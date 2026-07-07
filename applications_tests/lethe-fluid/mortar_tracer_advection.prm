@@ -1,0 +1,187 @@
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Check mortar implementation in tracer solver for an advection-only problem.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf1
+  set number mesh adapt = 0
+  set time end          = 0.2
+  set time step         = 0.02
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set enable bubble function velocity = true
+  set velocity degree                 = 1
+  set pressure degree                 = 1
+  set tracer degree                   = 1
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+  subsection tracer
+    set Function expression = tanh(25-50*x) #if (x<=0.5,1,0)
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set tracer diffusivity = 0
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube_with_cylindrical_hole
+  set grid arguments     = 0.5 : 1 : 0 : 1 : true
+  set initial refinement = 4
+end
+
+#---------------------------------------------------
+# Mortar
+#---------------------------------------------------
+
+subsection mortar
+  set enable = true
+  subsection mesh
+    set type           = dealii
+    set grid type      = hyper_ball_balanced
+    set grid arguments = 0.0, 0.0 : 0.5
+  end
+  set rotor boundary id  = 5
+  set stator boundary id = 4
+  set penalty factor     = 10
+  set radius tolerance   = 1e-4
+  set verbosity          = quiet
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set tracer = true
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 1 ; 0 ; 0
+  end
+  subsection tracer
+    set Function expression = tanh(25-50*x+50*t)
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+    set beta = 0
+  end
+  subsection bc 2
+    set id   = 2, 3
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 4, 5
+    set type = none
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
+subsection boundary conditions tracer
+  set number = 2
+  subsection bc 0
+    set id   = 0, 1, 2, 3
+    set type = outlet
+  end
+  subsection bc 1
+    set id   = 4, 5
+    set type = none
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection tracer
+    set verbosity = quiet
+    set tolerance = 1e-10
+  end
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-10
+    set max iterations = 200
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection tracer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-14
+    set preconditioner                        = ilu
+    set ilu preconditioner absolute tolerance = 1e-14
+  end
+end

@@ -57,6 +57,13 @@ Tracer<dim>::setup_assemblers()
       this->boundary_face_assembler =
         std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
           simulation_parameters.boundary_conditions_tracer);
+
+      // The mortar feature cannot be used with DG elements yet
+      if (simulation_parameters.mortar_parameters.enable)
+        AssertThrow(
+          false,
+          ExcMessage(
+            "Mortar coupling is not yet supported for the tracer physics when the DG formulation is used."));
     }
   else
     {
@@ -104,7 +111,7 @@ Tracer<dim>::assemble_system_matrix_cg()
     *this->fe,
     *this->cell_quadrature,
     *this->face_quadrature,
-    *this->mapping,
+    *this->get_mapping(),
     dof_handler_fluid.get_fe());
 
   WorkStream::run(this->dof_handler->begin_active(),
@@ -115,6 +122,15 @@ Tracer<dim>::assemble_system_matrix_cg()
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
+
+  // Add mortar entries
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      this->computing_timer.enter_subsection("Assemble matrix (mortar)");
+      this->mortar_coupling_operator->add_system_matrix_entries(
+        this->system_matrix);
+      this->computing_timer.leave_subsection("Assemble matrix (mortar)");
+    }
 
   system_matrix.compress(VectorOperation::add);
 }
@@ -132,7 +148,7 @@ Tracer<dim>::assemble_system_matrix_dg()
     *this->fe,
     *this->cell_quadrature,
     *this->face_quadrature,
-    *this->mapping,
+    *this->get_mapping(),
     dof_handler_fluid.get_fe());
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
@@ -336,6 +352,11 @@ Tracer<dim>::assemble_local_system_matrix(
         }
     }
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters,
+                               this->simulation_control->get_current_time());
+
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
@@ -397,7 +418,7 @@ Tracer<dim>::assemble_system_rhs_cg()
     *this->fe,
     *this->cell_quadrature,
     *this->face_quadrature,
-    *this->mapping,
+    *this->get_mapping(),
     dof_handler_fluid.get_fe());
 
   WorkStream::run(this->dof_handler->begin_active(),
@@ -408,6 +429,21 @@ Tracer<dim>::assemble_system_rhs_cg()
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
+
+  // Add mortar entries
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      this->computing_timer.enter_subsection("Assemble RHS (mortar)");
+      // Change sign of RHS to be compatible with mortar coupling terms
+      this->system_rhs.compress(VectorOperation::add);
+      this->system_rhs *= -1.0;
+      this->mortar_coupling_operator->vmult_add(this->system_rhs,
+                                                this->evaluation_point);
+      // Return RHS to original sign
+      this->system_rhs *= -1.0;
+
+      this->computing_timer.leave_subsection("Assemble RHS (mortar)");
+    }
 
   this->system_rhs.compress(VectorOperation::add);
 }
@@ -424,7 +460,7 @@ Tracer<dim>::assemble_system_rhs_dg()
     *this->fe,
     *this->cell_quadrature,
     *this->face_quadrature,
-    *this->mapping,
+    *this->get_mapping(),
     dof_handler_fluid.get_fe());
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
@@ -625,6 +661,11 @@ Tracer<dim>::assemble_local_system_rhs(
         }
     }
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters,
+                               this->simulation_control->get_current_time());
+
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
@@ -674,7 +715,7 @@ Tracer<dim>::calculate_L2_error()
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
-  FEValues<dim> fe_values(*mapping,
+  FEValues<dim> fe_values(*this->get_mapping(),
                           *fe,
                           *cell_quadrature,
                           update_values | update_gradients |
@@ -830,7 +871,7 @@ Tracer<dim>::calculate_tracer_statistics()
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
-  FEValues<dim> fe_values(*mapping,
+  FEValues<dim> fe_values(*this->get_mapping(),
                           *fe,
                           *cell_quadrature,
                           update_values | update_gradients |
@@ -858,8 +899,9 @@ Tracer<dim>::calculate_tracer_statistics()
             }
         }
     }
-  volume_integral      = Utilities::MPI::sum(volume_integral, mpi_communicator);
-  double global_volume = GridTools::volume(*triangulation, *mapping);
+  volume_integral = Utilities::MPI::sum(volume_integral, mpi_communicator);
+  double global_volume =
+    GridTools::volume(*triangulation, *this->get_mapping());
   double tracer_average = volume_integral / global_volume;
 
   double variance_integral = 0;
@@ -928,7 +970,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   // Initialize tracer information
   std::vector<double>         tracer_values(n_q_points_face);
   std::vector<Tensor<1, dim>> tracer_gradient(n_q_points_face);
-  FEFaceValues<dim>           fe_face_values_tracer(*this->mapping,
+  FEFaceValues<dim>           fe_face_values_tracer(*this->get_mapping(),
                                           this->dof_handler->get_fe(),
                                           *this->face_quadrature,
                                           update_values | update_gradients |
@@ -941,7 +983,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<1, dim>>      velocity_values(n_q_points_face);
-  FEFaceValues<dim>                fe_face_values_fd(*this->mapping,
+  FEFaceValues<dim>                fe_face_values_fd(*this->get_mapping(),
                                       dof_handler_fd.get_fe(),
                                       *this->face_quadrature,
                                       update_values);
@@ -1247,6 +1289,9 @@ Tracer<dim>::setup_dofs()
   locally_owned_dofs    = dof_handler->locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
+  // If enabled, rotate rotor mapping
+  this->rotate_rotor_mapping();
+
   present_solution->reinit(locally_owned_dofs,
                            locally_relevant_dofs,
                            mpi_communicator);
@@ -1265,73 +1310,13 @@ Tracer<dim>::setup_dofs()
 
   local_evaluation_point.reinit(this->locally_owned_dofs, mpi_communicator);
 
-  {
-    nonzero_constraints.clear();
-    nonzero_constraints.reinit(locally_owned_dofs, this->locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(*this->dof_handler,
-                                            nonzero_constraints);
-
-    for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions_tracer.type)
-      {
-        // Dirichlet condition : imposed temperature at i_bc
-        if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
-          {
-            VectorTools::interpolate_boundary_values(
-              *this->dof_handler,
-              id,
-              *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
-                id),
-              nonzero_constraints);
-          }
-        if (type == BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              *this->dof_handler,
-              id,
-              this->simulation_parameters.boundary_conditions_tracer
-                .periodic_neighbor_id.at(id),
-              this->simulation_parameters.boundary_conditions_tracer
-                .periodic_direction.at(id),
-              nonzero_constraints);
-          }
-      }
-  }
-  nonzero_constraints.close();
+  define_non_zero_constraints();
 
   // Boundary conditions for Newton correction
-  {
-    zero_constraints.clear();
-    zero_constraints.reinit(this->locally_owned_dofs,
-                            this->locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(*this->dof_handler,
-                                            zero_constraints);
+  define_zero_constraints();
 
-    for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions_tracer.type)
-      {
-        if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
-          {
-            VectorTools::interpolate_boundary_values(
-              *this->dof_handler,
-              id,
-              Functions::ZeroFunction<dim>(),
-              zero_constraints);
-          }
-        if (type == BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              *this->dof_handler,
-              id,
-              this->simulation_parameters.boundary_conditions_tracer
-                .periodic_neighbor_id.at(id),
-              this->simulation_parameters.boundary_conditions_tracer
-                .periodic_direction.at(id),
-              zero_constraints);
-          }
-      }
-  }
-  zero_constraints.close();
+  // If enabled, create mortar operators
+  this->reinit_mortar_operators();
 
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(locally_relevant_dofs);
@@ -1353,6 +1338,9 @@ Tracer<dim>::setup_dofs()
     }
 
 
+  // Add sparsity pattern entries
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              locally_owned_dofs,
@@ -1378,6 +1366,8 @@ template <int dim>
 void
 Tracer<dim>::update_boundary_conditions()
 {
+  this->update_mortar_configuration();
+
   if (!this->simulation_parameters.boundary_conditions_tracer.time_dependent)
     return;
 
@@ -1414,6 +1404,10 @@ Tracer<dim>::update_boundary_conditions()
               .periodic_direction.at(id),
             nonzero_constraints);
         }
+      if (type == BoundaryConditions::BoundaryType::none)
+        {
+          /* Do nothing */
+        }
     }
   nonzero_constraints.close();
   nonzero_constraints.distribute(this->local_evaluation_point);
@@ -1422,9 +1416,89 @@ Tracer<dim>::update_boundary_conditions()
 
 template <int dim>
 void
+Tracer<dim>::define_zero_constraints()
+{
+  zero_constraints.clear();
+  zero_constraints.reinit(this->locally_owned_dofs,
+                          this->locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(*this->dof_handler, zero_constraints);
+
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_tracer.type)
+    {
+      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
+        {
+          VectorTools::interpolate_boundary_values(
+            *this->dof_handler,
+            id,
+            Functions::ZeroFunction<dim>(),
+            zero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            *this->dof_handler,
+            id,
+            this->simulation_parameters.boundary_conditions_tracer
+              .periodic_neighbor_id.at(id),
+            this->simulation_parameters.boundary_conditions_tracer
+              .periodic_direction.at(id),
+            zero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::none)
+        {
+          /* Do nothing */
+        }
+    }
+  zero_constraints.close();
+}
+
+template <int dim>
+void
+Tracer<dim>::define_non_zero_constraints()
+{
+  nonzero_constraints.clear();
+  nonzero_constraints.reinit(locally_owned_dofs, this->locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
+                                          nonzero_constraints);
+
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_tracer.type)
+    {
+      // Dirichlet condition : imposed temperature at i_bc
+      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
+        {
+          VectorTools::interpolate_boundary_values(
+            *this->dof_handler,
+            id,
+            *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
+              id),
+            nonzero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            *this->dof_handler,
+            id,
+            this->simulation_parameters.boundary_conditions_tracer
+              .periodic_neighbor_id.at(id),
+            this->simulation_parameters.boundary_conditions_tracer
+              .periodic_direction.at(id),
+            nonzero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::none)
+        {
+          /* Do nothing */
+        }
+    }
+  nonzero_constraints.close();
+}
+
+template <int dim>
+void
 Tracer<dim>::set_initial_conditions()
 {
-  VectorTools::interpolate(*mapping,
+  VectorTools::interpolate(*this->get_mapping(),
                            *dof_handler,
                            simulation_parameters.initial_condition->tracer,
                            newton_update);
@@ -1462,7 +1536,7 @@ Tracer<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell,
                            const ComponentMask   &component_mask)
 {
   KellyErrorEstimator<dim>::estimate(
-    *this->mapping,
+    *this->get_mapping(),
     *this->dof_handler,
     *this->face_quadrature,
     typename std::map<types::boundary_id, const Function<dim, double> *>(),
@@ -1648,7 +1722,155 @@ Tracer<dim>::solve_linear_system()
   newton_update = completely_distributed_solution;
 }
 
+template <int dim>
+void
+Tracer<dim>::reinit_mortar_operators()
+{
+  if (!simulation_parameters.mortar_parameters.enable)
+    return;
 
+  TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
+
+  // Create mortar manager
+  if (simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      *this->dof_handler,
+      simulation_parameters.mortar_parameters);
+  else if (simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->mortar_manager = std::make_shared<MortarManagerLinear<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      *this->dof_handler,
+      simulation_parameters.mortar_parameters);
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
+
+
+  // Create mortar coupling evaluator
+  this->mortar_coupling_evaluator =
+    std::make_shared<ScalarCouplingEvaluationSIPG<dim, 1, double>>(
+      *this->get_mapping(), *this->dof_handler);
+
+  this->mortar_coupling_operator =
+    std::make_shared<CouplingOperator<dim, double>>(
+      *this->get_mapping(),
+      *this->dof_handler,
+      this->zero_constraints,
+      this->mortar_coupling_evaluator,
+      this->mortar_manager,
+      simulation_parameters.mortar_parameters.rotor_boundary_id,
+      simulation_parameters.mortar_parameters.stator_boundary_id,
+      simulation_parameters.mortar_parameters.sip_factor);
+}
+
+template <int dim>
+void
+Tracer<dim>::rotate_rotor_mapping()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "Rotate rotor mapping");
+
+  // Get updated rotation angle (radians)
+  simulation_parameters.mortar_parameters.rotor_rotation_angle->set_time(
+    this->simulation_control->get_current_time());
+  const double rotation_angle =
+    simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
+      Point<dim>());
+
+  // Rotate mapping only in the case of a circular mortar interface
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    LetheGridTools::rotate_mapping(
+      *this->dof_handler,
+      *this->mapping_cache,
+      *this->mapping,
+      rotation_angle,
+      this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotation_axis);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->mapping_cache->initialize(*this->mapping,
+                                    this->dof_handler->get_triangulation());
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
+}
+
+template <int dim>
+void
+Tracer<dim>::update_mortar_configuration()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "Update mortar configuration");
+
+  auto mpi_communicator = triangulation->get_mpi_communicator();
+
+  // We need to update the mortar operator/evaluator, as well as the sparsity
+  // pattern, at every iteration. Since this is already done within
+  // setup_dofs(), which is called in refine_mesh(), here we make sure that,
+  // when there is no mesh refinement, the mortar information is still updated
+  if (this->simulation_control->is_at_start() ||
+      !this->simulation_control->is_refinement_step(
+        this->simulation_parameters.mesh_adaptation) ||
+      this->simulation_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none)
+    {
+      // Now reset system matrix
+      this->system_matrix.clear();
+
+      // Rotate mapping
+      this->rotate_rotor_mapping();
+
+      define_non_zero_constraints();
+
+      // Boundary conditions for Newton correction
+      define_zero_constraints();
+
+      // Create mortar manager, operator, and evaluator
+      this->reinit_mortar_operators();
+
+      // Sparse matrices initialization
+      DynamicSparsityPattern dsp(locally_relevant_dofs);
+
+
+      if (simulation_parameters.fem_parameters.tracer_uses_dg)
+        {
+          DoFTools::make_flux_sparsity_pattern(
+            *this->dof_handler,
+            dsp,
+            nonzero_constraints,
+            /*keep_constrained_dofs = */ true);
+        }
+      else
+        {
+          DoFTools::make_sparsity_pattern(*this->dof_handler,
+                                          dsp,
+                                          nonzero_constraints,
+                                          /*keep_constrained_dofs = */ true);
+        }
+
+
+      // Add sparsity pattern entries
+      if (this->simulation_parameters.mortar_parameters.enable)
+        this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+
+      SparsityTools::distribute_sparsity_pattern(dsp,
+                                                 locally_owned_dofs,
+                                                 mpi_communicator,
+                                                 locally_relevant_dofs);
+      system_matrix.reinit(locally_owned_dofs,
+                           locally_owned_dofs,
+                           dsp,
+                           mpi_communicator);
+    }
+}
 
 template class Tracer<2>;
 template class Tracer<3>;
