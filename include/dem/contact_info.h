@@ -17,8 +17,8 @@ using namespace dealii;
  * information that has to be preserved over multiple iterations of a contact,
  * namely everything related to tangential displacements.
  *
- * The iterator to particle one is not stored here. Since all the contacts of a
- * given particle one share the same iterator, it is stored only once in the
+ * The iterator to "particle one" is not stored here. Since all the contacts of
+ * a given particle one share the same iterator, it is stored only once in the
  * enclosing adjacency container (see data_containers.h) instead of being
  * duplicated in every contact.
  */

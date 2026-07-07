@@ -83,7 +83,8 @@ update_contact_container_iterators(
             }
 
           // For particle-particle contacts, the iterator to particle one is
-          // shared by all its contacts and stored once in the adjacency value,
+          // shared by all its contact candidates (potential contacts)
+          // and stored once in the adjacency value,
           // while its map of contacts is held in second_particles. For the
           // other contact types, adjacent_pairs_content is directly the map of
           // objects in contact. Select the map to loop over accordingly.

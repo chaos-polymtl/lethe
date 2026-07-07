@@ -114,7 +114,8 @@ namespace DEM
     // Value stored per "particle one" in the adjacency containers below. The
     // iterator to particle one is shared by all its contacts, so it is stored
     // once here instead of being duplicated in every particle-particle contact
-    // info. second_particles maps each particle two id to the contact info.
+    // info. second_particles maps uses each particle two id (key)
+    // to access the contact info (value) between particle one and two.
     // (particle one iterator, <particle id, particle-particle info>)
     struct adjacent_particle_pairs_value
     {
