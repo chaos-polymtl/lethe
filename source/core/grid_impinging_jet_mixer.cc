@@ -145,7 +145,8 @@ namespace
       },
       cone);
     align_x_axis_to_z(cone);
-    GridTools::shift(Tensor<1, 3>({0., 0., z_cone_bottom + L_cone / 2.0}), cone);
+    GridTools::shift(Tensor<1, 3>({0., 0., z_cone_bottom + L_cone / 2.0}),
+                     cone);
 
     // Straight outlet pipe of radius r_outlet.
     Triangulation<3> outlet;
@@ -463,16 +464,27 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
   for (const auto &cell : triangulation.active_cell_iterators())
     cell->set_material_id(0);
 
+  // Re-datum the mesh vertically so that the common axis of the two inlet pipes
+  // lies on the z = 0 plane (the plane where the opposing jets impinge).  The
+  // whole geometry is translated rigidly by -inlet_axis_z, so the mesh that
+  // already works is untouched -- only the origin moves.  Because the shift is
+  // applied to the vertices after all boundary ids have been assigned (those
+  // use face centres in the original datum), the assignments are unaffected;
+  // the manifolds below are then defined in this shifted frame, so the inlet
+  // cylinder axis passes through z = 0 and the dome centre is translated by the
+  // same amount.  The z-cylinder axis passes through the origin either way.
+  const double z_shift = -inlet_axis_z;
+  GridTools::shift(Tensor<1, 3>({0., 0., z_shift}), triangulation);
+
   triangulation.set_manifold(cylinder_z_manifold_id,
                              CylindricalManifold<3>(Tensor<1, 3>({0., 0., 1.}),
                                                     Point<3>(0., 0., 0.)));
   triangulation.set_manifold(dome_manifold_id,
                              SphericalManifold<3>(
-                               Point<3>(0., 0., z_dome_center)));
+                               Point<3>(0., 0., z_dome_center + z_shift)));
   triangulation.set_manifold(inlet_manifold_id,
                              CylindricalManifold<3>(Tensor<1, 3>({1., 0., 0.}),
-                                                    Point<3>(0., 0.,
-                                                             inlet_axis_z)));
+                                                    Point<3>(0., 0., 0.)));
 }
 
 // Fallback make_grid definition for unsupported template parameters. This

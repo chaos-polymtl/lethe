@@ -22,7 +22,8 @@ using namespace dealii;
  *   pipe (radius r_outlet) below the chamber;
  * - Two opposing, smaller horizontal inlet pipes (radius r_inlet) entering the
  *   side wall of the chamber from +x and -x, whose jets impinge on the chamber
- *   axis.
+ *   axis. The mesh is datumed so that the common axis of the two inlet pipes
+ *   lies on the z = 0 plane (the impingement plane).
  *
  * How the inlets are connected to the chamber
  * --------------------------------------------
