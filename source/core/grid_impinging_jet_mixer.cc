@@ -20,25 +20,34 @@
 
 namespace
 {
-  // --- Geometric parameters of the mixer (SI units, metres). --------------
-  // TODO: these are currently hardcoded and will later be exposed as grid
-  // arguments.
-  constexpr double R_chamber = 0.05;  // mixing-chamber radius
-  constexpr double r_inlet   = 0.02;  // inlet-pipe radius
-  constexpr double r_outlet  = 0.025; // outlet-pipe radius
+  // --- Geometry of the mixer (SI units, metres). --------------------------
+  // The geometric dimensions are parsed from the grid arguments (see the
+  // constructor) and gathered into this struct, which also exposes the axial
+  // coordinates derived from them.
+  //
+  // All coordinates here are expressed in the CONSTRUCTION datum, in which the
+  // chamber floor sits at z = 0 and the chamber spans z in [0, H_chamber].  The
+  // vessel is built and all of its boundary ids are assigned in this frame.  As
+  // a final step, make_grid() rigidly shifts the whole mesh downward by the
+  // locked inlet-axis height so that, in the delivered mesh, the common axis of
+  // the two inlet pipes lies on the z = 0 (impingement) plane.
+  struct MixerGeometry
+  {
+    double R_chamber; // mixing-chamber radius
+    double r_inlet;   // inlet-pipe radius
+    double r_outlet;  // outlet-pipe radius
+    double H_chamber; // chamber height (axial extent)
+    double L_cone;    // axial length of the conical reduction
+    double L_outlet;  // length of the straight outlet pipe
+    double L_inlet;   // length of each inlet pipe
+    double z_inlet;   // inlet-axis height above the chamber floor
 
-  constexpr double H_chamber = 0.16; // chamber height, z in [0, H_chamber]
-  constexpr double L_cone    = 0.06; // axial length of the conical reduction
-  constexpr double L_outlet  = 0.05; // length of the straight outlet pipe
-  constexpr double L_inlet   = 0.08; // length of each inlet pipe
-
-  constexpr double z_inlet = 0.08; // height of the inlet axis in the chamber
-
-  // Derived axial coordinates along z.
-  constexpr double z_chamber_top   = H_chamber;          //  0.16
-  constexpr double z_cone_bottom   = -L_cone;            // -0.06
-  constexpr double z_outlet_bottom = -L_cone - L_outlet; // -0.11
-  constexpr double z_dome_center   = z_chamber_top;
+    // Derived axial coordinates along z (construction datum).
+    double z_chamber_top() const { return H_chamber; }
+    double z_cone_bottom() const { return -L_cone; }
+    double z_outlet_bottom() const { return -L_cone - L_outlet; }
+    double z_dome_center() const { return H_chamber; }
+  };
 
   // --- Discretisation parameters. -----------------------------------------
   // The axial subdivisions below are chosen so that, after global refinement,
@@ -107,24 +116,24 @@ namespace
   // Build the vessel (chamber + dome + reduction + outlet) as one conforming,
   // manifold-equipped triangulation.
   void
-  build_vessel(Triangulation<3> &vessel)
+  build_vessel(Triangulation<3> &vessel, const MixerGeometry &g)
   {
     // Mixing chamber: vertical cylinder of radius R_chamber,
     // z in [0, H_chamber].
     Triangulation<3> chamber;
     GridGenerator::subdivided_cylinder(chamber,
                                        chamber_axial_subdiv,
-                                       R_chamber,
-                                       H_chamber / 2.0);
+                                       g.R_chamber,
+                                       g.H_chamber / 2.0);
     align_x_axis_to_z(chamber);
-    GridTools::shift(Tensor<1, 3>({0., 0., H_chamber / 2.0}), chamber);
+    GridTools::shift(Tensor<1, 3>({0., 0., g.H_chamber / 2.0}), chamber);
 
     // Hemispherical dome closing the top; it shares the chamber's cross
     // section.
     Triangulation<3> dome;
-    GridGenerator::half_hyper_ball(dome, Point<3>(0, 0, 0), R_chamber);
+    GridGenerator::half_hyper_ball(dome, Point<3>(0, 0, 0), g.R_chamber);
     align_x_axis_to_z(dome);
-    GridTools::shift(Tensor<1, 3>({0., 0., z_dome_center}), dome);
+    GridTools::shift(Tensor<1, 3>({0., 0., g.z_dome_center()}), dome);
     relabel_manifold(dome, cylinder_z_manifold_id, dome_manifold_id);
 
     // Conical reduction R_chamber -> r_outlet, built as a cylinder whose radius
@@ -134,31 +143,32 @@ namespace
     Triangulation<3> cone;
     GridGenerator::subdivided_cylinder(cone,
                                        cone_axial_subdiv,
-                                       R_chamber,
-                                       L_cone / 2.0);
+                                       g.R_chamber,
+                                       g.L_cone / 2.0);
     GridTools::transform(
-      [](const Point<3> &p) {
-        const double s = (p[0] + L_cone / 2.0) / L_cone; // 0 at -x, 1 at +x
+      [&g](const Point<3> &p) {
+        const double s = (p[0] + g.L_cone / 2.0) / g.L_cone; // 0 at -x, 1 at +x
         const double factor =
-          r_outlet / R_chamber + s * (1.0 - r_outlet / R_chamber);
+          g.r_outlet / g.R_chamber + s * (1.0 - g.r_outlet / g.R_chamber);
         return Point<3>(p[0], factor * p[1], factor * p[2]);
       },
       cone);
     align_x_axis_to_z(cone);
-    GridTools::shift(Tensor<1, 3>({0., 0., z_cone_bottom + L_cone / 2.0}),
+    GridTools::shift(Tensor<1, 3>({0., 0., g.z_cone_bottom() + g.L_cone / 2.0}),
                      cone);
 
     // Straight outlet pipe of radius r_outlet.
     Triangulation<3> outlet;
     GridGenerator::subdivided_cylinder(outlet,
                                        outlet_axial_subdiv,
-                                       r_outlet,
-                                       L_outlet / 2.0);
+                                       g.r_outlet,
+                                       g.L_outlet / 2.0);
     align_x_axis_to_z(outlet);
-    GridTools::shift(Tensor<1, 3>({0., 0., z_outlet_bottom + L_outlet / 2.0}),
+    GridTools::shift(Tensor<1, 3>(
+                       {0., 0., g.z_outlet_bottom() + g.L_outlet / 2.0}),
                      outlet);
 
-    const double tol = 1e-6 * r_outlet;
+    const double tol = 1e-6 * g.r_outlet;
     GridGenerator::merge_triangulations({&chamber, &dome, &cone, &outlet},
                                         vessel,
                                         tol,
@@ -169,7 +179,8 @@ namespace
                         CylindricalManifold<3>(Tensor<1, 3>({0., 0., 1.}),
                                                Point<3>(0., 0., 0.)));
     vessel.set_manifold(dome_manifold_id,
-                        SphericalManifold<3>(Point<3>(0., 0., z_dome_center)));
+                        SphericalManifold<3>(Point<3>(0., 0.,
+                                                      g.z_dome_center())));
   }
 } // namespace
 
@@ -188,6 +199,56 @@ GridImpingingJetMixer<dim, spacedim>::GridImpingingJetMixer(
     }
 
   this->grid_arguments = grid_arguments;
+
+  // The geometry dimensions default to the values set in the header.  An empty
+  // argument string keeps those defaults; otherwise all eight dimensions must
+  // be supplied, colon-separated, in this order:
+  //   R_chamber:r_inlet:r_outlet:H_chamber:L_cone:L_outlet:L_inlet:z_inlet
+  // (The discretisation is intentionally not exposed and stays hardcoded.)
+  if (!grid_arguments.empty())
+    {
+      AssertThrow(
+        grid_arguments.find(';') == std::string::npos,
+        ExcMessage("The impinging-jet mixer grid arguments must be separated "
+                   "by colons (:), not semicolons (;)."));
+
+      const std::vector<std::string> tokens =
+        Utilities::split_string_list(grid_arguments, ':');
+      AssertThrow(
+        tokens.size() == 8,
+        ExcMessage(
+          "The impinging-jet mixer expects exactly 8 colon-separated geometry "
+          "arguments, in the order "
+          "R_chamber:r_inlet:r_outlet:H_chamber:L_cone:L_outlet:L_inlet:"
+          "z_inlet."));
+
+      this->R_chamber = Utilities::string_to_double(tokens[0]);
+      this->r_inlet   = Utilities::string_to_double(tokens[1]);
+      this->r_outlet  = Utilities::string_to_double(tokens[2]);
+      this->H_chamber = Utilities::string_to_double(tokens[3]);
+      this->L_cone    = Utilities::string_to_double(tokens[4]);
+      this->L_outlet  = Utilities::string_to_double(tokens[5]);
+      this->L_inlet   = Utilities::string_to_double(tokens[6]);
+      this->z_inlet   = Utilities::string_to_double(tokens[7]);
+    }
+
+  // Sanity checks: all dimensions positive, the inlet/outlet pipes fit inside
+  // the chamber cross-section, and the inlet axis lies strictly inside the
+  // cylindrical part of the chamber wall (where the port patch is grown).
+  AssertThrow(this->R_chamber > 0.0 && this->r_inlet > 0.0 &&
+                this->r_outlet > 0.0 && this->H_chamber > 0.0 &&
+                this->L_cone > 0.0 && this->L_outlet > 0.0 &&
+                this->L_inlet > 0.0,
+              ExcMessage("All impinging-jet mixer dimensions must be strictly "
+                         "positive."));
+  AssertThrow(this->r_inlet < this->R_chamber &&
+                this->r_outlet < this->R_chamber,
+              ExcMessage("The inlet and outlet radii must be smaller than the "
+                         "chamber radius."));
+  AssertThrow(this->z_inlet > 0.0 && this->z_inlet < this->H_chamber,
+              ExcMessage("The inlet axis height (z_inlet) must lie strictly "
+                         "between the chamber floor (0) and its top "
+                         "(H_chamber)."));
 }
 
 
@@ -195,12 +256,22 @@ template <>
 void
 GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 {
+  // Gather the parsed dimensions into the local geometry description used
+  // throughout this routine.  The derived axial coordinates that the rest of
+  // the code refers to by name are pulled out as locals here so the body below
+  // reads exactly as it did when these were file-scope constants.
+  const MixerGeometry g{R_chamber, r_inlet,  r_outlet, H_chamber,
+                        L_cone,    L_outlet, L_inlet,  z_inlet};
+  const double        z_chamber_top   = g.z_chamber_top();
+  const double        z_outlet_bottom = g.z_outlet_bottom();
+  const double        z_dome_center   = g.z_dome_center();
+
   // ---------------------------------------------------------------------
   // 1. Vessel, refined so the chamber wall carries fine faces, then
   //    flattened into a plain coarse mesh whose curved geometry is baked in.
   // ---------------------------------------------------------------------
   Triangulation<3> vessel;
-  build_vessel(vessel);
+  build_vessel(vessel, g);
   // Rotate the chamber about its axis by half a refined wall-face width so that
   // a wall face ends up centred on the +/- x meridian.  The inlet-port patch is
   // then symmetric about +/- x and each tube stays aligned with the x-axis.

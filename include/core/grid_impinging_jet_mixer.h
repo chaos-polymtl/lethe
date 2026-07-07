@@ -59,14 +59,17 @@ class GridImpingingJetMixer
 {
 public:
   /**
-   * @brief Constructor that parses grid parameters from a colon-separated
-   * string.
+   * @brief Constructor that parses the geometry dimensions from a
+   * colon-separated string.
    *
-   * For now the geometric parameters are hardcoded, so the argument string is
-   * ignored.
+   * The eight geometric dimensions (all in metres) are, in order:
+   *   R_chamber : r_inlet : r_outlet : H_chamber : L_cone : L_outlet :
+   *   L_inlet : z_inlet
+   * An empty string keeps the default dimensions. The mesh discretisation is
+   * not exposed and stays hardcoded.
    *
-   * @param[in] grid_arguments A string with the grid arguments (currently
-   * unused).
+   * @param[in] grid_arguments A colon-separated string with the geometry
+   * dimensions, or an empty string to use the defaults.
    */
   GridImpingingJetMixer(const std::string &grid_arguments);
 
@@ -81,6 +84,17 @@ public:
 private:
   /// Arguments used to generate the grid
   std::string grid_arguments;
+
+  /// Geometry dimensions (SI units, metres). Defaults below are overridden by
+  /// the constructor when a non-empty argument string is provided.
+  double R_chamber = 0.05;  ///< mixing-chamber radius
+  double r_inlet   = 0.02;  ///< inlet-pipe radius
+  double r_outlet  = 0.025; ///< outlet-pipe radius
+  double H_chamber = 0.16;  ///< chamber height (axial extent)
+  double L_cone    = 0.06;  ///< axial length of the conical reduction
+  double L_outlet  = 0.05;  ///< length of the straight outlet pipe
+  double L_inlet   = 0.08;  ///< length of each inlet pipe
+  double z_inlet   = 0.08;  ///< inlet-axis height above the chamber floor
 };
 
 #endif

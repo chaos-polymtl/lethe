@@ -1,0 +1,34 @@
+
+DEAL::==================================================
+DEAL::Case: default
+DEAL::Grid arguments: ""
+DEAL::Number of active cells : 13420
+DEAL::Number of vertices     : 14401
+DEAL::Mesh volume            : 0.00207269
+DEAL::Boundary id 0 face count : 9
+DEAL::Boundary id 1 face count : 9
+DEAL::Boundary id 2 face count : 320
+DEAL::Boundary id 3 face count : 1470
+DEAL::Inlet axis z (mean)    : 0.00000
+DEAL::==================================================
+DEAL::Case: explicit_default
+DEAL::Grid arguments: "0.05:0.02:0.025:0.16:0.06:0.05:0.08:0.08"
+DEAL::Number of active cells : 13420
+DEAL::Number of vertices     : 14401
+DEAL::Mesh volume            : 0.00207269
+DEAL::Boundary id 0 face count : 9
+DEAL::Boundary id 1 face count : 9
+DEAL::Boundary id 2 face count : 320
+DEAL::Boundary id 3 face count : 1470
+DEAL::Inlet axis z (mean)    : 0.00000
+DEAL::==================================================
+DEAL::Case: wide
+DEAL::Grid arguments: "0.06:0.025:0.03:0.2:0.08:0.06:0.1:0.1"
+DEAL::Number of active cells : 13420
+DEAL::Number of vertices     : 14401
+DEAL::Mesh volume            : 0.00376795
+DEAL::Boundary id 0 face count : 9
+DEAL::Boundary id 1 face count : 9
+DEAL::Boundary id 2 face count : 320
+DEAL::Boundary id 3 face count : 1470
+DEAL::Inlet axis z (mean)    : 0.00000
