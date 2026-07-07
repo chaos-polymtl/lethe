@@ -3211,7 +3211,6 @@ FluidDynamicsSharp<dim>::build_contact_containers(
             continue;
 
           particle_particle_contact_info<dim> dem_contact_info;
-          dem_contact_info.particle_one = particle_one_it->second;
           dem_contact_info.particle_two = particle_two_it->second;
           dem_contact_info.tangential_displacement =
             contact_info.tangential_displacement;
@@ -3220,14 +3219,22 @@ FluidDynamicsSharp<dim>::build_contact_containers(
 
           // Keep the same convention as for DEM, contacts between two owned
           // particles stay in the local container, while contacts involving a
-          // ghost neighbor go in the ghost container.
+          // ghost neighbor go in the ghost container. The iterator to particle
+          // one is shared by all its contacts and stored once in the adjacency
+          // value.
           if (local_particle_ids.find(particle_two_id) !=
               local_particle_ids.end())
-            local_adjacent_particles[particle_id][particle_two_id] =
-              dem_contact_info;
+            {
+              auto &adjacency        = local_adjacent_particles[particle_id];
+              adjacency.particle_one = particle_one_it->second;
+              adjacency.second_particles[particle_two_id] = dem_contact_info;
+            }
           else
-            ghost_adjacent_particles[particle_id][particle_two_id] =
-              dem_contact_info;
+            {
+              auto &adjacency        = ghost_adjacent_particles[particle_id];
+              adjacency.particle_one = particle_one_it->second;
+              adjacency.second_particles[particle_two_id] = dem_contact_info;
+            }
         }
     }
 

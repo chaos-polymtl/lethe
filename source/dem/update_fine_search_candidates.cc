@@ -28,9 +28,28 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
       // particle (from the fine search history)
       auto adjacent_pairs_content = &pairs_in_contact_iterator->second;
 
+      // For particle-particle contacts, the map of objects in contact is held
+      // in second_particles (the iterator to particle one is stored alongside
+      // it in the adjacency value). For the other contact types,
+      // adjacent_pairs_content is directly the map of objects in contact.
+      // Select the map to loop over accordingly.
+      auto &second_objects = [&]() -> auto & {
+        if constexpr (contact_type == ContactType::local_particle_particle ||
+                      contact_type == ContactType::ghost_particle_particle ||
+                      contact_type ==
+                        ContactType::local_periodic_particle_particle ||
+                      contact_type ==
+                        ContactType::ghost_periodic_particle_particle ||
+                      contact_type ==
+                        ContactType::ghost_local_periodic_particle_particle)
+          return adjacent_pairs_content->second_particles;
+        else
+          return *adjacent_pairs_content;
+      }();
+
       // Loop over all the adjacent objects
-      for (auto adjacent_map_iterator = adjacent_pairs_content->begin();
-           adjacent_map_iterator != adjacent_pairs_content->end();)
+      for (auto adjacent_map_iterator = second_objects.begin();
+           adjacent_map_iterator != second_objects.end();)
         {
           // Get the object (2nd particle/wall/face) id in the history list
           auto object_id = adjacent_map_iterator->first;
@@ -127,8 +146,8 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
                           // history in the fine search list particle-particle
                           // contact candidates list but kept in new broad
                           // search list
-                          adjacent_map_iterator = adjacent_pairs_content->erase(
-                            adjacent_map_iterator);
+                          adjacent_map_iterator =
+                            second_objects.erase(adjacent_map_iterator);
                           continue;
                         }
                     }
@@ -138,7 +157,7 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
               // The particle is then removed as a candidate for fine
               // search contact candidates list
               adjacent_map_iterator =
-                adjacent_pairs_content->erase(adjacent_map_iterator);
+                second_objects.erase(adjacent_map_iterator);
             }
 
           if constexpr (contact_type == ContactType::particle_wall ||
@@ -174,13 +193,13 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
               // removed as a candidate for fine search contact candidates
               // list
               adjacent_map_iterator =
-                adjacent_pairs_content->erase(adjacent_map_iterator);
+                second_objects.erase(adjacent_map_iterator);
             }
         }
 
       // If there are still particle/wall/face in the adjacent_pairs_content
       // then the pairs_in_contact_iterator remains in memory
-      if (adjacent_pairs_content->size() > 0)
+      if (second_objects.size() > 0)
         ++pairs_in_contact_iterator;
 
       // Otherwise it is deleted. This is necessary to prevent memory inflation.

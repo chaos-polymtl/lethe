@@ -1731,7 +1731,7 @@ private:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
   {
     // No contact calculation if no adjacent particles
-    if (adjacent_particles_list.empty())
+    if (adjacent_particles_list.second_particles.empty())
       return;
 
     // Define local variables which will be used within the contact calculation
@@ -1744,9 +1744,10 @@ private:
     double       normal_relative_velocity_value;
     Tensor<1, 3> tangential_relative_velocity;
 
-    // Gather information about particle 1 and set it up.
-    auto first_contact_info      = adjacent_particles_list.begin();
-    auto particle_one            = first_contact_info->second.particle_one;
+    // Gather information about particle 1 and set it up. The iterator to
+    // particle 1 is shared by all its contacts and stored once in the adjacency
+    // value.
+    auto particle_one            = adjacent_particles_list.particle_one;
     auto particle_one_properties = particle_one->get_properties();
 
     types::particle_index particle_one_id = particle_one->get_local_index();
@@ -1757,7 +1758,7 @@ private:
     Point<3> particle_one_location = get_location(particle_one);
 
     for (auto &&contact_info :
-         adjacent_particles_list | boost::adaptors::map_values)
+         adjacent_particles_list.second_particles | boost::adaptors::map_values)
       {
         // Getting information (location and properties) of particle 2 in
         // contact with particle 1

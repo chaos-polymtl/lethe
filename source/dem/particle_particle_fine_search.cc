@@ -31,11 +31,14 @@ particle_particle_fine_search(
   for (auto &&adjacent_particles_list :
        adjacent_particles | boost::adaptors::map_values)
     {
-      if (adjacent_particles_list.empty())
+      auto &second_particles = adjacent_particles_list.second_particles;
+
+      if (second_particles.empty())
         continue;
 
-      // Gather information about particle 1
-      auto &particle_one = adjacent_particles_list.begin()->second.particle_one;
+      // Gather information about particle 1. The iterator to particle 1 is
+      // shared by all its contacts and stored once in the adjacency value.
+      auto              &particle_one = adjacent_particles_list.particle_one;
       Point<dim, double> particle_one_location = particle_one->get_location();
 
       // For non-periodic contacts
@@ -43,10 +46,8 @@ particle_particle_fine_search(
                     contact_type == ghost_particle_particle)
         {
           // Iterating over each map which contains the contact information
-          for (auto adjacent_particles_list_iterator =
-                 adjacent_particles_list.begin();
-               adjacent_particles_list_iterator !=
-               adjacent_particles_list.end();)
+          for (auto adjacent_particles_list_iterator = second_particles.begin();
+               adjacent_particles_list_iterator != second_particles.end();)
             {
               // Getting contact information and particle 2 as local variables
               auto &adjacent_pair_information =
@@ -62,8 +63,7 @@ particle_particle_fine_search(
               if (square_distance > neighborhood_threshold)
                 {
                   adjacent_particles_list_iterator =
-                    adjacent_particles_list.erase(
-                      adjacent_particles_list_iterator);
+                    second_particles.erase(adjacent_particles_list_iterator);
                 }
               else
                 {
@@ -78,10 +78,8 @@ particle_particle_fine_search(
                     contact_type == ghost_local_periodic_particle_particle)
         {
           // Iterating over each map which contains the contact information
-          for (auto adjacent_particles_list_iterator =
-                 adjacent_particles_list.begin();
-               adjacent_particles_list_iterator !=
-               adjacent_particles_list.end();)
+          for (auto adjacent_particles_list_iterator = second_particles.begin();
+               adjacent_particles_list_iterator != second_particles.end();)
             {
               // Getting contact information and particle 2 as local variables
               auto &adjacent_pair_information =
@@ -121,8 +119,7 @@ particle_particle_fine_search(
               if (min_square_distance > neighborhood_threshold)
                 {
                   adjacent_particles_list_iterator =
-                    adjacent_particles_list.erase(
-                      adjacent_particles_list_iterator);
+                    second_particles.erase(adjacent_particles_list_iterator);
                 }
               else
                 {
@@ -170,11 +167,11 @@ particle_particle_fine_search(
                 {
                   auto &particle_one_contact_list =
                     adjacent_particles[particle_one_id];
+                  particle_one_contact_list.particle_one = particle_one;
 
-                  particle_one_contact_list.emplace(
+                  particle_one_contact_list.second_particles.emplace(
                     particle_two_id,
-                    particle_particle_contact_info<dim>{particle_one,
-                                                        particle_two,
+                    particle_particle_contact_info<dim>{particle_two,
                                                         Tensor<1, 3>(),
                                                         Tensor<1, 3>()});
                 }
@@ -221,14 +218,12 @@ particle_particle_fine_search(
 
                   auto &particle_one_contact_list =
                     adjacent_particles[particle_one_id];
+                  particle_one_contact_list.particle_one = particle_one;
 
-                  particle_one_contact_list.emplace(
+                  particle_one_contact_list.second_particles.emplace(
                     particle_two_id,
                     periodic_particle_particle_contact_info<dim>{
-                      {particle_one,
-                       particle_two,
-                       Tensor<1, 3>(),
-                       Tensor<1, 3>()},
+                      {particle_two, Tensor<1, 3>(), Tensor<1, 3>()},
                       offset_3d});
                 }
             }
