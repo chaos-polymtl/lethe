@@ -97,5 +97,8 @@ private:
   // It means that axis 0 is not necessarily x, since it depends on the order
   // of the insertion direction.
   std::vector<double> axis_min, axis_max;
+
+  /// Function used to insert particle inside our outside an arbitrary shape.
+  std::shared_ptr<Function<dim>> acceptance_fct;
 };
 #endif

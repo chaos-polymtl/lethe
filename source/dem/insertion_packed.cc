@@ -20,9 +20,9 @@ InsertionPacked<dim, PropertiesIndex>::InsertionPacked(
                                     dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
+  , acceptance_fct(dem_parameters.insertion_info.insertion_acceptance_fct)
 {
   // Initializing the current inserting particle type
-
   // Getting properties as local parameters
   const InsertionInfo<dim> insertion_information =
     dem_parameters.insertion_info;
@@ -40,28 +40,15 @@ InsertionPacked<dim, PropertiesIndex>::InsertionPacked(
   axis_max.resize(3);
   for (unsigned int axis : axis_list)
     {
-      switch (axis)
-        {
-          case 0:
-            axis_min[0] = insertion_information.insertion_box_point_1(0);
-            axis_max[0] = insertion_information.insertion_box_point_2(0);
-            break;
-          case 1:
-            axis_min[1] = insertion_information.insertion_box_point_1(1);
-            axis_max[1] = insertion_information.insertion_box_point_2(1);
-            break;
-          case 2:
-            axis_min[2] = insertion_information.insertion_box_point_1(2);
-            axis_max[2] = insertion_information.insertion_box_point_2(2);
-            break;
-          default:
-            AssertThrow(false,
-                        ExcMessage("Insertion direction must be 0, 1 or 2"));
-        }
+      AssertThrow(axis < dim,
+                  ExcMessage("Insertion direction must be 0, 1 or 2"));
+
+      axis_min[axis] = insertion_information.insertion_box_point_1(axis);
+      axis_max[axis] = insertion_information.insertion_box_point_2(axis);
     }
 }
 
-// The main insertion function.
+
 template <int dim, typename PropertiesIndex>
 void
 InsertionPacked<dim, PropertiesIndex>::insert(
@@ -140,9 +127,6 @@ InsertionPacked<dim, PropertiesIndex>::insert(
         }
 
       // Loop and generate valid insertion points.
-      // TODO: We could check if the point is inside the triangulation before
-      // doing the push back, this way, the insertion box could be bigger than
-      // the triangulation.
       Point<dim>   insertion_location;
       unsigned int particle_counter = 0;
       for (unsigned int id = first_id; id < last_id; ++id, ++particle_counter)
@@ -188,20 +172,26 @@ InsertionPacked<dim, PropertiesIndex>::generate_insertion_location(
   // likely to be located in the middle of the box or on its edges.
   std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
-  // Generate a new candidate point within the bounding box
-  for (int d = 0; d < dim; ++d)
+  bool accepted = false;
+  while (!accepted)
     {
-      // Get the actual coordinate axis (e.g., 0 for X, 1 for Y, 2 for Z)
-      // based on the configured insertion sequence
-      const unsigned int axis = insertion_information.direction_sequence.at(d);
+      // Generate a new candidate point within the bounding box
+      for (int d = 0; d < dim; ++d)
+        {
+          // Get the actual coordinate axis (e.g., 0 for X, 1 for Y, 2 for Z)
+          // based on the configured insertion sequence
+          const unsigned int axis = insertion_information.direction_sequence.at(d);
 
-      // Pull a fresh 0.0 to 1.0 random value
-      double random_value = distribution(rng);
+          // Pull a fresh 0.0 to 1.0 random value
+          double random_value = distribution(rng);
 
-      // Map it uniformly across the specific axis span
-      insertion_location[axis] =
-        this->axis_min[axis] +
-        random_value * (this->axis_max[axis] - this->axis_min[axis]);
+          // Map it uniformly across the specific axis span
+          insertion_location[axis] =
+            this->axis_min[axis] +
+            random_value * (this->axis_max[axis] - this->axis_min[axis]);
+        }
+      // Reject the point if the value is negative.
+      accepted = acceptance_fct->value(insertion_location) > 0.;
     }
 }
 
