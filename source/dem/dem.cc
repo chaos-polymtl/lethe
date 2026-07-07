@@ -53,6 +53,7 @@ DEMSolver<dim, PropertiesIndex>::DEMSolver(
   , background_dh(triangulation)
   , size_distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
+  , is_packed_insertion_method(false)
 {}
 
 template <int dim, typename PropertiesIndex>
