@@ -38,7 +38,7 @@ InsertionPacked<dim, PropertiesIndex>::InsertionPacked(
 
   axis_min.resize(3);
   axis_max.resize(3);
-  for (unsigned int axis : axis_list)
+  for (int axis : axis_list)
     {
       AssertThrow(axis < dim,
                   ExcMessage("Insertion direction must be 0, 1 or 2"));
