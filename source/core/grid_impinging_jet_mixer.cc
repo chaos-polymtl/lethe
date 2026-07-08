@@ -90,6 +90,10 @@ namespace
   //     vessel cells so the correct manifold can be assigned to each). ------
   constexpr types::material_id vessel_material_id = 0;
   constexpr types::material_id pipe_material_id   = 1;
+  // The central pipe column straddles the pipe axis, where the pipe's
+  // cylinder-about-x manifold is singular; it is tagged separately so it can be
+  // left flat while the surrounding ring cells take the cylindrical manifold.
+  constexpr types::material_id pipe_core_material_id = 2;
 
   // Rotation mapping the native cylinder axis (+x) onto the mixer axis (+z):
   // a rotation of -pi/2 about +y sends (1,0,0) -> (0,0,1).
@@ -425,19 +429,28 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
         column[vid] = std::move(col);
       }
 
-    // 3d. One hexahedron per patch face per pipe layer.
+    // 3d. One hexahedron per patch face per pipe layer.  The column grown from
+    //     the patch's centre face f0 straddles the pipe axis, so it is tagged
+    //     with pipe_core_material_id and later kept flat; the surrounding ring
+    //     columns take the pipe's cylinder-about-x manifold (see the manifold
+    //     assignment below).
     for (const auto &face : port_faces)
-      for (unsigned int j = 1; j <= n_pipe_layers; ++j)
-        {
-          CellData<3> hex;
-          for (unsigned int i = 0; i < 4; ++i)
-            {
-              hex.vertices[i]     = column[face[i]][j - 1];
-              hex.vertices[i + 4] = column[face[i]][j];
-            }
-          hex.material_id = pipe_material_id;
-          cells.push_back(hex);
-        }
+      {
+        const bool is_core_column =
+          std::set<unsigned int>(face.begin(), face.end()) == f0_vertices;
+        for (unsigned int j = 1; j <= n_pipe_layers; ++j)
+          {
+            CellData<3> hex;
+            for (unsigned int i = 0; i < 4; ++i)
+              {
+                hex.vertices[i]     = column[face[i]][j - 1];
+                hex.vertices[i + 4] = column[face[i]][j];
+              }
+            hex.material_id =
+              is_core_column ? pipe_core_material_id : pipe_material_id;
+            cells.push_back(hex);
+          }
+      }
 
     return port_faces.size();
   };
@@ -499,13 +512,32 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
             }
         }
 
+  // pass 1.5: give the inlet-pipe cells a volume manifold so the pipes refine
+  //         cylindrically (keeping the cell shape) instead of only their outer
+  //         wall faces following the circle while the interior is interpolated
+  //         linearly -- the latter is what slowly degrades the pipe cells under
+  //         repeated refinement.  set_all_manifold_ids() tags each cell together
+  //         with its faces and lines.  The ring columns take the pipe's
+  //         cylinder-about-x manifold; the central core column is then reset to
+  //         flat, because that manifold is singular on the pipe axis the column
+  //         straddles (and a flat core keeps its square cross-section crisp).
+  //         Running the ring pass before the core pass makes the shared
+  //         ring/core faces flat, so the square core stays straight-sided.
+  for (const auto &cell : triangulation.active_cell_iterators())
+    if (cell->material_id() == pipe_material_id)
+      cell->set_all_manifold_ids(inlet_manifold_id);
+  for (const auto &cell : triangulation.active_cell_iterators())
+    if (cell->material_id() == pipe_core_material_id)
+      cell->set_all_manifold_ids(numbers::flat_manifold_id);
+
   // pass 2 (last): inlet-pipe cells -> cylindrical about x; the axial end is
   //         the inlet opening (flat), the rest is the circular pipe wall.
   //         Running last, this also claims the shared port-rim edges for the
   //         pipe's x-cylinder, so each junction stays a clean circle when
   //         refined.
   for (const auto &cell : triangulation.active_cell_iterators())
-    if (cell->material_id() == pipe_material_id)
+    if (cell->material_id() == pipe_material_id ||
+        cell->material_id() == pipe_core_material_id)
       for (const unsigned int f : GeometryInfo<3>::face_indices())
         {
           const auto face = cell->face(f);
