@@ -52,8 +52,8 @@ public:
    *
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
-   * @param[in] radius Vector containing the radius at the mortar interface and
-   * the domain length in the direction of the rotation axis
+   * @param[in] interface_dimensions Vector containing the radius at the mortar
+   * interface and the domain length in the direction of the rotation axis
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
    * @param[in] rotation_axis_direction Direction of the rotation axis
@@ -62,7 +62,7 @@ public:
    */
   template <int dim2>
   MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
-                    const std::vector<double>       &radius,
+                    const std::vector<double>       &interface_dimensions,
                     const Quadrature<dim2>          &quadrature,
                     const double                     rotation_angle,
                     const unsigned int               rotation_axis_direction,
@@ -86,7 +86,7 @@ public:
   get_n_total_mortars() const;
 
   /**
-   * @brief Returns the number of mortars per face
+   * @brief Returns the number of mortars per cell (1 for aligned meshes, 2 for non-aligned meshes)
    */
   unsigned int
   get_n_mortars() const;
@@ -102,37 +102,37 @@ public:
   get_mortar_indices(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
-   * @brief Returns the total number of quadrature points at the inner/outer boundary interface
+   * @brief Returns the total number of quadrature points at all mortar cells
    */
   unsigned int
   get_n_total_points() const;
 
   /**
-   * @brief Returns the coordinates of the quadrature points at both sides of the interface
+   * @brief Returns the number of quadrature ponts at the mortar cells of a given cell
    */
   unsigned int
   get_n_points() const;
 
   /**
-   * @brief Returns the coordinates of the quadrature points at both sides of the interface
+   * @brief Returns the coordinates of the quadrature points at both sides of the interface in the real space
    *
    * @param[in] face_center Face center
    * @param[in] is_inner Boolean that indicates whether the face is part of the
    * rotor (inner) side of the mortar interface
    *
-   * @return points Coordinate of quadrature points of the cell
+   * @return points Coordinate of quadrature points of the cell in the real space
    */
   std::vector<Point<dim>>
   get_points(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
-   * @brief Returns the coordinates of the quadrature points at the interface
+   * @brief Returns the coordinates of the quadrature points at both sides of the interface in the reference space
    *
    * @param[in] face_center Face center
    * @param[in] is_inner Boolean that indicates whether the face is part of the
    * rotor (inner) side of the mortar interface
    *
-   * @return points Coordinate of quadrature points of the cell
+   * @return points Coordinate of quadrature points of the cell in the reference space
    */
   std::vector<Point<std::max(1, dim - 1)>>
   get_points_ref(const Point<dim> &face_center, const bool is_inner) const;
@@ -165,7 +165,7 @@ public:
   std::vector<unsigned int> n_subdivisions;
   /// Vector containing the radius at the mortar interface and the domain length
   /// in the direction of the rotation axis
-  std::vector<double> radius;
+  std::vector<double> interface_dimensions;
 
 protected:
   /**
@@ -380,8 +380,8 @@ public:
    *
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
-   * @param[in] radius Vector containing the radius at the mortar interface and
-   * the domain length in the direction of the rotation axis
+   * @param[in] interface_dimensions Vector containing the radius at the mortar
+   * interface and the domain length in the direction of the rotation axis
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
    * @param[in] rotation_axis_direction Direction of the rotation axis
@@ -394,7 +394,7 @@ public:
    */
   template <int dim2>
   MortarManagerCircle(std::vector<unsigned int> n_subdivisions,
-                      std::vector<double>       radius,
+                      std::vector<double>       interface_dimensions,
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
                       const unsigned int        rotation_axis_direction,
@@ -497,13 +497,13 @@ template <int dim>
 template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(
   const std::vector<unsigned int> &n_subdivisions,
-  const std::vector<double>       &radius,
+  const std::vector<double>       &interface_dimensions,
   const Quadrature<dim2>          &quadrature_in,
   const double                     rotation_angle,
   const unsigned int               rotation_axis_direction,
   const std::vector<double>        stage_heights)
   : n_subdivisions(n_subdivisions)
-  , radius(radius)
+  , interface_dimensions(interface_dimensions)
   , quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
@@ -536,7 +536,7 @@ template <int dim>
 template <int dim2>
 MortarManagerCircle<dim>::MortarManagerCircle(
   std::vector<unsigned int> n_subdivisions,
-  std::vector<double>       radius,
+  std::vector<double>       interface_dimensions,
   const Quadrature<dim2>   &quadrature,
   const double              rotation_angle,
   const unsigned int        rotation_axis_direction,
@@ -544,7 +544,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const Point<dim>         &center_of_rotation,
   const double              pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions,
-                           radius,
+                           interface_dimensions,
                            quadrature,
                            rotation_angle,
                            rotation_axis_direction,

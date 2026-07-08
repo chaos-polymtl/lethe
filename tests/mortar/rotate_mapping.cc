@@ -100,10 +100,10 @@ test()
   // Distribute dofs
   dof_handler.distribute_dofs(fe);
 
-  // Number of subdivisions and rotor radius
+  // Number of subdivisions and interface dimensions (rotor radius in 2D)
   const auto n_subdivisions =
     compute_number_interface_cells(triangulation, mortar_parameters);
-  const auto [radius, prerotation] =
+  const auto [interface_dimensions, prerotation] =
     compute_interface_dimensions_circular(triangulation,
                                           mapping,
                                           mortar_parameters);
@@ -122,7 +122,7 @@ test()
       deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
       deallog << "Number of subdivisions at interface : " << n_subdivisions[0]
               << std::endl;
-      deallog << "Radius : " << radius[0] << std::endl;
+      deallog << "Radius : " << interface_dimensions[0] << std::endl;
     }
 }
 
