@@ -57,34 +57,6 @@ public:
   void
   solve();
 
-  /**
-   * @brief Updates the previous positions of particles in all locally owned cells.
-   *
-   * This method iterates through all active cells in the triangulation,
-   * identifying locally owned cells. For each particle in these cells, it
-   * retrieves the current particle position and stores it into the particle's
-   * properties. The position is stored within certain indices that are
-   * conventionally designated as velocity components (v_x, v_y, and v_z for 3D
-   * configurations). This allows the tracking of previous particle positions
-   * without additional data structures. This tracking is required for the
-   * packed insertion method.
-   */
-  void
-  update_previous_position();
-
-  /**
-   * @brief Restricts the displacement of particles to a maximum allowable
-   * value, preventing excessive movement during the simulation.
-   *
-   * This method iterates over all particles and checks their displacement
-   * norm relative to their previous positions. If the displacement exceeds
-   * the maximum particle diameter, their positions are clamped such that
-   * the displacement does not exceed this threshold. The displacement
-   * values are updated accordingly for each particle.
-   */
-  void
-  clamp_displacement();
-
 private:
   /**
    * @brief Set the parameters for the DEM simulation
