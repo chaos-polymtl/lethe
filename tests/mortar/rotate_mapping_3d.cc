@@ -106,10 +106,10 @@ test()
   // Distribute dofs
   dof_handler.distribute_dofs(fe);
 
-  // Number of subdivisions and rotor radius
+  // Number of subdivisions and interface dimensions
   const auto n_subdivisions =
     compute_number_interface_cells(triangulation, mortar_parameters);
-  const auto [radius, _] =
+  const auto [interface_dimensions, _] =
     compute_interface_dimensions_circular(triangulation,
                                           mapping,
                                           mortar_parameters);
@@ -130,8 +130,9 @@ test()
               << std::endl;
       deallog << "Axial direction subdivisions : " << n_subdivisions[1]
               << std::endl;
-      deallog << "Radius : " << radius[0] << std::endl;
-      deallog << "Axial direction length : " << radius[1] << std::endl;
+      deallog << "Radius : " << interface_dimensions[0] << std::endl;
+      deallog << "Axial direction length : " << interface_dimensions[1]
+              << std::endl;
     }
 }
 

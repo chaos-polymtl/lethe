@@ -2387,7 +2387,7 @@ class MyMortarManagerCircle : public MortarManagerBase<dim>
 public:
   template <int dim2>
   MyMortarManagerCircle(const std::vector<unsigned int> &n_subdivisions,
-                        const std::vector<double>       &radius,
+                        const std::vector<double>       &interface_dimensions,
                         const Quadrature<dim2>          &quadrature,
                         const double                     rotation_angle,
                         const std::vector<double>       &stage_heights);
@@ -2408,12 +2408,12 @@ template <int dim>
 template <int dim2>
 MyMortarManagerCircle<dim>::MyMortarManagerCircle(
   const std::vector<unsigned int> &n_subdivisions,
-  const std::vector<double>       &radius,
+  const std::vector<double>       &interface_dimensions,
   const Quadrature<dim2>          &quadrature,
   const double                     rotation_angle,
   const std::vector<double>       &stage_heights)
   : MortarManagerBase<dim>(n_subdivisions,
-                           radius,
+                           interface_dimensions,
                            quadrature,
                            rotation_angle,
                            stage_heights)
@@ -2423,7 +2423,7 @@ template <int dim>
 Point<dim>
 MyMortarManagerCircle<dim>::from_1D(const double radiant) const
 {
-  return radius_to_point<dim>(this->radius[0], radiant);
+  return radius_to_point<dim>(this->interface_dimensions[0], radiant);
 }
 
 template <int dim>

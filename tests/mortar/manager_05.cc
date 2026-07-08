@@ -13,10 +13,10 @@
 int
 main()
 {
-  const unsigned int              dim                 = 3;
-  const std::vector<unsigned int> n_subdivisions      = {10, 3};
-  const unsigned int              n_quadrature_points = 3;
-  const std::vector<double>       radius              = {1.2, 0.4};
+  const unsigned int              dim                  = 3;
+  const std::vector<unsigned int> n_subdivisions       = {10, 3};
+  const unsigned int              n_quadrature_points  = 3;
+  const std::vector<double>       interface_dimensions = {1.2, 0.4};
   const std::vector<double> stage_heights = {0.0, 0.4 / 3.0, 0.8 / 3.0, 0.4};
 
   // cell angle variation
@@ -29,7 +29,7 @@ main()
       std::cout << "Rotation angle: " << rotate << std::endl;
 
       const MyMortarManagerCircle<dim> manager(n_subdivisions,
-                                               radius,
+                                               interface_dimensions,
                                                QGauss<dim>(n_quadrature_points),
                                                rotate,
                                                stage_heights);
@@ -50,8 +50,9 @@ main()
               std::cout << "Shift: " << shift << std::endl;
               std::cout << "Cell center at " << rad << ": " << std::endl;
 
-              auto p     = radius_to_point<dim>(radius[0], rad);
-              p[dim - 1] = radius[1] / n_subdivisions[1] * (j + 0.5);
+              auto p = radius_to_point<dim>(interface_dimensions[0], rad);
+              p[dim - 1] =
+                interface_dimensions[1] / n_subdivisions[1] * (j + 0.5);
 
               const auto indices = manager.get_mortar_indices(p, rotate != 0.0);
 

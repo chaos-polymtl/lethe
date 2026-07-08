@@ -26,8 +26,10 @@ MortarManagerBase<dim>::is_mesh_aligned() const
 {
   AssertThrow(dim != 1, ExcInternalError());
 
+  // Prescribed tolerance to verify the mesh alignment
   constexpr double tolerance = 1e-8;
-  const double     delta_0   = 2 * numbers::PI / n_subdivisions[0];
+  // Angle variation within each cell (in radians)
+  const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
 
   return std::abs(rotation_angle / delta_0 -
                   std::round(rotation_angle / delta_0)) < tolerance;
@@ -40,6 +42,8 @@ MortarManagerBase<dim>::get_n_total_mortars() const
   if constexpr (dim == 1)
     return 1;
 
+  // Total number of subdivisions (in 2D, this is equivalent to the number of
+  // cells at the interface)
   unsigned int n_total_subdivisions = n_subdivisions[0];
 
   // In 3D, besides the subdivisions in the plane perpendicular to the rotation
@@ -97,9 +101,10 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center,
 
       for (unsigned int q = 0; q < 2; ++q)
         {
+          // Index of mortar cells in the rotor side
           const unsigned int index =
             (id_in_plane * 2 + 1 + q) % (n_subdivisions[0] * 2);
-
+          // Assert that the index is within the valid range of mortar cells
           AssertIndexRange(index, n_subdivisions[0] * 2);
 
           indices.emplace_back(index + 2 * n_subdivisions[0] * id_out_plane);
@@ -113,8 +118,9 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center,
 
       for (unsigned int q = 0; q < 2; ++q)
         {
+          // Index of mortar cells in the stator side
           const unsigned int index = id_in_plane * 2 + q;
-
+          // Assert that the index is within the valid range of mortar cells
           AssertIndexRange(index, n_subdivisions[0] * 2);
 
           indices.emplace_back(index + 2 * n_subdivisions[0] * id_out_plane);
@@ -155,9 +161,10 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
   // Mesh alignment type and cell index
   const auto [type, id_in_plane, id_out_plane] =
     get_config(face_center, is_inner);
-  // Angle variation within each cell
+  // Angle span of each cell (in radians)
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
-  // Height of the cell in the direction of the rotation axis
+  // Height of the cell in the direction of the rotation axis (in units of
+  // length)
   double delta_1 = 1.0;
 
   if constexpr (dim == 3)
@@ -169,6 +176,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
+          // Convert quadrature point in reference space to real space
           const auto x =
             from_1D((id_in_plane + quadrature.point(q)[0]) * delta_0);
 
@@ -188,9 +196,18 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
   else // Point at the inner boundary lies somewhere in the face of the outer
        // boundary cell
     {
-      // rad_0: first cell vertex (fixed)
-      // rad_1: shifted vertex
-      // rad_2: last cell vertex (fixed)
+      // Location of the vertices of the inner and outer cells in the real space
+      // rad_0: first cell vertex
+      // rad_1: intersection between the cell of the opposite interface side
+      // into the cell of the current interface side
+      // rad_2: last cell vertex
+      // This is an example for the case where the current cell is the outside
+      // cell
+      //         |----------|         outside cell
+      //        rad0       rad2
+      //   |----------|               inside cell
+      //             rad1
+
       double rad_0, rad_1, rad_2;
       // Minimum rotation angle
       double rot_min =
@@ -211,8 +228,10 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
       std::vector<Point<dim>> points;
 
+      // Store points for the segment rad_0 to rad_1
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
+          // Convert quadrature point in reference space to real space
           const auto x =
             from_1D(rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0));
 
@@ -227,8 +246,10 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(x);
         }
 
+      // Store points for the segment rad_1 to rad_2
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
+          // Convert quadrature point in reference space to real space
           const auto x =
             from_1D(rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1));
 
@@ -256,8 +277,9 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
     return std::vector<Point<std::max(1, dim - 1)>>{
       Point<std::max(1, dim - 1)>()};
 
+  // Mesh alignment
   const auto [type, _, __] = get_config(face_center, is_inner);
-
+  // Angle span of each cell (in radians)
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
 
   if (type == 0) // aligned
@@ -272,8 +294,14 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
     }
   else // inside/outside
     {
+      // Location of the vertices of the inner and outer cells in the reference
+      // space
+      // rad_0: first cell vertex
+      // rad_1: intersection between the cell of the opposite interface side
+      // into the cell of the current interface side
+      // rad_2: last cell vertex
       double rad_0, rad_1, rad_2;
-
+      // Minimum rotation angle
       double rot_min =
         (rotation_angle - std::floor(rotation_angle / delta_0) * delta_0) /
         delta_0;
@@ -294,6 +322,7 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
       std::vector<Point<std::max(1, dim - 1)>> points;
       points.reserve(2 * n_quadrature_points);
 
+      // Store points for the segment rad_0 to rad_1
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
           const double x = rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0);
@@ -304,6 +333,7 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
             points.emplace_back(x, quadrature.point(q)[1]);
         }
 
+      // Store points for the segment rad_1 to rad_2
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
           const double x = rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1);
@@ -341,14 +371,25 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
       std::vector<double> weights;
       weights.reserve(n_quadrature_points);
 
+      // Mapping weight of the quadrature points from the reference space to the
+      // real space, where the Jacobian is given by the product between the
+      // angular length of the cell in the plane perpendicular to the rotation
+      // axis (radius * delta_0) and the height of the cell in the direction of
+      // the rotation axis (delta_1)
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) * delta_0 *
-                             delta_1);
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
+                             delta_0 * delta_1);
 
       return weights;
     }
   else // inside/outside
     {
+      // Location of the vertices of the inner and outer cells in the reference
+      // space
+      // rad_0: first cell vertex
+      // rad_1: intersection between the cell of the opposite interface side
+      // into the cell of the current interface side
+      // rad_2: last cell vertex
       double rad_0, rad_1, rad_2;
 
       double rot_min =
@@ -367,15 +408,19 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
           rad_2 = (id_in_plane + 1) * delta_0 + rot_min;
         }
 
+      // Store weights for both segments, mapping the quadrature points from the
+      // reference space to the real space (same logic as in the aigned case)
       std::vector<double> weights;
       weights.reserve(2 * n_quadrature_points);
 
+      // Store weights for the segment rad_0 to rad_1
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) *
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
                              (rad_1 - rad_0) * delta_1);
 
+      // Store weights for the segment rad_1 to rad_2
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) *
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
                              (rad_2 - rad_1) * delta_1);
 
       return weights;
@@ -387,7 +432,7 @@ std::vector<Tensor<1, dim, double>>
 MortarManagerBase<dim>::get_normals(const Point<dim> &face_center,
                                     const bool        is_inner) const
 {
-  // Coordinates of cell quadrature points
+  // Coordinates of cell quadrature points in the real space
   const auto points = get_points(face_center, is_inner);
 
   std::vector<Tensor<1, dim, double>> result;
@@ -941,7 +986,8 @@ template <int dim>
 Point<dim>
 MortarManagerCircle<dim>::from_1D(const double angle_rad) const
 {
-  return radius_to_point<dim>(this->radius[0], angle_rad + pre_rotation_angle);
+  return radius_to_point<dim>(this->interface_dimensions[0],
+                              angle_rad + pre_rotation_angle);
 }
 
 template <int dim>
@@ -1092,6 +1138,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
                 std::vector<Point<dim - 1>> quad;
 
+                // Invert quadrature point orientation when the face is in the
+                // "positive" domain
                 for (const auto p : points_ref)
                   {
                     Point<dim - 1> temp;
@@ -1122,6 +1170,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 auto normals = mortar_manager->get_normals(
                   get_face_center(cell, face),
                   cell->face(face_no)->boundary_id() == bid_m);
+                // Invert normal vector orientation when the face is in the
+                // "positive" domain
                 if (face->boundary_id() == bid_p)
                   for (auto &normal : normals)
                     normal *= -1.0;
