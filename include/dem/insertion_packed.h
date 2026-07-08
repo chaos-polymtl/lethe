@@ -59,7 +59,9 @@ public:
    */
   virtual void
   serialize(boost::archive::text_oarchive &ar) override
-  {}
+  {
+    (void)ar;
+  }
 
   /**
    * @brief Deserialize an input archive to the packed insertion object.
@@ -70,7 +72,9 @@ public:
    */
   virtual void
   deserialize(boost::archive::text_iarchive &ar) override
-  {}
+  {
+    (void)ar;
+  }
 
   /**
    * @brief Updates the previous positions of particles in all locally owned cells.
