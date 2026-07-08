@@ -94,63 +94,52 @@ Visualization<dim, PropertiesIndex>::print_xyz(
 {
   const bool is_dem_mp =
     std::is_same_v<PropertiesIndex, DEM::DEMMPProperties::PropertiesIndex>;
+
   pcout << "id, type, dp, x, y, z";
   if constexpr (is_dem_mp)
-    {
-      pcout << ", T";
-    }
+    pcout << ", T";
   pcout << " " << std::endl;
-  // Aggressively force synchronization of the header line
-  usleep(500);
-  MPI_Barrier(mpi_communicator);
-  usleep(500);
-  MPI_Barrier(mpi_communicator);
 
-  std::map<int, Particles::ParticleIterator<dim>> global_particles;
-  unsigned int current_id, current_id_max = 0;
+  // Build this rank's particles as id -> formatted line
+  std::map<unsigned int, std::string> local_lines;
 
-  // Mapping of all particles & find the max id on current processor
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle)
     {
-      current_id     = particle->get_id();
-      current_id_max = std::max(current_id, current_id_max);
+      const unsigned int id                  = particle->get_id();
+      auto               particle_properties = particle->get_properties();
+      auto               particle_location   = particle->get_location();
 
-      global_particles.insert({current_id, particle});
+      std::ostringstream oss;
+      oss << std::fixed << std::setprecision(0) << id << " "
+          << std::setprecision(0) << particle_properties[PropertiesIndex::type]
+          << " " << std::setprecision(5)
+          << particle_properties[PropertiesIndex::dp] << " "
+          << std::setprecision(4) << particle_location;
+
+      if constexpr (is_dem_mp)
+        {
+          oss << " " << std::fixed << std::setprecision(4)
+              << particle_properties[PropertiesIndex::T];
+        }
+
+      local_lines[id] = oss.str();
     }
 
-  // Find global max particle index
-  unsigned int id_max = Utilities::MPI::max(current_id_max, mpi_communicator);
+  // Gather every rank's map to rank 0 (single collective, no polling loop)
+  const auto gathered =
+    Utilities::MPI::gather(mpi_communicator, local_lines, 0);
 
-  // Print particle info one by one in ascending order
-  for (unsigned int i = 0; i <= id_max; i++)
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
-      for (auto &iterator : global_particles)
-        {
-          unsigned int id = iterator.first;
-          if (id == i)
-            {
-              auto particle            = iterator.second;
-              auto particle_properties = particle->get_properties();
-              auto particle_location   = particle->get_location();
+      // Merge into one ordered map (std::map keeps keys sorted by id)
+      std::map<unsigned int, std::string> all_lines;
+      for (const auto &proc_lines : gathered)
+        all_lines.insert(proc_lines.begin(), proc_lines.end());
 
-              std::cout << std::fixed << std::setprecision(0) << id << " "
-                        << std::setprecision(0)
-                        << particle_properties[PropertiesIndex::type] << " "
-                        << std::setprecision(5)
-                        << particle_properties[PropertiesIndex::dp] << " "
-                        << std::setprecision(4) << particle_location << " ";
-              if constexpr (is_dem_mp)
-                {
-                  std::cout << std::fixed << std::setprecision(4)
-                            << particle_properties[PropertiesIndex::T];
-                }
-              std::cout << std::endl;
-            }
-        }
-      usleep(500);
-      MPI_Barrier(mpi_communicator);
+      for (const auto &[id, line] : all_lines)
+        std::cout << line << std::endl;
     }
 }
 

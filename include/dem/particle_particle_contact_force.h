@@ -354,7 +354,10 @@ protected:
    * @param[out] particle_two_tangential_torque Contact tangential torque on
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
+   * @param[in] particle_one
    */
+
+
   inline void
   calculate_contact(particle_particle_contact_info<dim> &contact_info,
                     const Tensor<1, 3> &tangential_relative_velocity,
@@ -368,7 +371,8 @@ protected:
                     Tensor<1, 3>                  &tangential_force,
                     Tensor<1, 3> &particle_one_tangential_torque,
                     Tensor<1, 3> &particle_two_tangential_torque,
-                    Tensor<1, 3> &rolling_resistance_torque)
+                    Tensor<1, 3> &rolling_resistance_torque,
+                    Particles::ParticleIterator<dim> particle_one)
   {
     using namespace Parameters::Lagrangian;
 
@@ -485,7 +489,8 @@ protected:
                                                   normal_unit_vector,
                                                   normal_overlap,
                                                   particle_one_properties,
-                                                  particle_two_properties);
+                                                  particle_two_properties,
+                                                  particle_one);
       }
   }
 
@@ -1547,6 +1552,7 @@ private:
    * @param normal_overlap
    * @param particle_one_properties
    * @param particle_two_properties
+   * @param particle_one
    *
    */
   inline void
@@ -1555,12 +1561,12 @@ private:
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
     const ArrayView<const double>       &particle_one_properties,
-    const ArrayView<const double>       &particle_two_properties)
+    const ArrayView<const double>       &particle_two_properties,
+    Particles::ParticleIterator<dim>     particle_one)
   {
     ++this->n_contacts;
 
     // Particle iterator
-    auto particle_one = contact_info.particle_one;
     auto particle_two = contact_info.particle_two;
 
     Point<dim> particle_one_position = particle_one->get_location();
@@ -1936,7 +1942,8 @@ private:
                                         tangential_force,
                                         particle_one_tangential_torque,
                                         particle_two_tangential_torque,
-                                        rolling_resistance_torque);
+                                        rolling_resistance_torque,
+                                        particle_one);
               }
 
             if constexpr (contact_type ==
@@ -1973,7 +1980,8 @@ private:
                                         tangential_force,
                                         particle_two_tangential_torque,
                                         particle_one_tangential_torque,
-                                        rolling_resistance_torque);
+                                        rolling_resistance_torque,
+                                        particle_one);
               }
 
             // Apply the calculated forces and torques on both particles
