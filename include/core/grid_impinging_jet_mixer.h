@@ -6,7 +6,7 @@
 
 #include <deal.II/base/utilities.h>
 
-#include <deal.II/grid/manifold_lib.h>
+#include <deal.II/grid/tria.h>
 
 #include <string>
 

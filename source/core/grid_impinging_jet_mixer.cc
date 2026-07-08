@@ -441,8 +441,22 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
     return port_faces.size();
   };
 
-  grow_inlet(+1.0);
-  grow_inlet(-1.0);
+  // Build both inlet pipes.  Each must yield the full 3x3 wall-face patch
+  // (9 faces): fewer means the port search failed or the patch was clipped by
+  // the chamber ends (e.g. z_inlet too close to the floor or dome for extreme
+  // geometries), which would silently drop or malform an inlet -- treat it as a
+  // hard error rather than emit a mesh missing a pipe.
+  constexpr std::size_t expected_port_faces = 9; // 3x3 butterfly patch
+  const std::size_t     n_port_faces_pos    = grow_inlet(+1.0);
+  const std::size_t     n_port_faces_neg    = grow_inlet(-1.0);
+  AssertThrow(
+    n_port_faces_pos == expected_port_faces &&
+      n_port_faces_neg == expected_port_faces,
+    ExcMessage(
+      "Failed to build the impinging-jet inlet pipes: expected a 3x3 wall-face "
+      "patch (9 faces) for each inlet, but did not obtain one. This can happen "
+      "for extreme geometry parameters (e.g. an inlet axis too close to the "
+      "chamber floor or dome) or if the discretisation is changed."));
 
   // ---------------------------------------------------------------------
   // 4. Assemble the final triangulation.  Fix cell orientation robustly.
@@ -513,6 +527,9 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
   for (const auto &cell : triangulation.active_cell_iterators())
     if (cell->material_id() == pipe_material_id)
       cell->set_all_manifold_ids(inlet_manifold_id);
+  // numbers::flat_manifold_id is deal.II's reserved flat id (not manifold id
+  // 0); it always resolves to a FlatManifold, so the core column stays flat
+  // regardless of the cylindrical manifolds assigned to ids 0 and 2 below.
   for (const auto &cell : triangulation.active_cell_iterators())
     if (cell->material_id() == pipe_core_material_id)
       cell->set_all_manifold_ids(numbers::flat_manifold_id);
