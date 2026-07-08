@@ -20,43 +20,27 @@
 
 namespace
 {
-  // --- Geometry of the mixer (SI units, metres). --------------------------
-  // The geometric dimensions are parsed from the grid arguments (see the
-  // constructor) and gathered into this struct, which also exposes the axial
-  // coordinates derived from them.
-  //
-  // All coordinates here are expressed in the CONSTRUCTION datum, in which the
-  // chamber floor sits at z = 0 and the chamber spans z in [0, H_chamber].  The
-  // vessel is built and all of its boundary ids are assigned in this frame.  As
-  // a final step, make_grid() rigidly shifts the whole mesh downward by the
-  // locked inlet-axis height so that, in the delivered mesh, the common axis of
-  // the two inlet pipes lies on the z = 0 (impingement) plane.
-  struct MixerGeometry
-  {
-    double R_chamber; // mixing-chamber radius
-    double r_inlet;   // inlet-pipe radius
-    double r_outlet;  // outlet-pipe radius
-    double H_chamber; // chamber height (axial extent)
-    double L_cone;    // axial length of the conical reduction
-    double L_outlet;  // length of the straight outlet pipe
-    double L_inlet;   // length of each inlet pipe
-    double z_inlet;   // inlet-axis height above the chamber floor
+  // The mixer geometry dimensions live in the MixerGeometry struct declared in
+  // the header (the single container for those dimensions); they are parsed
+  // from the grid arguments in the constructor. All coordinates below are
+  // expressed in the construction datum, in which the bottom of the mixer is at
+  // z = 0 and the chamber spans z in [0, H_chamber]. The vessel is built and
+  // all of its boundary ids are assigned in this frame. As a final step,
+  // make_grid() rigidly shifts the whole mesh downward by the locked inlet-axis
+  // height so that, in the delivered mesh, the common axis of the two inlet
+  // pipes lies on the z = 0 (impingement) plane.
 
-    // Derived axial coordinates along z (construction datum).
-    double z_chamber_top() const { return H_chamber; }
-    double z_cone_bottom() const { return -L_cone; }
-    double z_outlet_bottom() const { return -L_cone - L_outlet; }
-    double z_dome_center() const { return H_chamber; }
-  };
-
-  // --- Discretisation parameters. -----------------------------------------
+  // Discretisation parameters
+  // -------------------------
   // The axial subdivisions below are chosen so that, after global refinement,
-  // every region carries axial cells close to the ~0.01 m size of the chamber
+  // every region carries axial cells close to the size of the chamber
   // wall faces (which is itself set by the circumferential resolution, so that
   // the wall faces are square).  Keeping all regions near that single target
   // size makes the volumetric mesh about as uniform as this topology allows,
   // and avoids the previous strong over-refinement of the (short) cone and
-  // outlet sections.
+  // outlet sections. This worked well for the parameter set I tested but I
+  // am not sure this will work for arbitrary configurations. This will
+  // need to be tested down the road.
   //   chamber : 0.16 / (2 * 8) = 0.0100
   //   cone    : 0.06 / (1 * 8) = 0.0075
   //   outlet  : 0.05 / (1 * 8) = 0.0063
@@ -70,9 +54,9 @@ namespace
   // the inlet diameter and maps onto the inlet circle with little chamber
   // distortion.  Lowering it makes the wall coarse and blocky at the ports.
   constexpr unsigned int global_refinements = 3; // wall resolution for ports
-  // Cells along each inlet pipe.  Six layers give ~0.0133 m cells, matching the
-  // in-plane pipe cell size (r_inlet mapped through the 3x3 patch) so the pipe
-  // cells stay roughly cubic instead of being stretched along the axis.
+  // Cells along each inlet pipe.  Six layers give correct cell size, matching
+  // the in-plane pipe cell size (r_inlet mapped through the 3x3 patch) so the
+  // pipe cells stay roughly cubic instead of being stretched along the axis.
   constexpr unsigned int n_pipe_layers = 6; // cells along the pipe axis
 
   // --- Manifold ids. ------------------------------------------------------
@@ -168,9 +152,8 @@ namespace
                                        g.r_outlet,
                                        g.L_outlet / 2.0);
     align_x_axis_to_z(outlet);
-    GridTools::shift(Tensor<1, 3>(
-                       {0., 0., g.z_outlet_bottom() + g.L_outlet / 2.0}),
-                     outlet);
+    GridTools::shift(
+      Tensor<1, 3>({0., 0., g.z_outlet_bottom() + g.L_outlet / 2.0}), outlet);
 
     const double tol = 1e-6 * g.r_outlet;
     GridGenerator::merge_triangulations({&chamber, &dome, &cone, &outlet},
@@ -183,8 +166,8 @@ namespace
                         CylindricalManifold<3>(Tensor<1, 3>({0., 0., 1.}),
                                                Point<3>(0., 0., 0.)));
     vessel.set_manifold(dome_manifold_id,
-                        SphericalManifold<3>(Point<3>(0., 0.,
-                                                      g.z_dome_center())));
+                        SphericalManifold<3>(
+                          Point<3>(0., 0., g.z_dome_center())));
   }
 } // namespace
 
@@ -208,13 +191,14 @@ GridImpingingJetMixer<dim, spacedim>::GridImpingingJetMixer(
   // argument string keeps those defaults; otherwise all eight dimensions must
   // be supplied, colon-separated, in this order:
   //   R_chamber:r_inlet:r_outlet:H_chamber:L_cone:L_outlet:L_inlet:z_inlet
-  // (The discretisation is intentionally not exposed and stays hardcoded.)
+  // (The discretisation is intentionally not exposed and stays hardcoded for
+  // now.)
   if (!grid_arguments.empty())
     {
-      AssertThrow(
-        grid_arguments.find(';') == std::string::npos,
-        ExcMessage("The impinging-jet mixer grid arguments must be separated "
-                   "by colons (:), not semicolons (;)."));
+      AssertThrow(grid_arguments.find(';') == std::string::npos,
+                  ExcMessage(
+                    "The impinging-jet mixer grid arguments must be separated "
+                    "by colons (:), not semicolons (;)."));
 
       const std::vector<std::string> tokens =
         Utilities::split_string_list(grid_arguments, ':');
@@ -226,30 +210,29 @@ GridImpingingJetMixer<dim, spacedim>::GridImpingingJetMixer(
           "R_chamber:r_inlet:r_outlet:H_chamber:L_cone:L_outlet:L_inlet:"
           "z_inlet."));
 
-      this->R_chamber = Utilities::string_to_double(tokens[0]);
-      this->r_inlet   = Utilities::string_to_double(tokens[1]);
-      this->r_outlet  = Utilities::string_to_double(tokens[2]);
-      this->H_chamber = Utilities::string_to_double(tokens[3]);
-      this->L_cone    = Utilities::string_to_double(tokens[4]);
-      this->L_outlet  = Utilities::string_to_double(tokens[5]);
-      this->L_inlet   = Utilities::string_to_double(tokens[6]);
-      this->z_inlet   = Utilities::string_to_double(tokens[7]);
+      this->geometry.R_chamber = Utilities::string_to_double(tokens[0]);
+      this->geometry.r_inlet   = Utilities::string_to_double(tokens[1]);
+      this->geometry.r_outlet  = Utilities::string_to_double(tokens[2]);
+      this->geometry.H_chamber = Utilities::string_to_double(tokens[3]);
+      this->geometry.L_cone    = Utilities::string_to_double(tokens[4]);
+      this->geometry.L_outlet  = Utilities::string_to_double(tokens[5]);
+      this->geometry.L_inlet   = Utilities::string_to_double(tokens[6]);
+      this->geometry.z_inlet   = Utilities::string_to_double(tokens[7]);
     }
 
   // Sanity checks: all dimensions positive, the inlet/outlet pipes fit inside
   // the chamber cross-section, and the inlet axis lies strictly inside the
   // cylindrical part of the chamber wall (where the port patch is grown).
-  AssertThrow(this->R_chamber > 0.0 && this->r_inlet > 0.0 &&
-                this->r_outlet > 0.0 && this->H_chamber > 0.0 &&
-                this->L_cone > 0.0 && this->L_outlet > 0.0 &&
-                this->L_inlet > 0.0,
+  const MixerGeometry &g = this->geometry;
+  AssertThrow(g.R_chamber > 0.0 && g.r_inlet > 0.0 && g.r_outlet > 0.0 &&
+                g.H_chamber > 0.0 && g.L_cone > 0.0 && g.L_outlet > 0.0 &&
+                g.L_inlet > 0.0,
               ExcMessage("All impinging-jet mixer dimensions must be strictly "
                          "positive."));
-  AssertThrow(this->r_inlet < this->R_chamber &&
-                this->r_outlet < this->R_chamber,
+  AssertThrow(g.r_inlet < g.R_chamber && g.r_outlet < g.R_chamber,
               ExcMessage("The inlet and outlet radii must be smaller than the "
                          "chamber radius."));
-  AssertThrow(this->z_inlet > 0.0 && this->z_inlet < this->H_chamber,
+  AssertThrow(g.z_inlet > 0.0 && g.z_inlet < g.H_chamber,
               ExcMessage("The inlet axis height (z_inlet) must lie strictly "
                          "between the chamber floor (0) and its top "
                          "(H_chamber)."));
@@ -260,15 +243,18 @@ template <>
 void
 GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 {
-  // Gather the parsed dimensions into the local geometry description used
-  // throughout this routine.  The derived axial coordinates that the rest of
-  // the code refers to by name are pulled out as locals here so the body below
-  // reads exactly as it did when these were file-scope constants.
-  const MixerGeometry g{R_chamber, r_inlet,  r_outlet, H_chamber,
-                        L_cone,    L_outlet, L_inlet,  z_inlet};
-  const double        z_chamber_top   = g.z_chamber_top();
-  const double        z_outlet_bottom = g.z_outlet_bottom();
-  const double        z_dome_center   = g.z_dome_center();
+  // All geometry dimensions come from the single MixerGeometry member.  The
+  // individual dimensions and derived axial coordinates that the rest of the
+  // code refers to by name are aliased as locals here to facilitate
+  // understanding.
+  const MixerGeometry &g               = this->geometry;
+  const double         R_chamber       = g.R_chamber;
+  const double         r_inlet         = g.r_inlet;
+  const double         L_inlet         = g.L_inlet;
+  const double         z_inlet         = g.z_inlet;
+  const double         z_chamber_top   = g.z_chamber_top();
+  const double         z_outlet_bottom = g.z_outlet_bottom();
+  const double         z_dome_center   = g.z_dome_center();
 
   // ---------------------------------------------------------------------
   // 1. Vessel, refined so the chamber wall carries fine faces, then
@@ -277,8 +263,8 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
   Triangulation<3> vessel;
   build_vessel(vessel, g);
   // Rotate the chamber about its axis by half a refined wall-face width so that
-  // a wall face ends up centred on the +/- x meridian.  The inlet-port patch is
-  // then symmetric about +/- x and each tube stays aligned with the x-axis.
+  // a wall face ends up centered on the +/- x meridian.  The inlet-port patch
+  // is then symmetric about +/- x and each tube stays aligned with the x-axis.
   // (The z-cylinder and dome manifolds are invariant under this rotation.)
   GridTools::rotate(Tensor<1, 3>({0., 0., 1.}),
                     numbers::PI_4 / std::pow(2.0, global_refinements),
@@ -331,7 +317,7 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
     // 3a. Find the wall face F0 nearest the ideal port centre, then take the
     //     3x3 block of wall faces around it (F0 plus every wall face sharing a
     //     vertex with it).  A 3x3 face block is a 4x4 vertex grid whose centre
-    //     is a FACE, so no vertex maps onto the pipe axis: the tube is then a
+    //     is a face, so no vertex maps onto the pipe axis: the tube is then a
     //     clean butterfly (square core + surrounding ring) with no gaps and no
     //     axis singularity.
     // Target the height fixed by the first pipe once it is locked, so the
@@ -516,13 +502,14 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
   //         cylindrically (keeping the cell shape) instead of only their outer
   //         wall faces following the circle while the interior is interpolated
   //         linearly -- the latter is what slowly degrades the pipe cells under
-  //         repeated refinement.  set_all_manifold_ids() tags each cell together
-  //         with its faces and lines.  The ring columns take the pipe's
-  //         cylinder-about-x manifold; the central core column is then reset to
-  //         flat, because that manifold is singular on the pipe axis the column
-  //         straddles (and a flat core keeps its square cross-section crisp).
-  //         Running the ring pass before the core pass makes the shared
-  //         ring/core faces flat, so the square core stays straight-sided.
+  //         repeated refinement.  set_all_manifold_ids() tags each cell
+  //         together with its faces and lines.  The ring columns take the
+  //         pipe's cylinder-about-x manifold; the central core column is then
+  //         reset to flat, because that manifold is singular on the pipe axis
+  //         the column straddles (and a flat core keeps its square
+  //         cross-section crisp). Running the ring pass before the core pass
+  //         makes the shared ring/core faces flat, so the square core stays
+  //         straight-sided.
   for (const auto &cell : triangulation.active_cell_iterators())
     if (cell->material_id() == pipe_material_id)
       cell->set_all_manifold_ids(inlet_manifold_id);

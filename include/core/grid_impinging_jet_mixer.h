@@ -13,6 +13,52 @@
 using namespace dealii;
 
 /**
+ * @brief Geometry dimensions of the impinging-jet mixer (SI units, metres).
+ *
+ * This is the single container for the mixer's geometric dimensions; the
+ * defaults below are used when the grid-argument string is empty, and are
+ * overridden by the constructor otherwise. The member functions expose the
+ * axial coordinates derived from these dimensions in the construction datum
+ * (bottom of the mixer at z = 0), in which the vessel is built before
+ * make_grid() re-datums the mesh so the common inlet axis lands on z = 0.
+ */
+struct MixerGeometry
+{
+  double R_chamber = 0.05;  ///< mixing-chamber radius
+  double r_inlet   = 0.02;  ///< inlet-pipe radius
+  double r_outlet  = 0.025; ///< outlet-pipe radius
+  double H_chamber = 0.16;  ///< chamber height (axial extent)
+  double L_cone    = 0.06;  ///< axial length of the conical reduction
+  double L_outlet  = 0.05;  ///< length of the straight outlet pipe
+  double L_inlet   = 0.08;  ///< length of each inlet pipe
+  double z_inlet   = 0.08;  ///< inlet-axis height above the chamber floor
+
+  /// @name Derived axial coordinates (construction datum).
+  /// @{
+  double
+  z_chamber_top() const
+  {
+    return H_chamber;
+  }
+  double
+  z_cone_bottom() const
+  {
+    return -L_cone;
+  }
+  double
+  z_outlet_bottom() const
+  {
+    return -L_cone - L_outlet;
+  }
+  double
+  z_dome_center() const
+  {
+    return H_chamber;
+  }
+  /// @}
+};
+
+/**
  * @brief Generates a 3D mesh for an impinging-jet mixer geometry.
  *
  * The geometry (axis of the mixing chamber = z, vertical) consists of:
@@ -85,16 +131,9 @@ private:
   /// Arguments used to generate the grid
   std::string grid_arguments;
 
-  /// Geometry dimensions (SI units, metres). Defaults below are overridden by
-  /// the constructor when a non-empty argument string is provided.
-  double R_chamber = 0.05;  ///< mixing-chamber radius
-  double r_inlet   = 0.02;  ///< inlet-pipe radius
-  double r_outlet  = 0.025; ///< outlet-pipe radius
-  double H_chamber = 0.16;  ///< chamber height (axial extent)
-  double L_cone    = 0.06;  ///< axial length of the conical reduction
-  double L_outlet  = 0.05;  ///< length of the straight outlet pipe
-  double L_inlet   = 0.08;  ///< length of each inlet pipe
-  double z_inlet   = 0.08;  ///< inlet-axis height above the chamber floor
+  /// All geometry dimensions (SI units, metres), with their defaults. Populated
+  /// from the grid-argument string by the constructor when one is provided.
+  MixerGeometry geometry;
 };
 
 #endif

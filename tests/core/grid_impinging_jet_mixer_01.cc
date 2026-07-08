@@ -34,8 +34,8 @@ test(const std::string &grid_arguments, const std::string &case_name)
   deallog << "Case: " << case_name << std::endl;
   deallog << "Grid arguments: \"" << grid_arguments << "\"" << std::endl;
 
-  Triangulation<3, 3>          triangulation;
-  GridImpingingJetMixer<3, 3>  grid(grid_arguments);
+  Triangulation<3, 3>         triangulation;
+  GridImpingingJetMixer<3, 3> grid(grid_arguments);
   grid.make_grid(triangulation);
 
   deallog << "Number of active cells : " << triangulation.n_active_cells()
@@ -63,9 +63,8 @@ test(const std::string &grid_arguments, const std::string &case_name)
   unsigned int inlet_n_faces = 0;
   for (const auto &cell : triangulation.active_cell_iterators())
     for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f)
-      if (cell->face(f)->at_boundary() &&
-          (cell->face(f)->boundary_id() == 0 ||
-           cell->face(f)->boundary_id() == 1))
+      if (cell->face(f)->at_boundary() && (cell->face(f)->boundary_id() == 0 ||
+                                           cell->face(f)->boundary_id() == 1))
         {
           inlet_z_sum += cell->face(f)->center()[2];
           ++inlet_n_faces;
