@@ -159,6 +159,80 @@ InsertionPacked<dim, PropertiesIndex>::insert(
     }
 }
 
+template <int dim, typename PropertiesIndex>
+void
+InsertionPacked<dim, PropertiesIndex>::update_previous_position(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  Particles::ParticleHandler<dim>                 &particle_handler)
+{
+  for (auto cell : triangulation.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_cell = particle_handler.particles_in_cell(cell);
+
+      if (particles_in_cell.empty())
+        continue;
+
+      for (auto &particle : particles_in_cell)
+        {
+          auto particle_properties = particle.get_properties();
+
+          Point<dim> particle_previous_position = particle.get_location();
+
+          particle_properties[PropertiesIndex::v_x] =
+            particle_previous_position[0];
+          particle_properties[PropertiesIndex::v_y] =
+            particle_previous_position[1];
+          if constexpr (dim == 3)
+            particle_properties[PropertiesIndex::v_z] =
+              particle_previous_position[2];
+        }
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
+  Particles::ParticleHandler<dim> &particle_handler,
+  const double                     max_disp,
+  std::vector<double>             &displacement)
+{
+  for (auto &particle : particle_handler)
+    {
+      auto particle_properties = particle.get_properties();
+
+      Point<dim> previous_position;
+      previous_position[0] = particle_properties[PropertiesIndex::v_x];
+      previous_position[1] = particle_properties[PropertiesIndex::v_y];
+      if constexpr (dim == 3)
+        previous_position[2] = particle_properties[PropertiesIndex::v_z];
+
+      const Tensor<1, dim> displacement_tensor =
+        particle.get_location() - previous_position;
+
+      const double disp_norm = displacement_tensor.norm();
+
+      // No movement
+      if (std::isnan(disp_norm))
+        continue;
+
+      const unsigned int particle_id = particle.get_local_index();
+      if (disp_norm > max_disp)
+        {
+          particle.set_location(previous_position +
+                                (max_disp / disp_norm) * displacement_tensor);
+          displacement[particle_id] += max_disp;
+        }
+      else
+        {
+          displacement[particle_id] += disp_norm;
+        }
+    }
+}
+
 
 template <int dim, typename PropertiesIndex>
 void
@@ -180,7 +254,8 @@ InsertionPacked<dim, PropertiesIndex>::generate_insertion_location(
         {
           // Get the actual coordinate axis (e.g., 0 for X, 1 for Y, 2 for Z)
           // based on the configured insertion sequence
-          const unsigned int axis = insertion_information.direction_sequence.at(d);
+          const unsigned int axis =
+            insertion_information.direction_sequence.at(d);
 
           // Pull a fresh 0.0 to 1.0 random value
           double random_value = distribution(rng);

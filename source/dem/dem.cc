@@ -496,7 +496,8 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
     }
 
   if (is_packed_insertion_method)
-    update_previous_position();
+    InsertionPacked<dim, PropertiesIndex>::update_previous_position(
+      triangulation, particle_handler);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -863,88 +864,6 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
 
 template <int dim, typename PropertiesIndex>
 void
-DEMSolver<dim, PropertiesIndex>::update_previous_position()
-{
-  for (auto cell : triangulation.active_cell_iterators())
-    {
-      if (!cell->is_locally_owned())
-        continue;
-
-      // Particles in the cell
-      typename Particles::ParticleHandler<dim>::particle_iterator_range
-        particles_in_cell = particle_handler.particles_in_cell(cell);
-
-      // If the main cell is not empty
-      if (particles_in_cell.empty())
-        continue;
-
-      for (auto particle_in_cell = particles_in_cell.begin();
-           particle_in_cell != particles_in_cell.end();
-           ++particle_in_cell)
-        {
-          auto particle_properties = particle_in_cell->get_properties();
-
-          Point<dim> particle_previous_position =
-            particle_in_cell->get_location();
-
-          // Since we don't want to create a PropertiesIndex only for this
-          // insertion method, we use the velocity to store the previous
-          // location.
-          particle_properties[PropertiesIndex::v_x] =
-            particle_previous_position[0];
-          particle_properties[PropertiesIndex::v_y] =
-            particle_previous_position[1];
-          if constexpr (dim == 3)
-            particle_properties[PropertiesIndex::v_z] =
-              particle_previous_position[2];
-        }
-    }
-}
-
-template <int dim, typename PropertiesIndex>
-void
-DEMSolver<dim, PropertiesIndex>::clamp_displacement()
-{
-  const double max_disp = maximum_particle_diameter;
-
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
-    {
-      auto particle_properties = particle->get_properties();
-
-      Point<dim> previous_position;
-      previous_position[0] = particle_properties[PropertiesIndex::v_x];
-      previous_position[1] = particle_properties[PropertiesIndex::v_y];
-      if constexpr (dim == 3)
-        previous_position[2] = particle_properties[PropertiesIndex::v_z];
-
-      const Tensor<1, dim> displacement_tensor =
-        particle->get_location() - previous_position;
-
-      const double disp_norm = displacement_tensor.norm();
-
-      // No movement
-      if (std::isnan(disp_norm))
-        continue;
-
-      const unsigned int particle_id = particle->get_local_index();
-      if (disp_norm > max_disp)
-        {
-          // Clamp position to at most max_disp from the previous position
-          particle->set_location(previous_position +
-                                 (max_disp / disp_norm) * displacement_tensor);
-          displacement[particle_id] += max_disp;
-        }
-      else
-        {
-          displacement[particle_id] += disp_norm;
-        }
-    }
-}
-
-template <int dim, typename PropertiesIndex>
-void
 DEMSolver<dim, PropertiesIndex>::solve()
 {
   // Set up the parameters
@@ -1202,8 +1121,10 @@ DEMSolver<dim, PropertiesIndex>::solve()
           particle_particle_contact_force_object->reset_number_of_contacts();
           particle_wall_contact_force_object->reset_number_of_contacts();
 
-          clamp_displacement();
-          update_previous_position();
+          InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
+            particle_handler, maximum_particle_diameter, displacement);
+          InsertionPacked<dim, PropertiesIndex>::update_previous_position(
+            triangulation, particle_handler);
         }
 
       // Visualization
