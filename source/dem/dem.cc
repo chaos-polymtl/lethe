@@ -1107,7 +1107,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
           if (total_number_of_pp_contacts + total_number_of_pw_contacts == 0)
             {
               pcout << "No contact detected. Exiting simulation." << std::endl;
-              write_output_results();
+              if (!parameters.test.enabled)
+                write_output_results();
               break;
             }
           if (simulation_control->is_verbose_iteration())
