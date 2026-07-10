@@ -182,7 +182,6 @@ GridImpingingJetMixer<dim, spacedim>::GridImpingingJetMixer(
         false,
         ExcMessage(
           "The impinging-jet mixer mesh is only supported in 3D space with 3D elements."));
-      return;
     }
 
   this->grid_arguments = grid_arguments;
