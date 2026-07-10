@@ -23,15 +23,15 @@ namespace
   // The mixer geometry dimensions live in the MixerGeometry struct declared in
   // the header (the single container for those dimensions); they are parsed
   // from the grid arguments in the constructor. The vessel is first built in a
-  // construction datum whose origin sits on the chamber floor: there the chamber
-  // spans z in [0, H_chamber], the conical reduction and the outlet pipe hang
-  // below it at negative z, and the dome caps it from above. All the derived
-  // axial coordinates (z_cone_bottom, z_outlet_bottom, ...) and all boundary-id
-  // assignments are expressed in that frame. This construction datum is NOT the
-  // datum of the delivered mesh: as a final step make_grid() rigidly shifts the
-  // whole mesh downward by the locked inlet-axis height, so that in the
-  // delivered mesh z = 0 is the common axis of the two inlet pipes (the
-  // impingement plane) and the chamber floor ends up at z = -inlet_axis_z.
+  // construction datum whose origin sits on the chamber floor: there the
+  // chamber spans z in [0, H_chamber], the conical reduction and the outlet
+  // pipe hang below it at negative z, and the dome caps it from above. All the
+  // derived axial coordinates (z_cone_bottom, z_outlet_bottom, ...) and all
+  // boundary-id assignments are expressed in that frame. This construction
+  // datum is NOT the datum of the delivered mesh: as a final step make_grid()
+  // rigidly shifts the whole mesh downward by the locked inlet-axis height, so
+  // that in the delivered mesh z = 0 is the common axis of the two inlet pipes
+  // (the impingement plane) and the chamber floor ends up at z = -inlet_axis_z.
 
   // Discretisation parameters
   // -------------------------
@@ -589,12 +589,12 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
   // (shifted) datum.  In particular the hemispherical dome's spherical manifold
   // is re-centred on the *translated* position of the sphere centre,
   // z_dome_center + z_shift, so that the dome keeps its exact spherical shape
-  // under later refinement.  Leaving this centre in the construction datum would
-  // silently distort the dome even though the coarse mesh looks correct.  Both
-  // cylindrical manifolds keep their reference point at (0, 0, 0): the vertical
-  // mixer (z-)axis passes through the origin and is invariant under a vertical
-  // shift, and the horizontal inlet (x-)axis has just been brought onto the
-  // impingement plane z = 0 by the re-datuming.
+  // under later refinement.  Leaving this centre in the construction datum
+  // would silently distort the dome even though the coarse mesh looks correct.
+  // Both cylindrical manifolds keep their reference point at (0, 0, 0): the
+  // vertical mixer (z-)axis passes through the origin and is invariant under a
+  // vertical shift, and the horizontal inlet (x-)axis has just been brought
+  // onto the impingement plane z = 0 by the re-datuming.
   const Point<3> dome_center(0., 0., z_dome_center + z_shift);
 
   triangulation.set_manifold(cylinder_z_manifold_id,
