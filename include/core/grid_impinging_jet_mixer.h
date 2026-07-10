@@ -19,8 +19,9 @@ using namespace dealii;
  * defaults below are used when the grid-argument string is empty, and are
  * overridden by the constructor otherwise. The member functions expose the
  * axial coordinates derived from these dimensions in the construction datum
- * (bottom of the mixer at z = 0), in which the vessel is built before
- * make_grid() re-datums the mesh so the common inlet axis lands on z = 0.
+ * (floor of the mixing chamber at z = 0, with the cone and outlet below it at
+ * negative z), in which the vessel is built before make_grid() re-datums the
+ * mesh so the common inlet axis lands on z = 0.
  */
 struct MixerGeometry
 {

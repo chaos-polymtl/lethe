@@ -22,13 +22,16 @@ namespace
 {
   // The mixer geometry dimensions live in the MixerGeometry struct declared in
   // the header (the single container for those dimensions); they are parsed
-  // from the grid arguments in the constructor. All coordinates below are
-  // expressed in the construction datum, in which the bottom of the mixer is at
-  // z = 0 and the chamber spans z in [0, H_chamber]. The vessel is built and
-  // all of its boundary ids are assigned in this frame. As a final step,
-  // make_grid() rigidly shifts the whole mesh downward by the locked inlet-axis
-  // height so that, in the delivered mesh, the common axis of the two inlet
-  // pipes lies on the z = 0 (impingement) plane.
+  // from the grid arguments in the constructor. The vessel is first built in a
+  // construction datum whose origin sits on the chamber floor: there the chamber
+  // spans z in [0, H_chamber], the conical reduction and the outlet pipe hang
+  // below it at negative z, and the dome caps it from above. All the derived
+  // axial coordinates (z_cone_bottom, z_outlet_bottom, ...) and all boundary-id
+  // assignments are expressed in that frame. This construction datum is NOT the
+  // datum of the delivered mesh: as a final step make_grid() rigidly shifts the
+  // whole mesh downward by the locked inlet-axis height, so that in the
+  // delivered mesh z = 0 is the common axis of the two inlet pipes (the
+  // impingement plane) and the chamber floor ends up at z = -inlet_axis_z.
 
   // Discretisation parameters
   // -------------------------
@@ -575,19 +578,30 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
   // whole geometry is translated rigidly by -inlet_axis_z, so the mesh that
   // already works is untouched -- only the origin moves.  Because the shift is
   // applied to the vertices after all boundary ids have been assigned (those
-  // use face centres in the original datum), the assignments are unaffected;
-  // the manifolds below are then defined in this shifted frame, so the inlet
-  // cylinder axis passes through z = 0 and the dome centre is translated by the
-  // same amount.  The z-cylinder axis passes through the origin either way.
+  // use face centres in the original datum), the assignments are unaffected.
   const double z_shift = -inlet_axis_z;
   GridTools::shift(Tensor<1, 3>({0., 0., z_shift}), triangulation);
+
+  // GridTools::shift moves the vertices but NOT the Manifold objects attached
+  // to the triangulation: a manifold does not follow the transformation of the
+  // grid.  All manifolds must therefore be (re)defined here, after the final
+  // translation, with their reference points expressed in the delivered
+  // (shifted) datum.  In particular the hemispherical dome's spherical manifold
+  // is re-centred on the *translated* position of the sphere centre,
+  // z_dome_center + z_shift, so that the dome keeps its exact spherical shape
+  // under later refinement.  Leaving this centre in the construction datum would
+  // silently distort the dome even though the coarse mesh looks correct.  Both
+  // cylindrical manifolds keep their reference point at (0, 0, 0): the vertical
+  // mixer (z-)axis passes through the origin and is invariant under a vertical
+  // shift, and the horizontal inlet (x-)axis has just been brought onto the
+  // impingement plane z = 0 by the re-datuming.
+  const Point<3> dome_center(0., 0., z_dome_center + z_shift);
 
   triangulation.set_manifold(cylinder_z_manifold_id,
                              CylindricalManifold<3>(Tensor<1, 3>({0., 0., 1.}),
                                                     Point<3>(0., 0., 0.)));
   triangulation.set_manifold(dome_manifold_id,
-                             SphericalManifold<3>(
-                               Point<3>(0., 0., z_dome_center + z_shift)));
+                             SphericalManifold<3>(dome_center));
   triangulation.set_manifold(inlet_manifold_id,
                              CylindricalManifold<3>(Tensor<1, 3>({1., 0., 0.}),
                                                     Point<3>(0., 0., 0.)));
