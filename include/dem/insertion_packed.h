@@ -118,11 +118,11 @@ private:
    */
   void
   generate_insertion_location(
-
     Point<dim>               &insertion_location,
     std::mt19937             &rng,
     const InsertionInfo<dim> &insertion_information);
 
+/// Current particle type being inserted
   unsigned int current_inserting_particle_type = 0;
 
   // Number of particles of each type that remain to be inserted in the
@@ -134,7 +134,7 @@ private:
   // of the insertion direction.
   std::vector<double> axis_min, axis_max;
 
-  /// Function used to insert particle inside our outside an arbitrary shape.
+  /// Function used to insert particles inside or outside an arbitrary shape.
   std::shared_ptr<Function<dim>> acceptance_fct;
 };
 #endif
