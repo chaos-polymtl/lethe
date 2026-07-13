@@ -14,6 +14,7 @@ This feature is useful in geometries with convex boundaries.
 ***********************************************************************
 200 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***********************************************************************
+ The particle volume to triangulation volume ratio is: 0.0255663
 
 *****************************************************************
 Transient iteration: 10       Time: 0.0001   Time step: 1e-05

@@ -87,6 +87,11 @@ public:
    * configurations). This allows the tracking of previous particle positions
    * without additional data structures. This tracking is required for the
    * packed insertion method.
+   *
+   * @param[in] triangulation The triangulation object.
+   * @param[out] particle_handler The particle handler of particles which are
+   * being inserted
+   *
    */
   static void
   update_previous_position(
@@ -117,12 +122,11 @@ private:
    * @param insertion_information Insertion parameters read from the .prm file.
    */
   void
-  generate_insertion_location(
-    Point<dim>               &insertion_location,
-    std::mt19937             &rng,
-    const InsertionInfo<dim> &insertion_information);
+  generate_insertion_location(Point<dim>               &insertion_location,
+                              std::mt19937             &rng,
+                              const InsertionInfo<dim> &insertion_information);
 
-/// Current particle type being inserted
+  /// Current particle type being inserted
   unsigned int current_inserting_particle_type = 0;
 
   // Number of particles of each type that remain to be inserted in the
