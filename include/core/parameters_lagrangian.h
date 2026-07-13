@@ -505,9 +505,6 @@ namespace Parameters
       /// using the volume insertion.
       std::shared_ptr<Function<dim>> insertion_acceptance_fct;
 
-      /// Displacement factor used for the packed insertion method.
-      double displacement_factor;
-
       /**
        * @brief Declare the parameters in the parameter handler.
        *

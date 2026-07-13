@@ -61,6 +61,7 @@ InsertionPacked<dim, PropertiesIndex>::insert(
   if (particle_handler.n_global_particles() != 0)
     return;
 
+
   // Message passing interface requirements.
   MPI_Comm           communicator = triangulation.get_mpi_communicator();
   ConditionalOStream pcout(std::cout,
@@ -147,6 +148,8 @@ InsertionPacked<dim, PropertiesIndex>::insert(
                                        insertion_points_on_proc,
                                        particle_properties);
 
+
+
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points_on_proc,
                                                global_bounding_boxes,
@@ -157,6 +160,39 @@ InsertionPacked<dim, PropertiesIndex>::insert(
                                  particle_type,
                                  pcout);
     }
+  // Loop on every locally owned particle
+  double this_proc_inserted_volume = 0.;
+  for (auto cell : triangulation.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_cell = particle_handler.particles_in_cell(cell);
+
+      if (particles_in_cell.empty())
+        continue;
+
+      for (auto &particle : particles_in_cell)
+        {
+          const double volume =
+            numbers::PI *
+            Utilities::fixed_power<3>(
+              particle.get_properties()[PropertiesIndex::dp]) /
+            6.;
+          this_proc_inserted_volume += volume;
+        }
+    }
+
+  // Volume of the entire triangulation
+  const double total_triangulation_volume = GridTools::volume(triangulation);
+
+  // Total volume of inserted particle.
+  double total_inserted_volume =
+    Utilities::MPI::sum(this_proc_inserted_volume, communicator);
+
+  pcout << " The particle volume to triangulation volume ratio is: "
+        << total_inserted_volume / total_triangulation_volume << std::endl;
 }
 
 template <int dim, typename PropertiesIndex>
