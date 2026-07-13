@@ -1,4 +1,7 @@
 Running on 1 MPI rank(s)...
+WARNING: a mesh 'scale' factor of 1.000e+01 is being applied to a 'dealii' grid. 
+Scaling moves the mesh vertices but not the curved manifolds attached to the triangulation, which can distort the geometry under refinement. 
+Verify the resulting mesh, or dimension the geometry through the grid arguments instead.
    Number of active cells:       64
    Number of degrees of freedom: 864
    Volume of triangulation:      2.945e+00
