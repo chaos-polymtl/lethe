@@ -71,6 +71,7 @@ set_insertion_type(std::vector<std::shared_ptr<Distribution>>
             }
           else
             {
+              packing_method = false;
               AssertThrow(false,
                           ExcMessage("InsertionPacked is not valid for "
                                      "the current solver type. It only works "

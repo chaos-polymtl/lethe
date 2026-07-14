@@ -451,7 +451,7 @@ protected:
 
     if constexpr (contact_model == ParticleWallContactForceModel::shift)
       {
-        shift_particle_using_normal_overlap(contact_info, normal_overlap);
+        shift_particle_using_normal_overlap(normal_overlap, contact_info);
       }
   }
 
@@ -1085,17 +1085,16 @@ private:
    * @brief Shift particles that are in contact using their normal overlap. This
    * contact model is used for the packed insertion method.
    *
+   * @param[in] normal_overlap Contact normal overlap.
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle-wall pair.
-   * @param[in] normal_overlap Contact normal overlap.
    */
 
   inline void
   shift_particle_using_normal_overlap(
-    particle_wall_contact_info<dim> &contact_info,
-    const double                     normal_overlap)
+    const double                     normal_overlap,
+    particle_wall_contact_info<dim> &contact_info)
   {
-    // Contact particle-wall + constant cohesive force.
     if (normal_overlap > 0.)
       {
         ++this->n_contacts;
