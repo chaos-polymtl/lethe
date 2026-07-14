@@ -259,6 +259,7 @@ private:
                                        particle_two_location);
 
             this->calculate_contact(
+              particle_one,
               contact_info,
               tangential_relative_velocity,
               normal_relative_velocity_value,
@@ -271,8 +272,7 @@ private:
               tangential_force,
               particle_one_tangential_torque,
               particle_two_tangential_torque,
-              rolling_resistance_torque,
-              particle_one);
+              rolling_resistance_torque);
 
             vertices.push_back(particle_one_location);
             vertices.push_back(particle_two_location);

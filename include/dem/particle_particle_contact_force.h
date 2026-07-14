@@ -101,11 +101,13 @@ public:
   }
 
   /**
-   * @brief Return the number of contact that occurred in the
+   * @brief Return the amount of contact that occurred in the
    * present pseudo-time step when using the shift insertion method.
+   *
+   * @return The amount of contact that occurred in the present pseudo-time
+   * step.
    */
-  unsigned int
-  get_number_of_contacts() const
+  unsigned int inline get_number_of_contacts() const
   {
     return n_contacts;
   }
@@ -120,7 +122,7 @@ public:
   }
 
 protected:
-  // Number of contact counter
+  // Counter for the amount of contact
   unsigned int n_contacts = 0;
 
   /**
@@ -336,6 +338,8 @@ protected:
    * @brief Calculate the particle-particle contact force and torque
    * according to the contact model.
    *
+   * @param[in] particle_one Iterator of the particle one. This is needed for
+   * the shift contact model.
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle pair in
    * contact.
@@ -354,12 +358,12 @@ protected:
    * @param[out] particle_two_tangential_torque Contact tangential torque on
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
-   * @param[in] particle_one
    */
 
 
   inline void
-  calculate_contact(particle_particle_contact_info<dim> &contact_info,
+  calculate_contact(Particles::ParticleIterator<dim>     particle_one,
+                    particle_particle_contact_info<dim> &contact_info,
                     const Tensor<1, 3> &tangential_relative_velocity,
                     const double        normal_relative_velocity_value,
                     const Tensor<1, 3> &normal_unit_vector,
@@ -371,8 +375,7 @@ protected:
                     Tensor<1, 3>                  &tangential_force,
                     Tensor<1, 3> &particle_one_tangential_torque,
                     Tensor<1, 3> &particle_two_tangential_torque,
-                    Tensor<1, 3> &rolling_resistance_torque,
-                    Particles::ParticleIterator<dim> particle_one)
+                    Tensor<1, 3> &rolling_resistance_torque)
   {
     using namespace Parameters::Lagrangian;
 
@@ -1930,7 +1933,8 @@ private:
                                                  dt);
 
                 // Calculation of the contact force
-                this->calculate_contact(contact_info,
+                this->calculate_contact(particle_one,
+                                        contact_info,
                                         tangential_relative_velocity,
                                         normal_relative_velocity_value,
                                         normal_unit_vector,
@@ -1942,8 +1946,7 @@ private:
                                         tangential_force,
                                         particle_one_tangential_torque,
                                         particle_two_tangential_torque,
-                                        rolling_resistance_torque,
-                                        particle_one);
+                                        rolling_resistance_torque);
               }
 
             if constexpr (contact_type ==
@@ -1968,7 +1971,8 @@ private:
                                                  dt);
 
                 // Calculation of the contact force
-                this->calculate_contact(contact_info,
+                this->calculate_contact(particle_one,
+                                        contact_info,
                                         tangential_relative_velocity,
                                         normal_relative_velocity_value,
                                         normal_unit_vector,
@@ -1980,8 +1984,7 @@ private:
                                         tangential_force,
                                         particle_two_tangential_torque,
                                         particle_one_tangential_torque,
-                                        rolling_resistance_torque,
-                                        particle_one);
+                                        rolling_resistance_torque);
               }
 
             // Apply the calculated forces and torques on both particles
