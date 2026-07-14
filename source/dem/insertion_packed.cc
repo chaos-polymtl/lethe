@@ -165,11 +165,10 @@ InsertionPacked<dim, PropertiesIndex>::insert(
   double this_proc_inserted_volume = 0.;
   for (auto &particle : particle_handler)
     {
-      const double volume =
-        numbers::PI *
-        Utilities::fixed_power<3>(
-          particle.get_properties()[PropertiesIndex::dp]) /
-        6.;
+      const double volume = numbers::PI *
+                            Utilities::fixed_power<3>(
+                              particle.get_properties()[PropertiesIndex::dp]) /
+                            6.;
       this_proc_inserted_volume += volume;
     }
 
