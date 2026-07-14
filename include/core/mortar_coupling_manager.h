@@ -566,7 +566,7 @@ MortarManagerLinear<dim>::MortarManagerLinear(
                                              mapping,
                                              mortar_parameters))) /
         (2.0 * numbers::PI),
-      quadrature,
+      construct_quadrature(quadrature, mortar_parameters),
       0.0)
 {
   std::tie(this->coord_min, this->coord_max) =
