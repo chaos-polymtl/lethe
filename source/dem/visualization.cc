@@ -108,8 +108,8 @@ Visualization<dim, PropertiesIndex>::print_xyz(
        ++particle)
     {
       const unsigned int id                  = particle->get_id();
-      auto               particle_properties = particle->get_properties();
-      auto               particle_location   = particle->get_location();
+      const auto               &particle_properties = particle->get_properties();
+      const auto               &particle_location   = particle->get_location();
 
       std::ostringstream oss;
       oss << std::fixed << std::setprecision(0) << id << " "
