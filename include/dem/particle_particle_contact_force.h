@@ -1547,10 +1547,10 @@ private:
 
   /**
    * @brief Shift the particles using the normal overlap and the normal unit
-   * vector. Pparticles in contact are shifted in opposite directions to resolve the
-   * overlap. The shift is proportional to the normal overlap and the particle
-   * diameters. This \"contact force\" model is use for the packed insertion
-   * method.
+   * vector. Pparticles in contact are shifted in opposite directions to resolve
+   * the overlap. The shift is proportional to the normal overlap and the
+   * particle diameters. This \"contact force\" model is use for the packed
+   * insertion method.
    *
    * @param[in] particle_one Iterator of the particle one.
    * @param[in,out] contact_info A container that contains the required
