@@ -127,13 +127,15 @@ Visualization<dim, PropertiesIndex>::print_xyz(
       local_lines[id] = oss.str();
     }
 
-  // Gather every rank's map to rank 0 (single collective, no polling loop)
+  // Gather every rank's map to rank 0. This way, we ensure that the output is
+  // sorted by particle id.
   const auto gathered =
     Utilities::MPI::gather(mpi_communicator, local_lines, 0);
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
-      // Merge into one ordered map (std::map keeps keys sorted by id)
+      // Merge into one ordered map. An std::map keeps keys sorted by id,
+      // thus this will be printed in order.
       std::map<unsigned int, std::string> all_lines;
       for (const auto &proc_lines : gathered)
         all_lines.insert(proc_lines.begin(), proc_lines.end());
