@@ -160,28 +160,17 @@ InsertionPacked<dim, PropertiesIndex>::insert(
                                  particle_type,
                                  pcout);
     }
+
   // Loop on every locally owned particle
   double this_proc_inserted_volume = 0.;
-  for (auto cell : triangulation.active_cell_iterators())
+  for (auto &particle : particle_handler)
     {
-      if (!cell->is_locally_owned())
-        continue;
-
-      typename Particles::ParticleHandler<dim>::particle_iterator_range
-        particles_in_cell = particle_handler.particles_in_cell(cell);
-
-      if (particles_in_cell.empty())
-        continue;
-
-      for (auto &particle : particles_in_cell)
-        {
-          const double volume =
-            numbers::PI *
-            Utilities::fixed_power<3>(
-              particle.get_properties()[PropertiesIndex::dp]) /
-            6.;
-          this_proc_inserted_volume += volume;
-        }
+      const double volume =
+        numbers::PI *
+        Utilities::fixed_power<3>(
+          particle.get_properties()[PropertiesIndex::dp]) /
+        6.;
+      this_proc_inserted_volume += volume;
     }
 
   // Volume of the entire triangulation
@@ -198,34 +187,19 @@ InsertionPacked<dim, PropertiesIndex>::insert(
 template <int dim, typename PropertiesIndex>
 void
 InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-  const parallel::distributed::Triangulation<dim> &triangulation,
-  Particles::ParticleHandler<dim>                 &particle_handler)
+  Particles::ParticleHandler<dim> &particle_handler)
 {
-  for (auto cell : triangulation.active_cell_iterators())
+  for (auto &particle : particle_handler)
     {
-      if (!cell->is_locally_owned())
-        continue;
+      auto particle_properties = particle.get_properties();
 
-      typename Particles::ParticleHandler<dim>::particle_iterator_range
-        particles_in_cell = particle_handler.particles_in_cell(cell);
+      const Point<dim> particle_previous_position = particle.get_location();
 
-      if (particles_in_cell.empty())
-        continue;
-
-      for (auto &particle : particles_in_cell)
-        {
-          auto particle_properties = particle.get_properties();
-
-          Point<dim> particle_previous_position = particle.get_location();
-
-          particle_properties[PropertiesIndex::v_x] =
-            particle_previous_position[0];
-          particle_properties[PropertiesIndex::v_y] =
-            particle_previous_position[1];
-          if constexpr (dim == 3)
-            particle_properties[PropertiesIndex::v_z] =
-              particle_previous_position[2];
-        }
+      particle_properties[PropertiesIndex::v_x] = particle_previous_position[0];
+      particle_properties[PropertiesIndex::v_y] = particle_previous_position[1];
+      if constexpr (dim == 3)
+        particle_properties[PropertiesIndex::v_z] =
+          particle_previous_position[2];
     }
 }
 
@@ -234,7 +208,7 @@ void
 InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
   Particles::ParticleHandler<dim> &particle_handler,
   const double                     max_disp,
-  std::vector<double>             &displacement)
+  std::vector<double>             &displacements)
 {
   for (auto &particle : particle_handler)
     {
@@ -250,21 +224,17 @@ InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
         particle.get_location() - previous_position;
 
       const double disp_norm = displacement_tensor.norm();
-
-      // No movement
-      if (std::isnan(disp_norm))
-        continue;
-
-      const unsigned int particle_id = particle.get_local_index();
       if (disp_norm > max_disp)
         {
+          const unsigned int particle_id = particle.get_local_index();
           particle.set_location(previous_position +
                                 (max_disp / disp_norm) * displacement_tensor);
-          displacement[particle_id] += max_disp;
+          displacements[particle_id] += max_disp;
         }
       else
         {
-          displacement[particle_id] += disp_norm;
+          const unsigned int particle_id = particle.get_local_index();
+          displacements[particle_id] += disp_norm;
         }
     }
 }

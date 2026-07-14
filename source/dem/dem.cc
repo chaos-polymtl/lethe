@@ -497,7 +497,7 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
 
   if (is_packed_insertion_method)
     InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-      triangulation, particle_handler);
+      particle_handler);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1125,7 +1125,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
           InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
             particle_handler, maximum_particle_diameter, displacement);
           InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-            triangulation, particle_handler);
+            particle_handler);
         }
 
       // Visualization

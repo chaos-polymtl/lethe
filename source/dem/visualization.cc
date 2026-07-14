@@ -100,7 +100,7 @@ Visualization<dim, PropertiesIndex>::print_xyz(
     pcout << ", T";
   pcout << " " << std::endl;
 
-  // Build this rank's particles as id -> formatted line
+  // Build this rank's particles as id to formatted line
   std::map<unsigned int, std::string> local_lines;
 
   for (auto particle = particle_handler.begin();
@@ -139,7 +139,7 @@ Visualization<dim, PropertiesIndex>::print_xyz(
         all_lines.insert(proc_lines.begin(), proc_lines.end());
 
       for (const auto &[id, line] : all_lines)
-        std::cout << line << std::endl;
+        pcout << line << std::endl;
     }
 }
 

@@ -88,15 +88,12 @@ public:
    * without additional data structures. This tracking is required for the
    * packed insertion method.
    *
-   * @param[in] triangulation The triangulation object.
    * @param[out] particle_handler The particle handler of particles which are
-   * being inserted
+   * being inserted.
    *
    */
   static void
-  update_previous_position(
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    Particles::ParticleHandler<dim>                 &particle_handler);
+  update_previous_position(Particles::ParticleHandler<dim> &particle_handler);
 
   /**
    * @brief Restricts the displacement of particles to a maximum allowable
@@ -107,11 +104,18 @@ public:
    * the maximum particle diameter, their positions are clamped such that
    * the displacement does not exceed this threshold. The displacement
    * values are updated accordingly for each particle.
+   *
+   * @param[in,out] particle_handler The particle handler of particles which are
+   * being inserted.
+   * @param[in] max_disp Maximum displacement that a particle is able to move
+   * during a single pseudo time-step.
+   * @param[in] displacements Vector that stored the displacement of each
+   * particle since the last contact detection time step.
    */
   static void
   clamp_displacement(Particles::ParticleHandler<dim> &particle_handler,
                      const double                     max_disp,
-                     std::vector<double>             &displacement);
+                     std::vector<double>             &displacements);
 
 private:
   /**
