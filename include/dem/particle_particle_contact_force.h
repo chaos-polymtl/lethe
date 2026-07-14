@@ -1546,26 +1546,30 @@ private:
   }
 
   /**
-   * @brief
+   * @brief Shift the particles using the normal overlap and the normal unit
+   * vector. Pparticles in contact are shifted in opposite directions to resolve the
+   * overlap. The shift is proportional to the normal overlap and the particle
+   * diameters. This \"contact force\" model is use for the packed insertion
+   * method.
    *
+   * @param[in] particle_one Iterator of the particle one.
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle pair in
    * contact.
-   * @param normal_unit_vector
-   * @param normal_overlap
-   * @param particle_one_properties
-   * @param particle_two_properties
-   * @param particle_one
-   *
+   * @param[in] normal_unit_vector Normal unit contact vector between particle
+   * one and two.
+   * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] particle_one_properties Properties of particle one in contact.
+   * @param[in] particle_two_properties Properties of particle two in contact.
    */
   inline void
   shift_particle_using_normal_overlap(
+    Particles::ParticleIterator<dim>     particle_one,
     particle_particle_contact_info<dim> &contact_info,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
     const ArrayView<const double>       &particle_one_properties,
-    const ArrayView<const double>       &particle_two_properties,
-    Particles::ParticleIterator<dim>     particle_one)
+    const ArrayView<const double>       &particle_two_properties)
   {
     ++this->n_contacts;
 
