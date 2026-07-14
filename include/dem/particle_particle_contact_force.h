@@ -488,12 +488,12 @@ protected:
 
     if constexpr (contact_model == ParticleParticleContactForceModel::shift)
       {
-        this->shift_particle_using_normal_overlap(contact_info,
+        this->shift_particle_using_normal_overlap(particle_one,
+                                                  contact_info,
                                                   normal_unit_vector,
                                                   normal_overlap,
                                                   particle_one_properties,
-                                                  particle_two_properties,
-                                                  particle_one);
+                                                  particle_two_properties);
       }
   }
 
