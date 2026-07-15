@@ -127,8 +127,10 @@ Visualization<dim, PropertiesIndex>::print_xyz(
       local_lines[id] = oss.str();
     }
 
-  // Gather every rank's map to rank 0. This way, we ensure that the output is
-  // sorted by particle id.
+  // In order to ensure that the particle will be printed in order relative to
+  // their ID's, rank 0 gathers the information of every particles, then it
+  // insert those information inside a std::map, which stores the information is
+  // order.
   const auto gathered =
     Utilities::MPI::gather(mpi_communicator, local_lines, 0);
 
