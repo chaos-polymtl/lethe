@@ -130,6 +130,79 @@ struct SolidInitialConditionsParameters
   }
 };
 
+template <int dim>
+struct SolidSourceTermParameters
+{
+  bool enable = false;
+
+  // Component order:
+  // 2D: S_mx ; S_my ; S_alpha
+  // 3D: S_mx ; S_my ; S_mz ; S_alpha
+  std::shared_ptr<Functions::ParsedFunction<dim>> function;
+
+  SolidSourceTermParameters()
+    : function(std::make_shared<Functions::ParsedFunction<dim>>(dim + 1))
+  {}
+
+  static void
+  declare_parameters(ParameterHandler &prm)
+  {
+    prm.declare_entry("enable", "false", Patterns::Bool());
+
+    Functions::ParsedFunction<dim> tmp(dim + 1);
+    tmp.declare_parameters(prm);
+  }
+
+  void
+  parse_parameters(ParameterHandler &prm)
+  {
+    enable = prm.get_bool("enable");
+
+    function = std::make_shared<Functions::ParsedFunction<dim>>(dim + 1);
+    function->parse_parameters(prm);
+  }
+};
+
+template <int dim>
+struct SolidAnalyticalSolutionParameters
+{
+  bool enable = false;
+
+  std::string  filename  = "solid_mms_error.dat";
+  unsigned int frequency = 1;
+
+  // Component order:
+  // 2D: u_s ; v_s ; alpha
+  // 3D: u_s ; v_s ; w_s ; alpha
+  std::shared_ptr<Functions::ParsedFunction<dim>> function;
+
+  SolidAnalyticalSolutionParameters()
+    : function(std::make_shared<Functions::ParsedFunction<dim>>(dim + 1))
+  {}
+
+  static void
+  declare_parameters(ParameterHandler &prm)
+  {
+    prm.declare_entry("enable", "false", Patterns::Bool());
+    prm.declare_entry("filename", "solid_mms_error.dat", Patterns::Anything());
+    prm.declare_entry("frequency", "1", Patterns::Integer(1));
+
+    Functions::ParsedFunction<dim> tmp(dim + 1);
+    tmp.declare_parameters(prm);
+  }
+
+  void
+  parse_parameters(ParameterHandler &prm)
+  {
+    enable    = prm.get_bool("enable");
+    filename  = prm.get("filename");
+    frequency = prm.get_integer("frequency");
+
+    function = std::make_shared<Functions::ParsedFunction<dim>>(dim + 1);
+    function->parse_parameters(prm);
+  }
+};
+
 
 // -----------------------------------------------------------------------------
 // Boundary conditions
@@ -269,19 +342,34 @@ struct SolidPhaseParameters
   SolidInitialConditionsParameters<dim>  initial_conditions;
   SolidBoundaryConditionsParameters<dim> boundary_conditions;
 
+  SolidSourceTermParameters<dim>         source_term;
+  SolidAnalyticalSolutionParameters<dim> analytical_solution;
+
   // Nonlinear (Picard)
   unsigned int picard_max_iterations = 10;
   double       picard_tolerance      = 1e-8;
+  double       picard_relaxation     = 0.3;
 
   // Output
   bool         output_verbose = true;
-  unsigned int output_every   = 10;
+  unsigned int output_every   = 1;
   unsigned int digits         = 4;
   std::string  output_folder  = "output/";
   std::string  output_prefix  = "solid_phase";
 
   // Assembly / solver
   bool verbose_assembly = true;
+
+  bool   use_alpha_supg    = true;
+  double alpha_supg_factor = 10.0;
+
+  bool   use_momentum_supg    = true;
+  double momentum_supg_factor = 10.0;
+
+  bool   use_solid_grad_div = true;
+  double grad_div_factor    = 0.1;
+
+  unsigned int quadrature_extra = 1;
 
   bool         solver_verbose = true;
   double       solver_abs_tol = 1e-12;
@@ -310,7 +398,7 @@ struct SolidPhaseParameters
 
       prm.enter_subsection("Physics");
       prm.declare_entry("rho_s", "1.0", Patterns::Double(0.0));
-      prm.declare_entry("beta", "50.0", Patterns::Double(0.0));
+      prm.declare_entry("beta", "5.0", Patterns::Double(0.0));
       prm.leave_subsection();
 
       prm.enter_subsection("Initial conditions");
@@ -319,9 +407,18 @@ struct SolidPhaseParameters
 
       SolidBoundaryConditionsParameters<dim>::declare_parameters(prm);
 
+      prm.enter_subsection("Source term");
+      SolidSourceTermParameters<dim>::declare_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("Analytical solution");
+      SolidAnalyticalSolutionParameters<dim>::declare_parameters(prm);
+      prm.leave_subsection();
+
       prm.enter_subsection("Nonlinear");
       prm.declare_entry("picard max iterations", "10", Patterns::Integer(1));
       prm.declare_entry("picard tolerance", "1e-8", Patterns::Double(0.0));
+      prm.declare_entry("picard relaxation", "0.3", Patterns::Double(0.0));
       prm.leave_subsection();
 
       prm.enter_subsection("Preconditioner");
@@ -336,6 +433,17 @@ struct SolidPhaseParameters
 
       prm.enter_subsection("Assembly");
       prm.declare_entry("verbose", "true", Patterns::Bool());
+
+      prm.declare_entry("use alpha supg", "true", Patterns::Bool());
+      prm.declare_entry("alpha supg factor", "10.0", Patterns::Double(0.0));
+
+      prm.declare_entry("use momentum supg", "true", Patterns::Bool());
+      prm.declare_entry("momentum supg factor", "10.0", Patterns::Double(0.0));
+
+      prm.declare_entry("use solid grad-div", "true", Patterns::Bool());
+      prm.declare_entry("grad-div factor", "0.1", Patterns::Double(0.0));
+
+      prm.declare_entry("quadrature extra", "1", Patterns::Integer(0));
       prm.leave_subsection();
 
       prm.enter_subsection("Timers");
@@ -382,9 +490,18 @@ struct SolidPhaseParameters
 
       boundary_conditions.parse_parameters(prm);
 
+      prm.enter_subsection("Source term");
+      source_term.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("Analytical solution");
+      analytical_solution.parse_parameters(prm);
+      prm.leave_subsection();
+
       prm.enter_subsection("Nonlinear");
       picard_max_iterations = prm.get_integer("picard max iterations");
       picard_tolerance      = prm.get_double("picard tolerance");
+      picard_relaxation     = prm.get_double("picard relaxation");
       prm.leave_subsection();
 
       prm.enter_subsection("Preconditioner");
@@ -396,7 +513,14 @@ struct SolidPhaseParameters
       prm.leave_subsection();
 
       prm.enter_subsection("Assembly");
-      verbose_assembly = prm.get_bool("verbose");
+      verbose_assembly     = prm.get_bool("verbose");
+      use_alpha_supg       = prm.get_bool("use alpha supg");
+      alpha_supg_factor    = prm.get_double("alpha supg factor");
+      use_momentum_supg    = prm.get_bool("use momentum supg");
+      momentum_supg_factor = prm.get_double("momentum supg factor");
+      use_solid_grad_div   = prm.get_bool("use solid grad-div");
+      grad_div_factor      = prm.get_double("grad-div factor");
+      quadrature_extra     = prm.get_integer("quadrature extra");
       prm.leave_subsection();
 
       prm.enter_subsection("Timers");
@@ -534,7 +658,10 @@ private:
   setup_linear_preconditioners();
 
   void
-  check_solid_mass_and_divergence() const;
+  solid_phase_conservation_monitoring() const;
+
+  void
+  calculate_mms_error() const;
 
   void
   assemble_local_system(

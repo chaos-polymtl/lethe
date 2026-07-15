@@ -49,6 +49,9 @@ EulerEulerOneWay<dim>::update_void_fraction_from_solid()
 
 
   this->void_fraction_manager.void_fraction_locally_relevant = alpha_f;
+
+  this->void_fraction_manager.void_fraction_locally_relevant
+    .update_ghost_values();
 }
 
 template <int dim>
@@ -58,6 +61,8 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
   fluid_drag_rhs = 0;
 
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
+
+
 
   FEValues<dim> fluid_fe_values(*this->mapping,
                                 *this->fe,
@@ -91,6 +96,11 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
       if (!fluid_cell->is_locally_owned())
         continue;
 
+      AssertThrow(&(this->dof_handler.get_triangulation()) ==
+                    &(solid_solver.get_dof_handler().get_triangulation()),
+                  ExcMessage("Fluid and solid DoF handlers do not use "
+                             "the same triangulation."));
+
       typename DoFHandler<dim>::active_cell_iterator solid_cell(
         &(*this->triangulation),
         fluid_cell->level(),
@@ -116,19 +126,22 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
           const Tensor<1, dim> drag_q =
             solid_solver.get_beta() * a_s_q[q] * (u_s_q[q] - u_f_q[q]);
 
-          if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0 &&
-              std::abs(fluid_fe_values.quadrature_point(q)[0] - 0.526416) <
-                1e-3 &&
-              std::abs(fluid_fe_values.quadrature_point(q)[1] - 0.223584) <
-                1e-3 &&
-              std::abs(fluid_fe_values.quadrature_point(q)[2] - 0.223584) <
-                1e-3)
+          if constexpr (dim == 3)
             {
-              this->pcout << "fluid drag | x_q = "
-                          << fluid_fe_values.quadrature_point(q)
-                          << " | alpha_s = " << a_s_q[q]
-                          << " | u_s = " << u_s_q[q] << " | u_f = " << u_f_q[q]
-                          << " | drag_to_fluid = " << drag_q << std::endl;
+              const auto &point = fluid_fe_values.quadrature_point(q);
+
+              if (Utilities::MPI::this_mpi_process(this->mpi_communicator) ==
+                    0 &&
+                  std::abs(point[0] - 0.526416) < 1e-3 &&
+                  std::abs(point[1] - 0.223584) < 1e-3 &&
+                  std::abs(point[2] - 0.223584) < 1e-3)
+                {
+                  this->pcout << "fluid drag | x_q = " << point
+                              << " | alpha_s = " << a_s_q[q]
+                              << " | u_s = " << u_s_q[q]
+                              << " | u_f = " << u_f_q[q]
+                              << " | drag_to_fluid = " << drag_q << std::endl;
+                }
             }
 
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -138,17 +151,10 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
 
               if (comp_i < dim)
                 {
-                  // const double v_i =
-                  //   fluid_fe_values[fluid_velocities].value(i, q)[comp_i];
-
-                  // cell_rhs(i) += v_i * drag_q[comp_i] * fluid_fe_values.JxW(q);
-
                   const Tensor<1, dim> v_i =
                     fluid_fe_values[fluid_velocities].value(i, q);
 
-                  cell_rhs(i) +=
-                    (v_i * drag_q) *
-                    fluid_fe_values.JxW(q);
+                  cell_rhs(i) += (v_i * drag_q) * fluid_fe_values.JxW(q);
                 }
             }
         }
@@ -166,6 +172,117 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
 
 template <int dim>
 void
+EulerEulerOneWay<dim>::inspect_mesh_boundaries() const
+{
+  AssertThrow(this->mapping != nullptr,
+              ExcMessage("The fluid mapping is null."));
+
+  AssertThrow(this->fe != nullptr,
+              ExcMessage("The fluid finite element is null."));
+
+  const unsigned int face_quadrature_order = std::max(2u, this->fe->degree + 1);
+
+  const QGauss<dim - 1> face_quadrature(face_quadrature_order);
+
+  FEFaceValues<dim> fe_face_values(*this->mapping,
+                                   *this->fe,
+                                   face_quadrature,
+                                   update_JxW_values);
+
+  std::map<types::boundary_id, double> local_boundary_measure;
+
+  std::map<types::boundary_id, unsigned long long> local_boundary_face_count;
+
+  std::set<unsigned int> local_raw_boundary_ids;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
+           ++face)
+        {
+          if (!cell->face(face)->at_boundary())
+            continue;
+
+          const types::boundary_id boundary_id =
+            cell->face(face)->boundary_id();
+
+          local_raw_boundary_ids.insert(static_cast<unsigned int>(boundary_id));
+
+          fe_face_values.reinit(cell, face);
+
+          double face_measure = 0.0;
+
+          for (unsigned int q = 0; q < face_quadrature.size(); ++q)
+            {
+              face_measure += fe_face_values.JxW(q);
+            }
+
+          local_boundary_measure[boundary_id] += face_measure;
+
+          local_boundary_face_count[boundary_id] += 1;
+        }
+    }
+
+  const std::vector<unsigned int> local_ids(local_raw_boundary_ids.begin(),
+                                            local_raw_boundary_ids.end());
+
+  const auto gathered_ids =
+    Utilities::MPI::all_gather(this->mpi_communicator, local_ids);
+
+  std::set<unsigned int> global_raw_boundary_ids;
+
+  for (const auto &rank_ids : gathered_ids)
+    {
+      global_raw_boundary_ids.insert(rank_ids.begin(), rank_ids.end());
+    }
+
+  AssertThrow(!global_raw_boundary_ids.empty(),
+              ExcMessage(
+                "The mesh does not contain any external boundary faces."));
+
+  this->pcout << "\nImported mesh boundary information:\n";
+
+  for (const unsigned int raw_id : global_raw_boundary_ids)
+    {
+      const types::boundary_id boundary_id =
+        static_cast<types::boundary_id>(raw_id);
+
+      double local_measure = 0.0;
+
+      const auto measure_it = local_boundary_measure.find(boundary_id);
+
+      if (measure_it != local_boundary_measure.end())
+        local_measure = measure_it->second;
+
+      unsigned long long local_face_count = 0;
+
+      const auto count_it = local_boundary_face_count.find(boundary_id);
+
+      if (count_it != local_boundary_face_count.end())
+        local_face_count = count_it->second;
+
+      const double global_measure =
+        Utilities::MPI::sum(local_measure, this->mpi_communicator);
+
+      const unsigned long long global_face_count =
+        Utilities::MPI::sum(local_face_count, this->mpi_communicator);
+
+      this->pcout << "  boundary ID " << raw_id
+                  << ": measure = " << global_measure
+                  << ", active boundary faces = " << global_face_count << '\n';
+    }
+
+  this->pcout << "  number of imported boundary IDs = "
+              << global_raw_boundary_ids.size() << "\n"
+              << std::endl;
+}
+
+
+template <int dim>
+void
 EulerEulerOneWay<dim>::solve()
 {
   read_mesh_and_manifolds(
@@ -177,65 +294,11 @@ EulerEulerOneWay<dim>::solve()
       this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
-  // for (const auto &cell : this->triangulation->active_cell_iterators())
-  //   for (const auto &face : cell->face_iterators())
-  //     if (face->at_boundary())
-  //       {
-  //         const auto center = face->center();
-
-  //         if (std::abs(center[0] - 0.0) < 1e-12)
-  //           face->set_boundary_id(1); // inlet
-  //         else if (std::abs(center[0] - 1.0) < 1e-12)
-  //           face->set_boundary_id(2); // outlet
-  //         else
-  //           face->set_boundary_id(0); // walls
-  //       }
-    std::map<types::boundary_id, double> local_boundary_area;
-
-  for (const auto &cell : this->triangulation->active_cell_iterators())
-    {
-      if (!cell->is_locally_owned())
-        continue;
-
-      for (unsigned int face = 0;
-          face < GeometryInfo<dim>::faces_per_cell;
-          ++face)
-        {
-          if (!cell->face(face)->at_boundary())
-            continue;
-
-          const types::boundary_id id =
-            cell->face(face)->boundary_id();
-
-          local_boundary_area[id] += cell->face(face)->measure();
-        }
-    }
-
-  // Expected Gmsh IDs for your current mesh
-  for (const types::boundary_id id : {1, 2, 3, 4})
-    {
-      const double global_area =
-        Utilities::MPI::sum(local_boundary_area[id],
-                            this->mpi_communicator);
-
-      this->pcout
-        << "Imported boundary ID "
-        << static_cast<unsigned int>(id)
-        << " area = " << global_area
-        << std::endl;
-    }
-
-  // Check whether any untagged boundary remains as ID 0
-  const double boundary_zero_area =
-    Utilities::MPI::sum(local_boundary_area[0],
-                        this->mpi_communicator);
-
-  this->pcout << "Imported boundary ID 0 area = "
-              << boundary_zero_area
-              << std::endl;
 
 
   this->setup_dofs();
+
+  inspect_mesh_boundaries();
 
   fluid_drag_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
@@ -251,6 +314,17 @@ EulerEulerOneWay<dim>::solve()
   this->void_fraction_manager.initialize_void_fraction(
     this->simulation_control->get_current_time());
 
+  // auto &alpha_f =
+  //   this->void_fraction_manager.void_fraction_locally_relevant;
+
+  // for (const auto i : alpha_f.locally_owned_elements())
+  //   alpha_f[i] = 1.0;
+
+  // alpha_f.compress(VectorOperation::insert);
+  // alpha_f.update_ghost_values();
+
+  // update_void_fraction_from_solid();
+
   pass_fluid_solution_to_solid();
 
   while (this->simulation_control->integrate())
@@ -260,11 +334,11 @@ EulerEulerOneWay<dim>::solve()
       this->update_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
-      if (!this->simulation_control->is_at_start())
-        {
-          //NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-          this->vertices_cell_mapping();
-        }
+      // if (!this->simulation_control->is_at_start())
+      //   {
+      //     NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+      //     this->vertices_cell_mapping();
+      //   }
 
       /*
        * Fluid -> solid.
@@ -274,7 +348,13 @@ EulerEulerOneWay<dim>::solve()
       /*
        * Solid solve.
        */
-      solid_solver.advance_one_step();
+      // solid_solver.advance_one_step();
+
+      const bool solid_step_completed = solid_solver.advance_one_step();
+
+      AssertThrow(solid_step_completed,
+                  ExcMessage("The solid solver did not complete the "
+                             "current coupled time step."));
 
       /*
        * Solid -> fluid.
@@ -291,7 +371,6 @@ EulerEulerOneWay<dim>::solve()
 
       /*
        * Fluid solve.
-       * This uses the updated void fraction field.
        */
       this->iterate();
 

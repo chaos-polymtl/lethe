@@ -66,11 +66,33 @@ EulerEulerVoidFraction<dim>::calculate_alpha_f()
   for (const auto &i : alpha_f.locally_owned_elements())
     {
       alpha_f[i] = std::max(1.0 - alpha_s[i], min_alpha_f_value);
+      //alpha_f[i] = 1.0 - alpha_s[i];
     }
 
   alpha_f.compress(VectorOperation::insert);
 
   has_alpha_f = true;
+
+  if (verbose)
+  {
+    const double alpha_s_min =
+      global_min_owned(alpha_s, mpi_communicator);
+
+    const double alpha_s_max =
+      global_max_owned(alpha_s, mpi_communicator);
+
+    const double alpha_f_min =
+      global_min_owned(alpha_f, mpi_communicator);
+
+    const double alpha_f_max =
+      global_max_owned(alpha_f, mpi_communicator);
+
+    pcout << "alpha_s min/max = "
+          << alpha_s_min << " / " << alpha_s_max << '\n'
+          << "alpha_f min/max = "
+          << alpha_f_min << " / " << alpha_f_max
+          << std::endl;
+  }
 }
 
 template <int dim>

@@ -29,7 +29,7 @@ main(int argc, char *argv[])
       const unsigned int rank =
         Utilities::MPI::this_mpi_process(mpi_communicator);
 
-      constexpr int dim = 3;
+      constexpr int dim = 2;
 
       const bool print_prm =
         (argc > 1 && std::string(argv[1]) == "--print-prm");

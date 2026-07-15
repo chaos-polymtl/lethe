@@ -500,7 +500,7 @@ subsection Solid phase
         # If the function you are describing represents a vector-valued
         # function with multiple components, then separate the expressions for
         # individual components by a semicolon.
-        set Function expression = 0.3
+        set Function expression = 0.1
 
         # The names of the variables as they will be used in the function,
         # separated by commas. By default, the names of variables at which the
@@ -633,7 +633,7 @@ subsection Solid phase
           # If the function you are describing represents a vector-valued
           # function with multiple components, then separate the expressions
           # for individual components by a semicolon.
-          set Function expression = 0.1
+          set Function expression = 1
 
           # The names of the variables as they will be used in the function,
           # separated by commas. By default, the names of variables at which
@@ -845,7 +845,7 @@ subsection Solid phase
       set id                 = 2
       set periodic_direction = 0
       set periodic_id        = -1
-      set type               = noslip
+      set type               = slip
 
 
       subsection alpha
@@ -1032,7 +1032,7 @@ subsection Solid phase
       set id                 = 3
       set periodic_direction = 0
       set periodic_id        = -1
-      set type               = noslip
+      set type               = slip
 
 
       subsection alpha
@@ -1219,7 +1219,7 @@ subsection Solid phase
       set id                 = 4
       set periodic_direction = 0
       set periodic_id        = -1
-      set type               = noslip
+      set type               = slip
 
 
       subsection alpha
@@ -1598,7 +1598,7 @@ subsection Solid phase
   end
 
   subsection Physics
-    set beta  = 50.0
+    set beta  = 5
     set rho_s = 1.0
   end
 
@@ -2191,7 +2191,7 @@ subsection boundary conditions
       # If the function you are describing represents a vector-valued function
       # with multiple components, then separate the expressions for individual
       # components by a semicolon.
-      set Function expression = 0.1
+      set Function expression = 1
 
       # The names of the variables as they will be used in the function,
       # separated by commas. By default, the names of variables at which the
@@ -2437,7 +2437,7 @@ subsection boundary conditions
     # Type of boundary conditionChoices are
     # <noslip|slip|function|periodic|pressure|function weak|partial
     # slip|outlet>.
-    set type                     = noslip
+    set type                     = slip
 
 
     subsection center of rotation
@@ -2641,7 +2641,7 @@ subsection boundary conditions
     # Type of boundary conditionChoices are
     # <noslip|slip|function|periodic|pressure|function weak|partial
     # slip|outlet>.
-    set type                     = noslip
+    set type                     = slip
 
 
     subsection center of rotation
@@ -2845,7 +2845,7 @@ subsection boundary conditions
     # Type of boundary conditionChoices are
     # <noslip|slip|function|periodic|pressure|function weak|partial
     # slip|outlet>.
-    set type                     = noslip
+    set type                     = slip
 
 
     subsection center of rotation
@@ -12746,7 +12746,7 @@ subsection physical properties
     set k_A1                           = 0
 
     # Kinematic viscosity for the fluid corresponding to Phase = 0
-    set kinematic viscosity            = 1
+    set kinematic viscosity            = 7.2e-5
 
     # Rheological model Choices are
     # <newtonian|power-law|carreau|phase_change>.
@@ -13333,7 +13333,7 @@ subsection physical properties
 
   subsection solid 0
     # Density for the fluid corresponding to Phase = 0
-    set density                        = 1
+    set density                        = 0
 
     # Model used for the calculation of the densityChoices are
     # <constant|isothermal_ideal_gas>.
@@ -13750,10 +13750,10 @@ subsection simulation control
   set subdivision                       = 1
 
   # Time step value
-  set time end                          = 1
+  set time end                          = 3
 
   # Time step value
-  set time step                         = 1e-2
+  set time step                         = 1e-3
 
   # Ensures that the correct time step is kept when using adaptive time step
   # simulations

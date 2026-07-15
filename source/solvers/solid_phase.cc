@@ -150,67 +150,6 @@ SolidPhaseSolver<dim>::setup_linear_preconditioners()
 }
 
 
-// template <int dim>
-// class SolidInitialValues : public Function<dim>
-// {
-// public:
-//   SolidInitialValues(const double &alpha0, const double &u0)
-//     : Function<dim>(dim + 1)
-//     , alpha_0(alpha0)
-//     , u_0(u0)
-//   {}
-
-
-//   virtual double
-//   value(const Point<dim> & /*p*/, const unsigned int component) const
-//   override
-//   {
-//     if (component < dim)
-//       {
-//         return component == 0 ? u_0 : 0.0;
-//       }
-//     else
-//       {
-//         return alpha_0;
-//       }
-//   }
-
-
-// private:
-//   const double alpha_0;
-//   const double u_0;
-// };
-
-
-
-// template <int dim>
-// class SolidBoundaryValues : public Function<dim>
-// {
-// public:
-//   SolidBoundaryValues(const double alpha_inlet, const Tensor<1, dim>
-//   &u_inlet)
-//     : Function<dim>(dim + 1)
-//     , alpha_in(alpha_inlet)
-//     , u_in(u_inlet)
-//   {}
-
-//   double
-//   value(const Point<dim> &, const unsigned int component) const override
-//   {
-//     if (component < dim)
-//       {
-//         return u_in[component];
-//       }
-//     else
-//       {
-//         return alpha_in;
-//       }
-//   }
-
-// private:
-//   const double         alpha_in;
-//   const Tensor<1, dim> u_in;
-// };
 
 template <int dim>
 class SolidVelocityFunctionDefined : public Function<dim>
@@ -872,13 +811,7 @@ private:
         const Tensor<1, dim> &u_old = scratch.old_velocity_values[q];
         const double          a_old = scratch.old_alpha_values[q];
 
-        /*
-         * Picard coefficient for the unknown conservative momentum:
-         *
-         *   (alpha u)^{k+1} ≈ alpha^k u^{k+1}
-         *
-         * This appears only on the matrix side.
-         */
+
         const double a_pic = scratch.picard_alpha_values[q];
 
 
@@ -887,11 +820,8 @@ private:
             const unsigned int comp_i = scratch.components[i];
 
             // --------------------------------------------------
-            // Alpha BDF1 time term:
-            //
-            // (1/dt) ∫ alpha^{k+1} q_i dΩ
-            // =
-            // (1/dt) ∫ alpha^n q_i dΩ
+            // continuity BDF1 time term:
+
             // --------------------------------------------------
             if (comp_i == dim)
               {
@@ -912,13 +842,7 @@ private:
 
             // --------------------------------------------------
             // Momentum BDF1 time term:
-            //
-            // (rho_s/dt) ∫ alpha^k u^{k+1} · v_i dΩ
-            // =
-            // (rho_s/dt) ∫ alpha^n u^n · v_i dΩ
-            //
-            // Matrix uses alpha^k.
-            // RHS uses alpha^n u^n.
+
             // --------------------------------------------------
             else if (comp_i < dim)
               {
@@ -928,8 +852,7 @@ private:
 
                 // --------------------------------------------------
                 // A_uu time block:
-                //
-                // (rho_s/dt) ∫ alpha^k u^{k+1} · v_i dΩ
+
                 // --------------------------------------------------
                 for (unsigned int j = 0; j < n_dof; ++j)
                   {
@@ -944,10 +867,7 @@ private:
 
                 // --------------------------------------------------
                 // A_u_alpha time coupling:
-                //
-                // (rho_s/dt) ∫ alpha^{k+1} u^k · v_i dΩ
-                //
-                // This is the new off-diagonal block A_{u alpha}.
+
                 // --------------------------------------------------
                 for (unsigned int j = 0; j < n_dof; ++j)
                   {
@@ -962,15 +882,11 @@ private:
 
                 // --------------------------------------------------
                 // RHS old conservative momentum:
-                //
-                // (rho_s/dt) ∫ alpha^n u^n · v_i dΩ
                 // --------------------------------------------------
                 copy.local_rhs(i) += (rho_s * a_old / dt) * (v_i * u_old) * JxW;
 
                 // --------------------------------------------------
                 // RHS correction from product linearization:
-                //
-                // (rho_s/dt) ∫ alpha^k u^k · v_i dΩ
                 // --------------------------------------------------
                 copy.local_rhs(i) += (rho_s * a_pic / dt) * (v_i * u_pic) * JxW;
               }
@@ -978,7 +894,7 @@ private:
       }
   }
 
-
+  // need to check, not fully ready
   void
   assemble_bdf2(const SolidScratchData<dim> &scratch,
                 SolidCopyData<dim>          &copy) const
@@ -999,7 +915,7 @@ private:
             const unsigned int comp_i = scratch.components[i];
 
             // ----------------
-            // Alpha equation
+            // continuity equation
             // ----------------
             if (comp_i == dim)
               {
@@ -1084,32 +1000,48 @@ public:
     const double dt = simulation_control->get_time_step();
 
     // SUPG terms
-    const bool   use_alpha_supg       = true;
-    const double alpha_supg_factor    = 5.0;
+    const bool   use_alpha_supg       = parameters.use_alpha_supg;
+    const double alpha_supg_factor    = parameters.alpha_supg_factor;
     const double tiny_velocity        = 1e-12;
     const double tiny_cell_diameter   = 1e-12;
-    const bool   use_momentum_supg    = true;
-    const double momentum_supg_factor = 5.0;
+    const bool   use_momentum_supg    = parameters.use_momentum_supg;
+    const double momentum_supg_factor = parameters.momentum_supg_factor;
 
     // grad-div stabilization terms
-    const bool   use_solid_grad_div = true;
-    const double grad_div_factor    = 0;
+    const bool   use_solid_grad_div = parameters.use_solid_grad_div;
+    const double grad_div_factor    = parameters.grad_div_factor;
 
     for (unsigned int q = 0; q < n_q; ++q)
       {
         const double JxW = scratch.JxW[q];
+
+        Vector<double> source_values(dim + 1);
+
+        Tensor<1, dim> S_m;
+        double         S_alpha = 0.0;
+
+        if (parameters.source_term.enable)
+          {
+            parameters.source_term.function->vector_value(
+              scratch.quadrature_points[q], source_values);
+
+            for (unsigned int d = 0; d < dim; ++d)
+              S_m[d] = source_values[d];
+
+            S_alpha = source_values[dim];
+          }
 
         const Tensor<1, dim> &u_pic = scratch.picard_velocity_values[q];
         const double          a_pic = scratch.picard_alpha_values[q];
 
         const Tensor<1, dim> &u_f = scratch.fluid_velocity_values[q];
 
-        Tensor<1, dim> u_const;
-        u_const[0] = 1.0;
-        if constexpr (dim >= 2)
-          u_const[1] = 0.0;
-        if constexpr (dim == 3)
-          u_const[2] = 0.0;
+        // Tensor<1, dim> u_const;
+        // u_const[0] = 1.0;
+        // if constexpr (dim >= 2)
+        //   u_const[1] = 0.0;
+        // if constexpr (dim == 3)
+        //   u_const[2] = 0.0;
 
 
 
@@ -1152,8 +1084,6 @@ public:
 
                     // --------------------------------------------------
                     // Standard conservative Galerkin volume term:
-                    //
-                    // - ∫ alpha^{k+1} u^k · grad(q_i) dΩ
                     // --------------------------------------------------
                     val += -alpha_j * (u_pic * grad_q_i);
 
@@ -1202,6 +1132,12 @@ public:
                 // RHS correction
                 // -------------------------------
                 F(i) += -a_pic * (u_pic * grad_q_i) * JxW;
+
+                if (parameters.source_term.enable)
+                  {
+                    const double q_i = scratch.phi_a[q][i];
+                    F(i) += q_i * S_alpha * JxW;
+                  }
               }
 
 
@@ -1241,34 +1177,32 @@ public:
 
                     val += -rho_s * a_pic * (u_trial_j * (grad_v_i * u_pic));
 
-                    // + beta alpha^k v_i · u_trial_j
                     val += beta * a_pic * (v_i * u_trial_j);
 
                     if (use_momentum_supg)
                       {
                         Tensor<1, dim> residual_matrix_part;
 
-                        // rho_s alpha^k u^{k+1} / dt
                         residual_matrix_part +=
                           (rho_s * a_pic / dt) * u_trial_j;
 
-                        // rho_s alpha^k (u^k · grad) u^{k+1}
+
                         residual_matrix_part +=
                           rho_s * a_pic * (grad_u_j * u_pic);
 
-                        // beta alpha^k u^{k+1}
+
                         residual_matrix_part += beta * a_pic * u_trial_j;
 
                         val += tau_u * (supg_test_u * residual_matrix_part);
 
-                        val += tau_u * rho_s * a_pic *
-                               (supg_test_u * (grad_u_j * u_pic));
+                        // val += tau_u * rho_s * a_pic *
+                        //        (supg_test_u * (grad_u_j * u_pic));
                       }
 
                     A(i, j) += val * JxW;
                   }
 
-                // Alpha columns: A_u_alpha
+                // A_u_alpha
                 // -------------------------------
                 for (unsigned int j = 0; j < n_dof; ++j)
                   {
@@ -1277,29 +1211,24 @@ public:
 
                     const double alpha_j = scratch.phi_a[q][j];
 
-                    // linearised convection
 
                     A(i, j) +=
                       -rho_s * alpha_j * (u_pic * (grad_v_i * u_pic)) * JxW;
 
-                    // Linearized drag alpha-coupling:
-                    // beta alpha^{k+1} (u_s^k - u_f) · v_i
+
                     A(i, j) += beta * alpha_j * (v_i * (u_pic - u_f)) * JxW;
                   }
 
 
 
-                // --------------------------------------------------
-                // RHS correction from convection product linearization:
-                //
-                // - rho_s ∫ alpha^k
-                //          (u^k ⊗ u^k) : grad(v_i) dΩ
-                // --------------------------------------------------
+                // RHS correction
+
                 F(i) += -rho_s * a_pic * (u_pic * (grad_v_i * u_pic)) * JxW;
 
 
                 // RHS drag:
                 F(i) += beta * a_pic * (v_i * u_pic) * JxW;
+
 
 
                 if (use_momentum_supg)
@@ -1340,13 +1269,9 @@ public:
                     const double div_alpha_u_pic =
                       (u_pic * grad_a_pic) + a_pic * div_u_pic;
 
-                    // --------------------------------------------------
-                    // Velocity columns: contribution from
-                    // div(alpha^k u^{k+1})
-                    //
-                    // div(alpha^k u_j)
-                    // = grad(alpha^k) · u_j + alpha^k div(u_j)
-                    // --------------------------------------------------
+
+                    // Velocity columns
+
                     for (unsigned int j = 0; j < n_dof; ++j)
                       {
                         if (scratch.components[j] >= dim)
@@ -1366,13 +1291,7 @@ public:
                           rho_s * gamma_gd * residual_u_part * div_v_i * JxW;
                       }
 
-                    // --------------------------------------------------
-                    // Alpha columns: contribution from
-                    // alpha^{k+1}/dt + div(alpha^{k+1} u^k)
-                    //
-                    // div(alpha_j u^k)
-                    // = u^k · grad(alpha_j) + alpha_j div(u^k)
-                    // --------------------------------------------------
+
                     for (unsigned int j = 0; j < n_dof; ++j)
                       {
                         if (scratch.components[j] != dim)
@@ -1393,13 +1312,16 @@ public:
 
                     // --------------------------------------------------
                     // RHS contribution:
-                    //
-                    // alpha^n/dt + div(alpha^k u^k)
-                    // --------------------------------------------------
+
                     F(i) +=
                       rho_s * gamma_gd *
                       ((scratch.old_alpha_values[q] / dt) + div_alpha_u_pic) *
                       div_v_i * JxW;
+                  }
+
+                if (parameters.source_term.enable)
+                  {
+                    F(i) += v_i * S_m * JxW;
                   }
               }
           }
@@ -1451,11 +1373,9 @@ public:
           {
             const unsigned int comp_i = scratch.components[i];
 
-            // --------------------------------------------------
+
             // Continuity boundary flux:
-            //
-            // + ∫ alpha^{k+1} (u^k · n) q_i dΓ
-            // --------------------------------------------------
+
             if (comp_i == dim)
               {
                 if (un <= 0.0)
@@ -1473,11 +1393,8 @@ public:
                     A(i, j) += q_i * alpha_j * un * JxW;
                   }
 
-                // --------------------------------------------------
-                // A_alpha_u coupling from continuity outlet flux:
-                //
-                // + ∫ q_i alpha^k (u^{k+1} · n) dΓ
-                // --------------------------------------------------
+
+                // A_alpha_u
                 for (unsigned int j = 0; j < n_dof; ++j)
                   {
                     if (scratch.components[j] >= dim)
@@ -1488,19 +1405,12 @@ public:
                     A(i, j) += q_i * a_pic * (u_trial_j * normal) * JxW;
                   }
 
-                // --------------------------------------------------
-                // RHS correction from continuity outlet flux linearization:
-                //
-                // + ∫ q_i alpha^k (u^k · n) dΓ
-                // --------------------------------------------------
+                // RHS correction
                 copy.local_rhs(i) += q_i * a_pic * un * JxW;
               }
 
             // --------------------------------------------------
             // Momentum boundary flux:
-            //
-            // + rho_s ∫ alpha^k (u^k · n)
-            //          v_i · u^{k+1} dΓ
             // --------------------------------------------------
             else if (comp_i < dim)
               {
@@ -1539,31 +1449,6 @@ public:
   }
 
 private:
-  // bool
-  // is_strong_or_wall_boundary(const types::boundary_id boundary_id) const
-  // {
-  //   const auto it = parameters.boundary_conditions.type.find(boundary_id);
-
-  //   if (it == parameters.boundary_conditions.type.end())
-  //     {
-  //       // Boundary not listed in the solid BC section:
-  //       // treat as natural outlet/do-nothing.
-  //       return false;
-  //     }
-
-  //   const auto type = it->second;
-
-  //   if (type == BoundaryConditions::BoundaryType::function ||
-  //       type == BoundaryConditions::BoundaryType::noslip ||
-  //       type == BoundaryConditions::BoundaryType::slip ||
-  //       type == BoundaryConditions::BoundaryType::periodic)
-  //     {
-  //       return true;
-  //     }
-
-  //   return false;
-  // }
-
   BoundaryConditions::BoundaryType
   get_boundary_type(const types::boundary_id boundary_id) const
   {
@@ -1627,7 +1512,7 @@ private:
 
 template <int dim>
 void
-SolidPhaseSolver<dim>::check_solid_mass_and_divergence() const
+SolidPhaseSolver<dim>::solid_phase_conservation_monitoring() const
 {
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar alpha(dim);
@@ -1669,6 +1554,15 @@ SolidPhaseSolver<dim>::check_solid_mass_and_divergence() const
   double local_alpha_res_min = std::numeric_limits<double>::max();
   double local_alpha_res_max = -std::numeric_limits<double>::max();
 
+  /*
+   * computes the volume integral of
+   *
+   *   d(alpha_s)/dt + div(alpha_s u_s)
+   *
+   */
+  double local_solid_phase_continuity           = 0.0;
+  double local_solid_phase_max_local_continuity = 0.0;
+
   double local_flux_total  = 0.0;
   double local_flux_wall   = 0.0;
   double local_flux_inlet  = 0.0;
@@ -1708,6 +1602,15 @@ SolidPhaseSolver<dim>::check_solid_mass_and_divergence() const
           const double alpha_res =
             (alpha_values[q] - alpha_old_values[q]) / dt +
             (u_values[q] * grad_alpha_values[q]) + alpha_values[q] * div_u;
+
+
+          const double solid_solid_phase_local_mass_source = alpha_res * JxW;
+
+          local_solid_phase_continuity += solid_solid_phase_local_mass_source;
+
+          local_solid_phase_max_local_continuity =
+            std::max(local_solid_phase_max_local_continuity,
+                     std::abs(solid_solid_phase_local_mass_source));
 
           local_mass_new += alpha_values[q] * JxW;
           local_mass_old += alpha_old_values[q] * JxW;
@@ -1788,8 +1691,7 @@ SolidPhaseSolver<dim>::check_solid_mass_and_divergence() const
               else if (boundary_type ==
                        BoundaryConditions::BoundaryType::periodic)
                 {
-                  // Periodic boundaries are paired internally.
-                  // Do not include them in the physical boundary-flux total.
+                  // Periodic boundaries should not contribute to net flux.
                 }
               else
                 {
@@ -1831,6 +1733,13 @@ SolidPhaseSolver<dim>::check_solid_mass_and_divergence() const
   const double alpha_res_rms =
     alpha_res_l2 / std::sqrt(std::max(volume, 1e-30));
 
+  const double solid_phase_continuity =
+    Utilities::MPI::sum(local_solid_phase_continuity, mpi_communicator);
+
+  const double solid_phase_max_local_continuity =
+    Utilities::MPI::max(local_solid_phase_max_local_continuity,
+                        mpi_communicator);
+
   const double flux_total =
     Utilities::MPI::sum(local_flux_total, mpi_communicator);
 
@@ -1867,6 +1776,10 @@ SolidPhaseSolver<dim>::check_solid_mass_and_divergence() const
         << "    outlet flux       = " << flux_outlet << "\n"
         << "  mass balance error  = " << mass_balance_error << "\n"
         << "  relative error      = " << mass_balance_relative << "\n"
+        << "  solid_phase volume continuity error = " << solid_phase_continuity
+        << "\n"
+        << "  solid_phase max local continuity contribution = "
+        << solid_phase_max_local_continuity << "\n"
         << "  div(u_s) min/max    = " << div_min << " , " << div_max << "\n"
         << "  div(u_s) L2/RMS     = " << div_l2 << " , " << div_rms << "\n"
         << "  alpha residual min/max = " << alpha_res_min << " , "
@@ -1979,8 +1892,14 @@ SolidPhaseSolver<dim>::assemble_system()
   locally_relevant_older_solution = older_solution;
   locally_relevant_older_solution.update_ghost_values();
 
-  const QGauss<dim>     cell_quadrature(order + 1);
-  const QGauss<dim - 1> face_quadrature(order + 1);
+  // const QGauss<dim>     cell_quadrature(order + 1);
+  // const QGauss<dim - 1> face_quadrature(order + 1);
+
+  const unsigned int n_q =
+    std::max<unsigned int>(order + 1, order + parameters.quadrature_extra);
+
+  const QGauss<dim>     cell_quadrature(n_q);
+  const QGauss<dim - 1> face_quadrature(n_q);
 
   SolidScratchData<dim> scratch_data(fe,
                                      cell_quadrature,
@@ -1990,6 +1909,14 @@ SolidPhaseSolver<dim>::assemble_system()
 
   AssertThrow(time_assembler != nullptr, ExcMessage("time_assembler is null."));
   AssertThrow(core_assembler != nullptr, ExcMessage("core_assembler is null."));
+
+  const double time = simulation_control->get_current_time();
+
+  if (parameters.source_term.enable)
+    {
+      parameters.source_term.function->set_time(time);
+    }
+
 
   WorkStream::run(dof_handler.begin_active(),
                   dof_handler.end(),
@@ -2064,15 +1991,9 @@ SolidPhaseSolver<dim>::solve()
 
 
 
-  // if (rebuild_preconditioner || !linear_preconditioners_are_initialized)
-  //   {
-  //     TimerOutput::Scope t_prec(computing_timer,
-  //                               "setup linear preconditioners");
-
   setup_linear_preconditioners();
 
-  //     linear_preconditioners_are_initialized = true;
-  //   }
+
 
   const bool use_amg = (parameters.amg_sweeps > 0);
 
@@ -2278,6 +2199,131 @@ SolidPhaseSolver<dim>::setup()
 }
 
 template <int dim>
+void
+SolidPhaseSolver<dim>::calculate_mms_error() const
+{
+  if (!parameters.analytical_solution.enable)
+    return;
+
+  if (timestep_number % parameters.analytical_solution.frequency != 0)
+    return;
+
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar alpha(dim);
+
+  const unsigned int n_q =
+    std::max<unsigned int>(order + 1, order + parameters.quadrature_extra);
+
+  const QGauss<dim> cell_quadrature(n_q);
+
+  FEValues<dim> fe_values(fe,
+                          cell_quadrature,
+                          update_values | update_quadrature_points |
+                            update_JxW_values);
+
+  const unsigned int n_q_points = cell_quadrature.size();
+
+  std::vector<Tensor<1, dim>> velocity_values(n_q_points);
+  std::vector<double>         alpha_values(n_q_points);
+
+  double local_alpha_l2    = 0.0;
+  double local_velocity_l2 = 0.0;
+
+  double local_alpha_linf    = 0.0;
+  double local_velocity_linf = 0.0;
+
+  const double time = simulation_control->get_current_time();
+
+  parameters.analytical_solution.function->set_time(time);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      fe_values.reinit(cell);
+
+      fe_values[velocities].get_function_values(locally_relevant_solution,
+                                                velocity_values);
+
+      fe_values[alpha].get_function_values(locally_relevant_solution,
+                                           alpha_values);
+
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          Vector<double> exact(dim + 1);
+
+          parameters.analytical_solution.function->vector_value(
+            fe_values.quadrature_point(q), exact);
+
+          Tensor<1, dim> velocity_exact;
+          for (unsigned int d = 0; d < dim; ++d)
+            velocity_exact[d] = exact[d];
+
+          const double alpha_exact = exact[dim];
+
+          const double JxW = fe_values.JxW(q);
+
+          const double alpha_error = alpha_values[q] - alpha_exact;
+
+          const Tensor<1, dim> velocity_error =
+            velocity_values[q] - velocity_exact;
+
+          local_alpha_l2 += alpha_error * alpha_error * JxW;
+
+          local_velocity_l2 += velocity_error.norm_square() * JxW;
+
+          local_alpha_linf = std::max(local_alpha_linf, std::abs(alpha_error));
+
+          local_velocity_linf =
+            std::max(local_velocity_linf, velocity_error.norm());
+        }
+    }
+
+  const double alpha_l2 =
+    std::sqrt(Utilities::MPI::sum(local_alpha_l2, mpi_communicator));
+
+  const double velocity_l2 =
+    std::sqrt(Utilities::MPI::sum(local_velocity_l2, mpi_communicator));
+
+  const double alpha_linf =
+    Utilities::MPI::max(local_alpha_linf, mpi_communicator);
+
+  const double velocity_linf =
+    Utilities::MPI::max(local_velocity_linf, mpi_communicator);
+
+  pcout << "solid MMS error:\n"
+        << "  alpha L2       = " << alpha_l2 << "\n"
+        << "  alpha Linf     = " << alpha_linf << "\n"
+        << "  velocity L2    = " << velocity_l2 << "\n"
+        << "  velocity Linf  = " << velocity_linf << std::endl;
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      const std::string filename = parameters.output_folder + "/" +
+                                   parameters.analytical_solution.filename;
+
+      const bool write_header = (timestep_number == 1);
+
+      std::ofstream file;
+
+      if (write_header)
+        file.open(filename, std::ios::out);
+      else
+        file.open(filename, std::ios::app);
+
+      if (write_header)
+        {
+          file << "time step alpha_L2 alpha_Linf velocity_L2 velocity_Linf\n";
+        }
+
+      file << std::setprecision(16) << time << " " << timestep_number << " "
+           << alpha_l2 << " " << alpha_linf << " " << velocity_l2 << " "
+           << velocity_linf << "\n";
+    }
+}
+
+template <int dim>
 bool
 SolidPhaseSolver<dim>::advance_one_step()
 {
@@ -2321,7 +2367,7 @@ SolidPhaseSolver<dim>::advance_one_step()
             << std::endl;
     };
 
-  const double omega = 0.3;
+  const double omega = parameters.picard_relaxation;
 
   for (unsigned int k = 0; k < max_picard; ++k)
     {
@@ -2411,11 +2457,6 @@ SolidPhaseSolver<dim>::advance_one_step()
           parameters.solver_verbose &&
           (k % 10 == 0 || picard_error < picard_tol || k == max_picard - 1))
         {
-          // pcout << "alpha bounds: min = " << global_min
-          //       << " max = " << global_max << std::endl;
-          // print_alpha_bounds(locally_relevant_solution.block(1),
-          //                    "alpha after relaxation");
-
           pcout << " Picard iteration " << k
                 << " relative error = " << picard_error << std::endl;
         }
@@ -2431,7 +2472,9 @@ SolidPhaseSolver<dim>::advance_one_step()
         }
     }
 
-  check_solid_mass_and_divergence();
+  solid_phase_conservation_monitoring();
+
+  calculate_mms_error();
 
   output_results(time);
 
