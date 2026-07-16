@@ -300,7 +300,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
  *
- * @return Direction of the rotation axis
+ * @return Direction of the rotation axis (x=0, y=1, z=2)
  */
 template <int dim>
 unsigned int
@@ -384,6 +384,7 @@ public:
    * the domain length in the direction of the rotation axis
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
+   * @param[in] rotation_axis_direction Direction of the rotation axis
    * @param[in] stage_heights Vector containing the unique vertex heights at the
    * mortar interface
    * @param[in] center_of_rotation Center of rotation of the inner domain

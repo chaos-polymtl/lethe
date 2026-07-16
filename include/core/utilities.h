@@ -985,20 +985,20 @@ delete_vtu_and_pvd_files(const std::string &output_path);
  * @brief Converts point to angle (in radians) based on rotation axis
  * @param[in] point Point in cartesian coordinates
  * @param[in] center_of_rotation Center of rotation
- * @param[in] rotation_axis Direction of rotation axis (0=x, 1=y, 2=z)
+ * @param[in] rotation_axis_direction Direction of rotation axis (0=x, 1=y, 2=z)
  *
  * @return Angle in the plane perpendicular to the rotation axis
  */
 template <int dim>
 inline double
 point_to_angle(const Point<dim>  &point,
-               const Point<dim>  &center_of_rotation = Point<dim>(),
-               const unsigned int rotation_axis      = 2)
+               const Point<dim>  &center_of_rotation      = Point<dim>(),
+               const unsigned int rotation_axis_direction = 2)
 {
   if constexpr (dim == 3)
     {
-      const unsigned int coord1 = (rotation_axis + 1) % 3;
-      const unsigned int coord2 = (rotation_axis + 2) % 3;
+      const unsigned int coord1 = (rotation_axis_direction + 1) % 3;
+      const unsigned int coord2 = (rotation_axis_direction + 2) % 3;
 
       return std::fmod(std::atan2(point[coord2] - center_of_rotation[coord2],
                                   point[coord1] - center_of_rotation[coord1]) +
@@ -1017,7 +1017,7 @@ point_to_angle(const Point<dim>  &point,
  * @param[in] radius Radial distance
  * @param[in] angle_rad Angle (in radians)
  * @param[in] center_of_rotation Center of rotation
- * @param[in] rotation_axis Direction of rotation axis (0=x, 1=y, 2=z)
+ * @param[in] rotation_axis_direction Direction of rotation axis (0=x, 1=y, 2=z)
  *
  * @return point Point in cartesian coordinates
  */
@@ -1025,19 +1025,20 @@ template <int dim>
 inline Point<dim>
 radius_to_point(const double       radius,
                 const double       angle_rad,
-                const Point<dim>  &center_of_rotation = Point<dim>(),
-                const unsigned int rotation_axis      = 2)
+                const Point<dim>  &center_of_rotation      = Point<dim>(),
+                const unsigned int rotation_axis_direction = 2)
 {
   Point<dim> point;
 
   if constexpr (dim == 3)
     {
-      const unsigned int coord1 = (rotation_axis + 1) % 3;
-      const unsigned int coord2 = (rotation_axis + 2) % 3;
+      const unsigned int coord1 = (rotation_axis_direction + 1) % 3;
+      const unsigned int coord2 = (rotation_axis_direction + 2) % 3;
 
       point[coord1] = radius * std::cos(angle_rad) + center_of_rotation[coord1];
       point[coord2] = radius * std::sin(angle_rad) + center_of_rotation[coord2];
-      point[rotation_axis] = center_of_rotation[rotation_axis];
+      point[rotation_axis_direction] =
+        center_of_rotation[rotation_axis_direction];
     }
   else
     {
