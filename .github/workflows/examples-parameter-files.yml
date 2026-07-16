@@ -48,6 +48,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Restore/save the compiler cache to speed up recompilation
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ccache-${{ github.workflow }}-${{ matrix.dealii_version }}
+          max-size: 2G
+
       #
       # Warnings
       #
@@ -56,7 +63,8 @@ jobs:
           ls
           mkdir build-parameter-files
           cd build-parameter-files
-          cmake ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/ -G Ninja
+          cmake ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/ -G Ninja \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
           ninja install -j${{ env.COMPILE_JOBS }}
           cd ../inst/bin
           install_dir=$(pwd)
