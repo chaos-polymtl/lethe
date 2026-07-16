@@ -204,6 +204,148 @@ private:
 };
 
 
+struct SolidKTGFValues
+{
+  double radial_distribution;
+  double particle_pressure;
+  double particle_pressure_derivative;
+  double shear_viscosity;
+  double bulk_viscosity;
+  double conductivity;
+  double collisional_dissipation_coefficient;
+};
+
+
+template <int dim>
+SolidKTGFValues
+evaluate_solid_ktgf(const SolidPhaseParameters<dim> &parameters,
+                    const double                     alpha,
+                    const double                     theta,
+                    const double                     velocity_divergence)
+{
+  const double rho_s = parameters.rho_s;
+  const double d_p   = parameters.particle_diameter;
+  const double e_p   = parameters.restitution_coefficient;
+  const double a_max = parameters.alpha_max;
+
+
+  AssertThrow(std::isfinite(alpha),
+              ExcMessage("KTGF received non-finite alpha."));
+
+  AssertThrow(std::isfinite(theta),
+              ExcMessage("KTGF received non-finite theta."));
+
+  AssertThrow(theta >= 0.0,
+              ExcMessage(
+                "KTGF received negative granular temperature: theta = " +
+                std::to_string(theta)));
+
+  AssertThrow(alpha < parameters.alpha_max,
+              ExcMessage("KTGF received alpha >= alpha_max: alpha = " +
+                         std::to_string(alpha) + ", alpha_max = " +
+                         std::to_string(parameters.alpha_max)));
+
+  AssertThrow(parameters.particle_diameter > 0.0,
+              ExcMessage("Particle diameter must be positive."));
+
+  AssertThrow(alpha >= 0.0,
+              ExcMessage(
+                "KTGF received negative solid volume fraction: alpha = " +
+                std::to_string(alpha)));
+
+  AssertThrow(parameters.alpha_max > 0.0,
+              ExcMessage("alpha_max must be positive."));
+
+  AssertThrow(parameters.rho_s > 0.0,
+              ExcMessage("Solid density must be positive."));
+
+  AssertThrow(parameters.restitution_coefficient >= 0.0 &&
+                parameters.restitution_coefficient <= 1.0,
+              ExcMessage(
+                "Restitution coefficient must be between zero and one."));
+
+  AssertThrow(std::isfinite(velocity_divergence),
+              ExcMessage(
+                "KTGF received non-finite solid velocity divergence."));
+
+
+  const double r           = std::cbrt(alpha / a_max);
+  const double one_minus_r = 1.0 - r;
+  const double g0          = 1.0 / one_minus_r;
+
+  AssertThrow(one_minus_r > 0.0,
+              ExcMessage("Invalid radial-distribution denominator. "
+                         "alpha must remain below alpha_max."));
+
+  const double sqrt_theta_over_pi = std::sqrt(theta / numbers::PI);
+  const double sqrt_theta_pi      = std::sqrt(theta * numbers::PI);
+
+  SolidKTGFValues values;
+  values.radial_distribution = g0;
+
+  values.particle_pressure = rho_s * alpha * theta + 2.0 * rho_s * alpha *
+                                                       alpha * g0 * theta *
+                                                       (1.0 + e_p);
+
+  /*
+   * G = partial p_s / partial alpha at fixed theta.
+   * The last term is written in an algebraically equivalent form that is
+   * finite at alpha = 0; no alpha clipping is introduced.
+   */
+  const double alpha_squared_dg0_dalpha =
+    a_max * r * r * r * r / (3.0 * one_minus_r * one_minus_r);
+
+  values.particle_pressure_derivative =
+    rho_s * theta *
+    (1.0 + 4.0 * alpha * g0 * (1.0 + e_p) +
+     2.0 * (1.0 + e_p) * alpha_squared_dg0_dalpha);
+
+  const double mu_collisional = (4.0 / 5.0) * alpha * alpha * rho_s * d_p * g0 *
+                                (1.0 + e_p) * sqrt_theta_over_pi;
+
+  const double kinetic_factor = 1.0 + (4.0 / 5.0) * (1.0 + e_p) * alpha * g0;
+
+  const double mu_kinetic = 10.0 * rho_s * d_p * sqrt_theta_pi /
+                            (96.0 * g0 * (1.0 + e_p)) * kinetic_factor *
+                            kinetic_factor;
+
+  values.shear_viscosity = mu_collisional + mu_kinetic;
+
+  values.bulk_viscosity = (4.0 / 3.0) * alpha * alpha * rho_s * d_p * g0 *
+                          (1.0 + e_p) * sqrt_theta_over_pi;
+
+  const double conductivity_factor =
+    1.0 + (6.0 / 5.0) * g0 * alpha * (1.0 + e_p);
+
+  values.conductivity =
+    150.0 * rho_s * d_p * sqrt_theta_pi / (384.0 * g0 * (1.0 + e_p)) *
+      conductivity_factor * conductivity_factor +
+    2.0 * alpha * alpha * rho_s * d_p * g0 * (1.0 + e_p) * sqrt_theta_over_pi;
+
+  values.collisional_dissipation_coefficient =
+    3.0 * (1.0 - e_p * e_p) * rho_s * alpha * alpha * g0 *
+    ((4.0 / d_p) * sqrt_theta_over_pi - velocity_divergence);
+
+  return values;
+}
+
+
+template <int dim>
+Tensor<2, dim>
+make_solid_stress(const double          mu_s,
+                  const double          lambda_s,
+                  const Tensor<2, dim> &velocity_gradient)
+{
+  Tensor<2, dim> identity;
+  for (unsigned int d = 0; d < dim; ++d)
+    identity[d][d] = 1.0;
+
+  const double div_u = trace(velocity_gradient);
+
+  return mu_s * (velocity_gradient + transpose(velocity_gradient)) +
+         (lambda_s - (2.0 / 3.0) * mu_s) * div_u * identity;
+}
+
 
 template <int dim>
 SolidPhaseSolver<dim>::SolidPhaseSolver(
@@ -216,8 +358,10 @@ SolidPhaseSolver<dim>::SolidPhaseSolver(
   , simulation_control(simulation_control_in)
   , order(parameters.order)
   , fe(FE_Q<dim>(order), dim, FE_Q<dim>(order), 1)
+  , theta_fe(order)
   , triangulation(tria)
   , dof_handler(triangulation)
+  , theta_dof_handler(triangulation)
   , rho_s(parameters.rho_s)
   , beta(parameters.beta)
   , timestep_number(0)
@@ -411,10 +555,105 @@ SolidPhaseSolver<dim>::setup_dofs()
   picard_solution_ptr = nullptr;
 }
 
+template <int dim>
+void
+SolidPhaseSolver<dim>::setup_granular_temperature_dofs()
+{
+  if (parameters.verbose_assembly)
+    pcout << "setting up granular-temperature dofs...\n" << std::endl;
+
+  TimerOutput::Scope t(computing_timer, "theta setup");
+
+  theta_dof_handler.distribute_dofs(theta_fe);
+
+  theta_locally_owned = theta_dof_handler.locally_owned_dofs();
+  theta_locally_relevant =
+    DoFTools::extract_locally_relevant_dofs(theta_dof_handler);
+
+  pcout << "   Granular-temperature degrees of freedom: "
+        << theta_dof_handler.n_dofs() << std::endl;
+
+  theta_constraints.clear();
+  theta_constraints.reinit(theta_locally_owned, theta_locally_relevant);
+  DoFTools::make_hanging_node_constraints(theta_dof_handler, theta_constraints);
+
+  const double time = simulation_control->get_current_time();
+
+  for (const auto &[id, type] : parameters.boundary_conditions.type)
+    {
+      if (type == BoundaryConditions::BoundaryType::function)
+        {
+          auto &theta_function =
+            *parameters.boundary_conditions.theta_functions.at(id);
+          theta_function.set_time(time);
+
+          VectorTools::interpolate_boundary_values(theta_dof_handler,
+                                                   id,
+                                                   theta_function,
+                                                   theta_constraints);
+        }
+      else if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            theta_dof_handler,
+            id,
+            parameters.boundary_conditions.periodic_neighbor_id.at(id),
+            parameters.boundary_conditions.periodic_direction.at(id),
+            theta_constraints);
+        }
+      else if (type == BoundaryConditions::BoundaryType::noslip ||
+               type == BoundaryConditions::BoundaryType::slip ||
+               type == BoundaryConditions::BoundaryType::outlet)
+        {
+          // Homogeneous natural granular-temperature flux.
+        }
+      else
+        {
+          AssertThrow(false,
+                      ExcMessage(
+                        "Unsupported granular-temperature boundary "
+                        "condition for boundary ID " +
+                        std::to_string(static_cast<unsigned int>(id))));
+        }
+    }
+
+  theta_constraints.close();
+
+  TrilinosWrappers::SparsityPattern theta_sparsity(theta_locally_owned,
+                                                   theta_locally_owned,
+                                                   theta_locally_relevant,
+                                                   mpi_communicator);
+
+  DoFTools::make_sparsity_pattern(theta_dof_handler,
+                                  theta_sparsity,
+                                  theta_constraints,
+                                  false,
+                                  Utilities::MPI::this_mpi_process(
+                                    mpi_communicator));
+
+  theta_sparsity.compress();
+  theta_matrix.reinit(theta_sparsity);
+
+  theta_solution.reinit(theta_locally_owned, mpi_communicator);
+  theta_old_solution.reinit(theta_locally_owned, mpi_communicator);
+  theta_picard_solution.reinit(theta_locally_owned, mpi_communicator);
+  theta_rhs.reinit(theta_locally_owned, mpi_communicator);
+
+  locally_relevant_theta_solution.reinit(theta_locally_owned,
+                                         theta_locally_relevant,
+                                         mpi_communicator);
+  locally_relevant_theta_old_solution.reinit(theta_locally_owned,
+                                             theta_locally_relevant,
+                                             mpi_communicator);
+  locally_relevant_theta_picard_solution.reinit(theta_locally_owned,
+                                                theta_locally_relevant,
+                                                mpi_communicator);
+}
+
 
 template <int dim>
 void
-SolidPhaseSolver<dim>::set_fluid_velocity_field(
+SolidPhaseSolver<dim>::set_fluid_solution_field(
   const DoFHandler<dim>               &fluid_dh,
   const Mapping<dim>                  &fluid_mapping,
   const TrilinosWrappers::MPI::Vector &fluid_solution)
@@ -455,11 +694,13 @@ class SolidScratchData
 {
 public:
   SolidScratchData(const FiniteElement<dim>  &solid_fe_in,
+                   const FiniteElement<dim>  &theta_fe_in,
                    const Quadrature<dim>     &cell_quadrature_in,
                    const Quadrature<dim - 1> &face_quadrature_in,
                    const Mapping<dim>        &fluid_mapping_in,
                    const FiniteElement<dim>  &fluid_fe_in)
     : solid_fe(&solid_fe_in)
+    , theta_fe(&theta_fe_in)
     , cell_quadrature(&cell_quadrature_in)
     , face_quadrature(&face_quadrature_in)
     , fluid_mapping(&fluid_mapping_in)
@@ -472,6 +713,7 @@ public:
                      face_quadrature_in,
                      update_values | update_normal_vectors |
                        update_quadrature_points | update_JxW_values)
+    , theta_fe_values(theta_fe_in, cell_quadrature_in, update_values)
     , fluid_fe_values(fluid_mapping_in,
                       fluid_fe_in,
                       cell_quadrature_in,
@@ -505,10 +747,12 @@ public:
     , picard_velocity_divergences(n_q_points, 0.0)
     , picard_alpha_values(n_q_points)
     , picard_alpha_gradients(n_q_points)
+    , picard_theta_values(n_q_points)
 
     , fluid_velocity_values(n_q_points)
     , fluid_velocity_gradients(n_q_points)
     , fluid_velocity_divergences(n_q_points, 0.0)
+    , fluid_pressure_gradients(n_q_points)
 
     // Face data
     , face_JxW(n_face_q_points)
@@ -527,6 +771,7 @@ public:
 
   SolidScratchData(const SolidScratchData<dim> &other)
     : solid_fe(other.solid_fe)
+    , theta_fe(other.theta_fe)
     , cell_quadrature(other.cell_quadrature)
     , face_quadrature(other.face_quadrature)
     , fluid_mapping(other.fluid_mapping)
@@ -539,6 +784,7 @@ public:
                      *face_quadrature,
                      update_values | update_normal_vectors |
                        update_quadrature_points | update_JxW_values)
+    , theta_fe_values(*theta_fe, *cell_quadrature, update_values)
     , fluid_fe_values(*fluid_mapping,
                       *fluid_fe,
                       *cell_quadrature,
@@ -572,10 +818,12 @@ public:
     , picard_velocity_divergences(n_q_points, 0.0)
     , picard_alpha_values(n_q_points)
     , picard_alpha_gradients(n_q_points)
+    , picard_theta_values(n_q_points)
 
     , fluid_velocity_values(n_q_points)
     , fluid_velocity_gradients(n_q_points)
     , fluid_velocity_divergences(n_q_points, 0.0)
+    , fluid_pressure_gradients(n_q_points)
 
     // Face data
     , face_JxW(n_face_q_points)
@@ -591,16 +839,20 @@ public:
 
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
+         const typename DoFHandler<dim>::active_cell_iterator &theta_cell,
          const typename DoFHandler<dim>::active_cell_iterator &fluid_cell,
          const TrilinosWrappers::MPI::BlockVector             &old_solution,
          const TrilinosWrappers::MPI::BlockVector             &older_solution,
          const TrilinosWrappers::MPI::BlockVector             &picard_solution,
+         const TrilinosWrappers::MPI::Vector                  &theta_solution,
          const TrilinosWrappers::MPI::Vector                  &fluid_solution,
          const FEValuesExtractors::Vector                     &velocities,
          const FEValuesExtractors::Scalar                     &alpha,
-         const FEValuesExtractors::Vector                     &fluid_velocities)
+         const FEValuesExtractors::Vector                     &fluid_velocities,
+         const FEValuesExtractors::Scalar                     &fluid_pressure)
   {
     fe_values.reinit(cell);
+    theta_fe_values.reinit(theta_cell);
     fluid_fe_values.reinit(fluid_cell);
     cell_diameter = cell->diameter();
 
@@ -629,12 +881,17 @@ public:
     fe_values[alpha].get_function_gradients(picard_solution,
                                             picard_alpha_gradients);
 
-    // Fluid velocity field
+    theta_fe_values.get_function_values(theta_solution, picard_theta_values);
+
+    // Fluid velocity and pressure fields
     fluid_fe_values[fluid_velocities].get_function_values(
       fluid_solution, fluid_velocity_values);
 
     fluid_fe_values[fluid_velocities].get_function_gradients(
       fluid_solution, fluid_velocity_gradients);
+
+    fluid_fe_values[fluid_pressure].get_function_gradients(
+      fluid_solution, fluid_pressure_gradients);
 
     for (unsigned int q = 0; q < n_q_points; ++q)
       {
@@ -687,6 +944,7 @@ public:
   }
 
   const FiniteElement<dim>  *solid_fe;
+  const FiniteElement<dim>  *theta_fe;
   const Quadrature<dim>     *cell_quadrature;
   const Quadrature<dim - 1> *face_quadrature;
   const Mapping<dim>        *fluid_mapping;
@@ -694,6 +952,7 @@ public:
 
   FEValues<dim>     fe_values;
   FEFaceValues<dim> fe_face_values;
+  FEValues<dim>     theta_fe_values;
   FEValues<dim>     fluid_fe_values;
 
   unsigned int n_q_points;
@@ -729,10 +988,12 @@ public:
   std::vector<double>         picard_velocity_divergences;
   std::vector<double>         picard_alpha_values;
   std::vector<Tensor<1, dim>> picard_alpha_gradients;
+  std::vector<double>         picard_theta_values;
 
   std::vector<Tensor<1, dim>> fluid_velocity_values;
   std::vector<Tensor<2, dim>> fluid_velocity_gradients;
   std::vector<double>         fluid_velocity_divergences;
+  std::vector<Tensor<1, dim>> fluid_pressure_gradients;
 
   // Face data
   std::vector<double>         face_JxW;
@@ -1043,6 +1304,20 @@ public:
         // if constexpr (dim == 3)
         //   u_const[2] = 0.0;
 
+        const double theta_pic = scratch.picard_theta_values[q];
+
+        const Tensor<1, dim> &grad_p = scratch.fluid_pressure_gradients[q];
+
+        const double div_u_pic = scratch.picard_velocity_divergences[q];
+
+        const SolidKTGFValues ktgf =
+          evaluate_solid_ktgf(parameters, a_pic, theta_pic, div_u_pic);
+
+        const Tensor<2, dim> tau_pic =
+          make_solid_stress<dim>(ktgf.shear_viscosity,
+                                 ktgf.bulk_viscosity,
+                                 scratch.picard_velocity_gradients[q]);
+
 
 
         for (unsigned int i = 0; i < n_dof; ++i)
@@ -1179,6 +1454,14 @@ public:
 
                     val += beta * a_pic * (v_i * u_trial_j);
 
+                    const Tensor<2, dim> tau_trial =
+                      make_solid_stress<dim>(ktgf.shear_viscosity,
+                                             ktgf.bulk_viscosity,
+                                             grad_u_j);
+
+                    // Solid stress: A_uu^tau
+                    val += a_pic * scalar_product(tau_trial, grad_v_i);
+
                     if (use_momentum_supg)
                       {
                         Tensor<1, dim> residual_matrix_part;
@@ -1211,12 +1494,30 @@ public:
 
                     const double alpha_j = scratch.phi_a[q][j];
 
+                    const Tensor<1, dim> &grad_alpha_j =
+                      scratch.grad_phi_a[q][j];
+
 
                     A(i, j) +=
                       -rho_s * alpha_j * (u_pic * (grad_v_i * u_pic)) * JxW;
 
 
                     A(i, j) += beta * alpha_j * (v_i * (u_pic - u_f)) * JxW;
+
+                    // Solid-stress alpha coupling: A_u_alpha^tau
+                    A(i, j) +=
+                      alpha_j * scalar_product(tau_pic, grad_v_i) * JxW;
+
+                    // Shared pressure: A_u_alpha^p
+                    A(i, j) += alpha_j * (v_i * grad_p) * JxW;
+
+                    // Particle pressure: A_u_alpha^p_s
+                    A(i, j) += ktgf.particle_pressure_derivative *
+                               (v_i * grad_alpha_j) * JxW;
+
+                    // Gravity: A_u_alpha^g
+                    A(i, j) +=
+                      -rho_s * alpha_j * (v_i * parameters.gravity) * JxW;
                   }
 
 
@@ -1228,6 +1529,9 @@ public:
 
                 // RHS drag:
                 F(i) += beta * a_pic * (v_i * u_pic) * JxW;
+
+                // Solid-stress Picard correction: b_u^tau
+                F(i) += a_pic * scalar_product(tau_pic, grad_v_i) * JxW;
 
 
 
@@ -1355,17 +1659,17 @@ public:
 
         const double un = u_pic * normal;
 
-        Tensor<1, dim> u_const;
+        // Tensor<1, dim> u_const;
 
-        u_const[0] = 1.0;
+        // u_const[0] = 1.0;
 
-        if constexpr (dim >= 2)
-          u_const[1] = 0.0;
+        // if constexpr (dim >= 2)
+        //   u_const[1] = 0.0;
 
-        if constexpr (dim == 3)
-          u_const[2] = 0.0;
+        // if constexpr (dim == 3)
+        //   u_const[2] = 0.0;
 
-        const double un_const = u_const * normal;
+        // const double un_const = u_const * normal;
 
 
 
@@ -1825,6 +2129,13 @@ SolidPhaseSolver<dim>::assemble_local_system(
   const FEValuesExtractors::Vector solid_velocities(0);
   const FEValuesExtractors::Scalar solid_alpha(dim);
   const FEValuesExtractors::Vector fluid_velocities(0);
+  const FEValuesExtractors::Scalar fluid_pressure(dim);
+
+  typename DoFHandler<dim>::active_cell_iterator theta_cell(
+    &(theta_dof_handler.get_triangulation()),
+    cell->level(),
+    cell->index(),
+    &theta_dof_handler);
 
   typename DoFHandler<dim>::active_cell_iterator fluid_cell(
     &(fluid_dof_handler_ptr->get_triangulation()),
@@ -1833,14 +2144,17 @@ SolidPhaseSolver<dim>::assemble_local_system(
     fluid_dof_handler_ptr);
 
   scratch.reinit(cell,
+                 theta_cell,
                  fluid_cell,
                  locally_relevant_old_solution,
                  locally_relevant_older_solution,
                  *picard_solution_ptr,
+                 locally_relevant_theta_solution,
                  *fluid_solution_ptr,
                  solid_velocities,
                  solid_alpha,
-                 fluid_velocities);
+                 fluid_velocities,
+                 fluid_pressure);
 
   time_assembler->assemble(scratch, copy);
   core_assembler->assemble_cell(scratch, copy);
@@ -1902,6 +2216,7 @@ SolidPhaseSolver<dim>::assemble_system()
   const QGauss<dim - 1> face_quadrature(n_q);
 
   SolidScratchData<dim> scratch_data(fe,
+                                     theta_fe,
                                      cell_quadrature,
                                      face_quadrature,
                                      *fluid_mapping_ptr,
@@ -1928,6 +2243,488 @@ SolidPhaseSolver<dim>::assemble_system()
 
   system_matrix.compress(VectorOperation::add);
   system_rhs.compress(VectorOperation::add);
+}
+
+
+template <int dim>
+void
+SolidPhaseSolver<dim>::assemble_granular_temperature()
+{
+  TimerOutput::Scope t(computing_timer, "granular temperature assembly");
+
+  static bool printed_theta_assembly_version = false;
+
+  if (!printed_theta_assembly_version)
+    {
+      pcout << "Theta assembly: implicit collisional dissipation, "
+            << "implicit viscous loss, explicit production" << std::endl;
+
+      printed_theta_assembly_version = true;
+    }
+
+  AssertThrow(simulation_control->get_assembly_method() ==
+                  Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+                simulation_control->get_assembly_method() ==
+                  Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+              ExcMessage(
+                "The granular-temperature implementation currently supports "
+                "BDF1 only."));
+
+  theta_matrix = 0.0;
+  theta_rhs    = 0.0;
+
+  const double dt      = simulation_control->get_time_step();
+  const double c_theta = 1.5 * rho_s;
+
+  AssertThrow(dt > 0.0,
+              ExcMessage(
+                "The granular-temperature time step must be positive."));
+
+  const unsigned int n_q =
+    std::max<unsigned int>(order + 1, order + parameters.quadrature_extra);
+
+  const QGauss<dim>     cell_quadrature(n_q);
+  const QGauss<dim - 1> face_quadrature(n_q);
+
+  FEValues<dim> solid_fe_values(
+    fe, cell_quadrature, update_values | update_gradients | update_JxW_values);
+
+  FEValues<dim> theta_fe_values(theta_fe,
+                                cell_quadrature,
+                                update_values | update_gradients |
+                                  update_JxW_values);
+
+  FEFaceValues<dim> solid_face_values(fe,
+                                      face_quadrature,
+                                      update_values | update_normal_vectors |
+                                        update_JxW_values);
+
+  FEFaceValues<dim> theta_face_values(theta_fe,
+                                      face_quadrature,
+                                      update_values | update_JxW_values);
+
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar alpha(dim);
+
+  const unsigned int solid_n_q = cell_quadrature.size();
+
+  const unsigned int face_n_q = face_quadrature.size();
+
+  const unsigned int theta_dofs_per_cell = theta_fe.n_dofs_per_cell();
+
+  std::vector<Tensor<1, dim>> picard_velocity_values(solid_n_q);
+
+  std::vector<Tensor<2, dim>> picard_velocity_gradients(solid_n_q);
+
+  std::vector<double> picard_alpha_values(solid_n_q);
+
+  std::vector<double> old_alpha_values(solid_n_q);
+
+  std::vector<double> picard_theta_values(solid_n_q);
+
+  std::vector<double> old_theta_values(solid_n_q);
+
+  std::vector<Tensor<1, dim>> face_picard_velocity_values(face_n_q);
+
+  std::vector<double> face_picard_alpha_values(face_n_q);
+
+  FullMatrix<double> local_matrix(theta_dofs_per_cell, theta_dofs_per_cell);
+
+  Vector<double> local_rhs(theta_dofs_per_cell);
+
+  std::vector<types::global_dof_index> local_dof_indices(theta_dofs_per_cell);
+
+
+  // diagnostics
+  double local_gamma_bracket_min = std::numeric_limits<double>::infinity();
+
+  double local_gamma_bracket_max = -std::numeric_limits<double>::infinity();
+
+  double local_C_gamma_min = std::numeric_limits<double>::infinity();
+
+  double local_C_gamma_max = -std::numeric_limits<double>::infinity();
+
+  double local_div_u_min = std::numeric_limits<double>::infinity();
+
+  double local_div_u_max = -std::numeric_limits<double>::infinity();
+
+  double local_theta_pic_min = std::numeric_limits<double>::infinity();
+
+  double local_theta_pic_max = -std::numeric_limits<double>::infinity();
+  // diagnostics
+
+  for (const auto &solid_cell : dof_handler.active_cell_iterators())
+    {
+      if (!solid_cell->is_locally_owned())
+        continue;
+
+
+      typename DoFHandler<dim>::active_cell_iterator theta_cell(
+        &(theta_dof_handler.get_triangulation()),
+        solid_cell->level(),
+        solid_cell->index(),
+        &theta_dof_handler);
+
+      solid_fe_values.reinit(solid_cell);
+      theta_fe_values.reinit(theta_cell);
+
+      /*
+       *
+       * alpha_s^k, u_s^k and grad(u_s^k).
+       */
+      solid_fe_values[velocities].get_function_values(
+        locally_relevant_picard_solution, picard_velocity_values);
+
+      solid_fe_values[velocities].get_function_gradients(
+        locally_relevant_picard_solution, picard_velocity_gradients);
+
+      solid_fe_values[alpha].get_function_values(
+        locally_relevant_picard_solution, picard_alpha_values);
+
+      /*
+       * Previous-time volume fraction alpha_s^n.
+       */
+      solid_fe_values[alpha].get_function_values(locally_relevant_old_solution,
+                                                 old_alpha_values);
+
+      /*
+       * Theta_s^k and Theta_s^n.
+       */
+      theta_fe_values.get_function_values(
+        locally_relevant_theta_picard_solution, picard_theta_values);
+
+      theta_fe_values.get_function_values(locally_relevant_theta_old_solution,
+                                          old_theta_values);
+
+      local_matrix = 0.0;
+      local_rhs    = 0.0;
+
+      for (unsigned int q = 0; q < solid_n_q; ++q)
+        {
+          const double JxW = theta_fe_values.JxW(q);
+
+          const double alpha_pic = picard_alpha_values[q];
+
+          const double alpha_old = old_alpha_values[q];
+
+          const double theta_pic = picard_theta_values[q];
+
+          const double theta_old = old_theta_values[q];
+
+          const Tensor<1, dim> &u_pic = picard_velocity_values[q];
+
+          const Tensor<2, dim> &grad_u_pic = picard_velocity_gradients[q];
+
+          const double div_u_pic = trace(grad_u_pic);
+
+          /*
+           * alpha_s^k, Theta_s^k and div(u_s^k).
+           */
+          const SolidKTGFValues ktgf =
+            evaluate_solid_ktgf(parameters, alpha_pic, theta_pic, div_u_pic);
+
+
+          const double gamma_bracket = (4.0 / parameters.particle_diameter) *
+                                         std::sqrt(theta_pic / numbers::PI) -
+                                       div_u_pic;
+
+          const double C_gamma = ktgf.collisional_dissipation_coefficient;
+
+          local_gamma_bracket_min =
+            std::min(local_gamma_bracket_min, gamma_bracket);
+
+          local_gamma_bracket_max =
+            std::max(local_gamma_bracket_max, gamma_bracket);
+
+          local_C_gamma_min = std::min(local_C_gamma_min, C_gamma);
+
+          local_C_gamma_max = std::max(local_C_gamma_max, C_gamma);
+
+          local_div_u_min = std::min(local_div_u_min, div_u_pic);
+
+          local_div_u_max = std::max(local_div_u_max, div_u_pic);
+
+          local_theta_pic_min = std::min(local_theta_pic_min, theta_pic);
+
+          local_theta_pic_max = std::max(local_theta_pic_max, theta_pic);
+
+          /*
+           * Solid stress tau_s^k.
+           */
+          const Tensor<2, dim> tau_pic =
+            make_solid_stress<dim>(ktgf.shear_viscosity,
+                                   ktgf.bulk_viscosity,
+                                   grad_u_pic);
+
+          /*
+           * P_Theta^k =
+           * (-p_s^k I + tau_s^k) : grad(u_s^k).
+           */
+          Tensor<2, dim> production_stress = tau_pic;
+
+          for (unsigned int d = 0; d < dim; ++d)
+            {
+              production_stress[d][d] -= ktgf.particle_pressure;
+            }
+
+          const double production =
+            scalar_product(production_stress, grad_u_pic);
+
+
+          const double C_viscous = 3.0 * alpha_pic * beta;
+
+
+          // const double damping_coefficient = C_gamma + C_viscous;
+
+          AssertThrow(std::isfinite(ktgf.conductivity),
+                      ExcMessage("Non-finite granular-temperature "
+                                 "conductivity."));
+
+          AssertThrow(std::isfinite(production),
+                      ExcMessage("Non-finite granular-energy "
+                                 "production term."));
+
+          AssertThrow(std::isfinite(C_gamma),
+                      ExcMessage("Non-finite collisional-dissipation "
+                                 "coefficient."));
+
+          AssertThrow(std::isfinite(C_viscous),
+                      ExcMessage("Non-finite viscous-loss "
+                                 "coefficient."));
+
+          // AssertThrow(std::isfinite(damping_coefficient),
+          //             ExcMessage("Non-finite granular-temperature "
+          //                        "damping coefficient."));
+
+          for (unsigned int i = 0; i < theta_dofs_per_cell; ++i)
+            {
+              const double chi_i = theta_fe_values.shape_value(i, q);
+
+              const Tensor<1, dim> grad_chi_i =
+                theta_fe_values.shape_grad(i, q);
+
+              for (unsigned int j = 0; j < theta_dofs_per_cell; ++j)
+                {
+                  const double chi_j = theta_fe_values.shape_value(j, q);
+
+                  const Tensor<1, dim> grad_chi_j =
+                    theta_fe_values.shape_grad(j, q);
+
+                  /*
+
+                   * (c_theta alpha_s^k / dt)
+                   * chi_i chi_j.
+                   */
+                  local_matrix(i, j) +=
+                    (c_theta * alpha_pic / dt) * chi_i * chi_j * JxW;
+
+                  /*
+
+
+                   * c_theta alpha_s^k
+                   * Theta_s^{k+1}
+                   * u_s^k . grad(chi_i).
+                   */
+                  local_matrix(i, j) +=
+                    -c_theta * alpha_pic * chi_j * (u_pic * grad_chi_i) * JxW;
+
+                  /*
+
+                   * kappa_s^k
+                   * grad(chi_i).grad(chi_j).
+                   */
+                  local_matrix(i, j) +=
+                    ktgf.conductivity * (grad_chi_i * grad_chi_j) * JxW;
+
+                  local_matrix(i, j) += C_gamma * chi_i * chi_j * JxW;
+
+
+                  /*
+
+                   * (C_gamma^k +
+                   *  3 alpha_s^k beta^k)
+                   * chi_i chi_j.
+                   */
+                  local_matrix(i, j) += C_viscous * chi_i * chi_j * JxW;
+                }
+
+
+
+              /*
+
+               * (c_theta / dt)
+               * chi_i alpha_s^n Theta_s^n.
+               */
+              local_rhs(i) +=
+                (c_theta / dt) * chi_i * alpha_old * theta_old * JxW;
+
+              /*
+
+               *
+               * chi_i P_Theta^k.
+               */
+              local_rhs(i) += chi_i * production * JxW;
+            }
+        }
+
+
+      for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
+           ++face)
+        {
+          if (!solid_cell->face(face)->at_boundary())
+            continue;
+
+          const types::boundary_id boundary_id =
+            solid_cell->face(face)->boundary_id();
+
+          const auto boundary_it =
+            parameters.boundary_conditions.type.find(boundary_id);
+
+          AssertThrow(boundary_it != parameters.boundary_conditions.type.end(),
+                      ExcMessage("No solid boundary condition specified "
+                                 "for boundary ID " +
+                                 std::to_string(
+                                   static_cast<unsigned int>(boundary_id))));
+
+          if (boundary_it->second != BoundaryConditions::BoundaryType::outlet)
+            continue;
+
+          solid_face_values.reinit(solid_cell, face);
+
+          theta_face_values.reinit(theta_cell, face);
+
+          solid_face_values[velocities].get_function_values(
+            locally_relevant_picard_solution, face_picard_velocity_values);
+
+          solid_face_values[alpha].get_function_values(
+            locally_relevant_picard_solution, face_picard_alpha_values);
+
+          for (unsigned int q = 0; q < face_n_q; ++q)
+            {
+              const Tensor<1, dim> normal = solid_face_values.normal_vector(q);
+
+              const double normal_velocity =
+                face_picard_velocity_values[q] * normal;
+
+              if (normal_velocity <= 0.0)
+                continue;
+
+              const double JxW = theta_face_values.JxW(q);
+
+              for (unsigned int i = 0; i < theta_dofs_per_cell; ++i)
+                {
+                  const double chi_i = theta_face_values.shape_value(i, q);
+
+                  for (unsigned int j = 0; j < theta_dofs_per_cell; ++j)
+                    {
+                      const double chi_j = theta_face_values.shape_value(j, q);
+
+                      local_matrix(i, j) +=
+                        c_theta * face_picard_alpha_values[q] * chi_i * chi_j *
+                        normal_velocity * JxW;
+                    }
+                }
+            }
+        }
+
+      theta_cell->get_dof_indices(local_dof_indices);
+
+      theta_constraints.distribute_local_to_global(
+        local_matrix, local_rhs, local_dof_indices, theta_matrix, theta_rhs);
+    }
+
+  const double global_gamma_bracket_min =
+    Utilities::MPI::min(local_gamma_bracket_min, mpi_communicator);
+
+  const double global_gamma_bracket_max =
+    Utilities::MPI::max(local_gamma_bracket_max, mpi_communicator);
+
+  const double global_C_gamma_min =
+    Utilities::MPI::min(local_C_gamma_min, mpi_communicator);
+
+  const double global_C_gamma_max =
+    Utilities::MPI::max(local_C_gamma_max, mpi_communicator);
+
+  const double global_div_u_min =
+    Utilities::MPI::min(local_div_u_min, mpi_communicator);
+
+  const double global_div_u_max =
+    Utilities::MPI::max(local_div_u_max, mpi_communicator);
+
+  const double global_theta_pic_min =
+    Utilities::MPI::min(local_theta_pic_min, mpi_communicator);
+
+  const double global_theta_pic_max =
+    Utilities::MPI::max(local_theta_pic_max, mpi_communicator);
+
+  if (parameters.solver_verbose)
+    {
+      pcout << "C_gamma diagnostics:\n"
+            << "  theta_pic min/max      = " << global_theta_pic_min << " / "
+            << global_theta_pic_max << '\n'
+            << "  div(u_s) min/max       = " << global_div_u_min << " / "
+            << global_div_u_max << '\n'
+            << "  gamma bracket min/max  = " << global_gamma_bracket_min
+            << " / " << global_gamma_bracket_max << '\n'
+            << "  C_gamma min/max        = " << global_C_gamma_min << " / "
+            << global_C_gamma_max << std::endl;
+    }
+
+  theta_matrix.compress(VectorOperation::add);
+
+  theta_rhs.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+SolidPhaseSolver<dim>::solve_granular_temperature()
+{
+  TimerOutput::Scope t(computing_timer, "theta solve");
+
+  if (parameters.solver_verbose)
+    pcout << "Solving granular-temperature system... " << std::flush;
+
+  TrilinosWrappers::MPI::Vector distributed_theta(theta_locally_owned,
+                                                  mpi_communicator);
+  distributed_theta = theta_solution;
+
+  theta_constraints.distribute(distributed_theta);
+  distributed_theta.compress(VectorOperation::insert);
+
+  theta_ilu = std::make_shared<TrilinosWrappers::PreconditionILU>();
+  TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
+  ilu_data.overlap = parameters.ilu_overlap;
+  theta_ilu->initialize(theta_matrix, ilu_data);
+
+  PrimitiveVectorMemory<TrilinosWrappers::MPI::Vector> memory;
+
+  const double rhs_norm = theta_rhs.l2_norm();
+  const double tolerance =
+    std::max(parameters.solver_abs_tol, parameters.solver_rel_tol * rhs_norm);
+
+  SolverControl solver_control(parameters.solver_max_it, tolerance);
+
+  SolverFGMRES<TrilinosWrappers::MPI::Vector> solver(
+    solver_control,
+    memory,
+    SolverFGMRES<TrilinosWrappers::MPI::Vector>::AdditionalData(
+      parameters.solver_restart));
+
+  solver.solve(theta_matrix, distributed_theta, theta_rhs, *theta_ilu);
+
+  theta_constraints.distribute(distributed_theta);
+  distributed_theta.compress(VectorOperation::insert);
+
+  theta_solution = distributed_theta;
+  theta_solution.compress(VectorOperation::insert);
+
+  locally_relevant_theta_solution = theta_solution;
+  locally_relevant_theta_solution.update_ghost_values();
+
+  if (parameters.solver_verbose)
+    pcout << solver_control.last_step()
+          << " iterations. residual=" << solver_control.last_value()
+          << std::endl;
 }
 
 
@@ -2059,6 +2856,13 @@ SolidPhaseSolver<dim>::get_solid_volume_fraction() const
   return locally_relevant_solution.block(1);
 }
 
+template <int dim>
+const TrilinosWrappers::MPI::Vector &
+SolidPhaseSolver<dim>::get_granular_temperature() const
+{
+  return locally_relevant_theta_solution;
+}
+
 
 
 template <int dim>
@@ -2124,6 +2928,18 @@ SolidPhaseSolver<dim>::output_results(const double /*time*/)
                                       timestep_number,
                                       mpi_communicator,
                                       parameters.digits);
+
+  DataOut<dim> theta_data_out;
+  theta_data_out.attach_dof_handler(theta_dof_handler);
+  theta_data_out.add_data_vector(locally_relevant_theta_solution, "theta");
+  theta_data_out.build_patches();
+
+  theta_data_out.write_vtu_with_pvtu_record(parameters.output_folder,
+                                            parameters.output_prefix +
+                                              "_granular_temperature",
+                                            timestep_number,
+                                            mpi_communicator,
+                                            parameters.digits);
 }
 
 
@@ -2133,6 +2949,7 @@ void
 SolidPhaseSolver<dim>::setup()
 {
   setup_dofs();
+  setup_granular_temperature_dofs();
 
   setup_time_assembler();
   setup_core_assembler();
@@ -2155,6 +2972,9 @@ SolidPhaseSolver<dim>::setup()
 
   auto &alpha_ic_function = *parameters.initial_conditions.alpha;
   alpha_ic_function.set_time(time);
+
+  auto &theta_ic_function = *parameters.initial_conditions.theta;
+  theta_ic_function.set_time(time);
 
   SolidVelocityFunctionDefined<dim> velocity_ic(&velocity_ic_functions.u,
                                                 &velocity_ic_functions.v,
@@ -2195,8 +3015,31 @@ SolidPhaseSolver<dim>::setup()
 
   picard_solution_ptr = &locally_relevant_picard_solution;
 
+  theta_old_solution = 0.0;
+  VectorTools::interpolate(theta_dof_handler,
+                           theta_ic_function,
+                           theta_old_solution);
+  theta_constraints.distribute(theta_old_solution);
+  theta_old_solution.compress(VectorOperation::insert);
+
+  theta_solution = theta_old_solution;
+  theta_solution.compress(VectorOperation::insert);
+
+  theta_picard_solution = theta_solution;
+  theta_picard_solution.compress(VectorOperation::insert);
+
+  locally_relevant_theta_old_solution = theta_old_solution;
+  locally_relevant_theta_old_solution.update_ghost_values();
+
+  locally_relevant_theta_solution = theta_solution;
+  locally_relevant_theta_solution.update_ghost_values();
+
+  locally_relevant_theta_picard_solution = theta_picard_solution;
+  locally_relevant_theta_picard_solution.update_ghost_values();
+
   timestep_number = 0;
 }
+
 
 template <int dim>
 void
@@ -2327,9 +3170,6 @@ template <int dim>
 bool
 SolidPhaseSolver<dim>::advance_one_step()
 {
-  // if (finished())
-  //   return false;
-
   ++timestep_number;
 
   const double dt   = simulation_control->get_time_step();
@@ -2339,12 +3179,17 @@ SolidPhaseSolver<dim>::advance_one_step()
 
   const unsigned int max_picard = parameters.picard_max_iterations;
   const double       picard_tol = parameters.picard_tolerance;
+  const double       omega      = parameters.picard_relaxation;
 
   TrilinosWrappers::MPI::BlockVector prev_picard(owned_partitioning,
                                                  mpi_communicator);
   TrilinosWrappers::MPI::BlockVector delta(owned_partitioning,
                                            mpi_communicator);
 
+  TrilinosWrappers::MPI::Vector previous_theta(theta_locally_owned,
+                                               mpi_communicator);
+  TrilinosWrappers::MPI::Vector theta_delta(theta_locally_owned,
+                                            mpi_communicator);
 
   const auto print_alpha_bounds =
     [&](const TrilinosWrappers::MPI::Vector &alpha, const std::string &label) {
@@ -2359,7 +3204,6 @@ SolidPhaseSolver<dim>::advance_one_step()
 
       const double global_min =
         Utilities::MPI::min(local_min, mpi_communicator);
-
       const double global_max =
         Utilities::MPI::max(local_max, mpi_communicator);
 
@@ -2367,65 +3211,87 @@ SolidPhaseSolver<dim>::advance_one_step()
             << std::endl;
     };
 
-  const double omega = parameters.picard_relaxation;
+  const auto print_theta_bounds =
+    [&](const TrilinosWrappers::MPI::Vector &theta, const std::string &label) {
+      double       local_min        = std::numeric_limits<double>::max();
+      double       local_max        = -std::numeric_limits<double>::max();
+      unsigned int local_non_finite = 0;
+
+      for (const auto i : theta.locally_owned_elements())
+        {
+          const double value = theta[i];
+
+          if (!std::isfinite(value))
+            local_non_finite = 1;
+          else
+            {
+              local_min = std::min(local_min, value);
+              local_max = std::max(local_max, value);
+            }
+        }
+
+      const double global_min =
+        Utilities::MPI::min(local_min, mpi_communicator);
+
+      const double global_max =
+        Utilities::MPI::max(local_max, mpi_communicator);
+
+      const unsigned int global_non_finite =
+        Utilities::MPI::max(local_non_finite, mpi_communicator);
+
+      pcout << label << ": min = " << global_min << " max = " << global_max
+            << " non-finite = " << global_non_finite << std::endl;
+    };
 
   for (unsigned int k = 0; k < max_picard; ++k)
     {
+      /* Known solid fields alpha^k and u_s^k. */
       picard_solution = solution;
       picard_solution.compress(VectorOperation::insert);
 
       locally_relevant_picard_solution = picard_solution;
       locally_relevant_picard_solution.update_ghost_values();
-
       picard_solution_ptr = &locally_relevant_picard_solution;
 
       prev_picard = solution;
       prev_picard.compress(VectorOperation::insert);
 
+      /* Known granular temperature Theta^k. */
+      theta_picard_solution = theta_solution;
+      theta_picard_solution.compress(VectorOperation::insert);
+
+      locally_relevant_theta_picard_solution = theta_picard_solution;
+      locally_relevant_theta_picard_solution.update_ghost_values();
+
+      previous_theta = theta_solution;
+      previous_theta.compress(VectorOperation::insert);
+
       if (k < 3 || k % 10 == 0)
-        {
-          print_alpha_bounds(locally_relevant_picard_solution.block(1),
-                             "alpha before solve");
-        }
+        print_alpha_bounds(locally_relevant_picard_solution.block(1),
+                           "alpha before solve");
 
+      /* Solve the segregated granular-temperature equation first. */
+      assemble_granular_temperature();
+      solve_granular_temperature();
+      print_theta_bounds(locally_relevant_theta_solution,
+                         "granular temperature after solve");
 
+      /*
+       * No granular-temperature under-relaxation is applied. The momentum
+       * closures use the newly solved Theta^{k+1} directly.
+       */
+      locally_relevant_theta_solution = theta_solution;
+      locally_relevant_theta_solution.update_ghost_values();
 
+      /* Solve the monolithic continuity-momentum system. */
       assemble_system();
-
-
       solve();
 
       if (k < 3 || k % 10 == 0)
-        {
-          print_alpha_bounds(locally_relevant_solution.block(1),
-                             "alpha after solve");
-        }
+        print_alpha_bounds(locally_relevant_solution.block(1),
+                           "alpha after solve");
 
-
-
-      // const auto &alpha = locally_relevant_solution.block(1);
-
-      // double local_min = std::numeric_limits<double>::max();
-      // double local_max = -std::numeric_limits<double>::max();
-
-      // for (const auto i : alpha.locally_owned_elements())
-      //   {
-      //     local_min = std::min(local_min, alpha[i]);
-      //     local_max = std::max(local_max, alpha[i]);
-      //   }
-
-      // const double global_min =
-      //   Utilities::MPI::min(local_min, mpi_communicator);
-
-      // const double global_max =
-      //   Utilities::MPI::max(local_max, mpi_communicator);
-
-      // pcout << "alpha bounds: min = " << global_min << " max = " <<
-      // global_max
-      //       << std::endl;
-
-
-
+      /* Existing relaxation is retained for u_s and alpha only. */
       TrilinosWrappers::MPI::BlockVector solved_solution(owned_partitioning,
                                                          mpi_communicator);
       solved_solution = solution;
@@ -2442,23 +3308,32 @@ SolidPhaseSolver<dim>::advance_one_step()
       locally_relevant_solution.update_ghost_values();
 
       if (k < 3 || k % 10 == 0)
-        {
-          print_alpha_bounds(locally_relevant_solution.block(1),
-                             "alpha after relaxation");
-        }
+        print_alpha_bounds(locally_relevant_solution.block(1),
+                           "alpha after relaxation");
 
       delta = solution;
       delta -= prev_picard;
 
-      const double picard_error =
+      theta_delta = theta_solution;
+      theta_delta -= previous_theta;
+
+      const double solid_picard_error =
         delta.l2_norm() / (solution.l2_norm() + 1e-30);
+
+      const double theta_picard_error =
+        theta_delta.l2_norm() / (theta_solution.l2_norm() + 1e-30);
+
+      const double picard_error =
+        std::max(solid_picard_error, theta_picard_error);
 
       if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0 &&
           parameters.solver_verbose &&
           (k % 10 == 0 || picard_error < picard_tol || k == max_picard - 1))
         {
           pcout << " Picard iteration " << k
-                << " relative error = " << picard_error << std::endl;
+                << " solid error = " << solid_picard_error
+                << " granular temperature error = " << theta_picard_error
+                << std::endl;
         }
 
       if (picard_error < picard_tol)
@@ -2473,9 +3348,7 @@ SolidPhaseSolver<dim>::advance_one_step()
     }
 
   solid_phase_conservation_monitoring();
-
   calculate_mms_error();
-
   output_results(time);
 
   older_solution = old_solution;
@@ -2490,6 +3363,11 @@ SolidPhaseSolver<dim>::advance_one_step()
   locally_relevant_old_solution = old_solution;
   locally_relevant_old_solution.update_ghost_values();
 
+  theta_old_solution = theta_solution;
+  theta_old_solution.compress(VectorOperation::insert);
+
+  locally_relevant_theta_old_solution = theta_old_solution;
+  locally_relevant_theta_old_solution.update_ghost_values();
 
   const double max_u_component =
     locally_relevant_solution.block(0).linfty_norm();
@@ -2507,8 +3385,7 @@ SolidPhaseSolver<dim>::advance_one_step()
       local_h_min = std::min(local_h_min, cell->diameter());
     }
 
-  const double h_min = Utilities::MPI::min(local_h_min, mpi_communicator);
-
+  const double h_min     = Utilities::MPI::min(local_h_min, mpi_communicator);
   const double solid_cfl = max_solid_velocity * dt / h_min;
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0 &&

@@ -11,6 +11,7 @@
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+#include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
 #include <deal.II/base/utilities.h>
 
@@ -18,6 +19,7 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
+#include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
 
@@ -26,6 +28,8 @@
 #include <deal.II/lac/trilinos_block_sparse_matrix.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_sparsity_pattern.h>
 
 #include <fstream>
 #include <iostream>
@@ -96,10 +100,12 @@ struct SolidInitialConditionsParameters
 {
   std::shared_ptr<SolidVelocityFunctionData<dim>> velocity;
   std::shared_ptr<Functions::ParsedFunction<dim>> alpha;
+  std::shared_ptr<Functions::ParsedFunction<dim>> theta;
 
   SolidInitialConditionsParameters()
     : velocity(std::make_shared<SolidVelocityFunctionData<dim>>())
     , alpha(std::make_shared<Functions::ParsedFunction<dim>>(1))
+    , theta(std::make_shared<Functions::ParsedFunction<dim>>(1))
   {}
 
   static void
@@ -110,6 +116,13 @@ struct SolidInitialConditionsParameters
     prm.leave_subsection();
 
     prm.enter_subsection("alpha");
+    {
+      Functions::ParsedFunction<dim> tmp(1);
+      tmp.declare_parameters(prm);
+    }
+    prm.leave_subsection();
+
+    prm.enter_subsection("theta");
     {
       Functions::ParsedFunction<dim> tmp(1);
       tmp.declare_parameters(prm);
@@ -126,6 +139,10 @@ struct SolidInitialConditionsParameters
 
     prm.enter_subsection("alpha");
     alpha->parse_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("theta");
+    theta->parse_parameters(prm);
     prm.leave_subsection();
   }
 };
@@ -222,6 +239,9 @@ struct SolidBoundaryConditionsParameters
   std::map<types::boundary_id, std::shared_ptr<Functions::ParsedFunction<dim>>>
     alpha_functions;
 
+  std::map<types::boundary_id, std::shared_ptr<Functions::ParsedFunction<dim>>>
+    theta_functions;
+
   std::map<types::boundary_id, types::boundary_id> periodic_neighbor_id;
   std::map<types::boundary_id, unsigned int>       periodic_direction;
 
@@ -244,6 +264,13 @@ struct SolidBoundaryConditionsParameters
     prm.leave_subsection();
 
     prm.enter_subsection("alpha");
+    {
+      Functions::ParsedFunction<dim> tmp(1);
+      tmp.declare_parameters(prm);
+    }
+    prm.leave_subsection();
+
+    prm.enter_subsection("theta");
     {
       Functions::ParsedFunction<dim> tmp(1);
       tmp.declare_parameters(prm);
@@ -296,6 +323,12 @@ struct SolidBoundaryConditionsParameters
           std::make_shared<Functions::ParsedFunction<dim>>(1);
         alpha_functions[id]->parse_parameters(prm);
         prm.leave_subsection();
+
+        prm.enter_subsection("theta");
+        theta_functions[id] =
+          std::make_shared<Functions::ParsedFunction<dim>>(1);
+        theta_functions[id]->parse_parameters(prm);
+        prm.leave_subsection();
       }
     else if (type_str == "periodic")
       {
@@ -339,6 +372,11 @@ struct SolidPhaseParameters
   double rho_s = 1.0;
   double beta  = 50.0;
 
+  double         particle_diameter       = 1.0e-3;
+  double         restitution_coefficient = 0.9;
+  double         alpha_max               = 0.63;
+  Tensor<1, dim> gravity;
+
   SolidInitialConditionsParameters<dim>  initial_conditions;
   SolidBoundaryConditionsParameters<dim> boundary_conditions;
 
@@ -363,7 +401,7 @@ struct SolidPhaseParameters
   bool   use_alpha_supg    = true;
   double alpha_supg_factor = 10.0;
 
-  bool   use_momentum_supg    = true;
+  bool   use_momentum_supg    = false;
   double momentum_supg_factor = 10.0;
 
   bool   use_solid_grad_div = true;
@@ -399,6 +437,14 @@ struct SolidPhaseParameters
       prm.enter_subsection("Physics");
       prm.declare_entry("rho_s", "1.0", Patterns::Double(0.0));
       prm.declare_entry("beta", "5.0", Patterns::Double(0.0));
+      prm.declare_entry("particle diameter", "1.0e-3", Patterns::Double(0.0));
+      prm.declare_entry("restitution coefficient",
+                        "0.9",
+                        Patterns::Double(0.0, 1.0));
+      prm.declare_entry("alpha max", "0.63", Patterns::Double(0.0, 1.0));
+      prm.declare_entry("gravity",
+                        (dim == 2 ? "0.0, 0.0" : "0.0, 0.0, 0.0"),
+                        Patterns::List(Patterns::Double(), dim, dim));
       prm.leave_subsection();
 
       prm.enter_subsection("Initial conditions");
@@ -437,7 +483,7 @@ struct SolidPhaseParameters
       prm.declare_entry("use alpha supg", "true", Patterns::Bool());
       prm.declare_entry("alpha supg factor", "10.0", Patterns::Double(0.0));
 
-      prm.declare_entry("use momentum supg", "true", Patterns::Bool());
+      prm.declare_entry("use momentum supg", "false", Patterns::Bool());
       prm.declare_entry("momentum supg factor", "10.0", Patterns::Double(0.0));
 
       prm.declare_entry("use solid grad-div", "true", Patterns::Bool());
@@ -480,8 +526,17 @@ struct SolidPhaseParameters
       prm.leave_subsection();
 
       prm.enter_subsection("Physics");
-      rho_s = prm.get_double("rho_s");
-      beta  = prm.get_double("beta");
+      rho_s                   = prm.get_double("rho_s");
+      beta                    = prm.get_double("beta");
+      particle_diameter       = prm.get_double("particle diameter");
+      restitution_coefficient = prm.get_double("restitution coefficient");
+      alpha_max               = prm.get_double("alpha max");
+
+      const auto gravity_components =
+        Utilities::split_string_list(prm.get("gravity"));
+      AssertDimension(gravity_components.size(), dim);
+      for (unsigned int d = 0; d < dim; ++d)
+        gravity[d] = std::stod(gravity_components[d]);
       prm.leave_subsection();
 
       prm.enter_subsection("Initial conditions");
@@ -608,8 +663,11 @@ public:
   const TrilinosWrappers::MPI::Vector &
   get_solid_volume_fraction() const;
 
+  const TrilinosWrappers::MPI::Vector &
+  get_granular_temperature() const;
+
   void
-  set_fluid_velocity_field(const DoFHandler<dim>               &fluid_dh,
+  set_fluid_solution_field(const DoFHandler<dim>               &fluid_dh,
                            const Mapping<dim>                  &fluid_mapping,
                            const TrilinosWrappers::MPI::Vector &fluid_solution);
 
@@ -641,9 +699,15 @@ private:
   void
   setup_dofs();
   void
+  setup_granular_temperature_dofs();
+  void
   assemble_system();
   void
+  assemble_granular_temperature();
+  void
   solve();
+  void
+  solve_granular_temperature();
   void
   output_results(const double time);
 
@@ -681,16 +745,20 @@ private:
 
   const unsigned int  order;
   const FESystem<dim> fe;
+  const FE_Q<dim>     theta_fe;
 
   parallel::distributed::Triangulation<dim> &triangulation;
   DoFHandler<dim>                            dof_handler;
+  DoFHandler<dim>                            theta_dof_handler;
 
   AffineConstraints<double> constraints;
+  AffineConstraints<double> theta_constraints;
 
   const double rho_s;
   double       beta;
 
   TrilinosWrappers::BlockSparseMatrix system_matrix;
+  TrilinosWrappers::SparseMatrix      theta_matrix;
 
   TrilinosWrappers::MPI::BlockVector solution;
   TrilinosWrappers::MPI::BlockVector old_solution;
@@ -700,6 +768,18 @@ private:
   TrilinosWrappers::MPI::BlockVector locally_relevant_solution;
   TrilinosWrappers::MPI::BlockVector locally_relevant_old_solution;
   TrilinosWrappers::MPI::BlockVector locally_relevant_older_solution;
+
+  TrilinosWrappers::MPI::Vector theta_solution;
+  TrilinosWrappers::MPI::Vector theta_old_solution;
+  TrilinosWrappers::MPI::Vector theta_picard_solution;
+  TrilinosWrappers::MPI::Vector theta_rhs;
+
+  TrilinosWrappers::MPI::Vector locally_relevant_theta_solution;
+  TrilinosWrappers::MPI::Vector locally_relevant_theta_old_solution;
+  TrilinosWrappers::MPI::Vector locally_relevant_theta_picard_solution;
+
+  IndexSet theta_locally_owned;
+  IndexSet theta_locally_relevant;
 
   IndexSet              locally_owned;
   IndexSet              locally_relevant;
@@ -717,6 +797,7 @@ private:
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> velocity_amg;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> velocity_ilu;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> alpha_ilu;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> theta_ilu;
 
   const DoFHandler<dim>               *fluid_dof_handler_ptr    = nullptr;
   const Mapping<dim>                  *fluid_mapping_ptr        = nullptr;

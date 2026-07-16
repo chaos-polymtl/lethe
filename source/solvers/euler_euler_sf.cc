@@ -28,7 +28,7 @@ template <int dim>
 void
 EulerEulerOneWay<dim>::pass_fluid_solution_to_solid()
 {
-  solid_solver.set_fluid_velocity_field(this->dof_handler,
+  solid_solver.set_fluid_solution_field(this->dof_handler,
                                         *this->mapping,
                                         this->present_solution);
 }
