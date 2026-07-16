@@ -2368,10 +2368,8 @@ SolidPhaseSolver<dim>::assemble_granular_temperature()
       solid_fe_values.reinit(solid_cell);
       theta_fe_values.reinit(theta_cell);
 
-      /*
-       *
-       * alpha_s^k, u_s^k and grad(u_s^k).
-       */
+
+
       solid_fe_values[velocities].get_function_values(
         locally_relevant_picard_solution, picard_velocity_values);
 
@@ -2381,15 +2379,11 @@ SolidPhaseSolver<dim>::assemble_granular_temperature()
       solid_fe_values[alpha].get_function_values(
         locally_relevant_picard_solution, picard_alpha_values);
 
-      /*
-       * Previous-time volume fraction alpha_s^n.
-       */
+
       solid_fe_values[alpha].get_function_values(locally_relevant_old_solution,
                                                  old_alpha_values);
 
-      /*
-       * Theta_s^k and Theta_s^n.
-       */
+
       theta_fe_values.get_function_values(
         locally_relevant_theta_picard_solution, picard_theta_values);
 
@@ -2417,9 +2411,7 @@ SolidPhaseSolver<dim>::assemble_granular_temperature()
 
           const double div_u_pic = trace(grad_u_pic);
 
-          /*
-           * alpha_s^k, Theta_s^k and div(u_s^k).
-           */
+
           const SolidKTGFValues ktgf =
             evaluate_solid_ktgf(parameters, alpha_pic, theta_pic, div_u_pic);
 
@@ -2448,18 +2440,13 @@ SolidPhaseSolver<dim>::assemble_granular_temperature()
 
           local_theta_pic_max = std::max(local_theta_pic_max, theta_pic);
 
-          /*
-           * Solid stress tau_s^k.
-           */
+
           const Tensor<2, dim> tau_pic =
             make_solid_stress<dim>(ktgf.shear_viscosity,
                                    ktgf.bulk_viscosity,
                                    grad_u_pic);
 
-          /*
-           * P_Theta^k =
-           * (-p_s^k I + tau_s^k) : grad(u_s^k).
-           */
+
           Tensor<2, dim> production_stress = tau_pic;
 
           for (unsigned int d = 0; d < dim; ++d)
@@ -2472,6 +2459,7 @@ SolidPhaseSolver<dim>::assemble_granular_temperature()
 
 
           const double C_viscous = 3.0 * alpha_pic * beta;
+          // const double C_viscous = 0;
 
 
           // const double damping_coefficient = C_gamma + C_viscous;
@@ -2510,59 +2498,30 @@ SolidPhaseSolver<dim>::assemble_granular_temperature()
                   const Tensor<1, dim> grad_chi_j =
                     theta_fe_values.shape_grad(j, q);
 
-                  /*
 
-                   * (c_theta alpha_s^k / dt)
-                   * chi_i chi_j.
-                   */
                   local_matrix(i, j) +=
                     (c_theta * alpha_pic / dt) * chi_i * chi_j * JxW;
 
-                  /*
 
-
-                   * c_theta alpha_s^k
-                   * Theta_s^{k+1}
-                   * u_s^k . grad(chi_i).
-                   */
                   local_matrix(i, j) +=
                     -c_theta * alpha_pic * chi_j * (u_pic * grad_chi_i) * JxW;
 
-                  /*
 
-                   * kappa_s^k
-                   * grad(chi_i).grad(chi_j).
-                   */
                   local_matrix(i, j) +=
                     ktgf.conductivity * (grad_chi_i * grad_chi_j) * JxW;
 
-                  local_matrix(i, j) += C_gamma * chi_i * chi_j * JxW;
+                  // local_matrix(i, j) += C_gamma * chi_i * chi_j * JxW;
 
 
-                  /*
 
-                   * (C_gamma^k +
-                   *  3 alpha_s^k beta^k)
-                   * chi_i chi_j.
-                   */
                   local_matrix(i, j) += C_viscous * chi_i * chi_j * JxW;
                 }
 
 
-
-              /*
-
-               * (c_theta / dt)
-               * chi_i alpha_s^n Theta_s^n.
-               */
               local_rhs(i) +=
                 (c_theta / dt) * chi_i * alpha_old * theta_old * JxW;
 
-              /*
 
-               *
-               * chi_i P_Theta^k.
-               */
               local_rhs(i) += chi_i * production * JxW;
             }
         }
