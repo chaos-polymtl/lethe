@@ -52,6 +52,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Restore/save the compiler cache to speed up recompilation
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ccache-${{ github.workflow }}-${{ matrix.dealii_version }}
+          max-size: 2G
+
       #
       # Release
       #
@@ -60,7 +67,8 @@ jobs:
           mkdir build-release
           cd build-release
           git config --global --add safe.directory /__w/lethe/lethe
-          cmake ../ -DCMAKE_BUILD_TYPE=Release -G Ninja
+          cmake ../ -DCMAKE_BUILD_TYPE=Release -G Ninja \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
           ninja -j${{ env.COMPILE_JOBS }}
 
       # These tests require a single core each so we will run them in parallel
