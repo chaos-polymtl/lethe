@@ -584,6 +584,17 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
       (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
+  // The deserialized vectors only carry valid locally owned entries; their
+  // ghost values are stale. The particle-fluid force/drag projection evaluates
+  // the fluid solution at particle locations on the first restarted step
+  // (before any Newton solve refreshes the ghosts) and therefore reads these
+  // ghost values directly. Refresh them here so that the restarted step matches
+  // a continuous run, where present_solution and previous_solutions are always
+  // left ghosted after a solve.
+  this->present_solution->update_ghost_values();
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
+    (*this->previous_solutions)[i].update_ghost_values();
+
   // Void Fraction Vectors
   std::vector<VectorType *> vf_system(
     1 + this->particle_projector.previous_void_fraction.size());
@@ -885,6 +896,12 @@ CFDDEMMatrixFree<dim>::load_balance()
 
   vf_system_trans_vectors.interpolate(vf_system);
 
+  // Store the interpolated void fraction before converting it to a Trilinos
+  // vector, otherwise the conversion below would pick up the stale (post
+  // setup_dofs, zeroed) content of void_fraction_solution instead of the
+  // freshly interpolated field.
+  this->particle_projector.void_fraction_solution = vf_distributed_system;
+
 #ifndef LETHE_USE_LDV
   // We also wish the Trilinos solution to be updated.
   convert_vector_dealii_to_trilinos(
@@ -892,10 +909,8 @@ CFDDEMMatrixFree<dim>::load_balance()
     this->particle_projector.void_fraction_solution);
 
   this->particle_projector.void_fraction_locally_relevant =
-    this->particle_projector.void_fraction_locally_owned,
+    this->particle_projector.void_fraction_locally_owned;
 #endif
-
-  this->particle_projector.void_fraction_solution = vf_distributed_system;
 
   for (unsigned int i = 0;
        i < this->particle_projector.previous_void_fraction.size();
