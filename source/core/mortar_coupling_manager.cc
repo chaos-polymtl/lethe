@@ -629,8 +629,8 @@ compute_interface_dimensions_circular(
 
                           pre_rotation_min = std::min(
                             pre_rotation_min,
-                            point_to_angle(mortar_parameters.center_of_rotation,
-                                           v,
+                            point_to_angle(v,
+                                           mortar_parameters.center_of_rotation,
                                            rotation_axis_direction));
                         }
                     }
@@ -741,15 +741,16 @@ get_rotation_axis_direction(const Parameters::Mortar<dim> &mortar_parameters)
 {
   if constexpr (dim == 3)
     {
-      // First check if the vector has a unit norm
+      // First check if the vector has a unit norm, with a small margin for
+      // error
       bool is_unit_axis =
-        mortar_parameters.rotation_axis.norm() == 1 ? true : false;
+        std::abs(mortar_parameters.rotation_axis.norm() - 1) < 1e-8;
 
       // Now check if the vector represents the x, y, or z directions
       // specifically (we assume those are the only options for now)
       for (int i = 0; i < dim; i++)
         if (mortar_parameters.rotation_axis[i] != 0. &&
-            mortar_parameters.rotation_axis[i] != 1.)
+            std::abs(mortar_parameters.rotation_axis[i]) != 1.)
           is_unit_axis = false;
 
       AssertThrow(
@@ -762,7 +763,7 @@ get_rotation_axis_direction(const Parameters::Mortar<dim> &mortar_parameters)
         if (mortar_parameters.rotation_axis[d] != 0.0)
           return d;
     }
-  return 0;
+  return 2;
 }
 
 template <int dim>
@@ -907,23 +908,22 @@ template <int dim>
 double
 MortarManagerCircle<dim>::to_1D(const Point<dim> &point) const
 {
-  if constexpr (dim == 3)
-    return std::fmod(point_to_angle(point,
-                                    this->center_of_rotation,
-                                    this->rotation_axis_direction) -
-                       pre_rotation_angle + 2 * numbers::PI,
-                     2 * numbers::PI);
-  else
-    return std::fmod(point_to_angle(point, this->center_of_rotation) -
-                       pre_rotation_angle + 2 * numbers::PI,
-                     2 * numbers::PI);
+  return std::fmod(point_to_angle(point,
+                                  this->center_of_rotation,
+                                  this->rotation_axis_direction) -
+                     pre_rotation_angle + 2 * numbers::PI,
+                   2 * numbers::PI);
 }
 
 template <int dim>
 Tensor<1, dim, double>
 MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 {
-  return point / point.norm();
+  Tensor<1, dim, double> radial = point - this->center_of_rotation;
+  if constexpr (dim == 3)
+    radial[this->rotation_axis_direction] = 0.0;
+
+  return radial / radial.norm();
 }
 
 
