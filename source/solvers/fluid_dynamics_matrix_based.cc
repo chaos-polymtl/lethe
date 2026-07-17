@@ -408,6 +408,16 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->simulation_parameters.boundary_conditions));
     }
 
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::neumann_traction))
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<NeumannTractionBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+
+
   // Thermal buoyancy force
   if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
     {
