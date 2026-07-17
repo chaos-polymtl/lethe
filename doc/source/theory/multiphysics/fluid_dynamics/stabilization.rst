@@ -32,6 +32,26 @@ where :math:`\Delta t` is the time step, and :math:`h_{conv}` and :math:`h_{diff
 
    \tau = \left[ \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + 9 \left(\frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
 
+Metric-tensor definition
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The definition above relies on a single, isotropic element size :math:`h`, which discards the directional information of the element and becomes a poor estimate for deformed, stretched or high-aspect-ratio cells. As an alternative, Lethe can compute :math:`\tau` from the element covariant metric tensor following the variational multiscale (VMS) approach of `Bazilevs et al. (2007) <https://doi.org/10.1016/j.cma.2007.07.016>`_. The covariant metric tensor is defined as
+
+.. math::
+
+   G_{ij} = \sum_{k} \frac{\partial \xi_k}{\partial x_i} \frac{\partial \xi_k}{\partial x_j} = J^{-T} J^{-1}
+
+where :math:`\xi` are the reference coordinates, :math:`x` the physical coordinates and :math:`J` the mapping Jacobian. The momentum stabilization parameter is then
+
+.. math::
+
+   \tau = \left[ \left( \frac{1}{\Delta t} \right)^{2} + u_i G_{ij} u_j + C_I \nu^2 G_{ij} G_{ij} \right]^{-1/2}
+
+where :math:`C_I` is a positive constant stemming from an inverse estimate (:math:`C_I = 36` for linear elements), and the grad-div (LSIC) parameter is :math:`\tau_{LSIC} = \left( \tau\, g_i g_i \right)^{-1}` with :math:`g_i = \sum_j \partial \xi_j / \partial x_i`. To remain consistent with the polynomial degree :math:`p` (which divides the element size in the isotropic definition), the metric tensor and the vector :math:`g` are scaled so that :math:`G` carries a factor :math:`p^2` and :math:`g` a factor :math:`p`, making the definition robust for higher-order elements. Because the metric tensor carries the anisotropic size information of the element, this definition is more robust on deformed meshes. It is selected with ``set stabilization parameter = metric_tensor`` and is currently only supported by the matrix-free solver.
+
+.. note::
+   The anisotropic metric-tensor definition strongly reduces :math:`\tau` on high-aspect-ratio cells (e.g. boundary-layer cells). Since the same parameter also multiplies the PSPG term, which is responsible for the pressure stabilization of equal-order elements, using it for PSPG would under-stabilize the pressure and can cause the linear solver to diverge. For this reason, the ``metric_tensor`` definition is applied only to the SUPG and LSIC terms, while the PSPG term always uses the isotropic (Tezduyar) definition.
+
 To solve the non-linear problem, Lethe uses again the Newton-Raphson method, however, the Jacobian and the residual are now of the following form: 
 
 .. math::

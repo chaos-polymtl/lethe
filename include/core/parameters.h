@@ -819,6 +819,19 @@ namespace Parameters
       grad_div
     } stabilization;
 
+    /// Selects how the Navier-Stokes stabilization parameter tau is defined.
+    /// - tezduyar: isotropic scalar element-size based definition (Tezduyar
+    ///   1992). This is the default.
+    /// - metric_tensor: anisotropic covariant-metric-tensor definition
+    ///   (Bazilevs et al. VMS), which is more robust for deformed, stretched
+    ///   or high-aspect-ratio cells. Currently only supported by the
+    ///   matrix-free solver.
+    enum class NavierStokesStabilizationParameter : std::int8_t
+    {
+      tezduyar,
+      metric_tensor
+    } stabilization_parameter;
+
     enum class ScalarLimiters : std::int8_t
     {
       moe,

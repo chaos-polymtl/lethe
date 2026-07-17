@@ -12,6 +12,9 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
 
     set stabilization                    = pspg_supg     # <pspg_supg|gls|grad_div>.
 
+    # Definition of the stabilization parameter tau
+    set stabilization parameter          = tezduyar      # <tezduyar|metric_tensor>.
+
     # DCDD stabilization
     set heat transfer dcdd stabilization = false
     set cls dcdd stabilization           = true
@@ -34,6 +37,12 @@ There are three choices of stabilization strategy:
 * ``stabilization=gls`` assembles a full GLS stabilization for the Navier-Stokes equations which adds two Least-Squares terms (for more details see :doc:`../../../../theory/multiphysics/fluid_dynamics/stabilization`). This stabilization should only be used with the monolithic solver for the Navier-Stokes equations (``lethe-fluid`` or ``lethe-fluid-matrix-free``).
 
 * ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div block Navier-Stokes solver (``lethe-fluid-block``).
+
+The ``stabilization parameter`` controls how the stabilization parameter :math:`\tau` is computed. There are two choices:
+
+* ``stabilization parameter=tezduyar`` (default) uses the classical definition of `Tezduyar (1992) <https://doi.org/10.1016/S0065-2156(08)70153-4>`_ based on an isotropic scalar element size (the diameter of a disk/sphere of equal area/volume). This is robust for most meshes and is the recommended default.
+
+* ``stabilization parameter=metric_tensor`` uses an anisotropic definition based on the element covariant metric tensor :math:`G = J^{-T} J^{-1}` (with :math:`J` the mapping Jacobian), following the variational multiscale (VMS) approach of `Bazilevs et al. (2007) <https://doi.org/10.1016/j.cma.2007.07.016>`_. Because it retains the directional size information of the element, it is more robust for deformed, stretched or high-aspect-ratio cells. It is applied to the SUPG and LSIC terms only; the PSPG term always keeps the isotropic definition to preserve pressure stabilization on high-aspect-ratio cells (see :doc:`../../../../theory/multiphysics/fluid_dynamics/stabilization`). This definition is currently only supported by the matrix-free solver (``lethe-fluid-matrix-free``).
 
 * ``heat transfer dcdd stabilization`` applies the Discontinuity-Capturing Directional Dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
 

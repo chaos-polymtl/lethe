@@ -5,6 +5,7 @@
 #include <core/time_integration_utilities.h>
 
 #include <solvers/fluid_dynamics_matrix_free_operators.h>
+#include <solvers/stabilization.h>
 
 #include <deal.II/grid/grid_generator.h>
 
@@ -88,7 +89,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const Quadrature<dim>                            &quadrature,
   const std::shared_ptr<Function<dim>>              forcing_function,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const StabilizationType                           stabilization,
+  const Parameters::Stabilization                  &stabilization_parameters,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -104,7 +105,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                quadrature,
                forcing_function,
                physical_properties_manager,
-               stabilization,
+               stabilization_parameters,
                mg_level,
                simulation_control,
                boundary_conditions,
@@ -122,7 +123,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const Quadrature<dim>                            &quadrature,
   const std::shared_ptr<Function<dim>>              forcing_function,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const StabilizationType                           stabilization,
+  const Parameters::Stabilization                  &stabilization_parameters,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -183,16 +184,19 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->properties_manager = physical_properties_manager;
 
-  if (stabilization ==
+  if (stabilization_parameters.stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
-      stabilization ==
+      stabilization_parameters.stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::gls)
     {
-      this->stabilization = stabilization;
+      this->stabilization = stabilization_parameters.stabilization;
     }
   else
     throw std::runtime_error(
       "Only SUPG/PSPG and GLS stabilization is supported at the moment.");
+
+  this->stabilization_parameter_definition =
+    stabilization_parameters.stabilization_parameter;
 
   this->simulation_control = simulation_control;
 
@@ -939,6 +943,7 @@ NavierStokesOperatorBase<dim, number>::
   nonlinear_previous_hessian_diagonal.reinit(n_cells, integrator.n_q_points);
   nonlinear_previous_hessian.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
+  stabilization_parameter_pspg.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
   kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
   grad_kinematic_viscosity_shear_rate.reinit(n_cells, integrator.n_q_points);
@@ -998,19 +1003,65 @@ NavierStokesOperatorBase<dim, number>::
             }
 
           // Calculate tau
+          // The isotropic (Tezduyar) stabilization parameter is always
+          // computed. It is used for the PSPG term regardless of the selected
+          // definition, and is also the default definition for the SUPG/LSIC
+          // terms.
           VectorizedArray<number> u_mag_squared = 1e-12;
           for (int k = 0; k < dim; ++k)
             u_mag_squared += Utilities::fixed_power<2>(
               this->nonlinear_previous_advective_values(cell, q)[k]);
 
-          stabilization_parameter(cell, q) =
+          const VectorizedArray<number> tau_isotropic =
             1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
                            4. * u_mag_squared / h / h +
                            9. * Utilities::fixed_power<2>(
                                   4. * kinematic_viscosity / (h * h)));
 
-          stabilization_parameter_lsic(cell, q) =
-            std::sqrt(u_mag_squared) * h * 0.5;
+          // The PSPG term always uses the isotropic definition. The anisotropic
+          // metric-tensor definition collapses tau on high-aspect-ratio cells,
+          // which would under-stabilize the pressure for equal-order elements.
+          stabilization_parameter_pspg(cell, q) = tau_isotropic;
+
+          if (this->stabilization_parameter_definition ==
+              StabilizationParameterType::metric_tensor)
+            {
+              // Anisotropic covariant-metric-tensor (Bazilevs VMS) definition
+              // for the SUPG and LSIC terms; more robust for deformed cells.
+              const Tensor<2, dim, VectorizedArray<number>> inverse_jacobian =
+                integrator.inverse_jacobian(q);
+
+              Tensor<1, dim, VectorizedArray<number>> velocity;
+              for (int k = 0; k < dim; ++k)
+                velocity[k] =
+                  this->nonlinear_previous_advective_values(cell, q)[k];
+
+              stabilization_parameter(cell, q) =
+                calculate_navier_stokes_metric_tau<dim,
+                                                   VectorizedArray<number>>(
+                  velocity,
+                  kinematic_viscosity,
+                  compute_covariant_metric_tensor<dim, VectorizedArray<number>>(
+                    inverse_jacobian, this->fe_degree),
+                  sdt);
+
+              stabilization_parameter_lsic(cell, q) =
+                calculate_navier_stokes_metric_tau_lsic<
+                  dim,
+                  VectorizedArray<number>>(
+                  compute_metric_g_vector<dim, VectorizedArray<number>>(
+                    inverse_jacobian, this->fe_degree),
+                  stabilization_parameter(cell, q));
+            }
+          else
+            {
+              // Isotropic scalar element-size (Tezduyar) definition for the
+              // SUPG and LSIC terms.
+              stabilization_parameter(cell, q) = tau_isotropic;
+
+              stabilization_parameter_lsic(cell, q) =
+                std::sqrt(u_mag_squared) * h * 0.5;
+            }
         }
 
       // Compute kinematic viscosity-related entries for non-Newtonian fluids
@@ -1105,11 +1156,36 @@ NavierStokesOperatorBase<dim, number>::
                 u_mag_squared +=
                   Utilities::fixed_power<2>(integrator.get_value(q)[k]);
 
-              stabilization_parameter(cell, q) =
-                1. /
-                std::sqrt(
-                  Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
-                  9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
+              const VectorizedArray<number> tau_isotropic =
+                1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
+                               4. * u_mag_squared / h / h +
+                               9. * Utilities::fixed_power<2>(
+                                      4. * viscosity / (h * h)));
+
+              // PSPG always uses the isotropic definition.
+              stabilization_parameter_pspg(cell, q) = tau_isotropic;
+
+              if (this->stabilization_parameter_definition ==
+                  StabilizationParameterType::metric_tensor)
+                {
+                  Tensor<1, dim, VectorizedArray<number>> velocity;
+                  for (int k = 0; k < dim; ++k)
+                    velocity[k] = integrator.get_value(q)[k];
+
+                  const Tensor<2, dim, VectorizedArray<number>> metric_tensor =
+                    compute_covariant_metric_tensor<dim,
+                                                    VectorizedArray<number>>(
+                      integrator.inverse_jacobian(q), this->fe_degree);
+
+                  stabilization_parameter(cell, q) =
+                    calculate_navier_stokes_metric_tau<dim,
+                                                       VectorizedArray<number>>(
+                      velocity, viscosity, metric_tensor, sdt);
+                }
+              else
+                {
+                  stabilization_parameter(cell, q) = tau_isotropic;
+                }
             }
         }
     }
@@ -1802,8 +1878,11 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
         previous_time_derivatives =
           this->time_derivatives_previous_solutions(cell, q);
 
-      // Get stabilization parameter
+      // Get stabilization parameter. tau is used for the SUPG term (and equals
+      // tau_pspg for the isotropic definition) whereas tau_pspg is always the
+      // isotropic stabilization parameter used for the PSPG term.
       const auto tau      = this->stabilization_parameter[cell][q];
+      const auto tau_pspg = this->stabilization_parameter_pspg[cell][q];
       const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
 
       // Weak form Jacobian
@@ -1838,19 +1917,20 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             {
               // (-ν∆δu + (u_adv·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
-                tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
-                       gradient[i][k] * previous_advective_values[k] +
-                       previous_gradient[i][k] * value[k]);
+                tau_pspg * (-kinematic_viscosity * hessian_diagonal[i][k] +
+                            gradient[i][k] * previous_advective_values[k] +
+                            previous_gradient[i][k] * value[k]);
             }
           // +(∂t δu)·τ∇q
           if (is_bdf)
-            gradient_result[dim][i] += tau * (*bdf_coefficients)[0] * value[i];
+            gradient_result[dim][i] +=
+              tau_pspg * (*bdf_coefficients)[0] * value[i];
 
           if (is_sdirk)
-            gradient_result[dim][i] += tau * (1.0 / (dt * a_ii)) * value[i];
+            gradient_result[dim][i] += tau_pspg * (1.0 / (dt * a_ii)) * value[i];
         }
       // (∇δp)τ·∇q
-      gradient_result[dim] += tau * gradient[dim];
+      gradient_result[dim] += tau_pspg * gradient[dim];
 
       // SUPG Jacobian
       for (int i = 0; i < dim; ++i)
@@ -2070,8 +2150,11 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
             previous_time_derivatives =
               this->time_derivatives_previous_solutions(cell, q);
 
-          // Get stabilization parameter
+          // Get stabilization parameter. tau is used for the SUPG term (and
+          // equals tau_pspg for the isotropic definition) whereas tau_pspg is
+          // always the isotropic stabilization parameter used for the PSPG term.
           const auto tau      = this->stabilization_parameter[cell][q];
+          const auto tau_pspg = this->stabilization_parameter_pspg[cell][q];
           const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
 
           // Result value/gradient we will use
@@ -2115,24 +2198,24 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                 {
                   // (-ν∆u + (u_adv·∇)u)·τ∇q
                   gradient_result[dim][i] +=
-                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
-                           gradient[i][k] * advective_value[k]);
+                    tau_pspg * (-kinematic_viscosity * hessian_diagonal[i][k] +
+                                gradient[i][k] * advective_value[k]);
                 }
               // +(-f)·τ∇q
-              gradient_result[dim][i] += tau * (-source_value[i]);
+              gradient_result[dim][i] += tau_pspg * (-source_value[i]);
 
               // +(∂t u)·τ∇q
               if (is_bdf)
                 gradient_result[dim][i] +=
-                  tau * ((*bdf_coefficients)[0] * value[i] +
-                         previous_time_derivatives[i]);
+                  tau_pspg * ((*bdf_coefficients)[0] * value[i] +
+                              previous_time_derivatives[i]);
               if (is_sdirk)
                 gradient_result[dim][i] +=
-                  tau * ((1.0 / (dt * a_ii)) * value[i] +
-                         previous_time_derivatives[i]);
+                  tau_pspg * ((1.0 / (dt * a_ii)) * value[i] +
+                              previous_time_derivatives[i]);
             }
           // +(∇p)τ∇·q
-          gradient_result[dim] += tau * gradient[dim];
+          gradient_result[dim] += tau_pspg * gradient[dim];
 
           // SUPG term
           for (int i = 0; i < dim; ++i)
@@ -2356,7 +2439,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         this->grad_kinematic_viscosity_shear_rate[cell][q];
 
       // Get stabilization parameter
-      const auto tau = this->stabilization_parameter[cell][q];
+      // tau is used for the SUPG term (and equals tau_pspg for the isotropic
+      // definition) whereas tau_pspg is always the isotropic stabilization
+      // parameter used for the PSPG term.
+      const auto tau      = this->stabilization_parameter[cell][q];
+      const auto tau_pspg = this->stabilization_parameter_pspg[cell][q];
 
       // Calculate shear rate per component
       typename FECellIntegrator::gradient_type shear_rate;
@@ -2419,19 +2506,20 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
             {
               // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u_adv·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
-                tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
-                       kinematic_viscosity_gradient[k] * shear_rate[k][i] +
-                       gradient[i][k] * previous_advective_values[k] +
-                       previous_gradient[i][k] * value[k]);
+                tau_pspg * (-kinematic_viscosity * hessian_diagonal[i][k] -
+                            kinematic_viscosity_gradient[k] * shear_rate[k][i] +
+                            gradient[i][k] * previous_advective_values[k] +
+                            previous_gradient[i][k] * value[k]);
             }
           // +(∂t δu)·τ∇q
           if (is_bdf)
-            gradient_result[dim][i] += tau * (*bdf_coefficients)[0] * value[i];
+            gradient_result[dim][i] +=
+              tau_pspg * (*bdf_coefficients)[0] * value[i];
           if (is_sdirk)
-            gradient_result[dim][i] += tau * (1.0 / (dt * a_ii)) * value[i];
+            gradient_result[dim][i] += tau_pspg * (1.0 / (dt * a_ii)) * value[i];
         }
       // (∇δp)τ·∇q
-      gradient_result[dim] += tau * gradient[dim];
+      gradient_result[dim] += tau_pspg * gradient[dim];
 
       // SUPG Jacobian
       for (int i = 0; i < dim; ++i)
@@ -2603,7 +2691,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
               this->time_derivatives_previous_solutions(cell, q);
 
           // Get stabilization parameter
-          const auto tau = this->stabilization_parameter[cell][q];
+          // tau is used for the SUPG term (and equals tau_pspg for the
+          // isotropic definition) whereas tau_pspg is always the isotropic
+          // stabilization parameter used for the PSPG term.
+          const auto tau      = this->stabilization_parameter[cell][q];
+          const auto tau_pspg = this->stabilization_parameter_pspg[cell][q];
 
           // Get kinematic viscosity from rheology model
           const auto kinematic_viscosity =
@@ -2666,25 +2758,26 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
                 {
                   // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u_adv·∇)u)·τ∇q
                   gradient_result[dim][i] +=
-                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
-                           kinematic_viscosity_gradient[k] * shear_rate[k][i] +
-                           gradient[i][k] * advective_value[k]);
+                    tau_pspg * (-kinematic_viscosity * hessian_diagonal[i][k] -
+                                kinematic_viscosity_gradient[k] *
+                                  shear_rate[k][i] +
+                                gradient[i][k] * advective_value[k]);
                 }
               // +(-f)·τ∇q
-              gradient_result[dim][i] += tau * (-source_value[i]);
+              gradient_result[dim][i] += tau_pspg * (-source_value[i]);
 
               // +(∂t u)·τ∇q
               if (is_bdf)
                 gradient_result[dim][i] +=
-                  tau * ((*bdf_coefficients)[0] * value[i] +
-                         previous_time_derivatives[i]);
+                  tau_pspg * ((*bdf_coefficients)[0] * value[i] +
+                              previous_time_derivatives[i]);
               if (is_sdirk)
                 gradient_result[dim][i] +=
-                  tau * ((1.0 / (dt * a_ii)) * value[i] +
-                         previous_time_derivatives[i]);
+                  tau_pspg * ((1.0 / (dt * a_ii)) * value[i] +
+                              previous_time_derivatives[i]);
             }
           // +(∇p)τ∇·q
-          gradient_result[dim] += tau * gradient[dim];
+          gradient_result[dim] += tau_pspg * gradient[dim];
 
           // SUPG term
           for (int i = 0; i < dim; ++i)

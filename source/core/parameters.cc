@@ -852,6 +852,18 @@ namespace Parameters
         "Choices are <pspg_supg|gls|grad_div>.");
 
       prm.declare_entry(
+        "stabilization parameter",
+        "tezduyar",
+        Patterns::Selection("tezduyar|metric_tensor"),
+        "Definition of the Navier-Stokes stabilization parameter tau. "
+        "The <tezduyar> definition uses an isotropic scalar element size. The "
+        "<metric_tensor> definition uses the anisotropic covariant metric "
+        "tensor of the element (Bazilevs et al. VMS), which is more robust for "
+        "deformed, stretched or high-aspect-ratio cells. The <metric_tensor> "
+        "definition is currently only supported by the matrix-free solver. "
+        "Choices are <tezduyar|metric_tensor>.");
+
+      prm.declare_entry(
         "heat transfer dcdd stabilization",
         "false",
         Patterns::Bool(),
@@ -912,6 +924,17 @@ namespace Parameters
           stabilization = NavierStokesStabilization::grad_div;
         else
           throw(std::runtime_error("Invalid stabilization strategy"));
+      }
+      {
+        std::string op = prm.get("stabilization parameter");
+        if (op == "tezduyar")
+          stabilization_parameter =
+            NavierStokesStabilizationParameter::tezduyar;
+        else if (op == "metric_tensor")
+          stabilization_parameter =
+            NavierStokesStabilizationParameter::metric_tensor;
+        else
+          throw(std::runtime_error("Invalid stabilization parameter definition"));
       }
       {
         std::string op = prm.get("scalar limiter");

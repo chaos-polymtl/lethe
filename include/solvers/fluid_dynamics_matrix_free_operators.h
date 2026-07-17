@@ -166,6 +166,8 @@ public:
   using size_type        = VectorizedArray<number>;
   using StabilizationType =
     Parameters::Stabilization::NavierStokesStabilization;
+  using StabilizationParameterType =
+    Parameters::Stabilization::NavierStokesStabilizationParameter;
 
   /**
    * @brief Default constructor.
@@ -183,7 +185,9 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters specified in
+   * the parameter file (stabilization type and stabilization parameter tau
+   * definition).
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] physical_properties_manager Required to have the updated values
@@ -205,7 +209,7 @@ public:
     const std::shared_ptr<Function<dim>> forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -227,7 +231,9 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    * physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters specified in
+   * the parameter file (stabilization type and stabilization parameter tau
+   * definition).
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] boundary_conditions Contains information regarding all
@@ -247,7 +253,7 @@ public:
     const std::shared_ptr<Function<dim>> forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -687,6 +693,13 @@ protected:
   StabilizationType stabilization;
 
   /**
+   * @brief Definition used to compute the stabilization parameter tau
+   * (isotropic Tezduyar or anisotropic covariant metric tensor).
+   *
+   */
+  StabilizationParameterType stabilization_parameter_definition;
+
+  /**
    * @brief Object storing the information regarding the time stepping method.
    *
    */
@@ -826,6 +839,17 @@ protected:
    *
    */
   Table<2, VectorizedArray<number>> stabilization_parameter;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the PSPG stabilization parameter tau. It is always computed with the
+   * isotropic (Tezduyar) definition, even when the metric-tensor definition is
+   * used for the SUPG/LSIC terms. This is because the anisotropic metric tensor
+   * definition strongly reduces tau on high-aspect-ratio cells, which would
+   * under-stabilize the pressure for equal-order elements.
+   *
+   */
+  Table<2, VectorizedArray<number>> stabilization_parameter_pspg;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
