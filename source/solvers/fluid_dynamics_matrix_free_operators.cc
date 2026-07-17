@@ -165,6 +165,13 @@ NavierStokesOperatorBase<dim, number>::reinit(
             update_values | update_quadrature_points | update_JxW_values |
             update_normal_vectors;
         }
+      else if (type == BoundaryConditions::BoundaryType::neumann_traction)
+        {
+          this->enable_face_terms = true;
+          additional_data.mapping_update_flags_boundary_faces =
+            update_values | update_quadrature_points | update_JxW_values |
+            update_normal_vectors;
+        }
     }
 
   matrix_free.reinit(
@@ -849,6 +856,65 @@ NavierStokesOperatorBase<dim, number>::get_element_size() const
 
 template <int dim, typename number>
 void
+NavierStokesOperatorBase<dim, number>::evaluate_prescribed_neumann_traction()
+{
+  if (enable_face_terms)
+    {
+      // Change the timer subsection name.
+      this->timer.enter_subsection(
+        "operator::evaluate_prescribed_neumann_traction");
+      const unsigned int n_inner_faces = matrix_free.n_inner_face_batches();
+      const unsigned int n_boundary_faces =
+        matrix_free.n_boundary_face_batches();
+
+      FEFaceIntegrator face_integrator(matrix_free, true, 0);
+
+      prescribed_neumann_traction.reinit(n_boundary_faces,
+                                         face_integrator.n_q_points);
+
+      for (unsigned int face = n_inner_faces;
+           face < n_inner_faces + n_boundary_faces;
+           ++face)
+        {
+          face_integrator.reinit(face);
+
+          for (const auto q : face_integrator.quadrature_point_indices())
+            {
+              if (this->boundary_conditions.type.at(
+                    face_integrator.boundary_id()) ==
+                  BoundaryConditions::BoundaryType::neumann_traction)
+                {
+                  Point<dim, VectorizedArray<number>> point_batch =
+                    face_integrator.quadrature_point(q);
+
+                  /*
+                  Neumann traction is of type Tensor<1, dim+1,
+                  VectorizedArray<number>> where the first dim components
+                  correspond to the traction vector and the last component
+                  corresponds to the pressure value at the boundary. The dummy
+                  pressure component is needed to properly assemble the traction
+                  term as FEFaceIntegrator uses MatrixFree which in turn is
+                  based on the DoFHandler which in turn is based on the FE
+                  system that has dim velocity components and 1 pressure
+                  component.
+                  */
+
+                  prescribed_neumann_traction(face - n_inner_faces, q) =
+                    evaluate_function<dim, number, dim + 1>(
+                      this->boundary_conditions.navier_stokes_functions
+                        .at(face_integrator.boundary_id())
+                        ->traction_fn,
+                      point_batch);
+                }
+            }
+        }
+      this->timer.leave_subsection(
+        "operator::evaluate_prescribed_neumann_traction");
+    }
+}
+
+template <int dim, typename number>
+void
 NavierStokesOperatorBase<dim, number>::
   evaluate_non_linear_term_and_calculate_tau(const VectorType &newton_step)
 {
@@ -1411,6 +1477,8 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_range(
 // (v,β·(u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
 // 2. Outlet boundary conditions using the directional do-nothing method.
 // It adds the following term: -(v,β(u·n)_·u) where (u·n)_=min(0,u·n)
+// 3. Neumann traction boundary conditions adding the term
+// \f$(\mathrm{traction\_fn},\, \mathbf{v})\f$ on the RHS.
 template <int dim, typename number>
 template <bool assemble_residual>
 void
@@ -1423,8 +1491,8 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
   // not a boundary condition that requires face asssembly (for example
-  // pressure, weak dirichlet or outlet), there is nothing to do, so we set the
-  // values to zero and return
+  // pressure, weak dirichlet, outlet or neumann traction), there is nothing
+  // to do, so we set the values to zero and return
   if (boundary_condition_requires_face_assembly(
         this->boundary_conditions.type.at(integrator.boundary_id())) == false)
     {
@@ -1486,6 +1554,38 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
       integrator.integrate(EvaluationFlags::EvaluationFlags::values |
                            EvaluationFlags::EvaluationFlags::gradients);
+    }
+  // This part assembles the prescribed Neumann traction boundary condition  (σ
+  // . n , v)  = (traction_fn, v) only on the RHS (residual) since it does not
+  // depend on the solution
+  else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
+           BoundaryConditions::BoundaryType::neumann_traction)
+    {
+      integrator.evaluate(EvaluationFlags::values);
+      {
+        for (const auto q : integrator.quadrature_point_indices())
+          {
+            typename FEFaceIntegrator::value_type value_result = {};
+            for (int d = 0; d < dim; ++d)
+              {
+                // Because we have enabled submission of the value for the
+                // faces, a value must be provided even when the operator is
+                // assembled. When the RHS is being assembled, we provide the
+                // value of the traction, and when the operator is assembled, we
+                // provide a zero value.
+                if constexpr (assemble_residual)
+                  // The matrix free solver assembles the residual and not - the
+                  // residual, so a minus sign here is necessary.
+                  value_result[d] =
+                    -this->prescribed_neumann_traction(face_index, q)[d];
+                else
+                  value_result[d] = 0;
+              }
+            integrator.submit_value(value_result, q);
+          }
+
+        integrator.integrate(EvaluationFlags::EvaluationFlags::values);
+      }
     }
 
   else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
