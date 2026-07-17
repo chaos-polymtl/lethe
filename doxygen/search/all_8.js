@@ -28,7 +28,7 @@ var searchData=
   ['gauss90_5fderivative_25',['gauss90_derivative',['../classRBFShape.html#a40217b3ae4880af9254d5c839f07f9d8',1,'RBFShape']]],
   ['gauss95_26',['gauss95',['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66ba5152fe409882d54099012df9f595e579',1,'RBFShape::GAUSS95'],['../classRBFShape.html#a0136ef0bada828a44e21a53d067c4cbf',1,'RBFShape::gauss95(const double distance)']]],
   ['gauss95_5fderivative_27',['gauss95_derivative',['../classRBFShape.html#af85fb383074fbe41bf03445d98f359de',1,'RBFShape']]],
-  ['gauss99_28',['gauss99',['../classRBFShape.html#a3e39741a66bd4afac0b5340009105b23',1,'RBFShape::gauss99(const double distance)'],['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66bad809d8ceb9c7da6471334b9198c8e177',1,'RBFShape::GAUSS99']]],
+  ['gauss99_28',['gauss99',['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66bad809d8ceb9c7da6471334b9198c8e177',1,'RBFShape::GAUSS99'],['../classRBFShape.html#a3e39741a66bd4afac0b5340009105b23',1,'RBFShape::gauss99(const double distance)']]],
   ['gauss99_5fderivative_29',['gauss99_derivative',['../classRBFShape.html#a63acec630af9f983064f387bb7ae9e26',1,'RBFShape']]],
   ['gauss_5flobatto_30',['gauss_lobatto',['../namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a9a8a1f8739356c62c5da46aef8be53fb',1,'Parameters']]],
   ['gaussian_31',['gaussian',['../namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a304e2a3b544f6b9f267a151e1bcee487',1,'Parameters']]],

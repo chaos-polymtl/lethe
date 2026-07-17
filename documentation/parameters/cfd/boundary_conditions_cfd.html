@@ -471,8 +471,20 @@
 \[\nu \partial_i u_j n_j  - p n_i - \beta ( u_k n_k)_{-} u_i = 0\]</div>
 </div>
 <p>where <span class="math notranslate nohighlight">\(\beta\)</span> is a constant  and <span class="math notranslate nohighlight">\((\mathbf{u}\cdot \mathbf{n})_{-}\)</span> is <span class="math notranslate nohighlight">\(\min (0,\mathbf{u}\cdot \mathbf{n})\)</span>. We refer the reader to the work of <a class="reference external" href="https://doi.org/10.1007/978-3-319-39929-4_10">Arndt et al 2015</a>  for more detail.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">neumann</span> <span class="pre">traction</span></code> imposes Neumann boundary conditions on the boundary. (<span class="math notranslate nohighlight">\(\mathrm{traction\_fn}\)</span> is a vector-valued function prescribed on the Neumann boundary.)</p></li>
+</ul>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\nu \nabla \mathbf{u} \cdot \mathbf{n} - p \mathcal{I} \cdot \mathbf{n} = \mathrm{traction\_fn}\]</div>
+</div>
+<p>or in Einstein notation:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\nu \partial_i u_j n_j  - p n_i = \mathrm{traction\_fn}_i\]</div>
+</div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number                = 2
+  set number                = 3
   set time dependent        = false
   set fix pressure constant = false
   subsection bc 0
@@ -505,6 +517,12 @@
   end
   subsection bc 1
     set type = noslip
+  end
+  subsection bc 2
+    set type = neumann traction
+    subsection traction fn
+      set Function expression = 2*x; 5*x*y; 3*y*z; 0
+    end
   end
 end
 </pre></div>
@@ -540,6 +558,7 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code> is a penalization parameter used for both the <code class="docutils literal notranslate"><span class="pre">outlet</span></code>, <code class="docutils literal notranslate"><span class="pre">partial</span> <span class="pre">slip</span></code>, and <code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">weak</span></code> boundary conditions. For the outlet boundary conditions <code class="docutils literal notranslate"><span class="pre">beta</span></code> should be close to unity, whereas <code class="docutils literal notranslate"><span class="pre">beta</span></code> of 10 or a 100 can be appropriate for the <code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">weak</span></code> boundary condition. For the <code class="docutils literal notranslate"><span class="pre">partial</span> <span class="pre">slip</span></code> condition, use high values of <code class="docutils literal notranslate"><span class="pre">beta</span></code> (<cite>i.e.</cite> &gt; 50).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">layer</span> <span class="pre">thickness</span></code> (<span class="math notranslate nohighlight">\(d_w\)</span>) is the parameter applied to the <code class="docutils literal notranslate"><span class="pre">partial</span> <span class="pre">slip</span></code> boundary condition. It is used to estimate the tangential shear stress <span class="math notranslate nohighlight">\(\tau_t = -\mu \frac{u}{d_w}\)</span>. For very high <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">layer</span> <span class="pre">thicknes</span></code>, the boundary layer should behave exactly like the <code class="docutils literal notranslate"><span class="pre">slip</span></code> condition.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">traction</span> <span class="pre">fn</span></code> is used to specify the prescribed Neumann traction vector-valued function on the boundary using function expressions. The function should be defined as a vector of size <span class="math notranslate nohighlight">\(dim + 1\)</span>, where the first <span class="math notranslate nohighlight">\(dim\)</span> components correspond to the traction in the x, y (in 2D) and x, y, z directions (in 3D), and the last component is for compatibility reasons (during assembly, we test this traction function with a test function that has 4 components in Matrix Free)</p></li>
 </ul>
 </dd>
 </dl>
