@@ -221,7 +221,7 @@ protected:
   const unsigned int n_quadrature_points;
   /// Rotation angle for the inner domain
   const double rotation_angle;
-  /// Direction of the rotation axis
+  /// Direction of the rotation axis (x=0, y=1, z=2)
   const unsigned int rotation_axis_direction;
   /// Stage heights at the mortar interface along the rotation axis
   /// in 3D problems. A stage is defined as a plane perpendicular to the

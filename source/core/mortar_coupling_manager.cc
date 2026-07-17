@@ -1061,7 +1061,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 for (const auto &p : points_ref)
                   {
                     Point<dim - 1> temp;
-                    // Axis perpendicular to the face current in the reference
+                    // Axis perpendicular to the current face in the reference
                     // cell
                     const unsigned int axis = face_no / 2;
 
