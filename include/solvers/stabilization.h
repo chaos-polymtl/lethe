@@ -195,10 +195,10 @@ calculate_rbvms_tau(const Tensor<2, dim, Number> &metric_tensor,
  *   Reynolds-stress -( ∇v, τ_M r_M ⊗ τ_M r_M )    -> -τ_M^2 r_M[i] r_M[j]
  *
  * Equivalently, with the fine-scale velocity u' = -τ_M r_M, the cross-stress is
- * -( ∇v, u ⊗ u' ) and the Reynolds-stress is -( ∇v, u' ⊗ u' ). Note the u factor
- * sits on the component (test) index i and r_M on the derivative index j, which
- * is the transpose of the SUPG term ( u·∇v, τ_M r_M ) = τ_M u_j r_M[i] (r_M on
- * the component index, u on the derivative index).
+ * -( ∇v, u ⊗ u' ) and the Reynolds-stress is -( ∇v, u' ⊗ u' ). Note the u
+ * factor sits on the component (test) index i and r_M on the derivative index
+ * j, which is the transpose of the SUPG term ( u·∇v, τ_M r_M ) = τ_M u_j r_M[i]
+ * (r_M on the component index, u on the derivative index).
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).
