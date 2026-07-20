@@ -53,7 +53,6 @@ DEMSolver<dim, PropertiesIndex>::DEMSolver(
   , background_dh(triangulation)
   , size_distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
-  , is_packed_insertion_method(false)
 {}
 
 template <int dim, typename PropertiesIndex>
@@ -205,10 +204,10 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
     set_insertion_type<dim, PropertiesIndex>(size_distribution_object_container,
                                              triangulation,
                                              parameters,
-                                             maximum_particle_diameter,
-                                             is_packed_insertion_method);
+                                             maximum_particle_diameter);
 
-  if (is_packed_insertion_method)
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
     {
       disable_position_integration = true;
       parameters.model_parameters.particle_particle_contact_force_model =
@@ -495,7 +494,8 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
       action_manager->particle_insertion_step();
     }
 
-  if (is_packed_insertion_method)
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
     InsertionPacked<dim, PropertiesIndex>::update_previous_position(
       particle_handler);
 }
@@ -1091,7 +1091,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
             }
         }
 
-      if (is_packed_insertion_method)
+      if (parameters.insertion_info.insertion_method ==
+          InsertionInfo<dim>::InsertionMethod::packed)
         {
           unsigned int number_of_pp_contact_on_proc =
             particle_particle_contact_force_object->get_number_of_contacts();
