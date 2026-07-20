@@ -1112,13 +1112,15 @@ private:
           {
             particle_new_position =
               particle_position -
-              (1.02 * normal_overlap + 0.01 * particle->get_properties()[PropertiesIndex::dp]) *
+              (1.02 * normal_overlap +
+               0.01 * particle->get_properties()[PropertiesIndex::dp]) *
                 tensor_nd_to_2d(normal_vector);
           }
         if constexpr (dim == 3)
           {
             particle_new_position =
-              (1.02 * normal_overlap + 0.01 * particle->get_properties()[PropertiesIndex::dp]) *
+              (1.02 * normal_overlap +
+               0.01 * particle->get_properties()[PropertiesIndex::dp]) *
               normal_vector;
           }
         particle->set_location(particle_new_position);
