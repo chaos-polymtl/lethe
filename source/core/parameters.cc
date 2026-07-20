@@ -913,7 +913,9 @@ namespace Parameters
         else if (op == "rbvms")
           stabilization = NavierStokesStabilization::rbvms;
         else
-          throw(std::runtime_error("Invalid stabilization strategy"));
+          AssertThrow(false,
+                      ExcMessage("Invalid stabilization strategy. Choices are "
+                                 "<pspg_supg|gls|grad_div|rbvms>."));
       }
       {
         std::string op = prm.get("scalar limiter");
@@ -922,7 +924,9 @@ namespace Parameters
         else if (op == "moe")
           scalar_limiter = ScalarLimiters::moe;
         else
-          throw(std::runtime_error("Invalid scalar limiter"));
+          AssertThrow(false,
+                      ExcMessage(
+                        "Invalid scalar limiter. Choices are <none|moe>."));
       }
 
       // DCDD stabilization activation parameters
