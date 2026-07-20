@@ -750,19 +750,21 @@ get_rotation_axis_direction(const Parameters::Mortar<dim> &mortar_parameters)
       // specifically (we assume those are the only options for now)
       for (int i = 0; i < dim; i++)
         if (mortar_parameters.rotation_axis[i] != 0. &&
-            std::abs(mortar_parameters.rotation_axis[i]) != 1.)
+            mortar_parameters.rotation_axis[i] != 1.)
           is_unit_axis = false;
 
       AssertThrow(
         is_unit_axis,
         ExcMessage(
-          "The rotation axis must be a unit vector in x, y, or z direction."));
+          "The rotation axis must be a unit vector in the positive x, y, or z direction."));
 
       // Find the direction of the rotation axis
       for (int d = 0; d < dim; d++)
         if (mortar_parameters.rotation_axis[d] != 0.0)
           return d;
     }
+  // In 2D, the rotation_axis_direction is not used, but we return 2 to indicate
+  // that the rotation axis is perpendicular to the plane
   return 2;
 }
 
