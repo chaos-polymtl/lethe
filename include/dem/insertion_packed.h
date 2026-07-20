@@ -85,8 +85,8 @@ public:
    * properties. The position is stored within certain indices that are
    * conventionally designated as velocity components (v_x, v_y, and v_z for 3D
    * configurations). This allows the tracking of previous particle positions
-   * without additional data structures. This tracking is required for the
-   * packed insertion method.
+   * without additional data structures, which would drastically increase the
+   * compilation time. This tracking is required for the packed insertion method.
    *
    * @param[out] particle_handler The particle handler of particles which are
    * being inserted.
