@@ -198,7 +198,7 @@ Each line is associated with a particle and its properties. The main advantage o
 --------------------
 Packed
 --------------------
-The ``packed`` insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions as is for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching each other or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motion on every particle are not solved.
+The ``packed`` insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions **as is** for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching other particles or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motions are not solved.
 
 .. note::
     Currently, when using this insertion method, the simulation ends once no contact is detected, thus the particle positions need to be extracted in an insertion file and the simulation must be relaunched with the ``file`` insertion method.
