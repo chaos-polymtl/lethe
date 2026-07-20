@@ -1,6 +1,17 @@
 # SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Test description: This test solves a 2D manufactured solution (MMS) of the
+# steady incompressible Navier-Stokes equations with the lethe-fluid-matrix-free
+# solver using the residual-based variational multiscale (RBVMS)
+# stabilization with equal-order Q2-Q2 elements. The analytical solution is a
+# divergence-free vortex-like velocity field with a sinusoidal pressure, and the
+# corresponding source term is imposed manually. The mesh is uniformly refined
+# twice and the L2 errors on the velocity and the pressure are monitored to
+# verify that the expected convergence rates of a stabilized equal-order
+# formulation of degree p are recovered, that is p+1 (3rd order) for the
+# velocity and p (2nd order) for the pressure.
+
 # Listing of Parameters
 #----------------------
 
