@@ -86,7 +86,8 @@ public:
    * conventionally designated as velocity components (v_x, v_y, and v_z for 3D
    * configurations). This allows the tracking of previous particle positions
    * without additional data structures, which would drastically increase the
-   * compilation time. This tracking is required for the packed insertion method.
+   * compilation time. This tracking is required for the packed insertion
+   * method.
    *
    * @param[out] particle_handler The particle handler of particles which are
    * being inserted.
@@ -130,12 +131,6 @@ private:
                               std::mt19937             &rng,
                               const InsertionInfo<dim> &insertion_information);
 
-  /// Current particle type being inserted
-  unsigned int current_inserting_particle_type = 0;
-
-  // Number of particles of each type that remain to be inserted in the
-  // upcoming insertion steps
-  unsigned int particles_of_each_type_remaining;
 
   // Minimum and maximum boundaries of the insertion box in the direction order
   // It means that axis 0 is not necessarily x, since it depends on the order

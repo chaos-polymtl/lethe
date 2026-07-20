@@ -18,8 +18,6 @@ InsertionPacked<dim, PropertiesIndex>::InsertionPacked(
   : Insertion<dim, PropertiesIndex>(size_distribution_object_container,
                                     triangulation,
                                     dem_parameters)
-  , particles_of_each_type_remaining(
-      dem_parameters.lagrangian_physical_properties.number.at(0))
   , acceptance_fct(dem_parameters.insertion_info.insertion_acceptance_fct)
 {
   // Initializing the current inserting particle type
