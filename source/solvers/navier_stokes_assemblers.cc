@@ -382,12 +382,8 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
       // of the convention expected by compute_metric_tensor (which follows the
       // matrix-free inverse_jacobian, [i][j] = dxi_j/dx_i); hence the
       // transpose.
-      const auto &fe_inverse_jacobian =
-        scratch_data.fe_values.inverse_jacobian(q);
-      Tensor<2, dim> inverse_jacobian;
-      for (unsigned int i = 0; i < dim; ++i)
-        for (unsigned int j = 0; j < dim; ++j)
-          inverse_jacobian[i][j] = fe_inverse_jacobian[j][i];
+      const Tensor<2, dim> inverse_jacobian =
+        scratch_data.fe_values.inverse_jacobian(q).transpose();
 
       Tensor<2, dim> metric_tensor;
       Tensor<1, dim> metric_vector;
@@ -598,12 +594,8 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
 
       // RBVMS stabilization parameters from the element metric tensor (see the
       // matching comment in assemble_matrix for the transpose convention).
-      const auto &fe_inverse_jacobian =
-        scratch_data.fe_values.inverse_jacobian(q);
-      Tensor<2, dim> inverse_jacobian;
-      for (unsigned int i = 0; i < dim; ++i)
-        for (unsigned int j = 0; j < dim; ++j)
-          inverse_jacobian[i][j] = fe_inverse_jacobian[j][i];
+      const Tensor<2, dim> inverse_jacobian =
+        scratch_data.fe_values.inverse_jacobian(q).transpose();
 
       Tensor<2, dim> metric_tensor;
       Tensor<1, dim> metric_vector;
