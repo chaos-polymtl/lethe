@@ -43,8 +43,8 @@ public:
                     double                  radius,
                     const Quadrature<dim2> &quadrature,
                     const double            rotation_angle,
-                    const unsigned int      rotation_axis_direction = 2,
-                    const double            stage_heights           = 0.0);
+                    const unsigned int      rotation_axis_direction,
+                    const double            stage_heights);
 
   /**
    * @brief Mortar manager base constructor used in 3D problems
@@ -599,6 +599,8 @@ MortarManagerLinear<dim>::MortarManagerLinear(
                                              mortar_parameters))) /
         (2.0 * numbers::PI),
       quadrature,
+      0.0,
+      2,
       0.0)
 {
   std::tie(this->coord_min, this->coord_max) =
