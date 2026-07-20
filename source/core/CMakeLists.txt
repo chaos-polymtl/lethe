@@ -9,6 +9,7 @@ add_library(lethe-core
   electric_permittivity_model.cc
   evaporation_model.cc
   grid_birmingham_fluidized_bed.cc
+  grid_cavity_mw.cc
   grid_cube_merged.cc
   grid_cylinder.cc
   grid_fichera_oven.cc

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grid_birmingham_fluidized_bed.h>
+#include <core/grid_cavity_mw.h>
 #include <core/grid_cube_merged.h>
 #include <core/grid_cylinder.h>
 #include <core/grid_fichera_oven.h>
@@ -317,6 +318,19 @@ attach_grid_to_triangulation(
               "Unsupported mesh type - uniform_channel_with_meshed_square_prism mesh with simplex is not supported"));
 
           GridUniformChannelWithMeshedSquarePrism<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+      else if (grid_type == "cavity_mw")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - uniform_channel_with_meshed_square_prism mesh with simplex is not supported"));
+
+          GridCavityMw<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
