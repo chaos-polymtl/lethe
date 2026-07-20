@@ -10,7 +10,7 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
   subsection stabilization
     set use default stabilization        = true
 
-    set stabilization                    = pspg_supg     # <pspg_supg|gls|grad_div>.
+    set stabilization                    = pspg_supg     # <pspg_supg|gls|grad_div|rbvms>.
 
     # DCDD stabilization
     set heat transfer dcdd stabilization = false
@@ -27,13 +27,15 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
 
 The ``use default stabilization`` indicates that the solver should use the default stabilization strategy, which is generally the most adequate strategy. To use an alternative strategy, this parameter must be set to false and the strategy to be used must be manually specified using the ``stabilization`` parameter.
 
-There are three choices of stabilization strategy:
+There are four choices of stabilization strategy:
 
 * ``stabilization=pspg-supg`` assembles a PSPG/SUPG stabilization for the Navier-Stokes equations. This stabilization should only be used with the monolithic solver for the Navier-Stokes equations (``lethe-fluid`` or ``lethe-fluid-matrix-free``).
 
 * ``stabilization=gls`` assembles a full GLS stabilization for the Navier-Stokes equations which adds two Least-Squares terms (for more details see :doc:`../../../../theory/multiphysics/fluid_dynamics/stabilization`). This stabilization should only be used with the monolithic solver for the Navier-Stokes equations (``lethe-fluid`` or ``lethe-fluid-matrix-free``).
 
 * ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div block Navier-Stokes solver (``lethe-fluid-block``).
+
+* ``stabilization=rbvms`` assembles the residual-based variational multiscale (RBVMS) stabilization of `Bazilevs et al. (2007) <https://doi.org/10.1016/j.cma.2007.07.016>`_. In addition to the SUPG/PSPG terms, it builds the stabilization parameters from the element metric tensor (so they account for element stretching and shearing) and adds the cross-stress and Reynolds-stress subgrid terms, making it suitable as an implicit large-eddy-simulation (LES) model for turbulent flows (for more details see :doc:`../../../../theory/multiphysics/fluid_dynamics/stabilization`). It is currently available for constant-density (incompressible) Newtonian flows with the monolithic solvers (``lethe-fluid`` or ``lethe-fluid-matrix-free``).
 
 * ``heat transfer dcdd stabilization`` applies the Discontinuity-Capturing Directional Dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
 
