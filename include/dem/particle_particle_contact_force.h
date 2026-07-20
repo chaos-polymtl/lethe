@@ -1589,11 +1589,11 @@ private:
       {
         particle_one_new_position =
           particle_one_position -
-          (0.501 * normal_overlap + 0.001 * diameter_one) *
+          (0.501 * normal_overlap + 0.01 * diameter_one) *
             tensor_nd_to_2d(normal_unit_vector);
         particle_two_new_position =
           particle_two_position +
-          (0.501 * normal_overlap + 0.001 * diameter_two) *
+          (0.501 * normal_overlap + 0.01 * diameter_two) *
             tensor_nd_to_2d(normal_unit_vector);
       }
     if constexpr (dim == 3)

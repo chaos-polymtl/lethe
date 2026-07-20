@@ -82,7 +82,7 @@ subsection insertion info
   set insertion method                               = packed
   set inserted number of particles at each time step = 200
   set insertion frequency                            = 2000000
-  set insertion box points coordinates               = -0.02, -0.02, -0.02 : 0.02, 0.02, -0.02
+  set insertion box points coordinates               = -0.01, -0.01, -0.01 : 0.01, 0.01, -0.01
   set insertion distance threshold                   = 1.5
   set insertion maximum offset                       = 0.2
   set insertion prn seed                             = 19
