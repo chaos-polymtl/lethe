@@ -126,6 +126,55 @@ public:
 
 
 /**
+ * @brief Class that assembles the core of the Navier-Stokes equation with the
+ * residual-based variational multiscale (RBVMS) stabilization of Bazilevs,
+ * Calo, Cottrell, Hughes, Reali & Scovazzi, "Variational multiscale
+ * residual-based turbulence modeling for large eddy simulation of
+ * incompressible flows", CMAME 197 (2007) 173-201.
+ *
+ * On top of the SUPG/PSPG terms it adds the metric-based stabilization
+ * parameters tau_M (eq. 64) and tau_C (eq. 65) built from the element metric
+ * tensor G (eq. 66) and vector g (eq. 69), the LSIC/grad-div term, and the two
+ * fine-scale terms that define RBVMS: the cross-stress term (u·(∇w)^T, tau_M
+ * r_M) and the Reynolds-stress term -(∇w, tau_M r_M ⊗ tau_M r_M) (eq. 72). This
+ * is the matrix-based counterpart of the matrix-free rbvms implementation.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class RBVMSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
+{
+public:
+  RBVMSNavierStokesAssemblerCore(
+    const std::shared_ptr<SimulationControl> &simulation_control)
+    : simulation_control(simulation_control)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
+};
+
+
+/**
  * @brief Class that assembles the coriolis and the centrifugal
  * if a simulation is carried out in a rotating frame of reference
  * according to the following term:
