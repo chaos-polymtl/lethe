@@ -191,11 +191,14 @@ calculate_rbvms_tau(const Tensor<2, dim, Number> &metric_tensor,
  * residual that is later contracted with the test-function gradient, i.e. it
  * contributes (T : ∇v) = sum_ij T[i][j] ∂v_i/∂x_j, so:
  *
- *   cross-stress     ( u·(∇v)^T, τ_M r_M )        -> +τ_M u_i r_M[j]
+ *   cross-stress     ( ∇v, u ⊗ τ_M r_M )          -> +τ_M u_i r_M[j]
  *   Reynolds-stress -( ∇v, τ_M r_M ⊗ τ_M r_M )    -> -τ_M^2 r_M[i] r_M[j]
  *
- * The cross-stress index pattern is the transpose of the SUPG one (which places
- * r_M on the component index and u on the derivative index).
+ * Equivalently, with the fine-scale velocity u' = -τ_M r_M, the cross-stress is
+ * -( ∇v, u ⊗ u' ) and the Reynolds-stress is -( ∇v, u' ⊗ u' ). Note the u factor
+ * sits on the component (test) index i and r_M on the derivative index j, which
+ * is the transpose of the SUPG term ( u·∇v, τ_M r_M ) = τ_M u_j r_M[i] (r_M on
+ * the component index, u on the derivative index).
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).
