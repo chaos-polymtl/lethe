@@ -135,7 +135,7 @@ public:
  * On top of the SUPG/PSPG terms it adds the metric-based stabilization
  * parameters tau_M (eq. 64) and tau_C (eq. 65) built from the element metric
  * tensor G (eq. 66) and vector g (eq. 69), the LSIC/grad-div term, and the two
- * fine-scale terms that define RBVMS: the cross-stress term (u·(∇w)^T, tau_M
+ * fine-scale terms that define RBVMS: the cross-stress term (∇w, u ⊗ tau_M
  * r_M) and the Reynolds-stress term -(∇w, tau_M r_M ⊗ tau_M r_M) (eq. 72). This
  * is the matrix-based counterpart of the matrix-free rbvms implementation.
  *
