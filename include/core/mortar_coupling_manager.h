@@ -43,8 +43,8 @@ public:
                     double                  radius,
                     const Quadrature<dim2> &quadrature,
                     const double            rotation_angle,
-                    const unsigned int      rotation_axis_direction,
-                    const double            stage_heights);
+                    const unsigned int      rotation_axis_direction = 2,
+                    const double            stage_heights = 0.0);
 
   /**
    * @brief Mortar manager base constructor used in 3D problems
