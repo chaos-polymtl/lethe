@@ -5,6 +5,7 @@
 #include <core/time_integration_utilities.h>
 
 #include <solvers/fluid_dynamics_matrix_free_operators.h>
+#include <solvers/stabilization.h>
 
 #include <deal.II/grid/grid_generator.h>
 
@@ -186,13 +187,16 @@ NavierStokesOperatorBase<dim, number>::reinit(
   if (stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
       stabilization ==
-        Parameters::Stabilization::NavierStokesStabilization::gls)
+        Parameters::Stabilization::NavierStokesStabilization::gls ||
+      stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::rbvms)
     {
       this->stabilization = stabilization;
     }
   else
     throw std::runtime_error(
-      "Only SUPG/PSPG and GLS stabilization is supported at the moment.");
+      "Only SUPG/PSPG, GLS and RBVMS stabilization is supported at the "
+      "moment.");
 
   this->simulation_control = simulation_control;
 
@@ -962,6 +966,16 @@ NavierStokesOperatorBase<dim, number>::
       sdt             = 1. / dt;
     }
 
+  // RBVMS-only quantities (Bazilevs et al. 2007). The transient term of tau_M
+  // (eq. 64) is 4/dt^2 = 4*sdt^2 (0 for steady). The inverse-estimate constant
+  // C_I (see paper text after eq. 70) is taken order dependent as 3*k^2.
+  const double four_over_dt_squared = 4. * sdt * sdt;
+  const double rbvms_c_i =
+    3. * static_cast<double>(this->fe_degree * this->fe_degree);
+  const bool is_rbvms =
+    this->stabilization ==
+    Parameters::Stabilization::NavierStokesStabilization::rbvms;
+
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
       integrator.reinit(cell);
@@ -1110,6 +1124,49 @@ NavierStokesOperatorBase<dim, number>::
                 std::sqrt(
                   Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
                   9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
+            }
+        }
+
+      // RBVMS: overwrite tau_M and tau_C with the metric-based values of
+      // Bazilevs et al. 2007 (eqs. 64-65). The metric tensor G (eq. 66) and
+      // vector g (eq. 69) are built from the element inverse Jacobian, so tau
+      // becomes anisotropy-aware (it accounts for cell stretch and shear). The
+      // model branch is a single scalar test hoisted above this quadrature
+      // loop, so the inner arithmetic stays branch-free and SIMD-vectorized.
+      // RBVMS is Newtonian-only, so kinematic_viscosity is the constant nu.
+      if (is_rbvms)
+        {
+          for (const auto q : integrator.quadrature_point_indices())
+            {
+              // inverse_jacobian(q) returns J^{-T} (see compute_metric_tensor).
+              Tensor<2, dim, VectorizedArray<number>> metric_tensor;
+              Tensor<1, dim, VectorizedArray<number>> metric_vector;
+              compute_metric_tensor(integrator.inverse_jacobian(q),
+                                    metric_tensor,
+                                    metric_vector);
+
+              // Extract the (advective) velocity components; the stored tensor
+              // also carries the pressure slot (component dim).
+              const auto &advective_value =
+                this->nonlinear_previous_advective_values(cell, q);
+              Tensor<1, dim, VectorizedArray<number>> velocity;
+              for (int d = 0; d < dim; ++d)
+                velocity[d] = advective_value[d];
+
+              VectorizedArray<number> tau_momentum;
+              VectorizedArray<number> tau_continuity;
+              calculate_rbvms_tau<dim, VectorizedArray<number>>(
+                metric_tensor,
+                metric_vector,
+                velocity,
+                VectorizedArray<number>(kinematic_viscosity),
+                VectorizedArray<number>(four_over_dt_squared),
+                rbvms_c_i,
+                tau_momentum,
+                tau_continuity);
+
+              stabilization_parameter(cell, q)      = tau_momentum;
+              stabilization_parameter_lsic(cell, q) = tau_continuity;
             }
         }
     }
@@ -1717,6 +1774,11 @@ NavierStokesStabilizedOperator<dim, number>::NavierStokesStabilizedOperator() =
  * plus two additional terms in the case of full gls stabilization:
  * \+ (∂t δu +(u_adv·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian)
  * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
+ * In the case of RBVMS stabilization (Bazilevs et al. 2007, eq. 72), the SUPG
+ * and PSPG terms above are kept with the metric-based τ_M, the LSIC term is
+ * added with the metric-based τ_C, and two further fine-scale terms are added:
+ * the cross-stress term (u·(∇v)^T, τ_M r_M) and the Reynolds-stress term
+ * -(∇v, τ_M r_M ⊗ τ_M r_M), both linearized under the frozen-τ approximation.
  * The advective velocity u_adv is the same as the velocity u unless an ALE
  * simulation is performed. In this case, u_adv = u - u_ALE, and u_ALE is
  * previously subtracted from u_adv at the function
@@ -1947,12 +2009,84 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                             ((1.0 / (dt * a_ii)) * value[i]);
                         }
                     }
-
-                  // LSIC term
-                  // (∇·δu)τ'(∇·v)
-                  gradient_result[i][i] += tau_lsic * gradient[k][k];
                 }
             }
+        }
+
+      // LSIC / grad-div Jacobian (∇·δu)τ_C(∇·v). Present for GLS and RBVMS
+      // (Bazilevs et al. 2007, eq. 72). Accumulation order matches the
+      // historical GLS code so GLS remains bit-for-bit unchanged.
+      if (this->stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::gls ||
+          this->stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::rbvms)
+        {
+          for (int i = 0; i < dim; ++i)
+            for (int k = 0; k < dim; ++k)
+              gradient_result[i][i] += tau_lsic * gradient[k][k];
+        }
+
+      // RBVMS cross-stress and Reynolds-stress Jacobian (Bazilevs et al. 2007,
+      // eq. 72), consistent frozen-τ linearization. δr_M is the linearization
+      // of the strong momentum residual (eq. 62) w.r.t. (δu, δp) — the same
+      // quantity the PSPG Jacobian forms — and r_M^{n} is the frozen residual
+      // at the previous Newton step (as in SUPG "Part 2"). τ_M is treated as
+      // constant (read from the table), so only the residual factors are
+      // differentiated.
+      if (this->stabilization ==
+          Parameters::Stabilization::NavierStokesStabilization::rbvms)
+        {
+          // δr_M: linearization of r_M w.r.t. the trial (δu, δp).
+          Tensor<1, dim, VectorizedArray<number>> delta_r_m;
+          // r_M^{n}: frozen strong residual at the previous Newton step.
+          Tensor<1, dim, VectorizedArray<number>> r_m_previous;
+          for (int i = 0; i < dim; ++i)
+            {
+              // δr_M = ∇δp + (u_adv·∇)δu + (δu·∇)u [ - ν∆δu ] [ + ∂t δu ]
+              delta_r_m[i] = gradient[dim][i];
+              for (int l = 0; l < dim; ++l)
+                delta_r_m[i] += gradient[i][l] * previous_advective_values[l] +
+                                previous_gradient[i][l] * value[l];
+              if (this->enable_hessians_jacobian)
+                for (int l = 0; l < dim; ++l)
+                  delta_r_m[i] += -kinematic_viscosity * hessian_diagonal[i][l];
+              if (is_bdf)
+                delta_r_m[i] += (*bdf_coefficients)[0] * value[i];
+              if (is_sdirk)
+                delta_r_m[i] += (1.0 / (dt * a_ii)) * value[i];
+
+              // r_M^{n} = ∇p - f + (u·∇)u [ - ν∆u ] [ + ∂t u ]
+              r_m_previous[i] = previous_gradient[dim][i] - source_value[i];
+              for (int l = 0; l < dim; ++l)
+                r_m_previous[i] +=
+                  previous_gradient[i][l] * previous_advective_values[l];
+              if (this->enable_hessians_jacobian)
+                for (int l = 0; l < dim; ++l)
+                  r_m_previous[i] +=
+                    -kinematic_viscosity * previous_hessian_diagonal[i][l];
+              if (is_bdf)
+                r_m_previous[i] += (*bdf_coefficients)[0] * previous_values[i] +
+                                   previous_time_derivatives[i];
+              if (is_sdirk)
+                r_m_previous[i] += (1.0 / (dt * a_ii)) * previous_values[i] +
+                                   previous_time_derivatives[i];
+            }
+
+          // Velocity components of the frozen advection (u^n) and of the trial
+          // increment (δu); the stored tensors also carry the pressure slot.
+          Tensor<1, dim, VectorizedArray<number>> velocity;
+          Tensor<1, dim, VectorizedArray<number>> delta_velocity;
+          for (int d = 0; d < dim; ++d)
+            {
+              velocity[d]       = previous_advective_values[d];
+              delta_velocity[d] = value[d];
+            }
+
+          const auto fine_scale = rbvms_fine_scale_terms_linearization<dim>(
+            velocity, delta_velocity, r_m_previous, delta_r_m, tau);
+          for (int i = 0; i < dim; ++i)
+            for (int j = 0; j < dim; ++j)
+              gradient_result[i][j] += fine_scale[i][j];
         }
 
       if (this->has_solids)
@@ -1986,6 +2120,11 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
  * plus two additional terms in the case of full gls stabilization:
  * \+ (∂t u +(u_adv·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term)
  * \+ (∇·u)τ'(∇·v) (LSIC term).
+ * In the case of RBVMS stabilization (Bazilevs et al. 2007, eq. 72), the SUPG
+ * and PSPG terms above are kept with the metric-based τ_M, the LSIC term is
+ * added with the metric-based τ_C, and two further fine-scale terms are added:
+ * the cross-stress term (u·(∇v)^T, τ_M r_M) and the Reynolds-stress term
+ * -(∇v, τ_M r_M ⊗ τ_M r_M), with r_M the strong momentum residual (eq. 62).
  * The advective velocity u_adv is the same as the velocity u unless an ALE
  * simulation is performed. In this case, u_adv = u - u_ALE, and u_ALE is
  * previously subtracted from u_adv at the function
@@ -2205,12 +2344,64 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                               ((1.0 / (dt * a_ii)) * value[i] +
                                previous_time_derivatives[i]);
                         }
-
-                      // LSIC term
-                      // (∇·u)τ'(∇·v)
-                      gradient_result[i][i] += tau_lsic * gradient[k][k];
                     }
                 }
+            }
+
+          // LSIC / grad-div term (∇·u)τ_C(∇·v). Present for GLS and for RBVMS
+          // (Bazilevs et al. 2007, eq. 72, continuity term with r_C = ∇·u). The
+          // accumulation order matches the historical GLS code so GLS remains
+          // bit-for-bit unchanged.
+          if (this->stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::gls ||
+              this->stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::rbvms)
+            {
+              for (int i = 0; i < dim; ++i)
+                for (int k = 0; k < dim; ++k)
+                  gradient_result[i][i] += tau_lsic * gradient[k][k];
+            }
+
+          // RBVMS cross-stress and Reynolds-stress terms (Bazilevs et al. 2007,
+          // eq. 72). These fine-scale terms are what distinguish RBVMS from
+          // SUPG/PSPG. The strong momentum residual r_M (eq. 62) is assembled
+          // once here from the current solution; the advecting velocity is the
+          // frozen advective_value, as in the Galerkin/SUPG convective terms.
+          if (this->stabilization ==
+              Parameters::Stabilization::NavierStokesStabilization::rbvms)
+            {
+              Tensor<1, dim, VectorizedArray<number>> r_m;
+              for (int i = 0; i < dim; ++i)
+                {
+                  // ∇p - f
+                  r_m[i] = gradient[dim][i] - source_value[i];
+                  // + (u_adv·∇)u
+                  for (int l = 0; l < dim; ++l)
+                    r_m[i] += gradient[i][l] * advective_value[l];
+                  // - ν∆u (only when the Laplacian is evaluated)
+                  if (this->enable_hessians_residual)
+                    for (int l = 0; l < dim; ++l)
+                      r_m[i] += -kinematic_viscosity * hessian_diagonal[i][l];
+                  // + ∂t u
+                  if (is_bdf)
+                    r_m[i] += (*bdf_coefficients)[0] * value[i] +
+                              previous_time_derivatives[i];
+                  if (is_sdirk)
+                    r_m[i] += (1.0 / (dt * a_ii)) * value[i] +
+                              previous_time_derivatives[i];
+                }
+
+              // Velocity components (the stored advective tensor also carries
+              // the pressure slot, component dim).
+              Tensor<1, dim, VectorizedArray<number>> velocity;
+              for (int d = 0; d < dim; ++d)
+                velocity[d] = advective_value[d];
+
+              const auto fine_scale =
+                rbvms_fine_scale_terms<dim>(velocity, r_m, tau);
+              for (int i = 0; i < dim; ++i)
+                for (int j = 0; j < dim; ++j)
+                  gradient_result[i][j] += fine_scale[i][j];
             }
 
           if (this->has_solids)

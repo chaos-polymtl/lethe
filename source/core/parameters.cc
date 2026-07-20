@@ -847,9 +847,9 @@ namespace Parameters
       prm.declare_entry(
         "stabilization",
         "pspg_supg",
-        Patterns::Selection("pspg_supg|gls|grad_div"),
+        Patterns::Selection("pspg_supg|gls|grad_div|rbvms"),
         "Type of stabilization used for the Navier-Stokes equations"
-        "Choices are <pspg_supg|gls|grad_div>.");
+        "Choices are <pspg_supg|gls|grad_div|rbvms>.");
 
       prm.declare_entry(
         "heat transfer dcdd stabilization",
@@ -910,6 +910,8 @@ namespace Parameters
           stabilization = NavierStokesStabilization::gls;
         else if (op == "grad_div")
           stabilization = NavierStokesStabilization::grad_div;
+        else if (op == "rbvms")
+          stabilization = NavierStokesStabilization::rbvms;
         else
           throw(std::runtime_error("Invalid stabilization strategy"));
       }

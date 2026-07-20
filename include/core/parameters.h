@@ -816,7 +816,8 @@ namespace Parameters
     {
       pspg_supg,
       gls,
-      grad_div
+      grad_div,
+      rbvms
     } stabilization;
 
     enum class ScalarLimiters : std::int8_t
