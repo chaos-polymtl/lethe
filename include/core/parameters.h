@@ -854,7 +854,8 @@ namespace Parameters
     {
       pspg_supg,
       gls,
-      grad_div
+      grad_div,
+      rbvms
     } stabilization = NavierStokesStabilization::pspg_supg;
 
     enum class ScalarLimiters : std::int8_t

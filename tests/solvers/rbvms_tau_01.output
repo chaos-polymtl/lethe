@@ -1,0 +1,10 @@
+
+DEAL::[double,transient]      tau_M (eq. 64) matches reference : OK
+DEAL::[double,transient]      tau_C (eq. 65) matches reference : OK
+DEAL::[double,transient]      tau_C*tau_M*(g.g) = 1 identity   : OK
+DEAL::[vectorized,transient]  tau_M (eq. 64) matches reference : OK
+DEAL::[vectorized,transient]  tau_C (eq. 65) matches reference : OK
+DEAL::[vectorized,transient]  tau_C*tau_M*(g.g) = 1 identity   : OK
+DEAL::[double,steady]         tau_M (eq. 64) matches reference : OK
+DEAL::[double,steady]         tau_C (eq. 65) matches reference : OK
+DEAL::[double,steady]         tau_C*tau_M*(g.g) = 1 identity   : OK
