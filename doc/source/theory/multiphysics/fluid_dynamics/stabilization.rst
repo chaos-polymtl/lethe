@@ -83,5 +83,42 @@ This is the version of the GLS stabilization if the finite element method is onl
 
    \tau_{LSIC} = \frac{|\mathrm{u}| h}{2}
 
-The non-linear problem is solved in the same fashion and the structure of the Jacobian is the same one as that of the SUPG/PSPG formulation. 
+The non-linear problem is solved in the same fashion and the structure of the Jacobian is the same one as that of the SUPG/PSPG formulation.
+
+
+-----------------------------------------------------------
+Residual-Based Variational Multiscale (RBVMS) Formulation
+-----------------------------------------------------------
+
+The RBVMS formulation of `Bazilevs et al. (2007) <https://doi.org/10.1016/j.cma.2007.07.016>`_ is a residual-based large-eddy-simulation (LES) approach derived from the variational multiscale framework. As with the SUPG/PSPG and GLS formulations, the added terms involve the residual so that the exact solution still satisfies the weak form (consistency). It differs in two important ways. First, the stabilization parameters are built from the element metric tensor rather than from a single scalar element size, which makes them sensitive to element stretching and shearing — a key property on the strongly anisotropic meshes used for wall-bounded turbulence. Second, two additional fine-scale terms are included, a cross-stress term and a Reynolds-stress term, which model the effect of the unresolved (subgrid) scales and give the method its implicit-LES character.
+
+Denoting the strong residual of the momentum equation by :math:`\mathcal{R}_k = \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k`, the weak form assembled by Lethe is:
+
+.. math::
+
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{K} \int_{\Omega_K} \mathcal{R}_k \left(\tau_{M} \partial_k q \right) \mathrm{d}\Omega_K  = 0
+  \\
+  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k v_k \right) p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega
+  \\
+  & + \sum_{K} \int_{\Omega_K} \mathcal{R}_k \left(\tau_{M} u_l \partial_l v_k \right) \mathrm{d}\Omega_K + \sum_{K} \int_{\Omega_K} \tau_{C} \left( \partial_k v_k \right) \left( \partial_l u_l \right) \mathrm{d}\Omega_K
+  \\
+  & + \sum_{K} \int_{\Omega_K} \tau_{M} \, u_k \left( \partial_l v_k \right) \mathcal{R}_l \, \mathrm{d}\Omega_K - \sum_{K} \int_{\Omega_K} \tau_{M}^2 \left( \partial_l v_k \right) \mathcal{R}_k \mathcal{R}_l \, \mathrm{d}\Omega_K = 0
+
+The first two lines are the continuity/PSPG equation and the Galerkin momentum equation. The third line adds the SUPG and the LSIC (grad-div) terms. The last line is what distinguishes RBVMS from GLS: the cross-stress term :math:`\left(\nabla v, \mathbf{u} \otimes \tau_M \boldsymbol{\mathcal{R}}\right)` and the Reynolds-stress term :math:`-\left(\nabla v, \tau_M \boldsymbol{\mathcal{R}} \otimes \tau_M \boldsymbol{\mathcal{R}}\right)`, the latter being quadratic in the residual.
+
+The stabilization parameters are computed from the element contravariant metric tensor :math:`G_{ij}` and metric vector :math:`g_i`,
+
+.. math::
+
+   G_{ij} = \sum_k \frac{\partial \xi_k}{\partial x_i}\frac{\partial \xi_k}{\partial x_j}, \qquad  g_i = \sum_j \frac{\partial \xi_j}{\partial x_i}
+
+where :math:`\boldsymbol{\xi}(\mathbf{x})` is the mapping from the physical element to the reference element (so :math:`\partial \xi_k / \partial x_i` are the entries of the inverse of the mapping Jacobian). The momentum and continuity stabilization parameters are then
+
+.. math::
+
+   \tau_{M} = \left( \frac{4}{\Delta t^{2}} + u_i G_{ij} u_j + C_I \nu^2 G_{ij} G_{ij} \right)^{-1/2}, \qquad \tau_{C} = \frac{1}{\tau_{M}\, g_i g_i}
+
+where :math:`C_I` is a positive constant arising from an element-wise inverse estimate, taken in Lethe as :math:`C_I = 3 k^2` with :math:`k` the polynomial degree of the velocity interpolation. Both the SUPG and the PSPG terms use :math:`\tau_M` (there is no separate pressure stabilization parameter), and in steady simulations the transient :math:`4/\Delta t^{2}` term is dropped.
+
+As in the SUPG/PSPG and GLS formulations, the Jacobian is assembled with the stabilization parameters :math:`\tau_M` and :math:`\tau_C` frozen (their dependence on the solution is not linearized). This stabilization is currently available for constant-density (incompressible) Newtonian flows with the monolithic solvers (``lethe-fluid`` and ``lethe-fluid-matrix-free``).
 
