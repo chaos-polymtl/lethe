@@ -1287,6 +1287,12 @@ namespace Parameters
     unsigned int phase_cahn_hilliard_degree;
     unsigned int potential_cahn_hilliard_degree;
 
+    /// Number of quadrature points used for the fluid dynamics. If this
+    /// parameter is set to its default value (0), the number of quadrature
+    /// points is deduced from the velocity interpolation degree
+    /// (velocity_degree + 1). Otherwise, the value specified is used directly.
+    unsigned int fluid_dynamics_number_of_quadrature_points;
+
     // Option for bubble enrichment functions
     bool enable_bubble_function_velocity;
     bool enable_bubble_function_pressure;

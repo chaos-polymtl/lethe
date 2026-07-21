@@ -28,6 +28,9 @@ This subsection specifies the characteristics of the finite element method used 
     set phase cahn hilliard degree     = 1
     set potential cahn hilliard degree = 1
 
+    # number of quadrature points used for the fluid dynamics
+    set fluid dynamics number of quadrature points = 0
+
     # bubble enrichment function
     set enable bubble function velocity = false
     set enable bubble function pressure = false
@@ -51,6 +54,8 @@ This subsection specifies the characteristics of the finite element method used 
 * ``CLS degree`` specifies the polynomial degree for the CLS phase indicator. It is not recommended to use higher polynomial degrees for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.
 
 * ``phase cahn hilliard degree`` and ``potential cahn hilliard degree`` specify the polynomial degree for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The degrees chosen should be equal. They are left as two separate parameters for debugging purposes.
+
+* ``fluid dynamics number of quadrature points`` specifies the number of quadrature points (per direction) used to integrate the fluid dynamics equations. When it is set to its default value (``0``), the number of quadrature points is deduced from the velocity polynomial degree, that is ``velocity degree + 1``. Setting a larger value enables over-integration of the fluid dynamics, which may be beneficial for highly deformed cells or for stabilization schemes that involve strongly non-linear integrands.
 
 * ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  `Franca and Farhat 1995 <https://www.sciencedirect.com/science/article/abs/pii/004578259400721X>`_ and `Brezzi et al 1992 <https://www.sciencedirect.com/science/article/abs/pii/004578259290102P>`_ for more detail.
 
