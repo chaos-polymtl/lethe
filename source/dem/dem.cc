@@ -209,6 +209,11 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
   if (parameters.insertion_info.insertion_method ==
       InsertionInfo<dim>::InsertionMethod::packed)
     {
+      pcout << "\nUsing packed insertion method. This method overloads the \n"
+               "regular contact model. Please consult the documentation for \n"
+               "information on how to appropriately use it.\n"
+            << std::endl;
+
       disable_position_integration = true;
       parameters.model_parameters.particle_particle_contact_force_model =
         ParticleParticleContactForceModel::shift;
