@@ -312,6 +312,371 @@ template class PSPGSUPGNavierStokesAssemblerCore<3>;
 
 template <int dim>
 void
+RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector =
+    scratch_data.kinematic_viscosity;
+
+  const std::vector<double> &viscosity_for_stabilization_vector =
+    scratch_data.kinematic_viscosity_for_stabilization;
+
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // RBVMS-only quantities (Bazilevs et al. 2007). The transient term of tau_M
+  // (eq. 64) is 4/dt^2 (0 for steady). The inverse-estimate constant C_I (see
+  // paper text after eq. 70) is taken order dependent as 3*k^2.
+  const bool is_steady =
+    this->simulation_control->get_assembly_method() ==
+    Parameters::SimulationControl::TimeSteppingMethod::steady;
+  const double       four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
+  const unsigned int velocity_fe_degree =
+    scratch_data.fe_values.get_fe().degree;
+  const double rbvms_c_i =
+    3. * static_cast<double>(velocity_fe_degree * velocity_fe_degree);
+
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const double          kinematic_viscosity = viscosity_vector[q];
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
+
+      const Tensor<1, dim> &pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Forcing term
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // RBVMS stabilization parameters from the element metric tensor. The
+      // FEValues inverse Jacobian has entry [i][j] = dxi_i/dx_j, the transpose
+      // of the convention expected by compute_metric_tensor (which follows the
+      // matrix-free inverse_jacobian, [i][j] = dxi_j/dx_i); hence the
+      // transpose.
+      const Tensor<2, dim> inverse_jacobian =
+        scratch_data.fe_values.inverse_jacobian(q).transpose();
+
+      Tensor<2, dim> metric_tensor;
+      Tensor<1, dim> metric_vector;
+      compute_metric_tensor(inverse_jacobian, metric_tensor, metric_vector);
+
+      double tau;      // tau_M (eq. 64)
+      double tau_lsic; // tau_C (eq. 65)
+      calculate_rbvms_tau<dim, double>(metric_tensor,
+                                       metric_vector,
+                                       advective_velocity,
+                                       viscosity_for_stabilization_vector[q],
+                                       four_over_dt_squared,
+                                       rbvms_c_i,
+                                       tau,
+                                       tau_lsic);
+
+      // Calculate the strong residual r_M (eq. 62)
+      auto strong_residual = velocity_gradient * advective_velocity +
+                             pressure_gradient -
+                             kinematic_viscosity * velocity_laplacian - force +
+                             mass_source * velocity + strong_residual_vec[q];
+
+      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+
+      // We loop over the column first to prevent recalculation
+      // of the strong jacobian in the inner loop
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j           = scratch_data.phi_u[q][j];
+          const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
+          const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
+
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
+
+          strong_jacobian_vec[q][j] +=
+            (velocity_gradient * phi_u_j + grad_phi_u_j * advective_velocity +
+             grad_phi_p_j - kinematic_viscosity * laplacian_phi_u_j +
+             mass_source * phi_u_j);
+
+          // Store these temporary products in auxiliary variables for speed
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * advective_velocity;
+          velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const int component_i = scratch_data.components[i];
+
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+
+          // Store these temporary products in auxiliary variables for speed.
+          // grad_phi_u_i_x_velocity contracts the velocity with the derivative
+          // (gradient) index (SUPG weight u·∇v), whereas
+          // grad_phi_u_i_x_strong_residual contracts r_M with that same index
+          // and is used by the cross-stress and Reynolds-stress terms.
+          const auto grad_phi_u_i_x_velocity =
+            grad_phi_u_i * advective_velocity;
+          const auto strong_residual_x_grad_phi_u_i =
+            strong_residual * grad_phi_u_i;
+          const auto grad_phi_u_i_x_strong_residual =
+            grad_phi_u_i * strong_residual;
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const int component_j = scratch_data.components[j];
+
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
+
+              const auto &strong_jac = strong_jacobian_vec[q][j];
+
+              double local_matrix_ij =
+                component_j == dim ? -div_phi_u_i * phi_p_j : 0;
+              if (component_i == dim)
+                {
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
+
+                  local_matrix_ij += phi_p_i * div_phi_u_j; // continuity
+
+                  // PSPG term
+                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                }
+
+              if (component_i < dim && component_j < dim)
+                {
+                  const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+
+                  local_matrix_ij += velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                                     grad_phi_u_j_x_velocity[j] * phi_u_i;
+
+                  // LSIC / grad-div term (uses tau_C)
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
+                  local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
+
+                  if (component_i == component_j)
+                    {
+                      local_matrix_ij +=
+                        kinematic_viscosity * (grad_phi_u_j[component_j] *
+                                               grad_phi_u_i[component_i]) +
+                        mass_source * phi_u_j * phi_u_i;
+                    }
+                }
+              if (component_i < dim)
+                {
+                  // The jacobian matrix does not include the jacobian of the
+                  // stabilization parameters tau (frozen-tau linearization),
+                  // consistently with the SUPG/PSPG and GLS assemblers.
+
+                  // SUPG term
+                  local_matrix_ij +=
+                    tau * (strong_jac * grad_phi_u_i_x_velocity +
+                           strong_residual_x_grad_phi_u_i * phi_u_j);
+
+                  // RBVMS cross-stress and Reynolds-stress terms (eq. 72),
+                  // consistent frozen-tau linearization.
+                  const auto grad_phi_u_i_x_strong_jac =
+                    grad_phi_u_i * strong_jac;
+                  // Cross-stress d/dU [ tau (u·(∇v)^T r_M) ].
+                  local_matrix_ij +=
+                    tau * (advective_velocity * grad_phi_u_i_x_strong_jac +
+                           phi_u_j * grad_phi_u_i_x_strong_residual);
+                  // Reynolds-stress d/dU [ -tau^2 (∇v : r_M ⊗ r_M) ].
+                  local_matrix_ij +=
+                    -tau * tau *
+                    (strong_jac * grad_phi_u_i_x_strong_residual +
+                     strong_residual * grad_phi_u_i_x_strong_jac);
+                }
+
+              local_matrix_ij *= JxW;
+              local_matrix(i, j) += local_matrix_ij;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector =
+    scratch_data.kinematic_viscosity;
+
+  const std::vector<double> &viscosity_for_stabilization_vector =
+    scratch_data.kinematic_viscosity_for_stabilization;
+
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  const bool is_steady =
+    this->simulation_control->get_assembly_method() ==
+    Parameters::SimulationControl::TimeSteppingMethod::steady;
+  const double       four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
+  const unsigned int velocity_fe_degree =
+    scratch_data.fe_values.get_fe().degree;
+  const double rbvms_c_i =
+    3. * static_cast<double>(velocity_fe_degree * velocity_fe_degree);
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Physical properties
+      const double kinematic_viscosity = viscosity_vector[q];
+
+      // Velocity
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
+      const Tensor<2, dim> &velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
+
+      // Pressure
+      const double          pressure = scratch_data.pressure_values[q];
+      const Tensor<1, dim> &pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Forcing term
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // RBVMS stabilization parameters from the element metric tensor (see the
+      // matching comment in assemble_matrix for the transpose convention).
+      const Tensor<2, dim> inverse_jacobian =
+        scratch_data.fe_values.inverse_jacobian(q).transpose();
+
+      Tensor<2, dim> metric_tensor;
+      Tensor<1, dim> metric_vector;
+      compute_metric_tensor(inverse_jacobian, metric_tensor, metric_vector);
+
+      double tau;      // tau_M (eq. 64)
+      double tau_lsic; // tau_C (eq. 65)
+      calculate_rbvms_tau<dim, double>(metric_tensor,
+                                       metric_vector,
+                                       advective_velocity,
+                                       viscosity_for_stabilization_vector[q],
+                                       four_over_dt_squared,
+                                       rbvms_c_i,
+                                       tau,
+                                       tau_lsic);
+
+      // Calculate the strong residual r_M (eq. 62)
+      auto strong_residual = velocity_gradient * advective_velocity +
+                             pressure_gradient -
+                             kinematic_viscosity * velocity_laplacian - force +
+                             mass_source * velocity + strong_residual_vec[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+
+          // Contraction of r_M with the derivative index of the test-function
+          // gradient, shared by the cross-stress and Reynolds-stress terms.
+          const auto grad_phi_u_i_x_strong_residual =
+            grad_phi_u_i * strong_residual;
+
+          double local_rhs_i = 0;
+
+          // Navier-Stokes Residual
+          local_rhs_i +=
+            (
+              // Momentum
+              -kinematic_viscosity *
+                scalar_product(velocity_gradient, grad_phi_u_i) -
+              velocity_gradient * advective_velocity * phi_u_i +
+              pressure * div_phi_u_i + force * phi_u_i -
+              mass_source * velocity * phi_u_i -
+              // Continuity
+              velocity_divergence * phi_p_i + mass_source * phi_p_i) *
+            JxW;
+
+          // PSPG term
+          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+
+          // SUPG term ( u·∇v weight only, no GLS -ν∆v part )
+          local_rhs_i +=
+            -tau * (strong_residual * (grad_phi_u_i * advective_velocity)) *
+            JxW;
+
+          // LSIC / grad-div term (uses tau_C)
+          local_rhs_i += -tau_lsic * (div_phi_u_i * velocity_divergence) * JxW;
+
+          // RBVMS cross-stress term ( u·(∇v)^T, tau_M r_M ) (eq. 72)
+          local_rhs_i +=
+            -tau * (advective_velocity * grad_phi_u_i_x_strong_residual) * JxW;
+
+          // RBVMS Reynolds-stress term -( ∇v, tau_M r_M ⊗ tau_M r_M ) (eq. 72)
+          local_rhs_i += tau * tau *
+                         (strong_residual * grad_phi_u_i_x_strong_residual) *
+                         JxW;
+
+          local_rhs(i) += local_rhs_i;
+        }
+    }
+}
+
+template class RBVMSNavierStokesAssemblerCore<2>;
+template class RBVMSNavierStokesAssemblerCore<3>;
+
+template <int dim>
+void
 GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)

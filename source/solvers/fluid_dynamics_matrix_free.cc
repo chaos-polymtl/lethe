@@ -777,8 +777,21 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
   const std::shared_ptr<FESystem<dim>>              fe)
 {
-  AssertThrow(*cell_quadrature ==
-                QGauss<dim>(this->dof_handler.get_fe().degree + 1),
+  // Number of quadrature points used to integrate the operator of a level. If
+  // the user has not prescribed a number of quadrature points, it is deduced
+  // from the interpolation degree of the level.
+  const unsigned int prescribed_number_of_quadrature_points =
+    this->simulation_parameters.fem_parameters
+      .fluid_dynamics_number_of_quadrature_points;
+  const auto number_of_quadrature_points =
+    [prescribed_number_of_quadrature_points](const unsigned int degree) {
+      return prescribed_number_of_quadrature_points > 0 ?
+               prescribed_number_of_quadrature_points :
+               degree + 1;
+    };
+
+  AssertThrow(*cell_quadrature == QGauss<dim>(number_of_quadrature_points(
+                                    this->dof_handler.get_fe().degree)),
               ExcNotImplemented());
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1198,8 +1211,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           // Provide appropriate quadrature depending on the type of elements of
           // the level
-          Quadrature<dim> quadrature_mg =
-            QGauss<dim>(level_dof_handler.get_fe().degree + 1);
+          Quadrature<dim> quadrature_mg = QGauss<dim>(
+            number_of_quadrature_points(level_dof_handler.get_fe().degree));
           if (this->simulation_parameters.linear_solver
                 .at(PhysicsID::fluid_dynamics)
                 .mg_use_fe_q_iso_q1 &&
@@ -1708,7 +1721,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           // Provide appropriate quadrature depending on the type of elements of
           // the level
-          Quadrature<dim> quadrature_mg = QGauss<dim>(levels[level].second + 1);
+          Quadrature<dim> quadrature_mg =
+            QGauss<dim>(number_of_quadrature_points(levels[level].second));
           if (this->simulation_parameters.linear_solver
                 .at(PhysicsID::fluid_dynamics)
                 .mg_use_fe_q_iso_q1 &&

@@ -699,10 +699,26 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                       this->simulation_control));
                 }
             }
+          else if (this->simulation_parameters.stabilization.stabilization ==
+                   Parameters::Stabilization::NavierStokesStabilization::rbvms)
+            {
+              // The RBVMS stabilization is currently only implemented for
+              // constant-density (incompressible) Newtonian flows, mirroring
+              // the matrix-free implementation.
+              AssertThrow(
+                this->simulation_parameters.physical_properties_manager
+                  .density_is_constant(),
+                ExcMessage(
+                  "The RBVMS stabilization is only supported for "
+                  "constant-density (incompressible) Newtonian flows."));
+              this->assemblers.emplace_back(
+                std::make_shared<RBVMSNavierStokesAssemblerCore<dim>>(
+                  this->simulation_control));
+            }
           else
             throw std::runtime_error(
-              "Using the GLS solver with a stabilization other than the pspg_supg or gls "
-              "stabilization will lead to an unstable solver that is unable to converge");
+              "Using the GLS solver with a stabilization other than the pspg_supg, gls or "
+              "rbvms stabilization will lead to an unstable solver that is unable to converge");
         }
     }
 }

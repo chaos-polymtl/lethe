@@ -64,7 +64,10 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , flow_control(simulation_parameters.flow_control)
   , velocity_fem_degree(p_nsparam.fem_parameters.velocity_degree)
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_degree)
-  , number_quadrature_points(p_nsparam.fem_parameters.velocity_degree + 1)
+  , number_quadrature_points(
+      p_nsparam.fem_parameters.fluid_dynamics_number_of_quadrature_points > 0 ?
+        p_nsparam.fem_parameters.fluid_dynamics_number_of_quadrature_points :
+        p_nsparam.fem_parameters.velocity_degree + 1)
   , mesh_controller(p_nsparam.mesh_adaptation.maximum_number_elements)
 {
   if (simulation_parameters.mesh.simplex)

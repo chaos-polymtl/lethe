@@ -847,9 +847,9 @@ namespace Parameters
       prm.declare_entry(
         "stabilization",
         "pspg_supg",
-        Patterns::Selection("pspg_supg|gls|grad_div"),
+        Patterns::Selection("pspg_supg|gls|grad_div|rbvms"),
         "Type of stabilization used for the Navier-Stokes equations"
-        "Choices are <pspg_supg|gls|grad_div>.");
+        "Choices are <pspg_supg|gls|grad_div|rbvms>.");
 
       prm.declare_entry(
         "heat transfer dcdd stabilization",
@@ -910,8 +910,12 @@ namespace Parameters
           stabilization = NavierStokesStabilization::gls;
         else if (op == "grad_div")
           stabilization = NavierStokesStabilization::grad_div;
+        else if (op == "rbvms")
+          stabilization = NavierStokesStabilization::rbvms;
         else
-          throw(std::runtime_error("Invalid stabilization strategy"));
+          AssertThrow(false,
+                      ExcMessage("Invalid stabilization strategy. Choices are "
+                                 "<pspg_supg|gls|grad_div|rbvms>."));
       }
       {
         std::string op = prm.get("scalar limiter");
@@ -920,7 +924,9 @@ namespace Parameters
         else if (op == "moe")
           scalar_limiter = ScalarLimiters::moe;
         else
-          throw(std::runtime_error("Invalid scalar limiter"));
+          AssertThrow(false,
+                      ExcMessage(
+                        "Invalid scalar limiter. Choices are <none|moe>."));
       }
 
       // DCDD stabilization activation parameters
@@ -1827,6 +1833,14 @@ namespace Parameters
       prm.declare_alias("cls uses dg", "VOF uses dg", true);
 
       prm.declare_entry(
+        "fluid dynamics number of quadrature points",
+        "0",
+        Patterns::Integer(0),
+        "Number of quadrature points used to integrate the fluid dynamics. "
+        "If this parameter is set to 0 (default), the number of quadrature "
+        "points is deduced from the velocity interpolation degree.");
+
+      prm.declare_entry(
         "enable bubble function velocity",
         "false",
         Patterns::Bool(),
@@ -1862,6 +1876,8 @@ namespace Parameters
         prm.get_integer("electromagnetics trial degree");
       electromagnetics_test_degree =
         prm.get_integer("electromagnetics test degree");
+      fluid_dynamics_number_of_quadrature_points =
+        prm.get_integer("fluid dynamics number of quadrature points");
       enable_bubble_function_velocity =
         prm.get_bool("enable bubble function velocity");
       enable_bubble_function_pressure =

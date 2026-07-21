@@ -1,0 +1,5 @@
+
+DEAL::[double]     residual terms (eq. 72) match reference : OK
+DEAL::[double]     linearization matches finite difference  : OK
+DEAL::[vectorized] residual terms (eq. 72) match reference : OK
+DEAL::[vectorized] linearization matches finite difference  : OK
