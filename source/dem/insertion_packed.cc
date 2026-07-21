@@ -63,7 +63,7 @@ InsertionPacked<dim, PropertiesIndex>::insert(
   // Message passing interface requirements.
   MPI_Comm           communicator = triangulation.get_mpi_communicator();
   ConditionalOStream pcout(std::cout,
-                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                           Utilities::MPI::this_mpi_process(communicator) ==
                              0);
 
   auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);

@@ -1571,8 +1571,6 @@ private:
     const ArrayView<const double>       &particle_one_properties,
     const ArrayView<const double>       &particle_two_properties)
   {
-    ++this->n_contacts;
-
     // Particle iterator
     auto particle_two = contact_info.particle_two;
 
@@ -1611,7 +1609,10 @@ private:
     auto cell_two = particle_two->get_surrounding_cell();
 
     if (cell_one->is_locally_owned())
-      particle_one->set_location(particle_one_new_position);
+      {
+        particle_one->set_location(particle_one_new_position);
+        ++this->n_contacts;
+      }
 
     if (cell_two->is_locally_owned())
       particle_two->set_location(particle_two_new_position);
