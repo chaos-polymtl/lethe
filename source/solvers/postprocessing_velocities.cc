@@ -78,7 +78,60 @@ AverageVelocities<dim, VectorType, DofsType>::update_average_velocities()
     }
 }
 
-// Since Trilinos vectors and block vectors data doesn't have the same
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::accumulate_reynolds_stresses(
+  const UnderlyingVectorType &local_solution,
+  const UnderlyingVectorType &local_average,
+  unsigned int (*k_index)(unsigned int),
+  UnderlyingVectorType &rns_dt,
+  UnderlyingVectorType &rss_dt,
+  UnderlyingVectorType &k_dt)
+{
+  // Only the locally owned degrees of freedom are accumulated, so no ghost
+  // value is ever read here.
+  const auto [begin_index, end_index] = get_local_range(local_solution);
+
+  for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
+    {
+      // u'u'*dt
+      rns_dt[i] = (local_solution[i] - local_average[i]) *
+                  (local_solution[i] - local_average[i]) * dt;
+
+      // v'v'*dt
+      rns_dt[i + 1] = (local_solution[i + 1] - local_average[i + 1]) *
+                      (local_solution[i + 1] - local_average[i + 1]) * dt;
+
+      // u'v'*dt
+      rss_dt[i] = (local_solution[i] - local_average[i]) *
+                  (local_solution[i + 1] - local_average[i + 1]) * dt;
+
+      // k*dt = 1/2(u'u'+v'v')*dt (turbulence kinetic energy)
+      // Note : k_dt and rns_dt refer to the same vector for regular vectors
+      // (not block vectors)
+      k_dt[k_index(i)] = (rns_dt[i] + rns_dt[i + 1]) / 2;
+
+      if (dim == 3)
+        {
+          // w'w'*dt
+          rns_dt[i + 2] = (local_solution[i + 2] - local_average[i + 2]) *
+                          (local_solution[i + 2] - local_average[i + 2]) * dt;
+
+          // v'w'*dt
+          rss_dt[i + 1] = (local_solution[i + 1] - local_average[i + 1]) *
+                          (local_solution[i + 2] - local_average[i + 2]) * dt;
+
+          // w'u'*dt
+          rss_dt[i + 2] = (local_solution[i + 2] - local_average[i + 2]) *
+                          (local_solution[i] - local_average[i]) * dt;
+
+          // k*dt = 1/2(u'u'+v'v'+w'w')*dt
+          k_dt[k_index(i)] = k_dt[k_index(i)] + rns_dt[i + 2] / 2;
+        }
+    }
+}
+
+// Since regular vectors and block vectors data doesn't have the same
 // structure, those vectors need to be processed in different ways.
 // Same about the dimension, where 2D solutions are stored in (u,v,p) groups
 // for vectors and [(u,v)][p] for block vectors and where 3D solutions
@@ -89,196 +142,32 @@ void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   const VectorType &local_evaluation_point)
 {
-  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
-                std::is_same_v<VectorType, GlobalBlockVectorType>)
+  // A function is required to get the index of the turbulence kinetic energy,
+  // because the two vector layouts do not store it in the same place.
+  // Regular vector : rss = (<u'u'>,<v'v'>,<w'w'>,k) => k_index = i + dim
+  // Block vector   : rss = [(<u'u'>,<v'v'>,<w'w'>)][k] => k_index = i / dim
+  if constexpr (LetheVectorTraits<VectorType>::is_block_vector)
     {
-      unsigned int begin_index, end_index;
-
-      // As explained in the comment above, about the structure of Trilinos
-      // vectors, a function is required to get the index of the turbulence
-      // kinetic energy. Trilinos vector : rss = (<u'u'>,<v'v'>,<w'w'>,k) =>
-      // k_index = i + dim Trilinos blocks : rss = [(<u'u'>,<v'v'>,<w'w'>)][k])
-      // => k_index = i / dim The k_index lambda is later changed for block
-      // vectors.
-      unsigned int (*k_index)(unsigned int) = [](unsigned int i) {
-        return i + dim;
-      };
-
-      const GlobalVectorType *local_solution, *local_average;
-      GlobalVectorType       *rns_dt, *rss_dt, *k_dt;
-
-      if constexpr (std::is_same_v<VectorType, GlobalVectorType>)
-        {
-          if constexpr (std::is_same_v<VectorType,
-                                       dealii::TrilinosWrappers::MPI::Vector>)
-            {
-              begin_index = local_evaluation_point.local_range().first;
-              end_index   = local_evaluation_point.local_range().second;
-            }
-          else if constexpr (std::is_same_v<VectorType,
-                                            dealii::LinearAlgebra::distributed::
-                                              Vector<double>>)
-            {
-              begin_index =
-                local_evaluation_point.get_partitioner()->local_range().first;
-              end_index =
-                local_evaluation_point.get_partitioner()->local_range().second;
-            }
-
-          else
-            {
-              AssertThrow(false, ExcNotImplemented());
-            }
-          local_solution = &local_evaluation_point;
-          local_average  = &average_velocities;
-          rns_dt         = &reynolds_normal_stress_dt;
-          rss_dt         = &reynolds_shear_stress_dt;
-          k_dt           = &reynolds_normal_stress_dt;
-        }
-      else if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
-        {
-          if constexpr (std::is_same_v<
-                          VectorType,
-                          dealii::TrilinosWrappers::MPI::BlockVector>)
-            {
-              begin_index = local_evaluation_point.block(0).local_range().first;
-              end_index = local_evaluation_point.block(0).local_range().second;
-            }
-          else if constexpr (std::is_same_v<VectorType,
-                                            dealii::LinearAlgebra::distributed::
-                                              BlockVector<double>>)
-            {
-              begin_index = local_evaluation_point.block(0)
-                              .get_partitioner()
-                              ->local_range()
-                              .first;
-              end_index = local_evaluation_point.block(0)
-                            .get_partitioner()
-                            ->local_range()
-                            .second;
-            }
-          else
-            {
-            }
-          local_solution = &local_evaluation_point.block(0);
-          local_average  = &average_velocities.block(0);
-          rns_dt         = &reynolds_normal_stress_dt.block(0);
-          rss_dt         = &reynolds_shear_stress_dt.block(0);
-          k_dt           = &reynolds_normal_stress_dt.block(1);
-          k_index        = [](unsigned int i) { return i / dim; };
-        }
-
-      for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
-        {
-          // u'u'*dt
-          (*rns_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
-                         ((*local_solution)[i] - (*local_average)[i]) * dt;
-
-          // v'v'*dt
-          (*rns_dt)[i + 1] =
-            ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-            ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
-
-          // u'v'*dt
-          (*rss_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
-                         ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-                         dt;
-
-          // k*dt = 1/2(u'u'+v'v')*dt (turbulence kinetic energy)
-          // Note : k_dt and rns_dt are both pointers of
-          // reynolds_normal_stress_dt for Trilinos vector (not block vectors)
-          (*k_dt)[k_index(i)] = ((*rns_dt)[i] + (*rns_dt)[i + 1]) / 2;
-
-          if (dim == 3)
-            {
-              // w'w'*dt
-              (*rns_dt)[i + 2] =
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
-
-              // v'w'*dt
-              (*rss_dt)[i + 1] =
-                ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
-
-              // w'u'*dt
-              (*rss_dt)[i + 2] =
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
-                ((*local_solution)[i] - (*local_average)[i]) * dt;
-
-              // k*dt = 1/2(u'u'+v'v'+w'w')*dt
-              (*k_dt)[k_index(i)] = (*k_dt)[k_index(i)] + (*rns_dt)[i + 2] / 2;
-            }
-        }
+      accumulate_reynolds_stresses(
+        local_evaluation_point.block(0),
+        average_velocities.block(0),
+        [](unsigned int i) { return i / dim; },
+        reynolds_normal_stress_dt.block(0),
+        reynolds_shear_stress_dt.block(0),
+        reynolds_normal_stress_dt.block(1));
     }
-
-#ifndef LETHE_USE_LDV
-  if constexpr (std::is_same_v<VectorType,
-                               LinearAlgebra::distributed::Vector<double>>)
+  else
     {
-      unsigned int begin_index, end_index;
-      unsigned int (*k_index)(unsigned int) = [](unsigned int i) {
-        return i + dim;
-      };
-      const LinearAlgebra::distributed::Vector<double> *local_solution,
-        *local_average;
-      LinearAlgebra::distributed::Vector<double> *rns_dt, *rss_dt, *k_dt;
-
-      local_evaluation_point.update_ghost_values();
-      begin_index =
-        local_evaluation_point.get_partitioner()->local_range().first;
-      end_index =
-        local_evaluation_point.get_partitioner()->local_range().second;
-      local_solution = &local_evaluation_point;
-      local_average  = &average_velocities;
-      rns_dt         = &reynolds_normal_stress_dt;
-      rss_dt         = &reynolds_shear_stress_dt;
-      k_dt           = &reynolds_normal_stress_dt;
-
-      for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
-        {
-          // u'u'*dt
-          (*rns_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
-                         ((*local_solution)[i] - (*local_average)[i]) * dt;
-
-          // v'v'*dt
-          (*rns_dt)[i + 1] =
-            ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-            ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
-
-          // u'v'*dt
-          (*rss_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
-                         ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-                         dt;
-
-          // // k*dt = 1/2(u'u'+v'v')*dt (turbulence kinetic energy)
-          // // Note : k_dt and rns_dt are both pointers of
-          // // reynolds_normal_stress_dt
-          (*k_dt)[k_index(i)] = ((*rns_dt)[i] + (*rns_dt)[i + 1]) / 2;
-
-          if (dim == 3)
-            {
-              // w'w'*dt
-              (*rns_dt)[i + 2] =
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
-
-              // v'w'*dt
-              (*rss_dt)[i + 1] =
-                ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
-
-              // w'u'*dt
-              (*rss_dt)[i + 2] =
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
-                ((*local_solution)[i] - (*local_average)[i]) * dt;
-
-              // k*dt = 1/2(u'u'+v'v'+w'w')*dt
-              (*k_dt)[k_index(i)] = (*k_dt)[k_index(i)] + (*rns_dt)[i + 2] / 2;
-            }
-        }
+      // Note that the normal stresses vector is also used to store the
+      // turbulence kinetic energy, hence it is passed twice.
+      accumulate_reynolds_stresses(
+        local_evaluation_point,
+        average_velocities,
+        [](unsigned int i) { return i + dim; },
+        reynolds_normal_stress_dt,
+        reynolds_shear_stress_dt,
+        reynolds_normal_stress_dt);
     }
-#endif
 
   // Sum of all reynolds stresses during simulation.
   sum_reynolds_normal_stress_dt += reynolds_normal_stress_dt;

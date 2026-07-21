@@ -944,19 +944,17 @@ template <int dim>
 double
 HeatTransfer<dim>::calculate_delta_T_ref(double minimum_delta_T_ref)
 {
-  double solution_maximum, solution_minimum;
-#ifndef LETHE_USE_LDV
-  if (is_steady(simulation_parameters.simulation_control.method))
-    {
-      solution_maximum = this->present_solution->max();
-      solution_minimum = this->present_solution->min();
-    }
-  else
-    {
-      solution_maximum = (*this->previous_solutions)[0].max();
-      solution_minimum = (*this->previous_solutions)[0].min();
-    }
-#endif
+  const MPI_Comm mpi_communicator = triangulation->get_mpi_communicator();
+
+  const GlobalVectorType &reference_solution =
+    is_steady(simulation_parameters.simulation_control.method) ?
+      *this->present_solution :
+      (*this->previous_solutions)[0];
+
+  const double solution_maximum =
+    global_max(reference_solution, mpi_communicator);
+  const double solution_minimum =
+    global_min(reference_solution, mpi_communicator);
 
   // Calculate delta_T_ref.
   double delta_T_ref =
@@ -1540,19 +1538,27 @@ HeatTransfer<dim>::setup_dofs()
   locally_owned_dofs    = dof_handler->locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
-  present_solution->reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
-                           mpi_communicator);
+  reinit_ghosted_vector(*present_solution,
+                        locally_owned_dofs,
+                        locally_relevant_dofs,
+                        mpi_communicator);
 
   // Previous solutions for transient schemes
   for (auto &solution : *this->previous_solutions)
     {
-      solution.reinit(locally_owned_dofs,
-                      locally_relevant_dofs,
-                      mpi_communicator);
+      reinit_ghosted_vector(solution,
+                            locally_owned_dofs,
+                            locally_relevant_dofs,
+                            mpi_communicator);
     }
 
-  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
+  // The right-hand side is the destination of
+  // AffineConstraints::distribute_local_to_global, which adds into degrees of
+  // freedom that are not locally owned. See reinit_assembly_vector().
+  reinit_assembly_vector(system_rhs,
+                         locally_owned_dofs,
+                         locally_relevant_dofs,
+                         mpi_communicator);
 
   newton_update.reinit(locally_owned_dofs, mpi_communicator);
 
@@ -1728,10 +1734,21 @@ template <int dim>
 void
 HeatTransfer<dim>::set_initial_conditions()
 {
+  // VectorTools::interpolate internally allocates a vector with the same
+  // partitioning as its destination and adds into degrees of freedom that are
+  // not locally owned, which the fully distributed newton_update cannot
+  // accept. See reinit_assembly_vector().
+  GlobalVectorType nodal_values;
+  reinit_assembly_vector(nodal_values,
+                         locally_owned_dofs,
+                         locally_relevant_dofs,
+                         mpi_communicator);
+
   VectorTools::interpolate(*this->temperature_mapping,
                            *dof_handler,
                            simulation_parameters.initial_condition->temperature,
-                           newton_update);
+                           nodal_values);
+  newton_update = nodal_values;
   nonzero_constraints.distribute(newton_update);
   *present_solution = newton_update;
   percolate_time_vectors();

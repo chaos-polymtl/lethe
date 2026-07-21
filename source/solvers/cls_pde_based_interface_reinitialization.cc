@@ -51,12 +51,19 @@ CLSPDEBasedInterfaceReinitialization<dim>::setup_dofs()
                              this->locally_owned_dofs,
                              dsp,
                              mpi_communicator);
-  this->system_rhs.reinit(this->locally_owned_dofs, mpi_communicator);
+  // The right-hand side is the destination of
+  // AffineConstraints::distribute_local_to_global, which adds into degrees of
+  // freedom that are not locally owned. See reinit_assembly_vector().
+  reinit_assembly_vector(this->system_rhs,
+                         this->locally_owned_dofs,
+                         this->locally_relevant_dofs,
+                         mpi_communicator);
 
   // Reinitialize solution vectors
-  this->present_solution->reinit(this->locally_owned_dofs,
-                                 this->locally_relevant_dofs,
-                                 mpi_communicator);
+  reinit_ghosted_vector(*this->present_solution,
+                        this->locally_owned_dofs,
+                        this->locally_relevant_dofs,
+                        mpi_communicator);
   this->previous_solution.reinit(this->locally_owned_dofs,
                                  this->locally_relevant_dofs,
                                  mpi_communicator);

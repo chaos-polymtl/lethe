@@ -5,6 +5,7 @@
 #define lethe_postprocessing_velocities_h
 
 #include <core/parameters.h>
+#include <core/vector.h>
 
 #include <deal.II/distributed/solution_transfer.h>
 
@@ -190,6 +191,45 @@ public:
   zero_average_after_restart();
 
 private:
+  /**
+   * @brief Type of the underlying non-block vector of VectorType.
+   *
+   * For block vectors, this is the type of an individual block. For regular
+   * vectors, this is VectorType itself. The Reynolds stresses are always
+   * accumulated block by block, hence the need for this type.
+   */
+  using UnderlyingVectorType =
+    typename LetheVectorTraits<VectorType>::UnderlyingVectorType;
+
+  /**
+   * @brief Accumulate the Reynolds stresses multiplied by the time step over the locally owned degrees of freedom.
+   *
+   * This gathers the loop that is common to all the supported vector types.
+   * The caller is responsible for extracting the relevant block of each vector
+   * and for providing the mapping to the turbulence kinetic energy index,
+   * which both differ between regular and block vectors.
+   *
+   * @param[in] local_solution Solution over which the fluctuations are computed.
+   *
+   * @param[in] local_average Time-averaged solution.
+   *
+   * @param[in] k_index Mapping from the index of the first velocity component
+   * of a vertex to the index of the turbulence kinetic energy of that vertex.
+   *
+   * @param[in,out] rns_dt Normal Reynolds stresses multiplied by the time step.
+   *
+   * @param[in,out] rss_dt Shear Reynolds stresses multiplied by the time step.
+   *
+   * @param[in,out] k_dt Turbulence kinetic energy multiplied by the time step.
+   */
+  void
+  accumulate_reynolds_stresses(const UnderlyingVectorType &local_solution,
+                               const UnderlyingVectorType &local_average,
+                               unsigned int (*k_index)(unsigned int),
+                               UnderlyingVectorType &rns_dt,
+                               UnderlyingVectorType &rss_dt,
+                               UnderlyingVectorType &k_dt);
+
   /**
    * @brief Inverse for total time for averaging.
    *

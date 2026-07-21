@@ -2576,27 +2576,37 @@ ConservativeLevelSet<dim>::setup_dofs()
   this->locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
 
-  this->present_solution->reinit(this->locally_owned_dofs,
-                                 this->locally_relevant_dofs,
-                                 mpi_communicator);
+  reinit_ghosted_vector(*this->present_solution,
+                        this->locally_owned_dofs,
+                        this->locally_relevant_dofs,
+                        mpi_communicator);
 
-  this->filtered_solution->reinit(this->locally_owned_dofs,
-                                  this->locally_relevant_dofs,
-                                  mpi_communicator);
+  reinit_ghosted_vector(*this->filtered_solution,
+                        this->locally_owned_dofs,
+                        this->locally_relevant_dofs,
+                        mpi_communicator);
 
-  this->level_set.reinit(this->locally_owned_dofs,
-                         this->locally_relevant_dofs,
-                         mpi_communicator);
+  reinit_ghosted_vector(this->level_set,
+                        this->locally_owned_dofs,
+                        this->locally_relevant_dofs,
+                        mpi_communicator);
 
   // Previous solutions for transient schemes
   for (auto &solution : *this->previous_solutions)
     {
-      solution.reinit(this->locally_owned_dofs,
-                      this->locally_relevant_dofs,
-                      mpi_communicator);
+      reinit_ghosted_vector(solution,
+                            this->locally_owned_dofs,
+                            this->locally_relevant_dofs,
+                            mpi_communicator);
     }
 
-  this->system_rhs.reinit(this->locally_owned_dofs, mpi_communicator);
+  // The right-hand side is the destination of
+  // AffineConstraints::distribute_local_to_global, which adds into degrees of
+  // freedom that are not locally owned. See reinit_assembly_vector().
+  reinit_assembly_vector(this->system_rhs,
+                         this->locally_owned_dofs,
+                         this->locally_relevant_dofs,
+                         mpi_communicator);
 
   this->newton_update.reinit(this->locally_owned_dofs, mpi_communicator);
 
@@ -2799,10 +2809,21 @@ template <int dim>
 void
 ConservativeLevelSet<dim>::set_initial_conditions()
 {
+  // VectorTools::interpolate internally allocates a vector with the same
+  // partitioning as its destination and adds into degrees of freedom that are
+  // not locally owned, which the fully distributed newton_update cannot
+  // accept. See reinit_assembly_vector().
+  GlobalVectorType nodal_values;
+  reinit_assembly_vector(nodal_values,
+                         this->locally_owned_dofs,
+                         this->locally_relevant_dofs,
+                         mpi_communicator);
+
   VectorTools::interpolate(*this->mapping,
                            *this->dof_handler,
                            simulation_parameters.initial_condition->CLS,
-                           this->newton_update);
+                           nodal_values);
+  this->newton_update = nodal_values;
   this->nonzero_constraints.distribute(this->newton_update);
   *this->present_solution = this->newton_update;
 

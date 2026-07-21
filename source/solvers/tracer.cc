@@ -1292,19 +1292,27 @@ Tracer<dim>::setup_dofs()
   // If enabled, rotate rotor mapping
   this->rotate_rotor_mapping();
 
-  present_solution->reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
-                           mpi_communicator);
+  reinit_ghosted_vector(*present_solution,
+                        locally_owned_dofs,
+                        locally_relevant_dofs,
+                        mpi_communicator);
 
   // Previous solutions for transient schemes
   for (auto &solution : *this->previous_solutions)
     {
-      solution.reinit(locally_owned_dofs,
-                      locally_relevant_dofs,
-                      mpi_communicator);
+      reinit_ghosted_vector(solution,
+                            locally_owned_dofs,
+                            locally_relevant_dofs,
+                            mpi_communicator);
     }
 
-  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
+  // The right-hand side is the destination of
+  // AffineConstraints::distribute_local_to_global, which adds into degrees of
+  // freedom that are not locally owned. See reinit_assembly_vector().
+  reinit_assembly_vector(system_rhs,
+                         locally_owned_dofs,
+                         locally_relevant_dofs,
+                         mpi_communicator);
 
   newton_update.reinit(locally_owned_dofs, mpi_communicator);
 
@@ -1498,10 +1506,21 @@ template <int dim>
 void
 Tracer<dim>::set_initial_conditions()
 {
+  // VectorTools::interpolate internally allocates a vector with the same
+  // partitioning as its destination and adds into degrees of freedom that are
+  // not locally owned, which the fully distributed newton_update cannot
+  // accept. See reinit_assembly_vector().
+  GlobalVectorType nodal_values;
+  reinit_assembly_vector(nodal_values,
+                         locally_owned_dofs,
+                         locally_relevant_dofs,
+                         mpi_communicator);
+
   VectorTools::interpolate(*this->get_mapping(),
                            *dof_handler,
                            simulation_parameters.initial_condition->tracer,
-                           newton_update);
+                           nodal_values);
+  newton_update = nodal_values;
   nonzero_constraints.distribute(newton_update);
   *present_solution = newton_update;
   percolate_time_vectors();

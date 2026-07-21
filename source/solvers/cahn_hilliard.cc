@@ -1078,23 +1078,32 @@ CahnHilliard<dim>::setup_dofs()
   locally_owned_dofs    = dof_handler->locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
-  present_solution->reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
-                           mpi_communicator);
+  reinit_ghosted_vector(*present_solution,
+                        locally_owned_dofs,
+                        locally_relevant_dofs,
+                        mpi_communicator);
 
-  filtered_solution->reinit(this->locally_owned_dofs,
-                            this->locally_relevant_dofs,
-                            mpi_communicator);
+  reinit_ghosted_vector(*filtered_solution,
+                        this->locally_owned_dofs,
+                        this->locally_relevant_dofs,
+                        mpi_communicator);
 
   // Previous solutions for transient schemes
   for (auto &solution : *this->previous_solutions)
     {
-      solution.reinit(locally_owned_dofs,
-                      locally_relevant_dofs,
-                      mpi_communicator);
+      reinit_ghosted_vector(solution,
+                            locally_owned_dofs,
+                            locally_relevant_dofs,
+                            mpi_communicator);
     }
 
-  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
+  // The right-hand side is the destination of
+  // AffineConstraints::distribute_local_to_global, which adds into degrees of
+  // freedom that are not locally owned. See reinit_assembly_vector().
+  reinit_assembly_vector(system_rhs,
+                         locally_owned_dofs,
+                         locally_relevant_dofs,
+                         mpi_communicator);
 
   newton_update.reinit(locally_owned_dofs, mpi_communicator);
 
@@ -1270,11 +1279,21 @@ CahnHilliard<dim>::set_initial_conditions()
   const FEValuesExtractors::Scalar phase_order(0);
   const FEValuesExtractors::Scalar potential(1);
 
+  // VectorTools::interpolate internally allocates a vector with the same
+  // partitioning as its destination and adds into degrees of freedom that are
+  // not locally owned, which the fully distributed newton_update cannot
+  // accept. See reinit_assembly_vector().
+  GlobalVectorType nodal_values;
+  reinit_assembly_vector(nodal_values,
+                         locally_owned_dofs,
+                         locally_relevant_dofs,
+                         mpi_communicator);
+
   VectorTools::interpolate(
     *mapping,
     *dof_handler,
     simulation_parameters.initial_condition->cahn_hilliard,
-    newton_update,
+    nodal_values,
     fe->component_mask(phase_order));
 
   // Set the initial chemical potential to 0. (May be discussed or modified
@@ -1283,9 +1302,10 @@ CahnHilliard<dim>::set_initial_conditions()
     *mapping,
     *dof_handler,
     simulation_parameters.initial_condition->cahn_hilliard,
-    newton_update,
+    nodal_values,
     fe->component_mask(potential));
 
+  newton_update = nodal_values;
   nonzero_constraints.distribute(newton_update);
   *present_solution = newton_update;
   apply_phase_filter();

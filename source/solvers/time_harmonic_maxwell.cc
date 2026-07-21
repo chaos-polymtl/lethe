@@ -1439,23 +1439,29 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler_test);
 
   // Initialize the solution vectors and error indicator
-  this->present_solution->reinit(this->locally_owned_dofs_trial_interior,
-                                 this->locally_relevant_dofs_trial_interior,
-                                 mpi_communicator);
-  this->present_solution_skeleton->reinit(
-    this->locally_owned_dofs_trial_skeleton,
-    this->locally_relevant_dofs_trial_skeleton,
-    mpi_communicator);
-  this->present_DPG_error_indicator->reinit(this->locally_owned_dofs_test,
-                                            this->locally_relevant_dofs_test,
-                                            mpi_communicator);
+  reinit_ghosted_vector(*this->present_solution,
+                        this->locally_owned_dofs_trial_interior,
+                        this->locally_relevant_dofs_trial_interior,
+                        mpi_communicator);
+  reinit_ghosted_vector(*this->present_solution_skeleton,
+                        this->locally_owned_dofs_trial_skeleton,
+                        this->locally_relevant_dofs_trial_skeleton,
+                        mpi_communicator);
+  reinit_ghosted_vector(*this->present_DPG_error_indicator,
+                        this->locally_owned_dofs_test,
+                        this->locally_relevant_dofs_test,
+                        mpi_communicator);
   this->local_estimated_error_per_cell.reinit(triangulation->n_active_cells());
 
   // We reinitialize the system rhs with the skeleton dofs because we have
   // performed a static condensation of the interior dofs using the Schur
-  // complement.
-  this->system_rhs.reinit(this->locally_owned_dofs_trial_skeleton,
-                          mpi_communicator);
+  // complement. It is the destination of
+  // AffineConstraints::distribute_local_to_global, which adds into degrees of
+  // freedom that are not locally owned. See reinit_assembly_vector().
+  reinit_assembly_vector(this->system_rhs,
+                         this->locally_owned_dofs_trial_skeleton,
+                         this->locally_relevant_dofs_trial_skeleton,
+                         mpi_communicator);
 
   // Define constraints
   define_constraints();
@@ -1533,9 +1539,15 @@ void
 TimeHarmonicMaxwell<dim>::set_initial_conditions()
 {
   // This tmp vector is used instead of the newton update vector as they don't
-  // exist for this solver.
-  GlobalVectorType tmp(this->locally_owned_dofs_trial_interior,
-                       this->triangulation->get_mpi_communicator());
+  // exist for this solver. VectorTools::interpolate internally allocates a
+  // vector with the same partitioning as its destination and adds into degrees
+  // of freedom that are not locally owned, hence the ghost entries. See
+  // reinit_assembly_vector().
+  GlobalVectorType tmp;
+  reinit_assembly_vector(tmp,
+                         this->locally_owned_dofs_trial_interior,
+                         this->locally_relevant_dofs_trial_interior,
+                         this->triangulation->get_mpi_communicator());
 
   VectorTools::interpolate(
     *this->mapping,

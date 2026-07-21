@@ -1856,16 +1856,26 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
 {
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
+
+  // VectorTools::interpolate internally allocates a vector with the same
+  // partitioning as its destination and adds into every degree of freedom of
+  // the locally owned cells, including those owned by a neighboring process.
+  // The destination must therefore be a vector that accepts such writes, which
+  // the fully distributed newton_update is not. The interpolation is done on a
+  // temporary vector, whose locally owned values are then copied over.
+  VectorType nodal_values = init_temporary_vector();
+
   VectorTools::interpolate(*this->get_mapping(),
                            *this->dof_handler,
                            this->simulation_parameters.initial_condition->uvwp,
-                           this->newton_update,
+                           nodal_values,
                            this->fe->component_mask(velocities));
   VectorTools::interpolate(*this->get_mapping(),
                            *this->dof_handler,
                            this->simulation_parameters.initial_condition->uvwp,
-                           this->newton_update,
+                           nodal_values,
                            this->fe->component_mask(pressure));
+  this->newton_update = nodal_values;
   this->nonzero_constraints.distribute(this->newton_update);
   *this->present_solution = this->newton_update;
   if (this->simulation_parameters.simulation_control.bdf_startup_method ==
@@ -1883,15 +1893,15 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
             *this->get_mapping(),
             *this->dof_handler,
             this->simulation_parameters.initial_condition->uvwp,
-            this->newton_update,
+            nodal_values,
             this->fe->component_mask(velocities));
           VectorTools::interpolate(
             *this->get_mapping(),
             *this->dof_handler,
             this->simulation_parameters.initial_condition->uvwp,
-            this->newton_update,
+            nodal_values,
             this->fe->component_mask(pressure));
-          (*this->previous_solutions)[i - 1] = this->newton_update;
+          (*this->previous_solutions)[i - 1] = nodal_values;
         }
     }
 }
@@ -3351,15 +3361,16 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 {
   VectorType tmp;
 
-  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
-                std::is_same_v<VectorType, GlobalBlockVectorType>)
-    tmp.reinit(locally_owned_dofs, this->mpi_communicator);
-
-  else if constexpr (std::is_same_v<VectorType,
-                                    LinearAlgebra::distributed::Vector<double>>)
-    tmp.reinit(locally_owned_dofs,
-               locally_relevant_dofs,
-               this->mpi_communicator);
+  // The temporary vector is written into by SolutionTransfer::interpolate and
+  // by VectorTools::interpolate, which both touch degrees of freedom that are
+  // not locally owned. deal.II distributed vectors therefore need ghost
+  // entries, whereas Trilinos vectors must not have any. Note that the
+  // locally relevant degrees of freedom are used as the ghost set: they are a
+  // superset of the locally active ones that are strictly required here.
+  reinit_assembly_vector(tmp,
+                         locally_owned_dofs,
+                         locally_relevant_dofs,
+                         this->mpi_communicator);
 
   return tmp;
 }

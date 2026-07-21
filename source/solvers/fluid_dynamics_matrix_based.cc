@@ -95,35 +95,39 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // only be done if these are reinitialized WITHOUT locally_relevant_dofs (i.e.
   // without ghost DoFs). This is why most of them are reinitialized both with
   // and without locally_relevant_dofs.
-  this->present_solution->reinit(this->locally_owned_dofs,
-                                 this->locally_relevant_dofs,
-                                 this->mpi_communicator);
+  reinit_ghosted_vector(*this->present_solution,
+                        this->locally_owned_dofs,
+                        this->locally_relevant_dofs,
+                        this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
-  this->evaluation_point.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+  reinit_ghosted_vector(this->evaluation_point,
+                        this->locally_owned_dofs,
+                        this->locally_relevant_dofs,
+                        this->mpi_communicator);
 
   // Initialize vector of previous solutions
   for (auto &solution : *this->previous_solutions)
     {
-      solution.reinit(this->locally_owned_dofs,
-                      this->locally_relevant_dofs,
-                      this->mpi_communicator);
+      reinit_ghosted_vector(solution,
+                            this->locally_owned_dofs,
+                            this->locally_relevant_dofs,
+                            this->mpi_communicator);
     }
 
   if (this->simulation_control->is_sdirk())
     {
       // Reinitialize vectors used for the SDIRK methods
-      this->sdirk_vectors.sum_bi_ki.reinit(this->locally_owned_dofs,
-                                           this->locally_relevant_dofs,
-                                           this->mpi_communicator);
+      reinit_ghosted_vector(this->sdirk_vectors.sum_bi_ki,
+                            this->locally_owned_dofs,
+                            this->locally_relevant_dofs,
+                            this->mpi_communicator);
       this->sdirk_vectors.local_sum_bi_ki.reinit(this->locally_owned_dofs,
                                                  this->mpi_communicator);
-      this->sdirk_vectors.sum_over_previous_stages.reinit(
-        this->locally_owned_dofs,
-        this->locally_relevant_dofs,
-        this->mpi_communicator);
+      reinit_ghosted_vector(this->sdirk_vectors.sum_over_previous_stages,
+                            this->locally_owned_dofs,
+                            this->locally_relevant_dofs,
+                            this->mpi_communicator);
       this->sdirk_vectors.local_sum_over_previous_stages.reinit(
         this->locally_owned_dofs, this->mpi_communicator);
       this->sdirk_vectors.locally_owned_for_calculation.reinit(
@@ -131,14 +135,28 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
       for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
         {
-          solution.reinit(this->locally_owned_dofs,
-                          this->locally_relevant_dofs,
-                          this->mpi_communicator);
+          reinit_ghosted_vector(solution,
+                                this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
         }
     }
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
+
+  // The system right-hand side is the destination of
+  // AffineConstraints::distribute_local_to_global, which adds into degrees of
+  // freedom that are not locally owned. It therefore needs ghost entries for
+  // deal.II distributed vectors, which the following
+  // compress(VectorOperation::add) sends to their owner and clears. The ghost
+  // set must be the one the constraints were built with, and not merely the
+  // locally active degrees of freedom: a contribution to a constrained degree
+  // of freedom is redistributed onto the degrees of freedom that constrain it,
+  // which for a periodic boundary lies on the opposite side of the domain.
+  reinit_assembly_vector(this->system_rhs,
+                         this->locally_owned_dofs,
+                         this->locally_relevant_dofs,
+                         this->mpi_communicator);
 
 
   auto                  &nonzero_constraints = this->get_nonzero_constraints();

@@ -117,8 +117,15 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
   dof_with_more_then_one_particle.clear();
   if (mapping_overconstrained_cells)
     {
-      local_dof_overconstrained.reinit(this->locally_owned_dofs,
-                                       this->mpi_communicator);
+      // The loop below marks degrees of freedom of both the locally owned and
+      // the ghost cells, so it writes to degrees of freedom owned by another
+      // process. deal.II distributed vectors need ghost entries to accept
+      // those writes.
+      reinit_assembly_vector(local_dof_overconstrained,
+                             this->locally_owned_dofs,
+                             DoFTools::extract_locally_relevant_dofs(
+                               *this->dof_handler),
+                             this->mpi_communicator);
       dof_overconstrained.reinit(this->locally_owned_dofs,
                                  this->locally_relevant_dofs,
                                  this->mpi_communicator);
@@ -260,7 +267,7 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                 {
                   for (const auto &id : local_dof_indices)
                     {
-                      local_dof_overconstrained(id) = 1;
+                      local_dof_overconstrained(id) += 1;
                     }
                 }
 
@@ -275,7 +282,7 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                       face->get_dof_indices(local_face_dof_indices);
                       for (const auto &id : local_face_dof_indices)
                         {
-                          local_dof_overconstrained(id) = 1;
+                          local_dof_overconstrained(id) += 1;
                         }
                     }
                 }
@@ -291,7 +298,11 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
 
   if (mapping_overconstrained_cells)
     {
-      local_dof_overconstrained.compress(VectorOperation::insert);
+      // Accumulated rather than inserted, so that the contributions coming
+      // from a process that only sees the cell as a ghost cell are summed
+      // into the owner. Only the marked/not marked distinction is used
+      // below, so the resulting count is equivalent to a flag.
+      local_dof_overconstrained.compress(VectorOperation::add);
       dof_overconstrained = local_dof_overconstrained;
 
 
