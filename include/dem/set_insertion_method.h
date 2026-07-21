@@ -8,6 +8,7 @@
 
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
+#include <dem/insertion_packed.h>
 #include <dem/insertion_plane.h>
 #include <dem/insertion_volume.h>
 
@@ -55,6 +56,24 @@ set_insertion_type(std::vector<std::shared_ptr<Distribution>>
           triangulation,
           dem_parameters,
           maximum_particle_diameter);
+      case InsertionInfo<dim>::InsertionMethod::packed:
+        {
+          if constexpr (std::is_same_v<PropertiesIndex,
+                                       DEM::DEMProperties::PropertiesIndex>)
+            {
+              return std::make_shared<InsertionPacked<dim, PropertiesIndex>>(
+                size_distribution_object_container,
+                triangulation,
+                dem_parameters);
+            }
+          else
+            {
+              AssertThrow(false,
+                          ExcMessage("InsertionPacked is not valid for "
+                                     "the current solver type. It only works "
+                                     "for the standard DEM solver."));
+            }
+        }
       default:
         AssertThrow(false, ExcMessage("Invalid insertion method."));
     }

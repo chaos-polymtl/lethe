@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_dem_action_manager_h
@@ -121,7 +121,7 @@ public:
   }
 
   /**
-   * @brief Flag that the sparse contacts is enabled and trigger a
+   * @brief Flag that the ASC is enabled and trigger a
    * mobility status reset to initialize the containers.
    */
   inline void
@@ -131,6 +131,19 @@ public:
 
     // Allowing the full broad search without mobility status at first iteration
     mobility_status_reset_trigger = true;
+  }
+
+
+  /**
+   * @brief Disables the ASC.
+   */
+  inline void
+  set_sparse_contacts_disabled()
+  {
+    this->sparse_contacts_enabled = false;
+
+    // Allowing the full broad search without mobility status at first iteration
+    mobility_status_reset_trigger = false;
   }
 
   /**

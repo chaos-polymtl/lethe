@@ -10,7 +10,7 @@ In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file
 .. code-block:: text
 
   subsection insertion info
-    # Choices are volume|plane|list|file
+    # Choices are volume|plane|list|file|packed
     set insertion method                               = volume
 
     # Every method
@@ -18,8 +18,6 @@ In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file
 
     # If method = volume
     set inserted number of particles at each time step = 0
-    set insertion box points coordinates               = 0., 0., 0. : 1., 1., 1.
-    set insertion direction sequence                   = 0, 1, 2
     set insertion distance threshold                   = 1.
     subsection insertion acceptance function
       set Function expression = 1.
@@ -30,6 +28,10 @@ In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file
     set insertion plane point                          = 0, 0, 0
     set insertion plane normal vector                  = 1, 0, 0
     set insertion plane threshold distance             = 0.
+
+    # If method = volume or packed
+    set insertion box points coordinates               = 0., 0., 0. : 1., 1., 1.
+    set insertion direction sequence                   = 0, 1, 2
 
     # If method = volume or plane
     set initial velocity                               = 0.0, 0.0, 0.0
@@ -61,7 +63,7 @@ In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file
     set removal box points coordinates                 = 0., 0., 0.: 1., 1., 1.
   end
 
-The ``insertion method`` parameter defines insertion type, where choices are: ``volume``, ``plane``, ``list`` and ``file``. Different insertion methods can share the same parameter. In order to simplify the explanation on those parameters, they are introduced in each method with their specificities.
+The ``insertion method`` parameter defines insertion type, where choices are: ``volume``, ``plane``, ``list``, ``file`` and ``packed``. Different insertion methods can share the same parameter. In order to simplify the explanation on those parameters, they are introduced in each method with their specificities.
 
 -------
 Volume
@@ -192,6 +194,20 @@ Each line is associated with a particle and its properties. The main advantage o
 
 .. warning::
     The critical Rayleigh time step is computed from the parameters in the ``particle type`` subsections, not the ``insertion info`` subsection. It is the user's responsibility to fill the ``particle type`` subsections correctly according to the diameter values stored in the insertion input file, otherwise Rayleigh time percentage displayed at the start of every DEM simulation may not be accurate.
+
+--------------------
+Packed
+--------------------
+The ``packed`` insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions **as is** for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching other particles or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motions are not solved.
+
+.. note::
+    Currently, when using this insertion method, the simulation ends once no contact is detected, thus the particle positions need to be extracted in an insertion file and the simulation must be relaunched with the ``file`` insertion method.
+
+.. note::
+    Due to the use of pseudo time-stepping and the functioning of this insertion method, if multiple particle types are used, every particle type will be inserted on the first insertion time-step.
+
+.. warning::
+    The ``packed`` insertion method is experimental. It does not guarantee that the particles will reach a non-overlapping configuration in a reasonable amount of time, especially when total inserted particle volume over the total triangulation volume is over 50%.
 
 --------------------
 Removal

@@ -69,7 +69,7 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   std::string output_dir_name = parameters.simulation_control.output_folder;
   struct stat buffer;
 
-  // If output directory does not exist, create it
+  // If the output directory does not exist, create it
   if (this_mpi_process == 0)
     {
       if (stat(output_dir_name.c_str(), &buffer) != 0)
@@ -85,8 +85,8 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
 
-  // Setup load balancing parameters and attach the correct functions to the
-  // signals inside the triangulation
+  // Set up the load balancing parameters and attach the correct functions to
+  // the signals inside the triangulation
   load_balancing.set_parameters(parameters.model_parameters);
   load_balancing.copy_references(simulation_control,
                                  triangulation,
@@ -198,13 +198,36 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
   contact_detection_iteration_check_function =
     set_contact_search_iteration_function();
 
-  // Set insertion object type before the restart because the restart only
+  // Set the insertion object type before the restart because the restart only
   // rebuilds the member of the insertion object
   insertion_object =
     set_insertion_type<dim, PropertiesIndex>(size_distribution_object_container,
                                              triangulation,
                                              parameters,
                                              maximum_particle_diameter);
+
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
+    {
+      pcout << "\nUsing packed insertion method. This method overloads the \n"
+               "regular contact model. Please consult the documentation for \n"
+               "information on how to appropriately use it.\n"
+            << std::endl;
+
+      disable_position_integration = true;
+      parameters.model_parameters.particle_particle_contact_force_model =
+        ParticleParticleContactForceModel::shift;
+      parameters.model_parameters.particle_wall_contact_force_method =
+        ParticleWallContactForceModel::shift;
+
+      if (parameters.model_parameters.sparse_particle_contacts)
+        {
+          sparse_contacts_object =
+            AdaptiveSparseContacts<dim, PropertiesIndex>();
+          DEMActionManager::get_action_manager()
+            ->set_sparse_contacts_disabled();
+        }
+    }
 
   // Setting chosen contact force, insertion and integration methods
   integrator_object = set_integrator_type();
@@ -262,7 +285,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
   // Find the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob
   // diameter - 1) * the largest particle radius). This value is used in
-  // find_contact_detection_frequency function
+  // the find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(triangulation) -
               maximum_particle_diameter * 0.5),
@@ -271,10 +294,10 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
               maximum_particle_diameter * 0.5));
 
   // Find the smallest cell size and use this as the floating mesh mapping
-  // criterion. The edge case comes when the cell are completely square/cubic.
-  // In that case, every side of a cell are 2^-0.5 or 3^-0.5 times the
-  // cell_diameter. We want to refresh the mapping each time the solid-objet
-  // pass through a cell or there will be late contact detection. Thus, we use
+  // criterion. The edge case comes when the cells are completely square/cubic.
+  // In that case, every side of a cell is 2^-0.5 or 3^-0.5 times the
+  // cell_diameter. We want to refresh the mapping each time a solid-object
+  // passes through a cell or there will be late contact detection. Thus, we use
   // this value.
   smallest_solid_object_mapping_criterion = [&] {
     if constexpr (dim == 2) // 2^-0.5 * D_c,min
@@ -285,7 +308,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
              GridTools::minimal_cell_diameter(triangulation);
   }();
 
-  // Setup background dof
+  // Set up background dof
   setup_background_dofs();
 
   // Set up the periodic boundaries (if PBC enabled)
@@ -318,7 +341,7 @@ DEMSolver<dim, PropertiesIndex>::setup_background_dofs()
   FE_Q<dim> background_fe(1);
   background_dh.distribute_dofs(background_fe);
 
-  // Periodic nodes must be mapped otherwise the disabling of contacts will not
+  // Periodic nodes must be mapped, otherwise the disabling of contacts will not
   // propagate the mobility status to the periodic nodes during iterations.
   // Identification of periodic nodes is done with the background constraints.
   // Those constraints are not used for any matrix assembly in DEM solver, this
@@ -379,7 +402,7 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
       triangulation.n_active_cells(),
       mpi_communicator);
 
-  // Prepare particle handler for the adaptation of the triangulation to the
+  // Prepare the particle handler for the adaptation of the triangulation to the
   // load
   particle_handler.prepare_for_coarsening_and_refinement();
 
@@ -475,6 +498,11 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
 
       action_manager->particle_insertion_step();
     }
+
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
+    InsertionPacked<dim, PropertiesIndex>::update_previous_position(
+      particle_handler);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -618,10 +646,12 @@ DEMSolver<dim, PropertiesIndex>::finish_simulation()
                                                              mpi_communicator);
               break;
             }
+          default:
+            break;
         }
     }
 
-  // Outputting force and torques over boundary
+  // Outputting force and torques over the boundaries
   if (parameters.forces_torques.calculate_force_torque)
     {
       write_forces_torques_output_results(
@@ -665,10 +695,10 @@ DEMSolver<dim, PropertiesIndex>::write_output_results()
     {
       DataOutFaces<dim> data_out_faces;
 
-      // Setup background dofs to initiate right sized boundary_id vector
+      // Set up background dofs to initiate right sized boundary_id vector
       Vector<float> boundary_id(background_dh.n_dofs());
 
-      // Attach the boundary_id to data_out_faces object
+      // Attach the boundary_id to the data_out_faces object
       BoundaryPostprocessor<dim> boundary;
       data_out_faces.attach_dof_handler(background_dh);
       data_out_faces.add_data_vector(boundary_id, boundary);
@@ -725,7 +755,7 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::report_statistics()
 {
-  // Update statistics on contact list
+  // Update statistics on the contact list
   double number_of_list_built_since_last_log =
     double(contact_build_number) - contact_list.total;
   contact_list.max =
@@ -822,7 +852,7 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
       contact_outcome.resize_interaction_containers(number_of_particles);
       MOI.resize(number_of_particles);
 
-      // Updating moment of inertia container
+      // Updating the moment of inertia container
       for (auto &particle : particle_handler)
         {
           auto particle_properties = particle.get_properties();
@@ -1064,6 +1094,44 @@ DEMSolver<dim, PropertiesIndex>::solve()
                                            triangulation,
                                            sparse_contacts_object);
             }
+        }
+
+      if (parameters.insertion_info.insertion_method ==
+          InsertionInfo<dim>::InsertionMethod::packed)
+        {
+          unsigned int number_of_pp_contact_on_proc =
+            particle_particle_contact_force_object->get_number_of_contacts();
+
+          unsigned int number_of_pw_contact_on_proc =
+            particle_wall_contact_force_object->get_number_of_contacts();
+
+          const unsigned int total_number_of_pp_contacts =
+            Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
+
+          const unsigned int total_number_of_pw_contacts =
+            Utilities::MPI::sum(number_of_pw_contact_on_proc, mpi_communicator);
+          if (total_number_of_pp_contacts + total_number_of_pw_contacts == 0)
+            {
+              pcout << "No contact detected. Exiting simulation." << std::endl;
+              if (!parameters.test.enabled)
+                write_output_results();
+              break;
+            }
+          if (simulation_control->is_verbose_iteration())
+            pcout << std::endl
+                  << "Total number of p-p contacts: "
+                  << total_number_of_pp_contacts << std::endl
+                  << "Total number of p-w contacts: "
+                  << total_number_of_pw_contacts << std::endl
+                  << std::endl;
+
+          particle_particle_contact_force_object->reset_number_of_contacts();
+          particle_wall_contact_force_object->reset_number_of_contacts();
+
+          InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
+            particle_handler, maximum_particle_diameter, displacement);
+          InsertionPacked<dim, PropertiesIndex>::update_previous_position(
+            particle_handler);
         }
 
       // Visualization

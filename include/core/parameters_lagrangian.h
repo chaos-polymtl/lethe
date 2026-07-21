@@ -43,7 +43,11 @@ namespace Parameters
       /// Hertz model with Johnson-Kendall-Roberts cohesive force
       hertz_JKR,
       /// Derjaguin-Muller-Toporov model
-      DMT
+      DMT,
+      /// Shift collision mode. This model shifts the particles using their
+      /// overlap. It is only used for the packed insertion method and does not
+      /// constitute a real collision model.
+      shift
     };
 
     /**
@@ -59,7 +63,11 @@ namespace Parameters
       /// Johnson-Kendall-Roberts model
       JKR,
       /// Derjaguin-Muller-Toporov model
-      DMT
+      DMT,
+      /// Shift collision mode. This model shifts the particles using their
+      /// overlap. It is only used for the packed insertion method and does not
+      /// constitute a real collision model.
+      shift
     };
 
     /**
@@ -423,7 +431,9 @@ namespace Parameters
         /// Insertion from a plane defined by a point and a normal
         plane,
         /// Insertion within a volume defined by a box
-        volume
+        volume,
+        /// Insertion using the packed method
+        packed
       } insertion_method; ///< Method used to insert particles
 
       /// Number of particles inserted at each insertion step.

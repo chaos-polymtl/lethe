@@ -259,6 +259,7 @@ private:
                                        particle_two_location);
 
             this->calculate_contact(
+              particle_one,
               contact_info,
               tangential_relative_velocity,
               normal_relative_velocity_value,
