@@ -231,8 +231,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - uniform_channel_with_meshed_square_prism mesh with simplex is not supported"));
 
-          GridCavityMw<dim, spacedim> grid(
-            mesh_parameters.grid_arguments);
+          GridCavityMw<dim, spacedim> grid(mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
           GridTools::scale(mesh_parameters.scale, triangulation);
