@@ -38,7 +38,7 @@ subsection analytical solution
     # A= -(kappa * kappa) / (1. - kappa * kappa);
     # B= ri * ri / (1. - kappa * kappa);
     set Function constants  = kappa=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667
-    set Function expression = 0 ; cos(atan2(z,y))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(z*z+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(z*z+y*y)) ; -sin(atan2(z,y))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(z*z+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(z*z+y*y)) ; A*A*(z^2+y^2)/2 + 2 *A*B *ln(sqrt(z^2+y^2)) - 0.5*B*B/(z^2+y^2)
+    set Function expression = 0 ; -sin(atan2(z,y)) * (-(kappa*kappa)/(1-kappa*kappa)*sqrt(z*z+y*y) + ri*ri/(1-kappa*kappa)/sqrt(z*z+y*y)) ; cos(atan2(z,y)) * (-(kappa*kappa)/(1-kappa*kappa)*sqrt(z*z+y*y) + ri*ri/(1-kappa*kappa)/sqrt(z*z+y*y)) ; A*A*(z^2+y^2)/2 + 2 *A*B *ln(sqrt(z^2+y^2)) - 0.5*B*B/(z^2+y^2)
   end
 end
 
