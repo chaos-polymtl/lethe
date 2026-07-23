@@ -398,8 +398,8 @@ GridCavityMw<dim, spacedim>::make_grid(
       3: PEC walls (every other wall)
 
       //Material
-      0: Waveguide paving stone (x<=  rectangle_length)
-      1: Fluid part (x> rectangle_length)
+      0: Fluid part (x> rectangle_length) 
+      1: Waveguide paving stone (x<=  rectangle_length)
       */
 
       for (auto &cell : triangulation.active_cell_iterators())
@@ -423,9 +423,9 @@ GridCavityMw<dim, spacedim>::make_grid(
             }
           // MATERIAL IDs
           if (cell->center()[0] <= rectangle_length)
-            cell->set_material_id(0); // waveguide (Paving stone)
+            cell->set_material_id(1); // waveguide (Paving stone)
           else
-            cell->set_material_id(1); // Fluid (cylinder)
+            cell->set_material_id(0); // Fluid (cylinder)
         }
     }
 }
