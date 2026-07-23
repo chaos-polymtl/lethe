@@ -2390,7 +2390,10 @@ public:
                         const std::vector<double>       &radius,
                         const Quadrature<dim2>          &quadrature,
                         const double                     rotation_angle,
-                        const std::vector<double>       &stage_heights);
+                        const unsigned int         rotation_axis_direction,
+                        const std::vector<double> &stage_heights,
+                        const Point<dim> &center_of_rotation = Point<dim>(),
+                        const double      pre_rotation_angle = 0.0);
 
 protected:
   Point<dim>
@@ -2401,6 +2404,9 @@ protected:
 
   Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const override;
+
+  const Point<dim> center_of_rotation;
+  const double     pre_rotation_angle;
 };
 
 
@@ -2411,36 +2417,48 @@ MyMortarManagerCircle<dim>::MyMortarManagerCircle(
   const std::vector<double>       &radius,
   const Quadrature<dim2>          &quadrature,
   const double                     rotation_angle,
-  const std::vector<double>       &stage_heights)
+  const unsigned int               rotation_axis_direction,
+  const std::vector<double>       &stage_heights,
+  const Point<dim>                &center_of_rotation,
+  const double                     pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions,
                            radius,
                            quadrature,
                            rotation_angle,
+                           rotation_axis_direction,
                            stage_heights)
+  , center_of_rotation(center_of_rotation)
+  , pre_rotation_angle(pre_rotation_angle)
 {}
 
 template <int dim>
 Point<dim>
 MyMortarManagerCircle<dim>::from_1D(const double radiant) const
 {
-  return radius_to_point<dim>(this->radius[0], radiant);
+  return radius_to_point<dim>(this->radius[0],
+                              radiant + pre_rotation_angle,
+                              center_of_rotation,
+                              this->rotation_axis_direction);
 }
 
 template <int dim>
 double
 MyMortarManagerCircle<dim>::to_1D(const Point<dim> &point) const
 {
-  return point_to_angle(point, Point<dim>());
+  return std::fmod(point_to_angle(point,
+                                  center_of_rotation,
+                                  this->rotation_axis_direction) -
+                     pre_rotation_angle + 2 * numbers::PI,
+                   2 * numbers::PI);
 }
 
 template <int dim>
 Tensor<1, dim, double>
 MyMortarManagerCircle<dim>::get_normal(const Point<dim> &point_in) const
 {
-  Point<dim> point = point_in;
+  Tensor<1, dim, double> radial = point_in - center_of_rotation;
+  if constexpr (dim == 3)
+    radial[this->rotation_axis_direction] = 0.0;
 
-  if (dim == 3)
-    point[2] = 0.0;
-
-  return point / point.norm();
+  return radial / radial.norm();
 }

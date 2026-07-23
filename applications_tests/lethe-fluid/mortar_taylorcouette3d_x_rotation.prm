@@ -1,0 +1,174 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Checks the mortar implementation with a x-aligned rotation axis for a Taylor-Couette example.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = steady
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.0000
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    # A= -(kappa * kappa) / (1. - kappa * kappa);
+    # B= ri * ri / (1. - kappa * kappa);
+    set Function constants  = kappa=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667
+    set Function expression = 0 ; -sin(atan2(z,y)) * (-(kappa*kappa)/(1-kappa*kappa)*sqrt(z*z+y*y) + ri*ri/(1-kappa*kappa)/sqrt(z*z+y*y)) ; cos(atan2(z,y)) * (-(kappa*kappa)/(1-kappa*kappa)*sqrt(z*z+y*y) + ri*ri/(1-kappa*kappa)/sqrt(z*z+y*y)) ; A*A*(z^2+y^2)/2 + 2 *A*B *ln(sqrt(z^2+y^2)) - 0.5*B*B/(z^2+y^2)
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                   = dealii
+  set grid type              = cylinder_shell
+  set grid arguments         = 2 : 0.5 : 1.0 : 16 : 2 : true
+  set initial refinement     = 0
+  set initial rotation axis  = 0, 1, 0
+  set initial rotation angle = 1.57079632679
+end
+
+#---------------------------------------------------
+# Manifolds
+#---------------------------------------------------
+
+subsection manifolds
+  set number = 4
+  subsection manifold 0
+    set id                = 0
+    set type              = cylindrical
+    set point coordinates = 0, 0, 0
+    set direction vector  = 1, 0, 0
+  end
+  subsection manifold 1
+    set id                = 1
+    set type              = cylindrical
+    set point coordinates = 0, 0, 0
+    set direction vector  = 1, 0, 0
+  end
+  subsection manifold 2
+    set id                = 4
+    set type              = cylindrical
+    set point coordinates = 0, 0, 0
+    set direction vector  = 1, 0, 0
+  end
+  subsection manifold 3
+    set id                = 5
+    set type              = cylindrical
+    set point coordinates = 0, 0, 0
+    set direction vector  = 1, 0, 0
+  end
+end
+
+#---------------------------------------------------
+# Mortar
+#---------------------------------------------------
+
+subsection mortar
+  set enable = true
+  subsection mesh
+    set type                   = dealii
+    set grid type              = cylinder_shell
+    set grid arguments         = 2 : 0.25 : 0.5 : 16 : 2 : true
+    set initial refinement     = 0
+    set initial rotation axis  = 0, 1, 0
+    set initial rotation angle = 1.57079632679
+  end
+  set rotor boundary id  = 5
+  set stator boundary id = 0
+  set rotation axis      = 1, 0, 0
+  set penalty factor     = 1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number                = 3
+  set fix pressure constant = true
+  subsection bc 0
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 0, 2, 3, 5, 6, 7
+    set type = none
+  end
+  subsection bc 2
+    set id   = 4
+    set type = function
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = -z
+    end
+    subsection w
+      set Function expression = y
+    end
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set enable bubble function velocity = true
+  set velocity degree                 = 1
+  set pressure degree                 = 1
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-10
+    set max iterations = 10
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method            = gmres
+    set relative residual = 1e-4
+    set minimum residual  = 1e-11
+    set preconditioner    = amg
+    set verbosity         = quiet
+  end
+end

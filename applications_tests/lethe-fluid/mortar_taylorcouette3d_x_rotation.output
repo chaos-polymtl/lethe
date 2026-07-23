@@ -1,0 +1,10 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 960
+   Volume of triangulation:      5.740251e+00
+
+*****************************
+Steady iteration:        1/1
+*****************************
+cells error_velocity error_pressure 
+   64 1.367252e-02 - 1.231668e-03 -
