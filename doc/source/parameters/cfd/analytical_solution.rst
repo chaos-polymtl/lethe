@@ -27,6 +27,9 @@ If the problem being simulated has a known analytical solution, or an exact solu
     subsection cahn hilliard
       set Function expression = 0; 0 # phase order parameter; chemical potential
     end
+    subsection electromagnetics
+      set Function expression = 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0 # E_x real part; E_y real part; E_z real part; E_x imag part; E_y imag part; E_z imag part; H_x real part; H_y real part; H_z real part; H_x imag part; H_y imag part; H_z imag part
+    end
    end
 
 * The ``enable`` parameter is set to true if the problem has an analytical solution. This enables the calculation of the analytical solution and the :math:`L^2` norm of the error.
