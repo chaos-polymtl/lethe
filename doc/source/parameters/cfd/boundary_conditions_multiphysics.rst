@@ -304,16 +304,16 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
           subsection E x real part
             set Function expression = 1
           end
-          subsection E y real part
-            set Function expression = 0
-          end
-          subsection E z real part
-            set Function expression = 0
-          end
           subsection E x imag part
             set Function expression = 1
           end
+          subsection E y real part
+            set Function expression = 0
+          end
           subsection E y imag part
+            set Function expression = 0
+          end
+          subsection E z real part
             set Function expression = 0
           end
           subsection E z imag part
@@ -336,16 +336,16 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
           subsection H x real part
             set Function expression = 1
           end
-          subsection H y real part
-            set Function expression = 0
-          end
-          subsection H z real part
-            set Function expression = 0
-          end
           subsection H x imag part
             set Function expression = 1
           end
+          subsection H y real part
+            set Function expression = 0
+          end
           subsection H y imag part
+            set Function expression = 0
+          end
+          subsection H z real part
             set Function expression = 0
           end
           subsection H z imag part
@@ -374,16 +374,16 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
           subsection excitation x real part
             set Function expression = 0
           end
-          subsection excitation y real part
-            set Function expression = 0
-          end
-          subsection excitation z real part
-            set Function expression = 0
-          end
           subsection excitation x imag part
             set Function expression = 0
           end
+          subsection excitation y real part
+            set Function expression = 0
+          end
           subsection excitation y imag part
+            set Function expression = 0
+          end
+          subsection excitation z real part
             set Function expression = 0
           end
           subsection excitation z imag part
