@@ -656,6 +656,29 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
 #endif
     }
 
+  // As for the fluid solution vectors above, the deserialized void fraction
+  // vectors only carry valid locally owned entries; their ghost values are
+  // stale. This is not felt on the restarted step itself, since the void
+  // fraction time derivative is assembled with add(), which only touches
+  // locally owned entries. It is felt at the *end* of the step: percolation
+  // copies void_fraction_previous_solution[0] into [1], propagating the stale
+  // ghosts, and the next write_checkpoint packs the vectors with
+  // SolutionTransfer, which reads ghost values to serialize the dofs of
+  // locally owned cells that sit on a subdomain boundary. The checkpoint would
+  // then store wrong void fractions on those dofs. Since the BDF time
+  // derivative of the void fraction is a small difference of large terms
+  // (the coefficients scale as 1/dt and cancel for a constant field), such
+  // errors do not stay small: they inject a spurious source in the continuity
+  // equation that grows with the number of subdomain boundaries and compounds
+  // over successive restarts. Refresh the ghosts here to keep the invariant
+  // that these vectors are always ghosted outside of a solve.
+  this->particle_projector.void_fraction_solution.update_ghost_values();
+  for (unsigned int i = 0;
+       i < this->particle_projector.void_fraction_previous_solution.size();
+       ++i)
+    this->particle_projector.void_fraction_previous_solution[i]
+      .update_ghost_values();
+
   if (this->simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);
