@@ -11,6 +11,7 @@ add_library(lethe-core
   fichera_oven_grid.cc
   grids.cc
   grid_birmingham_fluidized_bed.cc
+  grid_cavity_mw.cc
   grid_cylinder.cc
   grid_impinging_jet_mixer.cc
   grid_periodic_hills.cc
