@@ -9,6 +9,39 @@ waveguides and to control how the electromagnetic solution is scaled after the l
 system is solved.
 The main parameter subsection is ``time harmonic maxwell``.
 
+The nondimensional convention used by the solver is:
+
+.. math::
+
+  \begin{align}
+     & \tilde{\mathbf{E}} = \frac{1}{E_0}\mathbf{E}_\mathrm{spatial}, &                                                     & \tilde{\mathbf{H}} = \frac{Z_0}{E_0} \mathbf{H}_\mathrm{spatial},
+     &                                                                & \varepsilon_r = \frac{1}{\varepsilon_0}\varepsilon, &                                                                                 & \mu_r = \frac{1}{\mu_0}\mu, \nonumber \\
+     & \tilde{\nabla} = L \nabla,                                     &                                                     & \sigma_r = \frac{1}{\omega \varepsilon_0}\sigma,                                &
+     & \tilde{\omega} =  \frac{ L}{c_0}\omega,                        &                                                     & \tilde{ \mathbf{J} } = \frac{L Z_0}{E_0} \mathbf{J}_\mathrm{spatial}. \nonumber
+  \end{align}
+
+The time-harmonic Maxwell system is written in dimensionless form as:
+
+.. math::
+
+  \begin{subequations}\label{eq:maxwell_dimensionless}
+    \begin{align}
+      \nabla \times \tilde{\mathbf{E}} - i \tilde{\omega} \mu_r \tilde{\mathbf{H}}                      & = 0,                  \\
+      \nabla \times \tilde{\mathbf{H}} + i \tilde{\omega} \varepsilon_{r,\text{eff}} \tilde{\mathbf{E}} & = \tilde{\mathbf{J}},
+    \end{align}
+  \end{subequations}
+
+where :math:`\tilde{\mathbf{E}}` and :math:`\tilde{\mathbf{H}}` are the dimensionless electric
+and magnetic fields, :math:`\tilde{\omega}` is the dimensionless angular frequency,
+:math:`\mu_r` is the relative magnetic permeability, :math:`\varepsilon_{r,\text{eff}}` is
+the effective relative permittivity, and :math:`\tilde{\mathbf{J}}` is the dimensionless
+current density.
+
+The solver always works in this dimensionless formulation and rescales the solution only
+through the selected electromagnetic scaling type after the linear system is solved.
+
+The time-harmonic Maxwell solver is currently supported only for 3D problems.
+
 The parameters parsed by the solver are grouped as follows:
 
 .. code-block:: text
@@ -38,7 +71,6 @@ The parameters parsed by the solver are grouped as follows:
         set mode order n = 0
       end
 
-      # In 2D, define corner 0 and corner 1.
       # In 3D, define corner 0, corner 1, corner 2, and corner 3.
       set corner 0 = ...
       set corner 1 = ...
@@ -50,6 +82,8 @@ The parameters parsed by the solver are grouped as follows:
 .. note::
 
   The ``waveguide inlet`` subsections are only parsed for the first ``number of waveguide inlets`` entries. At most ten inlets are currently supported by the parameter declaration.
+
+  The solver is only available for 3D simulations, so the inlet corner coordinates always have three components.
 
 * ``time coupling strategy``: controls how often the electromagnetic fields are recomputed.
 
@@ -85,7 +119,7 @@ The parameters parsed by the solver are grouped as follows:
 
     * ``mode order n``: mode order in the second transverse direction.
 
-  * ``corner i``: coordinates of the inlet corners. In 2D, two corners are expected. In 3D, four corners are expected and the parser checks that they define a coplanar quadrilateral.
+  * ``corner i``: coordinates of the inlet corners. Four corners are expected and the parser checks that they define a coplanar quadrilateral.
 
 .. note::
 
