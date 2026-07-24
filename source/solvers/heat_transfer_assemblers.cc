@@ -1594,9 +1594,12 @@ HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>::assemble_rhs(
         scratch_data.magnetic_field_real_values[q].norm_square() +
         scratch_data.magnetic_field_imag_values[q].norm_square();
 
-      // Joule heating: 0.5 * sigma * |E|^2
-      const double joule_heating =
-        0.5 * electric_conductivity * electric_field_squared_amplitude;
+      // Joule heating: 0.5 * sigma * |E|^2, the factor omega*epsilon_0 is
+      // included to recover the electric conductivity in its dimensional form,
+      // i.e., sigma = omega * epsilon_0 * sigma_r.
+      const double joule_heating = 0.5 * angular_frequency *
+                                   vacuum_permittivity * electric_conductivity *
+                                   electric_field_squared_amplitude;
 
       // Dielectric loss heating: 0.5 * omega * epsilon_0 * epsilon_r'' * |E|^2
       const double dielectric_loss_heating =
