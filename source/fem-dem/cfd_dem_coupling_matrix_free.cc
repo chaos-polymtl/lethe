@@ -656,6 +656,29 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
 #endif
     }
 
+  // As for the fluid solution vectors above, the deserialized void fraction
+  // vectors only carry valid locally owned entries; their ghost values are
+  // stale. This is not felt on the restarted step itself, since the void
+  // fraction time derivative is assembled with add(), which only touches
+  // locally owned entries. It is felt at the *end* of the step: percolation
+  // copies void_fraction_previous_solution[0] into [1], propagating the stale
+  // ghosts, and the next write_checkpoint packs the vectors with
+  // SolutionTransfer, which reads ghost values to serialize the dofs of
+  // locally owned cells that sit on a subdomain boundary. The checkpoint would
+  // then store wrong void fractions on those dofs. Since the BDF time
+  // derivative of the void fraction is a small difference of large terms
+  // (the coefficients scale as 1/dt and cancel for a constant field), such
+  // errors do not stay small: they inject a spurious source in the continuity
+  // equation that grows with the number of subdomain boundaries and compounds
+  // over successive restarts. Refresh the ghosts here to keep the invariant
+  // that these vectors are always ghosted outside of a solve.
+  this->particle_projector.void_fraction_solution.update_ghost_values();
+  for (unsigned int i = 0;
+       i < this->particle_projector.void_fraction_previous_solution.size();
+       ++i)
+    this->particle_projector.void_fraction_previous_solution[i]
+      .update_ghost_values();
+
   if (this->simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);
@@ -896,6 +919,18 @@ CFDDEMMatrixFree<dim>::load_balance()
 
   vf_system_trans_vectors.interpolate(vf_system);
 
+  // Refresh the ghost values of the freshly interpolated void fraction vectors,
+  // exactly as is done for the fluid vectors above. interpolate() only fills
+  // locally owned entries, leaving stale ghosts. If these are not refreshed,
+  // the stale ghosts are later propagated by percolate_void_fraction (which
+  // copies whole vectors) and, when a checkpoint is written on a load balance
+  // step, packed into the checkpoint by prepare_for_serialization (which reads
+  // ghost values to serialize the dofs of locally owned cells sitting on a
+  // subdomain boundary). This would store wrong void fractions on those dofs
+  // and, since the BDF void fraction time derivative amplifies them by ~1/dt,
+  // cause an abnormally high residual on the restarted step.
+  vf_distributed_system.update_ghost_values();
+
   // Store the interpolated void fraction before converting it to a Trilinos
   // vector, otherwise the conversion below would pick up the stale (post
   // setup_dofs, zeroed) content of void_fraction_solution instead of the
@@ -916,6 +951,12 @@ CFDDEMMatrixFree<dim>::load_balance()
        i < this->particle_projector.previous_void_fraction.size();
        ++i)
     {
+      // Refresh the ghost values before storing, for the same reason as the
+      // void_fraction_solution above: interpolate() leaves stale ghosts, which
+      // would otherwise be propagated by percolation and serialized into the
+      // checkpoint on a load balance step.
+      vf_distributed_previous_solutions[i].update_ghost_values();
+
       this->particle_projector.void_fraction_previous_solution[i] =
         vf_distributed_previous_solutions[i];
 
