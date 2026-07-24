@@ -12,7 +12,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     # Thermal physics
     set heat transfer                   = false
     set viscous dissipation             = false
-    set thermal buoyancy force           = false
+    set thermal buoyancy force          = false
 
     # Tracer
     set tracer                          = false
@@ -20,8 +20,13 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     # Multiphase flow
     # Conservative Level-Set method
     set cls                             = false
+
     # Cahn-Hilliard equations
     set cahn hilliard                   = false
+
+    # Electromagnetics
+    set electromagnetics                = false
+    set microwave heating               = false
   end
 
 
@@ -57,5 +62,16 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   The CLS solver is used in the example :doc:`../../examples/multiphysics/dam-break/dam-break`.
 
+* The ``cahn hilliard`` parameter enables multiphase flow simulations, with two fluids separated by a free surface, using the Cahn-Hilliard equations. 
 
+  See :doc:`cahn_hilliard` for advanced Cahn-Hilliard parameters, :doc:`initial_conditions` for the definition of the Cahn-Hilliard conditions and `Physical properties - two phase simulations <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids. 
 
+* The ``electromagnetics`` parameter enables the solution of the time-harmonic Maxwell equations. 
+
+  See :doc:`time_harmonic_maxwell` for advanced time-harmonic Maxwell parameters, :doc:`boundary_conditions_multiphysics` for the definition of the electromagnetic boundary conditions and `Physical properties - electromagnetics <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#electromagnetics>`_ for the definition of the physical properties of the medium.
+
+  When ``set heat transfer = true``, in addition to the electromagnetic solver,the optional parameters ``microwave heating`` can be used to enable the calculation of the heat source due to the electromagnetic fields.  
+
+.. seealso::
+
+  The electromagnetic solver is used on its ownin the example :doc:`../../examples/multiphysics/waveguide/waveguide`.
