@@ -324,7 +324,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
     * ``magnetic field`` to impose a prescribed magnetic field. The boundary values are taken from the parsed functions in the ``H x/y/z real part`` and ``H x/y/z imag part`` subsections,
 
       .. math::
-        \mathbf{H} = \mathbf{H}^{\mathrm{inc}}.
+        \mathbf{H} = \mathbf{H}^{\mathrm{inc}} - \mathbf{J}_\mathrm{s}.
 
       Example:
 
