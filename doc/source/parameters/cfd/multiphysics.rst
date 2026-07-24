@@ -74,4 +74,4 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
 .. seealso::
 
-  The electromagnetic solver is used on its ownin the example :doc:`../../examples/multiphysics/waveguide/waveguide`.
+  The electromagnetic solver is used on its own in the example :doc:`../../examples/multiphysics/waveguide/waveguide`.
