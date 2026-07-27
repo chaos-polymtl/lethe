@@ -19,6 +19,15 @@ The choice of boundary conditions can vary greatly depending on the problem to b
 - Dirichlet boundary conditions: :math:`\mathbf{n} \times \mathbf{\hat{E}} = \mathbf{\hat{E}}_{Dirichlet}`;
 - Neumann boundary conditions: :math:`\mu_{em}^{-1}(\nabla \times \mathbf{\hat{E}}) \times \mathbf{n} = -i \omega \mathbf{J}_{ext_{Neumann}}`.
 
+.. seealso::
+
+    A fuller catalog of the boundary condition types commonly encountered in
+    electromagnetic simulations — perfect electric/magnetic conductors,
+    impedance and absorbing (Silver–Müller) conditions, lossy conductors, and
+    waveguide or plane-wave inlet ports — together with their mathematical
+    form, is given in the boundary condition reference of the DPG formulation
+    guide.
+
 The :math:`\mathbf{n}` represent the unit normal vector. For simplicity, in the current derivation of the weak form, a perfect electric conductor (PEC) is considered, which implies that :math:`\mathbf{E}_{Dirichlet} = 0`. Now, multiplying the strong form by a complex test function :math:`\mathbf{v}` that satisfies :math:`\mathbf{v} \times \mathbf{n}=0` and integrating over the domain :math:`\Omega`:
 
 .. math::
@@ -47,3 +56,16 @@ Thus the boundary term vanishes (:math:`\int_{\Gamma} \mu_{em}^{-1} (\nabla \tim
 Formally, :math:`\mathbf{E}` should also satisfy Gauss's law (:math:`\nabla \cdot \mathbf{D} = \rho_f`), but it is implicitly taken into account by the electromagnetic wave equation and holds in the weak form presented above.
 
 The formulation above is the conventional weak form used as a reference for the more robust ultra-weak DPG formulation. In the DPG setting, the same Maxwell operator is expressed with broken test functions, trace unknowns on the mesh skeleton, and a residual-minimizing test norm. This viewpoint is particularly advantageous for wave propagation and impedance-type boundary conditions.
+
+Another practical difference is that the primal formulation above eliminates
+the magnetic field to obtain a single second-order equation for the electric
+field, whereas the ultra-weak DPG formulation solves for the electric and
+magnetic fields simultaneously (see the
+:doc:`DPG formulation for time-harmonic Maxwell problems
+<dpg_formulation_time_harmonic_maxwell>`). Retaining both fields as
+independent unknowns is especially useful when the electromagnetic power
+dissipated in the medium must be evaluated, since some materials exhibit
+non-negligible magnetic losses in addition to dielectric losses; recovering
+:math:`\mathbf{H}` directly, rather than reconstructing it from
+:math:`\mathbf{E}` after the fact, avoids an additional loss of accuracy in
+that calculation.
