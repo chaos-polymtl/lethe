@@ -50,3 +50,5 @@ where :math:`\omega` is the angular frequency of the oscillating fields. By subs
     \end{align*}
     
 where :math:`\varepsilon_{em_{eff}} = \varepsilon_{em} - i \frac{\sigma_e}{\omega}` is the effective permittivity of the medium. These equations are the time-harmonic Maxwell's equations for spatially varying permittivity and permeability, which can be rank 2 tensors when the medium is anisotropic. Note that even if the harmonic oscillation is assumed, it is not a restrictive simplification. Indeed, any signal can be obtained by a summation of harmonic frequencies, and the time dependence of the electromagnetic field, if it is a quantity of interest, can be obtained by performing an inverse Fourier transform.
+
+For numerical purposes, this system is often rewritten in an ultra-weak form so that the derivatives are transferred to the test functions and boundary terms are handled explicitly through traces. This is the starting point of discontinuous Petrov-Galerkin (DPG) formulations, where the discrete solution is obtained by minimizing the residual in a test-space norm rather than by a standard symmetric Galerkin projection.
