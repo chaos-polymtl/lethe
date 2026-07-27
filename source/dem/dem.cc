@@ -851,11 +851,6 @@ DEMSolver<dim, PropertiesIndex>::solve()
             triangulation,
             parameters.boundary_conditions);
 
-  report_cell_size_to_particle_diameter_ratio(triangulation,
-                                              maximum_particle_diameter,
-                                              pcout,
-                                              mpi_communicator);
-
   // Set up functions and pointers according to parameters
   setup_functions_and_pointers();
 
@@ -870,6 +865,11 @@ DEMSolver<dim, PropertiesIndex>::solve()
                   insertion_object,
                   solid_surfaces,
                   checkpoint_controller);
+
+  report_cell_size_to_particle_diameter_ratio(triangulation,
+                                             maximum_particle_diameter,
+                                             pcout,
+                                             mpi_communicator);
 
   // Set up the various parameters that need the triangulation
   setup_triangulation_dependent_parameters();
