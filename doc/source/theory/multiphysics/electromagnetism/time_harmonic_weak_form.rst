@@ -45,3 +45,5 @@ Thus the boundary term vanishes (:math:`\int_{\Gamma} \mu_{em}^{-1} (\nabla \tim
     L(\mathbf{v}) = &\int_{\Omega} -i \omega \mathbf{J}_{ext} \cdot \mathbf{v^*} \mathrm{d}\Omega .
 
 Formally, :math:`\mathbf{E}` should also satisfy Gauss's law (:math:`\nabla \cdot \mathbf{D} = \rho_f`), but it is implicitly taken into account by the electromagnetic wave equation and holds in the weak form presented above.
+
+The formulation above is the conventional weak form used as a reference for the more robust ultra-weak DPG formulation. In the DPG setting, the same Maxwell operator is expressed with broken test functions, trace unknowns on the mesh skeleton, and a residual-minimizing test norm. This viewpoint is particularly advantageous for wave propagation and impedance-type boundary conditions.
