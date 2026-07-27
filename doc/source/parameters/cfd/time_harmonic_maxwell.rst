@@ -64,7 +64,7 @@ density.
 
 .. tip::
 
-  If the user wants to use different units than the MKS system because, for example, the problem is defined in centimeters, we recommend to use the dimensionality subsection :doc:`dimensionality <../parameters/dimensionality>` to set the reference length scale :math:`L` to 0.01 m, and leave all the parameters in the PRM file in MKS units. The solver will then automatically convert the parameters to the correct dimensionless form. If not using the dimensionality subsection, the user must ensure that all parameters are consistent with the desired behavior following the conventions described above that define the dimensionless formulation. 
+  If the user wants to use different units than the MKS system because, for example, the problem is defined in centimeters, we recommend to use the dimensionality subsection :doc:`dimensionality <./dimensionality>` to set the reference length scale :math:`L` to 0.01 m, and leave all the parameters in the PRM file in MKS units. The solver will then automatically convert the parameters to the correct dimensionless form. If not using the dimensionality subsection, the user must ensure that all parameters are consistent with the desired behavior following the conventions described above that define the dimensionless formulation. 
 
 **Parameter file syntax**
 
@@ -122,11 +122,9 @@ The parameters parsed by the solver are grouped as follows:
     ``magnetic field amplitude``  and the electric field matches :math:`E_0 = H_0 * Z_0`.
   * ``power``: rescaled so the power delivered through the waveguide inlet
     matches the ``waveguide power`` given in watts by the user to this inlet. The scaling is done internally by isolating the electric field amplitude using the Poynting vector and the waveguide mode properties, and then rescaling the magnetic field accordingly. This is obtained via the following relation:
+    
     .. math::
-
-    \begin{equation}
-      \overline{P}_\text{input} = \frac{1}{2} \frac{E_0^2}{Z_0} \int_A \Re{(\mathbf{E} \times \mathbf{H}^*)} \cdot \mathbf{n} \text{d}A.
-    \end{equation}
+      \overline{P}_\text{input} = \frac{1}{2} \frac{E_0^2}{Z_0} \int_A \Re{(\mathbf{E} \times \mathbf{H}^*)} \cdot \mathbf{n} \text{d}A,
 
     where :math:`\overline{P}_\text{input}` is the input  defined by the user, :math:`E_0` is the electric field amplitude, :math:`Z_0` is the impedance of free space, and the integral is taken over the waveguide inlet area :math:`A`. The Poynting vector is computed using the electric and magnetic fields of the selected waveguide mode.
 
@@ -151,10 +149,10 @@ The parameters parsed by the solver are grouped as follows:
   as the target amplitude when ``electromagnetic scaling type = magnetic field``.
 
 * ``number of waveguide inlets``: number of ``waveguide inlet`` that needs to be 
-    applied to the geometry boundary. Also see the :doc:`boundary conditions <../parameters/boundary_conditions_multiphysics>` section for more information on the waveguide boundary conditions.
+    applied to the geometry boundary. Also see the :doc:`boundary conditions <./boundary_conditions_multiphysics>` section for more information on the waveguide boundary conditions.
 
 .. note::
-  At the moment only rectangular waveguide modes are supported, and the user must ensure that the selected mode is valid according to the waveguide geometry. An example of such a geometry is given in the :doc:`waveguide example <../../examples/multiphysics/waveguide>`.
+  At the moment only rectangular waveguide modes are supported, and the user must ensure that the selected mode is valid according to the waveguide geometry. An example of such a geometry is given in the :doc:`waveguide example <../../examples/multiphysics/waveguide/waveguide>`.
 
 * ``waveguide inlet i``: describes inlet ``i``. Each inlet defines:
 
@@ -195,7 +193,7 @@ The parameters parsed by the solver are grouped as follows:
 
       The corners are used the following convention to associate the modes ``m`` and ``n`` to the correct transverse directions. In the reference frame of the inlet, the first transverse direction is defined by the vector from ``corner 0`` to ``corner 1``, and the second transverse direction is defined by the vector from ``corner 0`` to ``corner 2``. The mode orders ``m`` and ``n`` are associated with these two transverse directions, respectively. The following diagram illustrates this convention:
 
-      .. image:: /images/corners_schematic.pdf
+      .. image:: ./images/corners_schematic.pdf
          :width: 300
          :alt: Corner Convention
 
