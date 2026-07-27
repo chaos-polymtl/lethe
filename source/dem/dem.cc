@@ -867,9 +867,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
                   checkpoint_controller);
 
   report_cell_size_to_particle_diameter_ratio(triangulation,
-                                             maximum_particle_diameter,
-                                             pcout,
-                                             mpi_communicator);
+                                              maximum_particle_diameter,
+                                              pcout,
+                                              mpi_communicator);
 
   // Set up the various parameters that need the triangulation
   setup_triangulation_dependent_parameters();
