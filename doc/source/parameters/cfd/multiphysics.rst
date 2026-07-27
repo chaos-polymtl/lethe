@@ -70,8 +70,14 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   See :doc:`time_harmonic_maxwell` for advanced time-harmonic Maxwell parameters, :doc:`boundary_conditions_multiphysics` for the definition of the electromagnetic boundary conditions and `Physical properties - electromagnetics <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#electromagnetics>`_ for the definition of the physical properties of the medium.
 
-  When ``set heat transfer = true``, in addition to the electromagnetic solver,the optional parameters ``microwave heating`` can be used to enable the calculation of the heat source due to the electromagnetic fields.  
+  When ``set heat transfer = true``, in addition to the electromagnetic solver, the optional parameters ``microwave heating`` can be used to enable the calculation of the heat source due to the electromagnetic fields. If ``set microwave heating = true``, the following heat source is calculated and added to the right-hand side of the heat transfer equation:
+
+  .. math::
+
+      Q_\text{em}=-\nabla \cdot \overline{\mathbf{S}} = \frac{1}{2}\sigma|\mathbf{E}|^2 + \frac{1}{2}\omega\varepsilon_0\varepsilon_\mathrm{im}|\mathbf{E}|^2 + \frac{1}{2}\omega\mu_0\mu_\mathrm{im}|\mathbf{H}|^2,
+
+    where :math:`\overline{\mathbf{S}}` is the time-averaged Poynting vector, :math:`\sigma` is the conductivity, :math:`\varepsilon_0` is the vacuum permittivity, :math:`\varepsilon_\mathrm{im}` is the imaginary part of the relative permittivity, :math:`\mu_0` is the vacuum permeability, :math:`\mu_\mathrm{im}` is the imaginary part of the relative permeability, and :math:`\mathbf{E}` and :math:`\mathbf{H}` are the electric and magnetic fields, respectively.
 
 .. seealso::
 
-  The electromagnetic solver is used on its own in the example :doc:`../../examples/multiphysics/waveguide/waveguide`.
+  The electromagnetic solver can be used on its own, an example is available in :doc:`../../examples/multiphysics/waveguide/waveguide`.

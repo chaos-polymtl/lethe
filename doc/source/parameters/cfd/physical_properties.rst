@@ -147,19 +147,49 @@ Physical Properties
 
 * The ``electric conductivity model`` specifies the model used to calculate the electric conductivity. At the moment, only a constant electric conductivity is supported.
 
-* The ``electric conductivity`` parameter is the electric conductivity of the material in its dimensionless form, i.e., the quantity to input is :math:`\sigma_r = \frac{\sigma}{\omega \varepsilon_0}`, with :math:`\sigma` the dimensional electric conductivity, :math:`\omega` the angular frequency of the electromagnetic wave, and :math:`\varepsilon_0` the vacuum permittivity.
+* The ``electric conductivity`` parameter is the electric conductivity of the material in its dimensionless form, i.e., the quantity to input is:
+
+  .. math::
+
+    \sigma_r = \frac{\sigma}{\omega \varepsilon_0}
+
+  with :math:`\sigma` the dimensional electric conductivity, :math:`\omega` the angular frequency of the electromagnetic wave, and :math:`\varepsilon_0` the vacuum permittivity.
 
 * The ``electric permittivity model`` specifies the model used to calculate the electric permittivity. At the moment, only a constant electric permittivity is supported.
 
-* The ``electric permittivity real part`` parameter is the real part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity: :math:`\Re{\varepsilon_{r}} = \Re{\frac{\varepsilon}{\varepsilon_0}}`, with :math:`\varepsilon` the dimensional effective electric permittivity, and :math:`\varepsilon_0` the vacuum permittivity.
+* The ``electric permittivity real part`` parameter is the real part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity: 
 
-* The ``electric permittivity imag part`` parameter is the imaginary part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity: :math:`\Im{\varepsilon_{r}} = \Im{\frac{\varepsilon}{\varepsilon_0}}`, with :math:`\varepsilon` the dimensional effective electric permittivity, and :math:`\varepsilon_0` the vacuum permittivity.
+  .. math::
+
+    \Re{(\varepsilon_{r})} = \Re{\left(\frac{\varepsilon}{\varepsilon_0}\right)}
+
+  with :math:`\varepsilon` the dimensional effective electric permittivity, and :math:`\varepsilon_0` the vacuum permittivity.
+
+* The ``electric permittivity imag part`` parameter is the imaginary part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity: 
+
+  .. math::
+
+    \Im{(\varepsilon_{r})} = \Im{\left(\frac{\varepsilon}{\varepsilon_0}\right)}
+
+  with :math:`\varepsilon` the dimensional effective electric permittivity, and :math:`\varepsilon_0` the vacuum permittivity.
 
 * The ``magnetic permeability model`` specifies the model used to calculate the magnetic permeability. At the moment, only a constant magnetic permeability is supported.
 
-* The ``magnetic permeability real part`` parameter is the real part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability: :math:`\Re{\mu_{r}} = \Re{\frac{\mu}{\mu_0}}`, with :math:`\mu` the dimensional effective magnetic permeability, and :math:`\mu_0` the vacuum permeability.
+* The ``magnetic permeability real part`` parameter is the real part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability: 
 
-* The ``magnetic permeability imag part`` parameter is the imaginary part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability: :math:`\Im{\mu_{r}} = \Im{\frac{\mu}{\mu_0}}`, with :math:`\mu` the dimensional effective magnetic permeability, and :math:`\mu_0` the vacuum permeability.
+  .. math::
+
+    \Re{(\mu_{r})} = \Re{\left(\frac{\mu}{\mu_0}\right)}
+
+  with :math:`\mu` the dimensional effective magnetic permeability, and :math:`\mu_0` the vacuum permeability.
+
+* The ``magnetic permeability imag part`` parameter is the imaginary part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability: 
+
+  .. math::
+
+    \Im{(\mu_{r})} = \Im{\left(\frac{\mu}{\mu_0}\right)}
+
+  with :math:`\mu` the dimensional effective magnetic permeability, and :math:`\mu_0` the vacuum permeability.
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
