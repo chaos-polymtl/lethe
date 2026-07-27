@@ -51,15 +51,19 @@ protected:
 #ifndef LETHE_GMG_USE_FLOAT
   using MGNumber = double;
 #else
-  using MGNumber = float;
+  using MGNumber       = float;
 #endif
 
   using VectorType         = LinearAlgebra::distributed::Vector<Number>;
   using MGVectorType       = LinearAlgebra::distributed::Vector<MGNumber>;
   using TrilinosVectorType = LinearAlgebra::distributed::Vector<double>;
   using LSTransferType     = MGTransferMatrixFreeWrapper<dim, MGNumber>;
-  using GCTransferType     = MGTransferMatrixFree<dim, MGNumber>;
-  using OperatorType       = NavierStokesOperatorBase<dim, MGNumber>;
+#if DEAL_II_VERSION_GTE(9, 8, 0)
+  using GCTransferType = MGTransferMatrixFree<dim, MGNumber>;
+#else
+  using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
+#endif
+  using OperatorType               = NavierStokesOperatorBase<dim, MGNumber>;
   using SmootherPreconditionerType = PreconditionBase<MGVectorType>;
   using SmootherType =
     PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
@@ -337,7 +341,11 @@ public:
   using MGVectorType =
     typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType;
   using MGNumber = typename MFNavierStokesPreconditionGMGBase<dim>::MGNumber;
+#if DEAL_II_VERSION_GTE(9, 8, 0)
   using GCTransferType = MGTransferMatrixFree<dim, MGNumber>;
+#else
+  using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
+#endif
 
   /**
    * Constructor.

@@ -740,7 +740,11 @@ private:
   unsigned int       n_gc_levels;
 
   MGTransferMatrixFree<dim, Number> ls;
+#if DEAL_II_VERSION_GTE(9, 8, 0)
   MGTransferMatrixFree<dim, Number> gc;
+#else
+  MGTransferGlobalCoarsening<dim, VectorType> gc;
+#endif
 };
 
 template <int dim>
