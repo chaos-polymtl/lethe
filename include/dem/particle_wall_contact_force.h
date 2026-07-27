@@ -74,7 +74,7 @@ public:
 
   /**
    * @brief Return the number of contacts that occurred in the
-   * present pseudo-time step when using the shift insertion method.
+   * present pseudo-time step when using the packed insertion method.
    */
   unsigned int
   get_number_of_contacts() const
@@ -1089,7 +1089,6 @@ private:
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle-wall pair.
    */
-
   inline void
   shift_particle_using_normal_overlap(
     const double                     normal_overlap,
@@ -1119,6 +1118,7 @@ private:
         if constexpr (dim == 3)
           {
             particle_new_position =
+              particle_position -
               (1.02 * normal_overlap +
                0.01 * particle->get_properties()[PropertiesIndex::dp]) *
               normal_vector;

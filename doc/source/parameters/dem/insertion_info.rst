@@ -198,7 +198,7 @@ Each line is associated with a particle and its properties. The main advantage o
 --------------------
 Packed
 --------------------
-The ``packed`` insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions **as is** for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching other particles or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motions are not solved.
+The ``packed`` insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions **as is** for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching other particles or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motion are not solved.
 
 .. note::
     Currently, when using this insertion method, the simulation ends once no contact is detected, thus the particle positions need to be extracted in an insertion file and the simulation must be relaunched with the ``file`` insertion method.
@@ -207,7 +207,7 @@ The ``packed`` insertion method inserts particles in an insertion box in an unst
     Due to the use of pseudo time-stepping and the functioning of this insertion method, if multiple particle types are used, every particle type will be inserted on the first insertion time-step.
 
 .. warning::
-    The ``packed`` insertion method is experimental. It does not guarantee that the particles will reach a non-overlapping configuration in a reasonable amount of time, especially when total inserted particle volume over the total triangulation volume is over 50%.
+    The ``packed`` insertion method is experimental. It does not guarantee that the particles will reach a non-overlapping configuration in a reasonable amount of time, especially when the total inserted particle volume over the total triangulation volume is over 50%.
 
 --------------------
 Removal

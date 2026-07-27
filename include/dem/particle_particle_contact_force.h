@@ -101,10 +101,10 @@ public:
   }
 
   /**
-   * @brief Return the amount of contact that occurred in the
-   * present pseudo-time step when using the shift insertion method.
+   * @brief Return the number of contacts that occurred in the
+   * present pseudo-time step when using the packed insertion method.
    *
-   * @return The amount of contact that occurred in the present pseudo-time
+   * @return The number of contacts that occurred in the present pseudo-time
    * step.
    */
   unsigned int inline get_number_of_contacts() const
@@ -113,7 +113,7 @@ public:
   }
 
   /**
-   * @brief Reset the counter of number of contact for the next pseudo-time step.
+   * @brief Reset the counter of number of contacts for the next pseudo-time step.
    */
   void
   reset_number_of_contacts()
@@ -122,7 +122,7 @@ public:
   }
 
 protected:
-  // Counter for the amount of contact
+  // Counter for the number of contacts
   unsigned int n_contacts = 0;
 
   /**
@@ -359,8 +359,6 @@ protected:
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
-
-
   inline void
   calculate_contact(Particles::ParticleIterator<dim>     particle_one,
                     particle_particle_contact_info<dim> &contact_info,
@@ -1549,7 +1547,7 @@ private:
    * @brief Shift the particles using the normal overlap and the normal unit
    * vector. Pparticles in contact are shifted in opposite directions to resolve
    * the overlap. The shift is proportional to the normal overlap and the
-   * particle diameters. This \"contact force\" model is used for the packed
+   * particle diameters. This "contact force" model is used for the packed
    * insertion method.
    *
    * @param[in] particle_one Iterator of the particle one.
