@@ -56,6 +56,7 @@ public:
    * @param inserted_this_step_this_proc Number of particles that are inserted
    * at each insertion step on each processor. This value can change in the last
    * insertion step to reach the desired number of particles
+   * @param start_index Index of the first particle being inserted by this rank.
    *
    * @param particles_data Contains the particles
    *
@@ -65,6 +66,7 @@ public:
   assign_particle_properties_for_file_insertion(
     const DEMSolverParameters<dim>             &dem_parameters,
     const unsigned int                         &inserted_this_step_this_proc,
+    const unsigned int                         &start_index,
     std::map<std::string, std::vector<double>> &particles_data,
     std::vector<std::vector<double>>           &particle_properties);
 

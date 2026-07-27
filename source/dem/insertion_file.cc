@@ -25,6 +25,7 @@ InsertionFile<dim, PropertiesIndex>::InsertionFile(
   this->current_inserting_particle_type = 0;
   this->current_file_id                 = 0;
 }
+
 template <int dim, typename PropertiesIndex>
 void
 InsertionFile<dim, PropertiesIndex>::insert(
@@ -53,50 +54,128 @@ InsertionFile<dim, PropertiesIndex>::insert(
           this->remove_particles_in_box(particle_handler);
         }
 
-      // Read the input file
+      MPI_Comm  communicator     = triangulation.get_mpi_communicator();
+      const int this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
+
+      // Read the input file on Rank 0
       std::map<std::string, std::vector<double>> particles_data;
-      fill_vectors_from_file(particles_data,
-                             insertion_files.at(current_file_id),
-                             ";");
+      if (this_mpi_process == 0)
+        {
+          fill_vectors_from_file(particles_data,
+                                 insertion_files.at(current_file_id),
+                                 ";");
+        }
+
+      // Increment file id for next call
       current_file_id++;
       current_file_id = current_file_id % number_of_files;
 
-      // Number of particles in the file
-      unsigned int n_total_particles_to_insert = particles_data["p_x"].size();
-
-      // Adjusting the value in case we exceed the maximum number of particle in
-      // the simulation.
-      n_total_particles_to_insert =
-        std::min(remaining_particles_of_each_type, n_total_particles_to_insert);
-
-      // Processor 0 will be the only one inserting particles
-      MPI_Comm communicator = triangulation.get_mpi_communicator();
-      auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
-      const unsigned int n_particles_to_insert_this_proc =
-        this_mpi_process == 0 ? n_total_particles_to_insert : 0;
-
-      std::vector<Point<dim>> insertion_points_on_proc_this_step;
-      insertion_points_on_proc_this_step.reserve(
-        n_particles_to_insert_this_proc);
-
+      // Broadcast keys to all processes to reconstruct the map structure
+      unsigned int n_keys = 0;
       if (this_mpi_process == 0)
         {
-          for (unsigned int p = 0; p < n_particles_to_insert_this_proc; ++p)
-            {
-              if constexpr (dim == 2)
-                {
-                  insertion_points_on_proc_this_step.emplace_back(Point<dim>(
-                    {particles_data["p_x"][p], particles_data["p_y"][p]}));
-                }
+          n_keys = particles_data.size();
+        }
+      MPI_Bcast(&n_keys, 1, MPI_UNSIGNED, 0, communicator);
 
-              if constexpr (dim == 3)
+      std::vector<std::string> keys;
+      if (this_mpi_process == 0)
+        {
+          for (auto const &[key, val] : particles_data)
+            {
+              keys.push_back(key);
+            }
+        }
+      else
+        {
+          keys.resize(n_keys);
+        }
+
+      for (unsigned int i = 0; i < n_keys; ++i)
+        {
+          unsigned int key_size = 0;
+          if (this_mpi_process == 0)
+            {
+              key_size = keys[i].size();
+            }
+          MPI_Bcast(&key_size, 1, MPI_UNSIGNED, 0, communicator);
+          if (this_mpi_process != 0)
+            {
+              keys[i].resize(key_size);
+            }
+          MPI_Bcast(const_cast<char *>(keys[i].data()),
+                    key_size,
+                    MPI_CHAR,
+                    0,
+                    communicator);
+        }
+
+      // Number of particles in the file
+      unsigned int n_particles_in_file = 0;
+      if (this_mpi_process == 0)
+        {
+          n_particles_in_file = particles_data.at(keys[0]).size();
+        }
+      MPI_Bcast(&n_particles_in_file, 1, MPI_UNSIGNED, 0, communicator);
+
+      // Limit the number of particles to insert
+      unsigned int n_particles_to_insert =
+        std::min(remaining_particles_of_each_type, n_particles_in_file);
+
+      // Distribute particles among ranks
+      const int          n_mpi_procs = Utilities::MPI::n_mpi_processes(communicator);
+      const unsigned int n_particles_per_proc = n_particles_to_insert / n_mpi_procs;
+      const unsigned int n_excess_particles   = n_particles_to_insert % n_mpi_procs;
+
+      unsigned int my_n_particles = n_particles_per_proc;
+      unsigned int my_first_p     = this_mpi_process * n_particles_per_proc;
+
+      if ((unsigned int)this_mpi_process < n_excess_particles)
+        {
+          my_n_particles++;
+          my_first_p += this_mpi_process;
+        }
+      else
+        {
+          my_first_p += n_excess_particles;
+        }
+
+      // Prepare local particles data
+      std::map<std::string, std::vector<double>> local_particles_data;
+      for (const auto &key : keys)
+        {
+          local_particles_data[key].resize(my_n_particles);
+          // Scatter the data for this key
+          std::vector<int>  sendcounts(n_mpi_procs);
+          std::vector<int>  displs(n_mpi_procs);
+          const double     *sendbuf = nullptr;
+          if (this_mpi_process == 0)
+            {
+              sendbuf = particles_data.at(key).data();
+              for (int i = 0; i < n_mpi_procs; ++i)
                 {
-                  insertion_points_on_proc_this_step.emplace_back(
-                    Point<dim>({particles_data["p_x"][p],
-                                particles_data["p_y"][p],
-                                particles_data["p_z"][p]}));
+                  sendcounts[i] = n_particles_per_proc;
+                  displs[i]     = i * n_particles_per_proc;
+                  if ((unsigned int)i < n_excess_particles)
+                    {
+                      sendcounts[i]++;
+                      displs[i] += i;
+                    }
+                  else
+                    {
+                      displs[i] += n_excess_particles;
+                    }
                 }
             }
+          MPI_Scatterv(sendbuf,
+                       sendcounts.data(),
+                       displs.data(),
+                       MPI_DOUBLE,
+                       local_particles_data[key].data(),
+                       my_n_particles,
+                       MPI_DOUBLE,
+                       0,
+                       communicator);
         }
 
       // Obtain global bounding boxes
@@ -106,30 +185,43 @@ InsertionFile<dim, PropertiesIndex>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-      // A vector of vectors, which contains all the properties of all particles
-      // about to get inserted
-      std::vector<std::vector<double>> particle_properties;
+      std::vector<Point<dim>>          all_insertion_points_on_proc;
+      std::vector<std::vector<double>> all_particle_properties;
+
+      for (unsigned int p = 0; p < my_n_particles; ++p)
+        {
+          if constexpr (dim == 2)
+            {
+              all_insertion_points_on_proc.emplace_back(Point<dim>(
+                {local_particles_data["p_x"][p], local_particles_data["p_y"][p]}));
+            }
+
+          if constexpr (dim == 3)
+            {
+              all_insertion_points_on_proc.emplace_back(Point<dim>(
+                {local_particles_data["p_x"][p],
+                 local_particles_data["p_y"][p],
+                 local_particles_data["p_z"][p]}));
+            }
+        }
 
       // Assign inserted particles properties
       this->assign_particle_properties_for_file_insertion(
         dem_parameters,
-        n_particles_to_insert_this_proc,
-        particles_data,
-        particle_properties);
+        my_n_particles,
+        0,
+        local_particles_data,
+        all_particle_properties);
 
-      // Insert the particles using the points and assigned properties
-      particle_handler.insert_global_particles(
-        insertion_points_on_proc_this_step,
-        global_bounding_boxes,
-        particle_properties);
+      // Insert all particles at once to avoid communicator mismatches
+      particle_handler.insert_global_particles(all_insertion_points_on_proc,
+                                               global_bounding_boxes,
+                                               all_particle_properties);
 
-      // Update number of particle remaining to be inserted
-      remaining_particles_of_each_type -= n_total_particles_to_insert;
+      remaining_particles_of_each_type -= n_particles_to_insert;
 
-
-      ConditionalOStream pcout(
-        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
-      this->print_insertion_info(n_total_particles_to_insert,
+      ConditionalOStream pcout(std::cout, this_mpi_process == 0);
+      this->print_insertion_info(n_particles_to_insert,
                                  remaining_particles_of_each_type,
                                  this->current_inserting_particle_type,
                                  pcout);
@@ -142,6 +234,7 @@ InsertionFile<dim, PropertiesIndex>::
   assign_particle_properties_for_file_insertion(
     const DEMSolverParameters<dim>             &dem_parameters,
     const unsigned int                         &inserted_this_step_this_proc,
+    const unsigned int                         &start_index,
     std::map<std::string, std::vector<double>> &particles_data,
     std::vector<std::vector<double>>           &particle_properties)
 {
@@ -157,17 +250,19 @@ InsertionFile<dim, PropertiesIndex>::
        particle_counter < inserted_this_step_this_proc;
        ++particle_counter)
     {
-      double type     = this->current_inserting_particle_type;
-      double diameter = particles_data["diameters"][particle_counter];
+      unsigned int global_particle_counter = start_index + particle_counter;
+      double       type = this->current_inserting_particle_type;
+      double       diameter =
+        particles_data["diameters"][global_particle_counter];
       double density =
         physical_properties
           .density_particle[this->current_inserting_particle_type];
-      double vel_x   = particles_data["v_x"][particle_counter];
-      double vel_y   = particles_data["v_y"][particle_counter];
-      double vel_z   = particles_data["v_z"][particle_counter];
-      double omega_x = particles_data["w_x"][particle_counter];
-      double omega_y = particles_data["w_y"][particle_counter];
-      double omega_z = particles_data["w_z"][particle_counter];
+      double vel_x   = particles_data["v_x"][global_particle_counter];
+      double vel_y   = particles_data["v_y"][global_particle_counter];
+      double vel_z   = particles_data["v_z"][global_particle_counter];
+      double omega_x = particles_data["w_x"][global_particle_counter];
+      double omega_y = particles_data["w_y"][global_particle_counter];
+      double omega_z = particles_data["w_z"][global_particle_counter];
       double mass    = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
 
@@ -177,7 +272,7 @@ InsertionFile<dim, PropertiesIndex>::
       if constexpr (std::is_same_v<PropertiesIndex,
                                    DEM::DEMMPProperties::PropertiesIndex>)
         {
-          double T = particles_data["T"][particle_counter];
+          double T = particles_data["T"][global_particle_counter];
           double specific_heat =
             physical_properties
               .specific_heat_particle[this->current_inserting_particle_type];
