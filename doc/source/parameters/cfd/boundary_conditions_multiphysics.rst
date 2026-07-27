@@ -253,7 +253,6 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
         \mathbf{n} \times \mathbf{E} = 0.
 
       Example:
-
       .. code-block:: text
 
         subsection bc 0
@@ -267,7 +266,6 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
         \mathbf{n} \times \mathbf{H} = 0.
 
       Example:
-
       .. code-block:: text
 
         subsection bc 0
@@ -281,7 +279,6 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
         \mathbf{n} \times \mathbf{H} + \sqrt{\frac{\varepsilon_{r,\mathrm{eff}}}{\mu_r}} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = 0.
 
       Example:
-
       .. code-block:: text
 
         subsection bc 0
@@ -295,7 +292,6 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
         \mathbf{E} = \mathbf{E}^{\mathrm{inc}}.
 
       Example:
-
       .. code-block:: text
 
         subsection bc 0
@@ -327,7 +323,6 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
         \mathbf{H} = \mathbf{H}^{\mathrm{inc}} - \mathbf{J}_\mathrm{s}.
 
       Example:
-
       .. code-block:: text
 
         subsection bc 0
@@ -359,7 +354,6 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
         \mathbf{n} \times \mathbf{H} + Y_s \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{g}.
 
       Example:
-
       .. code-block:: text
 
         subsection bc 0
@@ -394,10 +388,9 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
     * ``waveguide port`` to impose a waveguide port boundary condition. The parameters for this boundary conditions are defined in the Time-Harmonic Maxwell section of the input file. In the following, :math:`k_l` is the wave number in the longitudinal direction of the waveguide.
 
       .. math::
-        \mathbf{n} \times \mathbf{H} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{n} \times \mathbf{H}_{\mathrm{TE}_{mn}} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E}_{\mathrm{TE}_{mn}} \times \mathbf{n} )
+        \mathbf{n} \times \mathbf{H} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{n} \times \mathbf{H}_{\mathrm{mode} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E}_{\mathrm{mode} \times \mathbf{n} )
 
       Example:
-
       .. code-block:: text
 
         subsection bc 0
