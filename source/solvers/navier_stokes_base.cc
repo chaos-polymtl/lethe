@@ -617,6 +617,29 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::update_multi_stage_solution(double)
 {}
 
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  set_specified_fluid_dynamics_solution()
+{
+  if (this->simulation_parameters.initial_condition->type ==
+      Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+    {
+      // We get the solution via the average solution
+      this->local_evaluation_point =
+        *this->average_velocities->get_average_velocities();
+      *this->present_solution = this->local_evaluation_point;
+    }
+  else
+    {
+      // We get the solution via an initial condition
+      this->simulation_parameters.initial_condition->uvwp.set_time(
+        this->simulation_control->get_current_time());
+      set_initial_condition_fd(
+        this->simulation_parameters.initial_condition->type);
+    }
+}
+
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial condition
@@ -630,8 +653,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   const auto         method = this->simulation_control->get_assembly_method();
   const auto         time_step = this->simulation_control->get_time_step();
   const unsigned int n_stages = SimulationControl::get_number_of_stages(method);
-
-  auto &present_solution = *this->present_solution;
 
   // For a multi-stages method, at each time iteration, we reset the value of
   // sum_bi_ki
@@ -700,23 +721,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
                               simulation_parameters.simulation_control.method);
           multiphysics->percolate_time_vectors(false);
 
-          if (this->simulation_parameters.initial_condition->type ==
-              Parameters::FluidDynamicsInitialConditionType::
-                average_velocity_profile)
-            {
-              // We get the solution via the average solution
-              this->local_evaluation_point =
-                *this->average_velocities->get_average_velocities();
-              present_solution = this->local_evaluation_point;
-            }
-          else
-            {
-              // We get the solution via an initial condition
-              this->simulation_parameters.initial_condition->uvwp.set_time(
-                this->simulation_control->get_current_time());
-              set_initial_condition_fd(
-                this->simulation_parameters.initial_condition->type);
-            }
+          this->set_specified_fluid_dynamics_solution();
 
           // Solve and percolate the auxiliary physics that should be treated
           // AFTER the fluid dynamics
