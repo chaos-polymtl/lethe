@@ -52,6 +52,7 @@ Analytical solutions for all physics are supported. They are all declared in the
 * ``tracer``: Analytical solution for the tracer physics.
 * ``CLS``: Analytical solution for the CLS field.
 * ``cahn hilliard``: Analytical solution for the phase order and the chemical potential of the Cahn-Hilliard physics.
+* ``electromagnetics``: Analytical solution for the electric and magnetic fields obtained with the time-harmonic Maxwell physics. The expression must provide :math:`E_x`, :math:`E_y`, :math:`E_z`, :math:`H_x`, :math:`H_y` and :math:`H_z` for a 3D simulation. Each component of the electric and magnetic fields must be provided as a real and imaginary part.
 
 .. note:: 
     The variables *x*, *y*, *z* (3D) and *t* (time-dependent) can be used in the function expressions.
