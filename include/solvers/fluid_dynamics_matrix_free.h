@@ -58,7 +58,7 @@ protected:
   using MGVectorType       = LinearAlgebra::distributed::Vector<MGNumber>;
   using TrilinosVectorType = LinearAlgebra::distributed::Vector<double>;
   using LSTransferType     = MGTransferMatrixFreeWrapper<dim, MGNumber>;
-  using GCTransferType     = MGTransferGlobalCoarsening<dim, MGVectorType>;
+  using GCTransferType     = MGTransferMatrixFree<dim, MGNumber>;
   using OperatorType       = NavierStokesOperatorBase<dim, MGNumber>;
   using SmootherPreconditionerType = PreconditionBase<MGVectorType>;
   using SmootherType =
@@ -337,7 +337,7 @@ public:
   using MGVectorType =
     typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType;
   using MGNumber = typename MFNavierStokesPreconditionGMGBase<dim>::MGNumber;
-  using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
+  using GCTransferType = MGTransferMatrixFree<dim, MGNumber>;
 
   /**
    * Constructor.
