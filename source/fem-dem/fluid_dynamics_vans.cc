@@ -191,10 +191,20 @@ void
 FluidDynamicsVANS<dim>::iterate()
 {
   announce_string(this->pcout, "Volume-Averaged Fluid Dynamics");
-  this->forcing_function->set_time(
-    this->simulation_control->get_current_time());
 
-  PhysicsSolver<GlobalVectorType>::solve_governing_system();
+  if (this->simulation_parameters.multiphysics.fluid_dynamics)
+    {
+      this->forcing_function->set_time(
+        this->simulation_control->get_current_time());
+
+      PhysicsSolver<GlobalVectorType>::solve_governing_system();
+    }
+  else
+    {
+      // The fluid dynamics is not to be solved, but rather specified. Update
+      // the velocity and the pressure fields and move on.
+      this->set_specified_fluid_dynamics_solution();
+    }
 }
 
 template <int dim>

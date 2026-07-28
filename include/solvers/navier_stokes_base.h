@@ -403,6 +403,18 @@ protected:
   update_multi_stage_solution(double time_step);
 
   /**
+   * @brief Specify the fluid dynamics solution instead of solving for it.
+   *
+   * When the fluid dynamics is disabled (fluid dynamics = false in the
+   * multiphysics subsection), the velocity and the pressure fields are not
+   * solved for, but rather imposed. They are either taken from the average
+   * velocity profile or re-established from the initial condition, which may
+   * be time-dependent.
+   */
+  virtual void
+  set_specified_fluid_dynamics_solution();
+
+  /**
    * @brief Do a regular CFD iteration
    */
   virtual void
