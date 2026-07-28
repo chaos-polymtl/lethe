@@ -133,8 +133,8 @@ detailed_circle(
     {21, 16, 20, 17},
     {20, 17, 19, 5},
     // We fill in the outer cells, starting from the top left
-    {8, 15, 9, 14},
     {9, 14, 6, 4}, 
+    {8, 15, 9, 14},
     {0, 2, 8, 15},
     {0, 10, 2, 18},
     {10, 1, 18, 3},
