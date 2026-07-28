@@ -129,13 +129,18 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aa638c14a20811366fc71cab494ea05c3b">hertz_JKR</a>
 , <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aad42cf92d868a495517abc2d26231a523">DMT</a>
+, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aa2ab64f4ee279e5baf7ab7059b15e6d12">shift</a>
 <br />
  }</td></tr>
 <tr class="separator:a2d003242b66f27f8c1fae956bd3c958a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab786c050e9bc6c2ea31d84c6de7d204e" id="r_ab786c050e9bc6c2ea31d84c6de7d204e"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204e">ParticleWallContactForceModel</a> : std::uint8_t { <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea9a932b3cb396238423eb2f33ec17d6aa">linear</a>
+<tr class="memitem:ab786c050e9bc6c2ea31d84c6de7d204e" id="r_ab786c050e9bc6c2ea31d84c6de7d204e"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204e">ParticleWallContactForceModel</a> : std::uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea9a932b3cb396238423eb2f33ec17d6aa">linear</a>
 , <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea06de001201911c5c9361c398bd7e9a79">nonlinear</a>
 , <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea7dfcd2d872a1f653ce346e9fbddf698f">JKR</a>
 , <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ead42cf92d868a495517abc2d26231a523">DMT</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea2ab64f4ee279e5baf7ab7059b15e6d12">shift</a>
+<br />
  }</td></tr>
 <tr class="separator:ab786c050e9bc6c2ea31d84c6de7d204e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac41aed1853eee7a1933daa560973327b" id="r_ac41aed1853eee7a1933daa560973327b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters_1_1Lagrangian.html#ac41aed1853eee7a1933daa560973327b">RollingResistanceMethod</a> : std::uint8_t { <a class="el" href="namespaceParameters_1_1Lagrangian.html#ac41aed1853eee7a1933daa560973327baca9757952f02d2b82fbdc55cdb5f63e7">none</a>
@@ -188,7 +193,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00098">98</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00106">106</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -226,6 +231,8 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a2d003242b66f27f8c1fae956bd3c958aad42cf92d868a495517abc2d26231a523" name="a2d003242b66f27f8c1fae956bd3c958aad42cf92d868a495517abc2d26231a523"></a>DMT&#160;</td><td class="fielddoc"><p>Derjaguin-Muller-Toporov model. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a2d003242b66f27f8c1fae956bd3c958aa2ab64f4ee279e5baf7ab7059b15e6d12" name="a2d003242b66f27f8c1fae956bd3c958aa2ab64f4ee279e5baf7ab7059b15e6d12"></a>shift&#160;</td><td class="fielddoc"><p>Shift collision model. This model shifts the particles using their overlap. It is only used for the packed insertion method and does not constitute a real collision model. </p>
+</td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00033">33</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
@@ -262,9 +269,11 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="ab786c050e9bc6c2ea31d84c6de7d204ead42cf92d868a495517abc2d26231a523" name="ab786c050e9bc6c2ea31d84c6de7d204ead42cf92d868a495517abc2d26231a523"></a>DMT&#160;</td><td class="fielddoc"><p>Derjaguin-Muller-Toporov model. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="ab786c050e9bc6c2ea31d84c6de7d204ea2ab64f4ee279e5baf7ab7059b15e6d12" name="ab786c050e9bc6c2ea31d84c6de7d204ea2ab64f4ee279e5baf7ab7059b15e6d12"></a>shift&#160;</td><td class="fielddoc"><p>Shift collision model. This model shifts the particles using their overlap. It is only used for the packed insertion method and does not constitute a real collision model. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00052">52</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00056">56</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -294,7 +303,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00106">106</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00114">114</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -322,7 +331,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00068">68</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00076">76</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -358,7 +367,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00083">83</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00091">91</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>

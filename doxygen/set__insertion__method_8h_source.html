@@ -107,71 +107,92 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;<a class="code" href="insertion__file_8h.html">dem/insertion_file.h</a>&gt;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;<a class="code" href="insertion__list_8h.html">dem/insertion_list.h</a>&gt;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;<a class="code" href="insertion__plane_8h.html">dem/insertion_plane.h</a>&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;<a class="code" href="insertion__volume_8h.html">dem/insertion_volume.h</a>&gt;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment"></span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> * @brief Set up the particle insertion method for the simulation.</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment"> * Creates and configures the appropriate insertion object based on the</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment"> * simulation parameters (e.g., volume insertion, plane insertion, etc.).</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment"> * @param size_distribution_object_container Contains all distribution for each</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment"> * particle type.</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment"> * @param triangulation Triangulation to access the cells in which the</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment"> * particles will be inserted.</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment"> * @param dem_parameters DEM parameters declared in the .prm file.</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment"> * @param maximum_particle_diameter Maximum particle diameter based on values</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment"> * defined in the parameter handler.</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment"> * @return Shared pointer to the configured insertion object</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>std::shared_ptr&lt;Insertion&lt;dim, PropertiesIndex&gt;&gt;</div>
-<div class="foldopen" id="foldopen00031" data-start="{" data-end="}">
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="set__insertion__method_8h.html#aa4f46398b4989e094f32211fb8aa9098">   31</a></span><a class="code hl_function" href="set__insertion__method_8h.html#aa4f46398b4989e094f32211fb8aa9098">set_insertion_type</a>(std::vector&lt;std::shared_ptr&lt;Distribution&gt;&gt;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>                     &amp;size_distribution_object_container,</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>                   parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>                   <a class="code hl_class" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                  &amp;dem_parameters,</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>                   <span class="keyword">const</span> <span class="keywordtype">double</span> &amp;maximum_particle_diameter)</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>{</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespaceParameters_1_1Lagrangian.html">Parameters::Lagrangian</a>;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keyword">typename</span> <a class="code hl_enumeration" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4b">InsertionInfo&lt;dim&gt;::InsertionMethod</a> insertion_method =</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    dem_parameters.<a class="code hl_variable" href="classDEMSolverParameters.html#aa1a30c87a373541625cb8ba443016cea">insertion_info</a>.insertion_method;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keywordflow">switch</span> (insertion_method)</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::file</a>:</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keywordflow">return</span> std::make_shared&lt;InsertionFile&lt;dim, PropertiesIndex&gt;&gt;(</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>          size_distribution_object_container, triangulation, dem_parameters);</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::list</a>:</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">return</span> std::make_shared&lt;InsertionList&lt;dim, PropertiesIndex&gt;&gt;(</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>          size_distribution_object_container, triangulation, dem_parameters);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::plane</a>:</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordflow">return</span> std::make_shared&lt;InsertionPlane&lt;dim, PropertiesIndex&gt;&gt;(</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>          size_distribution_object_container, triangulation, dem_parameters);</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::volume</a>:</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="keywordflow">return</span> std::make_shared&lt;InsertionVolume&lt;dim, PropertiesIndex&gt;&gt;(</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>          size_distribution_object_container,</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>          triangulation,</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>          dem_parameters,</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>          maximum_particle_diameter);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>      <span class="keywordflow">default</span>:</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        AssertThrow(<span class="keyword">false</span>, ExcMessage(<span class="stringliteral">&quot;Invalid insertion method.&quot;</span>));</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    }</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;<a class="code" href="insertion__packed_8h.html">dem/insertion_packed.h</a>&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;<a class="code" href="insertion__plane_8h.html">dem/insertion_plane.h</a>&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;<a class="code" href="insertion__volume_8h.html">dem/insertion_volume.h</a>&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"></span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment"> * @brief Set up the particle insertion method for the simulation.</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment"> * Creates and configures the appropriate insertion object based on the</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment"> * simulation parameters (e.g., volume insertion, plane insertion, etc.).</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment"> * @param size_distribution_object_container Contains all distribution for each</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment"> * particle type.</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment"> * @param triangulation Triangulation to access the cells in which the</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment"> * particles will be inserted.</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment"> * @param dem_parameters DEM parameters declared in the .prm file.</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment"> * @param maximum_particle_diameter Maximum particle diameter based on values</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment"> * defined in the parameter handler.</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"> * @return Shared pointer to the configured insertion object</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>std::shared_ptr&lt;Insertion&lt;dim, PropertiesIndex&gt;&gt;</div>
+<div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="set__insertion__method_8h.html#aa4f46398b4989e094f32211fb8aa9098">   32</a></span><a class="code hl_function" href="set__insertion__method_8h.html#aa4f46398b4989e094f32211fb8aa9098">set_insertion_type</a>(std::vector&lt;std::shared_ptr&lt;Distribution&gt;&gt;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>                     &amp;size_distribution_object_container,</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>                   parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>                   <a class="code hl_class" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                  &amp;dem_parameters,</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                   <span class="keyword">const</span> <span class="keywordtype">double</span> &amp;maximum_particle_diameter)</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>{</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespaceParameters_1_1Lagrangian.html">Parameters::Lagrangian</a>;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="keyword">typename</span> <a class="code hl_enumeration" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4b">InsertionInfo&lt;dim&gt;::InsertionMethod</a> insertion_method =</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    dem_parameters.<a class="code hl_variable" href="classDEMSolverParameters.html#aa1a30c87a373541625cb8ba443016cea">insertion_info</a>.insertion_method;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  <span class="keywordflow">switch</span> (insertion_method)</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::file</a>:</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="keywordflow">return</span> std::make_shared&lt;InsertionFile&lt;dim, PropertiesIndex&gt;&gt;(</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>          size_distribution_object_container, triangulation, dem_parameters);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::list</a>:</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keywordflow">return</span> std::make_shared&lt;InsertionList&lt;dim, PropertiesIndex&gt;&gt;(</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>          size_distribution_object_container, triangulation, dem_parameters);</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::plane</a>:</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordflow">return</span> std::make_shared&lt;InsertionPlane&lt;dim, PropertiesIndex&gt;&gt;(</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>          size_distribution_object_container, triangulation, dem_parameters);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::volume</a>:</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="keywordflow">return</span> std::make_shared&lt;InsertionVolume&lt;dim, PropertiesIndex&gt;&gt;(</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>          size_distribution_object_container,</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>          triangulation,</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>          dem_parameters,</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>          maximum_particle_diameter);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>      <span class="keywordflow">case</span> <a class="code hl_class" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">InsertionInfo&lt;dim&gt;::InsertionMethod::packed</a>:</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;PropertiesIndex,</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                                       <a class="code hl_enumeration" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a>&gt;)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>              <span class="keywordflow">return</span> std::make_shared&lt;InsertionPacked&lt;dim, PropertiesIndex&gt;&gt;(</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                size_distribution_object_container,</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                triangulation,</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                dem_parameters);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>            }</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>          <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>            {</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>              AssertThrow(<span class="keyword">false</span>,</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                          ExcMessage(<span class="stringliteral">&quot;InsertionPacked is not valid for &quot;</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                                     <span class="stringliteral">&quot;the current solver type. It only works &quot;</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                                     <span class="stringliteral">&quot;for the standard DEM solver.&quot;</span>));</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            }</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        }</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>      <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        AssertThrow(<span class="keyword">false</span>, ExcMessage(<span class="stringliteral">&quot;Invalid insertion method.&quot;</span>));</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    }</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>}</div>
 </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition</b> <a href="dem__solver__parameters_8h_source.html#l00015">dem_solver_parameters.h:16</a></div></div>
 <div class="ttc" id="aclassDEMSolverParameters_html_aa1a30c87a373541625cb8ba443016cea"><div class="ttname"><a href="classDEMSolverParameters.html#aa1a30c87a373541625cb8ba443016cea">DEMSolverParameters::insertion_info</a></div><div class="ttdeci">Parameters::Lagrangian::InsertionInfo&lt; dim &gt; insertion_info</div><div class="ttdef"><b>Definition</b> <a href="dem__solver__parameters_8h_source.html#l00025">dem_solver_parameters.h:25</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1InsertionInfo_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a></div><div class="ttdoc">Parameters controlling particle insertion in DEM simulations.</div><div class="ttdef"><b>Definition</b> <a href="parameters__lagrangian_8h_source.html#l00411">parameters_lagrangian.h:412</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1InsertionInfo_html_a8935f71b97c7cce069b63a2e28949a4b"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4b">Parameters::Lagrangian::InsertionInfo::InsertionMethod</a></div><div class="ttdeci">InsertionMethod</div><div class="ttdoc">Method used to insert particles.</div><div class="ttdef"><b>Definition</b> <a href="parameters__lagrangian_8h_source.html#l00417">parameters_lagrangian.h:418</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1InsertionInfo_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a></div><div class="ttdoc">Parameters controlling particle insertion in DEM simulations.</div><div class="ttdef"><b>Definition</b> <a href="parameters__lagrangian_8h_source.html#l00419">parameters_lagrangian.h:420</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1InsertionInfo_html_a8935f71b97c7cce069b63a2e28949a4b"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4b">Parameters::Lagrangian::InsertionInfo::InsertionMethod</a></div><div class="ttdeci">InsertionMethod</div><div class="ttdoc">Method used to insert particles.</div><div class="ttdef"><b>Definition</b> <a href="parameters__lagrangian_8h_source.html#l00425">parameters_lagrangian.h:426</a></div></div>
 <div class="ttc" id="ainsertion__file_8h_html"><div class="ttname"><a href="insertion__file_8h.html">insertion_file.h</a></div></div>
 <div class="ttc" id="ainsertion__list_8h_html"><div class="ttname"><a href="insertion__list_8h.html">insertion_list.h</a></div></div>
+<div class="ttc" id="ainsertion__packed_8h_html"><div class="ttname"><a href="insertion__packed_8h.html">insertion_packed.h</a></div></div>
 <div class="ttc" id="ainsertion__plane_8h_html"><div class="ttname"><a href="insertion__plane_8h.html">insertion_plane.h</a></div></div>
 <div class="ttc" id="ainsertion__volume_8h_html"><div class="ttname"><a href="insertion__volume_8h.html">insertion_volume.h</a></div></div>
+<div class="ttc" id="anamespaceDEM_1_1DEMProperties_html_ad4c9c6eeafe6423a5619617d6c8a5987"><div class="ttname"><a href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a></div><div class="ttdeci">PropertiesIndex</div><div class="ttdoc">Particle property indices for pure DEM simulations.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00051">dem_properties.h:52</a></div></div>
 <div class="ttc" id="anamespaceParameters_1_1Lagrangian_html"><div class="ttname"><a href="namespaceParameters_1_1Lagrangian.html">Parameters::Lagrangian</a></div><div class="ttdef"><b>Definition</b> <a href="parameters__lagrangian_8h_source.html#l00028">parameters_lagrangian.h:29</a></div></div>
 <div class="ttc" id="aparameters__lagrangian_8h_html"><div class="ttname"><a href="parameters__lagrangian_8h.html">parameters_lagrangian.h</a></div><div class="ttdoc">Parameter structures for Lagrangian (DEM) particle simulations.</div></div>
-<div class="ttc" id="aset__insertion__method_8h_html_aa4f46398b4989e094f32211fb8aa9098"><div class="ttname"><a href="set__insertion__method_8h.html#aa4f46398b4989e094f32211fb8aa9098">set_insertion_type</a></div><div class="ttdeci">std::shared_ptr&lt; Insertion&lt; dim, PropertiesIndex &gt; &gt; set_insertion_type(std::vector&lt; std::shared_ptr&lt; Distribution &gt; &gt; &amp;size_distribution_object_container, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, DEMSolverParameters&lt; dim &gt; &amp;dem_parameters, const double &amp;maximum_particle_diameter)</div><div class="ttdoc">Set up the particle insertion method for the simulation. Creates and configures the appropriate inser...</div><div class="ttdef"><b>Definition</b> <a href="set__insertion__method_8h_source.html#l00031">set_insertion_method.h:31</a></div></div>
+<div class="ttc" id="aset__insertion__method_8h_html_aa4f46398b4989e094f32211fb8aa9098"><div class="ttname"><a href="set__insertion__method_8h.html#aa4f46398b4989e094f32211fb8aa9098">set_insertion_type</a></div><div class="ttdeci">std::shared_ptr&lt; Insertion&lt; dim, PropertiesIndex &gt; &gt; set_insertion_type(std::vector&lt; std::shared_ptr&lt; Distribution &gt; &gt; &amp;size_distribution_object_container, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, DEMSolverParameters&lt; dim &gt; &amp;dem_parameters, const double &amp;maximum_particle_diameter)</div><div class="ttdoc">Set up the particle insertion method for the simulation. Creates and configures the appropriate inser...</div><div class="ttdef"><b>Definition</b> <a href="set__insertion__method_8h_source.html#l00032">set_insertion_method.h:32</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!--
 SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors

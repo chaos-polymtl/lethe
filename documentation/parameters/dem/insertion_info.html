@@ -456,7 +456,7 @@
 <p>Insertion in Lethe starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection insertion info
-  # Choices are volume|plane|list|file
+  # Choices are volume|plane|list|file|packed
   set insertion method                               = volume
 
   # Every method
@@ -464,8 +464,6 @@
 
   # If method = volume
   set inserted number of particles at each time step = 0
-  set insertion box points coordinates               = 0., 0., 0. : 1., 1., 1.
-  set insertion direction sequence                   = 0, 1, 2
   set insertion distance threshold                   = 1.
   subsection insertion acceptance function
     set Function expression = 1.
@@ -476,6 +474,10 @@
   set insertion plane point                          = 0, 0, 0
   set insertion plane normal vector                  = 1, 0, 0
   set insertion plane threshold distance             = 0.
+
+  # If method = volume or packed
+  set insertion box points coordinates               = 0., 0., 0. : 1., 1., 1.
+  set insertion direction sequence                   = 0, 1, 2
 
   # If method = volume or plane
   set initial velocity                               = 0.0, 0.0, 0.0
@@ -508,7 +510,7 @@
 end
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">method</span></code> parameter defines insertion type, where choices are: <code class="docutils literal notranslate"><span class="pre">volume</span></code>, <code class="docutils literal notranslate"><span class="pre">plane</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code> and <code class="docutils literal notranslate"><span class="pre">file</span></code>. Different insertion methods can share the same parameter. In order to simplify the explanation on those parameters, they are introduced in each method with their specificities.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">method</span></code> parameter defines insertion type, where choices are: <code class="docutils literal notranslate"><span class="pre">volume</span></code>, <code class="docutils literal notranslate"><span class="pre">plane</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">file</span></code> and <code class="docutils literal notranslate"><span class="pre">packed</span></code>. Different insertion methods can share the same parameter. In order to simplify the explanation on those parameters, they are introduced in each method with their specificities.</p>
 <section id="volume">
 <h2>Volume<a class="headerlink" href="#volume" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">volume</span></code> insertion method uses an insertion box where particles will be inserted. The box can inserts particles in a structured manner or in a random manner according to the  <code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">maximum</span> <span class="pre">offset</span></code> and <code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">prn</span> <span class="pre">seed</span></code> settings.</p>
@@ -622,6 +624,22 @@ set list z = 0., 3.
 <p>The critical Rayleigh time step is computed from the parameters in the <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">type</span></code> subsections, not the <code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">info</span></code> subsection. It is the user’s responsibility to fill the <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">type</span></code> subsections correctly according to the diameter values stored in the insertion input file, otherwise Rayleigh time percentage displayed at the start of every DEM simulation may not be accurate.</p>
 </div>
 </section>
+<section id="packed">
+<h2>Packed<a class="headerlink" href="#packed" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">packed</span></code> insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions <strong>as is</strong> for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching other particles or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motion are not solved.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, when using this insertion method, the simulation ends once no contact is detected, thus the particle positions need to be extracted in an insertion file and the simulation must be relaunched with the <code class="docutils literal notranslate"><span class="pre">file</span></code> insertion method.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Due to the use of pseudo time-stepping and the functioning of this insertion method, if multiple particle types are used, every particle type will be inserted on the first insertion time-step.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">packed</span></code> insertion method is experimental. It does not guarantee that the particles will reach a non-overlapping configuration in a reasonable amount of time, especially when the total inserted particle volume over the total triangulation volume is over 50%.</p>
+</div>
+</section>
 <section id="removal">
 <h2>Removal<a class="headerlink" href="#removal" title="Link to this heading">#</a></h2>
 <p>With all insertion methods, it is possible to define a removal box where particles will be removed from the triangulation just before the insertion of new particles.</p>
@@ -692,6 +710,7 @@ set list z = 0., 3.
 <li><a class="reference internal" href="#plane">Plane</a></li>
 <li><a class="reference internal" href="#list">List</a></li>
 <li><a class="reference internal" href="#file">File</a></li>
+<li><a class="reference internal" href="#packed">Packed</a></li>
 <li><a class="reference internal" href="#removal">Removal</a></li>
 </ul>
 </li>

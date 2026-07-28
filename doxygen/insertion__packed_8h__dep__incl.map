@@ -1,0 +1,13 @@
+<map id="/home/runner/work/lethe/lethe/include/dem/insertion_packed.h" name="/home/runner/work/lethe/lethe/include/dem/insertion_packed.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="317,5,521,60"/>
+<area shape="rect" id="Node000002" href="$set__insertion__method_8h.html" title=" " alt="" coords="220,108,403,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="383,72,341,110,338,106,379,68"/>
+<area shape="rect" id="Node000006" href="$insertion__packed_8cc.html" title=" " alt="" coords="427,108,627,163"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="460,68,501,106,497,110,456,72"/>
+<area shape="rect" id="Node000003" href="$dem_8cc.html" title=" " alt="" coords="5,225,196,265"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="249,172,139,227,137,223,246,167"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="220,218,403,273"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="314,177,314,218,309,218,309,177"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="427,211,622,280"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="377,167,459,208,457,213,374,171"/>
+</map>
