@@ -68,8 +68,7 @@ main(int argc, char *argv[])
             }
 
           // The solver type indicates whether the DEM has multiphysics
-          // features enabled. The same value is used by lethe-particles, so
-          // the model parameters of a packing simulation can be reused as-is.
+          // features enabled.
           const DEM::SolverType solver_type =
             NSparam.dem_parameters.model_parameters.solver_type;
 
@@ -125,8 +124,7 @@ main(int argc, char *argv[])
             }
 
           // The solver type indicates whether the DEM has multiphysics
-          // features enabled. The same value is used by lethe-particles, so
-          // the model parameters of a packing simulation can be reused as-is.
+          // features enabled.
           const DEM::SolverType solver_type =
             NSparam.dem_parameters.model_parameters.solver_type;
 
