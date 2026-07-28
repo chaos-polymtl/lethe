@@ -1,0 +1,5 @@
+## [Master] - 2026/07/08
+
+### Added
+
+- MAJOR This PR adds a new insertion method called the ``packed`` method. This insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Overlapping particles are then shifted apart, relative to their normal contact vector, until all particles are no longer touching each other or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motion on every particle are not solved. This method should be useful when dealing with a large number of particles in a tight triangulation, which forces the use of multiple insertion boxes when using the ``volume`` insertion method. [#2033](https://github.com/chaos-polymtl/lethe/pull/2033)

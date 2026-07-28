@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 
@@ -53,6 +53,25 @@ set_particle_wall_contact_force_model(
                                        PropertiesIndex,
                                        ParticleWallContactForceModel::DMT>(
             dem_parameters, particle_wall_contact_force_object);
+          break;
+        }
+      case ParticleWallContactForceModel::shift:
+        {
+          if constexpr (std::is_same_v<PropertiesIndex,
+                                       DEM::DEMProperties::PropertiesIndex>)
+            {
+              particle_wall_contact_force_object = std::make_shared<
+                ParticleWallContactForce<dim,
+                                         PropertiesIndex,
+                                         ParticleWallContactForceModel::shift,
+                                         RollingResistanceMethod::none>>(
+                dem_parameters);
+            }
+          else
+            {
+              throw std::runtime_error(
+                "The shift contact force model is only available for DEM simulations");
+            }
           break;
         }
       default:

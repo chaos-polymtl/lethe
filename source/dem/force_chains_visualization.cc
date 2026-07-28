@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_lagrangian.h>
@@ -24,11 +24,11 @@ ParticlesForceChains<dim,
                      PropertiesIndex,
                      contact_model,
                      rolling_friction_model>::
-  ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in)
+  ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters)
   : ParticleParticleContactForce<dim,
                                  PropertiesIndex,
                                  contact_model,
-                                 rolling_friction_model>(dem_parameters_in)
+                                 rolling_friction_model>(dem_parameters)
 {}
 
 template <int dim,

@@ -162,6 +162,16 @@ template class ParticleParticleContactForce<
   DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::none>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::DEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::shift,
+  RollingResistanceMethod::none>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::DEMProperties::PropertiesIndex,
+  ParticleParticleContactForceModel::shift,
+  RollingResistanceMethod::none>;
 
 // Constant resistance
 template class ParticleParticleContactForce<
