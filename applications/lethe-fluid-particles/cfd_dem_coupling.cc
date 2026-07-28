@@ -72,8 +72,7 @@ main(int argc, char *argv[])
           const DEM::SolverType solver_type =
             NSparam.dem_parameters.model_parameters.solver_type;
 
-          if (solver_type == DEM::SolverType::dem ||
-              solver_type == DEM::SolverType::cfd_dem)
+          if (solver_type == DEM::SolverType::dem)
             {
               CFDDEMSolver<2, DEM::CFDDEMProperties::PropertiesIndex> problem(
                 NSparam);
@@ -92,7 +91,7 @@ main(int argc, char *argv[])
                 dealii::ExcMessage(
                   "While reading the solver type from the input file, Lethe "
                   "found a value which is not supported by this solver. "
-                  "Choices are <dem|cfd_dem|dem_mp>."));
+                  "Choices are <dem|dem_mp>."));
             }
         }
 
@@ -128,8 +127,7 @@ main(int argc, char *argv[])
           const DEM::SolverType solver_type =
             NSparam.dem_parameters.model_parameters.solver_type;
 
-          if (solver_type == DEM::SolverType::dem ||
-              solver_type == DEM::SolverType::cfd_dem)
+          if (solver_type == DEM::SolverType::dem)
             {
               CFDDEMSolver<3, DEM::CFDDEMProperties::PropertiesIndex> problem(
                 NSparam);
@@ -148,7 +146,7 @@ main(int argc, char *argv[])
                 dealii::ExcMessage(
                   "While reading the solver type from the input file, Lethe "
                   "found a value which is not supported by this solver. "
-                  "Choices are <dem|cfd_dem|dem_mp>."));
+                  "Choices are <dem|dem_mp>."));
             }
         }
 

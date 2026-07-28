@@ -22,20 +22,21 @@
 namespace DEM
 {
   /**
-   * @brief Identifies which type of solver is used by the DEM particles.
+   * @brief Identifies which physics is solved for the DEM particles.
    *
-   * This is used to determine which index layout of the ParticleHandler
-   * PropertyPool corresponds to which set of properties. Three solver types
-   * are currently supported:
-   * - dem: pure DEM simulation.
-   * - cfd_dem: particles coupled to a CFD fluid solver (CFD-DEM), carrying
-   *   additional properties for particle-fluid coupling.
-   * - dem_mp: DEM multiphysics simulation with additional thermal properties.
+   * Two solver types are currently supported:
+   * - dem: the particles only carry their kinematic properties.
+   * - dem_mp: DEM multiphysics simulation, in which the particles also carry
+   *   thermal properties.
+   *
+   * This is independent of the presence of a fluid: it is the application
+   * which decides whether the particles are coupled to a CFD solver, and thus
+   * whether the CFD-DEM index layout of the ParticleHandler PropertyPool is
+   * used.
    */
   enum SolverType
   {
     dem,
-    cfd_dem,
     dem_mp,
   };
 
