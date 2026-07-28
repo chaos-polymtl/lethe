@@ -749,7 +749,6 @@ set_rolling_resistance_model<3,
     ParticlesForceChainsBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 
-//////////////////////////
 template std::shared_ptr<
   ParticleParticleContactForceBase<2, DEM::DEMMPProperties::PropertiesIndex>>
 set_particle_particle_contact_force_model<
