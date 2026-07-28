@@ -125,9 +125,8 @@ InsertionPacked<dim, PropertiesIndex>::insert(
         }
 
       // Loop and generate valid insertion points.
-      Point<dim>   insertion_location;
-      unsigned int particle_counter = 0;
-      for (unsigned int id = first_id; id < last_id; ++id, ++particle_counter)
+      Point<dim> insertion_location;
+      for (unsigned int id = first_id; id < last_id; ++id)
         {
           // Call updated rejection sampling function passing the RNG state
           generate_insertion_location(insertion_location,
@@ -276,6 +275,8 @@ InsertionPacked<dim, PropertiesIndex>::generate_insertion_location(
 template class InsertionPacked<2, DEM::DEMProperties::PropertiesIndex>;
 template class InsertionPacked<2, DEM::CFDDEMProperties::PropertiesIndex>;
 template class InsertionPacked<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionPacked<2, DEM::CFDDEMMPProperties::PropertiesIndex>;
 template class InsertionPacked<3, DEM::DEMProperties::PropertiesIndex>;
 template class InsertionPacked<3, DEM::CFDDEMProperties::PropertiesIndex>;
 template class InsertionPacked<3, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionPacked<3, DEM::CFDDEMMPProperties::PropertiesIndex>;

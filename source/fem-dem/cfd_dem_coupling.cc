@@ -1121,7 +1121,12 @@ CFDDEMSolver<dim, PropertiesIndex>::print_particles_summary()
               << std::setw(display_width) << std::left << "z, "
               << std::setw(display_width) << std::left << "v_x, "
               << std::setw(display_width) << std::left << "v_y, "
-              << std::setw(display_width) << std::left << "v_z" << std::endl;
+              << std::setw(display_width) << std::left << "v_z";
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      this->pcout << ", " << std::setw(display_width) << std::left << "T";
+    }
+  this->pcout << std::endl;
   // Aggressively force synchronization of the header line
   usleep(500);
   MPI_Barrier(this->mpi_communicator);
@@ -1166,8 +1171,13 @@ CFDDEMSolver<dim, PropertiesIndex>::print_particles_summary()
                         << std::setw(display_width) << std::left
                         << particle_properties[PropertiesIndex::v_y]
                         << std::setw(display_width) << std::left
-                        << particle_properties[PropertiesIndex::v_z]
-                        << std::endl;
+                        << particle_properties[PropertiesIndex::v_z];
+              if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+                {
+                  std::cout << std::setw(display_width) << std::left
+                            << particle_properties[PropertiesIndex::T];
+                }
+              std::cout << std::endl;
             }
         }
       usleep(500);
