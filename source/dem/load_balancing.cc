@@ -250,8 +250,16 @@ template class LagrangianLoadBalancing<2,
                                        DEM::CFDDEMProperties::PropertiesIndex>;
 template class LagrangianLoadBalancing<2,
                                        DEM::DEMMPProperties::PropertiesIndex>;
+
+template class LagrangianLoadBalancing<
+  2,
+  DEM::CFDDEMMPProperties::PropertiesIndex>;
 template class LagrangianLoadBalancing<3, DEM::DEMProperties::PropertiesIndex>;
 template class LagrangianLoadBalancing<3,
                                        DEM::CFDDEMProperties::PropertiesIndex>;
 template class LagrangianLoadBalancing<3,
                                        DEM::DEMMPProperties::PropertiesIndex>;
+
+template class LagrangianLoadBalancing<
+  3,
+  DEM::CFDDEMMPProperties::PropertiesIndex>;

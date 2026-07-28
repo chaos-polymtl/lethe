@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/log_collision_data.h>
@@ -289,7 +289,25 @@ log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
   CompletedCollisionLog<2> &collision_event_log);
 
 template void
+log_collision_data<2, DEM::CFDDEMMPProperties::PropertiesIndex>(
+  const DEMSolverParameters<2> &parameters,
+  dem_data_structures<2>::particle_wall_in_contact
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<2>   &ongoing_collision_log,
+  CompletedCollisionLog<2> &collision_event_log);
+
+template void
 log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
+  const DEMSolverParameters<3> &parameters,
+  dem_data_structures<3>::particle_wall_in_contact
+                           &particle_wall_pairs_in_contact,
+  const double              current_time,
+  OngoingCollisionLog<3>   &ongoing_collision_log,
+  CompletedCollisionLog<3> &collision_event_log);
+
+template void
+log_collision_data<3, DEM::CFDDEMMPProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &parameters,
   dem_data_structures<3>::particle_wall_in_contact
                            &particle_wall_pairs_in_contact,

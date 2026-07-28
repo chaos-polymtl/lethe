@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_cfd_dem_coupling_h
-#define lethe_cfd_dem_coupling_h
+#ifndef lethe_cfd_dem_coupling_matrix_free_h
+#define lethe_cfd_dem_coupling_matrix_free_h
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
@@ -33,12 +33,15 @@ using namespace dealii;
  * matrix-free formulation is used to solve the VANS equation.
  *
  * @tparam dim Spatial dimension of the simulation (2 or 3).
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  * While 2D simulation are theoretically supported, they have not been tested.
  *
  * @ingroup solvers
  */
-template <int dim>
-class CFDDEMMatrixFree : public FluidDynamicsVANSMatrixFree<dim>
+template <int dim, typename PropertiesIndex>
+class CFDDEMMatrixFree
+  : public FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>
 {
 public:
   /**
@@ -87,7 +90,7 @@ private:
    *
    * @return Shared pointer to the configured integration object
    */
-  std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+  std::shared_ptr<Integrator<dim, PropertiesIndex>>
   set_integrator_type();
 
   /**
@@ -341,8 +344,7 @@ private:
   Tensor<1, 3> g;
 
   /// Container for particle interaction outcomes (forces and torques)
-  ParticleInteractionOutcomes<DEM::CFDDEMProperties::PropertiesIndex>
-    contact_outcome;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
 
   /// Displacement vector for particle motion calculations
   std::vector<double> displacement;
@@ -380,39 +382,31 @@ private:
 
   /// Manager for particle-particle and particle-wall contact detection and
   /// handling
-  DEMContactManager<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    contact_manager;
+  DEMContactManager<dim, PropertiesIndex> contact_manager;
 
   /// Load balancing handler for distributing particles across MPI processes
-  LagrangianLoadBalancing<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    load_balancing;
+  LagrangianLoadBalancing<dim, PropertiesIndex> load_balancing;
 
   /// Handler for point and line contact forces between particles
-  ParticlePointLineForce<dim, DEM::CFDDEMProperties::PropertiesIndex>
+  ParticlePointLineForce<dim, PropertiesIndex>
     particle_point_line_contact_force_object;
 
   /// Time integration scheme for particle motion equations
-  std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-    integrator_object;
+  std::shared_ptr<Integrator<dim, PropertiesIndex>> integrator_object;
 
   /// Particle insertion method handler
-  std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-    insertion_object;
+  std::shared_ptr<Insertion<dim, PropertiesIndex>> insertion_object;
 
   /// Contact force model for particle-particle interactions
-  std::shared_ptr<
-    ParticleParticleContactForceBase<dim,
-                                     DEM::CFDDEMProperties::PropertiesIndex>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
     particle_particle_contact_force_object;
 
   /// Contact force model for particle-wall interactions
-  std::shared_ptr<
-    ParticleWallContactForceBase<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+  std::shared_ptr<ParticleWallContactForceBase<dim, PropertiesIndex>>
     particle_wall_contact_force_object;
 
   /// Visualization handler for DEM output generation
-  Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    visualization_object;
+  Visualization<dim, PropertiesIndex> visualization_object;
 
   /// Information about boundary cells for contact detection
   BoundaryCellsInformation<dim> boundary_cell_object;
@@ -441,8 +435,7 @@ private:
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
 
   /// Object for handling adaptive sparse contact detection algorithms
-  AdaptiveSparseContacts<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    sparse_contacts_object;
+  AdaptiveSparseContacts<dim, PropertiesIndex> sparse_contacts_object;
 
   /// Counter for contact searches performed in the current CFD iteration
   unsigned int contact_search_counter;
@@ -454,8 +447,7 @@ private:
   statistics contact_list;
 
   /// Particle properties handler for DEM simulation
-  DEM::ParticleProperties<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    properties_class;
+  DEM::ParticleProperties<dim, PropertiesIndex> properties_class;
 
   /// PVD handler for grid visualization output
   PVDHandler grid_pvdhandler;

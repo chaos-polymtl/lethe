@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
@@ -171,28 +171,28 @@ InsertionFile<dim, PropertiesIndex>::
       double mass    = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
 
-      std::vector<double> properties_of_one_particle{
-        type, diameter, mass, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z};
+      // Every property which is not set explicitly below, such as the CFD-DEM
+      // coupling properties, is left to zero.
+      std::vector<double> properties_of_one_particle(
+        PropertiesIndex::n_properties, 0.);
 
-      if constexpr (std::is_same_v<PropertiesIndex,
-                                   DEM::DEMMPProperties::PropertiesIndex>)
+      properties_of_one_particle[PropertiesIndex::type]    = type;
+      properties_of_one_particle[PropertiesIndex::dp]      = diameter;
+      properties_of_one_particle[PropertiesIndex::mass]    = mass;
+      properties_of_one_particle[PropertiesIndex::v_x]     = vel_x;
+      properties_of_one_particle[PropertiesIndex::v_y]     = vel_y;
+      properties_of_one_particle[PropertiesIndex::v_z]     = vel_z;
+      properties_of_one_particle[PropertiesIndex::omega_x] = omega_x;
+      properties_of_one_particle[PropertiesIndex::omega_y] = omega_y;
+      properties_of_one_particle[PropertiesIndex::omega_z] = omega_z;
+
+      if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
         {
-          double T = particles_data["T"][particle_counter];
-          double specific_heat =
+          properties_of_one_particle[PropertiesIndex::T] =
+            particles_data["T"][particle_counter];
+          properties_of_one_particle[PropertiesIndex::specific_heat] =
             physical_properties
               .specific_heat_particle[this->current_inserting_particle_type];
-          properties_of_one_particle.push_back(T);
-          properties_of_one_particle.push_back(specific_heat);
-        }
-
-      if constexpr (std::is_same_v<PropertiesIndex,
-                                   DEM::CFDDEMProperties::PropertiesIndex>)
-        {
-          // Push back all zero variables for the CFD-DEM coupling properties
-          for (unsigned int i = properties_of_one_particle.size();
-               i < PropertiesIndex::n_properties;
-               ++i)
-            properties_of_one_particle.push_back(0.);
         }
 
       particle_properties.push_back(properties_of_one_particle);
@@ -203,6 +203,8 @@ InsertionFile<dim, PropertiesIndex>::
 template class InsertionFile<2, DEM::DEMProperties::PropertiesIndex>;
 template class InsertionFile<2, DEM::CFDDEMProperties::PropertiesIndex>;
 template class InsertionFile<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionFile<2, DEM::CFDDEMMPProperties::PropertiesIndex>;
 template class InsertionFile<3, DEM::DEMProperties::PropertiesIndex>;
 template class InsertionFile<3, DEM::CFDDEMProperties::PropertiesIndex>;
 template class InsertionFile<3, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionFile<3, DEM::CFDDEMMPProperties::PropertiesIndex>;

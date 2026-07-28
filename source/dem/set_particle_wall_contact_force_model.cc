@@ -227,6 +227,7 @@ template std::shared_ptr<
 set_particle_wall_contact_force_model<2,
                                       DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &dem_parameters);
+
 template std::shared_ptr<
   ParticleWallContactForceBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
 set_particle_wall_contact_force_model<3,
@@ -317,6 +318,7 @@ set_rolling_resistance_model<2,
   std::shared_ptr<
     ParticleWallContactForceBase<2, DEM::DEMMPProperties::PropertiesIndex>>
     &particle_wall_contact_force_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::DEMMPProperties::PropertiesIndex,
@@ -325,6 +327,7 @@ set_rolling_resistance_model<3,
   std::shared_ptr<
     ParticleWallContactForceBase<3, DEM::DEMMPProperties::PropertiesIndex>>
     &particle_wall_contact_force_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::DEMMPProperties::PropertiesIndex,
@@ -333,6 +336,7 @@ set_rolling_resistance_model<2,
   std::shared_ptr<
     ParticleWallContactForceBase<2, DEM::DEMMPProperties::PropertiesIndex>>
     &particle_wall_contact_force_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::DEMMPProperties::PropertiesIndex,
@@ -341,6 +345,7 @@ set_rolling_resistance_model<3,
   std::shared_ptr<
     ParticleWallContactForceBase<3, DEM::DEMMPProperties::PropertiesIndex>>
     &particle_wall_contact_force_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::DEMMPProperties::PropertiesIndex,
@@ -349,6 +354,7 @@ set_rolling_resistance_model<2,
   std::shared_ptr<
     ParticleWallContactForceBase<2, DEM::DEMMPProperties::PropertiesIndex>>
     &particle_wall_contact_force_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::DEMMPProperties::PropertiesIndex,
@@ -357,6 +363,7 @@ set_rolling_resistance_model<3,
   std::shared_ptr<
     ParticleWallContactForceBase<3, DEM::DEMMPProperties::PropertiesIndex>>
     &particle_wall_contact_force_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::DEMMPProperties::PropertiesIndex,
@@ -365,6 +372,7 @@ set_rolling_resistance_model<2,
   std::shared_ptr<
     ParticleWallContactForceBase<2, DEM::DEMMPProperties::PropertiesIndex>>
     &particle_wall_contact_force_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::DEMMPProperties::PropertiesIndex,
@@ -372,4 +380,80 @@ set_rolling_resistance_model<3,
   const DEMSolverParameters<3> &dem_parameters,
   std::shared_ptr<
     ParticleWallContactForceBase<3, DEM::DEMMPProperties::PropertiesIndex>>
+    &particle_wall_contact_force_object);
+
+// cfd_dem_mp
+template std::shared_ptr<
+  ParticleWallContactForceBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
+set_particle_wall_contact_force_model<2,
+                                      DEM::CFDDEMMPProperties::PropertiesIndex>(
+  const DEMSolverParameters<2> &dem_parameters);
+template std::shared_ptr<
+  ParticleWallContactForceBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
+set_particle_wall_contact_force_model<3,
+                                      DEM::CFDDEMMPProperties::PropertiesIndex>(
+  const DEMSolverParameters<3> &dem_parameters);
+template void
+set_rolling_resistance_model<2,
+                             DEM::CFDDEMMPProperties::PropertiesIndex,
+                             ParticleWallContactForceModel::DMT>(
+  const DEMSolverParameters<2> &dem_parameters,
+  std::shared_ptr<
+    ParticleWallContactForceBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
+    &particle_wall_contact_force_object);
+template void
+set_rolling_resistance_model<3,
+                             DEM::CFDDEMMPProperties::PropertiesIndex,
+                             ParticleWallContactForceModel::DMT>(
+  const DEMSolverParameters<3> &dem_parameters,
+  std::shared_ptr<
+    ParticleWallContactForceBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
+    &particle_wall_contact_force_object);
+template void
+set_rolling_resistance_model<2,
+                             DEM::CFDDEMMPProperties::PropertiesIndex,
+                             ParticleWallContactForceModel::JKR>(
+  const DEMSolverParameters<2> &dem_parameters,
+  std::shared_ptr<
+    ParticleWallContactForceBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
+    &particle_wall_contact_force_object);
+template void
+set_rolling_resistance_model<3,
+                             DEM::CFDDEMMPProperties::PropertiesIndex,
+                             ParticleWallContactForceModel::JKR>(
+  const DEMSolverParameters<3> &dem_parameters,
+  std::shared_ptr<
+    ParticleWallContactForceBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
+    &particle_wall_contact_force_object);
+template void
+set_rolling_resistance_model<2,
+                             DEM::CFDDEMMPProperties::PropertiesIndex,
+                             ParticleWallContactForceModel::linear>(
+  const DEMSolverParameters<2> &dem_parameters,
+  std::shared_ptr<
+    ParticleWallContactForceBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
+    &particle_wall_contact_force_object);
+template void
+set_rolling_resistance_model<3,
+                             DEM::CFDDEMMPProperties::PropertiesIndex,
+                             ParticleWallContactForceModel::linear>(
+  const DEMSolverParameters<3> &dem_parameters,
+  std::shared_ptr<
+    ParticleWallContactForceBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
+    &particle_wall_contact_force_object);
+template void
+set_rolling_resistance_model<2,
+                             DEM::CFDDEMMPProperties::PropertiesIndex,
+                             ParticleWallContactForceModel::nonlinear>(
+  const DEMSolverParameters<2> &dem_parameters,
+  std::shared_ptr<
+    ParticleWallContactForceBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
+    &particle_wall_contact_force_object);
+template void
+set_rolling_resistance_model<3,
+                             DEM::CFDDEMMPProperties::PropertiesIndex,
+                             ParticleWallContactForceModel::nonlinear>(
+  const DEMSolverParameters<3> &dem_parameters,
+  std::shared_ptr<
+    ParticleWallContactForceBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_wall_contact_force_object);

@@ -188,4 +188,9 @@ Solver Type
 -----------
 The ``solver type`` parameter controls the type of physic being solved by lethe. Currently, this parameter should be set to ``dem``, which is the default value, when solving a DEM or CFD-DEM problem. The ``dem_mp`` solver type is used for multiphysic DEM, which includes heat transfer.
 
+The ``dem_mp`` solver type is supported by ``lethe-particles`` as well as by the CFD-DEM solvers, ``lethe-fluid-particles`` and ``lethe-fluid-particles-matrix-free``. Since the parameter only indicates that the DEM has its multiphysic features enabled, the ``model parameters`` subsection of a packing simulation can be reused as-is in the CFD-DEM simulation that follows it.
+
+.. warning::
+    In CFD-DEM, ``dem_mp`` enables the heat transfer between the particles and the integration of their temperature, but the fluid and the particles do not exchange heat with one another. A ``dem_mp`` CFD-DEM simulation which is started from the checkpoint of a DEM simulation must be started from a ``dem_mp`` one, otherwise the temperature of the particles cannot be carried over.
+
 The ``disable position integration`` is used to freeze the position of particles. It is useful in multiphysic DEM simulations involving a packed bed. This allows to set a higher time step than in the loading of particles, since the temperature can take a lot more time to vary than the position.

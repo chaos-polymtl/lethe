@@ -385,6 +385,8 @@ InsertionVolume<dim, PropertiesIndex>::
 template class InsertionVolume<2, DEM::DEMProperties::PropertiesIndex>;
 template class InsertionVolume<2, DEM::CFDDEMProperties::PropertiesIndex>;
 template class InsertionVolume<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionVolume<2, DEM::CFDDEMMPProperties::PropertiesIndex>;
 template class InsertionVolume<3, DEM::DEMProperties::PropertiesIndex>;
 template class InsertionVolume<3, DEM::CFDDEMProperties::PropertiesIndex>;
 template class InsertionVolume<3, DEM::DEMMPProperties::PropertiesIndex>;
+template class InsertionVolume<3, DEM::CFDDEMMPProperties::PropertiesIndex>;

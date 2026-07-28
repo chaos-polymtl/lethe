@@ -67,8 +67,34 @@ main(int argc, char *argv[])
               print_parameters_to_output_file(pcout, prm, file_name);
             }
 
-          CFDDEMSolver<2> problem(NSparam);
-          problem.solve();
+          // The solver type indicates whether the DEM has multiphysics
+          // features enabled. The same value is used by lethe-particles, so
+          // the model parameters of a packing simulation can be reused as-is.
+          const DEM::SolverType solver_type =
+            NSparam.dem_parameters.model_parameters.solver_type;
+
+          if (solver_type == DEM::SolverType::dem ||
+              solver_type == DEM::SolverType::cfd_dem)
+            {
+              CFDDEMSolver<2, DEM::CFDDEMProperties::PropertiesIndex> problem(
+                NSparam);
+              problem.solve();
+            }
+          else if (solver_type == DEM::SolverType::dem_mp)
+            {
+              CFDDEMSolver<2, DEM::CFDDEMMPProperties::PropertiesIndex> problem(
+                NSparam);
+              problem.solve();
+            }
+          else
+            {
+              AssertThrow(
+                false,
+                dealii::ExcMessage(
+                  "While reading the solver type from the input file, Lethe "
+                  "found a value which is not supported by this solver. "
+                  "Choices are <dem|cfd_dem|dem_mp>."));
+            }
         }
 
       else if (dim == 3)
@@ -98,8 +124,34 @@ main(int argc, char *argv[])
               print_parameters_to_output_file(pcout, prm, file_name);
             }
 
-          CFDDEMSolver<3> problem(NSparam);
-          problem.solve();
+          // The solver type indicates whether the DEM has multiphysics
+          // features enabled. The same value is used by lethe-particles, so
+          // the model parameters of a packing simulation can be reused as-is.
+          const DEM::SolverType solver_type =
+            NSparam.dem_parameters.model_parameters.solver_type;
+
+          if (solver_type == DEM::SolverType::dem ||
+              solver_type == DEM::SolverType::cfd_dem)
+            {
+              CFDDEMSolver<3, DEM::CFDDEMProperties::PropertiesIndex> problem(
+                NSparam);
+              problem.solve();
+            }
+          else if (solver_type == DEM::SolverType::dem_mp)
+            {
+              CFDDEMSolver<3, DEM::CFDDEMMPProperties::PropertiesIndex> problem(
+                NSparam);
+              problem.solve();
+            }
+          else
+            {
+              AssertThrow(
+                false,
+                dealii::ExcMessage(
+                  "While reading the solver type from the input file, Lethe "
+                  "found a value which is not supported by this solver. "
+                  "Choices are <dem|cfd_dem|dem_mp>."));
+            }
         }
 
       else

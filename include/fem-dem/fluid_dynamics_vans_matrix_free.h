@@ -70,14 +70,19 @@ public:
    * derivative.
    * @param[in] particle_projector Manage for the void fraction. This is used
    * to obtain the void fraction on the levels of the grid.
+   *
+   * @tparam PropertiesIndex Index of the properties used within the
+   * ParticleHandler. Only the projected fields of the particle projector are
+   * used here, so this class itself does not depend on the properties index.
    */
+  template <typename PropertiesIndex>
   void
   initialize(const std::shared_ptr<SimulationControl> &simulation_control,
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
-             const VectorType             &time_derivative_previous_solutions,
-             const VectorType             &time_derivative_void_fraction,
-             const ParticleProjector<dim> &particle_projector);
+             const VectorType &time_derivative_previous_solutions,
+             const VectorType &time_derivative_void_fraction,
+             const ParticleProjector<dim, PropertiesIndex> &particle_projector);
 
 private:
   /// Reference to the simulation parameters
@@ -164,8 +169,10 @@ private:
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class FluidDynamicsVANSMatrixFree : public FluidDynamicsMatrixFree<dim>
 {
   using VectorType = LinearAlgebra::distributed::Vector<double>;
@@ -256,7 +263,7 @@ protected:
 
   /// Object that manages the void fraction calculation from functions
   /// or from parameters.
-  ParticleProjector<dim> particle_projector;
+  ParticleProjector<dim, PropertiesIndex> particle_projector;
 
   /// Member variables which are used to manage boundary conditions
   bool                                         has_periodic_boundaries;

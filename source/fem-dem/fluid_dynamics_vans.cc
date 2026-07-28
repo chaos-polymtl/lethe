@@ -11,15 +11,15 @@
 #include <deal.II/base/work_stream.h>
 
 // Constructor for class FluidDynamicsVANS
-template <int dim>
-FluidDynamicsVANS<dim>::FluidDynamicsVANS(
+template <int dim, typename PropertiesIndex>
+FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
   CFDDEMSimulationParameters<dim> &nsparam)
   : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters)
   , cfd_dem_simulation_parameters(nsparam)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
                      particle_mapping,
-                     DEM::CFDDEMProperties::n_properties)
+                     PropertiesIndex::n_properties)
   , particle_projector(
       &(*this->triangulation),
       nsparam.void_fraction,
@@ -51,15 +51,15 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
     }
 }
 
-template <int dim>
-FluidDynamicsVANS<dim>::~FluidDynamicsVANS()
+template <int dim, typename PropertiesIndex>
+FluidDynamicsVANS<dim, PropertiesIndex>::~FluidDynamicsVANS()
 {
   this->dof_handler->clear();
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::setup_dofs()
+FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
 {
   FluidDynamicsMatrixBased<dim>::setup_dofs();
 
@@ -68,9 +68,9 @@ FluidDynamicsVANS<dim>::setup_dofs()
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::finish_time_step_fd()
+FluidDynamicsVANS<dim, PropertiesIndex>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
   // ensure that the checkpointed information is correct
@@ -79,9 +79,9 @@ FluidDynamicsVANS<dim>::finish_time_step_fd()
   FluidDynamicsMatrixBased<dim>::finish_time_step();
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::read_dem()
+FluidDynamicsVANS<dim, PropertiesIndex>::read_dem()
 {
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
@@ -110,9 +110,13 @@ FluidDynamicsVANS<dim>::read_dem()
   std::istringstream            iss(buffer);
   boost::archive::text_iarchive ia(iss, boost::archive::no_header);
 
-  // Create a temporary particle_handler with DEM properties
+  // Create a temporary particle_handler with the DEM properties of the
+  // simulation this one is restarted from
+  using DEMPropertiesIndex =
+    DEM::matching_dem_properties_index<PropertiesIndex>;
+
   Particles::ParticleHandler<dim> temporary_particle_handler(
-    *this->triangulation, particle_mapping, DEM::DEMProperties::n_properties);
+    *this->triangulation, particle_mapping, DEMPropertiesIndex::n_properties);
 
   ia >> temporary_particle_handler;
 
@@ -147,9 +151,7 @@ FluidDynamicsVANS<dim>::read_dem()
       // Fill the existing particle handler using the temporary one
       // This is done during the dynamic cast for the convert_particle_handler
       // function which requires a pararallel::distributed::triangulation
-      convert_particle_handler<dim,
-                               DEM::DEMProperties::PropertiesIndex,
-                               DEM::CFDDEMProperties::PropertiesIndex>(
+      convert_particle_handler<dim, DEMPropertiesIndex, PropertiesIndex>(
         *parallel_triangulation, temporary_particle_handler, particle_handler);
     }
   else
@@ -160,17 +162,18 @@ FluidDynamicsVANS<dim>::read_dem()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::calculate_void_fraction(const double time)
+FluidDynamicsVANS<dim, PropertiesIndex>::calculate_void_fraction(
+  const double time)
 {
   TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
   particle_projector.calculate_void_fraction(time);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::vertices_cell_mapping()
+FluidDynamicsVANS<dim, PropertiesIndex>::vertices_cell_mapping()
 {
   // Find all the cells around each vertex
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
@@ -186,9 +189,9 @@ FluidDynamicsVANS<dim>::vertices_cell_mapping()
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial conditions
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::iterate()
+FluidDynamicsVANS<dim, PropertiesIndex>::iterate()
 {
   announce_string(this->pcout, "Volume-Averaged Fluid Dynamics");
 
@@ -207,9 +210,9 @@ FluidDynamicsVANS<dim>::iterate()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::setup_assemblers()
+FluidDynamicsVANS<dim, PropertiesIndex>::setup_assemblers()
 {
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
@@ -252,7 +255,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerDiFelice<dim>>(
+            std::make_shared<VANSAssemblerDiFelice<dim, PropertiesIndex>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -261,7 +264,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerRong<dim>>(
+            std::make_shared<VANSAssemblerRong<dim, PropertiesIndex>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -270,7 +273,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerDallavalle<dim>>(
+            std::make_shared<VANSAssemblerDallavalle<dim, PropertiesIndex>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -279,7 +282,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Koch and Hill Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerKochHill<dim>>(
+            std::make_shared<VANSAssemblerKochHill<dim, PropertiesIndex>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -287,7 +290,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Beetstra drag model assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerBeetstra<dim>>(
+            std::make_shared<VANSAssemblerBeetstra<dim, PropertiesIndex>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -295,7 +298,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Gidaspow Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerGidaspow<dim>>(
+            std::make_shared<VANSAssemblerGidaspow<dim, PropertiesIndex>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
     }
@@ -303,42 +306,42 @@ FluidDynamicsVANS<dim>::setup_assemblers()
   if (this->cfd_dem_simulation_parameters.cfd_dem.saffman_lift_force == true)
     // Saffman Mei Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerSaffmanMei<dim>>());
+      std::make_shared<VANSAssemblerSaffmanMei<dim, PropertiesIndex>>());
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.magnus_lift_force == true)
     // Magnus Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerMagnus<dim>>());
+      std::make_shared<VANSAssemblerMagnus<dim, PropertiesIndex>>());
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.rotational_viscous_torque ==
       true)
     // Viscous Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerViscousTorque<dim>>());
+      std::make_shared<VANSAssemblerViscousTorque<dim, PropertiesIndex>>());
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.vortical_viscous_torque ==
       true)
     // Vortical Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerVorticalTorque<dim>>());
+      std::make_shared<VANSAssemblerVorticalTorque<dim, PropertiesIndex>>());
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerBuoyancy<dim>>(
+      std::make_shared<VANSAssemblerBuoyancy<dim, PropertiesIndex>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties.g));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.pressure_force == true)
     // Pressure Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerPressureForce<dim>>(
+      std::make_shared<VANSAssemblerPressureForce<dim, PropertiesIndex>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerShearForce<dim>>(
+      std::make_shared<VANSAssemblerShearForce<dim, PropertiesIndex>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   // Time-stepping schemes
@@ -375,9 +378,9 @@ FluidDynamicsVANS<dim>::setup_assemblers()
       this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::assemble_system_matrix()
+FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_matrix()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
   this->system_matrix = 0;
@@ -450,9 +453,9 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
   this->system_matrix.compress(VectorOperation::add);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::assemble_local_system_matrix(
+FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
@@ -501,7 +504,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
 
   if (this->simulation_parameters.multiphysics.CLS)
     {
-      scratch_data.reinit_particle_fluid_interactions(
+      scratch_data.template reinit_particle_fluid_interactions<PropertiesIndex>(
         cell,
         void_fraction_cell,
         *phase_cell,
@@ -514,7 +517,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     }
   else
     {
-      scratch_data.reinit_particle_fluid_interactions(
+      scratch_data.template reinit_particle_fluid_interactions<PropertiesIndex>(
         cell,
         void_fraction_cell,
         this->evaluation_point,
@@ -581,9 +584,9 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::copy_local_matrix_to_global_matrix(
+FluidDynamicsVANS<dim, PropertiesIndex>::copy_local_matrix_to_global_matrix(
   const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -595,9 +598,9 @@ FluidDynamicsVANS<dim>::copy_local_matrix_to_global_matrix(
                                               this->system_matrix);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::assemble_system_rhs()
+FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
 {
   this->computing_timer.enter_subsection("Assemble RHS");
   auto scratch_data = NavierStokesScratchData<dim>(
@@ -678,9 +681,9 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::assemble_local_system_rhs(
+FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
@@ -729,7 +732,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.CLS)
     {
-      scratch_data.reinit_particle_fluid_interactions(
+      scratch_data.template reinit_particle_fluid_interactions<PropertiesIndex>(
         cell,
         void_fraction_cell,
         *phase_cell,
@@ -742,7 +745,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     }
   else
     {
-      scratch_data.reinit_particle_fluid_interactions(
+      scratch_data.template reinit_particle_fluid_interactions<PropertiesIndex>(
         cell,
         void_fraction_cell,
         this->evaluation_point,
@@ -809,9 +812,9 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::copy_local_rhs_to_global_rhs(
+FluidDynamicsVANS<dim, PropertiesIndex>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -823,9 +826,9 @@ FluidDynamicsVANS<dim>::copy_local_rhs_to_global_rhs(
                                               this->system_rhs);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 std::vector<OutputStruct<dim, GlobalVectorType>>
-FluidDynamicsVANS<dim>::gather_output_hook()
+FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
 {
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   solution_output_structs.emplace_back(
@@ -961,9 +964,9 @@ FluidDynamicsVANS<dim>::gather_output_hook()
   return solution_output_structs;
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::monitor_mass_conservation()
+FluidDynamicsVANS<dim, PropertiesIndex>::monitor_mass_conservation()
 {
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
 
@@ -1134,9 +1137,9 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
               << " s^-1" << std::endl;
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim>::solve()
+FluidDynamicsVANS<dim, PropertiesIndex>::solve()
 {
   read_mesh_and_manifolds(
     *this->triangulation,
@@ -1197,5 +1200,7 @@ FluidDynamicsVANS<dim>::solve()
 
 // Pre-compile the 2D and 3D solver to ensure that the
 // library is valid before we actually compile the solver
-template class FluidDynamicsVANS<2>;
-template class FluidDynamicsVANS<3>;
+template class FluidDynamicsVANS<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class FluidDynamicsVANS<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class FluidDynamicsVANS<2, DEM::CFDDEMMPProperties::PropertiesIndex>;
+template class FluidDynamicsVANS<3, DEM::CFDDEMMPProperties::PropertiesIndex>;

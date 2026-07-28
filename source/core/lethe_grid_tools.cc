@@ -1482,6 +1482,16 @@ LetheGridTools::
     const std::vector<Point<2>>          &triangle,
     const Particles::ParticleIterator<2> &particle);
 
+template std::tuple<bool,
+                    Point<3>,
+                    Tensor<1, 3>,
+                    LetheGridTools::ParticleTriangleContactIndicator>
+LetheGridTools::find_particle_triangle_projection<
+  2,
+  DEM::CFDDEMMPProperties::PropertiesIndex>(
+  const std::vector<Point<2>>          &triangle,
+  const Particles::ParticleIterator<2> &particle);
+
 // input dim == 3
 template std::tuple<bool,
                     Point<3>,
@@ -1509,6 +1519,16 @@ LetheGridTools::
   find_particle_triangle_projection<3, DEM::DEMMPProperties::PropertiesIndex>(
     const std::vector<Point<3>>          &triangle,
     const Particles::ParticleIterator<3> &particle);
+
+template std::tuple<bool,
+                    Point<3>,
+                    Tensor<1, 3>,
+                    LetheGridTools::ParticleTriangleContactIndicator>
+LetheGridTools::find_particle_triangle_projection<
+  3,
+  DEM::CFDDEMMPProperties::PropertiesIndex>(
+  const std::vector<Point<3>>          &triangle,
+  const Particles::ParticleIterator<3> &particle);
 
 
 template <int dim>

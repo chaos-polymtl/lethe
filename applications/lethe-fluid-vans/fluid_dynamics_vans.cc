@@ -67,7 +67,8 @@ main(int argc, char *argv[])
               print_parameters_to_output_file(pcout, prm, file_name);
             }
 
-          FluidDynamicsVANS<2> problem(NSparam);
+          FluidDynamicsVANS<2, DEM::CFDDEMProperties::PropertiesIndex> problem(
+            NSparam);
           problem.solve();
         }
 
@@ -98,7 +99,8 @@ main(int argc, char *argv[])
               print_parameters_to_output_file(pcout, prm, file_name);
             }
 
-          FluidDynamicsVANS<3> problem(NSparam);
+          FluidDynamicsVANS<3, DEM::CFDDEMProperties::PropertiesIndex> problem(
+            NSparam);
           problem.solve();
         }
 

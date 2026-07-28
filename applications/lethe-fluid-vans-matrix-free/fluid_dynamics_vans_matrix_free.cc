@@ -67,7 +67,8 @@ main(int argc, char *argv[])
               print_parameters_to_output_file(pcout, prm, file_name);
             }
 
-          FluidDynamicsVANSMatrixFree<2> problem(NSparam);
+          FluidDynamicsVANSMatrixFree<2, DEM::CFDDEMProperties::PropertiesIndex>
+            problem(NSparam);
           problem.solve();
         }
 
@@ -98,7 +99,8 @@ main(int argc, char *argv[])
               print_parameters_to_output_file(pcout, prm, file_name);
             }
 
-          FluidDynamicsVANSMatrixFree<3> problem(NSparam);
+          FluidDynamicsVANSMatrixFree<3, DEM::CFDDEMProperties::PropertiesIndex>
+            problem(NSparam);
           problem.solve();
         }
       else

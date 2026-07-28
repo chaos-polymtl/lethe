@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/dem_properties.h>
@@ -237,8 +237,24 @@ namespace DEM
 
   template statistics
   calculate_granular_statistics<
+    2,
+    DEM::CFDDEMMPProperties::PropertiesIndex,
+    dem_statistic_variable::translational_kinetic_energy>(
+    const Particles::ParticleHandler<2, 2> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<
     3,
     DEM::DEMMPProperties::PropertiesIndex,
+    dem_statistic_variable::translational_kinetic_energy>(
+    const Particles::ParticleHandler<3, 3> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<
+    3,
+    DEM::CFDDEMMPProperties::PropertiesIndex,
     dem_statistic_variable::translational_kinetic_energy>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
@@ -253,8 +269,24 @@ namespace DEM
 
   template statistics
   calculate_granular_statistics<
+    2,
+    DEM::CFDDEMMPProperties::PropertiesIndex,
+    dem_statistic_variable::rotational_kinetic_energy>(
+    const Particles::ParticleHandler<2, 2> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<
     3,
     DEM::DEMMPProperties::PropertiesIndex,
+    dem_statistic_variable::rotational_kinetic_energy>(
+    const Particles::ParticleHandler<3, 3> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<
+    3,
+    DEM::CFDDEMMPProperties::PropertiesIndex,
     dem_statistic_variable::rotational_kinetic_energy>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
@@ -267,8 +299,22 @@ namespace DEM
     const MPI_Comm                         &mpi_communicator);
 
   template statistics
+  calculate_granular_statistics<2,
+                                DEM::CFDDEMMPProperties::PropertiesIndex,
+                                dem_statistic_variable::velocity>(
+    const Particles::ParticleHandler<2, 2> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
   calculate_granular_statistics<3,
                                 DEM::DEMMPProperties::PropertiesIndex,
+                                dem_statistic_variable::velocity>(
+    const Particles::ParticleHandler<3, 3> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<3,
+                                DEM::CFDDEMMPProperties::PropertiesIndex,
                                 dem_statistic_variable::velocity>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
@@ -281,8 +327,22 @@ namespace DEM
     const MPI_Comm                         &mpi_communicator);
 
   template statistics
+  calculate_granular_statistics<2,
+                                DEM::CFDDEMMPProperties::PropertiesIndex,
+                                dem_statistic_variable::omega>(
+    const Particles::ParticleHandler<2, 2> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
   calculate_granular_statistics<3,
                                 DEM::DEMMPProperties::PropertiesIndex,
+                                dem_statistic_variable::omega>(
+    const Particles::ParticleHandler<3, 3> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<3,
+                                DEM::CFDDEMMPProperties::PropertiesIndex,
                                 dem_statistic_variable::omega>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
     const MPI_Comm                         &mpi_communicator);

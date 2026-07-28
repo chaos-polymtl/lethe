@@ -2062,8 +2062,7 @@ private:
             contact_info.rolling_resistance_spring_torque.clear();
           }
 
-        if constexpr (std::is_same_v<PropertiesIndex,
-                                     DEM::DEMMPProperties::PropertiesIndex>)
+        if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
           {
             if (normal_overlap > 0)
               {
