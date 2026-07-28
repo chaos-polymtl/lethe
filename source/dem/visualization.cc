@@ -117,7 +117,7 @@ Visualization<dim, PropertiesIndex>::print_xyz(
           << particle_properties[PropertiesIndex::dp] << " "
           << std::setprecision(4) << particle_location;
 
-      if constexpr (is_dem_mp)
+      if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
         {
           oss << " " << std::fixed << std::setprecision(4)
               << particle_properties[PropertiesIndex::T];
