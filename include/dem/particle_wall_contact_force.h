@@ -1121,7 +1121,7 @@ private:
               particle_position -
               (1.02 * normal_overlap +
                0.01 * particle->get_properties()[PropertiesIndex::dp]) *
-              normal_vector;
+                normal_vector;
           }
         particle->set_location(particle_new_position);
       }
