@@ -55,91 +55,86 @@ detailed_circle(
       DEAL_II_NOT_IMPLEMENTED();
   };
 
-  // To understand better the points we use, it is advised to run this program
-  // with refine = 0
   const auto vertices = [&]() -> std::vector<Point<spacedim>> {
-    if (shape) // Inner circle
+    if (shape) 
+      // Inner circle
       return {
         p + embed_point(-1., -1.) * (r / std::sqrt(2.0)),
         p + embed_point(+1., -1.) * (r / std::sqrt(2.0)),
-        p +
-          embed_point(-1., -1.) *
-            (R / std::sqrt(2.0)), // The four points which make the inner square
+        // The four points which make the inner square
+        p + embed_point(-1., -1.) * (R / std::sqrt(2.0)), 
         p + embed_point(+1., -1.) * (R / std::sqrt(2.0)),
         p + embed_point(-1., +1.) * (R / std::sqrt(2.0)),
         p + embed_point(+1., +1.) * (R / std::sqrt(2.0)),
         p + embed_point(-1., +1.) * (r / std::sqrt(2.0)),
         p + embed_point(+1., +1.) * (r / std::sqrt(2.0)),
-        embed_point(b, 0), // Two points linked with the rectangle on is left
+        // Two points linked with the rectangle on is left
+        embed_point(b, 0), 
         embed_point(b, a),
-        p + embed_point(0, -r), // The two points (0, r) and (0, -r) from the
-                                // center of the circle
+        // The two points (0, r) and (0, -r) from the center of the circle
+        p + embed_point(0, -r), 
         p + embed_point(0, +r),
-        p +
-          embed_point(std::sqrt(r * r - a * a / 4),
-                      -a /
-                        2), // The two points on the right side of the outer
-                            // circle that lie along the width of the rectangle
+        // The two points on the right side of the outer circle that lie along the width of the rectangle
+        p + embed_point(std::sqrt(r * r - a * a / 4), -a / 2), 
         p + embed_point(std::sqrt(r * r - a * a / 4), +a / 2),
-        p + embed_point(-(std::sqrt(R * R - a * a / 4)),
-                        +a / 2), // The other points where the width of the
-                                 // rectangle intersects the central square
+        // The other points where the width of the rectangle intersects the central square
+        p + embed_point(-(std::sqrt(R * R - a * a / 4)), +a / 2), 
         p + embed_point(-(std::sqrt(R * R - a * a / 4)), -a / 2),
         p + embed_point(+(std::sqrt(R * R - a * a / 4)), -a / 2),
         p + embed_point(+(std::sqrt(R * R - a * a / 4)), +a / 2),
-        p + embed_point(0, -R), // The two points of the central square on the
-                                // circle's axis of symmetry
+        // The two points of the central square on the circle's axis of symmetry
+        p + embed_point(0, -R), 
         p + embed_point(0, +R),
-        p + embed_point(0,
-                        +a /
-                          2), // The two points where the width of the rectangle
-                              // intersects the axis of symmetry of the circle
+        // The two points where the width of the rectangle intersects the axis of symmetry of the circle
+        p + embed_point(0, +a / 2), 
         p + embed_point(0, -a / 2)};
 
-    else // Inner square
+    else 
+      // Inner square
       return {
         p + embed_point(-1., -1.) * (r / std::sqrt(2.0)),
         p + embed_point(+1., -1.) * (r / std::sqrt(2.0)),
-        p + embed_point(-1., -1.) *
-              R, // The other points that form the inner square
+        // The other points that form the inner square
+        p + embed_point(-1., -1.) * R, 
         p + embed_point(+1., -1.) * R,
         p + embed_point(-1., +1.) * R,
         p + embed_point(+1., +1.) * R,
         p + embed_point(-1., +1.) * (r / std::sqrt(2.0)),
         p + embed_point(+1., +1.) * (r / std::sqrt(2.0)),
-        embed_point(b, 0), // The two points attached to the rectangle
+        // The two points attached to the rectangle
+        embed_point(b, 0), 
         embed_point(b, a),
-        p + embed_point(0, -r), // The two points (0, r) and (0, -r) from the
-                                // center of the circle
+        // The two points (0, r) and (0, -r) from the center of the circle
+        p + embed_point(0, -r), 
         p + embed_point(0, +r),
-        p +
-          embed_point(std::sqrt(r * r - a * a / 4),
-                      -a /
-                        2), // The two points on the right side of the outer
-                            // circle that lie along the width of the rectangle
+        // The two points on the right side of the outer circle that lie along the width of the rectangle
+        p + embed_point(std::sqrt(r * r - a * a / 4), -a / 2), 
         p + embed_point(std::sqrt(r * r - a * a / 4), +a / 2),
-        p + embed_point(-R, +a / 2), // The other points where the width of the
-                                     // rectangle intersects the central square
+        // The other points where the width of the rectangle intersects the central square
+        p + embed_point(-R, +a / 2), 
         p + embed_point(-R, -a / 2),
         p + embed_point(+R, -a / 2),
         p + embed_point(+R, +a / 2),
-        p + embed_point(0, -R), // The two points of the central square on the
-                                // circle's axis of symmetry
+        // The two points of the central square on the circle's axis of symmetry
+        p + embed_point(0, -R), 
         p + embed_point(0, +R),
-        p + embed_point(0, +a / 2), // The two points where the width of the rectangle intersects the axis of symmetry of the circle
+        // The two points where the width of the rectangle intersects the axis of symmetry of the circle
+        p + embed_point(0, +a / 2), 
         p + embed_point(0, -a / 2)};
   }();
 
   std::vector<CellData<2>> cells(16, CellData<2>());
   static constexpr int     circle_cell_vertices[16][4] = {
-    {2, 18, 15, 21}, // We start with the 6 squares in the center square
+    // We start with the 6 squares in the center square
+    {2, 18, 15, 21}, 
     {15, 21, 14, 20},
     {14, 20, 4, 19},
     {18, 3, 21, 16},
     {21, 16, 20, 17},
     {20, 17, 19, 5},
-    {9, 14, 6, 4}, // We fill in the outer cells, starting from the top left
+    // We fill in the outer cells, starting from the top left
     {8, 15, 9, 14},
+    {9, 14, 6, 4}, 
     {0, 2, 8, 15},
     {0, 10, 2, 18},
     {10, 1, 18, 3},
@@ -178,14 +173,17 @@ GridCavityMw<dim, spacedim>::GridCavityMw(const std::string &grid_arguments)
   const std::vector<std::string> arguments =
     Utilities::split_string_list(grid_arguments, ':');
 
-  rectangle_width  = std::stod(arguments[0]);
-  rectangle_length = std::stod(arguments[1]);
-  outer_radius     = std::stod(arguments[2]);
-  inner_length     = std::stod(arguments[3]);
-  bottom_height    = std::stod(arguments[4]);
-  center_height    = std::stod(arguments[5]);
-  top_height       = std::stod(arguments[6]);
-  shape            = (arguments[7] == "true");
+  rectangle_width    = std::stod(arguments[0]);
+  rectangle_length   = std::stod(arguments[1]);
+  outer_radius       = std::stod(arguments[2]);
+  inner_length       = std::stod(arguments[3]);
+  bottom_height      = std::stod(arguments[4]);
+  center_height      = std::stod(arguments[5]);
+  top_height         = std::stod(arguments[6]);
+  bottom_resolution  = std::stod(arguments[7]);
+  center_resolution  = std::stod(arguments[8]);
+  top_resoluution    = std::stod(arguments[9]);
+  shape              = (arguments[10] == "true");
 }
 
 template <int dim, int spacedim>
@@ -301,14 +299,17 @@ GridCavityMw<dim, spacedim>::make_grid(
       Triangulation<3> extruded_center;
       Triangulation<3> extruded_top;
       GridGenerator::extrude_triangulation(base,
-                                           10,
+                                           bottom_resolution,
                                            bottom_height,
                                            extruded_base);
       GridGenerator::extrude_triangulation(merged,
-                                           10,
+                                           center_resolution,
                                            center_height,
                                            extruded_center);
-      GridGenerator::extrude_triangulation(top, 10, top_height, extruded_top);
+      GridGenerator::extrude_triangulation(top,
+                                           top_resolution,
+                                           top_height,
+                                           extruded_top);
 
       //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       // MANIFOLD
