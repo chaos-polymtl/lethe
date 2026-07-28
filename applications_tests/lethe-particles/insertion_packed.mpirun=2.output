@@ -7,13 +7,13 @@ DEM time step is 2.31107% of Rayleigh time step
 Reading triangulation
 
 Finished reading triangulation
-Minimum vertex distance between cell vertices: 0.01
-Minimum cell size to maximum particle diameter ratio: 2
 
 Using packed insertion method. This method overrides the
 regular contact model. Please consult the documentation for
 information on how to appropriately use it.
 
+Minimum vertex distance between cell vertices: 0.01
+Minimum cell size to maximum particle diameter ratio: 2
 Warning: expansion of particle-wall contact list is disabled.
 This feature is useful in geometries with convex boundaries.
 ***********************************************************************
