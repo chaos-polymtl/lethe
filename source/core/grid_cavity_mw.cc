@@ -182,7 +182,7 @@ GridCavityMw<dim, spacedim>::GridCavityMw(const std::string &grid_arguments)
   top_height         = std::stod(arguments[6]);
   bottom_resolution  = std::stod(arguments[7]);
   center_resolution  = std::stod(arguments[8]);
-  top_resoluution    = std::stod(arguments[9]);
+  top_resolution     = std::stod(arguments[9]);
   shape              = (arguments[10] == "true");
 }
 
