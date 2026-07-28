@@ -32,6 +32,7 @@ set dimension = 3
 
 # The DEM time step is the CFD time step divided by the coupling frequency,
 # which gives back the 5e-5 s of the DEM case.
+
 subsection simulation control
   set method           = bdf1
   set output name      = out
@@ -48,6 +49,7 @@ end
 
 # The fluid dynamics is not solved. The velocity and the pressure are kept at
 # the values given by the initial condition.
+
 subsection multiphysics
   set fluid dynamics = false
 end
@@ -78,6 +80,7 @@ end
 
 # The fluid is never solved and never acts on the particles. These values are
 # only there because the solver requires a fluid to be defined.
+
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity = 1.5e-5
@@ -103,6 +106,7 @@ end
 # The void fraction is prescribed to one. Since no fluid-particle interaction
 # force is enabled, it has no effect on the particles and there is no reason to
 # pay for its calculation with the QCM.
+
 subsection void fraction
   set mode = function
   subsection function
@@ -116,6 +120,7 @@ end
 
 # Every fluid-particle interaction force is disabled so that the particles
 # behave exactly as they do in the pure DEM case.
+
 subsection cfd-dem
   set drag force         = false
   set buoyancy force     = false
@@ -206,6 +211,7 @@ end
 # These two walls replace the moving solid objects of the DEM case. They are
 # placed where the plates come to rest and hold the chain of particles in
 # compression. Floating walls are adiabatic, like the plates they replace.
+
 subsection floating walls
   set number of floating walls = 2
   subsection wall 0
