@@ -419,7 +419,8 @@ public:
                      dof_handler.locally_owned_mg_dofs(
                        this->matrix_free.get_mg_level()) :
                      dof_handler.locally_owned_dofs(),
-                   dof_handler.get_mpi_communicator());
+                   dof_handler.get_mpi_communicator(),
+                   dof_handler.max_couplings_between_dofs());
 
         if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
           MGTools::make_sparsity_pattern(dof_handler,

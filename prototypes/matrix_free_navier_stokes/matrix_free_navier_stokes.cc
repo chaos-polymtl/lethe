@@ -823,7 +823,8 @@ NavierStokesOperator<dim, number>::get_system_matrix() const
         this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int ?
           dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level()) :
           dof_handler.locally_owned_dofs(),
-        dof_handler.get_triangulation().get_mpi_communicator());
+        dof_handler.get_triangulation().get_mpi_communicator(),
+        dof_handler.max_couplings_between_dofs());
 
       if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
         MGTools::make_sparsity_pattern(dof_handler,
@@ -1331,7 +1332,11 @@ solve_with_gcmg(SolverControl             &solver_control,
                                 constraints[level + 1],
                                 constraints[level]);
 
+#if DEAL_II_VERSION_GTE(9, 8, 0)
+  MGTransferMatrixFree<dim, typename VectorType::value_type> transfer(
+#else
   MGTransferGlobalCoarsening<dim, VectorType> transfer(
+#endif
     transfers,
     [&](const auto l, auto &vec) { operators[l]->initialize_dof_vector(vec); });
 

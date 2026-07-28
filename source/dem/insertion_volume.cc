@@ -244,9 +244,9 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
       // Assign the maximum number of insertion points according to the
       // direction and calculate the total number of points that fit in the box
       // (maximum_number_of_points = max_x * max_y * max_z)
-      const unsigned int number_of_points =
+      const unsigned int number_of_points = static_cast<unsigned int>(
         (axis_max[axis] - axis_min[axis]) /
-        (insertion_information.distance_threshold * maximum_diameter);
+        (insertion_information.distance_threshold * maximum_diameter));
 
       number_of_particles_directions[axis] = number_of_points;
 
@@ -260,12 +260,11 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
   auto     this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
   auto     n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);
 
-  unsigned int n_points_this_proc =
-    floor(maximum_number_of_points / n_mpi_process);
+  unsigned int n_points_this_proc = maximum_number_of_points / n_mpi_process;
   if (this_mpi_process == (n_mpi_process - 1))
     n_points_this_proc =
       maximum_number_of_points -
-      (n_mpi_process - 1) * floor(maximum_number_of_points / n_mpi_process);
+      (n_mpi_process - 1) * (maximum_number_of_points / n_mpi_process);
 
   // First and last index of the unfiltered points that were assigned to this
   // process.

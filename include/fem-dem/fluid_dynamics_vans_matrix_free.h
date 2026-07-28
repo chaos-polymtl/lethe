@@ -26,8 +26,12 @@ public:
   using VectorType = typename MFNavierStokesPreconditionGMG<dim>::VectorType;
   using MGVectorType =
     typename MFNavierStokesPreconditionGMG<dim>::MGVectorType;
-  using MGNumber       = typename MFNavierStokesPreconditionGMG<dim>::MGNumber;
+  using MGNumber = typename MFNavierStokesPreconditionGMG<dim>::MGNumber;
+#if DEAL_II_VERSION_GTE(9, 8, 0)
+  using GCTransferType = MGTransferMatrixFree<dim, MGNumber>;
+#else
   using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
+#endif
 
   /// Local-smoothing transfer used for the auxiliary (particle-projected)
   /// fields. The auxiliary fields live on a single triangulation that has

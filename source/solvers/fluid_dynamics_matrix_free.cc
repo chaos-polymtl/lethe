@@ -327,10 +327,17 @@ public:
 
     std::vector<FullMatrix<Number>> blocks;
 
+    // The deprecation warning is triggered internally by deal.II: the call
+    // below instantiates SparseMatrixTools code that still relies on the
+    // deprecated ConsensusAlgorithms::Process class. Suppress it locally until
+    // it is resolved upstream.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     SparseMatrixTools::restrict_to_full_matrices(global_sparse_matrix,
                                                  global_sparsity_pattern,
                                                  patches,
                                                  blocks);
+#pragma GCC diagnostic pop
 
     this->timer.leave_subsection("asm::restrict");
     this->timer.enter_subsection("asm::invert");
@@ -732,8 +739,12 @@ private:
   const unsigned int min_h_level;
   unsigned int       n_gc_levels;
 
-  MGTransferMatrixFree<dim, Number>           ls;
+  MGTransferMatrixFree<dim, Number> ls;
+#if DEAL_II_VERSION_GTE(9, 8, 0)
+  MGTransferMatrixFree<dim, Number> gc;
+#else
   MGTransferGlobalCoarsening<dim, VectorType> gc;
+#endif
 };
 
 template <int dim>
