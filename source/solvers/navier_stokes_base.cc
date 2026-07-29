@@ -2304,15 +2304,10 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
   this->set_solution_from_checkpoint(prefix);
 
-  // Calculate the initial condition for the average velocity profile
-  if (simulation_parameters.post_processing.calculate_average_velocities)
-    {
-      this->average_velocities->calculate_average_velocities(
-        this->local_evaluation_point,
-        simulation_parameters.post_processing,
-        simulation_control->get_current_time(),
-        simulation_control->get_time_step());
-    }
+  // The averaged fields, which are used by the average velocity profile initial
+  // condition, are reevaluated from the checkpointed sums by
+  // restore_average_velocities_after_checkpoint, which is called by
+  // set_solution_from_checkpoint above.
 
   if (simulation_parameters.flow_control.enable_flow_control)
     {
@@ -2436,7 +2431,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
         }
     }
 
-  this->average_velocities->sanitize_after_restart();
+  this->average_velocities->sanitize_after_restart(
+    this->simulation_control->get_current_time());
 }
 
 template <int dim, typename VectorType, typename DofsType>

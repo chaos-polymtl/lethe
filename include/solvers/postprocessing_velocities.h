@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_postprocessing_velocities_h
@@ -174,13 +174,28 @@ public:
    * vectors. This is necessary because only the locally_relevant_vectors are
    * saved, but the calculation routines expect that the content of the
    * locally_owned vectors match that of the locally_relevant vectors.
+   *
+   * The total time over which the averaging has been carried out is not stored
+   * in the checkpoint file, but it is entirely determined by the time at which
+   * the averaging started, which is stored, and by the time at which the
+   * simulation is restarted. Restoring it here allows the averaged fields to be
+   * reevaluated from the checkpointed sums without accumulating an additional
+   * contribution, which would otherwise be needed to give the averaged fields a
+   * meaningful value right after a restart.
+   *
+   * @param[in] current_time The time at which the simulation is restarted.
    */
   void
-  sanitize_after_restart()
+  sanitize_after_restart(const double current_time)
   {
     sum_velocity_dt               = sum_velocity_dt_with_ghost_cells;
     sum_reynolds_normal_stress_dt = sum_rns_dt_with_ghost_cells;
     sum_reynolds_shear_stress_dt  = sum_rss_dt_with_ghost_cells;
+
+    total_time_for_average =
+      has_started_averaging ? (current_time - real_initial_time) + dt_0 : 0.0;
+
+    update_average_velocities();
   }
 
   /**
