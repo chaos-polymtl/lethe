@@ -1017,8 +1017,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
             present_solution);
 
           multiphysics->prepare_for_mesh_adaptation();
-          if (this->simulation_parameters.post_processing
-                .calculate_average_velocities)
+          if (this->average_velocities_are_enabled())
             average_velocities->prepare_for_mesh_adaptation();
 
           tria.execute_coarsening_and_refinement();
@@ -1046,8 +1045,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
             }
 
           multiphysics->post_mesh_adaptation();
-          if (this->simulation_parameters.post_processing
-                .calculate_average_velocities)
+          if (this->average_velocities_are_enabled())
             average_velocities->post_mesh_adaptation();
         }
     }
@@ -1286,10 +1284,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
   multiphysics->prepare_for_mesh_adaptation();
-  if (this->simulation_parameters.post_processing
-        .calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+  if (this->average_velocities_are_enabled())
     average_velocities->prepare_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
@@ -1351,10 +1346,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     }
 
   multiphysics->prepare_for_mesh_adaptation();
-  if (this->simulation_parameters.post_processing
-        .calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+  if (this->average_velocities_are_enabled())
     average_velocities->prepare_for_mesh_adaptation();
 
   // Refine
@@ -1399,10 +1391,7 @@ NavierStokesBase<dim, VectorType, DofsType>::transfer_solution(
     }
 
   multiphysics->post_mesh_adaptation();
-  if (this->simulation_parameters.post_processing
-        .calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+  if (this->average_velocities_are_enabled())
     average_velocities->post_mesh_adaptation();
 
   // Only needed if other physics apart from fluid dynamics are enabled.
@@ -2402,9 +2391,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
     }
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
 
-  if (simulation_parameters.post_processing.calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+  if (this->average_velocities_are_enabled())
     {
       std::vector<VectorType *> sum_vectors =
         this->average_velocities->read(checkpoint_file_prefix);
@@ -2418,6 +2405,17 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
     {
       (*previous_solutions)[i] = distributed_previous_solutions[i];
     }
+
+  this->restore_average_velocities_after_checkpoint();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  restore_average_velocities_after_checkpoint()
+{
+  if (!this->average_velocities_are_enabled())
+    return;
 
   // Reset the average velocity profile if the initial time to average the
   // velocities has not been reached. Disabled if the initial condition is an
@@ -2438,12 +2436,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
         }
     }
 
-  if (simulation_parameters.post_processing.calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
-    {
-      this->average_velocities->sanitize_after_restart();
-    }
+  this->average_velocities->sanitize_after_restart();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2729,6 +2722,13 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
         this->average_velocities->get_reynolds_normal_stresses(),
         reynolds_normal_stress_names,
         reynolds_normal_stress_data_component_interpretation);
+
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, VectorType>>,
+        *this->dof_handler,
+        this->average_velocities->get_reynolds_shear_stresses(),
+        reynolds_shear_stress_names,
+        reynolds_shear_stress_data_component_interpretation);
     }
 
   // Create the post-processors to have derived information about the velocity
@@ -3194,9 +3194,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       sol_set_transfer.emplace_back(&(*previous_solutions)[i]);
     }
 
-  if (simulation_parameters.post_processing.calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+  if (this->average_velocities_are_enabled())
     {
       std::vector<const VectorType *> av_set_transfer =
         this->average_velocities->save(prefix);

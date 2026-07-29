@@ -474,6 +474,47 @@ protected:
   read_checkpoint();
 
   /**
+   * @brief Indicate whether the time-averaged velocity object holds vectors that
+   * must be preserved. The averaging is used either when it is explicitly
+   * requested through the post-processing parameters or when the initial
+   * condition is an average velocity profile, which is read back from a
+   * checkpoint. This condition must be identical everywhere the average
+   * velocity vectors are serialized, deserialized or transferred to a new
+   * mesh partition, otherwise the accumulated sums are silently lost.
+   *
+   * @return Whether the average velocity vectors must be preserved.
+   */
+  bool
+  average_velocities_are_enabled() const
+  {
+    return this->simulation_parameters.post_processing
+             .calculate_average_velocities ||
+           this->simulation_parameters.initial_condition->type ==
+             Parameters::FluidDynamicsInitialConditionType::
+               average_velocity_profile;
+  }
+
+  /**
+   * @brief Restore the state of the time-averaged velocity object after its
+   * vectors have been deserialized.
+   *
+   * The deserialization fills the vectors with ghost cells, since only those
+   * are serialized, whereas the averaging routines accumulate into the
+   * locally owned vectors. The locally owned vectors must therefore be reset
+   * from their ghosted counterparts, otherwise the averaging silently
+   * restarts from zero while the total averaging time keeps spanning the
+   * whole averaging window, which scales down the average velocity and the
+   * Reynolds stresses. The checkpointed average is also discarded here if the
+   * initial time for averaging has not been reached yet, which lets a
+   * simulation be restarted with a later averaging start time.
+   *
+   * This function must be called at the end of every read_checkpoint()
+   * implementation that deserializes the average velocity vectors.
+   */
+  void
+  restore_average_velocities_after_checkpoint();
+
+  /**
    * @brief Read the solution from a checkpoint file and set it as the current solution.
    */
   virtual void
