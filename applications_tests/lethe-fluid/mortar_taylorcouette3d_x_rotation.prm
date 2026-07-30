@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Checks the mortar implementation with a x-aligned rotation axis for a Taylor-Couette example.
+# Checks the mortar implementation with an x-aligned rotation axis for a Taylor-Couette example.
 
 # Listing of Parameters
 #----------------------

@@ -765,7 +765,8 @@ get_rotation_axis_direction(const Parameters::Mortar<dim> &mortar_parameters)
     }
   // In 2D, the rotation_axis_direction is not used, but we return 2 to indicate
   // that the rotation axis is perpendicular to the plane
-  return 2;
+  else
+    return 2;
 }
 
 template <int dim>
