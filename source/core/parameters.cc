@@ -119,8 +119,16 @@ namespace Parameters
                         "1.",
                         Patterns::Double(),
                         "Time step value");
-      prm.declare_entry("time end", "1", Patterns::Double(), "Time step value at which to end a transient simulation");
-      prm.declare_entry("iteration end", "10", Patterns::Integer(), "Iteration number at which to end a transient simulation");
+      prm.declare_entry(
+        "time end",
+        "1",
+        Patterns::Double(),
+        "Time step value at which to end a transient simulation");
+      prm.declare_entry(
+        "iteration end",
+        "10",
+        Patterns::Integer(),
+        "Iteration number at which to end a transient simulation");
       prm.declare_entry("startup time scaling",
                         "0.4",
                         Patterns::Double(),
