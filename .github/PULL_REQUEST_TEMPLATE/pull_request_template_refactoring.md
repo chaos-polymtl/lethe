@@ -16,6 +16,18 @@
 
 <!-- Does this refactor modify or have new simulation parameters? If so, describe them. -->
 
+### Use of LLMs (large language models)
+
+<!-- LLM-assisted contributions are welcome, but they must be declared.
+       If an LLM (e.g. GitHub Copilot, ChatGPT, Claude, Cursor) generated a substantial portion
+       of this pull request (e.g. more than a small fraction of the source code, or algorithms
+       that are crucial for the functionality), describe here which parts were generated and
+       what the LLM was used for.
+       Write "None" if no LLM was used.
+       By submitting this pull request, you confirm that you have reviewed and verified all
+       LLM-generated content, and that you understand and accept responsibility for the
+       proposed changes. -->
+
 ### Miscellaneous (will be removed when merged)
 
 <!-- Anything that you would like to add that does not fit into any of the categories above.
