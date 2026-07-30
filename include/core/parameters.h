@@ -96,6 +96,9 @@ namespace Parameters
     // End time
     double time_end;
 
+    // End iteration
+    unsigned int iteration_end;
+
     // Boolean to keep the time step for the last iteration regardless of the
     // end time specify. Both for fixed time step and adaptive time step.
     bool time_step_independent_of_end_time;
@@ -165,6 +168,12 @@ namespace Parameters
 
     // Prefix for simulation output
     std::string output_name;
+
+    enum class EndControl : std::uint8_t
+    {
+      iteration,
+      time
+    } end_control;
 
     enum class OutputControl : std::uint8_t
     {

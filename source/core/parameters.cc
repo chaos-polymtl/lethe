@@ -119,7 +119,8 @@ namespace Parameters
                         "1.",
                         Patterns::Double(),
                         "Time step value");
-      prm.declare_entry("time end", "1", Patterns::Double(), "Time step value");
+      prm.declare_entry("time end", "1", Patterns::Double(), "Time step value at which to end a transient simulation");
+      prm.declare_entry("iteration end", "10", Patterns::Integer(), "Iteration number at which to end a transient simulation");
       prm.declare_entry("startup time scaling",
                         "0.4",
                         Patterns::Double(),
@@ -216,6 +217,13 @@ namespace Parameters
                         "List of specific output times separated with a comma");
 
       prm.declare_entry(
+        "end control",
+        "time",
+        Patterns::Selection("iteration|time"),
+        "The control for the end of a transient simulation"
+        "The succesful ending condtion can be either a maximum time value or a maximum number of iterations");
+
+      prm.declare_entry(
         "output control",
         "iteration",
         Patterns::Selection("iteration|time"),
@@ -275,7 +283,15 @@ namespace Parameters
         {
           AssertThrow(false, ExcMessage("Invalid bdf startup scheme"));
         }
-
+      const std::string end_control_string = prm.get("end control");
+      if (end_control_string == "iteration")
+        end_control = EndControl::iteration;
+      else if (end_control_string == "time")
+        end_control = EndControl::time;
+      else
+        {
+          AssertThrow(false, ExcMessage("Invalid end control scheme"));
+        }
       const std::string osv = prm.get("output control");
       if (osv == "iteration")
         output_control = OutputControl::iteration;
@@ -287,6 +303,7 @@ namespace Parameters
         }
       dt             = prm.get_double("time step");
       time_end       = prm.get_double("time end");
+      iteration_end  = prm.get_integer("iteration end");
       adapt_with_cfl = prm.get_bool("adapt time step to respect CFL");
       time_step_independent_of_end_time =
         prm.get_bool("time step independent of end time");
