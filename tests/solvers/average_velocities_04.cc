@@ -15,7 +15,7 @@
  * identical.
  *
  * The refinement is carried out with refine_mesh_uniform(), which is the
- * production path the dynamic mesh adaptation of the solvers goes through, so
+ * the dynamic mesh adaptation of the solvers goes through, so
  * the averaged fields are transferred by the same calls to
  * AverageVelocities::prepare_for_mesh_adaptation and
  * AverageVelocities::post_mesh_adaptation as in a simulation.
@@ -291,7 +291,7 @@ test()
   NSparam.simulation_control.dt       = 0.1;
   NSparam.simulation_control.time_end = 1.0;
 
-  // A second order element is used so that the averaged fields, which are
+  // A second order element is used so that the reynolds stresses, which are
   // quadratic in space, belong to the finite element space and are therefore
   // independent of the mesh. The matrix-free solver requires an equal order
   // interpolation.

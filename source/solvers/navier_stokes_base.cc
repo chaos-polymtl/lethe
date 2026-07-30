@@ -2304,11 +2304,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
   this->set_solution_from_checkpoint(prefix);
 
-  // The averaged fields, which are used by the average velocity profile initial
-  // condition, are reevaluated from the checkpointed sums by
-  // restore_average_velocities_after_checkpoint, which is called by
-  // set_solution_from_checkpoint above.
-
   if (simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);

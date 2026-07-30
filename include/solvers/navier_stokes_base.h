@@ -498,13 +498,12 @@ protected:
    * @brief Restore the state of the time-averaged velocity object after its
    * vectors have been deserialized.
    *
-   * The deserialization fills the vectors with ghost cells, since only those
-   * are serialized, whereas the averaging routines accumulate into the
-   * locally owned vectors. The locally owned vectors must therefore be reset
-   * from their ghosted counterparts, otherwise the averaging silently
-   * restarts from zero while the total averaging time keeps spanning the
-   * whole averaging window, which scales down the average velocity and the
-   * Reynolds stresses. The checkpointed average is also discarded here if the
+   * The deserialization fills the vectors with locally_relevant (owned +
+   * ghost), since only those are serialized, whereas the averaging routines
+   * accumulate into the locally owned vectors. The locally owned vectors must
+   * therefore be reset from their locally_relevant version after a checkpoint,
+   * otherwise the averaging silently
+   * restarts from zero. The checkpointed average is also discarded here if the
    * initial time for averaging has not been reached yet, which lets a
    * simulation be restarted with a later averaging start time.
    *
