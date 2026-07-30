@@ -371,14 +371,15 @@ bool
 SimulationControlTransient::is_at_end()
 {
   if (end_control == Parameters::SimulationControl::EndControl::time)
-  {
-    double floating_point_margin = std::max(1e-6 * time_step, 1e-12 * end_time);
-    return current_time >= (end_time - floating_point_margin);
-  }
+    {
+      double floating_point_margin =
+        std::max(1e-6 * time_step, 1e-12 * end_time);
+      return current_time >= (end_time - floating_point_margin);
+    }
   else if (end_control == Parameters::SimulationControl::EndControl::iteration)
-  {
-    return iteration_number >= end_iteration;
-  }
+    {
+      return iteration_number >= end_iteration;
+    }
 }
 
 double
