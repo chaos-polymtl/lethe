@@ -421,7 +421,7 @@ CFDDEMSolver<dim>::write_checkpoint()
       sol_set_transfer.push_back(&(*this->previous_solutions)[i]);
     }
 
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->average_velocities_are_enabled())
     {
       std::vector<const GlobalVectorType *> av_set_transfer =
         this->average_velocities->save(prefix);
@@ -568,7 +568,7 @@ CFDDEMSolver<dim>::read_checkpoint()
   SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
     *this->dof_handler);
 
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->average_velocities_are_enabled())
     {
       std::vector<GlobalVectorType *> sum_vectors =
         this->average_velocities->read(prefix);
@@ -583,6 +583,8 @@ CFDDEMSolver<dim>::read_checkpoint()
     {
       (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
+
+  this->restore_average_velocities_after_checkpoint();
 
   // Void Fraction Vectors
   std::vector<GlobalVectorType *> vf_system(
@@ -706,6 +708,14 @@ CFDDEMSolver<dim>::load_balance()
     *this->dof_handler);
   system_trans_vectors.prepare_for_coarsening_and_refinement(sol_set_transfer);
 
+  // The time-averaged velocity accumulators live on the fluid dof handler and
+  // must be transferred to the new partition as well. Otherwise the setup_dofs
+  // below resets them to zero while the total averaging time keeps spanning
+  // the whole averaging window, which makes the average velocity and the
+  // Reynolds stresses decay towards zero at every load balance.
+  if (this->average_velocities_are_enabled())
+    this->average_velocities->prepare_for_mesh_adaptation();
+
   // Void Fraction
   std::vector<const GlobalVectorType *> vf_set_transfer;
   vf_set_transfer.push_back(
@@ -814,6 +824,12 @@ CFDDEMSolver<dim>::load_balance()
     {
       (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
+
+  // Restore the time-averaged velocity accumulators on the new partition. This
+  // also reevaluates the average velocity and the Reynolds stresses from the
+  // transferred sums.
+  if (this->average_velocities_are_enabled())
+    this->average_velocities->post_mesh_adaptation();
 
   x_system.clear();
 

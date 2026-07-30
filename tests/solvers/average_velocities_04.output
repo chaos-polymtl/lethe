@@ -1,0 +1,13 @@
+
+DEAL::Averaged fields before the mesh refinement
+DEAL::  Average velocity         : 3.43399
+DEAL::  Reynolds normal stresses : 0.0343142
+DEAL::  Reynolds shear stresses  : 0.0126027
+DEAL::Averaged fields after the mesh refinement
+DEAL::  Average velocity         : 3.43399
+DEAL::  Reynolds normal stresses : 0.0343142
+DEAL::  Reynolds shear stresses  : 0.0126027
+DEAL::Averaged fields at the end of the simulation
+DEAL::  Average velocity         : 3.80725
+DEAL::  Reynolds normal stresses : 0.162992
+DEAL::  Reynolds shear stresses  : 0.0598628

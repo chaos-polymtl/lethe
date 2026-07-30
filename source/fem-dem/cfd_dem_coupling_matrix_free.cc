@@ -421,7 +421,7 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
       sol_set_transfer.push_back(&(*this->previous_solutions)[i]);
     }
 
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->average_velocities_are_enabled())
     {
       std::vector<const VectorType *> av_set_transfer =
         this->average_velocities->save(prefix);
@@ -568,7 +568,7 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
 
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
 
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->average_velocities_are_enabled())
     {
       std::vector<VectorType *> sum_vectors =
         this->average_velocities->read(prefix);
@@ -583,6 +583,8 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
     {
       (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
+
+  this->restore_average_velocities_after_checkpoint();
 
   // The deserialized vectors only carry valid locally owned entries; their
   // ghost values are stale. The particle-fluid force/drag projection evaluates
@@ -773,6 +775,14 @@ CFDDEMMatrixFree<dim>::load_balance()
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_coarsening_and_refinement(sol_set_transfer);
 
+  // The time-averaged velocity accumulators live on the fluid dof handler and
+  // must be transferred to the new partition as well. Otherwise the setup_dofs
+  // below resets them to zero while the total averaging time keeps spanning
+  // the whole averaging window, which makes the average velocity and the
+  // Reynolds stresses decay towards zero at every load balance.
+  if (this->average_velocities_are_enabled())
+    this->average_velocities->prepare_for_mesh_adaptation();
+
   // Now do the same process for the void fractgion
   // Void Fraction
   std::vector<const VectorType *> vf_set_transfer;
@@ -887,6 +897,12 @@ CFDDEMMatrixFree<dim>::load_balance()
       distributed_previous_solutions[i].update_ghost_values();
       (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
+
+  // Restore the time-averaged velocity accumulators on the new partition. This
+  // also reevaluates the average velocity and the Reynolds stresses from the
+  // transferred sums.
+  if (this->average_velocities_are_enabled())
+    this->average_velocities->post_mesh_adaptation();
 
   x_system.clear();
 
