@@ -357,7 +357,7 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
             }
         }
 
-      // Finally, adding the remained elements of the
+      // Finally, adding the remaining elements of the
       // all_cells_with_boundary_lines container to boundary_cells_with_lines
       if (!all_cells_with_boundary_lines.empty())
         {
@@ -843,6 +843,8 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
 
                                   boundary_cells_information.insert(
                                     {imaginary_face_id, boundary_information});
+                                  std::cout << "Added face: " << point_2 << " to cell" << boundary_cells_info.cell->id() << std::endl;
+                                  
                                 }
                             }   
                         }

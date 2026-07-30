@@ -142,9 +142,9 @@ private:
 
   /**
    * Adds the cells with boundary lines to the boundary cells information
-   * (boundary_cells_information), First , it loops through the
+   * (boundary_cells_information). First , it loops through the
    * boundary_cells_with_lines vector, then it loops through the neighbors of
-   * boundary cells with lines, if a neighbor is a member of
+   * boundary_cells_with_lines; if a neighbor is a member of
    * boundary_cells_with_faces, then it adds the neighbor cell to the
    * boundary_cells_information with the normal vector and point of the neighbor
    * cell.
