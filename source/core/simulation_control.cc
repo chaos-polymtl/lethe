@@ -16,6 +16,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , time_step(param.dt)
   , initial_time_step(param.dt)
   , end_time(param.time_end)
+  , end_iteration(param.iteration_end)
   , time_step_independent_of_end_time(param.time_step_independent_of_end_time)
   , iteration_number(0)
   , number_mesh_adapt(param.number_mesh_adaptation)
@@ -281,6 +282,7 @@ SimulationControlTransient::SimulationControlTransient(
   , no_more_output_times(false)
   , override_time_step_on_restart(param.override_time_step_on_restart)
   , output_time_interval(param.output_time_interval)
+  , end_control(param.end_control)
   , output_control(param.output_control)
 {}
 
@@ -368,8 +370,15 @@ SimulationControlTransient::integrate()
 bool
 SimulationControlTransient::is_at_end()
 {
-  double floating_point_margin = std::max(1e-6 * time_step, 1e-12 * end_time);
-  return current_time >= (end_time - floating_point_margin);
+  if (end_control == Parameters::SimulationControl::EndControl::time)
+  {
+    double floating_point_margin = std::max(1e-6 * time_step, 1e-12 * end_time);
+    return current_time >= (end_time - floating_point_margin);
+  }
+  else if (end_control == Parameters::SimulationControl::EndControl::iteration)
+  {
+    return iteration_number >= end_iteration;
+  }
 }
 
 double

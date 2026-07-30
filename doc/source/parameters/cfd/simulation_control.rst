@@ -34,8 +34,14 @@ This subsection is the most important in a simulation and therefore, the most co
     #---------------------------------------------------
     # Transient simulations parameters
     #---------------------------------------------------
+    # The control for the ending of the simulation
+    set end control = time
+    
     # End time value of the simulation
     set time end = 1
+
+    # End iteration for the simulation
+    set iteration end = 10
   
     # Time step value
     set time step = 1
