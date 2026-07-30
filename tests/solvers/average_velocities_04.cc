@@ -29,7 +29,7 @@
  * transferring them, makes those norms drop to zero.
  *
  * The analytical solution imposed at every time step is linear in space and the
- * finite element is of second order. The average velocity is then linear and
+ * finite element is of degree two. The average velocity is then linear and
  * the Reynolds stresses, which are products of the velocity fluctuations, are
  * quadratic, so all the averaged fields belong to the finite element space and
  * their interpolants do not depend on the mesh. The norms printed at the end of
@@ -62,7 +62,7 @@
  * average differs from the instantaneous field and the Reynolds stresses do
  * not vanish.
  *
- * The spatial shape is linear so that, together with the second order finite
+ * The spatial shape is linear so that, together with the degree two finite
  * element used by the test, the averaged fields belong to the finite element
  * space. See the description at the top of the file.
  */
@@ -291,7 +291,7 @@ test()
   NSparam.simulation_control.dt       = 0.1;
   NSparam.simulation_control.time_end = 1.0;
 
-  // A second order element is used so that the reynolds stresses, which are
+  // A degree=2 element is used so that the reynolds stresses, which are
   // quadratic in space, belong to the finite element space and are therefore
   // independent of the mesh. The matrix-free solver requires an equal order
   // interpolation.
