@@ -56,38 +56,6 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Manifolds
-#---------------------------------------------------
-
-subsection manifolds
-  set number = 4
-  subsection manifold 0
-    set id                = 0
-    set type              = cylindrical
-    set point coordinates = 0, 0, 0
-    set direction vector  = 1, 0, 0
-  end
-  subsection manifold 1
-    set id                = 1
-    set type              = cylindrical
-    set point coordinates = 0, 0, 0
-    set direction vector  = 1, 0, 0
-  end
-  subsection manifold 2
-    set id                = 4
-    set type              = cylindrical
-    set point coordinates = 0, 0, 0
-    set direction vector  = 1, 0, 0
-  end
-  subsection manifold 3
-    set id                = 5
-    set type              = cylindrical
-    set point coordinates = 0, 0, 0
-    set direction vector  = 1, 0, 0
-  end
-end
-
-#---------------------------------------------------
 # Mortar
 #---------------------------------------------------
 
@@ -112,14 +80,14 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number                = 3
+  set number                = 5
   set fix pressure constant = true
   subsection bc 0
     set id   = 1
     set type = noslip
   end
   subsection bc 1
-    set id   = 0, 2, 3, 5, 6, 7
+    set id   = 0, 5
     set type = none
   end
   subsection bc 2
@@ -134,6 +102,18 @@ subsection boundary conditions
     subsection w
       set Function expression = y
     end
+  end
+  subsection bc 3
+    set id                 = 2
+    set type               = periodic
+    set periodic id        = 3
+    set periodic direction = 0
+  end
+  subsection bc 4
+    set id                 = 6
+    set type               = periodic
+    set periodic id        = 7
+    set periodic direction = 0
   end
 end
 
@@ -165,10 +145,30 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method            = gmres
-    set relative residual = 1e-4
-    set minimum residual  = 1e-11
-    set preconditioner    = amg
-    set verbosity         = quiet
+    set method                         = gmres
+    set max iters                      = 2000
+    set max krylov vectors             = 2000
+    set relative residual              = 1e-4
+    set minimum residual               = 1e-14
+    set preconditioner                 = ilu
+    set verbosity                      = quiet
+    set mg enable hessians in jacobian = true
+
+    # MG parameters
+    set mg verbosity = extra verbose
+
+    # Relaxation smoother parameters
+    set mg smoother iterations          = 10
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = inverse diagonal
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 10
+    set eig estimation verbosity       = verbose
+
+    # Coarse-grid solver parameters
+    set mg coarse grid solver = direct
+    set mg coarsening type    = hp
   end
 end
