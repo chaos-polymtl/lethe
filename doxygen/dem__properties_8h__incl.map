@@ -1,7 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/core/dem_properties.h" name="/home/runner/work/lethe/lethe/include/core/dem_properties.h">
-<area shape="rect" id="Node000001" title="DEM particle property definitions and output name management." alt="" coords="5,5,188,60"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="25,108,83,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,61,68,97,64,94,81,59"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="108,108,171,133"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="112,59,130,94,125,97,107,61"/>
+<area shape="rect" id="Node000001" title="DEM particle property definitions and output name management." alt="" coords="43,5,226,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,64,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,62,61,101,57,97,102,58"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="89,108,181,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="137,60,137,94,132,94,132,60"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="205,108,267,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="167,58,214,97,210,101,164,62"/>
 </map>

@@ -854,7 +854,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>If set to enable, dynamic_flow_control allows to control the flow by executing space-average velocity and beta coefficient force calculation at each time step. </p>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a58687be4a84054002bf2ac1d0e523550">CFDDEMSolver&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMMatrixFree.html#ac4c1eb863a0e68cd39dcf2c4064f2680">CFDDEMMatrixFree&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a8b063dc5f848779956fa79d09daa956f">CFDDEMSolver&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classCFDDEMMatrixFree.html#a5624db247d75d4082a7219b5f3669acf">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l00221">221</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -1023,7 +1023,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 <p>Gather and return vector of output structs that are particular to some applications. </p>
 <dl class="section return"><dt>Returns</dt><dd>Vector of OutputStructs that will be used to write the output results as VTU files. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classFluidDynamicsSharp.html#a494d80a2c737bf43e7816118321ba43d">FluidDynamicsSharp&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsVANS.html#a14ae4d028338147c577739d43e0e5df6">FluidDynamicsVANS&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsVANSMatrixFree.html#a565378c53e79e0dd166e6328ded1f7b2">FluidDynamicsVANSMatrixFree&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classFluidDynamicsSharp.html#a494d80a2c737bf43e7816118321ba43d">FluidDynamicsSharp&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsVANS.html#a7bc9c130448d9d4cac8e6259450d81b8">FluidDynamicsVANS&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classFluidDynamicsVANSMatrixFree.html#accbfcc52568c3bfc4415bf38d225c2a2">FluidDynamicsVANSMatrixFree&lt; dim, PropertiesIndex &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02620">2620</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -1108,7 +1108,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 <p>Returns a vector of references to TableHandler objects that needs to be serialized/ deserialized for a given solver. </p>
 <dl class="section return"><dt>Returns</dt><dd>Structure containing a vector of references to TableHandler objects that needs to be serialized/deserialized for a given solver, and their corresponding file names. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a3ac66d723494bdadd8ec221043cc1878">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a739637b70e23ed9b676ad2f714febb9c">CFDDEMMatrixFree&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#a70db00a80d2713ea91311020ce472ca3">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a1c8fbeba8df8aac737646aa4fa73fea2">CFDDEMSolver&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#acf9af6876801be4a4959ccdeabf5c950">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#a70db00a80d2713ea91311020ce472ca3">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l03086">3086</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -1637,7 +1637,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Do a regular CFD iteration. </p>
 
-<p>Reimplemented in <a class="el" href="classFluidDynamicsVANS.html#af5702dddac75fa2e12d67391c95b0ccd">FluidDynamicsVANS&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classFluidDynamicsVANS.html#a1d4424a58116155524bc542a4c7d1d8d">FluidDynamicsVANS&lt; dim, PropertiesIndex &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l00648">648</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -1947,7 +1947,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Post-process fluid dynamics after an iteration. </p>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#aef7bc5774f96b116540adad012ffdc65">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#ade90819876b36a2ef1efbd2702f7cc7f">CFDDEMMatrixFree&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsSharp.html#ae9b51761f62a86bbcb29e876913f5eca">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a5add23f6ef87d44ff551f79eb754afc2">CFDDEMSolver&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a13174346282943dd544a3cd7e416519e">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classFluidDynamicsSharp.html#ae9b51761f62a86bbcb29e876913f5eca">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01404">1404</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -2047,7 +2047,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Restart a previous simulation from a checkpoint file. </p>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a8e1bf1e148eb7c08ddc4da5d1b1f2304">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a8045d71b4a56f93383da078d10019ae0">CFDDEMMatrixFree&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsSharp.html#a0cf0af6991bf6050350de577b2ecd668">FluidDynamicsSharp&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a61a5b832f19f68cfb8bb07ccb9cfd8ab">CFDDEMSolver&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a55f58da3f68ddb209f7232db6b007025">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classFluidDynamicsSharp.html#a0cf0af6991bf6050350de577b2ecd668">FluidDynamicsSharp&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02287">2287</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -2287,7 +2287,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02171">2171</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00466">announce_string()</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l00892">mortar_workload_imbalance()</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l01789">LetheGridTools::rotate_mapping()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00466">announce_string()</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l00892">mortar_workload_imbalance()</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l01809">LetheGridTools::rotate_mapping()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -2336,7 +2336,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a788b8a3a20d758ef9482763c1680499b">CFDDEMSolver&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMMatrixFree.html#aa84ed2ab820c62e4cb09d6437f66423d">CFDDEMMatrixFree&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a797a29909e2c1940466edf81c83040d7">CFDDEMSolver&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classCFDDEMMatrixFree.html#a1b8c140b6f47d07d45b990d59338fd2f">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00246">246</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
@@ -2508,7 +2508,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Initialize the degree of freedom and the memory associated with them for fluid dynamics and enabled auxiliary physics. </p>
 
-<p>Reimplemented in <a class="el" href="classFluidDynamicsVANS.html#a8b4d9d45b4f0e1fe9e3cb5d6c127c2fa">FluidDynamicsVANS&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsVANSMatrixFree.html#ab69c54228f25ad4d57f48366413a3128">FluidDynamicsVANSMatrixFree&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classFluidDynamicsVANS.html#a79bb9e27567582e8af3c2857d4f2dad7">FluidDynamicsVANS&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classFluidDynamicsVANSMatrixFree.html#a8b1ed5393b04b14240ed93ed3ad1f540">FluidDynamicsVANSMatrixFree&lt; dim, PropertiesIndex &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00229">229</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
@@ -2853,7 +2853,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Write the checkpoint. </p>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#af85e466d9fa806d09e531d1e9203c53a">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a0e02d0c9f3539d127388b67dbdc1f796">CFDDEMMatrixFree&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsSharp.html#a2114b03f4318546330da75b20dd566b3">FluidDynamicsSharp&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#ae46440c2a8a1a13504eaf34abbcfbfdd">CFDDEMSolver&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a0e590873da4dd07ade711db2fe810ccb">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classFluidDynamicsSharp.html#a2114b03f4318546330da75b20dd566b3">FluidDynamicsSharp&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l03156">3156</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 

@@ -1,4 +1,4 @@
-<map id="VANSAssemblerSaffmanMei&lt; dim &gt;" name="VANSAssemblerSaffmanMei&lt; dim &gt;">
+<map id="VANSAssemblerSaffmanMei&lt; dim, PropertiesIndex &gt;" name="VANSAssemblerSaffmanMei&lt; dim, PropertiesIndex &gt;">
 <area shape="rect" id="Node000001" title="Assembler for the lift force using the Saffman&#45;Mei model." alt="" coords="5,93,211,133"/>
 <area shape="rect" id="Node000002" href="$classParticleFluidAssemblerBase.html" title="Interface for all assemblers of particle&#45;fluid interactions in the VANS equations." alt="" coords="7,5,209,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,59,111,93,105,93,105,59"/>

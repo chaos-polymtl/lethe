@@ -90,13 +90,16 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">DEM Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
+<tr class="memitem:namespaceDEM_1_1CFDDEMMPProperties" id="r_namespaceDEM_1_1CFDDEMMPProperties"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html">CFDDEMMPProperties</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceDEM_1_1CFDDEMProperties" id="r_namespaceDEM_1_1CFDDEMProperties"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1CFDDEMProperties.html">CFDDEMProperties</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceDEM_1_1DEMMPProperties" id="r_namespaceDEM_1_1DEMMPProperties"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1DEMMPProperties.html">DEMMPProperties</a></td></tr>
@@ -113,13 +116,15 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:ad6f19a136c3504e472457942a25bac01" id="r_ad6f19a136c3504e472457942a25bac01"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:ad6f19a136c3504e472457942a25bac01"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">matching_dem_properties_index</a> = std::conditional_t&lt; <a class="el" href="namespaceDEM.html#a3a7808dc58cf90a67c0d294d8a7893d9">has_thermal_properties</a>&lt; PropertiesIndex &gt;, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEMProperties::PropertiesIndex</a> &gt;</td></tr>
+<tr class="separator:ad6f19a136c3504e472457942a25bac01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef67e3518b42018c6fb5db80f6a9c4f7" id="r_aef67e3518b42018c6fb5db80f6a9c4f7"><td class="memItemLeft" align="right" valign="top">typedef unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#aef67e3518b42018c6fb5db80f6a9c4f7">global_face_id</a></td></tr>
 <tr class="separator:aef67e3518b42018c6fb5db80f6a9c4f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:ace9d7c6b123aa13027ca7915f1fa4d16" id="r_ace9d7c6b123aa13027ca7915f1fa4d16"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16">SolverType</a> { <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d">dem</a>
-, <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16a78ae406074be6be7fab62b1c41b968dd">cfd_dem</a>
 , <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12">dem_mp</a>
  }</td></tr>
 <tr class="separator:ace9d7c6b123aa13027ca7915f1fa4d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,6 +137,8 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a7d860d523c8964d7ff5d28121a3cdcc5" id="r_a7d860d523c8964d7ff5d28121a3cdcc5"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a7d860d523c8964d7ff5d28121a3cdcc5">is_stored_at_the_same_index</a> (const int first_index, const int second_index)</td></tr>
+<tr class="separator:a7d860d523c8964d7ff5d28121a3cdcc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a8aca4f226de77c7ee7cf037ee2d04f" id="r_a7a8aca4f226de77c7ee7cf037ee2d04f"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2b">dem_statistic_variable</a> var&gt; </td></tr>
 <tr class="memitem:a7a8aca4f226de77c7ee7cf037ee2d04f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">calculate_granular_statistics</a> (const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:a7a8aca4f226de77c7ee7cf037ee2d04f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,20 +176,45 @@ Functions</h2></td></tr>
 <tr class="separator:a418524084cb7232bccc6a417bd1ffad9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aadbe01994fed33c83b5b3fbc67e32b21" id="r_aadbe01994fed33c83b5b3fbc67e32b21"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#aadbe01994fed33c83b5b3fbc67e32b21">calculate_granular_statistics&lt; 2, DEM::DEMMPProperties::PropertiesIndex, dem_statistic_variable::translational_kinetic_energy &gt;</a> (const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:aadbe01994fed33c83b5b3fbc67e32b21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59b2898558f946629a26330eecdfc987" id="r_a59b2898558f946629a26330eecdfc987"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a59b2898558f946629a26330eecdfc987">calculate_granular_statistics&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::translational_kinetic_energy &gt;</a> (const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:a59b2898558f946629a26330eecdfc987"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68dbdc522f16e374df9b08afad4f2f7a" id="r_a68dbdc522f16e374df9b08afad4f2f7a"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a68dbdc522f16e374df9b08afad4f2f7a">calculate_granular_statistics&lt; 3, DEM::DEMMPProperties::PropertiesIndex, dem_statistic_variable::translational_kinetic_energy &gt;</a> (const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:a68dbdc522f16e374df9b08afad4f2f7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27ddc325dd7f6a5eac144d83bc6b80a9" id="r_a27ddc325dd7f6a5eac144d83bc6b80a9"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a27ddc325dd7f6a5eac144d83bc6b80a9">calculate_granular_statistics&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::translational_kinetic_energy &gt;</a> (const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:a27ddc325dd7f6a5eac144d83bc6b80a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a818d540253d830ca6e1e3490693c6a71" id="r_a818d540253d830ca6e1e3490693c6a71"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a818d540253d830ca6e1e3490693c6a71">calculate_granular_statistics&lt; 2, DEM::DEMMPProperties::PropertiesIndex, dem_statistic_variable::rotational_kinetic_energy &gt;</a> (const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:a818d540253d830ca6e1e3490693c6a71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b064e9922dfdd3ffb59ee6f717a3c22" id="r_a8b064e9922dfdd3ffb59ee6f717a3c22"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a8b064e9922dfdd3ffb59ee6f717a3c22">calculate_granular_statistics&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::rotational_kinetic_energy &gt;</a> (const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:a8b064e9922dfdd3ffb59ee6f717a3c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a5417f39b7f47315af254ac20b2032a" id="r_a1a5417f39b7f47315af254ac20b2032a"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a1a5417f39b7f47315af254ac20b2032a">calculate_granular_statistics&lt; 3, DEM::DEMMPProperties::PropertiesIndex, dem_statistic_variable::rotational_kinetic_energy &gt;</a> (const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:a1a5417f39b7f47315af254ac20b2032a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e45802869697fef872879339a75d015" id="r_a0e45802869697fef872879339a75d015"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a0e45802869697fef872879339a75d015">calculate_granular_statistics&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::rotational_kinetic_energy &gt;</a> (const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:a0e45802869697fef872879339a75d015"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3afeaa8014a50098ae76d6225836cd7" id="r_aa3afeaa8014a50098ae76d6225836cd7"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#aa3afeaa8014a50098ae76d6225836cd7">calculate_granular_statistics&lt; 2, DEM::DEMMPProperties::PropertiesIndex, dem_statistic_variable::velocity &gt;</a> (const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:aa3afeaa8014a50098ae76d6225836cd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4049029d8eb8c043ff5d61029d5ce934" id="r_a4049029d8eb8c043ff5d61029d5ce934"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a4049029d8eb8c043ff5d61029d5ce934">calculate_granular_statistics&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::velocity &gt;</a> (const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:a4049029d8eb8c043ff5d61029d5ce934"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae445e994e9742dd7bbd346cfc4d8a86b" id="r_ae445e994e9742dd7bbd346cfc4d8a86b"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ae445e994e9742dd7bbd346cfc4d8a86b">calculate_granular_statistics&lt; 3, DEM::DEMMPProperties::PropertiesIndex, dem_statistic_variable::velocity &gt;</a> (const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:ae445e994e9742dd7bbd346cfc4d8a86b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8a101085adb555ab42a6db9737a9a71" id="r_ae8a101085adb555ab42a6db9737a9a71"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ae8a101085adb555ab42a6db9737a9a71">calculate_granular_statistics&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::velocity &gt;</a> (const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:ae8a101085adb555ab42a6db9737a9a71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa923caeabc23b270a0ea3003e5703422" id="r_aa923caeabc23b270a0ea3003e5703422"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#aa923caeabc23b270a0ea3003e5703422">calculate_granular_statistics&lt; 2, DEM::DEMMPProperties::PropertiesIndex, dem_statistic_variable::omega &gt;</a> (const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:aa923caeabc23b270a0ea3003e5703422"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af10d98436c9bced110728ed3ca4583a5" id="r_af10d98436c9bced110728ed3ca4583a5"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#af10d98436c9bced110728ed3ca4583a5">calculate_granular_statistics&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::omega &gt;</a> (const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:af10d98436c9bced110728ed3ca4583a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aceed8062f1d7e9b749dfa061f07c405d" id="r_aceed8062f1d7e9b749dfa061f07c405d"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#aceed8062f1d7e9b749dfa061f07c405d">calculate_granular_statistics&lt; 3, DEM::DEMMPProperties::PropertiesIndex, dem_statistic_variable::omega &gt;</a> (const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:aceed8062f1d7e9b749dfa061f07c405d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2154c4a406080b47c539565d84398d8" id="r_ae2154c4a406080b47c539565d84398d8"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ae2154c4a406080b47c539565d84398d8">calculate_granular_statistics&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::omega &gt;</a> (const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</td></tr>
+<tr class="separator:ae2154c4a406080b47c539565d84398d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a3a7808dc58cf90a67c0d294d8a7893d9" id="r_a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a3a7808dc58cf90a67c0d294d8a7893d9">has_thermal_properties</a> = false</td></tr>
+<tr class="separator:a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acda69e5351674a5179ca3a949874ef4b" id="r_acda69e5351674a5179ca3a949874ef4b"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:acda69e5351674a5179ca3a949874ef4b"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">has_fluid_coupling_properties</a> = false</td></tr>
+<tr class="separator:acda69e5351674a5179ca3a949874ef4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This namespace defines all the data containers and required operations on these containers for the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> solver. At the moment, only overloaded operators are here, but eventually all the data containers of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> solver will be moved here. </p>
@@ -202,6 +234,33 @@ Functions</h2></td></tr>
 <p>Defined global face id as a type to ensure that we know what the structures use as index. This is more verbose than unsigned int. </p>
 
 <p class="definition">Definition at line <a class="el" href="data__containers_8h_source.html#l00038">38</a> of file <a class="el" href="data__containers_8h_source.html">data_containers.h</a>.</p>
+
+</div>
+</div>
+<a id="ad6f19a136c3504e472457942a25bac01" name="ad6f19a136c3504e472457942a25bac01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6f19a136c3504e472457942a25bac01">&#9670;&#160;</a></span>matching_dem_properties_index</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PropertiesIndex &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">DEM::matching_dem_properties_index</a> = typedef std::conditional_t&lt;<a class="el" href="namespaceDEM.html#a3a7808dc58cf90a67c0d294d8a7893d9">has_thermal_properties</a>&lt;PropertiesIndex&gt;, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEMProperties::PropertiesIndex</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The pure <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> index set matching a given index set. </p>
+<p>A CFD-DEM simulation is usually started from the checkpoint of a pure <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation, whose particle handler carries fewer properties. This alias gives the index set that checkpoint must have been written with: a multiphysics CFD-DEM simulation is always restarted from a multiphysics <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation, so that the temperature and the specific heat of the particles are carried over rather than reset.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00400">400</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 
 </div>
 </div>
@@ -250,19 +309,18 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Identifies which type of solver is used by the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> particles. </p>
-<p>This is used to determine which index layout of the ParticleHandler PropertyPool corresponds to which set of properties. Three solver types are currently supported:</p><ul>
-<li>dem: pure <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation.</li>
-<li>cfd_dem: particles coupled to a CFD fluid solver (CFD-DEM), carrying additional properties for particle-fluid coupling.</li>
-<li>dem_mp: <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> multiphysics simulation with additional thermal properties. </li>
+<p>Identifies which physics is solved for the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> particles. </p>
+<p>Two solver types are currently supported:</p><ul>
+<li>dem: the particles only carry their kinematic properties.</li>
+<li>dem_mp: <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> multiphysics simulation, in which the particles also carry thermal properties.</li>
 </ul>
+<p>This is independent of the presence of a fluid: it is the application which decides whether the particles are coupled to a CFD solver, and thus whether the CFD-DEM index layout of the ParticleHandler PropertyPool is used. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d" name="ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d"></a>dem&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ace9d7c6b123aa13027ca7915f1fa4d16a78ae406074be6be7fab62b1c41b968dd" name="ace9d7c6b123aa13027ca7915f1fa4d16a78ae406074be6be7fab62b1c41b968dd"></a>cfd_dem&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12" name="ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12"></a>dem_mp&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00033">33</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00037">37</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 
 </div>
 </div>
@@ -321,6 +379,118 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespaceDEM
 <p class="definition">Definition at line <a class="el" href="dem__post__processing_8cc_source.html#l00012">12</a> of file <a class="el" href="dem__post__processing_8cc_source.html">dem_post_processing.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00069">statistics::average</a>, <a class="el" href="core_2utilities_8h_source.html#l00063">statistics::max</a>, <a class="el" href="core_2utilities_8h_source.html#l00060">statistics::min</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">rotational_kinetic_energy</a>, <a class="el" href="core_2utilities_8h_source.html#l00066">statistics::total</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">translational_kinetic_energy</a>, and <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
+
+</div>
+</div>
+<a id="af10d98436c9bced110728ed3ca4583a5" name="af10d98436c9bced110728ed3ca4583a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af10d98436c9bced110728ed3ca4583a5">&#9670;&#160;</a></span>calculate_granular_statistics&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::omega &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">dem_statistic_variable::omega</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8b064e9922dfdd3ffb59ee6f717a3c22" name="a8b064e9922dfdd3ffb59ee6f717a3c22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b064e9922dfdd3ffb59ee6f717a3c22">&#9670;&#160;</a></span>calculate_granular_statistics&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::rotational_kinetic_energy &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">dem_statistic_variable::rotational_kinetic_energy</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a59b2898558f946629a26330eecdfc987" name="a59b2898558f946629a26330eecdfc987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59b2898558f946629a26330eecdfc987">&#9670;&#160;</a></span>calculate_granular_statistics&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::translational_kinetic_energy &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">dem_statistic_variable::translational_kinetic_energy</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4049029d8eb8c043ff5d61029d5ce934" name="a4049029d8eb8c043ff5d61029d5ce934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4049029d8eb8c043ff5d61029d5ce934">&#9670;&#160;</a></span>calculate_granular_statistics&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::velocity &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">dem_statistic_variable::velocity</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -642,6 +812,118 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespaceDEM
           <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEM::DEMProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">dem_statistic_variable::velocity</a> &gt; </td>
           <td>(</td>
           <td class="paramtype">const Particles::ParticleHandler&lt; 2, 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae2154c4a406080b47c539565d84398d8" name="ae2154c4a406080b47c539565d84398d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2154c4a406080b47c539565d84398d8">&#9670;&#160;</a></span>calculate_granular_statistics&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::omega &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">dem_statistic_variable::omega</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0e45802869697fef872879339a75d015" name="a0e45802869697fef872879339a75d015"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e45802869697fef872879339a75d015">&#9670;&#160;</a></span>calculate_granular_statistics&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::rotational_kinetic_energy &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">dem_statistic_variable::rotational_kinetic_energy</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a27ddc325dd7f6a5eac144d83bc6b80a9" name="a27ddc325dd7f6a5eac144d83bc6b80a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27ddc325dd7f6a5eac144d83bc6b80a9">&#9670;&#160;</a></span>calculate_granular_statistics&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::translational_kinetic_energy &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">dem_statistic_variable::translational_kinetic_energy</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae8a101085adb555ab42a6db9737a9a71" name="ae8a101085adb555ab42a6db9737a9a71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8a101085adb555ab42a6db9737a9a71">&#9670;&#160;</a></span>calculate_granular_statistics&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex, dem_statistic_variable::velocity &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classstatistics.html">statistics</a> <a class="el" href="namespaceDEM.html#a7a8aca4f226de77c7ee7cf037ee2d04f">DEM::calculate_granular_statistics</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">dem_statistic_variable::velocity</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; 3, 3 &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
         </tr>
         <tr>
@@ -993,6 +1275,126 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespaceDEM
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7d860d523c8964d7ff5d28121a3cdcc5" name="a7d860d523c8964d7ff5d28121a3cdcc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d860d523c8964d7ff5d28121a3cdcc5">&#9670;&#160;</a></span>is_stored_at_the_same_index()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool DEM::is_stored_at_the_same_index </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>first_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>second_index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compare the position of a property in two different index sets. </p>
+<p>The arguments are taken as integers rather than as enumerators so that enumerators of two distinct index sets may be compared without triggering -Wenum-compare.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first_index</td><td>Position of the property in the first index set. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">second_index</td><td>Position of the property in the second index set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the property is stored at the same position in both sets. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00273">273</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="acda69e5351674a5179ca3a949874ef4b" name="acda69e5351674a5179ca3a949874ef4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acda69e5351674a5179ca3a949874ef4b">&#9670;&#160;</a></span>has_fluid_coupling_properties</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool DEM::has_fluid_coupling_properties = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether a properties index set carries fluid coupling properties. </p>
+<p>This is true for the index sets used by the CFD-DEM solvers, which store the fluid-particle interaction forces and torques, the volumetric contribution and the momentum transfer coefficient of every particle.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00376">376</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
+
+</div>
+</div>
+<a id="a3a7808dc58cf90a67c0d294d8a7893d9" name="a3a7808dc58cf90a67c0d294d8a7893d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a7808dc58cf90a67c0d294d8a7893d9">&#9670;&#160;</a></span>has_thermal_properties</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool DEM::has_thermal_properties = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether a properties index set carries thermal properties. </p>
+<p>This is true for the index sets used by the multiphysics solvers, which store the temperature (T) and the specific heat of every particle. It is used to enable, at compile time, the heat transfer between particles and the integration of their temperature.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00355">355</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 
 </div>
 </div>

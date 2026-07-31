@@ -22,8 +22,7 @@ var searchData=
   ['velocitysource_19',['VelocitySource',['../structParameters_1_1VelocitySource.html',1,'Parameters']]],
   ['velocityverletintegrator_20',['VelocityVerletIntegrator',['../classVelocityVerletIntegrator.html',1,'']]],
   ['visualization_21',['Visualization',['../classVisualization.html',1,'']]],
-  ['visualization_3c_20dim_2c_20dem_3a_3acfddemproperties_3a_3apropertiesindex_20_3e_22',['Visualization&lt; dim, DEM::CFDDEMProperties::PropertiesIndex &gt;',['../classVisualization.html',1,'']]],
-  ['visualization_5fib_23',['Visualization_IB',['../structFluidDynamicsSharp_1_1Visualization__IB.html',1,'FluidDynamicsSharp']]],
-  ['voidfractionparameters_24',['VoidFractionParameters',['../classParameters_1_1VoidFractionParameters.html',1,'Parameters']]],
-  ['vorticitypostprocessor_25',['VorticityPostprocessor',['../classVorticityPostprocessor.html',1,'']]]
+  ['visualization_5fib_22',['Visualization_IB',['../structFluidDynamicsSharp_1_1Visualization__IB.html',1,'FluidDynamicsSharp']]],
+  ['voidfractionparameters_23',['VoidFractionParameters',['../classParameters_1_1VoidFractionParameters.html',1,'Parameters']]],
+  ['vorticitypostprocessor_24',['VorticityPostprocessor',['../classVorticityPostprocessor.html',1,'']]]
 ];

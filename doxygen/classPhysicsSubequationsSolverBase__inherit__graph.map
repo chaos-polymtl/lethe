@@ -10,8 +10,8 @@
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="538,23,572,23,572,28,538,28"/>
 <area shape="rect" id="Node000005" href="$classCLSLinearSubequationsSolver.html" title="Generalized solver for CLS linear subequations." alt="" coords="599,69,813,109"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="518,87,598,87,598,92,518,92"/>
-<area shape="rect" id="Node000008" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="637,133,775,173"/>
-<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="513,110,637,136,636,141,512,115"/>
+<area shape="rect" id="Node000008" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="618,133,794,173"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="513,110,618,132,617,137,512,115"/>
 <area shape="rect" id="Node000006" href="$classCLSCurvatureProjection.html" title="CLS curvature L2 projection solver." alt="" coords="904,37,1079,77"/>
 <area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="826,73,903,64,904,70,827,78"/>
 <area shape="rect" id="Node000007" href="$classCLSPhaseGradientProjection.html" title="CLS phase indicator gradient L2 projection solver." alt="" coords="888,101,1095,141"/>

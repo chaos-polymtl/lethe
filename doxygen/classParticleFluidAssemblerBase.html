@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: ParticleFluidAssemblerBase&lt; dim &gt; Class Template Reference</title>
+<title>Lethe Open-Source Library: ParticleFluidAssemblerBase&lt; dim, PropertiesIndex &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -88,49 +88,50 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classParticleFluidAssemblerBase-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">ParticleFluidAssemblerBase&lt; dim &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+  <div class="headertitle"><div class="title">ParticleFluidAssemblerBase&lt; dim, PropertiesIndex &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for ParticleFluidAssemblerBase&lt; dim &gt;:</div>
+Inheritance diagram for ParticleFluidAssemblerBase&lt; dim, PropertiesIndex &gt;:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classParticleFluidAssemblerBase__inherit__graph.svg" width="482" height="819"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a273a79d7265d8eaf8af65287186f4fea" id="r_a273a79d7265d8eaf8af65287186f4fea"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFluidAssemblerBase.html#a273a79d7265d8eaf8af65287186f4fea">calculate_particle_fluid_interactions</a> (<a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data)=0</td></tr>
-<tr class="separator:a273a79d7265d8eaf8af65287186f4fea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2be34034f9dbc8964ba19e966f3dc0f3" id="r_a2be34034f9dbc8964ba19e966f3dc0f3"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFluidAssemblerBase.html#a2be34034f9dbc8964ba19e966f3dc0f3">~ParticleFluidAssemblerBase</a> ()=default</td></tr>
-<tr class="separator:a2be34034f9dbc8964ba19e966f3dc0f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7517a2e7a93030bd92b1525dd678c032" id="r_a7517a2e7a93030bd92b1525dd678c032"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFluidAssemblerBase.html#a7517a2e7a93030bd92b1525dd678c032">calculate_particle_fluid_interactions</a> (<a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data)=0</td></tr>
+<tr class="separator:a7517a2e7a93030bd92b1525dd678c032"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1fbd0c5f5626ec3ba47aaaf4189461f" id="r_af1fbd0c5f5626ec3ba47aaaf4189461f"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFluidAssemblerBase.html#af1fbd0c5f5626ec3ba47aaaf4189461f">~ParticleFluidAssemblerBase</a> ()=default</td></tr>
+<tr class="separator:af1fbd0c5f5626ec3ba47aaaf4189461f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class ParticleFluidAssemblerBase&lt; dim &gt;</div><p>Interface for all assemblers of particle-fluid interactions in the VANS equations. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
+class ParticleFluidAssemblerBase&lt; dim, PropertiesIndex &gt;</div><p>Interface for all assemblers of particle-fluid interactions in the VANS equations. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00040">40</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00042">42</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a2be34034f9dbc8964ba19e966f3dc0f3" name="a2be34034f9dbc8964ba19e966f3dc0f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2be34034f9dbc8964ba19e966f3dc0f3">&#9670;&#160;</a></span>~ParticleFluidAssemblerBase()</h2>
+<a id="af1fbd0c5f5626ec3ba47aaaf4189461f" name="af1fbd0c5f5626ec3ba47aaaf4189461f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1fbd0c5f5626ec3ba47aaaf4189461f">&#9670;&#160;</a></span>~ParticleFluidAssemblerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt; dim &gt;::~<a class="el" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a> </td>
+          <td class="memname">virtual <a class="el" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt; dim, PropertiesIndex &gt;::~<a class="el" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -148,19 +149,19 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a273a79d7265d8eaf8af65287186f4fea" name="a273a79d7265d8eaf8af65287186f4fea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a273a79d7265d8eaf8af65287186f4fea">&#9670;&#160;</a></span>calculate_particle_fluid_interactions()</h2>
+<a id="a7517a2e7a93030bd92b1525dd678c032" name="a7517a2e7a93030bd92b1525dd678c032"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7517a2e7a93030bd92b1525dd678c032">&#9670;&#160;</a></span>calculate_particle_fluid_interactions()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt; dim &gt;::calculate_particle_fluid_interactions </td>
+          <td class="memname">virtual void <a class="el" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt; dim, PropertiesIndex &gt;::calculate_particle_fluid_interactions </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em></td><td>)</td>
@@ -183,7 +184,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classVANSAssemblerDiFelice.html#a2941d7f043d269f35dab45fe3871f9bd">VANSAssemblerDiFelice&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerRong.html#af714ea11807cd062600394978a03b311">VANSAssemblerRong&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerDallavalle.html#a3608798d90d4afd2a1281c57db96f368">VANSAssemblerDallavalle&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerKochHill.html#a7024cd1bf5b0f1e234cfaa2433973345">VANSAssemblerKochHill&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerBeetstra.html#ac9682f2aef113d9b6c6e702c872407ae">VANSAssemblerBeetstra&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerGidaspow.html#a2e17871dcacfd713d869cbe8c8f23e82">VANSAssemblerGidaspow&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerSaffmanMei.html#a09c5b02a7e244c6bc49b267d1bdc3f82">VANSAssemblerSaffmanMei&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerMagnus.html#a6c4c84aeb38167bcf0fd85dd8eee9741">VANSAssemblerMagnus&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerViscousTorque.html#a2421ae9ebbf7794c6b5827ce905b499f">VANSAssemblerViscousTorque&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerVorticalTorque.html#a42d73e5e1c8b9b3e9856f13353b07b09">VANSAssemblerVorticalTorque&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerBuoyancy.html#a116dac0207e2f9a89be2de9eb4af313f">VANSAssemblerBuoyancy&lt; dim &gt;</a>, <a class="el" href="classVANSAssemblerPressureForce.html#ab71e6ed101789738af9d0a692a33361b">VANSAssemblerPressureForce&lt; dim &gt;</a>, and <a class="el" href="classVANSAssemblerShearForce.html#a0dc43fd65e251ecd4557050fd512234f">VANSAssemblerShearForce&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classVANSAssemblerDiFelice.html#a286b47b3ff9139189cb0133e5c0f2371">VANSAssemblerDiFelice&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerRong.html#ad4f9e4e5fa7b7970c7109830746c2e1e">VANSAssemblerRong&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerDallavalle.html#a03e4e537d4e1a3cdcc030659ef584a6d">VANSAssemblerDallavalle&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerKochHill.html#a64d652cb4a0a7bb97cc280cc3d511591">VANSAssemblerKochHill&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerBeetstra.html#ac3fc5a23981505f2d6eed5f3c520cc5e">VANSAssemblerBeetstra&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerGidaspow.html#acbbc1c94fbe94ac78bede0e41105b1ba">VANSAssemblerGidaspow&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerSaffmanMei.html#a2e661753ccae48683464851ace9d529c">VANSAssemblerSaffmanMei&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerMagnus.html#ab3194f7fcc474473d9d98c094038c73c">VANSAssemblerMagnus&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerViscousTorque.html#ac1e16c3d42cad73a951710d059d1eb77">VANSAssemblerViscousTorque&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerVorticalTorque.html#a18ba19476cc6ef95de26043eddee4472">VANSAssemblerVorticalTorque&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerBuoyancy.html#a42ed6235f5a0a0d6bb462292e25c16d2">VANSAssemblerBuoyancy&lt; dim, PropertiesIndex &gt;</a>, <a class="el" href="classVANSAssemblerPressureForce.html#ae62fd11dfd360e8d1916f299f4524494">VANSAssemblerPressureForce&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classVANSAssemblerShearForce.html#a07fd41161792d3a1b8917c2623c7d873">VANSAssemblerShearForce&lt; dim, PropertiesIndex &gt;</a>.</p>
 
 </div>
 </div>

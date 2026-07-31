@@ -1,7 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/multiphysics_integrator.h" name="/home/runner/work/lethe/lethe/include/dem/multiphysics_integrator.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="101,5,332,60"/>
-<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,115,196,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,71,124,117,121,113,174,67"/>
-<area shape="rect" id="Node000003" href="$multiphysics__integrator_8cc.html" title=" " alt="" coords="221,108,447,163"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="260,67,305,106,302,110,256,71"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="333,5,564,60"/>
+<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,123,196,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="352,67,209,111,162,125,160,120,208,105,350,62"/>
+<area shape="rect" id="Node000003" href="$multiphysics__integrator_8cc.html" title=" " alt="" coords="221,115,447,170"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="412,72,364,117,360,113,408,68"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="472,115,655,170"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="489,68,537,113,533,117,485,72"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="679,108,874,177"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="542,62,680,107,678,112,541,67"/>
 </map>

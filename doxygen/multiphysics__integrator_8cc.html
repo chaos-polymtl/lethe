@@ -112,6 +112,10 @@ Functions</h2></td></tr>
 <tr class="separator:a4502e77b92c6bb159d2eaad63ca6e106"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5355324a6f5f96a1dfe2ea78d1a78b9" id="r_ae5355324a6f5f96a1dfe2ea78d1a78b9"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__integrator_8cc.html#ae5355324a6f5f96a1dfe2ea78d1a78b9">integrate_temperature&lt; 3, DEM::DEMMPProperties::PropertiesIndex &gt;</a> (Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const double dt, std::vector&lt; double &gt; &amp;heat_transfer_rate, const std::vector&lt; double &gt; &amp;heat_source)</td></tr>
 <tr class="separator:ae5355324a6f5f96a1dfe2ea78d1a78b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6d32bfd8b6889d0ad27cacb74908df7" id="r_aa6d32bfd8b6889d0ad27cacb74908df7"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__integrator_8cc.html#aa6d32bfd8b6889d0ad27cacb74908df7">integrate_temperature&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex &gt;</a> (Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, const double dt, std::vector&lt; double &gt; &amp;heat_transfer_rate, const std::vector&lt; double &gt; &amp;heat_source)</td></tr>
+<tr class="separator:aa6d32bfd8b6889d0ad27cacb74908df7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1e6de6c8da37c4f67994e3d622b39e6" id="r_ab1e6de6c8da37c4f67994e3d622b39e6"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__integrator_8cc.html#ab1e6de6c8da37c4f67994e3d622b39e6">integrate_temperature&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex &gt;</a> (Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, const double dt, std::vector&lt; double &gt; &amp;heat_transfer_rate, const std::vector&lt; double &gt; &amp;heat_source)</td></tr>
+<tr class="separator:ab1e6de6c8da37c4f67994e3d622b39e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a5b02bbc46c1c8a0d5d812d4a505f7fc6" name="a5b02bbc46c1c8a0d5d812d4a505f7fc6"></a>
@@ -176,6 +180,46 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 </div>
 </div>
+<a id="aa6d32bfd8b6889d0ad27cacb74908df7" name="aa6d32bfd8b6889d0ad27cacb74908df7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6d32bfd8b6889d0ad27cacb74908df7">&#9670;&#160;</a></span>integrate_temperature&lt; 2, DEM::CFDDEMMPProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="multiphysics__integrator_8h.html#a5b02bbc46c1c8a0d5d812d4a505f7fc6">integrate_temperature</a>&lt; 2, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">Particles::ParticleHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>heat_transfer_rate</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>heat_source</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a4502e77b92c6bb159d2eaad63ca6e106" name="a4502e77b92c6bb159d2eaad63ca6e106"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4502e77b92c6bb159d2eaad63ca6e106">&#9670;&#160;</a></span>integrate_temperature&lt; 2, DEM::DEMMPProperties::PropertiesIndex &gt;()</h2>
 
@@ -186,6 +230,46 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
           <td class="memname">template void <a class="el" href="multiphysics__integrator_8h.html#a5b02bbc46c1c8a0d5d812d4a505f7fc6">integrate_temperature</a>&lt; 2, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEM::DEMMPProperties::PropertiesIndex</a> &gt; </td>
           <td>(</td>
           <td class="paramtype">Particles::ParticleHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>heat_transfer_rate</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>heat_source</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab1e6de6c8da37c4f67994e3d622b39e6" name="ab1e6de6c8da37c4f67994e3d622b39e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1e6de6c8da37c4f67994e3d622b39e6">&#9670;&#160;</a></span>integrate_temperature&lt; 3, DEM::CFDDEMMPProperties::PropertiesIndex &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="multiphysics__integrator_8h.html#a5b02bbc46c1c8a0d5d812d4a505f7fc6">integrate_temperature</a>&lt; 3, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">Particles::ParticleHandler&lt; 3 &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
         </tr>
         <tr>

@@ -1,11 +1,11 @@
 <map id="PhysicsLinearSubequationsSolver" name="PhysicsLinearSubequationsSolver">
-<area shape="rect" id="Node000001" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="200,79,399,119"/>
+<area shape="rect" id="Node000001" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="209,79,408,119"/>
 <area shape="rect" id="Node000003" href="$classCLSLinearSubequationsSolver.html" title="Generalized solver for CLS linear subequations." alt="" coords="92,167,307,207"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="269,130,223,168,220,164,265,126"/>
-<area shape="rect" id="Node000006" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="331,167,470,207"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="334,126,380,164,377,168,331,130"/>
-<area shape="rect" id="Node000002" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="183,5,415,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="302,44,302,79,297,79,297,44"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="275,129,225,169,222,164,272,125"/>
+<area shape="rect" id="Node000006" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="331,167,507,207"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="346,125,396,164,393,169,343,129"/>
+<area shape="rect" id="Node000002" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="193,5,425,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="311,44,311,79,306,79,306,44"/>
 <area shape="rect" id="Node000004" href="$classCLSCurvatureProjection.html" title="CLS curvature L2 projection solver." alt="" coords="5,255,180,295"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="167,217,118,257,115,252,163,213"/>
 <area shape="rect" id="Node000005" href="$classCLSPhaseGradientProjection.html" title="CLS phase indicator gradient L2 projection solver." alt="" coords="204,255,411,295"/>

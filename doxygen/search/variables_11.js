@@ -14,7 +14,7 @@ var searchData=
   ['ramp_5fviscosity_11',['ramp_viscosity',['../structParameters_1_1Ramp.html#a1f0b020a72b5d33f7198d2c041b61cc6',1,'Parameters::Ramp']]],
   ['ray_5ftracing_5finfo_12',['ray_tracing_info',['../classRayTracingSolverParameters.html#ab7ac52b91229c69d39b8e30cea7c9205',1,'RayTracingSolverParameters']]],
   ['rayleigh_5fcharacteristic_5ftime_13',['rayleigh_characteristic_time',['../classSubSimulationControlDEM.html#a45c86d15bbc3ccf64bc3b4bd2e2a3d70',1,'SubSimulationControlDEM']]],
-  ['rayleigh_5ftime_5fstep_14',['rayleigh_time_step',['../classCFDDEMSolver.html#a420b8033386312f89ffe3003a0f7298d',1,'CFDDEMSolver::rayleigh_time_step'],['../classCFDDEMMatrixFree.html#a5aaa6d10c7a3fd9141635de890fa71fd',1,'CFDDEMMatrixFree::rayleigh_time_step']]],
+  ['rayleigh_5ftime_5fstep_14',['rayleigh_time_step',['../classCFDDEMSolver.html#a43084a949cc398a9a19c76789305c006',1,'CFDDEMSolver::rayleigh_time_step'],['../classCFDDEMMatrixFree.html#a1f3465f2a79a46c2875b41d7d2076b17',1,'CFDDEMMatrixFree::rayleigh_time_step']]],
   ['re_5fparticle_15',['Re_particle',['../classNavierStokesScratchData.html#a91011b4cd4861cad33fe26dd60c010b8',1,'NavierStokesScratchData']]],
   ['read_5fcheckpoint_5ftrigger_16',['read_checkpoint_trigger',['../classDEMActionManager.html#ac15057f7e671c993d88c6c1d58422982',1,'DEMActionManager']]],
   ['read_5fdem_17',['read_dem',['../classParameters_1_1VoidFractionParameters.html#a81123e705cd9576f27774ab57cd67585',1,'Parameters::VoidFractionParameters']]],

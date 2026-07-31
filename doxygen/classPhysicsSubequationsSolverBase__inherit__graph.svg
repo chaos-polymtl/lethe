@@ -116,9 +116,9 @@
 <g id="Node000008" class="node">
 <title>Node8</title>
 <g id="a_Node000008"><a xlink:href="classParticleProjector.html" target="_top" xlink:title="Particle information projection. This class manages the calculation of the projection of the particle...">
-<polygon fill="white" stroke="#666666" points="577.5,-30 473.5,-30 473.5,0 577.5,0 577.5,-30"/>
-<text text-anchor="start" x="481.5" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">ParticleProjector&lt;</text>
-<text text-anchor="middle" x="525.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00"> dim &gt;</text>
+<polygon fill="white" stroke="#666666" points="591.5,-30 459.5,-30 459.5,0 591.5,0 591.5,-30"/>
+<text text-anchor="start" x="467.5" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">ParticleProjector&lt;</text>
+<text text-anchor="middle" x="525.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00"> dim, PropertiesIndex &gt;</text>
 </a>
 </g>
 </g>
@@ -126,7 +126,7 @@
 <g id="edge7_Node000004_Node000008" class="edge">
 <title>Node4&#45;&gt;Node8</title>
 <g id="a_edge7_Node000004_Node000008"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M380.65,-45.83C411.52,-39.21 445.91,-31.84 473.32,-25.97"/>
+<path fill="none" stroke="#63b8ff" d="M380.54,-45.85C406.42,-40.3 434.79,-34.22 459.44,-28.94"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="379.81,-42.43 370.76,-47.94 381.27,-49.27 379.81,-42.43"/>
 </a>
 </g>

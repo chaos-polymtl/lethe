@@ -1,7 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classMFNavierStokesPreconditionGMGBase.html" title="A geometric multigrid preconditioner compatible with the matrix&#45;free solver." alt="" coords="5,5,215,45"/>
-<area shape="rect" id="Node000001" href="$classMFNavierStokesPreconditionGMG.html" title="A geometric multigrid preconditioner implementation for incompressible flow." alt="" coords="263,5,472,45"/>
-<area shape="poly" id="edge88_Node000000_Node000001" title=" " alt="" coords="228,23,263,23,263,28,228,28"/>
-<area shape="rect" id="Node000002" href="$classMFNavierStokesVANSPreconditionGMG.html" title="A geometric multigrid preconditioner implementation for incompressible VANS equations." alt="" coords="520,5,764,45"/>
-<area shape="poly" id="edge89_Node000001_Node000002" title=" " alt="" coords="486,23,520,23,520,28,486,28"/>
+<area shape="rect" id="Node000000" href="$classMortarManagerBase.html" title="Base class for the mortar manager." alt="" coords="5,37,171,77"/>
+<area shape="rect" id="Node000001" href="$classMortarManagerCircle.html" title="Mortar manager class for circular interface." alt="" coords="221,5,379,45"/>
+<area shape="poly" id="edge91_Node000000_Node000001" title=" " alt="" coords="184,40,220,35,221,40,185,45"/>
+<area shape="rect" id="Node000002" href="$classMortarManagerLinear.html" title="Mortar manager class for linear interface." alt="" coords="219,69,381,109"/>
+<area shape="poly" id="edge92_Node000000_Node000002" title=" " alt="" coords="185,69,219,74,218,80,184,74"/>
 </map>

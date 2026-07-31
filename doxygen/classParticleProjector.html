@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: ParticleProjector&lt; dim &gt; Class Template Reference</title>
+<title>Lethe Open-Source Library: ParticleProjector&lt; dim, PropertiesIndex &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -92,46 +92,46 @@ $(function() {
 <a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classParticleProjector-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">ParticleProjector&lt; dim &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">ParticleProjector&lt; dim, PropertiesIndex &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for ParticleProjector&lt; dim &gt;:</div>
+Inheritance diagram for ParticleProjector&lt; dim, PropertiesIndex &gt;:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classParticleProjector__inherit__graph.svg" width="243" height="212"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3ca0291c062f9f7a9d2cabc9e864cdf9" id="r_a3ca0291c062f9f7a9d2cabc9e864cdf9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a3ca0291c062f9f7a9d2cabc9e864cdf9">ParticleProjector</a> (parallel::DistributedTriangulationBase&lt; dim &gt; *<a class="el" href="classParticleProjector.html#ae2964cca4b0c4dbd3ef54d9fab57e72f">triangulation</a>, std::shared_ptr&lt; <a class="el" href="classParameters_1_1VoidFractionParameters.html">Parameters::VoidFractionParameters</a>&lt; dim &gt; &gt; input_parameters, const <a class="el" href="structParameters_1_1LinearSolver.html">Parameters::LinearSolver</a> &amp;<a class="el" href="classParticleProjector.html#a244b1975f59c07d091e1c8a8dbe8f9c5">linear_solver_parameters</a>, Particles::ParticleHandler&lt; dim &gt; *<a class="el" href="classParticleProjector.html#a5bbc7785d064e05331657aa29e596431">particle_handler</a>, const unsigned int fe_degree, const bool simplex, const ConditionalOStream &amp;<a class="el" href="classPhysicsLinearSubequationsSolver.html#a8077bebe593826553b8ee4554428309c">pcout</a>)</td></tr>
-<tr class="separator:a3ca0291c062f9f7a9d2cabc9e864cdf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4965b0a0382b734d5f8aa5a70b796f43" id="r_a4965b0a0382b734d5f8aa5a70b796f43"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a4965b0a0382b734d5f8aa5a70b796f43">setup_dofs</a> () override</td></tr>
-<tr class="separator:a4965b0a0382b734d5f8aa5a70b796f43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0579c6354ef73587243ad47c514a19e4" id="r_a0579c6354ef73587243ad47c514a19e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a0579c6354ef73587243ad47c514a19e4">enable_multigrid_level_dofs</a> (const bool enabled=true)</td></tr>
-<tr class="separator:a0579c6354ef73587243ad47c514a19e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33331968e0849b6ece00173b6196b34f" id="r_a33331968e0849b6ece00173b6196b34f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a33331968e0849b6ece00173b6196b34f">setup_constraints</a> (const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions)</td></tr>
-<tr class="separator:a33331968e0849b6ece00173b6196b34f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5271694c3d91b7b4393b0c6b385c7240" id="r_a5271694c3d91b7b4393b0c6b385c7240"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a5271694c3d91b7b4393b0c6b385c7240">calculate_void_fraction</a> (const double time)</td></tr>
-<tr class="separator:a5271694c3d91b7b4393b0c6b385c7240"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54c5bb90644697d463f589d0c2081290" id="r_a54c5bb90644697d463f589d0c2081290"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
-<tr class="memitem:a54c5bb90644697d463f589d0c2081290"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a54c5bb90644697d463f589d0c2081290">calculate_particle_fluid_forces_projection</a> (const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;cfd_dem_parameters, DoFHandler&lt; dim &gt; &amp;fluid_dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_velocity_pressure_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_velocity_pressure_solution, const Tensor&lt; 1, 3 &gt; &amp;gravity, <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; scratch_data)</td></tr>
-<tr class="separator:a54c5bb90644697d463f589d0c2081290"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0eb5a936e34fbc45a07690030322689" id="r_ad0eb5a936e34fbc45a07690030322689"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ad0eb5a936e34fbc45a07690030322689">solve</a> () override</td></tr>
-<tr class="separator:ad0eb5a936e34fbc45a07690030322689"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a110f60956f9db8e8344046d7847036c0" id="r_a110f60956f9db8e8344046d7847036c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a110f60956f9db8e8344046d7847036c0">percolate_void_fraction</a> ()</td></tr>
-<tr class="separator:a110f60956f9db8e8344046d7847036c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98a596ad780a33bde2098e4b57995677" id="r_a98a596ad780a33bde2098e4b57995677"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a98a596ad780a33bde2098e4b57995677">initialize_void_fraction</a> (const double time)</td></tr>
-<tr class="separator:a98a596ad780a33bde2098e4b57995677"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac477f79f7e85f77c481f3605ee0768d" id="r_aac477f79f7e85f77c481f3605ee0768d"><td class="memTemplParams" colspan="2">template&lt;int property_start_index, int n_components&gt; </td></tr>
-<tr class="memitem:aac477f79f7e85f77c481f3605ee0768d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#aac477f79f7e85f77c481f3605ee0768d">calculate_field_projection</a> (<a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, property_start_index, n_components &gt; &amp;field_qcm)</td></tr>
-<tr class="separator:aac477f79f7e85f77c481f3605ee0768d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26a775d5c9ba7a1bc758aea3783307aa" id="r_a26a775d5c9ba7a1bc758aea3783307aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a26a775d5c9ba7a1bc758aea3783307aa">zero_out_and_ghost_auxiliary_fields</a> ()</td></tr>
-<tr class="separator:a26a775d5c9ba7a1bc758aea3783307aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a400f578ba1e710fc65fb46be9732eb28" id="r_a400f578ba1e710fc65fb46be9732eb28"><td class="memTemplParams" colspan="2">template&lt;int n_components, int property_start_index&gt; </td></tr>
-<tr class="memitem:a400f578ba1e710fc65fb46be9732eb28"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a400f578ba1e710fc65fb46be9732eb28">calculate_field_projection</a> (<a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, n_components, property_start_index &gt; &amp;field_qcm)</td></tr>
-<tr class="separator:a400f578ba1e710fc65fb46be9732eb28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0345c6ed33d5aa245e4dc07422f5fac" id="r_ae0345c6ed33d5aa245e4dc07422f5fac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ae0345c6ed33d5aa245e4dc07422f5fac">ParticleProjector</a> (parallel::DistributedTriangulationBase&lt; dim &gt; *<a class="el" href="classParticleProjector.html#a810641b68bbef6f6438ce37f70047612">triangulation</a>, std::shared_ptr&lt; <a class="el" href="classParameters_1_1VoidFractionParameters.html">Parameters::VoidFractionParameters</a>&lt; dim &gt; &gt; input_parameters, const <a class="el" href="structParameters_1_1LinearSolver.html">Parameters::LinearSolver</a> &amp;<a class="el" href="classParticleProjector.html#a07f1dc3581ebef2fbb83b3f461cdcaf5">linear_solver_parameters</a>, Particles::ParticleHandler&lt; dim &gt; *<a class="el" href="classParticleProjector.html#ac612b7585a931bb3d0a40021fb14ee9b">particle_handler</a>, const unsigned int fe_degree, const bool simplex, const ConditionalOStream &amp;<a class="el" href="classPhysicsLinearSubequationsSolver.html#a8077bebe593826553b8ee4554428309c">pcout</a>)</td></tr>
+<tr class="separator:ae0345c6ed33d5aa245e4dc07422f5fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae47bb620fe6f57936e5951da699b214b" id="r_ae47bb620fe6f57936e5951da699b214b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ae47bb620fe6f57936e5951da699b214b">setup_dofs</a> () override</td></tr>
+<tr class="separator:ae47bb620fe6f57936e5951da699b214b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac720806742f45ba49f9511dfa5ef137e" id="r_ac720806742f45ba49f9511dfa5ef137e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ac720806742f45ba49f9511dfa5ef137e">enable_multigrid_level_dofs</a> (const bool enabled=true)</td></tr>
+<tr class="separator:ac720806742f45ba49f9511dfa5ef137e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14b1e4bef6376c5c09821f94e93cf0f3" id="r_a14b1e4bef6376c5c09821f94e93cf0f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a14b1e4bef6376c5c09821f94e93cf0f3">setup_constraints</a> (const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions)</td></tr>
+<tr class="separator:a14b1e4bef6376c5c09821f94e93cf0f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17f9cb9dfaa87010992f239ca824661d" id="r_a17f9cb9dfaa87010992f239ca824661d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a17f9cb9dfaa87010992f239ca824661d">calculate_void_fraction</a> (const double time)</td></tr>
+<tr class="separator:a17f9cb9dfaa87010992f239ca824661d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae348371e43aa7655d4c73cc3b0e55923" id="r_ae348371e43aa7655d4c73cc3b0e55923"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:ae348371e43aa7655d4c73cc3b0e55923"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ae348371e43aa7655d4c73cc3b0e55923">calculate_particle_fluid_forces_projection</a> (const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;cfd_dem_parameters, DoFHandler&lt; dim &gt; &amp;fluid_dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_velocity_pressure_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_velocity_pressure_solution, const Tensor&lt; 1, 3 &gt; &amp;gravity, <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; scratch_data)</td></tr>
+<tr class="separator:ae348371e43aa7655d4c73cc3b0e55923"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af83c195705df10758dcd415193a406aa" id="r_af83c195705df10758dcd415193a406aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#af83c195705df10758dcd415193a406aa">solve</a> () override</td></tr>
+<tr class="separator:af83c195705df10758dcd415193a406aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad718f650c16f6c57654f1c21c799c19a" id="r_ad718f650c16f6c57654f1c21c799c19a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ad718f650c16f6c57654f1c21c799c19a">percolate_void_fraction</a> ()</td></tr>
+<tr class="separator:ad718f650c16f6c57654f1c21c799c19a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8afada8a39064eba4075ec323f7c679c" id="r_a8afada8a39064eba4075ec323f7c679c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a8afada8a39064eba4075ec323f7c679c">initialize_void_fraction</a> (const double time)</td></tr>
+<tr class="separator:a8afada8a39064eba4075ec323f7c679c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12a5a2c089c838de16bde035f95328b8" id="r_a12a5a2c089c838de16bde035f95328b8"><td class="memTemplParams" colspan="2">template&lt;int property_start_index, int n_components&gt; </td></tr>
+<tr class="memitem:a12a5a2c089c838de16bde035f95328b8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a12a5a2c089c838de16bde035f95328b8">calculate_field_projection</a> (<a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, property_start_index, n_components &gt; &amp;field_qcm)</td></tr>
+<tr class="separator:a12a5a2c089c838de16bde035f95328b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ca66e0ebcbbfcb5a539884a780b2287" id="r_a7ca66e0ebcbbfcb5a539884a780b2287"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a7ca66e0ebcbbfcb5a539884a780b2287">zero_out_and_ghost_auxiliary_fields</a> ()</td></tr>
+<tr class="separator:a7ca66e0ebcbbfcb5a539884a780b2287"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee455120be66376d0cee111fa3623314" id="r_aee455120be66376d0cee111fa3623314"><td class="memTemplParams" colspan="2">template&lt;int n_components, int property_start_index&gt; </td></tr>
+<tr class="memitem:aee455120be66376d0cee111fa3623314"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#aee455120be66376d0cee111fa3623314">calculate_field_projection</a> (<a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, n_components, property_start_index &gt; &amp;field_qcm)</td></tr>
+<tr class="separator:aee455120be66376d0cee111fa3623314"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPhysicsLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsLinearSubequationsSolver.html">PhysicsLinearSubequationsSolver</a></td></tr>
 <tr class="memitem:a852b65e89e97c5f5171b34bf89e6f6ac inherit pub_methods_classPhysicsLinearSubequationsSolver" id="r_a852b65e89e97c5f5171b34bf89e6f6ac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsLinearSubequationsSolver.html#a852b65e89e97c5f5171b34bf89e6f6ac">PhysicsLinearSubequationsSolver</a> (const ConditionalOStream &amp;<a class="el" href="classPhysicsLinearSubequationsSolver.html#a8077bebe593826553b8ee4554428309c">pcout</a>)</td></tr>
 <tr class="separator:a852b65e89e97c5f5171b34bf89e6f6ac inherit pub_methods_classPhysicsLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,104 +140,104 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a9629b8db44e070e669add0118563213d" id="r_a9629b8db44e070e669add0118563213d"><td class="memItemLeft" align="right" valign="top">DoFHandler&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a9629b8db44e070e669add0118563213d">dof_handler</a></td></tr>
-<tr class="separator:a9629b8db44e070e669add0118563213d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a001f73421cdade82f36cecfb26f7f2f3" id="r_a001f73421cdade82f36cecfb26f7f2f3"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Mapping&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a001f73421cdade82f36cecfb26f7f2f3">mapping</a></td></tr>
-<tr class="separator:a001f73421cdade82f36cecfb26f7f2f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fba6fb264343b1d90ba4bcdb714fdf5" id="r_a3fba6fb264343b1d90ba4bcdb714fdf5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a3fba6fb264343b1d90ba4bcdb714fdf5">quadrature</a></td></tr>
-<tr class="separator:a3fba6fb264343b1d90ba4bcdb714fdf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23d7dd4afa15a699607e28d851344b28" id="r_a23d7dd4afa15a699607e28d851344b28"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a23d7dd4afa15a699607e28d851344b28">previous_void_fraction</a></td></tr>
-<tr class="separator:a23d7dd4afa15a699607e28d851344b28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a076f51430db2892d4b2159ec0d2fce43" id="r_a076f51430db2892d4b2159ec0d2fce43"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a076f51430db2892d4b2159ec0d2fce43">void_fraction_locally_relevant</a></td></tr>
-<tr class="separator:a076f51430db2892d4b2159ec0d2fce43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18377a9361ad308631456dbc27a7fd01" id="r_a18377a9361ad308631456dbc27a7fd01"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a18377a9361ad308631456dbc27a7fd01">void_fraction_locally_owned</a></td></tr>
-<tr class="separator:a18377a9361ad308631456dbc27a7fd01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdbc7e58e70921a26bcae089699b6a26" id="r_acdbc7e58e70921a26bcae089699b6a26"><td class="memItemLeft" align="right" valign="top">LinearAlgebra::distributed::Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#acdbc7e58e70921a26bcae089699b6a26">void_fraction_solution</a></td></tr>
-<tr class="separator:acdbc7e58e70921a26bcae089699b6a26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36c554346757900b60fadf282de23d93" id="r_a36c554346757900b60fadf282de23d93"><td class="memItemLeft" align="right" valign="top">std::vector&lt; LinearAlgebra::distributed::Vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a36c554346757900b60fadf282de23d93">void_fraction_previous_solution</a></td></tr>
-<tr class="separator:a36c554346757900b60fadf282de23d93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af564ae64a6eaff69053056788f8f294e" id="r_af564ae64a6eaff69053056788f8f294e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FiniteElement&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#af564ae64a6eaff69053056788f8f294e">fe</a></td></tr>
-<tr class="separator:af564ae64a6eaff69053056788f8f294e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a918d7f1ee45da6f8529c642a7b5cd3c3" id="r_a918d7f1ee45da6f8529c642a7b5cd3c3"><td class="memItemLeft" align="right" valign="top">IndexSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a918d7f1ee45da6f8529c642a7b5cd3c3">locally_owned_dofs</a></td></tr>
-<tr class="separator:a918d7f1ee45da6f8529c642a7b5cd3c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69cf3acd2fc1161081a6560e7e72d0f7" id="r_a69cf3acd2fc1161081a6560e7e72d0f7"><td class="memItemLeft" align="right" valign="top">IndexSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a69cf3acd2fc1161081a6560e7e72d0f7">locally_relevant_dofs</a></td></tr>
-<tr class="separator:a69cf3acd2fc1161081a6560e7e72d0f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a5ce712e7d1940a980ef17e107dcf6d" id="r_a2a5ce712e7d1940a980ef17e107dcf6d"><td class="memItemLeft" align="right" valign="top">AffineConstraints&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a2a5ce712e7d1940a980ef17e107dcf6d">void_fraction_constraints</a></td></tr>
-<tr class="separator:a2a5ce712e7d1940a980ef17e107dcf6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91df5d33aab7979a5c445ad32b2fc4eb" id="r_a91df5d33aab7979a5c445ad32b2fc4eb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa827460368a1344eadd594a4b96171190">DEM::CFDDEMProperties::PropertiesIndex::v_x</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a91df5d33aab7979a5c445ad32b2fc4eb">particle_velocity</a></td></tr>
-<tr class="separator:a91df5d33aab7979a5c445ad32b2fc4eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78ded01c662bc5ee7fda52fe352fa031" id="r_a78ded01c662bc5ee7fda52fe352fa031"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa79ade2f97ce82e18c8bb6f6a97196ec6">DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a78ded01c662bc5ee7fda52fe352fa031">fluid_force_on_particles_two_way_coupling</a></td></tr>
-<tr class="separator:a78ded01c662bc5ee7fda52fe352fa031"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8c733e957921c4e4ddbc1f2d0dafd96" id="r_ad8c733e957921c4e4ddbc1f2d0dafd96"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2faacc103a5acb9c524c2405a52ce420416">DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ad8c733e957921c4e4ddbc1f2d0dafd96">fluid_drag_on_particles</a></td></tr>
-<tr class="separator:ad8c733e957921c4e4ddbc1f2d0dafd96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75798e43c3b6bbf142ae3f1503198b97" id="r_a75798e43c3b6bbf142ae3f1503198b97"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 1, DEM::CFDDEMProperties::PropertiesIndex::momentum_transfer_coefficient &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a75798e43c3b6bbf142ae3f1503198b97">momentum_transfer_coefficient</a></td></tr>
-<tr class="separator:a75798e43c3b6bbf142ae3f1503198b97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a344bc8864d5b179e8ef9b5bf5300a837" id="r_a344bc8864d5b179e8ef9b5bf5300a837"><td class="memItemLeft" align="right" valign="top">DoFHandler&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a344bc8864d5b179e8ef9b5bf5300a837">dof_handler</a></td></tr>
+<tr class="separator:a344bc8864d5b179e8ef9b5bf5300a837"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85c310c957f0fbc4415c02fdf312e376" id="r_a85c310c957f0fbc4415c02fdf312e376"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Mapping&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a85c310c957f0fbc4415c02fdf312e376">mapping</a></td></tr>
+<tr class="separator:a85c310c957f0fbc4415c02fdf312e376"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a278b2ff9a29f7903eef2aa01aa557975" id="r_a278b2ff9a29f7903eef2aa01aa557975"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a278b2ff9a29f7903eef2aa01aa557975">quadrature</a></td></tr>
+<tr class="separator:a278b2ff9a29f7903eef2aa01aa557975"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add6b018c322fd6b6a62c2bda7aa73b35" id="r_add6b018c322fd6b6a62c2bda7aa73b35"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#add6b018c322fd6b6a62c2bda7aa73b35">previous_void_fraction</a></td></tr>
+<tr class="separator:add6b018c322fd6b6a62c2bda7aa73b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1222c2ad7483671f0c7c1db6265ad90f" id="r_a1222c2ad7483671f0c7c1db6265ad90f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a1222c2ad7483671f0c7c1db6265ad90f">void_fraction_locally_relevant</a></td></tr>
+<tr class="separator:a1222c2ad7483671f0c7c1db6265ad90f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a109fbeefd23a331cd6e9811514a82b49" id="r_a109fbeefd23a331cd6e9811514a82b49"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a109fbeefd23a331cd6e9811514a82b49">void_fraction_locally_owned</a></td></tr>
+<tr class="separator:a109fbeefd23a331cd6e9811514a82b49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa718527c0e9125a9a49b41ead7499384" id="r_aa718527c0e9125a9a49b41ead7499384"><td class="memItemLeft" align="right" valign="top">LinearAlgebra::distributed::Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#aa718527c0e9125a9a49b41ead7499384">void_fraction_solution</a></td></tr>
+<tr class="separator:aa718527c0e9125a9a49b41ead7499384"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49ce591e56e0cd702a234d2769d43eee" id="r_a49ce591e56e0cd702a234d2769d43eee"><td class="memItemLeft" align="right" valign="top">std::vector&lt; LinearAlgebra::distributed::Vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a49ce591e56e0cd702a234d2769d43eee">void_fraction_previous_solution</a></td></tr>
+<tr class="separator:a49ce591e56e0cd702a234d2769d43eee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a132d5c58d9d8c7424c199db300ae6de7" id="r_a132d5c58d9d8c7424c199db300ae6de7"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FiniteElement&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a132d5c58d9d8c7424c199db300ae6de7">fe</a></td></tr>
+<tr class="separator:a132d5c58d9d8c7424c199db300ae6de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a070750fe743fbcd83d9e3d9a98ea72ad" id="r_a070750fe743fbcd83d9e3d9a98ea72ad"><td class="memItemLeft" align="right" valign="top">IndexSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a070750fe743fbcd83d9e3d9a98ea72ad">locally_owned_dofs</a></td></tr>
+<tr class="separator:a070750fe743fbcd83d9e3d9a98ea72ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90aeea6d9e83c9330283462fd34aa278" id="r_a90aeea6d9e83c9330283462fd34aa278"><td class="memItemLeft" align="right" valign="top">IndexSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a90aeea6d9e83c9330283462fd34aa278">locally_relevant_dofs</a></td></tr>
+<tr class="separator:a90aeea6d9e83c9330283462fd34aa278"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbdfcf2ca3f553631766d32a16b79834" id="r_abbdfcf2ca3f553631766d32a16b79834"><td class="memItemLeft" align="right" valign="top">AffineConstraints&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#abbdfcf2ca3f553631766d32a16b79834">void_fraction_constraints</a></td></tr>
+<tr class="separator:abbdfcf2ca3f553631766d32a16b79834"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae34e520b149c07aba045289292d287e6" id="r_ae34e520b149c07aba045289292d287e6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 3, PropertiesIndex::v_x &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ae34e520b149c07aba045289292d287e6">particle_velocity</a></td></tr>
+<tr class="separator:ae34e520b149c07aba045289292d287e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7399a7215873f1c6da953db49fe6f3c7" id="r_a7399a7215873f1c6da953db49fe6f3c7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 3, PropertiesIndex::fem_force_two_way_coupling_x &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a7399a7215873f1c6da953db49fe6f3c7">fluid_force_on_particles_two_way_coupling</a></td></tr>
+<tr class="separator:a7399a7215873f1c6da953db49fe6f3c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd81d1ff58843af02d697987cc931504" id="r_afd81d1ff58843af02d697987cc931504"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 3, PropertiesIndex::fem_drag_x &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#afd81d1ff58843af02d697987cc931504">fluid_drag_on_particles</a></td></tr>
+<tr class="separator:afd81d1ff58843af02d697987cc931504"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fa5cdee792b4ce3726d80003112f0a3" id="r_a8fa5cdee792b4ce3726d80003112f0a3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 1, PropertiesIndex::momentum_transfer_coefficient &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a8fa5cdee792b4ce3726d80003112f0a3">momentum_transfer_coefficient</a></td></tr>
+<tr class="separator:a8fa5cdee792b4ce3726d80003112f0a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:ab45bdd68ca3af7f98ae49ff3363fb033" id="r_ab45bdd68ca3af7f98ae49ff3363fb033"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ab45bdd68ca3af7f98ae49ff3363fb033">calculate_filter_length_from_cell_measure</a> (const double cell_measure)</td></tr>
-<tr class="separator:ab45bdd68ca3af7f98ae49ff3363fb033"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad18e69c4b7b1e485f7f8d0ca32e36e53" id="r_ad18e69c4b7b1e485f7f8d0ca32e36e53"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ad18e69c4b7b1e485f7f8d0ca32e36e53">calculate_void_fraction_function</a> (const double time)</td></tr>
-<tr class="separator:ad18e69c4b7b1e485f7f8d0ca32e36e53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a7a3291b00f55f0e9810e7e7ec8601a" id="r_a9a7a3291b00f55f0e9810e7e7ec8601a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a9a7a3291b00f55f0e9810e7e7ec8601a">calculate_void_fraction_particle_centered_method</a> ()</td></tr>
-<tr class="separator:a9a7a3291b00f55f0e9810e7e7ec8601a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8354f6e7beedaeb066be74ed37656f55" id="r_a8354f6e7beedaeb066be74ed37656f55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a8354f6e7beedaeb066be74ed37656f55">calculate_void_fraction_satellite_point_method</a> ()</td></tr>
-<tr class="separator:a8354f6e7beedaeb066be74ed37656f55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a022dccdfa3cf8a2409c536fa34f56537" id="r_a022dccdfa3cf8a2409c536fa34f56537"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a022dccdfa3cf8a2409c536fa34f56537">calculate_void_fraction_quadrature_centered_method</a> ()</td></tr>
-<tr class="separator:a022dccdfa3cf8a2409c536fa34f56537"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fcb512af17c334ab121444e488edc5b" id="r_a1fcb512af17c334ab121444e488edc5b"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type&gt; </td></tr>
-<tr class="memitem:a1fcb512af17c334ab121444e488edc5b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a1fcb512af17c334ab121444e488edc5b">calculate_void_fraction_qcm_impl</a> ()</td></tr>
-<tr class="separator:a1fcb512af17c334ab121444e488edc5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0245ee2d78f533bc9570a4048b9564c2" id="r_a0245ee2d78f533bc9570a4048b9564c2"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type, int n_components, int property_start_index&gt; </td></tr>
-<tr class="memitem:a0245ee2d78f533bc9570a4048b9564c2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a0245ee2d78f533bc9570a4048b9564c2">calculate_field_projection_impl</a> (<a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, n_components, property_start_index &gt; &amp;field_qcm)</td></tr>
-<tr class="separator:a0245ee2d78f533bc9570a4048b9564c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe43478d9c087a01ad57d82733e3a12b" id="r_afe43478d9c087a01ad57d82733e3a12b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#afe43478d9c087a01ad57d82733e3a12b">solve_linear_system_and_update_solution</a> () override</td></tr>
-<tr class="separator:afe43478d9c087a01ad57d82733e3a12b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4600c1ae109276742f147ba4e3d2fbff" id="r_a4600c1ae109276742f147ba4e3d2fbff"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a4600c1ae109276742f147ba4e3d2fbff">get_periodic_offset_distance</a> (unsigned int boundary_id) const</td></tr>
-<tr class="separator:a4600c1ae109276742f147ba4e3d2fbff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fea01b7db241e5ce97dc714cfbc0986" id="r_a0fea01b7db241e5ce97dc714cfbc0986"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a0fea01b7db241e5ce97dc714cfbc0986">calculate_filter_length_from_cell_measure</a> (const double cell_measure)</td></tr>
+<tr class="separator:a0fea01b7db241e5ce97dc714cfbc0986"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75c477192b4ec54cdc0b56d998b52442" id="r_a75c477192b4ec54cdc0b56d998b52442"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a75c477192b4ec54cdc0b56d998b52442">calculate_void_fraction_function</a> (const double time)</td></tr>
+<tr class="separator:a75c477192b4ec54cdc0b56d998b52442"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34a334f53a24be4086bf94604104afbe" id="r_a34a334f53a24be4086bf94604104afbe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a34a334f53a24be4086bf94604104afbe">calculate_void_fraction_particle_centered_method</a> ()</td></tr>
+<tr class="separator:a34a334f53a24be4086bf94604104afbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab24d7c5e3fb47a527b55b13d7d3ebfdf" id="r_ab24d7c5e3fb47a527b55b13d7d3ebfdf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ab24d7c5e3fb47a527b55b13d7d3ebfdf">calculate_void_fraction_satellite_point_method</a> ()</td></tr>
+<tr class="separator:ab24d7c5e3fb47a527b55b13d7d3ebfdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28d98bdcdcc21dd29b068afeb6461244" id="r_a28d98bdcdcc21dd29b068afeb6461244"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a28d98bdcdcc21dd29b068afeb6461244">calculate_void_fraction_quadrature_centered_method</a> ()</td></tr>
+<tr class="separator:a28d98bdcdcc21dd29b068afeb6461244"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4a45db745072c97b3698f1674848f96" id="r_ac4a45db745072c97b3698f1674848f96"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type&gt; </td></tr>
+<tr class="memitem:ac4a45db745072c97b3698f1674848f96"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ac4a45db745072c97b3698f1674848f96">calculate_void_fraction_qcm_impl</a> ()</td></tr>
+<tr class="separator:ac4a45db745072c97b3698f1674848f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1aebaa51492f78258b2b4a3348dcca64" id="r_a1aebaa51492f78258b2b4a3348dcca64"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type, int n_components, int property_start_index&gt; </td></tr>
+<tr class="memitem:a1aebaa51492f78258b2b4a3348dcca64"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a1aebaa51492f78258b2b4a3348dcca64">calculate_field_projection_impl</a> (<a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, n_components, property_start_index &gt; &amp;field_qcm)</td></tr>
+<tr class="separator:a1aebaa51492f78258b2b4a3348dcca64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5790d79f01ed26d8a5966214d2a822e6" id="r_a5790d79f01ed26d8a5966214d2a822e6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a5790d79f01ed26d8a5966214d2a822e6">solve_linear_system_and_update_solution</a> () override</td></tr>
+<tr class="separator:a5790d79f01ed26d8a5966214d2a822e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a04e83c70edfbdc1056d36e315c6853" id="r_a5a04e83c70edfbdc1056d36e315c6853"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a5a04e83c70edfbdc1056d36e315c6853">get_periodic_offset_distance</a> (unsigned int boundary_id) const</td></tr>
+<tr class="separator:a5a04e83c70edfbdc1056d36e315c6853"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
-<tr class="memitem:a317c5f25d381d41b201d1509a4bdd61a" id="r_a317c5f25d381d41b201d1509a4bdd61a"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a317c5f25d381d41b201d1509a4bdd61a">radius_sphere_equivalent_volume</a> (const double volume)</td></tr>
-<tr class="separator:a317c5f25d381d41b201d1509a4bdd61a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d00c5fb67d38ab4f783e5c4e245ef69" id="r_a4d00c5fb67d38ab4f783e5c4e245ef69"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a4d00c5fb67d38ab4f783e5c4e245ef69">calculate_intersection_measure</a> (double r_particle, double r_sphere, double distance_between_spheres)</td></tr>
-<tr class="separator:a4d00c5fb67d38ab4f783e5c4e245ef69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4cfbd514e2c08bfd8b1106fc97126b9" id="r_aa4cfbd514e2c08bfd8b1106fc97126b9"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type&gt; </td></tr>
-<tr class="memitem:aa4cfbd514e2c08bfd8b1106fc97126b9"><td class="memTemplItemLeft" align="right" valign="top">static double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#aa4cfbd514e2c08bfd8b1106fc97126b9">evaluate_filter</a> (const double r_particle, const double filter_length, const double distance)</td></tr>
-<tr class="separator:aa4cfbd514e2c08bfd8b1106fc97126b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e79d78836f078bcc1df6ff9a040046f" id="r_a4e79d78836f078bcc1df6ff9a040046f"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a4e79d78836f078bcc1df6ff9a040046f">radius_sphere_equivalent_volume</a> (const double volume)</td></tr>
+<tr class="separator:a4e79d78836f078bcc1df6ff9a040046f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa416ff0f68739f03faad896c5047b695" id="r_aa416ff0f68739f03faad896c5047b695"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#aa416ff0f68739f03faad896c5047b695">calculate_intersection_measure</a> (double r_particle, double r_sphere, double distance_between_spheres)</td></tr>
+<tr class="separator:aa416ff0f68739f03faad896c5047b695"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c90428e0618b5c36e4b630e4db68529" id="r_a1c90428e0618b5c36e4b630e4db68529"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type&gt; </td></tr>
+<tr class="memitem:a1c90428e0618b5c36e4b630e4db68529"><td class="memTemplItemLeft" align="right" valign="top">static double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a1c90428e0618b5c36e4b630e4db68529">evaluate_filter</a> (const double r_particle, const double filter_length, const double distance)</td></tr>
+<tr class="separator:a1c90428e0618b5c36e4b630e4db68529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ae2964cca4b0c4dbd3ef54d9fab57e72f" id="r_ae2964cca4b0c4dbd3ef54d9fab57e72f"><td class="memItemLeft" align="right" valign="top">parallel::DistributedTriangulationBase&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ae2964cca4b0c4dbd3ef54d9fab57e72f">triangulation</a></td></tr>
-<tr class="separator:ae2964cca4b0c4dbd3ef54d9fab57e72f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a877db45737b5ef2b98cf09310b4c9a8a" id="r_a877db45737b5ef2b98cf09310b4c9a8a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParameters_1_1VoidFractionParameters.html">Parameters::VoidFractionParameters</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a877db45737b5ef2b98cf09310b4c9a8a">void_fraction_parameters</a></td></tr>
-<tr class="separator:a877db45737b5ef2b98cf09310b4c9a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a244b1975f59c07d091e1c8a8dbe8f9c5" id="r_a244b1975f59c07d091e1c8a8dbe8f9c5"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structParameters_1_1LinearSolver.html">Parameters::LinearSolver</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a244b1975f59c07d091e1c8a8dbe8f9c5">linear_solver_parameters</a></td></tr>
-<tr class="separator:a244b1975f59c07d091e1c8a8dbe8f9c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bbc7785d064e05331657aa29e596431" id="r_a5bbc7785d064e05331657aa29e596431"><td class="memItemLeft" align="right" valign="top">Particles::ParticleHandler&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a5bbc7785d064e05331657aa29e596431">particle_handler</a></td></tr>
-<tr class="separator:a5bbc7785d064e05331657aa29e596431"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1be3d52454af44860d3cc5b3f0268216" id="r_a1be3d52454af44860d3cc5b3f0268216"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; TrilinosWrappers::PreconditionILU &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a1be3d52454af44860d3cc5b3f0268216">ilu_preconditioner</a></td></tr>
-<tr class="separator:a1be3d52454af44860d3cc5b3f0268216"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac13c96bc13c902a109099f453e75f3f7" id="r_ac13c96bc13c902a109099f453e75f3f7"><td class="memItemLeft" align="right" valign="top">TrilinosWrappers::SparseMatrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ac13c96bc13c902a109099f453e75f3f7">system_matrix_void_fraction</a></td></tr>
-<tr class="separator:ac13c96bc13c902a109099f453e75f3f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafff43dfa2a15df97415deaeeaff9f0f" id="r_aafff43dfa2a15df97415deaeeaff9f0f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#aafff43dfa2a15df97415deaeeaff9f0f">system_rhs_void_fraction</a></td></tr>
-<tr class="separator:aafff43dfa2a15df97415deaeeaff9f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afba545078c2439d859b896c52a83449f" id="r_afba545078c2439d859b896c52a83449f"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#afba545078c2439d859b896c52a83449f">vertices_to_cell</a></td></tr>
-<tr class="separator:afba545078c2439d859b896c52a83449f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1adab6de206b0e242eb94975927cec72" id="r_a1adab6de206b0e242eb94975927cec72"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a1adab6de206b0e242eb94975927cec72">has_periodic_boundaries</a></td></tr>
-<tr class="separator:a1adab6de206b0e242eb94975927cec72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8bbbe7eb0f77e4f09a2d5850247d7a1" id="r_ae8bbbe7eb0f77e4f09a2d5850247d7a1"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ae8bbbe7eb0f77e4f09a2d5850247d7a1">cfd_periodic_offsets</a></td></tr>
-<tr class="separator:ae8bbbe7eb0f77e4f09a2d5850247d7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7bea5ad6a50698f0bb5f3cabb12acfb" id="r_ae7bea5ad6a50698f0bb5f3cabb12acfb"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ae7bea5ad6a50698f0bb5f3cabb12acfb">cfd_periodic_directions</a></td></tr>
-<tr class="separator:ae7bea5ad6a50698f0bb5f3cabb12acfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bd04cc280bdb1aa884a5c9f64573238" id="r_a8bd04cc280bdb1aa884a5c9f64573238"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a8bd04cc280bdb1aa884a5c9f64573238">vertices_to_periodic_cell</a></td></tr>
-<tr class="separator:a8bd04cc280bdb1aa884a5c9f64573238"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af82486dc1133720974eed23d301bca1b" id="r_af82486dc1133720974eed23d301bca1b"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#af82486dc1133720974eed23d301bca1b">l2_smoothing_factor</a></td></tr>
-<tr class="separator:af82486dc1133720974eed23d301bca1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae999a7f90f38792f935c5f111330e2af" id="r_ae999a7f90f38792f935c5f111330e2af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ae999a7f90f38792f935c5f111330e2af">particle_have_been_projected</a></td></tr>
-<tr class="separator:ae999a7f90f38792f935c5f111330e2af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1aca52e63778a8907ee1f36f4492eb93" id="r_a1aca52e63778a8907ee1f36f4492eb93"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a1aca52e63778a8907ee1f36f4492eb93">multigrid_level_dofs_required</a> = false</td></tr>
-<tr class="separator:a1aca52e63778a8907ee1f36f4492eb93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a810641b68bbef6f6438ce37f70047612" id="r_a810641b68bbef6f6438ce37f70047612"><td class="memItemLeft" align="right" valign="top">parallel::DistributedTriangulationBase&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a810641b68bbef6f6438ce37f70047612">triangulation</a></td></tr>
+<tr class="separator:a810641b68bbef6f6438ce37f70047612"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a391bd256429ab5ffd619b320a36a7ea4" id="r_a391bd256429ab5ffd619b320a36a7ea4"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParameters_1_1VoidFractionParameters.html">Parameters::VoidFractionParameters</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a391bd256429ab5ffd619b320a36a7ea4">void_fraction_parameters</a></td></tr>
+<tr class="separator:a391bd256429ab5ffd619b320a36a7ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07f1dc3581ebef2fbb83b3f461cdcaf5" id="r_a07f1dc3581ebef2fbb83b3f461cdcaf5"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structParameters_1_1LinearSolver.html">Parameters::LinearSolver</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a07f1dc3581ebef2fbb83b3f461cdcaf5">linear_solver_parameters</a></td></tr>
+<tr class="separator:a07f1dc3581ebef2fbb83b3f461cdcaf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac612b7585a931bb3d0a40021fb14ee9b" id="r_ac612b7585a931bb3d0a40021fb14ee9b"><td class="memItemLeft" align="right" valign="top">Particles::ParticleHandler&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ac612b7585a931bb3d0a40021fb14ee9b">particle_handler</a></td></tr>
+<tr class="separator:ac612b7585a931bb3d0a40021fb14ee9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafcfff83ba7dbc40b64e81e8acb6b2bc" id="r_aafcfff83ba7dbc40b64e81e8acb6b2bc"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; TrilinosWrappers::PreconditionILU &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#aafcfff83ba7dbc40b64e81e8acb6b2bc">ilu_preconditioner</a></td></tr>
+<tr class="separator:aafcfff83ba7dbc40b64e81e8acb6b2bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3dff63ba7251788e9c7d634cad9427d1" id="r_a3dff63ba7251788e9c7d634cad9427d1"><td class="memItemLeft" align="right" valign="top">TrilinosWrappers::SparseMatrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a3dff63ba7251788e9c7d634cad9427d1">system_matrix_void_fraction</a></td></tr>
+<tr class="separator:a3dff63ba7251788e9c7d634cad9427d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d1e4cefb72646b97a8facad817667a1" id="r_a5d1e4cefb72646b97a8facad817667a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a5d1e4cefb72646b97a8facad817667a1">system_rhs_void_fraction</a></td></tr>
+<tr class="separator:a5d1e4cefb72646b97a8facad817667a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06598475ba03f848bfc91cf9edf2d3f0" id="r_a06598475ba03f848bfc91cf9edf2d3f0"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a06598475ba03f848bfc91cf9edf2d3f0">vertices_to_cell</a></td></tr>
+<tr class="separator:a06598475ba03f848bfc91cf9edf2d3f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc6a33e94b1c50076258a0ddf741cd91" id="r_abc6a33e94b1c50076258a0ddf741cd91"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#abc6a33e94b1c50076258a0ddf741cd91">has_periodic_boundaries</a></td></tr>
+<tr class="separator:abc6a33e94b1c50076258a0ddf741cd91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a61183ec78b565accaeff2ec8250180" id="r_a5a61183ec78b565accaeff2ec8250180"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a5a61183ec78b565accaeff2ec8250180">cfd_periodic_offsets</a></td></tr>
+<tr class="separator:a5a61183ec78b565accaeff2ec8250180"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1535d0225c45665b99af9b42306b464c" id="r_a1535d0225c45665b99af9b42306b464c"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a1535d0225c45665b99af9b42306b464c">cfd_periodic_directions</a></td></tr>
+<tr class="separator:a1535d0225c45665b99af9b42306b464c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26539293fa137b30b13a2032736422cb" id="r_a26539293fa137b30b13a2032736422cb"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a26539293fa137b30b13a2032736422cb">vertices_to_periodic_cell</a></td></tr>
+<tr class="separator:a26539293fa137b30b13a2032736422cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e4cd90d27bca045bc37faff2aa1f518" id="r_a7e4cd90d27bca045bc37faff2aa1f518"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a7e4cd90d27bca045bc37faff2aa1f518">l2_smoothing_factor</a></td></tr>
+<tr class="separator:a7e4cd90d27bca045bc37faff2aa1f518"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f61ec277fbff562450b02fe039681c3" id="r_a2f61ec277fbff562450b02fe039681c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a2f61ec277fbff562450b02fe039681c3">particle_have_been_projected</a></td></tr>
+<tr class="separator:a2f61ec277fbff562450b02fe039681c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a725664fba592fd19dcd7292c86633a54" id="r_a725664fba592fd19dcd7292c86633a54"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a725664fba592fd19dcd7292c86633a54">multigrid_level_dofs_required</a> = false</td></tr>
+<tr class="separator:a725664fba592fd19dcd7292c86633a54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -246,31 +246,32 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a8077bebe593826553b8ee4554428309c inherit pro_attribs_classPhysicsLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class ParticleProjector&lt; dim &gt;</div><p>Particle information projection. This class manages the calculation of the projection of the particle fields onto a triangulation. Its main use is the calculation of the void fraction which is used as an auxiliary field for the solvers that solve the Volume-Averaged Navier-Stokes equations. The present architecture of the class support all of the different void fraction calculation methods within a single class instead of building a class hierarchy. This is because there are only a few void fraction calculation strategies. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
+class ParticleProjector&lt; dim, PropertiesIndex &gt;</div><p>Particle information projection. This class manages the calculation of the projection of the particle fields onto a triangulation. Its main use is the calculation of the void fraction which is used as an auxiliary field for the solvers that solve the Volume-Averaged Navier-Stokes equations. The present architecture of the class support all of the different void fraction calculation methods within a single class instead of building a class hierarchy. This is because there are only a few void fraction calculation strategies. </p>
 <p>Using QCM, this class is also capable of projecting arbitrary fields belonging to the particle back onto the mesh by instantiating @ParticleFieldQCM class.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00266">266</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00268">268</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3ca0291c062f9f7a9d2cabc9e864cdf9" name="a3ca0291c062f9f7a9d2cabc9e864cdf9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ca0291c062f9f7a9d2cabc9e864cdf9">&#9670;&#160;</a></span>ParticleProjector()</h2>
+<a id="ae0345c6ed33d5aa245e4dc07422f5fac" name="ae0345c6ed33d5aa245e4dc07422f5fac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0345c6ed33d5aa245e4dc07422f5fac">&#9670;&#160;</a></span>ParticleProjector()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;<a class="el" href="classParticleProjector.html">::ParticleProjector</a> </td>
+          <td class="memname"><a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;<a class="el" href="classParticleProjector.html">::ParticleProjector</a> </td>
           <td>(</td>
           <td class="paramtype">parallel::DistributedTriangulationBase&lt; dim &gt; *&#160;</td>
           <td class="paramname"><em>triangulation</em>, </td>
@@ -338,25 +339,25 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00280">280</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00282">282</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00536">ParticleProjector&lt; dim &gt;::fe</a>, <a class="el" href="namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1">Parameters::gauss</a>, <a class="el" href="namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a9a8a1f8739356c62c5da46aef8be53fb">Parameters::gauss_lobatto</a>, <a class="el" href="particle__projector_8h_source.html#l00513">ParticleProjector&lt; dim &gt;::mapping</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1">Parameters::qcm</a>, <a class="el" href="particle__projector_8h_source.html#l00516">ParticleProjector&lt; dim &gt;::quadrature</a>, and <a class="el" href="particle__projector_8h_source.html#l00809">ParticleProjector&lt; dim &gt;::void_fraction_parameters</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00538">ParticleProjector&lt; dim, PropertiesIndex &gt;::fe</a>, <a class="el" href="namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1">Parameters::gauss</a>, <a class="el" href="namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a9a8a1f8739356c62c5da46aef8be53fb">Parameters::gauss_lobatto</a>, <a class="el" href="particle__projector_8h_source.html#l00515">ParticleProjector&lt; dim, PropertiesIndex &gt;::mapping</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1">Parameters::qcm</a>, <a class="el" href="particle__projector_8h_source.html#l00518">ParticleProjector&lt; dim, PropertiesIndex &gt;::quadrature</a>, and <a class="el" href="particle__projector_8h_source.html#l00811">ParticleProjector&lt; dim, PropertiesIndex &gt;::void_fraction_parameters</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a400f578ba1e710fc65fb46be9732eb28" name="a400f578ba1e710fc65fb46be9732eb28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a400f578ba1e710fc65fb46be9732eb28">&#9670;&#160;</a></span>calculate_field_projection() <span class="overload">[1/2]</span></h2>
+<a id="aee455120be66376d0cee111fa3623314" name="aee455120be66376d0cee111fa3623314"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee455120be66376d0cee111fa3623314">&#9670;&#160;</a></span>calculate_field_projection() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <div class="memtemplate">
 template&lt;int n_components, int property_start_index&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_field_projection </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_field_projection </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, n_components, property_start_index &gt; &amp;&#160;</td>
           <td class="paramname"><em>field_qcm</em></td><td>)</td>
@@ -365,24 +366,24 @@ template&lt;int n_components, int property_start_index&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l01138">1138</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l01127">1127</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a304e2a3b544f6b9f267a151e1bcee487">Parameters::gaussian</a>, and <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a6683a3be9c0472d8c680cc93a424c198">Parameters::spherical</a>.</p>
 
 </div>
 </div>
-<a id="aac477f79f7e85f77c481f3605ee0768d" name="aac477f79f7e85f77c481f3605ee0768d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac477f79f7e85f77c481f3605ee0768d">&#9670;&#160;</a></span>calculate_field_projection() <span class="overload">[2/2]</span></h2>
+<a id="a12a5a2c089c838de16bde035f95328b8" name="a12a5a2c089c838de16bde035f95328b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12a5a2c089c838de16bde035f95328b8">&#9670;&#160;</a></span>calculate_field_projection() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <div class="memtemplate">
 template&lt;int property_start_index, int n_components&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_field_projection </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_field_projection </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, property_start_index, n_components &gt; &amp;&#160;</td>
           <td class="paramname"><em>field_qcm</em></td><td>)</td>
@@ -408,13 +409,13 @@ template&lt;int property_start_index, int n_components&gt; </div>
 
 </div>
 </div>
-<a id="a0245ee2d78f533bc9570a4048b9564c2" name="a0245ee2d78f533bc9570a4048b9564c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0245ee2d78f533bc9570a4048b9564c2">&#9670;&#160;</a></span>calculate_field_projection_impl()</h2>
+<a id="a1aebaa51492f78258b2b4a3348dcca64" name="a1aebaa51492f78258b2b4a3348dcca64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1aebaa51492f78258b2b4a3348dcca64">&#9670;&#160;</a></span>calculate_field_projection_impl()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <div class="memtemplate">
 template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type, int n_components, int property_start_index&gt; </div>
 <table class="mlabels">
@@ -422,7 +423,7 @@ template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_field_projection_impl </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_field_projection_impl </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, n_components, property_start_index &gt; &amp;&#160;</td>
           <td class="paramname"><em>field_qcm</em></td><td>)</td>
@@ -444,25 +445,25 @@ template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l01166">1166</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l01155">1155</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00227">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::conservative_projection</a>, <a class="el" href="particle__projector_8h_source.html#l00187">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::dof_handler</a>, <a class="el" href="dem__properties_8h_source.html#l00094">DEM::CFDDEMProperties::dp</a>, <a class="el" href="particle__projector_8h_source.html#l00193">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::fe</a>, <a class="el" href="particle__projector_8h_source.html#l00216">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::ilu_preconditioner</a>, <a class="el" href="particle__projector_8h_source.html#l00234">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::matrix_requires_assembly</a>, <a class="el" href="particle__projector_8h_source.html#l00222">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::neumann_boundaries</a>, <a class="el" href="particle__projector_8h_source.html#l00210">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::particle_field_constraints</a>, <a class="el" href="particle__projector_8h_source.html#l00190">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::particle_field_solution</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="particle__projector_8h_source.html#l00203">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::system_matrix</a>, <a class="el" href="particle__projector_8h_source.html#l00207">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::system_rhs</a>, and <a class="el" href="dem__properties_8h_source.html#l00134">DEM::CFDDEMProperties::volumetric_contribution</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00227">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::conservative_projection</a>, <a class="el" href="particle__projector_8h_source.html#l00187">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::dof_handler</a>, <a class="el" href="particle__projector_8h_source.html#l00193">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::fe</a>, <a class="el" href="particle__projector_8h_source.html#l00216">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::ilu_preconditioner</a>, <a class="el" href="particle__projector_8h_source.html#l00234">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::matrix_requires_assembly</a>, <a class="el" href="particle__projector_8h_source.html#l00222">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::neumann_boundaries</a>, <a class="el" href="particle__projector_8h_source.html#l00210">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::particle_field_constraints</a>, <a class="el" href="particle__projector_8h_source.html#l00190">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::particle_field_solution</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="particle__projector_8h_source.html#l00203">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::system_matrix</a>, and <a class="el" href="particle__projector_8h_source.html#l00207">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::system_rhs</a>.</p>
 
 </div>
 </div>
-<a id="ab45bdd68ca3af7f98ae49ff3363fb033" name="ab45bdd68ca3af7f98ae49ff3363fb033"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab45bdd68ca3af7f98ae49ff3363fb033">&#9670;&#160;</a></span>calculate_filter_length_from_cell_measure()</h2>
+<a id="a0fea01b7db241e5ce97dc714cfbc0986" name="a0fea01b7db241e5ce97dc714cfbc0986"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fea01b7db241e5ce97dc714cfbc0986">&#9670;&#160;</a></span>calculate_filter_length_from_cell_measure()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_filter_length_from_cell_measure </td>
+          <td class="memname">double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_filter_length_from_cell_measure </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>cell_measure</em></td><td>)</td>
@@ -486,25 +487,25 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The QCM filter characteristic length used in the calculations. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00579">579</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00581">581</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00560">ParticleProjector&lt; dim &gt;::radius_sphere_equivalent_volume()</a>, and <a class="el" href="particle__projector_8h_source.html#l00809">ParticleProjector&lt; dim &gt;::void_fraction_parameters</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00562">ParticleProjector&lt; dim, PropertiesIndex &gt;::radius_sphere_equivalent_volume()</a>, and <a class="el" href="particle__projector_8h_source.html#l00811">ParticleProjector&lt; dim, PropertiesIndex &gt;::void_fraction_parameters</a>.</p>
 
 </div>
 </div>
-<a id="a4d00c5fb67d38ab4f783e5c4e245ef69" name="a4d00c5fb67d38ab4f783e5c4e245ef69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d00c5fb67d38ab4f783e5c4e245ef69">&#9670;&#160;</a></span>calculate_intersection_measure()</h2>
+<a id="aa416ff0f68739f03faad896c5047b695" name="aa416ff0f68739f03faad896c5047b695"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa416ff0f68739f03faad896c5047b695">&#9670;&#160;</a></span>calculate_intersection_measure()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_intersection_measure </td>
+          <td class="memname">static double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_intersection_measure </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>r_particle</em>, </td>
@@ -545,24 +546,24 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The intersection volume (in 3D) or area (in 2d) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00609">609</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00611">611</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 <p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00046">particle_circle_intersection_2d()</a>, and <a class="el" href="particle__projector_8h_source.html#l00074">particle_sphere_intersection_3d()</a>.</p>
 
 </div>
 </div>
-<a id="a54c5bb90644697d463f589d0c2081290" name="a54c5bb90644697d463f589d0c2081290"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54c5bb90644697d463f589d0c2081290">&#9670;&#160;</a></span>calculate_particle_fluid_forces_projection()</h2>
+<a id="ae348371e43aa7655d4c73cc3b0e55923" name="ae348371e43aa7655d4c73cc3b0e55923"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae348371e43aa7655d4c73cc3b0e55923">&#9670;&#160;</a></span>calculate_particle_fluid_forces_projection()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <div class="memtemplate">
 template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_particle_fluid_forces_projection </td>
+          <td class="memname">template void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_particle_fluid_forces_projection </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;&#160;</td>
           <td class="paramname"><em>cfd_dem_parameters</em>, </td>
@@ -607,22 +608,22 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p>Calculate all the necessary information for the particle-fluid coupling. This means calculating the projection of the particle-fluid interaction forces as well as the solid velocity onto the CFD mesh. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l01605">1605</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l01588">1588</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a8efa8d4f5786679eabd0fdb325bad76b">Parameters::beetstra</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00267">Parameters::CFDDEM::buoyancy_force</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00508">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970">Parameters::dallavalle</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6ab1f1e7a3c1ddcf75366181531f51873a">Parameters::difelice</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00248">Parameters::CFDDEM::drag_coupling</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00264">Parameters::CFDDEM::drag_force</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00245">Parameters::CFDDEM::drag_model</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00379">NavierStokesScratchData&lt; dim &gt;::enable_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00314">NavierStokesScratchData&lt; dim &gt;::enable_void_fraction()</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14">Parameters::function</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed">Parameters::gidaspow</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf">Parameters::kochhill</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00279">Parameters::CFDDEM::magnus_lift_force</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00273">Parameters::CFDDEM::pressure_force</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1">Parameters::qcm</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01066">NavierStokesScratchData&lt; dim &gt;::reinit_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00695">NavierStokesScratchData&lt; dim &gt;::reinit_void_fraction()</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a08279be0e2c1aba70f92cd04058b995a">Parameters::rong</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00282">Parameters::CFDDEM::rotational_viscous_torque</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00276">Parameters::CFDDEM::saffman_lift_force</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00270">Parameters::CFDDEM::shear_force</a>, and <a class="el" href="parameters__cfd__dem_8h_source.html#l00285">Parameters::CFDDEM::vortical_viscous_torque</a>.</p>
+<p class="reference">References <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a8efa8d4f5786679eabd0fdb325bad76b">Parameters::beetstra</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00267">Parameters::CFDDEM::buoyancy_force</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00508">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970">Parameters::dallavalle</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6ab1f1e7a3c1ddcf75366181531f51873a">Parameters::difelice</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00248">Parameters::CFDDEM::drag_coupling</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00264">Parameters::CFDDEM::drag_force</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00245">Parameters::CFDDEM::drag_model</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00379">NavierStokesScratchData&lt; dim &gt;::enable_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00314">NavierStokesScratchData&lt; dim &gt;::enable_void_fraction()</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14">Parameters::function</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed">Parameters::gidaspow</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf">Parameters::kochhill</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00279">Parameters::CFDDEM::magnus_lift_force</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00273">Parameters::CFDDEM::pressure_force</a>, <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1">Parameters::qcm</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00695">NavierStokesScratchData&lt; dim &gt;::reinit_void_fraction()</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a08279be0e2c1aba70f92cd04058b995a">Parameters::rong</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00282">Parameters::CFDDEM::rotational_viscous_torque</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00276">Parameters::CFDDEM::saffman_lift_force</a>, <a class="el" href="parameters__cfd__dem_8h_source.html#l00270">Parameters::CFDDEM::shear_force</a>, and <a class="el" href="parameters__cfd__dem_8h_source.html#l00285">Parameters::CFDDEM::vortical_viscous_torque</a>.</p>
 
 </div>
 </div>
-<a id="a5271694c3d91b7b4393b0c6b385c7240" name="a5271694c3d91b7b4393b0c6b385c7240"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5271694c3d91b7b4393b0c6b385c7240">&#9670;&#160;</a></span>calculate_void_fraction()</h2>
+<a id="a17f9cb9dfaa87010992f239ca824661d" name="a17f9cb9dfaa87010992f239ca824661d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17f9cb9dfaa87010992f239ca824661d">&#9670;&#160;</a></span>calculate_void_fraction()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_void_fraction </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_void_fraction </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>time</em></td><td>)</td>
@@ -645,19 +646,19 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ad18e69c4b7b1e485f7f8d0ca32e36e53" name="ad18e69c4b7b1e485f7f8d0ca32e36e53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad18e69c4b7b1e485f7f8d0ca32e36e53">&#9670;&#160;</a></span>calculate_void_fraction_function()</h2>
+<a id="a75c477192b4ec54cdc0b56d998b52442" name="a75c477192b4ec54cdc0b56d998b52442"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75c477192b4ec54cdc0b56d998b52442">&#9670;&#160;</a></span>calculate_void_fraction_function()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_void_fraction_function </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_void_fraction_function </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>time</em></td><td>)</td>
@@ -679,25 +680,25 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00307">307</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00308">308</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vector_8h_source.html#l00054">convert_vector_trilinos_to_dealii()</a>.</p>
 
 </div>
 </div>
-<a id="a9a7a3291b00f55f0e9810e7e7ec8601a" name="a9a7a3291b00f55f0e9810e7e7ec8601a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a7a3291b00f55f0e9810e7e7ec8601a">&#9670;&#160;</a></span>calculate_void_fraction_particle_centered_method()</h2>
+<a id="a34a334f53a24be4086bf94604104afbe" name="a34a334f53a24be4086bf94604104afbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34a334f53a24be4086bf94604104afbe">&#9670;&#160;</a></span>calculate_void_fraction_particle_centered_method()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_void_fraction_particle_centered_method </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_void_fraction_particle_centered_method </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -712,19 +713,17 @@ template&lt;int dim&gt; </div>
 
 <p>Calculate the void fraction using the particle centered method. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00336">336</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00094">DEM::CFDDEMProperties::dp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00338">338</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
 </div>
 </div>
-<a id="a1fcb512af17c334ab121444e488edc5b" name="a1fcb512af17c334ab121444e488edc5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1fcb512af17c334ab121444e488edc5b">&#9670;&#160;</a></span>calculate_void_fraction_qcm_impl()</h2>
+<a id="ac4a45db745072c97b3698f1674848f96" name="ac4a45db745072c97b3698f1674848f96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4a45db745072c97b3698f1674848f96">&#9670;&#160;</a></span>calculate_void_fraction_qcm_impl()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <div class="memtemplate">
 template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type&gt; </div>
 <table class="mlabels">
@@ -732,7 +731,7 @@ template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_void_fraction_qcm_impl </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_void_fraction_qcm_impl </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -753,25 +752,23 @@ template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00708">708</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00094">DEM::CFDDEMProperties::dp</a>, and <a class="el" href="dem__properties_8h_source.html#l00134">DEM::CFDDEMProperties::volumetric_contribution</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00707">707</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
 </div>
 </div>
-<a id="a022dccdfa3cf8a2409c536fa34f56537" name="a022dccdfa3cf8a2409c536fa34f56537"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a022dccdfa3cf8a2409c536fa34f56537">&#9670;&#160;</a></span>calculate_void_fraction_quadrature_centered_method()</h2>
+<a id="a28d98bdcdcc21dd29b068afeb6461244" name="a28d98bdcdcc21dd29b068afeb6461244"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28d98bdcdcc21dd29b068afeb6461244">&#9670;&#160;</a></span>calculate_void_fraction_quadrature_centered_method()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_void_fraction_quadrature_centered_method </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_void_fraction_quadrature_centered_method </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -787,25 +784,25 @@ template&lt;int dim&gt; </div>
 <p>Calculate the void fraction using the Quadrature-Centered Method (QCM). </p>
 <p>Thin dispatcher that selects the filter kernel at runtime and forwards to the templated implementation calculate_void_fraction_qcm_impl. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00688">688</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00686">686</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a304e2a3b544f6b9f267a151e1bcee487">Parameters::gaussian</a>, and <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a6683a3be9c0472d8c680cc93a424c198">Parameters::spherical</a>.</p>
 
 </div>
 </div>
-<a id="a8354f6e7beedaeb066be74ed37656f55" name="a8354f6e7beedaeb066be74ed37656f55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8354f6e7beedaeb066be74ed37656f55">&#9670;&#160;</a></span>calculate_void_fraction_satellite_point_method()</h2>
+<a id="ab24d7c5e3fb47a527b55b13d7d3ebfdf" name="ab24d7c5e3fb47a527b55b13d7d3ebfdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab24d7c5e3fb47a527b55b13d7d3ebfdf">&#9670;&#160;</a></span>calculate_void_fraction_satellite_point_method()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_void_fraction_satellite_point_method </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::calculate_void_fraction_satellite_point_method </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -820,25 +817,23 @@ template&lt;int dim&gt; </div>
 
 <p>Calculate the void fraction using the satellite point method. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00435">435</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00094">DEM::CFDDEMProperties::dp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00436">436</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
 </div>
 </div>
-<a id="a0579c6354ef73587243ad47c514a19e4" name="a0579c6354ef73587243ad47c514a19e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0579c6354ef73587243ad47c514a19e4">&#9670;&#160;</a></span>enable_multigrid_level_dofs()</h2>
+<a id="ac720806742f45ba49f9511dfa5ef137e" name="ac720806742f45ba49f9511dfa5ef137e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac720806742f45ba49f9511dfa5ef137e">&#9670;&#160;</a></span>enable_multigrid_level_dofs()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::enable_multigrid_level_dofs </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::enable_multigrid_level_dofs </td>
           <td>(</td>
           <td class="paramtype">const bool&#160;</td>
           <td class="paramname"><em>enabled</em> = <code>true</code></td><td>)</td>
@@ -852,7 +847,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Request that all DoFHandlers managed by this projector also distribute multigrid level DoFs the next time <a class="el" href="classParticleProjector.html#a4965b0a0382b734d5f8aa5a70b796f43" title="Setup the degrees of freedom.">setup_dofs()</a> is called. This is required by the local-smoothing multigrid (LSMG) preconditioner of the VANS matrix-free solver, which needs the auxiliary fields on every triangulation level. Must be called before <a class="el" href="classParticleProjector.html#a4965b0a0382b734d5f8aa5a70b796f43" title="Setup the degrees of freedom.">setup_dofs()</a>. </p>
+<p>Request that all DoFHandlers managed by this projector also distribute multigrid level DoFs the next time <a class="el" href="classParticleProjector.html#ae47bb620fe6f57936e5951da699b214b" title="Setup the degrees of freedom.">setup_dofs()</a> is called. This is required by the local-smoothing multigrid (LSMG) preconditioner of the VANS matrix-free solver, which needs the auxiliary fields on every triangulation level. Must be called before <a class="el" href="classParticleProjector.html#ae47bb620fe6f57936e5951da699b214b" title="Setup the degrees of freedom.">setup_dofs()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">enabled</td><td>If true, distribute_mg_dofs() will be called on the void-fraction DoFHandler and on every <a class="el" href="classParticleFieldQCM.html" title="ParticleFieldQCM calculator. This class stores the required information for the calculation of a fiel...">ParticleFieldQCM</a> DoFHandler. </td></tr>
@@ -860,19 +855,19 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00381">381</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00383">383</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00889">ParticleProjector&lt; dim &gt;::fluid_drag_on_particles</a>, <a class="el" href="particle__projector_8h_source.html#l00882">ParticleProjector&lt; dim &gt;::fluid_force_on_particles_two_way_coupling</a>, <a class="el" href="particle__projector_8h_source.html#l00899">ParticleProjector&lt; dim &gt;::momentum_transfer_coefficient</a>, <a class="el" href="particle__projector_8h_source.html#l00240">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::multigrid_level_dofs_required</a>, <a class="el" href="particle__projector_8h_source.html#l00864">ParticleProjector&lt; dim &gt;::multigrid_level_dofs_required</a>, and <a class="el" href="particle__projector_8h_source.html#l00872">ParticleProjector&lt; dim &gt;::particle_velocity</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00886">ParticleProjector&lt; dim, PropertiesIndex &gt;::fluid_drag_on_particles</a>, <a class="el" href="particle__projector_8h_source.html#l00880">ParticleProjector&lt; dim, PropertiesIndex &gt;::fluid_force_on_particles_two_way_coupling</a>, <a class="el" href="particle__projector_8h_source.html#l00893">ParticleProjector&lt; dim, PropertiesIndex &gt;::momentum_transfer_coefficient</a>, <a class="el" href="particle__projector_8h_source.html#l00240">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::multigrid_level_dofs_required</a>, <a class="el" href="particle__projector_8h_source.html#l00866">ParticleProjector&lt; dim, PropertiesIndex &gt;::multigrid_level_dofs_required</a>, and <a class="el" href="particle__projector_8h_source.html#l00873">ParticleProjector&lt; dim, PropertiesIndex &gt;::particle_velocity</a>.</p>
 
 </div>
 </div>
-<a id="aa4cfbd514e2c08bfd8b1106fc97126b9" name="aa4cfbd514e2c08bfd8b1106fc97126b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4cfbd514e2c08bfd8b1106fc97126b9">&#9670;&#160;</a></span>evaluate_filter()</h2>
+<a id="a1c90428e0618b5c36e4b630e4db68529" name="a1c90428e0618b5c36e4b630e4db68529"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c90428e0618b5c36e4b630e4db68529">&#9670;&#160;</a></span>evaluate_filter()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <div class="memtemplate">
 template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a> filter_type&gt; </div>
 <table class="mlabels">
@@ -880,7 +875,7 @@ template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::evaluate_filter </td>
+          <td class="memname">static double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::evaluate_filter </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>r_particle</em>, </td>
@@ -927,25 +922,25 @@ template&lt;<a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00659">659</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00661">661</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00609">ParticleProjector&lt; dim &gt;::calculate_intersection_measure()</a>, <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a304e2a3b544f6b9f267a151e1bcee487">Parameters::gaussian</a>, and <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a6683a3be9c0472d8c680cc93a424c198">Parameters::spherical</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00611">ParticleProjector&lt; dim, PropertiesIndex &gt;::calculate_intersection_measure()</a>, <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a304e2a3b544f6b9f267a151e1bcee487">Parameters::gaussian</a>, and <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a6683a3be9c0472d8c680cc93a424c198">Parameters::spherical</a>.</p>
 
 </div>
 </div>
-<a id="a4600c1ae109276742f147ba4e3d2fbff" name="a4600c1ae109276742f147ba4e3d2fbff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4600c1ae109276742f147ba4e3d2fbff">&#9670;&#160;</a></span>get_periodic_offset_distance()</h2>
+<a id="a5a04e83c70edfbdc1056d36e315c6853" name="a5a04e83c70edfbdc1056d36e315c6853"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a04e83c70edfbdc1056d36e315c6853">&#9670;&#160;</a></span>get_periodic_offset_distance()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Tensor&lt; 1, dim &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::get_periodic_offset_distance </td>
+          <td class="memname">Tensor&lt; 1, dim &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::get_periodic_offset_distance </td>
           <td>(</td>
           <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>boundary_id</em></td><td>)</td>
@@ -968,25 +963,25 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The periodic offset vector. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00755">755</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00757">757</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00802">ParticleProjector&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00804">ParticleProjector&lt; dim, PropertiesIndex &gt;::triangulation</a>.</p>
 
 </div>
 </div>
-<a id="a98a596ad780a33bde2098e4b57995677" name="a98a596ad780a33bde2098e4b57995677"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98a596ad780a33bde2098e4b57995677">&#9670;&#160;</a></span>initialize_void_fraction()</h2>
+<a id="a8afada8a39064eba4075ec323f7c679c" name="a8afada8a39064eba4075ec323f7c679c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8afada8a39064eba4075ec323f7c679c">&#9670;&#160;</a></span>initialize_void_fraction()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::initialize_void_fraction </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::initialize_void_fraction </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>time</em></td><td>)</td>
@@ -1008,25 +1003,25 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00463">463</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00465">465</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8cc_source.html#l00267">ParticleProjector&lt; dim &gt;::calculate_void_fraction()</a>, <a class="el" href="particle__projector_8h_source.html#l00520">ParticleProjector&lt; dim &gt;::previous_void_fraction</a>, <a class="el" href="particle__projector_8h_source.html#l00523">ParticleProjector&lt; dim &gt;::void_fraction_locally_relevant</a>, <a class="el" href="particle__projector_8h_source.html#l00533">ParticleProjector&lt; dim &gt;::void_fraction_previous_solution</a>, and <a class="el" href="particle__projector_8h_source.html#l00529">ParticleProjector&lt; dim &gt;::void_fraction_solution</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8cc_source.html#l00267">ParticleProjector&lt; dim, PropertiesIndex &gt;::calculate_void_fraction()</a>, <a class="el" href="particle__projector_8h_source.html#l00522">ParticleProjector&lt; dim, PropertiesIndex &gt;::previous_void_fraction</a>, <a class="el" href="particle__projector_8h_source.html#l00525">ParticleProjector&lt; dim, PropertiesIndex &gt;::void_fraction_locally_relevant</a>, <a class="el" href="particle__projector_8h_source.html#l00535">ParticleProjector&lt; dim, PropertiesIndex &gt;::void_fraction_previous_solution</a>, and <a class="el" href="particle__projector_8h_source.html#l00531">ParticleProjector&lt; dim, PropertiesIndex &gt;::void_fraction_solution</a>.</p>
 
 </div>
 </div>
-<a id="a110f60956f9db8e8344046d7847036c0" name="a110f60956f9db8e8344046d7847036c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a110f60956f9db8e8344046d7847036c0">&#9670;&#160;</a></span>percolate_void_fraction()</h2>
+<a id="ad718f650c16f6c57654f1c21c799c19a" name="ad718f650c16f6c57654f1c21c799c19a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad718f650c16f6c57654f1c21c799c19a">&#9670;&#160;</a></span>percolate_void_fraction()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::percolate_void_fraction </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::percolate_void_fraction </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1042,25 +1037,25 @@ template&lt;int dim&gt; </div>
 <p>Percolate the time vector for the void fraction. This operation is called at the end of a time step. It percolates both the deal.II and the Trilinos vectors. </p>
 <p>TODO - Refactor the <a class="el" href="classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle...">ParticleProjector</a> class to use deal.II vectors for everything instead of a blend of Trilinos and deal.II vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00444">444</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00446">446</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00520">ParticleProjector&lt; dim &gt;::previous_void_fraction</a>, <a class="el" href="particle__projector_8h_source.html#l00523">ParticleProjector&lt; dim &gt;::void_fraction_locally_relevant</a>, <a class="el" href="particle__projector_8h_source.html#l00533">ParticleProjector&lt; dim &gt;::void_fraction_previous_solution</a>, and <a class="el" href="particle__projector_8h_source.html#l00529">ParticleProjector&lt; dim &gt;::void_fraction_solution</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00522">ParticleProjector&lt; dim, PropertiesIndex &gt;::previous_void_fraction</a>, <a class="el" href="particle__projector_8h_source.html#l00525">ParticleProjector&lt; dim, PropertiesIndex &gt;::void_fraction_locally_relevant</a>, <a class="el" href="particle__projector_8h_source.html#l00535">ParticleProjector&lt; dim, PropertiesIndex &gt;::void_fraction_previous_solution</a>, and <a class="el" href="particle__projector_8h_source.html#l00531">ParticleProjector&lt; dim, PropertiesIndex &gt;::void_fraction_solution</a>.</p>
 
 </div>
 </div>
-<a id="a317c5f25d381d41b201d1509a4bdd61a" name="a317c5f25d381d41b201d1509a4bdd61a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a317c5f25d381d41b201d1509a4bdd61a">&#9670;&#160;</a></span>radius_sphere_equivalent_volume()</h2>
+<a id="a4e79d78836f078bcc1df6ff9a040046f" name="a4e79d78836f078bcc1df6ff9a040046f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e79d78836f078bcc1df6ff9a040046f">&#9670;&#160;</a></span>radius_sphere_equivalent_volume()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::radius_sphere_equivalent_volume </td>
+          <td class="memname">static double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::radius_sphere_equivalent_volume </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>volume</em></td><td>)</td>
@@ -1083,20 +1078,20 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Radius of a sphere with equivalent volume </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00560">560</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00562">562</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a33331968e0849b6ece00173b6196b34f" name="a33331968e0849b6ece00173b6196b34f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33331968e0849b6ece00173b6196b34f">&#9670;&#160;</a></span>setup_constraints()</h2>
+<a id="a14b1e4bef6376c5c09821f94e93cf0f3" name="a14b1e4bef6376c5c09821f94e93cf0f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14b1e4bef6376c5c09821f94e93cf0f3">&#9670;&#160;</a></span>setup_constraints()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::setup_constraints </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::setup_constraints </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_conditions</em></td><td>)</td>
@@ -1119,19 +1114,19 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a4965b0a0382b734d5f8aa5a70b796f43" name="a4965b0a0382b734d5f8aa5a70b796f43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4965b0a0382b734d5f8aa5a70b796f43">&#9670;&#160;</a></span>setup_dofs()</h2>
+<a id="ae47bb620fe6f57936e5951da699b214b" name="ae47bb620fe6f57936e5951da699b214b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae47bb620fe6f57936e5951da699b214b">&#9670;&#160;</a></span>setup_dofs()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::setup_dofs </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::setup_dofs </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1154,19 +1149,19 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ad0eb5a936e34fbc45a07690030322689" name="ad0eb5a936e34fbc45a07690030322689"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad0eb5a936e34fbc45a07690030322689">&#9670;&#160;</a></span>solve()</h2>
+<a id="af83c195705df10758dcd415193a406aa" name="af83c195705df10758dcd415193a406aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af83c195705df10758dcd415193a406aa">&#9670;&#160;</a></span>solve()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::solve </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::solve </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1183,23 +1178,23 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSubequationsSolverBase.html#a4ad4b59beac16fd37a200e55ccd24991">PhysicsSubequationsSolverBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00433">433</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00435">435</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="afe43478d9c087a01ad57d82733e3a12b" name="afe43478d9c087a01ad57d82733e3a12b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe43478d9c087a01ad57d82733e3a12b">&#9670;&#160;</a></span>solve_linear_system_and_update_solution()</h2>
+<a id="a5790d79f01ed26d8a5966214d2a822e6" name="a5790d79f01ed26d8a5966214d2a822e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5790d79f01ed26d8a5966214d2a822e6">&#9670;&#160;</a></span>solve_linear_system_and_update_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::solve_linear_system_and_update_solution </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::solve_linear_system_and_update_solution </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1216,25 +1211,25 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsLinearSubequationsSolver.html#ad07b8e3652412522f754006c783aa450">PhysicsLinearSubequationsSolver</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l01857">1857</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l01898">1898</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vector_8h_source.html#l00054">convert_vector_trilinos_to_dealii()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
 </div>
 </div>
-<a id="a26a775d5c9ba7a1bc758aea3783307aa" name="a26a775d5c9ba7a1bc758aea3783307aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26a775d5c9ba7a1bc758aea3783307aa">&#9670;&#160;</a></span>zero_out_and_ghost_auxiliary_fields()</h2>
+<a id="a7ca66e0ebcbbfcb5a539884a780b2287" name="a7ca66e0ebcbbfcb5a539884a780b2287"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ca66e0ebcbbfcb5a539884a780b2287">&#9670;&#160;</a></span>zero_out_and_ghost_auxiliary_fields()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::zero_out_and_ghost_auxiliary_fields </td>
+          <td class="memname">void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::zero_out_and_ghost_auxiliary_fields </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1249,26 +1244,26 @@ template&lt;int dim&gt; </div>
 
 <p>Zeros out and update the ghost values of the auxiliary fields. This is necessary when the void fraction calculation mode does not rely on particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00496">496</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00498">498</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00889">ParticleProjector&lt; dim &gt;::fluid_drag_on_particles</a>, <a class="el" href="particle__projector_8h_source.html#l00882">ParticleProjector&lt; dim &gt;::fluid_force_on_particles_two_way_coupling</a>, <a class="el" href="particle__projector_8h_source.html#l00899">ParticleProjector&lt; dim &gt;::momentum_transfer_coefficient</a>, <a class="el" href="particle__projector_8h_source.html#l00190">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::particle_field_solution</a>, and <a class="el" href="particle__projector_8h_source.html#l00872">ParticleProjector&lt; dim &gt;::particle_velocity</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00886">ParticleProjector&lt; dim, PropertiesIndex &gt;::fluid_drag_on_particles</a>, <a class="el" href="particle__projector_8h_source.html#l00880">ParticleProjector&lt; dim, PropertiesIndex &gt;::fluid_force_on_particles_two_way_coupling</a>, <a class="el" href="particle__projector_8h_source.html#l00893">ParticleProjector&lt; dim, PropertiesIndex &gt;::momentum_transfer_coefficient</a>, <a class="el" href="particle__projector_8h_source.html#l00190">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::particle_field_solution</a>, and <a class="el" href="particle__projector_8h_source.html#l00873">ParticleProjector&lt; dim, PropertiesIndex &gt;::particle_velocity</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ae7bea5ad6a50698f0bb5f3cabb12acfb" name="ae7bea5ad6a50698f0bb5f3cabb12acfb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7bea5ad6a50698f0bb5f3cabb12acfb">&#9670;&#160;</a></span>cfd_periodic_directions</h2>
+<a id="a1535d0225c45665b99af9b42306b464c" name="a1535d0225c45665b99af9b42306b464c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1535d0225c45665b99af9b42306b464c">&#9670;&#160;</a></span>cfd_periodic_directions</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;types::boundary_id, unsigned int&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::cfd_periodic_directions</td>
+          <td class="memname">std::map&lt;types::boundary_id, unsigned int&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::cfd_periodic_directions</td>
         </tr>
       </table>
   </td>
@@ -1280,23 +1275,23 @@ template&lt;int dim&gt; </div>
 
 <p>Map of directions associated with periodic boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00843">843</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00845">845</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="ae8bbbe7eb0f77e4f09a2d5850247d7a1" name="ae8bbbe7eb0f77e4f09a2d5850247d7a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8bbbe7eb0f77e4f09a2d5850247d7a1">&#9670;&#160;</a></span>cfd_periodic_offsets</h2>
+<a id="a5a61183ec78b565accaeff2ec8250180" name="a5a61183ec78b565accaeff2ec8250180"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a61183ec78b565accaeff2ec8250180">&#9670;&#160;</a></span>cfd_periodic_offsets</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;types::boundary_id, Tensor&lt;1, dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::cfd_periodic_offsets</td>
+          <td class="memname">std::map&lt;types::boundary_id, Tensor&lt;1, dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::cfd_periodic_offsets</td>
         </tr>
       </table>
   </td>
@@ -1308,101 +1303,101 @@ template&lt;int dim&gt; </div>
 
 <p>Map of offsets for periodic boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00840">840</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00842">842</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a9629b8db44e070e669add0118563213d" name="a9629b8db44e070e669add0118563213d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9629b8db44e070e669add0118563213d">&#9670;&#160;</a></span>dof_handler</h2>
+<a id="a344bc8864d5b179e8ef9b5bf5300a837" name="a344bc8864d5b179e8ef9b5bf5300a837"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a344bc8864d5b179e8ef9b5bf5300a837">&#9670;&#160;</a></span>dof_handler</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">DoFHandler&lt;dim&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::dof_handler</td>
+          <td class="memname">DoFHandler&lt;dim&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::dof_handler</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>DoFHandler that manages the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00510">510</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00512">512</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="af564ae64a6eaff69053056788f8f294e" name="af564ae64a6eaff69053056788f8f294e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af564ae64a6eaff69053056788f8f294e">&#9670;&#160;</a></span>fe</h2>
+<a id="a132d5c58d9d8c7424c199db300ae6de7" name="a132d5c58d9d8c7424c199db300ae6de7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a132d5c58d9d8c7424c199db300ae6de7">&#9670;&#160;</a></span>fe</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;FiniteElement&lt;dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::fe</td>
+          <td class="memname">std::shared_ptr&lt;FiniteElement&lt;dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::fe</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Finite element for the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00536">536</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00538">538</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="ad8c733e957921c4e4ddbc1f2d0dafd96" name="ad8c733e957921c4e4ddbc1f2d0dafd96"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8c733e957921c4e4ddbc1f2d0dafd96">&#9670;&#160;</a></span>fluid_drag_on_particles</h2>
+<a id="afd81d1ff58843af02d697987cc931504" name="afd81d1ff58843af02d697987cc931504"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd81d1ff58843af02d697987cc931504">&#9670;&#160;</a></span>fluid_drag_on_particles</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt;dim, 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2faacc103a5acb9c524c2405a52ce420416">DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x</a>&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::fluid_drag_on_particles</td>
+          <td class="memname"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt;dim, 3, PropertiesIndex::fem_drag_x&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::fluid_drag_on_particles</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Projector used to store the drag force. The drag is stored as a separate field since we may want to make implicit calculations of it. This field is volumetric. The integral of this field over the entire domain will result in the sum of the drag force over all the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00889">889</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00886">886</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a78ded01c662bc5ee7fda52fe352fa031" name="a78ded01c662bc5ee7fda52fe352fa031"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78ded01c662bc5ee7fda52fe352fa031">&#9670;&#160;</a></span>fluid_force_on_particles_two_way_coupling</h2>
+<a id="a7399a7215873f1c6da953db49fe6f3c7" name="a7399a7215873f1c6da953db49fe6f3c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7399a7215873f1c6da953db49fe6f3c7">&#9670;&#160;</a></span>fluid_force_on_particles_two_way_coupling</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa79ade2f97ce82e18c8bb6f6a97196ec6">DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x</a>&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::fluid_force_on_particles_two_way_coupling</td>
+          <td class="memname"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt;dim, 3, PropertiesIndex::fem_force_two_way_coupling_x&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::fluid_force_on_particles_two_way_coupling</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Projector used to save the forces used in the two-way coupling scheme, without drag. This field is volumetric. The integral of this field over the entire domain will result in the sum of the force (without drag) over all of the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00882">882</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00880">880</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a1adab6de206b0e242eb94975927cec72" name="a1adab6de206b0e242eb94975927cec72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1adab6de206b0e242eb94975927cec72">&#9670;&#160;</a></span>has_periodic_boundaries</h2>
+<a id="abc6a33e94b1c50076258a0ddf741cd91" name="abc6a33e94b1c50076258a0ddf741cd91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc6a33e94b1c50076258a0ddf741cd91">&#9670;&#160;</a></span>has_periodic_boundaries</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::has_periodic_boundaries</td>
+          <td class="memname">bool <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::has_periodic_boundaries</td>
         </tr>
       </table>
   </td>
@@ -1414,23 +1409,23 @@ template&lt;int dim&gt; </div>
 
 <p>Boolean to indicate if the mesh has periodic boundaries. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00837">837</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00839">839</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a1be3d52454af44860d3cc5b3f0268216" name="a1be3d52454af44860d3cc5b3f0268216"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1be3d52454af44860d3cc5b3f0268216">&#9670;&#160;</a></span>ilu_preconditioner</h2>
+<a id="aafcfff83ba7dbc40b64e81e8acb6b2bc" name="aafcfff83ba7dbc40b64e81e8acb6b2bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafcfff83ba7dbc40b64e81e8acb6b2bc">&#9670;&#160;</a></span>ilu_preconditioner</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;TrilinosWrappers::PreconditionILU&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::ilu_preconditioner</td>
+          <td class="memname">std::shared_ptr&lt;TrilinosWrappers::PreconditionILU&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::ilu_preconditioner</td>
         </tr>
       </table>
   </td>
@@ -1441,23 +1436,23 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Preconditioner used for the solution of the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00820">820</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00822">822</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="af82486dc1133720974eed23d301bca1b" name="af82486dc1133720974eed23d301bca1b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af82486dc1133720974eed23d301bca1b">&#9670;&#160;</a></span>l2_smoothing_factor</h2>
+<a id="a7e4cd90d27bca045bc37faff2aa1f518" name="a7e4cd90d27bca045bc37faff2aa1f518"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e4cd90d27bca045bc37faff2aa1f518">&#9670;&#160;</a></span>l2_smoothing_factor</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::l2_smoothing_factor</td>
+          <td class="memname">const double <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::l2_smoothing_factor</td>
         </tr>
       </table>
   </td>
@@ -1467,28 +1462,28 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
-<div class="line">    Utilities::fixed_power&lt;2&gt;(<a class="code hl_variable" href="classParticleProjector.html#a877db45737b5ef2b98cf09310b4c9a8a">void_fraction_parameters</a>-&gt;l2_smoothing_length)</div>
-<div class="ttc" id="aclassParticleProjector_html_a877db45737b5ef2b98cf09310b4c9a8a"><div class="ttname"><a href="classParticleProjector.html#a877db45737b5ef2b98cf09310b4c9a8a">ParticleProjector::void_fraction_parameters</a></div><div class="ttdeci">std::shared_ptr&lt; Parameters::VoidFractionParameters&lt; dim &gt; &gt; void_fraction_parameters</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00809">particle_projector.h:809</a></div></div>
+<div class="line">    Utilities::fixed_power&lt;2&gt;(<a class="code hl_variable" href="classParticleProjector.html#a391bd256429ab5ffd619b320a36a7ea4">void_fraction_parameters</a>-&gt;l2_smoothing_length)</div>
+<div class="ttc" id="aclassParticleProjector_html_a391bd256429ab5ffd619b320a36a7ea4"><div class="ttname"><a href="classParticleProjector.html#a391bd256429ab5ffd619b320a36a7ea4">ParticleProjector::void_fraction_parameters</a></div><div class="ttdeci">std::shared_ptr&lt; Parameters::VoidFractionParameters&lt; dim &gt; &gt; void_fraction_parameters</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00811">particle_projector.h:811</a></div></div>
 </div><!-- fragment -->
 <p>Smoothing length factor for the void fraction calculation. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00852">852</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00854">854</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a244b1975f59c07d091e1c8a8dbe8f9c5" name="a244b1975f59c07d091e1c8a8dbe8f9c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a244b1975f59c07d091e1c8a8dbe8f9c5">&#9670;&#160;</a></span>linear_solver_parameters</h2>
+<a id="a07f1dc3581ebef2fbb83b3f461cdcaf5" name="a07f1dc3581ebef2fbb83b3f461cdcaf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07f1dc3581ebef2fbb83b3f461cdcaf5">&#9670;&#160;</a></span>linear_solver_parameters</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="structParameters_1_1LinearSolver.html">Parameters::LinearSolver</a> <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::linear_solver_parameters</td>
+          <td class="memname">const <a class="el" href="structParameters_1_1LinearSolver.html">Parameters::LinearSolver</a> <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::linear_solver_parameters</td>
         </tr>
       </table>
   </td>
@@ -1500,102 +1495,102 @@ template&lt;int dim&gt; </div>
 
 <p>Linear solvers for the calculation of the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00812">812</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00814">814</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a918d7f1ee45da6f8529c642a7b5cd3c3" name="a918d7f1ee45da6f8529c642a7b5cd3c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a918d7f1ee45da6f8529c642a7b5cd3c3">&#9670;&#160;</a></span>locally_owned_dofs</h2>
+<a id="a070750fe743fbcd83d9e3d9a98ea72ad" name="a070750fe743fbcd83d9e3d9a98ea72ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a070750fe743fbcd83d9e3d9a98ea72ad">&#9670;&#160;</a></span>locally_owned_dofs</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">IndexSet <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::locally_owned_dofs</td>
+          <td class="memname">IndexSet <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::locally_owned_dofs</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Index set for the locally owned degree of freedoms. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00539">539</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00541">541</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a69cf3acd2fc1161081a6560e7e72d0f7" name="a69cf3acd2fc1161081a6560e7e72d0f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69cf3acd2fc1161081a6560e7e72d0f7">&#9670;&#160;</a></span>locally_relevant_dofs</h2>
+<a id="a90aeea6d9e83c9330283462fd34aa278" name="a90aeea6d9e83c9330283462fd34aa278"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90aeea6d9e83c9330283462fd34aa278">&#9670;&#160;</a></span>locally_relevant_dofs</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">IndexSet <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::locally_relevant_dofs</td>
+          <td class="memname">IndexSet <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::locally_relevant_dofs</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Index set for the locally relevant degree of freedoms. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00542">542</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00544">544</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a001f73421cdade82f36cecfb26f7f2f3" name="a001f73421cdade82f36cecfb26f7f2f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a001f73421cdade82f36cecfb26f7f2f3">&#9670;&#160;</a></span>mapping</h2>
+<a id="a85c310c957f0fbc4415c02fdf312e376" name="a85c310c957f0fbc4415c02fdf312e376"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85c310c957f0fbc4415c02fdf312e376">&#9670;&#160;</a></span>mapping</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;Mapping&lt;dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::mapping</td>
+          <td class="memname">std::shared_ptr&lt;Mapping&lt;dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::mapping</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Mapping for the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00513">513</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00515">515</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a75798e43c3b6bbf142ae3f1503198b97" name="a75798e43c3b6bbf142ae3f1503198b97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75798e43c3b6bbf142ae3f1503198b97">&#9670;&#160;</a></span>momentum_transfer_coefficient</h2>
+<a id="a8fa5cdee792b4ce3726d80003112f0a3" name="a8fa5cdee792b4ce3726d80003112f0a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fa5cdee792b4ce3726d80003112f0a3">&#9670;&#160;</a></span>momentum_transfer_coefficient</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, 1, DEM::CFDDEMProperties::PropertiesIndex::momentum_transfer_coefficient&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::momentum_transfer_coefficient</td>
+          <td class="memname"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt;dim, 1, PropertiesIndex::momentum_transfer_coefficient&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::momentum_transfer_coefficient</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Projector used to save the momentum transfer coefficient (beta). This field is volumetric. The integral of this field over the entire domain will result in the sum of the momentum transfer coefficient over all particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00899">899</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00893">893</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a1aca52e63778a8907ee1f36f4492eb93" name="a1aca52e63778a8907ee1f36f4492eb93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1aca52e63778a8907ee1f36f4492eb93">&#9670;&#160;</a></span>multigrid_level_dofs_required</h2>
+<a id="a725664fba592fd19dcd7292c86633a54" name="a725664fba592fd19dcd7292c86633a54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a725664fba592fd19dcd7292c86633a54">&#9670;&#160;</a></span>multigrid_level_dofs_required</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::multigrid_level_dofs_required = false</td>
+          <td class="memname">bool <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::multigrid_level_dofs_required = false</td>
         </tr>
       </table>
   </td>
@@ -1604,25 +1599,25 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>When set, <a class="el" href="classParticleProjector.html#a4965b0a0382b734d5f8aa5a70b796f43" title="Setup the degrees of freedom.">setup_dofs()</a> will additionally call distribute_mg_dofs() on the void-fraction DoFHandler. This is required by local-smoothing multigrid (LSMG) of the VANS matrix-free solver. The flag is propagated to every <a class="el" href="classParticleFieldQCM.html" title="ParticleFieldQCM calculator. This class stores the required information for the calculation of a fiel...">ParticleFieldQCM</a> by <a class="el" href="classParticleProjector.html#a0579c6354ef73587243ad47c514a19e4" title="Request that all DoFHandlers managed by this projector also distribute multigrid level DoFs the next ...">enable_multigrid_level_dofs()</a>. </p>
+<p>When set, <a class="el" href="classParticleProjector.html#ae47bb620fe6f57936e5951da699b214b" title="Setup the degrees of freedom.">setup_dofs()</a> will additionally call distribute_mg_dofs() on the void-fraction DoFHandler. This is required by local-smoothing multigrid (LSMG) of the VANS matrix-free solver. The flag is propagated to every <a class="el" href="classParticleFieldQCM.html" title="ParticleFieldQCM calculator. This class stores the required information for the calculation of a fiel...">ParticleFieldQCM</a> by <a class="el" href="classParticleProjector.html#ac720806742f45ba49f9511dfa5ef137e" title="Request that all DoFHandlers managed by this projector also distribute multigrid level DoFs the next ...">enable_multigrid_level_dofs()</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00864">864</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00866">866</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a5bbc7785d064e05331657aa29e596431" name="a5bbc7785d064e05331657aa29e596431"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bbc7785d064e05331657aa29e596431">&#9670;&#160;</a></span>particle_handler</h2>
+<a id="ac612b7585a931bb3d0a40021fb14ee9b" name="ac612b7585a931bb3d0a40021fb14ee9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac612b7585a931bb3d0a40021fb14ee9b">&#9670;&#160;</a></span>particle_handler</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Particles::ParticleHandler&lt;dim&gt;* <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::particle_handler</td>
+          <td class="memname">Particles::ParticleHandler&lt;dim&gt;* <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::particle_handler</td>
         </tr>
       </table>
   </td>
@@ -1634,23 +1629,23 @@ template&lt;int dim&gt; </div>
 
 <p>Particle handler used when the void fraction depends on particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00815">815</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00817">817</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="ae999a7f90f38792f935c5f111330e2af" name="ae999a7f90f38792f935c5f111330e2af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae999a7f90f38792f935c5f111330e2af">&#9670;&#160;</a></span>particle_have_been_projected</h2>
+<a id="a2f61ec277fbff562450b02fe039681c3" name="a2f61ec277fbff562450b02fe039681c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f61ec277fbff562450b02fe039681c3">&#9670;&#160;</a></span>particle_have_been_projected</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::particle_have_been_projected</td>
+          <td class="memname">bool <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::particle_have_been_projected</td>
         </tr>
       </table>
   </td>
@@ -1661,81 +1656,81 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Boolean indicator used to check if the particles have at least been projected once. This is mainly used for assertions and sanity checking purposes </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00858">858</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00860">860</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a91df5d33aab7979a5c445ad32b2fc4eb" name="a91df5d33aab7979a5c445ad32b2fc4eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91df5d33aab7979a5c445ad32b2fc4eb">&#9670;&#160;</a></span>particle_velocity</h2>
+<a id="ae34e520b149c07aba045289292d287e6" name="ae34e520b149c07aba045289292d287e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae34e520b149c07aba045289292d287e6">&#9670;&#160;</a></span>particle_velocity</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt;dim, 3, <a class="el" href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa827460368a1344eadd594a4b96171190">DEM::CFDDEMProperties::PropertiesIndex::v_x</a>&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::particle_velocity</td>
+          <td class="memname"><a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt;dim, 3, PropertiesIndex::v_x&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::particle_velocity</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Projector used to save the particle velocity field onto the mesh This field is not volumetric, meaning that the integral over the entire domain of this field will not yield the sum of the particle velocity over all the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00872">872</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00873">873</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a23d7dd4afa15a699607e28d851344b28" name="a23d7dd4afa15a699607e28d851344b28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23d7dd4afa15a699607e28d851344b28">&#9670;&#160;</a></span>previous_void_fraction</h2>
+<a id="add6b018c322fd6b6a62c2bda7aa73b35" name="add6b018c322fd6b6a62c2bda7aa73b35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add6b018c322fd6b6a62c2bda7aa73b35">&#9670;&#160;</a></span>previous_void_fraction</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::previous_void_fraction</td>
+          <td class="memname">std::vector&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::previous_void_fraction</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>The solutions are made public instead of using getters Solution of the void fraction at previous time steps </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00520">520</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00522">522</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a3fba6fb264343b1d90ba4bcdb714fdf5" name="a3fba6fb264343b1d90ba4bcdb714fdf5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3fba6fb264343b1d90ba4bcdb714fdf5">&#9670;&#160;</a></span>quadrature</h2>
+<a id="a278b2ff9a29f7903eef2aa01aa557975" name="a278b2ff9a29f7903eef2aa01aa557975"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a278b2ff9a29f7903eef2aa01aa557975">&#9670;&#160;</a></span>quadrature</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;Quadrature&lt;dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::quadrature</td>
+          <td class="memname">std::shared_ptr&lt;Quadrature&lt;dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::quadrature</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Quadrature for the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00516">516</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00518">518</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="ac13c96bc13c902a109099f453e75f3f7" name="ac13c96bc13c902a109099f453e75f3f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac13c96bc13c902a109099f453e75f3f7">&#9670;&#160;</a></span>system_matrix_void_fraction</h2>
+<a id="a3dff63ba7251788e9c7d634cad9427d1" name="a3dff63ba7251788e9c7d634cad9427d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dff63ba7251788e9c7d634cad9427d1">&#9670;&#160;</a></span>system_matrix_void_fraction</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TrilinosWrappers::SparseMatrix <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::system_matrix_void_fraction</td>
+          <td class="memname">TrilinosWrappers::SparseMatrix <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::system_matrix_void_fraction</td>
         </tr>
       </table>
   </td>
@@ -1746,23 +1741,23 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>System matrix used to assemble the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00824">824</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00826">826</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="aafff43dfa2a15df97415deaeeaff9f0f" name="aafff43dfa2a15df97415deaeeaff9f0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aafff43dfa2a15df97415deaeeaff9f0f">&#9670;&#160;</a></span>system_rhs_void_fraction</h2>
+<a id="a5d1e4cefb72646b97a8facad817667a1" name="a5d1e4cefb72646b97a8facad817667a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d1e4cefb72646b97a8facad817667a1">&#9670;&#160;</a></span>system_rhs_void_fraction</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::system_rhs_void_fraction</td>
+          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::system_rhs_void_fraction</td>
         </tr>
       </table>
   </td>
@@ -1773,23 +1768,23 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Right-hand side used to assemble the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00828">828</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00830">830</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="ae2964cca4b0c4dbd3ef54d9fab57e72f" name="ae2964cca4b0c4dbd3ef54d9fab57e72f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2964cca4b0c4dbd3ef54d9fab57e72f">&#9670;&#160;</a></span>triangulation</h2>
+<a id="a810641b68bbef6f6438ce37f70047612" name="a810641b68bbef6f6438ce37f70047612"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a810641b68bbef6f6438ce37f70047612">&#9670;&#160;</a></span>triangulation</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">parallel::DistributedTriangulationBase&lt;dim&gt;* <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::triangulation</td>
+          <td class="memname">parallel::DistributedTriangulationBase&lt;dim&gt;* <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::triangulation</td>
         </tr>
       </table>
   </td>
@@ -1801,23 +1796,23 @@ template&lt;int dim&gt; </div>
 
 <p>Triangulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00802">802</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00804">804</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="afba545078c2439d859b896c52a83449f" name="afba545078c2439d859b896c52a83449f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afba545078c2439d859b896c52a83449f">&#9670;&#160;</a></span>vertices_to_cell</h2>
+<a id="a06598475ba03f848bfc91cf9edf2d3f0" name="a06598475ba03f848bfc91cf9edf2d3f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06598475ba03f848bfc91cf9edf2d3f0">&#9670;&#160;</a></span>vertices_to_cell</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;unsigned int, std::set&lt;typename DoFHandler&lt;dim&gt;::active_cell_iterator&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::vertices_to_cell</td>
+          <td class="memname">std::map&lt;unsigned int, std::set&lt;typename DoFHandler&lt;dim&gt;::active_cell_iterator&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::vertices_to_cell</td>
         </tr>
       </table>
   </td>
@@ -1828,23 +1823,23 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Vertices to cell map, this is used in the QCM and the satellite point method to access the neighboring cells of a cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00834">834</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00836">836</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a8bd04cc280bdb1aa884a5c9f64573238" name="a8bd04cc280bdb1aa884a5c9f64573238"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8bd04cc280bdb1aa884a5c9f64573238">&#9670;&#160;</a></span>vertices_to_periodic_cell</h2>
+<a id="a26539293fa137b30b13a2032736422cb" name="a26539293fa137b30b13a2032736422cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26539293fa137b30b13a2032736422cb">&#9670;&#160;</a></span>vertices_to_periodic_cell</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;unsigned int, std::set&lt;typename DoFHandler&lt;dim&gt;::active_cell_iterator&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::vertices_to_periodic_cell</td>
+          <td class="memname">std::map&lt;unsigned int, std::set&lt;typename DoFHandler&lt;dim&gt;::active_cell_iterator&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::vertices_to_periodic_cell</td>
         </tr>
       </table>
   </td>
@@ -1855,82 +1850,82 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Vertices to periodic cell map, this is used in the QCM and the satellite point method to access the neighboring cells of a cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00849">849</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00851">851</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a2a5ce712e7d1940a980ef17e107dcf6d" name="a2a5ce712e7d1940a980ef17e107dcf6d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a5ce712e7d1940a980ef17e107dcf6d">&#9670;&#160;</a></span>void_fraction_constraints</h2>
+<a id="abbdfcf2ca3f553631766d32a16b79834" name="abbdfcf2ca3f553631766d32a16b79834"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbdfcf2ca3f553631766d32a16b79834">&#9670;&#160;</a></span>void_fraction_constraints</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">AffineConstraints&lt;double&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::void_fraction_constraints</td>
+          <td class="memname">AffineConstraints&lt;double&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::void_fraction_constraints</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Constraints used for the boundary conditions of the void fraction. Currently, this is only used to establish periodic void fractions. This object has to be made public because the boundary conditions are set outside of the object for now. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00548">548</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00550">550</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a18377a9361ad308631456dbc27a7fd01" name="a18377a9361ad308631456dbc27a7fd01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a18377a9361ad308631456dbc27a7fd01">&#9670;&#160;</a></span>void_fraction_locally_owned</h2>
+<a id="a109fbeefd23a331cd6e9811514a82b49" name="a109fbeefd23a331cd6e9811514a82b49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a109fbeefd23a331cd6e9811514a82b49">&#9670;&#160;</a></span>void_fraction_locally_owned</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::void_fraction_locally_owned</td>
+          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::void_fraction_locally_owned</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Locally owned solution of the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00526">526</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00528">528</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a076f51430db2892d4b2159ec0d2fce43" name="a076f51430db2892d4b2159ec0d2fce43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a076f51430db2892d4b2159ec0d2fce43">&#9670;&#160;</a></span>void_fraction_locally_relevant</h2>
+<a id="a1222c2ad7483671f0c7c1db6265ad90f" name="a1222c2ad7483671f0c7c1db6265ad90f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1222c2ad7483671f0c7c1db6265ad90f">&#9670;&#160;</a></span>void_fraction_locally_relevant</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::void_fraction_locally_relevant</td>
+          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::void_fraction_locally_relevant</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Fully distributed (including locally relevant) solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00523">523</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00525">525</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a877db45737b5ef2b98cf09310b4c9a8a" name="a877db45737b5ef2b98cf09310b4c9a8a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a877db45737b5ef2b98cf09310b4c9a8a">&#9670;&#160;</a></span>void_fraction_parameters</h2>
+<a id="a391bd256429ab5ffd619b320a36a7ea4" name="a391bd256429ab5ffd619b320a36a7ea4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a391bd256429ab5ffd619b320a36a7ea4">&#9670;&#160;</a></span>void_fraction_parameters</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classParameters_1_1VoidFractionParameters.html">Parameters::VoidFractionParameters</a>&lt;dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::void_fraction_parameters</td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classParameters_1_1VoidFractionParameters.html">Parameters::VoidFractionParameters</a>&lt;dim&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::void_fraction_parameters</td>
         </tr>
       </table>
   </td>
@@ -1941,47 +1936,47 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p><a class="el" href="namespaceParameters.html">Parameters</a> for the calculation of the void fraction Right now this is used for the VANS matrix-free solver to directly calculate the void fraction from the function itself. The function will be removed back to private in a future PR. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00809">809</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00811">811</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a36c554346757900b60fadf282de23d93" name="a36c554346757900b60fadf282de23d93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36c554346757900b60fadf282de23d93">&#9670;&#160;</a></span>void_fraction_previous_solution</h2>
+<a id="a49ce591e56e0cd702a234d2769d43eee" name="a49ce591e56e0cd702a234d2769d43eee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49ce591e56e0cd702a234d2769d43eee">&#9670;&#160;</a></span>void_fraction_previous_solution</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;LinearAlgebra::distributed::Vector&lt;double&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::void_fraction_previous_solution</td>
+          <td class="memname">std::vector&lt;LinearAlgebra::distributed::Vector&lt;double&gt; &gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::void_fraction_previous_solution</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>deal.II vector the previous void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00533">533</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00535">535</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="acdbc7e58e70921a26bcae089699b6a26" name="acdbc7e58e70921a26bcae089699b6a26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acdbc7e58e70921a26bcae089699b6a26">&#9670;&#160;</a></span>void_fraction_solution</h2>
+<a id="aa718527c0e9125a9a49b41ead7499384" name="aa718527c0e9125a9a49b41ead7499384"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa718527c0e9125a9a49b41ead7499384">&#9670;&#160;</a></span>void_fraction_solution</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">LinearAlgebra::distributed::Vector&lt;double&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::void_fraction_solution</td>
+          <td class="memname">LinearAlgebra::distributed::Vector&lt;double&gt; <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim, PropertiesIndex &gt;::void_fraction_solution</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>deal.II vector for the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00529">529</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00531">531</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>

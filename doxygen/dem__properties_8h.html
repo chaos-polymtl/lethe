@@ -92,21 +92,25 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">dem_properties.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;string&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for dem_properties.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="dem__properties_8h__incl.svg" width="194" height="139"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="dem__properties_8h__incl.svg" width="274" height="139"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="dem__properties_8h__dep__incl.svg" width="6222" height="946"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="dem__properties_8h__dep__incl.svg" width="5238" height="1034"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="dem__properties_8h_source.html">Go to the source code of this file.</a></p>
@@ -126,11 +130,18 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceDEM_1_1DEMMPProperties" id="r_namespaceDEM_1_1DEMMPProperties"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1DEMMPProperties.html">DEM::DEMMPProperties</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceDEM_1_1CFDDEMMPProperties" id="r_namespaceDEM_1_1CFDDEMMPProperties"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html">DEM::CFDDEMMPProperties</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ad6f19a136c3504e472457942a25bac01" id="r_ad6f19a136c3504e472457942a25bac01"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:ad6f19a136c3504e472457942a25bac01"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">DEM::matching_dem_properties_index</a> = std::conditional_t&lt; <a class="el" href="namespaceDEM.html#a3a7808dc58cf90a67c0d294d8a7893d9">has_thermal_properties</a>&lt; PropertiesIndex &gt;, <a class="el" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEMMPProperties::PropertiesIndex</a>, <a class="el" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEMProperties::PropertiesIndex</a> &gt;</td></tr>
+<tr class="separator:ad6f19a136c3504e472457942a25bac01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:ace9d7c6b123aa13027ca7915f1fa4d16" id="r_ace9d7c6b123aa13027ca7915f1fa4d16"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16">DEM::SolverType</a> { <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d">DEM::dem</a>
-, <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16a78ae406074be6be7fab62b1c41b968dd">DEM::cfd_dem</a>
 , <a class="el" href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12">DEM::dem_mp</a>
  }</td></tr>
 <tr class="separator:ace9d7c6b123aa13027ca7915f1fa4d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -201,10 +212,60 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:aca0676848b97f3864735e524aac253f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd71079056676d61e8b23e4076174b3c" id="r_afd71079056676d61e8b23e4076174b3c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a> : int { <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3caf7a7560fc4abfcf029574d3e872d498d">DEM::CFDDEMMPProperties::type</a> = 0
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3cab5f4dd7a10386f083706cd335c7b9703">DEM::CFDDEMMPProperties::dp</a> = 1
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca308ea33245ad2c6f49da87d7a9c4ca08">DEM::CFDDEMMPProperties::mass</a> = 2
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3cace70ac49c79ce800d3caddd9dd933cd6">DEM::CFDDEMMPProperties::v_x</a> = 3
+, <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca1492963f6c910f347e62c5fd7e99ccf5">DEM::CFDDEMMPProperties::v_y</a> = 4
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca22623b4f460a45fffca003aa1336cb61">DEM::CFDDEMMPProperties::v_z</a> = 5
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3cab779f350d3c2739abd225acbfc9a25fd">DEM::CFDDEMMPProperties::omega_x</a> = 6
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca5b9e3acd2299894c091599addea02751">DEM::CFDDEMMPProperties::omega_y</a> = 7
+, <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca93ef20ae126fc555c726cd73ad24144a">DEM::CFDDEMMPProperties::omega_z</a> = 8
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca08372f11881d6a11bfd041f586c4af10">DEM::CFDDEMMPProperties::fem_force_two_way_coupling_x</a> = 9
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3caebe80b5cec540d5da437cea9a0f21a24">DEM::CFDDEMMPProperties::fem_force_two_way_coupling_y</a> = 10
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca03a0fedb9800dc2525a472e9964fa0dd">DEM::CFDDEMMPProperties::fem_force_two_way_coupling_z</a> = 11
+, <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca6f9b9777b590b2efba406a763f61a4af">DEM::CFDDEMMPProperties::fem_force_one_way_coupling_x</a> = 12
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca98015787213df97cfdad6bb525d146ac">DEM::CFDDEMMPProperties::fem_force_one_way_coupling_y</a> = 13
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3cabb28ef874c22eed8953d3a2c52865fef">DEM::CFDDEMMPProperties::fem_force_one_way_coupling_z</a> = 14
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3caa693fdda4c10cbc6b195005c90748857">DEM::CFDDEMMPProperties::fem_drag_x</a> = 15
+, <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca306c5e59cfcc3859c98c242e13ede5c6">DEM::CFDDEMMPProperties::fem_drag_y</a> = 16
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca005ac083ec4bfdd8844e383e7b52a368">DEM::CFDDEMMPProperties::fem_drag_z</a> = 17
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca5757d02fa5feaa348209deabe72938e3">DEM::CFDDEMMPProperties::fem_torque_x</a> = 18
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca029347622a19010a04487662957d1763">DEM::CFDDEMMPProperties::fem_torque_y</a> = 19
+, <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3caa206646cc1b18744baea83231d336e5a">DEM::CFDDEMMPProperties::fem_torque_z</a> = 20
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3cae3945865f8b64ce74efe67436f261abe">DEM::CFDDEMMPProperties::volumetric_contribution</a> = 21
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3cab65f33dc66c40589cf1e999dda3bc376">DEM::CFDDEMMPProperties::momentum_transfer_coefficient</a> = 22
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3caf4aabb12c893362b361818df1d3af37e">DEM::CFDDEMMPProperties::T</a> = 23
+, <br />
+&#160;&#160;<a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca34f67a73a618b46dbe1493d61381ed14">DEM::CFDDEMMPProperties::specific_heat</a> = 24
+, <a class="el" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca9f09889d76b75f26a81e4be54c8fe1d0">DEM::CFDDEMMPProperties::n_properties</a> = 25
+<br />
+ }</td></tr>
+<tr class="separator:afd71079056676d61e8b23e4076174b3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a7d860d523c8964d7ff5d28121a3cdcc5" id="r_a7d860d523c8964d7ff5d28121a3cdcc5"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a7d860d523c8964d7ff5d28121a3cdcc5">DEM::is_stored_at_the_same_index</a> (const int first_index, const int second_index)</td></tr>
+<tr class="separator:a7d860d523c8964d7ff5d28121a3cdcc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a3a7808dc58cf90a67c0d294d8a7893d9" id="r_a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a3a7808dc58cf90a67c0d294d8a7893d9">DEM::has_thermal_properties</a> = false</td></tr>
+<tr class="separator:a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acda69e5351674a5179ca3a949874ef4b" id="r_acda69e5351674a5179ca3a949874ef4b"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:acda69e5351674a5179ca3a949874ef4b"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">DEM::has_fluid_coupling_properties</a> = false</td></tr>
+<tr class="separator:acda69e5351674a5179ca3a949874ef4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> particle property definitions and output name management. </p>
-<p>This file defines the property indices used to store and access particle data within the deal.II ParticleHandler PropertyPool. Separate index enumerations are provided for pure <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a>, CFD-DEM, and <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> multiphysics simulations, as each carries a different set of per-particle properties. </p>
+<p>This file defines the property indices used to store and access particle data within the deal.II ParticleHandler PropertyPool. Separate index enumerations are provided for pure <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a>, CFD-DEM, <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> multiphysics and CFD-DEM multiphysics simulations, as each carries a different set of per-particle properties. </p>
 
 <p class="definition">Definition in file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 </div></div><!-- contents -->

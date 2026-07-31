@@ -506,7 +506,7 @@
   end
 
   # Solver type
-  # Choices are dem|cfd_dem|dem_mp
+  # Choices are dem|dem_mp
   set solver type = dem
   set disable position integration = false
 end
@@ -622,7 +622,12 @@ See how the mechanism works with mobility status in the figure below:</p>
 </section>
 <section id="solver-type">
 <h2>Solver Type<a class="headerlink" href="#solver-type" title="Link to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">solver</span> <span class="pre">type</span></code> parameter controls the type of physic being solved by lethe. Currently, this parameter should be set to <code class="docutils literal notranslate"><span class="pre">dem</span></code>, which is the default value, when solving a DEM or CFD-DEM problem. The <code class="docutils literal notranslate"><span class="pre">dem_mp</span></code> solver type is used for multiphysic DEM, which includes heat transfer.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">solver</span> <span class="pre">type</span></code> parameter controls the type of physic being solved for the particles. It should be left to <code class="docutils literal notranslate"><span class="pre">dem</span></code>, which is the default value, when the particles only carry their kinematic properties. The <code class="docutils literal notranslate"><span class="pre">dem_mp</span></code> solver type is used for multiphysic DEM, which includes heat transfer.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">dem_mp</span></code> solver type is supported by <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> as well as by the CFD-DEM solvers, <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> and <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles-matrix-free</span></code>. Since the parameter only indicates that the DEM has its multiphysic features enabled, the <code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">parameters</span></code> subsection of a packing simulation can be reused as-is in the CFD-DEM simulation that follows it.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In CFD-DEM, <code class="docutils literal notranslate"><span class="pre">dem_mp</span></code> enables the heat transfer between the particles and the integration of their temperature, but the fluid and the particles do not exchange heat with one another. A <code class="docutils literal notranslate"><span class="pre">dem_mp</span></code> CFD-DEM simulation which is started from the checkpoint of a DEM simulation must be started from a <code class="docutils literal notranslate"><span class="pre">dem_mp</span></code> one, otherwise the temperature of the particles cannot be carried over.</p>
+</div>
 <p>The <code class="docutils literal notranslate"><span class="pre">disable</span> <span class="pre">position</span> <span class="pre">integration</span></code> is used to freeze the position of particles. It is useful in multiphysic DEM simulations involving a packed bed. This allows to set a higher time step than in the loading of particles, since the temperature can take a lot more time to vary than the position.</p>
 </section>
 </section>
