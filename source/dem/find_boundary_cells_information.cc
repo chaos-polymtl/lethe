@@ -731,8 +731,8 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
             }
         }
       
-      std::cout << "normal_1: " << -boundary_cells_info.normal_vector << std::endl;
-      std::cout << "point_1: " << boundary_cells_info.point_on_face << std::endl;
+      // std::cout << "normal_1: " << -boundary_cells_info.normal_vector << std::endl;
+      // std::cout << "point_1: " << boundary_cells_info.point_on_face << std::endl;
       // Iterate over the vertices of each boundary sharing vertices in common with
       // the face in the main boundary cell.
       for (auto vertex_id : main_face_iterator->vertex_indices())
@@ -804,10 +804,10 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                               // Create a vector from point_1 to point_2
                               Tensor<1, dim> vector_main_to_neighbor = point_2 - point_1;
                               bool is_convex = (normal_1 * vector_main_to_neighbor) < 0;
-                              std::cout << "point_2: " << point_2 << std::endl;
-                              std::cout << "vector_main_to_neighbor: " << vector_main_to_neighbor << std::endl;
+                              // std::cout << "point_2: " << point_2 << std::endl;
+                              // std::cout << "vector_main_to_neighbor: " << vector_main_to_neighbor << std::endl;
 
-                              std::cout << std::scientific << std::setprecision(6) << normal_1*vector_main_to_neighbor << " " << is_convex << std::endl;
+                              // std::cout << std::scientific << std::setprecision(6) << normal_1*vector_main_to_neighbor << " " << is_convex << std::endl;
 
                               if (is_convex) 
                                 {
@@ -843,7 +843,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
 
                                   boundary_cells_information.insert(
                                     {imaginary_face_id, boundary_information});
-                                  std::cout << "Added face: " << point_2 << " to cell" << boundary_cells_info.cell->id() << std::endl;
+                                  // std::cout << "Added face: " << point_2 << " to cell" << boundary_cells_info.cell->id() << std::endl;
                                   
                                 }
                             }   
