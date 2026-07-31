@@ -157,9 +157,12 @@ Transient simulations parameters
 	* ``iteration``: simulation will end at a specified maximum iteration number.
 	* ``time`` : simulation will end at a specified maximum time value.
 
-* ``iteration end``: iteration number at which the simulation ends.
+* ``iteration end``: iteration number at which the simulation ends. Only used when ``end control = iteration``.
 
-* ``time end``: value of the time at which the simulation ends.
+* ``time end``: value of the time at which the simulation ends. Only used when ``end control = time``.
+
+.. note::
+	When ``end control = iteration``, the end time has no effect on the simulation, including on the value of the last time step. Consequently, ``time step independent of end time`` is irrelevant in that case.
 
 * ``time step``: value of the time step.
 
