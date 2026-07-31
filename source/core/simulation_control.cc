@@ -16,9 +16,9 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , time_step(param.dt)
   , initial_time_step(param.dt)
   , end_time(param.time_end)
-  , end_iteration(param.iteration_end)
   , time_step_independent_of_end_time(param.time_step_independent_of_end_time)
   , iteration_number(0)
+  , end_iteration(param.iteration_end)
   , number_mesh_adapt(param.number_mesh_adaptation)
   , CFL(0)
   , max_CFL(param.maxCFL)
@@ -379,6 +379,10 @@ SimulationControlTransient::is_at_end()
   else if (end_control == Parameters::SimulationControl::EndControl::iteration)
     {
       return iteration_number >= end_iteration;
+    }
+  else
+    {
+      return false;
     }
 }
 
