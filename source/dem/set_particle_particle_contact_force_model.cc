@@ -997,7 +997,6 @@ set_rolling_resistance_model<3,
     ParticlesForceChainsBase<3, DEM::DEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
 
-//////////////////////////
 template std::shared_ptr<
   ParticleParticleContactForceBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
 set_particle_particle_contact_force_model<
@@ -1006,20 +1005,24 @@ set_particle_particle_contact_force_model<
   const DEMSolverParameters<2> &dem_parameters);
 template std::shared_ptr<
   ParticleParticleContactForceBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
+
 set_particle_particle_contact_force_model<
   3,
   DEM::CFDDEMMPProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &dem_parameters);
+
 template std::shared_ptr<
   ParticlesForceChainsBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
 set_force_chains_contact_force_model<2,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &dem_parameters);
+
 template std::shared_ptr<
   ParticlesForceChainsBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
 set_force_chains_contact_force_model<3,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &dem_parameters);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1029,6 +1032,7 @@ set_rolling_resistance_model<2,
     ParticleParticleContactForceBase<2,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1038,6 +1042,7 @@ set_rolling_resistance_model<3,
     ParticleParticleContactForceBase<3,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<
   2,
@@ -1048,6 +1053,7 @@ set_rolling_resistance_model<
     ParticleParticleContactForceBase<2,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<
   3,
@@ -1058,6 +1064,7 @@ set_rolling_resistance_model<
     ParticleParticleContactForceBase<3,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<
   2,
@@ -1068,6 +1075,7 @@ set_rolling_resistance_model<
     ParticleParticleContactForceBase<2,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<
   3,
@@ -1078,6 +1086,7 @@ set_rolling_resistance_model<
     ParticleParticleContactForceBase<3,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1087,6 +1096,7 @@ set_rolling_resistance_model<2,
     ParticleParticleContactForceBase<2,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1096,6 +1106,7 @@ set_rolling_resistance_model<3,
     ParticleParticleContactForceBase<3,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1105,6 +1116,7 @@ set_rolling_resistance_model<2,
     ParticleParticleContactForceBase<2,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1114,6 +1126,7 @@ set_rolling_resistance_model<3,
     ParticleParticleContactForceBase<3,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1123,6 +1136,7 @@ set_rolling_resistance_model<2,
     ParticleParticleContactForceBase<2,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1132,6 +1146,7 @@ set_rolling_resistance_model<3,
     ParticleParticleContactForceBase<3,
                                      DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1140,6 +1155,7 @@ set_rolling_resistance_model<2,
   std::shared_ptr<
     ParticlesForceChainsBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1148,6 +1164,7 @@ set_rolling_resistance_model<3,
   std::shared_ptr<
     ParticlesForceChainsBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<
   2,
@@ -1157,6 +1174,7 @@ set_rolling_resistance_model<
   std::shared_ptr<
     ParticlesForceChainsBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<
   3,
@@ -1166,6 +1184,7 @@ set_rolling_resistance_model<
   std::shared_ptr<
     ParticlesForceChainsBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<
   2,
@@ -1175,6 +1194,7 @@ set_rolling_resistance_model<
   std::shared_ptr<
     ParticlesForceChainsBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<
   3,
@@ -1184,6 +1204,7 @@ set_rolling_resistance_model<
   std::shared_ptr<
     ParticlesForceChainsBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1192,6 +1213,7 @@ set_rolling_resistance_model<2,
   std::shared_ptr<
     ParticlesForceChainsBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1200,6 +1222,7 @@ set_rolling_resistance_model<3,
   std::shared_ptr<
     ParticlesForceChainsBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1208,6 +1231,7 @@ set_rolling_resistance_model<2,
   std::shared_ptr<
     ParticlesForceChainsBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1216,6 +1240,7 @@ set_rolling_resistance_model<3,
   std::shared_ptr<
     ParticlesForceChainsBase<3, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<2,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
@@ -1224,6 +1249,7 @@ set_rolling_resistance_model<2,
   std::shared_ptr<
     ParticlesForceChainsBase<2, DEM::CFDDEMMPProperties::PropertiesIndex>>
     &particles_force_chains_object);
+
 template void
 set_rolling_resistance_model<3,
                              DEM::CFDDEMMPProperties::PropertiesIndex,
