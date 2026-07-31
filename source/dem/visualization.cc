@@ -92,12 +92,11 @@ Visualization<dim, PropertiesIndex>::print_xyz(
   const MPI_Comm                          &mpi_communicator,
   const ConditionalOStream                &pcout)
 {
-  const bool is_dem_mp =
-    std::is_same_v<PropertiesIndex, DEM::DEMMPProperties::PropertiesIndex>;
-
   pcout << "id, type, dp, x, y, z";
-  if constexpr (is_dem_mp)
-    pcout << ", T";
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      pcout << ", T";
+    }
   pcout << " " << std::endl;
 
   // Build this rank's particles as id to formatted line
@@ -118,7 +117,7 @@ Visualization<dim, PropertiesIndex>::print_xyz(
           << particle_properties[PropertiesIndex::dp] << " "
           << std::setprecision(4) << particle_location;
 
-      if constexpr (is_dem_mp)
+      if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
         {
           oss << " " << std::fixed << std::setprecision(4)
               << particle_properties[PropertiesIndex::T];
@@ -226,6 +225,8 @@ Visualization<dim, PropertiesIndex>::~Visualization() = default;
 template class Visualization<2, DEM::DEMProperties::PropertiesIndex>;
 template class Visualization<2, DEM::CFDDEMProperties::PropertiesIndex>;
 template class Visualization<2, DEM::DEMMPProperties::PropertiesIndex>;
+template class Visualization<2, DEM::CFDDEMMPProperties::PropertiesIndex>;
 template class Visualization<3, DEM::DEMProperties::PropertiesIndex>;
 template class Visualization<3, DEM::CFDDEMProperties::PropertiesIndex>;
 template class Visualization<3, DEM::DEMMPProperties::PropertiesIndex>;
+template class Visualization<3, DEM::CFDDEMMPProperties::PropertiesIndex>;

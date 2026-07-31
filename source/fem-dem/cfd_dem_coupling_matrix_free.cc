@@ -11,6 +11,7 @@
 #include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
+#include <dem/multiphysics_integrator.h>
 #include <dem/particle_handler_conversion.h>
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
@@ -25,14 +26,15 @@
 
 
 // Constructor for the class CFD-DEM class
-template <int dim>
-CFDDEMMatrixFree<dim>::CFDDEMMatrixFree(CFDDEMSimulationParameters<dim> &param)
-  : FluidDynamicsVANSMatrixFree<dim>(param)
+template <int dim, typename PropertiesIndex>
+CFDDEMMatrixFree<dim, PropertiesIndex>::CFDDEMMatrixFree(
+  CFDDEMSimulationParameters<dim> &param)
+  : FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>(param)
 {}
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::setup_distribution_type()
+CFDDEMMatrixFree<dim, PropertiesIndex>::setup_distribution_type()
 {
   maximum_particle_diameter = 0;
   setup_distributions(dem_parameters.lagrangian_physical_properties,
@@ -47,9 +49,9 @@ CFDDEMMatrixFree<dim>::setup_distribution_type()
              2);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::dem_setup_parameters()
+CFDDEMMatrixFree<dim, PropertiesIndex>::dem_setup_parameters()
 {
   dem_action_manager = DEMActionManager::get_action_manager();
 
@@ -144,27 +146,25 @@ CFDDEMMatrixFree<dim>::dem_setup_parameters()
         dem_parameters.boundary_conditions.periodic_direction);
     }
 
-  insertion_object = set_insertion_type<dim, CFDDEMProperties::PropertiesIndex>(
-    size_distribution_object_container,
-    *parallel_triangulation,
-    dem_parameters,
-    maximum_particle_diameter);
+  insertion_object =
+    set_insertion_type<dim, PropertiesIndex>(size_distribution_object_container,
+                                             *parallel_triangulation,
+                                             dem_parameters,
+                                             maximum_particle_diameter);
 
   // Initialize the total contact list counter
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model<
-      dim,
-      DEM::CFDDEMProperties::PropertiesIndex>(
+    set_particle_particle_contact_force_model<dim, PropertiesIndex>(
       this->cfd_dem_simulation_parameters.dem_parameters);
 
   // Initialize the contact search counter
   contact_search_total_number = 0;
 }
 
-template <int dim>
-std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-CFDDEMMatrixFree<dim>::set_integrator_type()
+template <int dim, typename PropertiesIndex>
+std::shared_ptr<Integrator<dim, PropertiesIndex>>
+CFDDEMMatrixFree<dim, PropertiesIndex>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
   typename ModelParameters<dim>::IntegrationMethod integration_method =
@@ -174,20 +174,18 @@ CFDDEMMatrixFree<dim>::set_integrator_type()
     {
       case ModelParameters<dim>::IntegrationMethod::velocity_verlet:
         return std::make_shared<
-          VelocityVerletIntegrator<dim,
-                                   DEM::CFDDEMProperties::PropertiesIndex>>();
+          VelocityVerletIntegrator<dim, PropertiesIndex>>();
       case ModelParameters<dim>::IntegrationMethod::explicit_euler:
         return std::make_shared<
-          ExplicitEulerIntegrator<dim,
-                                  DEM::CFDDEMProperties::PropertiesIndex>>();
+          ExplicitEulerIntegrator<dim, PropertiesIndex>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::initialize_dem_parameters()
+CFDDEMMatrixFree<dim, PropertiesIndex>::initialize_dem_parameters()
 {
   this->pcout << "Initializing DEM parameters" << std::endl;
 
@@ -199,10 +197,9 @@ CFDDEMMatrixFree<dim>::initialize_dem_parameters()
   sparse_contacts_object.update_local_and_ghost_cell_set(
     this->particle_projector.dof_handler);
 
-  particle_wall_contact_force_object = set_particle_wall_contact_force_model<
-    dim,
-    DEM::CFDDEMProperties::PropertiesIndex>(
-    this->cfd_dem_simulation_parameters.dem_parameters);
+  particle_wall_contact_force_object =
+    set_particle_wall_contact_force_model<dim, PropertiesIndex>(
+      this->cfd_dem_simulation_parameters.dem_parameters);
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob diameter
@@ -268,9 +265,9 @@ CFDDEMMatrixFree<dim>::initialize_dem_parameters()
               << std::endl;
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::read_dem()
+CFDDEMMatrixFree<dim, PropertiesIndex>::read_dem()
 {
   this->pcout << "Reading DEM checkpoint" << std::endl;
 
@@ -301,11 +298,15 @@ CFDDEMMatrixFree<dim>::read_dem()
   std::istringstream            iss(buffer);
   boost::archive::text_iarchive ia(iss, boost::archive::no_header);
 
-  // Create a temporary particle_handler with DEM properties
+  // Create a temporary particle_handler with the DEM properties of the
+  // simulation this one is restarted from
+  using DEMPropertiesIndex =
+    DEM::matching_dem_properties_index<PropertiesIndex>;
+
   Particles::ParticleHandler<dim> temporary_particle_handler(
     *this->triangulation,
     this->particle_mapping,
-    DEM::DEMProperties::n_properties);
+    DEMPropertiesIndex::n_properties);
 
   ia >> temporary_particle_handler;
 
@@ -340,9 +341,7 @@ CFDDEMMatrixFree<dim>::read_dem()
       // Fill the existing particle handler using the temporary one
       // This is done during the dynamic cast for the convert_particle_handler
       // function which requires a parallel::distributed::triangulation
-      convert_particle_handler<dim,
-                               DEM::DEMProperties::PropertiesIndex,
-                               DEM::CFDDEMProperties::PropertiesIndex>(
+      convert_particle_handler<dim, DEMPropertiesIndex, PropertiesIndex>(
         *parallel_triangulation,
         temporary_particle_handler,
         this->particle_handler);
@@ -360,9 +359,9 @@ CFDDEMMatrixFree<dim>::read_dem()
   write_dem_output_results();
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 std::vector<OutputStructTableHandler>
-CFDDEMMatrixFree<dim>::gather_tables()
+CFDDEMMatrixFree<dim, PropertiesIndex>::gather_tables()
 {
   std::vector<OutputStructTableHandler> table_output_structs;
 
@@ -378,9 +377,9 @@ CFDDEMMatrixFree<dim>::gather_tables()
   return table_output_structs;
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::write_checkpoint()
+CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
 {
   using VectorType = LinearAlgebra::distributed::Vector<double>;
 
@@ -476,9 +475,9 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
   serialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::read_checkpoint()
+CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
   using VectorType = LinearAlgebra::distributed::Vector<double>;
@@ -709,9 +708,10 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
   this->particle_handler.exchange_ghost_particles(true);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::check_contact_detection_method(unsigned int counter)
+CFDDEMMatrixFree<dim, PropertiesIndex>::check_contact_detection_method(
+  unsigned int counter)
 {
   // Use namespace and alias to make the code more readable
   using namespace Parameters::Lagrangian;
@@ -732,9 +732,7 @@ CFDDEMMatrixFree<dim>::check_contact_detection_method(unsigned int counter)
             this->simulation_control->get_time_step() /
             this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
-          find_particle_contact_detection_step<
-            dim,
-            DEM::CFDDEMProperties::PropertiesIndex>(
+          find_particle_contact_detection_step<dim, PropertiesIndex>(
             this->particle_handler,
             dt,
             smallest_contact_search_criterion,
@@ -749,9 +747,9 @@ CFDDEMMatrixFree<dim>::check_contact_detection_method(unsigned int counter)
 
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::load_balance()
+CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
 {
   load_balancing.check_load_balance_iteration();
 
@@ -992,9 +990,9 @@ CFDDEMMatrixFree<dim>::load_balance()
   this->particle_handler.unpack_after_coarsening_and_refinement();
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::add_fluid_particle_interaction()
+CFDDEMMatrixFree<dim, PropertiesIndex>::add_fluid_particle_interaction()
 {
   /// Reference to torque vector from contact outcomes
   std::vector<Tensor<1, 3>> &torque = contact_outcome.torque;
@@ -1011,35 +1009,29 @@ CFDDEMMatrixFree<dim>::add_fluid_particle_interaction()
       types::particle_index particle_id = particle->get_local_index();
 
       force[particle_id][0] +=
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                              fem_force_two_way_coupling_x] +
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                              fem_force_one_way_coupling_x] +
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x];
+        particle_properties[PropertiesIndex::fem_force_two_way_coupling_x] +
+        particle_properties[PropertiesIndex::fem_force_one_way_coupling_x] +
+        particle_properties[PropertiesIndex::fem_drag_x];
       force[particle_id][1] +=
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                              fem_force_two_way_coupling_y] +
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                              fem_force_one_way_coupling_y] +
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::fem_drag_y];
+        particle_properties[PropertiesIndex::fem_force_two_way_coupling_y] +
+        particle_properties[PropertiesIndex::fem_force_one_way_coupling_y] +
+        particle_properties[PropertiesIndex::fem_drag_y];
       force[particle_id][2] +=
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                              fem_force_two_way_coupling_z] +
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                              fem_force_one_way_coupling_z] +
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::fem_drag_z];
-      torque[particle_id][0] += particle_properties
-        [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x];
-      torque[particle_id][1] += particle_properties
-        [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_y];
-      torque[particle_id][2] += particle_properties
-        [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_z];
+        particle_properties[PropertiesIndex::fem_force_two_way_coupling_z] +
+        particle_properties[PropertiesIndex::fem_force_one_way_coupling_z] +
+        particle_properties[PropertiesIndex::fem_drag_z];
+      torque[particle_id][0] +=
+        particle_properties[PropertiesIndex::fem_torque_x];
+      torque[particle_id][1] +=
+        particle_properties[PropertiesIndex::fem_torque_y];
+      torque[particle_id][2] +=
+        particle_properties[PropertiesIndex::fem_torque_z];
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::insert_particles()
+CFDDEMMatrixFree<dim, PropertiesIndex>::insert_particles()
 {
   // If the insertion frequency is set to 0, then no particles are going
   // to be inserted in the CFD-DEM simulation and the function returns
@@ -1064,9 +1056,9 @@ CFDDEMMatrixFree<dim>::insert_particles()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::particle_wall_contact_force()
+CFDDEMMatrixFree<dim, PropertiesIndex>::particle_wall_contact_force()
 {
   const double dem_time_step = this->dem_simulation_control->get_time_step();
 
@@ -1101,9 +1093,9 @@ CFDDEMMatrixFree<dim>::particle_wall_contact_force()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::write_dem_output_results()
+CFDDEMMatrixFree<dim, PropertiesIndex>::write_dem_output_results()
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
@@ -1114,7 +1106,7 @@ CFDDEMMatrixFree<dim>::write_dem_output_results()
     dem_parameters.simulation_control.group_files;
 
   // Write particles
-  Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex> particle_data_out;
+  Visualization<dim, PropertiesIndex> particle_data_out;
   particle_data_out.build_patches(this->particle_handler,
                                   properties_class.get_properties_name());
 
@@ -1129,9 +1121,9 @@ CFDDEMMatrixFree<dim>::write_dem_output_results()
 }
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::report_particle_statistics()
+CFDDEMMatrixFree<dim, PropertiesIndex>::report_particle_statistics()
 {
   const auto this_mpi_process =
     Utilities::MPI::this_mpi_process(this->mpi_communicator);
@@ -1150,22 +1142,22 @@ CFDDEMMatrixFree<dim>::report_particle_statistics()
   // Calculate statistics on the particles
   statistics translational_kinetic_energy = calculate_granular_statistics<
     dim,
-    DEM::CFDDEMProperties::PropertiesIndex,
+    PropertiesIndex,
     DEM::dem_statistic_variable::translational_kinetic_energy>(
     this->particle_handler, this->mpi_communicator);
   statistics rotational_kinetic_energy = calculate_granular_statistics<
     dim,
-    DEM::CFDDEMProperties::PropertiesIndex,
+    PropertiesIndex,
     DEM::dem_statistic_variable::rotational_kinetic_energy>(
     this->particle_handler, this->mpi_communicator);
   statistics velocity =
     calculate_granular_statistics<dim,
-                                  DEM::CFDDEMProperties::PropertiesIndex,
+                                  PropertiesIndex,
                                   DEM::dem_statistic_variable::velocity>(
       this->particle_handler, this->mpi_communicator);
   statistics omega =
     calculate_granular_statistics<dim,
-                                  DEM::CFDDEMProperties::PropertiesIndex,
+                                  PropertiesIndex,
                                   DEM::dem_statistic_variable::omega>(
       this->particle_handler, this->mpi_communicator);
 
@@ -1225,9 +1217,9 @@ CFDDEMMatrixFree<dim>::report_particle_statistics()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::postprocess_fd(bool first_iteration)
+CFDDEMMatrixFree<dim, PropertiesIndex>::postprocess_fd(bool first_iteration)
 {
   this->FluidDynamicsMatrixFree<dim>::postprocess_fd(first_iteration);
 
@@ -1244,9 +1236,9 @@ CFDDEMMatrixFree<dim>::postprocess_fd(bool first_iteration)
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::postprocess_cfd_dem()
+CFDDEMMatrixFree<dim, PropertiesIndex>::postprocess_cfd_dem()
 {
   // Calculate total volume of fluid and solid
   if (this->simulation_parameters.post_processing.calculate_phase_volumes)
@@ -1301,9 +1293,9 @@ CFDDEMMatrixFree<dim>::postprocess_cfd_dem()
 }
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::dynamic_flow_control()
+CFDDEMMatrixFree<dim, PropertiesIndex>::dynamic_flow_control()
 {
   if (this->simulation_parameters.flow_control.enable_flow_control &&
       this->simulation_parameters.simulation_control.method !=
@@ -1367,9 +1359,10 @@ CFDDEMMatrixFree<dim>::dynamic_flow_control()
 }
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 inline void
-CFDDEMMatrixFree<dim>::sort_particles_into_subdomains_and_cells()
+CFDDEMMatrixFree<dim,
+                 PropertiesIndex>::sort_particles_into_subdomains_and_cells()
 {
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -1393,10 +1386,9 @@ CFDDEMMatrixFree<dim>::sort_particles_into_subdomains_and_cells()
         {
           auto particle_properties = particle.get_properties();
           MOI[particle.get_local_index()] =
-            0.1 *
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::mass] *
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp];
+            0.1 * particle_properties[PropertiesIndex::mass] *
+            particle_properties[PropertiesIndex::dp] *
+            particle_properties[PropertiesIndex::dp];
         }
     }
 
@@ -1404,9 +1396,9 @@ CFDDEMMatrixFree<dim>::sort_particles_into_subdomains_and_cells()
   std::ranges::fill(displacement, 0.);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::dem_iterator()
+CFDDEMMatrixFree<dim, PropertiesIndex>::dem_iterator()
 {
   const unsigned int counter = this->dem_simulation_control->get_iteration();
   const double dem_time_step = this->dem_simulation_control->get_time_step();
@@ -1428,6 +1420,18 @@ CFDDEMMatrixFree<dim>::dem_iterator()
 
   // Particles-walls contact force:
   particle_wall_contact_force();
+
+  // Integration of the temperature of the particles for the multiphysic DEM.
+  // The heat source is zero since the fluid does not exchange heat with the
+  // particles yet.
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      integrate_temperature<dim, PropertiesIndex>(
+        this->particle_handler,
+        dem_time_step,
+        contact_outcome.heat_transfer_rate,
+        std::vector<double>(contact_outcome.force.size()));
+    }
 
   // Add fluid-particle interaction force to the force container
   add_fluid_particle_interaction();
@@ -1477,7 +1481,7 @@ CFDDEMMatrixFree<dim>::dem_iterator()
   // Log the contact statistics if the parameter is enabled
   if (dem_parameters.post_processing.particle_wall_collision_statistics)
     {
-      log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
+      log_collision_data<dim, PropertiesIndex>(
         dem_parameters,
         contact_manager.get_particle_wall_in_contact(),
         dem_current_time,
@@ -1488,9 +1492,9 @@ CFDDEMMatrixFree<dim>::dem_iterator()
   dem_action_manager->reset_triggers();
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::dem_contact_build()
+CFDDEMMatrixFree<dim, PropertiesIndex>::dem_contact_build()
 {
   const unsigned int counter = this->dem_simulation_control->get_iteration();
   // If this is not the last DEM iteration before the next CFD iteration, check
@@ -1566,9 +1570,9 @@ CFDDEMMatrixFree<dim>::dem_contact_build()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-CFDDEMMatrixFree<dim>::solve()
+CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
 
@@ -1780,5 +1784,7 @@ CFDDEMMatrixFree<dim>::solve()
 }
 
 // Pre-compile the 2D and 3D CFD-DEM matrix-free solver
-template class CFDDEMMatrixFree<2>;
-template class CFDDEMMatrixFree<3>;
+template class CFDDEMMatrixFree<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class CFDDEMMatrixFree<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class CFDDEMMatrixFree<2, DEM::CFDDEMMPProperties::PropertiesIndex>;
+template class CFDDEMMatrixFree<3, DEM::CFDDEMMPProperties::PropertiesIndex>;

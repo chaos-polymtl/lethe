@@ -37,11 +37,13 @@ using namespace dealii;
  * and particle-wall collisions using the soft-sphere contact model.
  *
  * @tparam dim Spatial dimension of the simulation (2 or 3)
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler
  *
  * @ingroup solvers
  */
-template <int dim>
-class CFDDEMSolver : public FluidDynamicsVANS<dim>
+template <int dim, typename PropertiesIndex>
+class CFDDEMSolver : public FluidDynamicsVANS<dim, PropertiesIndex>
 {
 public:
   /**
@@ -93,7 +95,7 @@ private:
    *
    * @return Shared pointer to the configured integration object
    */
-  std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+  std::shared_ptr<Integrator<dim, PropertiesIndex>>
   set_integrator_type();
 
   /**
@@ -365,8 +367,7 @@ private:
   Tensor<1, 3> g;
 
   /// Container for particle interaction outcomes (forces and torques)
-  ParticleInteractionOutcomes<DEM::CFDDEMProperties::PropertiesIndex>
-    contact_outcome;
+  ParticleInteractionOutcomes<PropertiesIndex> contact_outcome;
 
   /// Reference to torque vector from contact outcomes
   std::vector<Tensor<1, 3>> &torque = contact_outcome.torque;
@@ -410,39 +411,31 @@ private:
 
   /// Manager for particle-particle and particle-wall contact detection and
   /// handling
-  DEMContactManager<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    contact_manager;
+  DEMContactManager<dim, PropertiesIndex> contact_manager;
 
   /// Load balancing handler for distributing particles across MPI processes
-  LagrangianLoadBalancing<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    load_balancing;
+  LagrangianLoadBalancing<dim, PropertiesIndex> load_balancing;
 
   /// Handler for point and line contact forces between particles
-  ParticlePointLineForce<dim, DEM::CFDDEMProperties::PropertiesIndex>
+  ParticlePointLineForce<dim, PropertiesIndex>
     particle_point_line_contact_force_object;
 
   /// Time integration scheme for particle motion equations
-  std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-    integrator_object;
+  std::shared_ptr<Integrator<dim, PropertiesIndex>> integrator_object;
 
   /// Particle insertion method handler
-  std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-    insertion_object;
+  std::shared_ptr<Insertion<dim, PropertiesIndex>> insertion_object;
 
   /// Contact force model for particle-particle interactions
-  std::shared_ptr<
-    ParticleParticleContactForceBase<dim,
-                                     DEM::CFDDEMProperties::PropertiesIndex>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
     particle_particle_contact_force_object;
 
   /// Contact force model for particle-wall interactions
-  std::shared_ptr<
-    ParticleWallContactForceBase<dim, DEM::CFDDEMProperties::PropertiesIndex>>
+  std::shared_ptr<ParticleWallContactForceBase<dim, PropertiesIndex>>
     particle_wall_contact_force_object;
 
   /// Visualization handler for DEM output generation
-  Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    visualization_object;
+  Visualization<dim, PropertiesIndex> visualization_object;
 
   /// Information about boundary cells for contact detection
   BoundaryCellsInformation<dim> boundary_cell_object;
@@ -471,8 +464,7 @@ private:
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
 
   /// Object for handling adaptive sparse contact detection algorithms
-  AdaptiveSparseContacts<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    sparse_contacts_object;
+  AdaptiveSparseContacts<dim, PropertiesIndex> sparse_contacts_object;
 
   /// Counter for contact searches performed in the current CFD iteration
   unsigned int contact_search_counter;
@@ -484,8 +476,7 @@ private:
   statistics contact_list;
 
   /// Particle properties handler for DEM simulation
-  DEM::ParticleProperties<dim, DEM::CFDDEMProperties::PropertiesIndex>
-    properties_class;
+  DEM::ParticleProperties<dim, PropertiesIndex> properties_class;
 
   /// PVD handler for grid visualization output
   PVDHandler grid_pvdhandler;

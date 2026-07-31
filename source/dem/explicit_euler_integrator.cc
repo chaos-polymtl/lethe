@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/dem_properties.h>
@@ -121,8 +121,16 @@ template class ExplicitEulerIntegrator<2,
                                        DEM::CFDDEMProperties::PropertiesIndex>;
 template class ExplicitEulerIntegrator<2,
                                        DEM::DEMMPProperties::PropertiesIndex>;
+
+template class ExplicitEulerIntegrator<
+  2,
+  DEM::CFDDEMMPProperties::PropertiesIndex>;
 template class ExplicitEulerIntegrator<3, DEM::DEMProperties::PropertiesIndex>;
 template class ExplicitEulerIntegrator<3,
                                        DEM::CFDDEMProperties::PropertiesIndex>;
 template class ExplicitEulerIntegrator<3,
                                        DEM::DEMMPProperties::PropertiesIndex>;
+
+template class ExplicitEulerIntegrator<
+  3,
+  DEM::CFDDEMMPProperties::PropertiesIndex>;

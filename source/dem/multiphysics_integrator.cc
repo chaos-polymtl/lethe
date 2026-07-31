@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/multiphysics_integrator.h>
@@ -42,6 +42,20 @@ integrate_temperature<2, DEM::DEMMPProperties::PropertiesIndex>(
 
 template void
 integrate_temperature<3, DEM::DEMMPProperties::PropertiesIndex>(
+  Particles::ParticleHandler<3> &particle_handler,
+  const double                   dt,
+  std::vector<double>           &heat_transfer_rate,
+  const std::vector<double>     &heat_source);
+
+template void
+integrate_temperature<2, DEM::CFDDEMMPProperties::PropertiesIndex>(
+  Particles::ParticleHandler<2> &particle_handler,
+  const double                   dt,
+  std::vector<double>           &heat_transfer_rate,
+  const std::vector<double>     &heat_source);
+
+template void
+integrate_temperature<3, DEM::CFDDEMMPProperties::PropertiesIndex>(
   Particles::ParticleHandler<3> &particle_handler,
   const double                   dt,
   std::vector<double>           &heat_transfer_rate,

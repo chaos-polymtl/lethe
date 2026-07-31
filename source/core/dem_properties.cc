@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/dem_properties.h>
@@ -24,8 +24,7 @@ namespace DEM
     properties[PropertiesIndex::omega_z] = std::make_pair("omega", 1);
     properties[PropertiesIndex::mass]    = std::make_pair("mass", 1);
 
-    if constexpr (std::is_same_v<PropertiesIndex,
-                                 DEM::CFDDEMProperties::PropertiesIndex>)
+    if constexpr (DEM::has_fluid_coupling_properties<PropertiesIndex>)
       {
         properties[PropertiesIndex::fem_force_two_way_coupling_x] =
           std::make_pair("fem_force", 3);
@@ -54,8 +53,7 @@ namespace DEM
           std::make_pair("momentum_transfer_coefficient", 1);
       }
 
-    if constexpr (std::is_same_v<PropertiesIndex,
-                                 DEM::DEMMPProperties::PropertiesIndex>)
+    if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
       {
         properties[PropertiesIndex::T] = std::make_pair("temperature", 1);
         properties[PropertiesIndex::specific_heat] =
@@ -67,8 +65,12 @@ namespace DEM
   template class ParticleProperties<2, DEM::DEMProperties::PropertiesIndex>;
   template class ParticleProperties<2, DEM::CFDDEMProperties::PropertiesIndex>;
   template class ParticleProperties<2, DEM::DEMMPProperties::PropertiesIndex>;
+  template class ParticleProperties<2,
+                                    DEM::CFDDEMMPProperties::PropertiesIndex>;
   template class ParticleProperties<3, DEM::DEMProperties::PropertiesIndex>;
   template class ParticleProperties<3, DEM::CFDDEMProperties::PropertiesIndex>;
   template class ParticleProperties<3, DEM::DEMMPProperties::PropertiesIndex>;
+  template class ParticleProperties<3,
+                                    DEM::CFDDEMMPProperties::PropertiesIndex>;
 
 } // namespace DEM

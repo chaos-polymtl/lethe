@@ -4,6 +4,7 @@
 #ifndef particle_handler_conversion_h
 #define particle_handler_conversion_h
 
+#include <core/dem_properties.h>
 
 #include <deal.II/grid/filtered_iterator.h>
 #include <deal.II/grid/grid_tools.h>
@@ -71,6 +72,18 @@ convert_particle_handler(
 
       ph_out_particle_properties[output::mass] =
         particle_properties[input::mass];
+
+      // The thermal properties are only carried over when both particle
+      // handlers are those of a multiphysics solver. Going from a multiphysics
+      // to a non-multiphysics solver drops them, and the opposite leaves them
+      // at their default value of zero.
+      if constexpr (DEM::has_thermal_properties<input> &&
+                    DEM::has_thermal_properties<output>)
+        {
+          ph_out_particle_properties[output::T] = particle_properties[input::T];
+          ph_out_particle_properties[output::specific_heat] =
+            particle_properties[input::specific_heat];
+        }
 
       ph_out_properties.emplace_back(ph_out_particle_properties);
     }

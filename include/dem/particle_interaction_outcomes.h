@@ -1,8 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_interaction_outcomes_h
 #define lethe_particle_interaction_outcomes_h
+
+#include <core/dem_properties.h>
 
 #include <deal.II/base/tensor.h>
 
@@ -33,8 +35,7 @@ public:
   {
     force.resize(number_of_particles);
     torque.resize(number_of_particles);
-    if constexpr (std::is_same_v<PropertiesIndex,
-                                 DEM::DEMMPProperties::PropertiesIndex>)
+    if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
       {
         heat_transfer_rate.resize(number_of_particles);
       }

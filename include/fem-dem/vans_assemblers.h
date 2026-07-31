@@ -33,10 +33,12 @@
  * VANS equations.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class ParticleFluidAssemblerBase
 {
 public:
@@ -255,11 +257,14 @@ public:
  * particle.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerDiFelice
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -307,11 +312,14 @@ public:
  * particle.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerRong : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerRong
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -355,11 +363,14 @@ public:
  * between the fluid and the particle.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerDallavalle
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -422,11 +433,14 @@ public:
  * particle volume, and \f$ \text{Re}_p \f$ is the particle Reynolds number.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerKochHill : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerKochHill
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -480,11 +494,14 @@ public:
  * arrays of spheres." AIChE journal 53.2 (2007): 489-501.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerBeetstra : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerBeetstra
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -534,11 +551,14 @@ public:
  * \f$ \rho_p \f$ is the particle density.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerGidaspow : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerGidaspow
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -604,11 +624,14 @@ public:
  * Reynolds number.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerSaffmanMei
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -667,11 +690,14 @@ public:
  * and \f$ \text{Re}_p \f$ is the particle Reynolds number.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerMagnus : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerMagnus
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -708,11 +734,14 @@ public:
  * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerViscousTorque : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerViscousTorque
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -750,11 +779,14 @@ public:
  * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerVorticalTorque : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerVorticalTorque
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -790,11 +822,14 @@ public:
  * particle and does not generate a reaction force on the fluid.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerBuoyancy
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -838,11 +873,14 @@ public:
  * also applied back on the fluid as a reaction force (two-way coupling).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerPressureForce
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**
@@ -886,11 +924,14 @@ public:
  * applied back on the fluid as a reaction force (two-way coupling).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  *
  * @ingroup assemblers
  */
-template <int dim>
-class VANSAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
+template <int dim, typename PropertiesIndex>
+class VANSAssemblerShearForce
+  : public ParticleFluidAssemblerBase<dim, PropertiesIndex>
 {
 public:
   /**

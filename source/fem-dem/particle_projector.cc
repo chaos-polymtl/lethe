@@ -95,9 +95,9 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
   matrix_requires_assembly = true;
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim>::setup_dofs()
+ParticleProjector<dim, PropertiesIndex>::setup_dofs()
 {
   // First we setup the dofs related to the void fraction
 
@@ -189,9 +189,9 @@ ParticleProjector<dim>::setup_dofs()
 }
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim>::setup_constraints(
+ParticleProjector<dim, PropertiesIndex>::setup_constraints(
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions)
 {
   has_periodic_boundaries = false;
@@ -262,9 +262,10 @@ ParticleProjector<dim>::setup_constraints(
 }
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim>::calculate_void_fraction(const double time)
+ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction(
+  const double time)
 {
   announce_string(this->pcout, "Void Fraction");
 
@@ -302,9 +303,10 @@ ParticleProjector<dim>::calculate_void_fraction(const double time)
 }
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim>::calculate_void_fraction_function(const double time)
+ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_function(
+  const double time)
 {
   // The current time of the function is set for time-dependant functions
   void_fraction_parameters->void_fraction.set_time(time);
@@ -331,9 +333,10 @@ ParticleProjector<dim>::calculate_void_fraction_function(const double time)
 #endif
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim>::calculate_void_fraction_particle_centered_method()
+ParticleProjector<dim, PropertiesIndex>::
+  calculate_void_fraction_particle_centered_method()
 {
   FEValues<dim> fe_values_void_fraction(*mapping,
                                         *fe,
@@ -374,16 +377,14 @@ ParticleProjector<dim>::calculate_void_fraction_particle_centered_method()
                   solid_volume_in_cell +=
                     M_PI * 0.25 *
                     Utilities::fixed_power<2>(
-                      particle_properties
-                        [DEM::CFDDEMProperties::PropertiesIndex::dp]);
+                      particle_properties[PropertiesIndex::dp]);
                 }
               if constexpr (dim == 3)
                 {
                   solid_volume_in_cell +=
                     M_PI * 1. / 6. *
                     Utilities::fixed_power<3>(
-                      particle_properties
-                        [DEM::CFDDEMProperties::PropertiesIndex::dp]);
+                      particle_properties[PropertiesIndex::dp]);
                 }
             }
           double cell_volume = cell->measure();
@@ -430,9 +431,10 @@ ParticleProjector<dim>::calculate_void_fraction_particle_centered_method()
   system_rhs_void_fraction.compress(VectorOperation::add);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim>::calculate_void_fraction_satellite_point_method()
+ParticleProjector<dim, PropertiesIndex>::
+  calculate_void_fraction_satellite_point_method()
 {
   FEValues<dim> fe_values_void_fraction(*mapping,
                                         *fe,
@@ -542,9 +544,7 @@ ParticleProjector<dim>::calculate_void_fraction_satellite_point_method()
                   // makes our method valid for different particle
                   // distribution.
                   double translational_factor =
-                    particle_properties
-                      [DEM::CFDDEMProperties::PropertiesIndex::dp] *
-                    0.5;
+                    particle_properties[PropertiesIndex::dp] * 0.5;
 
                   // Resize and translate the reference sphere
                   // to the particle size and position according the volume
@@ -618,9 +618,7 @@ ParticleProjector<dim>::calculate_void_fraction_satellite_point_method()
                       particle.get_location() + neighbor_offset;
 
                   double translational_factor =
-                    particle_properties
-                      [DEM::CFDDEMProperties::PropertiesIndex::dp] *
-                    0.5;
+                    particle_properties[PropertiesIndex::dp] * 0.5;
 
                   for (unsigned int l = 0;
                        l < reference_quadrature_location.size();
@@ -683,9 +681,10 @@ ParticleProjector<dim>::calculate_void_fraction_satellite_point_method()
   system_rhs_void_fraction.compress(VectorOperation::add);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
+ParticleProjector<dim, PropertiesIndex>::
+  calculate_void_fraction_quadrature_centered_method()
 {
   switch (void_fraction_parameters->qcm_filter_type)
     {
@@ -702,10 +701,10 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 template <Parameters::QCMFilterType filter_type>
 void
-ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
+ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
 {
   FEValues<dim> fe_values_void_fraction(*mapping,
                                         *fe,
@@ -755,8 +754,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
             {
               auto particle_properties = particle.get_properties();
 
-              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                                    volumetric_contribution] = 0;
+              particle_properties[PropertiesIndex::volumetric_contribution] = 0;
             }
         }
     }
@@ -811,8 +809,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
             {
               auto         particle_properties = particle.get_properties();
               const double r_particle =
-                0.5 *
-                particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp];
+                0.5 * particle_properties[PropertiesIndex::dp];
 
               // Loop over neighboring cells to determine if a given
               // neighboring particle contributes to the solid volume of the
@@ -846,8 +843,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                       // Add the filter kernel contribution to the particle's
                       // volumetric contribution.
                       particle_properties
-                        [DEM::CFDDEMProperties::PropertiesIndex::
-                           volumetric_contribution] +=
+                        [PropertiesIndex::volumetric_contribution] +=
                         evaluate_filter<filter_type>(r_particle,
                                                      filter_length,
                                                      neighbor_distance);
@@ -904,8 +900,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                       // Add the filter kernel contribution to the particle's
                       // volumetric contribution.
                       particle_properties
-                        [DEM::CFDDEMProperties::PropertiesIndex::
-                           volumetric_contribution] +=
+                        [PropertiesIndex::volumetric_contribution] +=
                         evaluate_filter<filter_type>(
                           r_particle,
                           filter_length,
@@ -978,9 +973,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                     {
                       auto particle_properties = particle.get_properties();
                       const double r_particle =
-                        particle_properties
-                          [DEM::CFDDEMProperties::PropertiesIndex::dp] *
-                        0.5;
+                        particle_properties[PropertiesIndex::dp] * 0.5;
 
                       // Calculate the ratio between the particle volume and the
                       // total volume it contributes to
@@ -988,8 +981,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                         (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
                          (2 * dim)) /
                         particle_properties
-                          [DEM::CFDDEMProperties::PropertiesIndex::
-                             volumetric_contribution];
+                          [PropertiesIndex::volumetric_contribution];
 
                       // Distance between particle and quadrature point
                       // centers
@@ -1021,9 +1013,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                     {
                       auto particle_properties = particle.get_properties();
                       const double r_particle =
-                        particle_properties
-                          [DEM::CFDDEMProperties::PropertiesIndex::dp] *
-                        0.5;
+                        particle_properties[PropertiesIndex::dp] * 0.5;
 
                       // Adjust the location of the particle in the cell to
                       // account for the periodicity. If the position of the
@@ -1064,8 +1054,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                         (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
                          (2 * dim)) /
                         particle_properties
-                          [DEM::CFDDEMProperties::PropertiesIndex::
-                             volumetric_contribution];
+                          [PropertiesIndex::volumetric_contribution];
 
                       // Calculate the normalized particle contribution
                       particles_volume_in_kernel +=
@@ -1131,11 +1120,11 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
 }
 
 // first: the template of the class
-template <int dim>
+template <int dim, typename PropertiesIndex>
 // second: the template of the method
 template <int n_components, int property_start_index>
 void
-ParticleProjector<dim>::calculate_field_projection(
+ParticleProjector<dim, PropertiesIndex>::calculate_field_projection(
   ParticleFieldQCM<dim, n_components, property_start_index> &field_qcm)
 {
   switch (void_fraction_parameters->qcm_filter_type)
@@ -1157,13 +1146,13 @@ ParticleProjector<dim>::calculate_field_projection(
 }
 
 // first: the template of the class
-template <int dim>
+template <int dim, typename PropertiesIndex>
 // second: the template of the method
 template <Parameters::QCMFilterType filter_type,
           int                       n_components,
           int                       property_start_index>
 void
-ParticleProjector<dim>::calculate_field_projection_impl(
+ParticleProjector<dim, PropertiesIndex>::calculate_field_projection_impl(
   ParticleFieldQCM<dim, n_components, property_start_index> &field_qcm)
 {
   AssertThrow(n_components == 1 || n_components == dim,
@@ -1274,9 +1263,7 @@ ParticleProjector<dim>::calculate_field_projection_impl(
                       double distance            = 0;
                       auto   particle_properties = particle.get_properties();
                       const double r_particle =
-                        particle_properties
-                          [DEM::CFDDEMProperties::PropertiesIndex::dp] *
-                        0.5;
+                        particle_properties[PropertiesIndex::dp] * 0.5;
 
                       // Distance between particle and quadrature point
                       // centers
@@ -1302,8 +1289,7 @@ ParticleProjector<dim>::calculate_field_projection_impl(
                         field_qcm.conservative_projection ?
                           particle_volume_in_sphere /
                             (particle_properties
-                               [DEM::CFDDEMProperties::PropertiesIndex::
-                                  volumetric_contribution]) :
+                               [PropertiesIndex::volumetric_contribution]) :
                           particle_volume_in_sphere;
 
                       if constexpr (n_components == 1)
@@ -1339,9 +1325,7 @@ ParticleProjector<dim>::calculate_field_projection_impl(
                       double distance            = 0;
                       auto   particle_properties = particle.get_properties();
                       const double r_particle =
-                        particle_properties
-                          [DEM::CFDDEMProperties::PropertiesIndex::dp] *
-                        0.5;
+                        particle_properties[PropertiesIndex::dp] * 0.5;
 
                       // Adjust the location of the particle in the cell to
                       // account for the periodicity. If the position of the
@@ -1397,8 +1381,7 @@ ParticleProjector<dim>::calculate_field_projection_impl(
                         field_qcm.conservative_projection ?
                           particle_volume_in_sphere /
                             (particle_properties
-                               [DEM::CFDDEMProperties::PropertiesIndex::
-                                  volumetric_contribution]) :
+                               [PropertiesIndex::volumetric_contribution]) :
                           particle_volume_in_sphere;
 
 
@@ -1599,16 +1582,17 @@ ParticleProjector<dim>::calculate_field_projection_impl(
 
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 template <typename VectorType>
 void
-ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
-  const Parameters::CFDDEM      &cfd_dem_parameters,
-  DoFHandler<dim>               &fluid_dof_handler,
-  const VectorType              &present_velocity_pressure_solution,
-  const std::vector<VectorType> &previous_velocity_pressure_solution,
-  const Tensor<1, 3>            &gravity,
-  NavierStokesScratchData<dim>   scratch_data)
+ParticleProjector<dim, PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM      &cfd_dem_parameters,
+    DoFHandler<dim>               &fluid_dof_handler,
+    const VectorType              &present_velocity_pressure_solution,
+    const std::vector<VectorType> &previous_velocity_pressure_solution,
+    const Tensor<1, 3>            &gravity,
+    NavierStokesScratchData<dim>   scratch_data)
 {
   // If the mode to calculate the void fraction is function, then the VANS
   // solver is running with a user defined function so there are no
@@ -1645,7 +1629,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   // 1. We setup the particle-fluid assemblers that we use.
 
   // Assemblers for the particle_fluid interactions
-  std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
+  std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim, PropertiesIndex>>>
     particle_fluid_assemblers;
 
   if (cfd_dem_parameters.drag_force == true)
@@ -1655,78 +1639,86 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
         {
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerDiFelice<dim>>(cfd_dem_parameters));
+            std::make_shared<VANSAssemblerDiFelice<dim, PropertiesIndex>>(
+              cfd_dem_parameters));
         }
 
       if (cfd_dem_parameters.drag_model == Parameters::DragModel::rong)
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerRong<dim>>(cfd_dem_parameters));
+            std::make_shared<VANSAssemblerRong<dim, PropertiesIndex>>(
+              cfd_dem_parameters));
         }
 
       if (cfd_dem_parameters.drag_model == Parameters::DragModel::dallavalle)
         {
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerDallavalle<dim>>(cfd_dem_parameters));
+            std::make_shared<VANSAssemblerDallavalle<dim, PropertiesIndex>>(
+              cfd_dem_parameters));
         }
 
       if (cfd_dem_parameters.drag_model == Parameters::DragModel::kochhill)
         {
           // Koch and Hill Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerKochHill<dim>>(cfd_dem_parameters));
+            std::make_shared<VANSAssemblerKochHill<dim, PropertiesIndex>>(
+              cfd_dem_parameters));
         }
       if (cfd_dem_parameters.drag_model == Parameters::DragModel::beetstra)
         {
           // Beetstra drag model assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerBeetstra<dim>>(cfd_dem_parameters));
+            std::make_shared<VANSAssemblerBeetstra<dim, PropertiesIndex>>(
+              cfd_dem_parameters));
         }
       if (cfd_dem_parameters.drag_model == Parameters::DragModel::gidaspow)
         {
           // Gidaspow Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VANSAssemblerGidaspow<dim>>(cfd_dem_parameters));
+            std::make_shared<VANSAssemblerGidaspow<dim, PropertiesIndex>>(
+              cfd_dem_parameters));
         }
     }
 
   if (cfd_dem_parameters.buoyancy_force == true)
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerBuoyancy<dim>>(gravity));
+      std::make_shared<VANSAssemblerBuoyancy<dim, PropertiesIndex>>(gravity));
 
   if (cfd_dem_parameters.saffman_lift_force == true)
     // Saffman Mei Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerSaffmanMei<dim>>());
+      std::make_shared<VANSAssemblerSaffmanMei<dim, PropertiesIndex>>());
 
   if (cfd_dem_parameters.magnus_lift_force == true)
     // Magnus Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerMagnus<dim>>());
+      std::make_shared<VANSAssemblerMagnus<dim, PropertiesIndex>>());
 
   if (cfd_dem_parameters.rotational_viscous_torque == true)
     // Viscous Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerViscousTorque<dim>>());
+      std::make_shared<VANSAssemblerViscousTorque<dim, PropertiesIndex>>());
 
   if (cfd_dem_parameters.vortical_viscous_torque == true)
     // Vortical Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerVorticalTorque<dim>>());
+      std::make_shared<VANSAssemblerVorticalTorque<dim, PropertiesIndex>>());
 
 
   if (cfd_dem_parameters.pressure_force == true)
     // Pressure Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerPressureForce<dim>>(cfd_dem_parameters));
+      std::make_shared<VANSAssemblerPressureForce<dim, PropertiesIndex>>(
+        cfd_dem_parameters));
 
   if (cfd_dem_parameters.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
+      std::make_shared<VANSAssemblerShearForce<dim, PropertiesIndex>>(
+        cfd_dem_parameters));
 
 
   scratch_data.enable_void_fraction(*fe, *quadrature, *mapping);
@@ -1765,26 +1757,28 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
             {
-              scratch_data.reinit_particle_fluid_interactions(
-                cell,
-                void_fraction_cell,
-                present_velocity_pressure_solution,
-                previous_velocity_pressure_solution[0],
-                void_fraction_solution,
-                *particle_handler,
-                cfd_dem_parameters.drag_coupling);
+              scratch_data
+                .template reinit_particle_fluid_interactions<PropertiesIndex>(
+                  cell,
+                  void_fraction_cell,
+                  present_velocity_pressure_solution,
+                  previous_velocity_pressure_solution[0],
+                  void_fraction_solution,
+                  *particle_handler,
+                  cfd_dem_parameters.drag_coupling);
             }
           else
             {
               // In this case the global vector type is not a deal.II vector.
-              scratch_data.reinit_particle_fluid_interactions(
-                cell,
-                void_fraction_cell,
-                present_velocity_pressure_solution,
-                previous_velocity_pressure_solution[0],
-                void_fraction_locally_relevant,
-                *particle_handler,
-                cfd_dem_parameters.drag_coupling);
+              scratch_data
+                .template reinit_particle_fluid_interactions<PropertiesIndex>(
+                  cell,
+                  void_fraction_cell,
+                  present_velocity_pressure_solution,
+                  previous_velocity_pressure_solution[0],
+                  void_fraction_locally_relevant,
+                  *particle_handler,
+                  cfd_dem_parameters.drag_coupling);
             }
 
 
@@ -1813,48 +1807,95 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
 
 
 template void
-ParticleProjector<2>::calculate_particle_fluid_forces_projection(
-  const Parameters::CFDDEM            &cfd_dem_parameters,
-  DoFHandler<2>                       &dof_handler,
-  const GlobalVectorType              &fluid_solution,
-  const std::vector<GlobalVectorType> &fluid_previous_solutions,
-  const Tensor<1, 3>                  &gravity,
-  NavierStokesScratchData<2>           scratch_data);
+ParticleProjector<2, DEM::CFDDEMProperties::PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM            &cfd_dem_parameters,
+    DoFHandler<2>                       &dof_handler,
+    const GlobalVectorType              &fluid_solution,
+    const std::vector<GlobalVectorType> &fluid_previous_solutions,
+    const Tensor<1, 3>                  &gravity,
+    NavierStokesScratchData<2>           scratch_data);
 
 template void
-ParticleProjector<3>::calculate_particle_fluid_forces_projection(
-  const Parameters::CFDDEM            &cfd_dem_parameters,
-  DoFHandler<3>                       &dof_handler,
-  const GlobalVectorType              &fluid_solution,
-  const std::vector<GlobalVectorType> &fluid_previous_solutions,
-  const Tensor<1, 3>                  &gravity,
-  NavierStokesScratchData<3>           scratch_data);
+ParticleProjector<2, DEM::CFDDEMMPProperties::PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM            &cfd_dem_parameters,
+    DoFHandler<2>                       &dof_handler,
+    const GlobalVectorType              &fluid_solution,
+    const std::vector<GlobalVectorType> &fluid_previous_solutions,
+    const Tensor<1, 3>                  &gravity,
+    NavierStokesScratchData<2>           scratch_data);
+
+template void
+ParticleProjector<3, DEM::CFDDEMProperties::PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM            &cfd_dem_parameters,
+    DoFHandler<3>                       &dof_handler,
+    const GlobalVectorType              &fluid_solution,
+    const std::vector<GlobalVectorType> &fluid_previous_solutions,
+    const Tensor<1, 3>                  &gravity,
+    NavierStokesScratchData<3>           scratch_data);
+
+template void
+ParticleProjector<3, DEM::CFDDEMMPProperties::PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM            &cfd_dem_parameters,
+    DoFHandler<3>                       &dof_handler,
+    const GlobalVectorType              &fluid_solution,
+    const std::vector<GlobalVectorType> &fluid_previous_solutions,
+    const Tensor<1, 3>                  &gravity,
+    NavierStokesScratchData<3>           scratch_data);
 
 #ifndef LETHE_USE_LDV
 template void
-ParticleProjector<2>::calculate_particle_fluid_forces_projection(
-  const Parameters::CFDDEM                         &cfd_dem_parameters,
-  DoFHandler<2>                                    &dof_handler,
-  const LinearAlgebra::distributed::Vector<double> &fluid_solution,
-  const std::vector<LinearAlgebra::distributed::Vector<double>>
-                            &fluid_previous_solutions,
-  const Tensor<1, 3>        &gravity,
-  NavierStokesScratchData<2> scratch_data);
+ParticleProjector<2, DEM::CFDDEMProperties::PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM                         &cfd_dem_parameters,
+    DoFHandler<2>                                    &dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &fluid_solution,
+    const std::vector<LinearAlgebra::distributed::Vector<double>>
+                              &fluid_previous_solutions,
+    const Tensor<1, 3>        &gravity,
+    NavierStokesScratchData<2> scratch_data);
 
 template void
-ParticleProjector<3>::calculate_particle_fluid_forces_projection(
-  const Parameters::CFDDEM                         &cfd_dem_parameters,
-  DoFHandler<3>                                    &dof_handler,
-  const LinearAlgebra::distributed::Vector<double> &fluid_solution,
-  const std::vector<LinearAlgebra::distributed::Vector<double>>
-                            &fluid_previous_solutions,
-  const Tensor<1, 3>        &gravity,
-  NavierStokesScratchData<3> scratch_data);
+ParticleProjector<2, DEM::CFDDEMMPProperties::PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM                         &cfd_dem_parameters,
+    DoFHandler<2>                                    &dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &fluid_solution,
+    const std::vector<LinearAlgebra::distributed::Vector<double>>
+                              &fluid_previous_solutions,
+    const Tensor<1, 3>        &gravity,
+    NavierStokesScratchData<2> scratch_data);
+
+template void
+ParticleProjector<3, DEM::CFDDEMProperties::PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM                         &cfd_dem_parameters,
+    DoFHandler<3>                                    &dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &fluid_solution,
+    const std::vector<LinearAlgebra::distributed::Vector<double>>
+                              &fluid_previous_solutions,
+    const Tensor<1, 3>        &gravity,
+    NavierStokesScratchData<3> scratch_data);
+
+template void
+ParticleProjector<3, DEM::CFDDEMMPProperties::PropertiesIndex>::
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM                         &cfd_dem_parameters,
+    DoFHandler<3>                                    &dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &fluid_solution,
+    const std::vector<LinearAlgebra::distributed::Vector<double>>
+                              &fluid_previous_solutions,
+    const Tensor<1, 3>        &gravity,
+    NavierStokesScratchData<3> scratch_data);
 #endif
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim>::solve_linear_system_and_update_solution()
+ParticleProjector<dim,
+                  PropertiesIndex>::solve_linear_system_and_update_solution()
 {
   // Calculate rescale metric in case rescale is active.
   const double rescale_metric =
@@ -1930,5 +1971,7 @@ ParticleProjector<dim>::solve_linear_system_and_update_solution()
 // Pre-compile the 2D and 3D ParticleProjector solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging
-template class ParticleProjector<2>;
-template class ParticleProjector<3>;
+template class ParticleProjector<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleProjector<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleProjector<2, DEM::CFDDEMMPProperties::PropertiesIndex>;
+template class ParticleProjector<3, DEM::CFDDEMMPProperties::PropertiesIndex>;

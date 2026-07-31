@@ -261,8 +261,10 @@ public:
  * @ParticleFieldQCM class.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  */
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class ParticleProjector : public PhysicsLinearSubequationsSolver
 {
 public:
@@ -868,34 +870,26 @@ public:
   /// This field is not volumetric, meaning that the integral over the
   /// entire domain of this field will not yield the sum of the particle
   /// velocity over all the particles.
-  ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::v_x>
-    particle_velocity;
+  ParticleFieldQCM<dim, 3, PropertiesIndex::v_x> particle_velocity;
 
   /// Projector used to save the forces used in the two-way coupling scheme,
   /// without drag. This field is volumetric. The integral of this field over
   /// the entire domain will result in the sum of the force (without drag) over
   /// all of the particles.
-  ParticleFieldQCM<
-    dim,
-    3,
-    DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x>
+  ParticleFieldQCM<dim, 3, PropertiesIndex::fem_force_two_way_coupling_x>
     fluid_force_on_particles_two_way_coupling;
 
   /// Projector used to store the drag force. The drag is stored as a separate
   /// field since we may want to make implicit calculations of it. This field
   /// is volumetric. The integral of this field over the entire domain will
   /// result in the sum of the drag force over all the particles.
-  ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x>
-    fluid_drag_on_particles;
+  ParticleFieldQCM<dim, 3, PropertiesIndex::fem_drag_x> fluid_drag_on_particles;
 
   /// Projector used to save the momentum transfer coefficient (beta). This
   /// field is volumetric. The integral of this field over the entire domain
   /// will result in the sum of the momentum transfer coefficient over all
   /// particles.
-  ParticleFieldQCM<
-    dim,
-    1,
-    DEM::CFDDEMProperties::PropertiesIndex::momentum_transfer_coefficient>
+  ParticleFieldQCM<dim, 1, PropertiesIndex::momentum_transfer_coefficient>
     momentum_transfer_coefficient;
 };
 #endif

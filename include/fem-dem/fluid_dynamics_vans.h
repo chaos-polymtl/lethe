@@ -41,7 +41,7 @@ using namespace dealii;
  * @ingroup solvers
  */
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 class FluidDynamicsVANS : public FluidDynamicsMatrixBased<dim>
 {
 public:
@@ -278,7 +278,7 @@ protected:
   MappingQGeneric<dim> particle_mapping;
 
   /// Vector of assembler objects for particle-fluid interaction terms
-  std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
+  std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim, PropertiesIndex>>>
     particle_fluid_assemblers;
 
   /// Flag enabling Pressure Stabilizing Petrov-Galerkin (PSPG) stabilization
@@ -308,7 +308,7 @@ protected:
   Particles::ParticleHandler<dim, dim> particle_handler;
 
   /// Particle projector for calculating void fraction and particle effects
-  ParticleProjector<dim> particle_projector;
+  ParticleProjector<dim, PropertiesIndex> particle_projector;
 
   /// Flag indicating whether the domain has periodic boundary conditions
   bool has_periodic_boundaries;

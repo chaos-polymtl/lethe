@@ -735,14 +735,20 @@ public:
 
   /**
    * @brief Reinitializes the fluid forces and torques on the particles in the cell to zero
+   *
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    */
+  template <typename PropertiesIndex>
   void
   reinit_particle_fluid_forces();
 
   /**
    * @brief Extracts the velocity of the particles and calculates their total volume
    * in the cell. Both outcomes are stored as members of the scratch data class.
+   *
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    */
+  template <typename PropertiesIndex>
   void
   extract_particle_properties();
 
@@ -956,8 +962,11 @@ public:
    * @brief Calculates the velocity of the fluid relative to that of the particle and
    * the particle Reynolds number at the location of the particles. These will
    * be used in forces calculations in the vans equations.
+   *
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    */
 
+  template <typename PropertiesIndex>
   void
   calculate_force_parameters_at_particle_location()
   {
@@ -982,7 +991,7 @@ public:
           cell_void_fraction[i_particle] *
             fluid_particle_relative_velocity_at_particle_location[i_particle]
               .norm() *
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
+            particle_properties[PropertiesIndex::dp] /
             (kinematic_viscosity_at_particle_location[i_particle] + DBL_MIN);
         i_particle++;
       }
@@ -1061,7 +1070,7 @@ public:
    * interpolated at the location of the particles.
    */
 
-  template <typename VectorType>
+  template <typename PropertiesIndex, typename VectorType>
   void
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
@@ -1080,8 +1089,8 @@ public:
 
     pic = particle_handler.particles_in_cell(velocity_cell);
 
-    extract_particle_properties();
-    reinit_particle_fluid_forces();
+    extract_particle_properties<PropertiesIndex>();
+    reinit_particle_fluid_forces<PropertiesIndex>();
 
     calculate_cell_void_fraction(total_particle_volume);
 
@@ -1105,7 +1114,7 @@ public:
                                                      void_fraction_solution);
       }
     calculate_fluid_properties_at_particle_location();
-    calculate_force_parameters_at_particle_location();
+    calculate_force_parameters_at_particle_location<PropertiesIndex>();
   }
 
   /**
@@ -1142,7 +1151,7 @@ public:
    * used. This parameter essentially decides which velocity_pressure solution
    * is interpolated at the location of the particles.
    */
-  template <typename VectorType>
+  template <typename PropertiesIndex, typename VectorType>
   void
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
@@ -1157,8 +1166,8 @@ public:
   {
     pic = particle_handler.particles_in_cell(velocity_cell);
 
-    extract_particle_properties();
-    reinit_particle_fluid_forces();
+    extract_particle_properties<PropertiesIndex>();
+    reinit_particle_fluid_forces<PropertiesIndex>();
     calculate_cell_void_fraction(total_particle_volume);
 
     if (number_of_particles == 0)
@@ -1183,7 +1192,7 @@ public:
                                        phase_cell,
                                        current_filtered_CLS_solution);
     calculate_fluid_properties_at_particle_location();
-    calculate_force_parameters_at_particle_location();
+    calculate_force_parameters_at_particle_location<PropertiesIndex>();
   }
 
   /**

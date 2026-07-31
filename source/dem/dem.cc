@@ -580,8 +580,7 @@ DEMSolver<dim, PropertiesIndex>::update_temperature_solid_objects()
   // temperature is updated before calculating the contact outcomes for the
   // current time step, so its properties should correspond to the
   // previous time step.
-  if constexpr (std::is_same_v<PropertiesIndex,
-                               DEM::DEMMPProperties::PropertiesIndex>)
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
     {
       if (!action_manager->check_solid_objects_enabled())
         return;
@@ -1058,8 +1057,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
       particle_wall_contact_force();
 
       // Integration of temperature for multiphysic DEM
-      if constexpr (std::is_same_v<PropertiesIndex,
-                                   DEM::DEMMPProperties::PropertiesIndex>)
+      if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
         {
           integrate_temperature<dim, PropertiesIndex>(
             particle_handler,

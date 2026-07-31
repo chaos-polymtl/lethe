@@ -35,6 +35,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::create_level_operator(
 }
 
 template <int dim>
+template <typename PropertiesIndex>
 void
 MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   const std::shared_ptr<SimulationControl> &simulation_control,
@@ -42,7 +43,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions,
   const VectorType                         &time_derivative_void_fraction,
-  const ParticleProjector<dim>             &particle_projector)
+  const ParticleProjector<dim, PropertiesIndex> &particle_projector)
 {
   AssertThrow(
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -545,15 +546,15 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
     time_derivative_previous_solutions);
 }
 
-template <int dim>
-FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
+template <int dim, typename PropertiesIndex>
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)
   : FluidDynamicsMatrixFree<dim>(param.cfd_parameters)
   , cfd_dem_simulation_parameters(param)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
                      particle_mapping,
-                     DEM::CFDDEMProperties::n_properties)
+                     PropertiesIndex::n_properties)
   , particle_projector(
       &(*this->triangulation),
       param.void_fraction,
@@ -597,9 +598,9 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
     cfd_dem_simulation_parameters.cfd_dem);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::setup_dofs()
 {
   FluidDynamicsMatrixFree<dim>::setup_dofs();
 
@@ -622,9 +623,9 @@ FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
     this->mpi_communicator);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim>::read_dem()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::read_dem()
 {
   AssertThrow(
     dim == 3,
@@ -659,9 +660,13 @@ FluidDynamicsVANSMatrixFree<dim>::read_dem()
   std::istringstream            iss(buffer);
   boost::archive::text_iarchive ia(iss, boost::archive::no_header);
 
-  // Create a temporary particle_handler with DEM properties
+  // Create a temporary particle_handler with the DEM properties of the
+  // simulation this one is restarted from
+  using DEMPropertiesIndex =
+    DEM::matching_dem_properties_index<PropertiesIndex>;
+
   Particles::ParticleHandler<dim> temporary_particle_handler(
-    *this->triangulation, particle_mapping, DEM::DEMProperties::n_properties);
+    *this->triangulation, particle_mapping, DEMPropertiesIndex::n_properties);
 
   ia >> temporary_particle_handler;
 
@@ -696,9 +701,7 @@ FluidDynamicsVANSMatrixFree<dim>::read_dem()
       // Fill the existing particle handler using the temporary one
       // This is done during the dynamic cast for the convert_particle_handler
       // function which requires a pararallel::distributed::triangulation
-      convert_particle_handler<dim,
-                               DEM::DEMProperties::PropertiesIndex,
-                               DEM::CFDDEMProperties::PropertiesIndex>(
+      convert_particle_handler<dim, DEMPropertiesIndex, PropertiesIndex>(
         *parallel_triangulation, temporary_particle_handler, particle_handler);
 
       // Exchange the ghost particles so that the particle handler is ready to
@@ -714,9 +717,9 @@ FluidDynamicsVANSMatrixFree<dim>::read_dem()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::assemble_system_rhs()
 {
   // First we update the particle-fluid coupling terms.
   // The base matrix-free operator is not aware of the various VANS
@@ -798,9 +801,9 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
   // ensure that the checkpointed information is correct
@@ -809,9 +812,9 @@ FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
   FluidDynamicsMatrixFree<dim>::finish_time_step();
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 std::vector<OutputStruct<dim, LinearAlgebra::distributed::Vector<double>>>
-FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
 {
   // Make sure all of the particle-related vectors have adequate ghost values.
   particle_projector.void_fraction_solution.update_ghost_values();
@@ -888,9 +891,10 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
     }
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
+  evaluate_time_derivative_void_fraction()
 {
   this->time_derivative_void_fraction = 0;
 
@@ -922,9 +926,9 @@ FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
   time_derivative_void_fraction.update_ghost_values();
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim>::solve()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
 
@@ -1068,9 +1072,9 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 }
 
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim>::create_GMG()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::create_GMG()
 {
   this->gmg_preconditioner =
     std::make_shared<MFNavierStokesVANSPreconditionGMG<dim>>(
@@ -1086,21 +1090,32 @@ FluidDynamicsVANSMatrixFree<dim>::create_GMG()
                                    this->fe);
 }
 
-template <int dim>
+template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::initialize_GMG()
 {
   dynamic_cast<MFNavierStokesVANSPreconditionGMG<dim> *>(
     this->gmg_preconditioner.get())
-    ->initialize(this->simulation_control,
-                 this->flow_control,
-                 *this->present_solution,
-                 this->time_derivative_previous_solutions,
-                 this->time_derivative_void_fraction,
-                 this->particle_projector);
+    ->template initialize<PropertiesIndex>(
+      this->simulation_control,
+      this->flow_control,
+      *this->present_solution,
+      this->time_derivative_previous_solutions,
+      this->time_derivative_void_fraction,
+      this->particle_projector);
 }
 
 // Pre-compile the 2D and 3D solver to ensure that the
 // library is valid before we actually compile the solver
-template class FluidDynamicsVANSMatrixFree<2>;
-template class FluidDynamicsVANSMatrixFree<3>;
+template class FluidDynamicsVANSMatrixFree<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex>;
+template class FluidDynamicsVANSMatrixFree<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex>;
+template class FluidDynamicsVANSMatrixFree<
+  2,
+  DEM::CFDDEMMPProperties::PropertiesIndex>;
+template class FluidDynamicsVANSMatrixFree<
+  3,
+  DEM::CFDDEMMPProperties::PropertiesIndex>;

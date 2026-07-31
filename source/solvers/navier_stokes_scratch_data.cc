@@ -750,6 +750,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 }
 
 template <int dim>
+template <typename PropertiesIndex>
 void
 NavierStokesScratchData<dim>::reinit_particle_fluid_forces()
 {
@@ -759,22 +760,19 @@ NavierStokesScratchData<dim>::reinit_particle_fluid_forces()
       // Set the particle_fluid_interactions properties and vectors to 0
       for (int d = 0; d < dim; ++d)
         {
-          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                                fem_force_two_way_coupling_x +
-                              d] = 0.;
-          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                                fem_force_one_way_coupling_x +
-                              d] = 0.;
-          particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] = 0.;
-          particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
-          explicit_particle_volumetric_acceleration_on_fluid[d]        = 0.;
+          particle_properties[PropertiesIndex::fem_force_two_way_coupling_x +
+                              d]                                 = 0.;
+          particle_properties[PropertiesIndex::fem_force_one_way_coupling_x +
+                              d]                                 = 0.;
+          particle_properties[PropertiesIndex::fem_drag_x + d]   = 0.;
+          particle_properties[PropertiesIndex::fem_torque_x + d] = 0.;
+          explicit_particle_volumetric_acceleration_on_fluid[d]  = 0.;
         }
     }
 }
 
 template <int dim>
+template <typename PropertiesIndex>
 void
 NavierStokesScratchData<dim>::extract_particle_properties()
 {
@@ -788,19 +786,16 @@ NavierStokesScratchData<dim>::extract_particle_properties()
       auto particle_properties = particle.get_properties();
       // Stores the values of particle velocity in a tensor
       particle_velocity[i_particle][0] =
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_x];
+        particle_properties[PropertiesIndex::v_x];
       particle_velocity[i_particle][1] =
-        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_y];
+        particle_properties[PropertiesIndex::v_y];
       if constexpr (dim == 3)
         particle_velocity[i_particle][2] =
-          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_z];
+          particle_properties[PropertiesIndex::v_z];
 
       if (!interpolated_void_fraction)
         total_particle_volume +=
-          M_PI *
-          pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-              dim) /
-          (2 * dim);
+          M_PI * pow(particle_properties[PropertiesIndex::dp], dim) / (2 * dim);
 
       average_particle_velocity += particle_velocity[i_particle];
       i_particle++;
@@ -865,3 +860,35 @@ NavierStokesScratchData<dim>::gather_particles_reference_location()
 }
 template class NavierStokesScratchData<2>;
 template class NavierStokesScratchData<3>;
+
+template void
+NavierStokesScratchData<2>::reinit_particle_fluid_forces<
+  DEM::CFDDEMProperties::PropertiesIndex>();
+
+template void
+NavierStokesScratchData<2>::extract_particle_properties<
+  DEM::CFDDEMProperties::PropertiesIndex>();
+
+template void
+NavierStokesScratchData<2>::reinit_particle_fluid_forces<
+  DEM::CFDDEMMPProperties::PropertiesIndex>();
+
+template void
+NavierStokesScratchData<2>::extract_particle_properties<
+  DEM::CFDDEMMPProperties::PropertiesIndex>();
+
+template void
+NavierStokesScratchData<3>::reinit_particle_fluid_forces<
+  DEM::CFDDEMProperties::PropertiesIndex>();
+
+template void
+NavierStokesScratchData<3>::extract_particle_properties<
+  DEM::CFDDEMProperties::PropertiesIndex>();
+
+template void
+NavierStokesScratchData<3>::reinit_particle_fluid_forces<
+  DEM::CFDDEMMPProperties::PropertiesIndex>();
+
+template void
+NavierStokesScratchData<3>::extract_particle_properties<
+  DEM::CFDDEMMPProperties::PropertiesIndex>();

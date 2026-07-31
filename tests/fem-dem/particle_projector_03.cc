@@ -197,13 +197,14 @@ test_void_fraction_qcm(const unsigned int fe_degree,
 
   BoundaryConditions::NSBoundaryConditions<3> boundary_conditions;
 
-  ParticleProjector<3> particle_projector(&domain_triangulation,
-                                          void_fraction_parameters,
-                                          linear_solver_parameters,
-                                          &particle_handler,
-                                          fe_degree,
-                                          false,
-                                          pcout);
+  ParticleProjector<3, DEM::CFDDEMProperties::PropertiesIndex>
+    particle_projector(&domain_triangulation,
+                       void_fraction_parameters,
+                       linear_solver_parameters,
+                       &particle_handler,
+                       fe_degree,
+                       false,
+                       pcout);
 
 
 

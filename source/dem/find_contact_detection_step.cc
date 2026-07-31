@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/dem_action_manager.h>
@@ -105,7 +105,27 @@ find_particle_contact_detection_step<2, DEM::DEMMPProperties::PropertiesIndex>(
   const bool                     parallel_update);
 
 template void
+find_particle_contact_detection_step<2,
+                                     DEM::CFDDEMMPProperties::PropertiesIndex>(
+  Particles::ParticleHandler<2> &particle_handler,
+  const double                   dt,
+  const double                   smallest_contact_search_criterion,
+  MPI_Comm                      &mpi_communicator,
+  std::vector<double>           &displacement,
+  const bool                     parallel_update);
+
+template void
 find_particle_contact_detection_step<3, DEM::DEMMPProperties::PropertiesIndex>(
+  Particles::ParticleHandler<3> &particle_handler,
+  const double                   dt,
+  const double                   smallest_contact_search_criterion,
+  MPI_Comm                      &mpi_communicator,
+  std::vector<double>           &displacement,
+  const bool                     parallel_update);
+
+template void
+find_particle_contact_detection_step<3,
+                                     DEM::CFDDEMMPProperties::PropertiesIndex>(
   Particles::ParticleHandler<3> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,

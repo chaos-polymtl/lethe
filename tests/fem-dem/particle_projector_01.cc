@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -148,13 +148,14 @@ test_void_fraction_qcm(const unsigned int fe_degree,
 
   BoundaryConditions::NSBoundaryConditions<3> boundary_conditions;
 
-  ParticleProjector<3> particle_projector(&domain_triangulation,
-                                          void_fraction_parameters,
-                                          linear_solver_parameters,
-                                          &particle_handler,
-                                          fe_degree,
-                                          false,
-                                          pcout);
+  ParticleProjector<3, DEM::CFDDEMProperties::PropertiesIndex>
+    particle_projector(&domain_triangulation,
+                       void_fraction_parameters,
+                       linear_solver_parameters,
+                       &particle_handler,
+                       fe_degree,
+                       false,
+                       pcout);
 
 
 

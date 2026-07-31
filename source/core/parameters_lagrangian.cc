@@ -1052,9 +1052,9 @@ namespace Parameters
 
         prm.declare_entry("solver type",
                           "dem",
-                          Patterns::Selection("dem|cfd_dem|dem_mp"),
+                          Patterns::Selection("dem|dem_mp"),
                           "Choosing solver type"
-                          "Choices are <dem|cfd_dem|dem_mp>.");
+                          "Choices are <dem|dem_mp>.");
 
         prm.enter_subsection("adaptive sparse contacts");
         {
@@ -1321,8 +1321,6 @@ namespace Parameters
         const std::string solver_type_str = prm.get("solver type");
         if (solver_type_str == "dem")
           solver_type = DEM::SolverType::dem;
-        else if (solver_type_str == "cfd_dem")
-          solver_type = DEM::SolverType::cfd_dem;
         else if (solver_type_str == "dem_mp")
           solver_type = DEM::SolverType::dem_mp;
         else
