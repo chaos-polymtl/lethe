@@ -123,12 +123,14 @@ namespace Parameters
         "time end",
         "1",
         Patterns::Double(),
-        "Time step value at which to end a transient simulation");
+        "Time value at which a transient simulation ends. Only used when the "
+        "end control is set to time");
       prm.declare_entry(
         "iteration end",
         "10",
-        Patterns::Integer(),
-        "Iteration number at which to end a transient simulation");
+        Patterns::Integer(0),
+        "Transient iteration number at which a transient simulation ends. "
+        "Only used when the end control is set to iteration");
       prm.declare_entry("startup time scaling",
                         "0.4",
                         Patterns::Double(),
@@ -228,8 +230,9 @@ namespace Parameters
         "end control",
         "time",
         Patterns::Selection("iteration|time"),
-        "The control for the end of a transient simulation"
-        "The succesful ending condtion can be either a maximum time value or a maximum number of iterations");
+        "The control for the end of a transient simulation. The ending "
+        "condition is either a maximum time value (time end) or a maximum "
+        "number of transient iterations (iteration end)");
 
       prm.declare_entry(
         "output control",
@@ -291,6 +294,7 @@ namespace Parameters
         {
           AssertThrow(false, ExcMessage("Invalid bdf startup scheme"));
         }
+
       const std::string end_control_string = prm.get("end control");
       if (end_control_string == "iteration")
         end_control = EndControl::iteration;
@@ -300,6 +304,7 @@ namespace Parameters
         {
           AssertThrow(false, ExcMessage("Invalid end control scheme"));
         }
+
       const std::string osv = prm.get("output control");
       if (osv == "iteration")
         output_control = OutputControl::iteration;

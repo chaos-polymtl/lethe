@@ -370,20 +370,11 @@ SimulationControlTransient::integrate()
 bool
 SimulationControlTransient::is_at_end()
 {
-  if (end_control == Parameters::SimulationControl::EndControl::time)
-    {
-      double floating_point_margin =
-        std::max(1e-6 * time_step, 1e-12 * end_time);
-      return current_time >= (end_time - floating_point_margin);
-    }
-  else if (end_control == Parameters::SimulationControl::EndControl::iteration)
-    {
-      return iteration_number >= end_iteration;
-    }
-  else
-    {
-      return false;
-    }
+  if (end_control == Parameters::SimulationControl::EndControl::iteration)
+    return iteration_number >= end_iteration;
+
+  double floating_point_margin = std::max(1e-6 * time_step, 1e-12 * end_time);
+  return current_time >= (end_time - floating_point_margin);
 }
 
 double
@@ -409,8 +400,10 @@ SimulationControlTransient::calculate_time_step()
     }
 
   // Ensure that the time step for the last iteration is kept regardless of the
-  // end time set
-  if (time_step_independent_of_end_time)
+  // end time set. The end time is also irrelevant when the simulation ends at a
+  // given iteration, in which case the time step is never clipped.
+  if (time_step_independent_of_end_time ||
+      end_control == Parameters::SimulationControl::EndControl::iteration)
     return new_time_step;
 
   // Modify last time step to ensure that the last iteration is exactly the end
