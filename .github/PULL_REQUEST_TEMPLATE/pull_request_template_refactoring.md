@@ -16,7 +16,7 @@
 
 <!-- Does this refactor modify or have new simulation parameters? If so, describe them. -->
 
-### Use of LLMs (large language models)
+### Use of LLMs  (Large Language Models)
 
 <!-- LLM-assisted contributions are welcome, but they must be declared.
        If an LLM (e.g. GitHub Copilot, ChatGPT, Claude, Cursor) generated a substantial portion
