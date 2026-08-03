@@ -16,7 +16,7 @@ Starting from the electric-field wave equation shown in
 :doc:`Time Harmonic Maxwell's Equations <time_harmonic>`:
 
 .. math::
-    \nabla \times \left( \mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E} \right) -\omega^2 \varepsilon_{\mathrm{em},{eff}} \mathbf{E} = i \omega \mathbf{J}_{\mathrm{ext}}, \\
+    \nabla \times \left( \mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E} \right) -\omega^2 \varepsilon_{\mathrm{em,eff}} \mathbf{E} = i \omega \mathbf{J}_{\mathrm{ext}},
 
 we consider a domain :math:`\Omega` with boundary :math:`\Gamma`.
 
@@ -30,7 +30,7 @@ absorbing/radiation, or impedance conditions), but they can be grouped into
 three main categories:
 
 - First-type (Dirichlet) boundary conditions: :math:`\mathbf{n} \times \mathbf{E} = \mathbf{E}_{\mathrm{D}}`;
-- Second-type (Neumann) boundary conditions: :math:`\mu_{\mathrm{em}}^{-1} \mathbf{n} \times (\nabla \times \mathbf{E})  = -i \omega \mathbf{J}_{\mathrm{ext,N}}`;
+- Second-type (Neumann) boundary conditions: :math:`\mu_{\mathrm{em}}^{-1} \mathbf{n} \times (\nabla \times \mathbf{E})  = i \omega \mathbf{J}_{\mathrm{ext,N}}`;
 - Robin boundary conditions: :math:`\mathbf{n} \times (\mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E}) + i \omega Z_{\mathrm{s}}^{-1} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n}) = \mathbf{E}_\mathrm{R}`,
 
 In the expressions above, :math:`\mathbf{n}` is the outward unit normal and
@@ -46,7 +46,7 @@ gives:
 
 .. math::
     \begin{align*}
-     \int_{\Omega} -i \omega \mathbf{J}_{\mathrm{ext}} \cdot \mathbf{v^*} \mathrm{d}\Omega = &
+     \int_{\Omega} i \omega \mathbf{J}_{\mathrm{ext}} \cdot \mathbf{v^*} \mathrm{d}\Omega = &
      \int_{\Omega}  \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega - \int_{\Omega} \omega^2 \varepsilon_{\mathrm{em},{eff}} \mathbf{E} \cdot \mathbf{v^*} \mathrm{d}\Omega \\ & + \int_{\Gamma} \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\mathbf{v^*} \times \mathbf{n}) \mathrm{d}\Gamma .
     \end{align*}
 
@@ -72,7 +72,7 @@ and the weak form of the time-harmonic Maxwell equations becomes:
 
 .. math::
     B(\mathbf{E}, \mathbf{v}) = &\int_{\Omega}  \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega + \int_{\Omega} \omega^2 \varepsilon_{\mathrm{em},{eff}} \mathbf{E} \cdot \mathbf{v^*} \mathrm{d}\Omega  \\
-    L(\mathbf{v}) = &\int_{\Omega} -i \omega \mathbf{J}_{\mathrm{ext}} \cdot \mathbf{v^*} \mathrm{d}\Omega .
+    L(\mathbf{v}) = &\int_{\Omega} i \omega \mathbf{J}_{\mathrm{ext}} \cdot \mathbf{v^*} \mathrm{d}\Omega .
 
 Formally, :math:`\mathbf{E}` should also satisfy Gauss's law
 (:math:`\nabla \cdot \mathbf{D} = \rho_f`). In this setting, it is

@@ -49,7 +49,7 @@ where
   ``electromagnetic frequency`` parameter.
 
 Using these conventions, the time-harmonic Maxwell system is written in
-dimensionless form (using the time-harmonic ansantz :math:`\mathbf{E}(\mathbf{x},t) = \Re(\mathbf{E}_\mathrm{spatial}(\mathbf{x})e^{-i\omega t})`) as:
+dimensionless form (using the time-harmonic ansatz :math:`\mathbf{E}(\mathbf{x},t) = \Re(\mathbf{E}_\mathrm{spatial}(\mathbf{x})e^{-i\omega t})`) as:
 
 .. math::
 
@@ -84,7 +84,7 @@ density.
 Parameter File Syntax
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The an example of the time-harmonic Maxwell parameters are given in the text
+The example of the time-harmonic Maxwell parameters are given in the text
 box below.
 
 .. code-block:: text

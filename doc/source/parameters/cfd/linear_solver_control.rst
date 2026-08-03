@@ -62,7 +62,7 @@ In the example below, only ``fluid dynamics`` is used, however, the same block c
 		The use of ``direct`` solver should be in general avoided as it is not efficient for large problems. It can be, however, used for debugging purposes or the development of new features.
 
   .. note::
-    The ``electromagnetics`` solver always uses a conjugate gradient method and therefore the ``method``, ``max iters``, ``max krylov vectors`` parameters are do not have any effect.
+    The ``electromagnetics`` solver always uses a conjugate gradient method; therefore the ``method``, ``max iters``, and ``max krylov vectors`` parameters have no effect.
 
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations.
