@@ -1577,7 +1577,7 @@ namespace Parameters
               Utilities::split_string_list(
                 electric_conductivity_coefficients_string);
 
-          for (const string &coefficient :
+          for (const std::string &coefficient :
                electric_conductivity_coefficients_vec)
             {
               electric_conductivity_polynomial_coefficients.push_back(
@@ -1605,7 +1605,7 @@ namespace Parameters
               Utilities::split_string_list(
                 electric_permittivity_real_coefficients_string);
 
-          for (const string &coefficient :
+          for (const std::string &coefficient :
                electric_permittivity_real_coefficients_vec)
             {
               electric_permittivity_real_polynomial_coefficients.push_back(
@@ -1619,7 +1619,7 @@ namespace Parameters
               Utilities::split_string_list(
                 electric_permittivity_imag_coefficients_string);
 
-          for (const string &coefficient :
+          for (const std::string &coefficient :
                electric_permittivity_imag_coefficients_vec)
             {
               electric_permittivity_imag_polynomial_coefficients.push_back(
@@ -1645,7 +1645,7 @@ namespace Parameters
             magnetic_permeability_real_coefficients_vec =
               Utilities::split_string_list(
                 magnetic_permeability_real_coefficients_string);
-          for (const string &coefficient :
+          for (const std::string &coefficient :
                magnetic_permeability_real_coefficients_vec)
             {
               magnetic_permeability_real_polynomial_coefficients.push_back(
@@ -1658,7 +1658,7 @@ namespace Parameters
             magnetic_permeability_imag_coefficients_vec =
               Utilities::split_string_list(
                 magnetic_permeability_imag_coefficients_string);
-          for (const string &coefficient :
+          for (const std::string &coefficient :
                magnetic_permeability_imag_coefficients_vec)
             {
               magnetic_permeability_imag_polynomial_coefficients.push_back(
