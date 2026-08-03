@@ -1318,22 +1318,30 @@ namespace Parameters
       prm.declare_entry(
         "electric conductivity model",
         "constant",
-        Patterns::Selection("constant"),
+        Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the electric conductivity"
-        "Choices are <constant>.");
+        "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "electric conductivity",
         "0",
         Patterns::Double(),
-        "Electric conductivity for the fluid corresponding to Phase = " +
-          Utilities::int_to_string(id, 1));
+        "Electric conductivity for the material corresponding to: " +
+          material_prefix + " " + Utilities::int_to_string(id, 1));
+
+      prm.declare_entry(
+        "electric conductivity polynomial coefficients",
+        "0",
+        Patterns::List(Patterns::Double()),
+        "Coefficients of the polynomial model for the electric conductivity of the material corresponding to: " +
+          material_prefix + " " + Utilities::int_to_string(id, 1) +
+          ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
 
       prm.declare_entry(
         "electric permittivity model",
         "constant",
-        Patterns::Selection("constant"),
+        Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the electric permittivity"
-        "Choices are <constant>.");
+        "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "electric permittivity real part",
         "1",
@@ -1346,13 +1354,28 @@ namespace Parameters
         Patterns::Double(),
         "Imaginary part of the electric permittivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
+      prm.declare_entry(
+        "electric permittivity real part polynomial coefficients",
+        "0",
+        Patterns::List(Patterns::Double()),
+        "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
+          material_prefix + " " + Utilities::int_to_string(id, 1) +
+          ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
+
+      prm.declare_entry(
+        "electric permittivity imag part polynomial coefficients",
+        "0",
+        Patterns::List(Patterns::Double()),
+        "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
+          material_prefix + " " + Utilities::int_to_string(id, 1) +
+          ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
 
       prm.declare_entry(
         "magnetic permeability model",
         "constant",
-        Patterns::Selection("constant"),
+        Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the magnetic permeability"
-        "Choices are <constant>.");
+        "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "magnetic permeability real part",
         "1",
@@ -1365,6 +1388,20 @@ namespace Parameters
         Patterns::Double(),
         "Imaginary part of the magnetic permeability for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
+      prm.declare_entry(
+        "magnetic permeability real part polynomial coefficients",
+        "0",
+        Patterns::List(Patterns::Double()),
+        "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
+          material_prefix + " " + Utilities::int_to_string(id, 1) +
+          ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
+      prm.declare_entry(
+        "magnetic permeability imag part polynomial coefficients",
+        "0",
+        Patterns::List(Patterns::Double()),
+        "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
+          material_prefix + " " + Utilities::int_to_string(id, 1) +
+          ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
     }
     prm.leave_subsection();
   }
@@ -1526,24 +1563,108 @@ namespace Parameters
       //--------------------------------
       op = prm.get("electric conductivity model");
       if (op == "constant")
-        electric_conductivity_model = ElectricConductivityModel::constant;
-      electric_conductivity = prm.get_double("electric conductivity");
+        {
+          electric_conductivity_model = ElectricConductivityModel::constant;
+        }
+      else if (op == "polynomial")
+        {
+          electric_conductivity_model = ElectricConductivityModel::polynomial;
+
+          const std::string electric_conductivity_coefficients_string =
+            prm.get("electric conductivity polynomial coefficients");
+          const std::vector<std::string>
+            electric_conductivity_coefficients_vec =
+              Utilities::split_string_list(
+                electric_conductivity_coefficients_string);
+
+          for (const string &coefficient :
+               electric_conductivity_coefficients_vec)
+            {
+              electric_conductivity_polynomial_coefficients.push_back(
+                std::stod(coefficient));
+            }
+        }
 
       op = prm.get("electric permittivity model");
       if (op == "constant")
-        electric_permittivity_model = ElectricPermittivityModel::constant;
-      electric_permittivity_real =
-        prm.get_double("electric permittivity real part");
-      electric_permittivity_imag =
-        prm.get_double("electric permittivity imag part");
+        {
+          electric_permittivity_model = ElectricPermittivityModel::constant;
+          electric_permittivity_real =
+            prm.get_double("electric permittivity real part");
+          electric_permittivity_imag =
+            prm.get_double("electric permittivity imag part");
+        }
+      else if (op == "polynomial")
+        {
+          electric_permittivity_model = ElectricPermittivityModel::polynomial;
 
+          const std::string electric_permittivity_real_coefficients_string =
+            prm.get("electric permittivity real part polynomial coefficients");
+          const std::vector<std::string>
+            electric_permittivity_real_coefficients_vec =
+              Utilities::split_string_list(
+                electric_permittivity_real_coefficients_string);
+
+          for (const string &coefficient :
+               electric_permittivity_real_coefficients_vec)
+            {
+              electric_permittivity_real_polynomial_coefficients.push_back(
+                std::stod(coefficient));
+            }
+
+          const std::string electric_permittivity_imag_coefficients_string =
+            prm.get("electric permittivity imag part polynomial coefficients");
+          const std::vector<std::string>
+            electric_permittivity_imag_coefficients_vec =
+              Utilities::split_string_list(
+                electric_permittivity_imag_coefficients_string);
+
+          for (const string &coefficient :
+               electric_permittivity_imag_coefficients_vec)
+            {
+              electric_permittivity_imag_polynomial_coefficients.push_back(
+                std::stod(coefficient));
+            }
+        }
       op = prm.get("magnetic permeability model");
       if (op == "constant")
-        magnetic_permeability_model = MagneticPermeabilityModel::constant;
-      magnetic_permeability_real =
-        prm.get_double("magnetic permeability real part");
-      magnetic_permeability_imag =
-        prm.get_double("magnetic permeability imag part");
+        {
+          magnetic_permeability_model = MagneticPermeabilityModel::constant;
+          magnetic_permeability_real =
+            prm.get_double("magnetic permeability real part");
+          magnetic_permeability_imag =
+            prm.get_double("magnetic permeability imag part");
+        }
+      else if (op == "polynomial")
+        {
+          magnetic_permeability_model = MagneticPermeabilityModel::polynomial;
+
+          const std::string magnetic_permeability_real_coefficients_string =
+            prm.get("magnetic permeability real part polynomial coefficients");
+          const std::vector<std::string>
+            magnetic_permeability_real_coefficients_vec =
+              Utilities::split_string_list(
+                magnetic_permeability_real_coefficients_string);
+          for (const string &coefficient :
+               magnetic_permeability_real_coefficients_vec)
+            {
+              magnetic_permeability_real_polynomial_coefficients.push_back(
+                std::stod(coefficient));
+            }
+
+          const std::string magnetic_permeability_imag_coefficients_string =
+            prm.get("magnetic permeability imag part polynomial coefficients");
+          const std::vector<std::string>
+            magnetic_permeability_imag_coefficients_vec =
+              Utilities::split_string_list(
+                magnetic_permeability_imag_coefficients_string);
+          for (const string &coefficient :
+               magnetic_permeability_imag_coefficients_vec)
+            {
+              magnetic_permeability_imag_polynomial_coefficients.push_back(
+                std::stod(coefficient));
+            }
+        }
     }
     prm.leave_subsection();
   }
