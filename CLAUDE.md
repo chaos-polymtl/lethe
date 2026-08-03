@@ -75,7 +75,7 @@ Never hand-format. Run `contrib/utilities/indent-all` (sources),
 `contrib/utilities/prmindent -i file.prm` (parameter files), or
 `contrib/utilities/pre-commit.sh` (both).
 
-- SPDX header on every file; header guards named `lethe_<file_name>_h`.
+- SPDX header on every new file; header guards named `lethe_<file_name>_h`.
 - Don't add new file-scope `using namespace` in headers (existing
   `using namespace dealii;` in old headers stays).
 - `const` correctness everywhere: pass deal.II objects (`Vector`, `Tensor`,
