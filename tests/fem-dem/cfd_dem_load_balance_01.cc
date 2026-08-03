@@ -231,7 +231,7 @@ CFDDEMLoadBalance<dim, PropertiesIndex>::run()
   // domain so that they remain in it for the whole duration of the test.
   Point<dim> bottom_left;
   Point<dim> top_right;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       bottom_left[d] = 0.15;
       top_right[d]   = 0.85;
