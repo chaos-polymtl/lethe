@@ -2,7 +2,7 @@
 Simulation Control
 ==================
 
-This subsection is the most important in a simulation and therefore, the most commonly modified in a parameter file. It controls the general parameters of the simulation, such as the time integration method, end time of a simulation and output settings for paraview files. 
+This subsection is the most important in a simulation and therefore, the most commonly modified in a parameter file. It controls the general parameters of the simulation, such as the time integration method, end time of a simulation and output settings for Paraview files. 
 
 .. tip::
 	A standard convention in Lethe is to keep this section at the top of the parameter file, since it is generally the most accessed one.

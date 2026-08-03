@@ -51,6 +51,7 @@ DEAL::Iteration : 5    Time : 7.36800    Time step : 2.00000
 DEAL::*************************************************
 DEAL::Iteration end control - iteration end at 0
 DEAL::*************************************************
+DEAL::Dummy iteration, no integration
 DEAL::Iteration : 0    Time : 0.00000
 DEAL::*************************************************
 DEAL::Time end control - iteration end has no effect

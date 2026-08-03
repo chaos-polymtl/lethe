@@ -33,14 +33,16 @@ test()
   simulation_control_parameters.startup_timestep_scaling = 0.4;
   simulation_control_parameters.bdf_startup_method =
     Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf;
+  // The end control is set to time. The simulation must end at the end
+  // time, as it did before the end control parameter was introduced.
+  simulation_control_parameters.end_control =
+    Parameters::SimulationControl::EndControl::time;
   simulation_control_parameters.time_end                             = 0.5;
   simulation_control_parameters.number_mesh_adaptation               = 0;
   simulation_control_parameters.time_step_independent_of_end_time    = true;
   simulation_control_parameters.adapt_with_capillary_time_step_ratio = false;
 
   {
-    // The end control is not specified. The simulation must end at the end
-    // time, as it did before the end control parameter was introduced.
     SimulationControlTransient simulation_control(
       simulation_control_parameters);
 
@@ -191,6 +193,7 @@ test()
                 << std::endl;
       }
 
+    deallog << "Dummy iteration, no integration" << std::endl;
     deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << std::endl;
