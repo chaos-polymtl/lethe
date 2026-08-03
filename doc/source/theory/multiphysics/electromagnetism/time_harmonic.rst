@@ -2,7 +2,7 @@
 Time Harmonic Maxwell's Equations
 ==================================
 
-Lethe now features a solver for the time-harmonic Maxwell's equations that can be coupled to the heat transfer, enabling the simulation of microwave heating processes. The scope of this theory section is to give a brief description of where the equations come from, for further details, the reader is invited to look at the `Griffiths <https://en.wikipedia.org/wiki/Introduction_to_Electrodynamics (book)>`_ book for an introduction on electromagnetism theory and on the following `article <https://ieeexplore.ieee.org/document/9682427>`_ for a review on computational electromagnetism. 
+Lethe features a solver for the time-harmonic Maxwell's equations that can be coupled to the heat transfer, enabling the simulation of microwave heating processes. The scope of this theory section is to give a brief description of where the equations come from, for further details, the reader is invited to look at the `Griffiths <https://en.wikipedia.org/wiki/Introduction_to_Electrodynamics (book)>`_ book for an introduction on electromagnetism theory and on the following `article <https://ieeexplore.ieee.org/document/9682427>`_ for a review on computational electromagnetism. 
 
 Maxwell's equations are a set of partial differential equations that form the foundation of classical electromagnetism. This famous set of equations can take multiple forms, but one of the most common ones is the macroscopic volumetric equations in matter :
 
@@ -43,12 +43,12 @@ where :math:`\varepsilon_{\mathrm{em}}` is the permittivity, :math:`\mu_{\mathrm
     
 where :math:`\omega` is the angular frequency of the oscillating fields and :math:`t` is the time.
 
-By substituting these expressions in Maxwell's equations presented above and cleverly combining them, one can obtain the either ones of the following equations:
+By substituting these expressions in Maxwell's equations presented above and cleverly combining them, one can obtain either of the following equations:
 
 .. math::
     \begin{align*}
-    \nabla \times \left( \frac{1}{\mu_{\mathrm{em}}} \nabla \times \mathbf{E} \right) -\omega^2 \varepsilon_{\mathrm{em},{\mathrm{eff}}} \mathbf{E} &= i \omega \mathbf{J}_{\mathrm{ext}},\\
-    \nabla \times \left( \frac{1}{\varepsilon_{\mathrm{em},{\mathrm{eff}}}} \nabla \times \mathbf{H} \right) - \omega^2 \mu_{\mathrm{em}} \mathbf{H} &= \nabla \times \frac{\mathbf{J}_{\mathrm{ext}}}{\varepsilon_{\mathrm{em},{\mathrm{eff}}}},
+    \nabla \times \left( \frac{1}{\mu_{\mathrm{em}}} \nabla \times \mathbf{E} \right) -\omega^2 \varepsilon_{\mathrm{em},\mathrm{eff}} \mathbf{E} &= i \omega \mathbf{J}_{\mathrm{ext}},\\
+    \nabla \times \left( \frac{1}{\varepsilon_{\mathrm{em},\mathrm{eff}}} \nabla \times \mathbf{H} \right) - \omega^2 \mu_{\mathrm{em}} \mathbf{H} &= \nabla \times \frac{\mathbf{J}_{\mathrm{ext}}}{\varepsilon_{\mathrm{em},\mathrm{eff}}},
     \end{align*}
     
 where :math:`\varepsilon_{\mathrm{em},{\mathrm{eff}}} = \varepsilon_{\mathrm{em}} + i \frac{\sigma_e}{\omega}` is the effective permittivity of the medium. These equations are the time-harmonic Maxwell's equations for spatially varying permittivity and permeability, which can be rank 2 tensors when the medium is anisotropic. Note that even if the harmonic oscillation is assumed, it is not a restrictive simplification. Indeed, any signal can be obtained by a summation of harmonic frequencies, and the time dependence of the electromagnetic field, if it is a quantity of interest, can be obtained by performing an inverse Fourier transform. 

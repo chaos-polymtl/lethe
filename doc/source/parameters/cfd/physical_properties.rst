@@ -276,7 +276,7 @@ For two phases, the properties are defined for each fluid. Default values are:
   Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
 
 .. Note::
-  The microwave heating simulations are not supported with the current two-phase flow models.
+  The microwave heating simulations are not supported with the current two-phase flow models (CLS or Cahn-Hilliard).
 
 
 .. _conjugate heat transfer:
@@ -285,9 +285,6 @@ Conjugate Heat Transfer
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be set to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.
-
-.. Note::
-  This feature is what enables the microwave heating simulations, where the solid region is heated by the electromagnetic field and the heat is then transferred to the fluid region.
 
 .. code-block:: text
 

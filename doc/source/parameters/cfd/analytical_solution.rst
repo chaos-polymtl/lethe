@@ -28,7 +28,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
       set Function expression = 0; 0 # phase order parameter; chemical potential
     end
     subsection electromagnetics
-      set Function expression = 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0 # E_x real part; E_y real part; E_z real part; E_x imag part; E_y imag part; E_z imag part; H_x real part; H_y real part; H_z real part; H_x imag part; H_y imag part; H_z imag part
+      set Function expression = 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0 # E_x real; E_y real; E_z real; E_x imag; E_y imag; E_z imag; H_x real; H_y real; H_z real; H_x imag; H_y imag; H_z imag
     end
    end
 
@@ -52,7 +52,7 @@ Analytical solutions for all physics are supported. They are all declared in the
 * ``tracer``: Analytical solution for the tracer physics.
 * ``CLS``: Analytical solution for the CLS field.
 * ``cahn hilliard``: Analytical solution for the phase order and the chemical potential of the Cahn-Hilliard physics.
-* ``electromagnetics``: Analytical solution for the electric and magnetic fields obtained with the time-harmonic Maxwell physics. The expression must provide :math:`E_x`, :math:`E_y`, :math:`E_z`, :math:`H_x`, :math:`H_y` and :math:`H_z` for a 3D simulation. Each component of the electric and magnetic fields must be provided as a real and imaginary part.
+* ``electromagnetics``: Analytical solution for the electric and magnetic fields obtained with the time-harmonic Maxwell physics. The expression must provide :math:`E_x`, :math:`E_y`, :math:`E_z`, :math:`H_x`, :math:`H_y` and :math:`H_z` for a 3D simulation. Each component of the electric and magnetic fields must be provided as a real and imaginary part (e.g. the real part of :math:`E_x`, :math:`E_y`, :math:`E_z` and then it's imaginary part).
 
 .. note:: 
     The variables *x*, *y*, *z* (3D) and *t* (time-dependent) can be used in the function expressions.

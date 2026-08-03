@@ -60,7 +60,7 @@ This subsection specifies the characteristics of the finite element method used 
 
 .. important:: 
   
-  The test function degree needs to be at least one degree higher than the trial space for the linear system to be well-posed. It can be set to a higher value than the minimum required, but this will increase the number of degrees of freedom and the computational cost.
+  The test function degree needs to be at least one degree higher than the trial space for the linear system to be well-posed. It can be set to a higher value than the minimum required, but this will increase the computational cost.
 
 * ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  `Franca and Farhat 1995 <https://www.sciencedirect.com/science/article/abs/pii/004578259400721X>`_ and `Brezzi et al 1992 <https://www.sciencedirect.com/science/article/abs/pii/004578259290102P>`_ for more detail.
 
