@@ -590,12 +590,11 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::update_material_properties(
   const PhysicalPropertiesManager &properties_manager,
+  const std::map<field, double>   &field_values,
   std::complex<double>            &effective_electric_permittivity,
   std::complex<double>            &effective_magnetic_permeability,
   const unsigned int               material_id)
 {
-  std::map<field, double>
-    field_values; // Empty map since no field dependence for now
   effective_electric_permittivity = {
     properties_manager.get_electric_permittivity_real(0, material_id)
       ->value(field_values),
@@ -2035,6 +2034,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   std::complex<double> effective_electric_permittivity;
   std::complex<double> effective_magnetic_permeability;
   unsigned int         material_id;
+  const bool           needs_temperature;
 
   /// Excitation properties
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
@@ -2082,6 +2082,16 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                                         *this->fe_test,
                                         *this->face_quadrature,
                                         update_values);
+
+  // We may need the temperature field for the physical properties. If so, we
+  // create the corresponding FEValues object to evaluate the temperature at the
+  // quadrature points and its container to store the values.
+  FEValues<dim> fe_values_temperature(*this->mapping,
+                                      *this->multiphysics->get_fe(
+                                        PhysicsID::temperature),
+                                      *this->cell_quadrature,
+                                      update_values | update_quadrature_points);
+  temperature_values = std::vector<double>(n_q_points, 0.0);
 
   // We also create all the relevant matrices and vector to build the DPG
   // system. To do so we first need the number of dofs per cell for each of
@@ -2249,20 +2259,29 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
     {
       if (cell->is_locally_owned())
         {
-          // We update the material properties for the current cell and define
-          // some constants that will be used during the assembly.
+          // We update the material id and determine the
+          // temperature field if needed.
           material_id = cell->material_id();
-          update_material_properties(properties_manager,
-                                     effective_electric_permittivity,
-                                     effective_magnetic_permeability,
-                                     material_id);
-          const std::complex<double> iweffective_magnetic_permeability =
-            imag * omega * effective_magnetic_permeability;
-          const std::complex<double> conj_iweffective_magnetic_permeability =
-            std::conj(iweffective_magnetic_permeability);
-          const std::complex<double> iweps_r =
-            imag * omega * effective_electric_permittivity;
-          const std::complex<double> conj_iweps_r = std::conj(iweps_r);
+
+          needs_temperature =
+            properties_manager.get_electric_conductivity(0, material_id)
+              ->depends_on(field::temperature) ||
+            properties_manager.get_electric_permittivity_real(0, material_id)
+              ->depends_on(field::temperature) ||
+            properties_manager.get_electric_permittivity_imag(0, material_id)
+              ->depends_on(field::temperature) ||
+            properties_manager.get_magnetic_permeability_real(0, material_id)
+              ->depends_on(field::temperature) ||
+            properties_manager.get_magnetic_permeability_imag(0, material_id)
+              ->depends_on(field::temperature);
+
+          if (needs_temperature)
+            {
+              fe_values_temperature.reinit(cell);
+              fe_values_temperature.get_function_values(
+                *this->present_solution_temperature, temperature_values);
+            }
+
 
           // We reinitialize the FEValues objects to the current cell.
           fe_values_trial_interior.reinit(cell);
@@ -2419,6 +2438,26 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
           // Now we loop over all quadrature points of the cell
           for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
             {
+              // We update the material properties for the current cell
+              // quadrature points and define
+              // some constants that will be used during the assembly.
+              std::map<field, double> field_values;
+              field_values[field::temperature] = temperature_values[q_point];
+
+              update_material_properties(properties_manager,
+                                         field_values,
+                                         effective_electric_permittivity,
+                                         effective_magnetic_permeability,
+                                         material_id);
+              const std::complex<double> iweffective_magnetic_permeability =
+                imag * omega * effective_magnetic_permeability;
+              const std::complex<double>
+                conj_iweffective_magnetic_permeability =
+                  std::conj(iweffective_magnetic_permeability);
+              const std::complex<double> iweps_r =
+                imag * omega * effective_electric_permittivity;
+              const std::complex<double> conj_iweps_r = std::conj(iweps_r);
+
               // To avoid unnecessary computation, we fill the shape values
               // containers for the real and imaginary parts of the electric
               // and magnetic fields and the dofs relationship at the current
@@ -3024,6 +3063,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   std::complex<double> effective_electric_permittivity;
   std::complex<double> effective_magnetic_permeability;
   unsigned int         material_id;
+  const bool           needs_temperature;
 
   /// Excitation properties
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
@@ -3063,6 +3103,16 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                                         *this->fe_test,
                                         *this->face_quadrature,
                                         update_values);
+
+  // We may need the temperature field for the physical properties. If so, we
+  // create the corresponding FEValues object to evaluate the temperature at the
+  // quadrature points and its container to store the values.
+  FEValues<dim> fe_values_temperature(*this->mapping,
+                                      *this->multiphysics->get_fe(
+                                        PhysicsID::temperature),
+                                      *this->cell_quadrature,
+                                      update_values | update_quadrature_points);
+  temperature_values = std::vector<double>(n_q_points, 0.0);
 
   // We also create all the relevant matrices and vector to build the DPG
   // system. To do so we first need the number of dofs per cell for each of
@@ -3243,20 +3293,28 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
     {
       if (cell->is_locally_owned())
         {
-          // We update the material properties for the current cell and define
-          // some constants that will be used during the assembly.
+          // We update the material id and determine the
+          // temperature field if needed.
           material_id = cell->material_id();
-          update_material_properties(properties_manager,
-                                     effective_electric_permittivity,
-                                     effective_magnetic_permeability,
-                                     material_id);
-          const std::complex<double> iweffective_magnetic_permeability =
-            imag * omega * effective_magnetic_permeability;
-          const std::complex<double> conj_iweffective_magnetic_permeability =
-            std::conj(iweffective_magnetic_permeability);
-          const std::complex<double> iweps_r =
-            imag * omega * effective_electric_permittivity;
-          const std::complex<double> conj_iweps_r = std::conj(iweps_r);
+
+          needs_temperature =
+            properties_manager.get_electric_conductivity(0, material_id)
+              ->depends_on(field::temperature) ||
+            properties_manager.get_electric_permittivity_real(0, material_id)
+              ->depends_on(field::temperature) ||
+            properties_manager.get_electric_permittivity_imag(0, material_id)
+              ->depends_on(field::temperature) ||
+            properties_manager.get_magnetic_permeability_real(0, material_id)
+              ->depends_on(field::temperature) ||
+            properties_manager.get_magnetic_permeability_imag(0, material_id)
+              ->depends_on(field::temperature);
+
+          if (needs_temperature)
+            {
+              fe_values_temperature.reinit(cell);
+              fe_values_temperature.get_function_values(
+                *this->present_solution_temperature, temperature_values);
+            }
 
           // We reinitialize the FEValues objects to the current cell.
           fe_values_trial_interior.reinit(cell);
@@ -3411,6 +3469,26 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
           // Now we loop over all quadrature points of the cell
           for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
             {
+              // We update the material properties for the current cell
+              // quadrature points and define
+              // some constants that will be used during the assembly.
+              std::map<field, double> field_values;
+              field_values[field::temperature] = temperature_values[q_point];
+
+              update_material_properties(properties_manager,
+                                         field_values,
+                                         effective_electric_permittivity,
+                                         effective_magnetic_permeability,
+                                         material_id);
+              const std::complex<double> iweffective_magnetic_permeability =
+                imag * omega * effective_magnetic_permeability;
+              const std::complex<double>
+                conj_iweffective_magnetic_permeability =
+                  std::conj(iweffective_magnetic_permeability);
+              const std::complex<double> iweps_r =
+                imag * omega * effective_electric_permittivity;
+              const std::complex<double> conj_iweps_r = std::conj(iweps_r);
+
               // To avoid unnecessary computation, we fill the shape values
               // containers for the real and imaginary parts of the electric
               // and magnetic fields and the dofs relationship at the current
