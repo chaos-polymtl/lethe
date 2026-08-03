@@ -248,7 +248,7 @@ move_test_particles(Particles::ParticleHandler<dim> &particle_handler,
       const auto particle_properties = particle->get_properties();
 
       Point<dim> location = particle->get_location();
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         location[d] +=
           particle_properties[PropertiesIndex::v_x + d] * time_step;
 
@@ -284,7 +284,7 @@ print_particle_state(const Particles::ParticleHandler<dim> &particle_handler,
       const double     weight              = 1. + particle->get_id();
       const Point<dim> location            = particle->get_location();
 
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         position_checksum += weight * (d + 1) * location[d];
 
       for (unsigned int d = 0; d < 3; ++d)
