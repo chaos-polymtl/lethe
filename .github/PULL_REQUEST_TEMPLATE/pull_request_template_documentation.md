@@ -5,7 +5,7 @@
 <!-- Explain the content of this documentation
        Is it related to Lethe documentation (simulation parameters or theory guide) or in-code documentation? -->
 
-### Use of LLMs (large language models)
+### Use of LLMs (Large Language Models)
 
 <!-- LLM-assisted contributions are welcome, but they must be declared.
        If an LLM (e.g. GitHub Copilot, ChatGPT, Claude, Cursor) generated a substantial portion
