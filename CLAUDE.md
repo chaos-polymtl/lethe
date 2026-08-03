@@ -102,8 +102,8 @@ Never hand-format. Run `contrib/utilities/indent-all` (sources),
   function.
 - **Tests**: a new feature needs unit and/or application tests; a bug fix needs
   a test reproducing the bug, and a PR description explaining the root cause.
-  Unit tests are a `.cc` + `.output` + `.debug`/`.release` marker directory in
-  `tests/<module>/`. Application tests are a `.prm` + `.output` sharing a prefix
+  Unit tests are a `.cc` + `.output` `tests/<module>/`. 
+  Application tests are a `.prm` + `.output` sharing a prefix
   in `applications_tests/<app>/`; `foo.mpirun=2.output` runs on 2 ranks. Stay at
   ≤ 3 ranks and keep tests fast. Tests should be deterministic across MPI ranks
   and platforms. Avoid tests that depend on wall-clock timing, unordered output,
