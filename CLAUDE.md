@@ -10,7 +10,7 @@ high-performance C++ codebase. Docs: https://chaos-polymtl.github.io/lethe/
 
 - `include/`, `source/` — headers (`.h`) and sources (`.cc`), each split into
   `core/`, `dem/`, `solvers/`, `fem-dem/`.
-- `applications/` — one executable per folder; minimal main files (< 100 lines)
+- `applications/` — one executable per folder; minimal main files (< 150 lines)
   that instantiate the templated solvers for a given `dim`. Driven by `.prm`.
 - `applications_tests/`, `tests/` — functional tests (per application) and unit
   tests (per module).
