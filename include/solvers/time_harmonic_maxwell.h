@@ -59,57 +59,6 @@
  * discontinuous between elements.
  **/
 
-/// TODO until completion of the auxiliary physics :
-
-/// [] TimeHarmonicMaxwell class
-///   [x] Constructeur
-///   [x] Destructeur
-///   [x] Gather output hook
-///   [x] Calculate_L2_error
-///   [x] Finish simulation
-///   [x] Percolate_time_vector
-///   [x] modify_solution
-///   [x] update_boundary_conditions
-///   [x] postprocess
-///   [x] pre_mesh_adaptation
-///   [x] post_mesh_adaptation
-///   [x] write_checkpoint
-///   [ ] read_checkpoint
-///   [x] gather_tables()
-///   [x] fix dimensionality of power scaling
-///   [x] compute_kelly
-///   [x] compute_dpg_error
-///   [x] Setup_dofs
-///   [x] set_initial_conditions
-///   [x] setup_preconditioner
-///   [x] define_constraints
-///   [x] solve_linear_system
-///   [x] get_dof_handler
-///   [x] get_evaluation_point
-///   [x] get_local_evaluation_point
-///   [x] get_newton_update
-///   [x] get_present_solution
-///   [x] get_present_solution_skeleton
-///   [x] get_system_rhs
-///   [x] get_nonzero_constraints
-///   [x] output_newton_update_norms
-///   [x] get_residual_rescale_metric
-///   [x] assemble_system_matrix
-///   [x] assemble_system_rhs
-///   [ ] assemble_local_system_matrix
-///   [ ] assemble_local_system_rhs
-///   [ ] setup_assemblers
-///   [ ] copy_local_matrix_to_global_matrix
-///   [ ] copy_local_rhs_to_global_rhs
-/// [x] Physics field
-/// [x] Multiphysics interface components
-/// [x] Physical Properties
-///   [x] Electrical conductivity
-///   [x] Permittivity
-///   [x] Permeability
-/// [X] FEM section for DPG
-/// [x] Mesh adaptation
-
 using VectorType = GlobalVectorType;
 
 DeclException1(
@@ -648,6 +597,9 @@ private:
    *  @param[in] physical_properties_manager The object that manages the
    * physical properties of the problem and provides them at any given position
    * of the domain.
+   * @param[in] field_values A map containing the values of the fields at the
+   * current position. This is used to compute the material properties that
+   * depend on the fields.
    *  @param[in,out] effective_electric_permittivity Effective electric
    * permittivity at the current position. This value is updated in place by the
    * function.
@@ -660,6 +612,7 @@ private:
   void
   update_material_properties(
     const PhysicalPropertiesManager &physical_properties_manager,
+    const std::map<field, double>   &field_values,
     std::complex<double>            &effective_electric_permittivity,
     std::complex<double>            &effective_magnetic_permeability,
     const unsigned int               material_id);
