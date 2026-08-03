@@ -572,17 +572,20 @@ namespace Parameters
 
     enum class ElectricConductivityModel : std::int8_t
     {
-      constant
+      constant,
+      polynomial
     } electric_conductivity_model;
 
     enum class ElectricPermittivityModel : std::int8_t
     {
-      constant
+      constant,
+      polynomial
     } electric_permittivity_model;
 
     enum class MagneticPermeabilityModel : std::int8_t
     {
-      constant
+      constant,
+      polynomial
     } magnetic_permeability_model;
 
     // Struct that contains the parameters to handle physical properties when
@@ -602,15 +605,21 @@ namespace Parameters
     /// store electromagnetic energy in the medium and also dissipate it.
 
     /// Electric_conductivity
-    double electric_conductivity;
+    double              electric_conductivity;
+    int                 electric_conductivity_polynomial_degree;
+    std::vector<double> electric_conductivity_polynomial_coefficients;
 
     /// Magnetic_permeability
-    double magnetic_permeability_real;
-    double magnetic_permeability_imag;
+    double              magnetic_permeability_real;
+    double              magnetic_permeability_imag;
+    std::vector<double> magnetic_permeability_real_polynomial_coefficients;
+    std::vector<double> magnetic_permeability_imag_polynomial_coefficients;
 
     /// Electric_permittivity
-    double electric_permittivity_real;
-    double electric_permittivity_imag;
+    double              electric_permittivity_real;
+    double              electric_permittivity_imag;
+    std::vector<double> electric_permittivity_real_polynomial_coefficients;
+    std::vector<double> electric_permittivity_imag_polynomial_coefficients;
   };
 
   /**
