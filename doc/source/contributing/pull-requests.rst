@@ -33,7 +33,7 @@ Reviewers Responsibility
 * Give the review in a timely manner.
 
 Use of  Large Language Models (LLMs)
------------
+------------------------------------
 
 Lethe is a software project that aims to form and educate a community of human researchers and to further the field of computational fluid dynamics, discrete element modeling and their coupling. Based on this purpose, we formulate the following policy on contributions made with the help of LLMs.
 
