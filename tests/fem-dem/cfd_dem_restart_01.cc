@@ -37,6 +37,13 @@
  * the void fraction is calculated by the solver itself, from the position of
  * the particles.
  *
+ * The particles all follow different trajectories and the void fraction is
+ * calculated with the quadrature centered method, whose result varies
+ * continuously with the position of the particles. The fields of the two time
+ * histories therefore all differ from one another, which is what makes the
+ * test able to tell a history that is restored correctly from one whose fields
+ * are mixed up, dropped or duplicated.
+ *
  * The signature is made of continuous L2 norms and of global particle
  * checksums, both of which are independent of the parallel partitioning, so the
  * serial and the mpirun=2 outputs of this test are identical. Since the L2
@@ -68,6 +75,7 @@
 
 // Tests
 #include <../tests/fem-dem/cfd_dem_test_utilities.h>
+
 #include <../tests/tests.h>
 
 /// Diameter of the particles of the test. It is large enough for the solid
@@ -198,13 +206,14 @@ CFDDEMRestart<dim, PropertiesIndex>::print_state(const std::string &label)
                              dim + 1)
             << std::endl;
 
-  deallog << "  Void fraction             : "
-          << field_l2_norm(*this->particle_projector.mapping,
-                           this->particle_projector.dof_handler,
-                           *this->particle_projector.quadrature,
-                           this->particle_projector.void_fraction_locally_relevant,
-                           1)
-          << std::endl;
+  deallog
+    << "  Void fraction             : "
+    << field_l2_norm(*this->particle_projector.mapping,
+                     this->particle_projector.dof_handler,
+                     *this->particle_projector.quadrature,
+                     this->particle_projector.void_fraction_locally_relevant,
+                     1)
+    << std::endl;
   for (unsigned int i = 0;
        i < this->particle_projector.previous_void_fraction.size();
        ++i)
@@ -356,12 +365,6 @@ main(int argc, char *argv[])
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
       MPILogInitAll                    all;
-
-      // The L2 projection of the void fraction is solved with a SolverControl
-      // that logs its history, and the residuals of its iterations depend on
-      // the partitioning. Only the messages of the test itself, which carry the
-      // "DEAL" and the MPI rank prefixes, are kept in the output file.
-      deallog.depth_file(2);
 
       test();
     }

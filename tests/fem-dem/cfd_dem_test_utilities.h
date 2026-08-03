@@ -107,11 +107,11 @@ private:
  */
 template <int dim, typename VectorType>
 double
-field_l2_norm(const Mapping<dim>      &mapping,
-              const DoFHandler<dim>   &dof_handler,
-              const Quadrature<dim>   &quadrature,
-              const VectorType        &field,
-              const unsigned int       n_components)
+field_l2_norm(const Mapping<dim>    &mapping,
+              const DoFHandler<dim> &dof_handler,
+              const Quadrature<dim> &quadrature,
+              const VectorType      &field,
+              const unsigned int     n_components)
 {
   const Triangulation<dim> &triangulation = dof_handler.get_triangulation();
 
@@ -191,6 +191,12 @@ insert_test_particles(
   // particles carry different velocities. They consequently follow different
   // trajectories, which makes the void fraction of the successive time steps
   // differ from one another.
+  //
+  // The velocities are chosen so that no particle ever lies exactly on a face
+  // of the background mesh at a time step whose state is printed, since the
+  // cell a particle located on a face belongs to is decided by an exact
+  // floating point comparison. They are also small enough for the particles to
+  // remain in the domain for the whole duration of the tests.
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle)
@@ -203,9 +209,9 @@ insert_test_particles(
       particle_properties[PropertiesIndex::mass] =
         density * numbers::PI / 6. * Utilities::fixed_power<3>(diameter);
 
-      particle_properties[PropertiesIndex::v_x] = 0.05 * (1. + (id % 3));
-      particle_properties[PropertiesIndex::v_y] = -0.04 * (1. + (id % 4));
-      particle_properties[PropertiesIndex::v_z] = 0.03 * (1. + (id % 5));
+      particle_properties[PropertiesIndex::v_x] = 0.10 * (1. + (id % 3));
+      particle_properties[PropertiesIndex::v_y] = -0.06 * (1. + (id % 4));
+      particle_properties[PropertiesIndex::v_z] = 0.04 * (1. + (id % 5));
 
       particle_properties[PropertiesIndex::omega_x] = 0.7 * (1. + id);
       particle_properties[PropertiesIndex::omega_y] = -0.3 * (1. + id);
@@ -324,9 +330,9 @@ print_particle_state(const Particles::ParticleHandler<dim> &particle_handler,
 template <int dim>
 void
 setup_cfd_dem_test_parameters(CFDDEMSimulationParameters<dim> &parameters,
-                              const double                     particle_diameter,
-                              const std::string               &restart_filename,
-                              const bool                       restart)
+                              const double       particle_diameter,
+                              const std::string &restart_filename,
+                              const bool         restart)
 {
   ParameterHandler              prm;
   Parameters::SizeOfSubsections size_of_subsections;
@@ -346,8 +352,8 @@ setup_cfd_dem_test_parameters(CFDDEMSimulationParameters<dim> &parameters,
   // A degree two element is used so that the imposed fluid solution, which is
   // linear in space, belongs to the finite element space and is therefore
   // independent of the mesh and of the partitioning.
-  cfd_parameters.fem_parameters.velocity_degree     = 2;
-  cfd_parameters.fem_parameters.pressure_degree     = 2;
+  cfd_parameters.fem_parameters.velocity_degree      = 2;
+  cfd_parameters.fem_parameters.pressure_degree      = 2;
   cfd_parameters.fem_parameters.void_fraction_degree = 1;
 
   // The checkpointing of finish_time_step() is disabled: the tests call
@@ -385,13 +391,20 @@ setup_cfd_dem_test_parameters(CFDDEMSimulationParameters<dim> &parameters,
 
   cfd_parameters.physical_properties_manager.initialize(physical_properties);
 
-  // The particle centered method is the cheapest void fraction scheme and it
-  // has no averaging radius to tune. Which scheme is used is irrelevant for the
-  // restart and the load balance, both of which only transfer the resulting
-  // field.
-  parameters.void_fraction->mode = Parameters::VoidFractionMode::pcm;
-  parameters.void_fraction->read_dem            = false;
-  parameters.void_fraction->l2_smoothing_length = 0.;
+  // The quadrature centered method of the default void fraction parameters of
+  // the tests is used. Its void fraction varies continuously with the position
+  // of the particles, contrary to the one of the particle centered method,
+  // which lumps the volume of a particle into the cell that contains its
+  // center and therefore only changes when a particle crosses a face of the
+  // mesh. The successive fields of the time history would then be identical to
+  // one another and the tests could not tell a history that is transferred
+  // correctly from one whose fields are mixed up, dropped or duplicated.
+  //
+  // Half of the smoothing length of these parameters is the radius of the
+  // averaging sphere. It is equal to the size of the cells of the background
+  // mesh of the tests, which keeps the averaging sphere within the layer of
+  // neighboring cells over which the method gathers the particles.
+  parameters.void_fraction = make_default_void_fraction_parameters<dim>();
 
   parameters.dem_parameters.lagrangian_physical_properties
     .particle_average_diameter.at(0) = particle_diameter;

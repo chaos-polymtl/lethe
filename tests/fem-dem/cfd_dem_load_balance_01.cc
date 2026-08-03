@@ -32,6 +32,13 @@
  * the void fraction is calculated by the solver itself, from the position of
  * the particles.
  *
+ * The particles all follow different trajectories and the void fraction is
+ * calculated with the quadrature centered method, whose result varies
+ * continuously with the position of the particles. The fields of the time
+ * history therefore all differ from one another, which is what makes the test
+ * able to tell a history that is transferred correctly from one whose fields
+ * are mixed up, dropped or duplicated.
+ *
  * The signature is made of continuous L2 norms and of global particle
  * checksums, both of which are independent of the parallel partitioning. This
  * is what makes them comparable across a repartitioning, and it also makes the
@@ -56,6 +63,7 @@
 
 // Tests
 #include <../tests/fem-dem/cfd_dem_test_utilities.h>
+
 #include <../tests/tests.h>
 
 /// Diameter of the particles of the test. It is large enough for the solid
@@ -281,12 +289,6 @@ main(int argc, char *argv[])
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
       MPILogInitAll                    all;
-
-      // The L2 projection of the void fraction is solved with a SolverControl
-      // that logs its history, and the residuals of its iterations depend on
-      // the partitioning. Only the messages of the test itself, which carry the
-      // "DEAL" and the MPI rank prefixes, are kept in the output file.
-      deallog.depth_file(2);
 
       test();
     }
