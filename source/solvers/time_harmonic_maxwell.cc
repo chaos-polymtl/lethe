@@ -730,8 +730,8 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
               else
                 {
                   std::fill(temperature_values.begin(),
-                                                 temperature_values.end(),
-                                                 0.);
+                            temperature_values.end(),
+                            0.);
                 }
 
               for (const auto &face : cell->face_iterators())
@@ -2377,8 +2377,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
           else
             {
               std::fill(temperature_values.begin(),
-                                             temperature_values.end(),
-                                             0.);
+                        temperature_values.end(),
+                        0.);
             }
 
           // We then reinitialize all the matrices where we are aggregating
@@ -3430,8 +3430,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
           else
             {
               std::fill(temperature_values.begin(),
-                                             temperature_values.end(),
-                                             0.);
+                        temperature_values.end(),
+                        0.);
             }
 
           // We then reinitialize all the matrices that we are aggregating
