@@ -15,10 +15,10 @@ The mortar section is used when simulating rotor-stator geometries, in which the
       set grid arguments         = 1,1,1 : -1,-1,-1 : 1,1,1 : true
       set initial refinement     = 0
     end
-    set rotor boundary id   = 4
-    set stator boundary id  = 2
-    set center of rotation  = 0, 0
-    set rotation axis       = 0, 0, 1
+    set rotor boundary id         = 4
+    set stator boundary id        = 2
+    set center of rotation        = 0, 0
+    set rotation axis direction   = 2
     subsection rotor rotation angle
       set Function expression = 0
     end
@@ -50,7 +50,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 
 * The ``center of rotation`` is the reference point for the prescribed rotation at the rotor domain.
 
-* The ``rotation axis`` is the unit vector that defines the rotor axis of rotation.
+* The ``rotation axis direction`` is the direction of the rotation axis given by 0, 1, or 2 corresponding to the x, y, or z axis respectively.
 
 * The ``rotor rotation angle`` subsection allows the imposition of a constant or time-dependent rotation angle for the rotor.
 
