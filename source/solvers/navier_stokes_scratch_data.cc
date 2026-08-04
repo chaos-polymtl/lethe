@@ -471,7 +471,7 @@ NavierStokesScratchData<dim>::reinit_mortar(
       // Compute terms of u_ale
       rotor_linear_velocity_values[q] =
         LetheGridTools::angular_to_linear_velocity(
-          omega, p, mortar_parameters.rotation_axis);
+          omega, p, mortar_parameters.rotation_axis_direction);
 
       // Subtract u_ale from the advective velocity
       this->advective_velocity[q] -= rotor_linear_velocity_values[q];

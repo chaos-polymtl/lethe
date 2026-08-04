@@ -1263,7 +1263,7 @@ void
 NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
   const Mapping<dim>                             &mapping,
   const Point<dim>                                center_of_rotation,
-  const Tensor<1, dim>                            rotation_axis,
+  const unsigned int                              rotation_axis_direction,
   std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity)
 {
   this->timer.enter_subsection("operator::evaluate_velocity_ale");
@@ -1316,10 +1316,8 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
                        center_of_rotation[i];
 
               // Compute terms of u_ale
-              const auto product =
-                LetheGridTools::angular_to_linear_velocity(omega,
-                                                           p,
-                                                           rotation_axis);
+              const auto product = LetheGridTools::angular_to_linear_velocity(
+                omega, p, rotation_axis_direction);
 
               for (int i = 0; i < dim; i++)
                 this->velocity_ale[cell][q][i][lane] = product[i];

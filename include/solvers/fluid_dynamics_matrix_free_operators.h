@@ -452,14 +452,14 @@ public:
    *
    * @param[in] mapping Describes the transformations from unit to real cell.
    * @param[in] center_of_rotation Center of rotation of the rotor domain.
-   * @param[in] rotation_axis Rotation axis of the rotor domain for 3D case.
+   * @param[in] rotation_axis_direction Direction of the rotation axis.
    * @param[in] rotor_angular_velocity  Angular velocity of the rotor domain.
    */
   void
   evaluate_velocity_ale(
     const Mapping<dim>                             &mapping,
     const Point<dim>                                center_of_rotation,
-    const Tensor<1, dim>                            rotation_axis,
+    const unsigned int                              rotation_axis_direction,
     std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity);
 
   /**

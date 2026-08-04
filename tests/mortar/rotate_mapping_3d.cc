@@ -80,7 +80,7 @@ test()
   mortar_parameters.rotor_mesh->rotation_angle = 0.0;
   mortar_parameters.stator_boundary_id         = 0;
   mortar_parameters.rotor_boundary_id          = 5; // after shifting
-  mortar_parameters.rotation_axis              = Tensor<1, dim>({0, 0, 1});
+  mortar_parameters.rotation_axis_direction    = 2;
   mortar_parameters.center_of_rotation         = Point<dim>();
   mortar_parameters.radius_tolerance           = 1e-8;
   const double rotation_angle                  = 0.1;
@@ -120,7 +120,7 @@ test()
                                  mapping,
                                  rotation_angle,
                                  mortar_parameters.center_of_rotation,
-                                 mortar_parameters.rotation_axis);
+                                 mortar_parameters.rotation_axis_direction);
 
   // Print information
   if (Utilities::MPI::this_mpi_process(comm) == 0)

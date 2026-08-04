@@ -463,7 +463,7 @@ compute_number_interface_cells(const Triangulation<dim>      &triangulation,
   const double radius_tolerance = mortar_parameters.radius_tolerance;
   // Direction of the rotation axis
   const unsigned int rotation_axis_direction =
-    get_rotation_axis_direction(mortar_parameters);
+    mortar_parameters.rotation_axis_direction;
 
   // Coordinate of the reference cell for computation of the number of
   // subdivisions in the radial direction. Used in 3D case
@@ -562,7 +562,10 @@ compute_interface_dimensions_circular(
 
   // Direction of the rotation axis
   const unsigned int rotation_axis_direction =
-    get_rotation_axis_direction(mortar_parameters);
+    mortar_parameters.rotation_axis_direction;
+  Tensor<1, dim> rotation_axis;
+  rotation_axis[rotation_axis_direction] = 1.0;
+
   // Min and max vertex coordinates for length computation in the axial
   // direction. Used in 3D case
   double vertex_min = std::numeric_limits<double>::max();
@@ -606,7 +609,7 @@ compute_interface_dimensions_circular(
                               radius_current =
                                 LetheGridTools::find_point_line_distance(
                                   mortar_parameters.center_of_rotation,
-                                  mortar_parameters.rotation_axis,
+                                  rotation_axis,
                                   v);
                             }
 
@@ -736,39 +739,6 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 }
 
 template <int dim>
-unsigned int
-get_rotation_axis_direction(const Parameters::Mortar<dim> &mortar_parameters)
-{
-  if constexpr (dim == 3)
-    {
-      // First check if the vector has a unit norm, with a small margin for
-      // error
-      bool is_unit_axis =
-        std::abs(mortar_parameters.rotation_axis.norm() - 1) < 1e-8;
-
-      // Now check if the vector represents the x, y, or z directions
-      // specifically (we assume those are the only options for now)
-      for (int i = 0; i < dim; i++)
-        if (mortar_parameters.rotation_axis[i] != 0. &&
-            mortar_parameters.rotation_axis[i] != 1.)
-          is_unit_axis = false;
-
-      AssertThrow(
-        is_unit_axis,
-        ExcMessage(
-          "The rotation axis must be a unit vector in the positive x, y, or z direction."));
-
-      // Find the direction of the rotation axis
-      for (int d = 0; d < dim; d++)
-        if (mortar_parameters.rotation_axis[d] != 0.0)
-          return d;
-    }
-  // In 2D, the rotation_axis_direction is not used, but we return 2 to indicate
-  // that the rotation axis is perpendicular to the plane
-  return 2;
-}
-
-template <int dim>
 std::vector<double>
 compute_stage_heights(const Triangulation<dim>      &triangulation,
                       const Parameters::Mortar<dim> &mortar_parameters)
@@ -777,7 +747,7 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
     {
       // Direction of the rotation axis
       const unsigned int rotation_axis_direction =
-        get_rotation_axis_direction(mortar_parameters);
+        mortar_parameters.rotation_axis_direction;
       // Container storing all vertex coordinates in the rotation axis direction
       // for the local cells at the mortar boundary
       std::vector<double> stage_heights_local;
@@ -2179,12 +2149,6 @@ construct_quadrature(const Quadrature<2>         &quadrature,
 template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
-
-template unsigned int
-get_rotation_axis_direction(const Parameters::Mortar<2> &mortar_parameters);
-
-template unsigned int
-get_rotation_axis_direction(const Parameters::Mortar<3> &mortar_parameters);
 
 template std::vector<double>
 compute_stage_heights<2>(const Triangulation<2>      &triangulation,

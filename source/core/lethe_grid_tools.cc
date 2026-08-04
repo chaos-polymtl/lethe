@@ -1811,7 +1811,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
                                const Mapping<dim>    &mapping,
                                const double          &rotation_angle,
                                const Point<dim>      &center_of_rotation,
-                               const Tensor<1, dim>  &rotation_axis)
+                               const unsigned int    &rotation_axis_direction)
 {
   if constexpr (dim == 2)
     {
@@ -1847,6 +1847,9 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
 
           // Shift point by the center of rotation
           const auto shift_point = point - center_of_rotation;
+          // Rotation axis tensor
+          Tensor<1, 3> rotation_axis;
+          rotation_axis[rotation_axis_direction] = 1.0;
           // Rotate
           const auto rotate_point =
             Physics::Transformations::Rotations::rotation_matrix_3d(
@@ -1865,7 +1868,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<2> &dof_handler,
                                const Mapping<2>    &mapping,
                                const double        &rotation_angle,
                                const Point<2>      &center_of_rotation,
-                               const Tensor<1, 2>  &rotation_axis);
+                               const unsigned int  &rotation_axis_direction);
 
 template void
 LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
@@ -1873,7 +1876,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                const Mapping<3>    &mapping,
                                const double        &rotation_angle,
                                const Point<3>      &center_of_rotation,
-                               const Tensor<1, 3>  &rotation_axis);
+                               const unsigned int  &rotation_axis_direction);
 
 template <int dim, int spacedim>
 void
