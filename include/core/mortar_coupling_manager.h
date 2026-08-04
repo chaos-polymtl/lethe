@@ -108,7 +108,7 @@ public:
   get_n_total_points() const;
 
   /**
-   * @brief Returns the number of quadrature ponts at the mortar cells of a given cell
+   * @brief Returns the number of quadrature points at the mortar cells connected to a given cell
    */
   unsigned int
   get_n_points() const;
