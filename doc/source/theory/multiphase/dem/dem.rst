@@ -367,12 +367,29 @@ Explicit Euler method is calculated as:
     \mathbf{v}_{i}^{n+1} &= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}dt \\
     \mathbf{x}_{i}^{n+1} &= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n}dt
 
-And velocity Verlet method is calculated with half-step velocity as:
+The velocity Verlet method is implemented in its staggered (leapfrog) form: the velocities are stored at the half steps whereas the positions are stored at the integer steps. The scheme is not self-starting, so completing :math:`n` time steps requires :math:`n+1` integration operations.
+
+The opening half step is carried out once, at the first time step. The velocities are advanced by half a time step and the positions by a full time step:
 
 .. math::
-    \mathbf{v}_{i}^{n+\frac{1}{2}} &= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}\frac{dt}{2} \\
-    \mathbf{x}_{i}^{n+1} &= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n+\frac{1}{2}}dt \\
-    \mathbf{v}_{i}^{n+1} &= \mathbf{v}_{i}^{n+\frac{1}{2}} + \mathbf{a}_{i}^{n+1}\frac{dt}{2}
+    \mathbf{v}_{i}^{\frac{1}{2}} &= \mathbf{v}_{i}^{0} + \mathbf{a}_{i}^{0}\frac{dt}{2} \\
+    \mathbf{x}_{i}^{1} &= \mathbf{x}_{i}^{0} + \mathbf{v}_{i}^{\frac{1}{2}}dt
+
+Every subsequent time step advances both the velocities and the positions by a full time step, which keeps the velocities staggered:
+
+.. math::
+    \mathbf{v}_{i}^{n+\frac{1}{2}} &= \mathbf{v}_{i}^{n-\frac{1}{2}} + \mathbf{a}_{i}^{n}dt \\
+    \mathbf{x}_{i}^{n+1} &= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n+\frac{1}{2}}dt
+
+Once the final position is reached, the accelerations are evaluated one last time at that position and a closing half step synchronizes the velocities with the positions:
+
+.. math::
+    \mathbf{v}_{i}^{n} = \mathbf{v}_{i}^{n-\frac{1}{2}} + \mathbf{a}_{i}^{n}\frac{dt}{2}
+
+In pure DEM simulations, this closing half step is carried out at the end of the simulation. In CFD-DEM simulations, it is carried out at the end of the DEM sub-iterations of every CFD time step, so that the coupling with the fluid always uses velocities that are synchronized with the positions of the particles.
+
+.. note::
+  Because the velocities are staggered within a run, the velocities written to the visualization files during the simulation lag the positions by half a time step. Only the values obtained after a closing half step are synchronized.
 
 --------------------------------
 Thermal DEM in a Stagnant Gas
