@@ -25,7 +25,8 @@ test()
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
   simulation_control_parameters.time_step_independent_of_end_time = true;
-  simulation_control_parameters.end_control = Parameters::SimulationControl::EndControl::time;
+  simulation_control_parameters.end_control =
+    Parameters::SimulationControl::EndControl::time;
   simulation_control_parameters.time_end                             = 20;
   simulation_control_parameters.number_mesh_adaptation               = 0;
   simulation_control_parameters.output_name                          = "test";
