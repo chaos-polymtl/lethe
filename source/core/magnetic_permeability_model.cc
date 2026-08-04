@@ -11,11 +11,15 @@ MagneticPermeabilityModel::model_cast_real(
       Parameters::Material::MagneticPermeabilityModel::constant)
     return std::make_shared<ConstantMagneticPermeability>(
       material_properties.magnetic_permeability_real);
+  else if (material_properties.magnetic_permeability_model ==
+           Parameters::Material::MagneticPermeabilityModel::polynomial)
+    return std::make_shared<PolynomialMagneticPermeability>(
+      material_properties.magnetic_permeability_real_polynomial_coefficients);
   else
     AssertThrow(
       false,
       ExcMessage(
-        "Invalid magnetic permeability model. The choices are <constant>"));
+        "Invalid magnetic permeability model. The choices are <constant|polynomial>"));
 }
 
 std::shared_ptr<MagneticPermeabilityModel>
@@ -26,9 +30,13 @@ MagneticPermeabilityModel::model_cast_imag(
       Parameters::Material::MagneticPermeabilityModel::constant)
     return std::make_shared<ConstantMagneticPermeability>(
       material_properties.magnetic_permeability_imag);
+  else if (material_properties.magnetic_permeability_model ==
+           Parameters::Material::MagneticPermeabilityModel::polynomial)
+    return std::make_shared<PolynomialMagneticPermeability>(
+      material_properties.magnetic_permeability_imag_polynomial_coefficients);
   else
     AssertThrow(
       false,
       ExcMessage(
-        "Invalid magnetic permeability model. The choices are <constant>"));
+        "Invalid magnetic permeability model. The choices are <constant|polynomial>"));
 }
