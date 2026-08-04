@@ -21,8 +21,8 @@ using namespace dealii;
  *
  * Calculation procedure:
  *
- * Opening half step (integrate_half_step_location), carried out once at the
- * first time step
+ * Opening half step (integrate_start), carried
+ * out once at the first time step
  * v(1/2)     = v(0)       + 1/2 * a(0)   * dt
  * x(1)       = x(0)       + v(1/2)       * dt
  *
@@ -31,7 +31,7 @@ using namespace dealii;
  * v(n+1/2)   = v(n-1/2)   + a(n)         * dt
  * x(n+1)     = x(n)       + v(n+1/2)     * dt
  *
- * Closing half step (integrate_half_step_velocity), carried out once the final
+ * Closing half step (integrate_end), carried out once the final
  * position is reached to synchronize the velocities with the positions
  * a(n)       = F(n) / m
  * v(n)       = v(n-1/2)   + 1/2 * a(n)   * dt
@@ -48,22 +48,12 @@ public:
   {}
 
   /**
-   * @brief Indicate that the Velocity Verlet scheme stores the velocities
-   * staggered by half a time step and thus requires an opening and a closing
-   * half step.
-   *
-   * @return Always true.
-   */
-  virtual bool
-  is_half_step_required() const override
-  {
-    return true;
-  }
-
-  /**
-   * @brief Integrate the opening half step of the Velocity Verlet scheme. The
-   * velocities are advanced by half a time step and the positions by a full
-   * time step.
+   * @brief Integrate the opening half step of the Velocity Verlet scheme, which
+   * starts the staggering. The velocities are advanced by half a time step,
+   * from v(0) to v(1/2), whereas the positions are advanced by a full time
+   * step, from x(0) to x(1). No time is therefore lost by the opening step: it
+   * consumes a full time step of the simulation, only the velocity is left
+   * behind by dt/2.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -76,13 +66,12 @@ public:
    * @param MOI A container of moment of inertia of particles
    */
   virtual void
-  integrate_half_step_location(
-    Particles::ParticleHandler<dim> &particle_handler,
-    const Tensor<1, 3>              &body_force,
-    const double                     time_step,
-    std::vector<Tensor<1, 3>>       &torque,
-    std::vector<Tensor<1, 3>>       &force,
-    const std::vector<double>       &MOI) override;
+  integrate_start(Particles::ParticleHandler<dim> &particle_handler,
+                  const Tensor<1, 3>              &body_force,
+                  const double                     time_step,
+                  std::vector<Tensor<1, 3>>       &torque,
+                  std::vector<Tensor<1, 3>>       &force,
+                  const std::vector<double>       &MOI) override;
 
   /**
    * @brief Integrate the closing half step of the Velocity Verlet scheme. The
@@ -100,13 +89,12 @@ public:
    * @param MOI A container of moment of inertia of particles
    */
   virtual void
-  integrate_half_step_velocity(
-    Particles::ParticleHandler<dim> &particle_handler,
-    const Tensor<1, 3>              &body_force,
-    const double                     time_step,
-    std::vector<Tensor<1, 3>>       &torque,
-    std::vector<Tensor<1, 3>>       &force,
-    const std::vector<double>       &MOI) override;
+  integrate_end(Particles::ParticleHandler<dim> &particle_handler,
+                const Tensor<1, 3>              &body_force,
+                const double                     time_step,
+                std::vector<Tensor<1, 3>>       &torque,
+                std::vector<Tensor<1, 3>>       &force,
+                const std::vector<double>       &MOI) override;
 
   /**
    * @brief Integrate the closing half step of the Velocity Verlet scheme when the
@@ -128,27 +116,50 @@ public:
    * the cells
    */
   virtual void
-  integrate_half_step_velocity(
-    Particles::ParticleHandler<dim>                 &particle_handler,
-    const Tensor<1, 3>                              &body_force,
-    const double                                     time_step,
-    std::vector<Tensor<1, 3>>                       &torque,
-    std::vector<Tensor<1, 3>>                       &force,
-    const std::vector<double>                       &MOI,
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object)
-    override;
+  integrate_end(Particles::ParticleHandler<dim> &particle_handler,
+                const Tensor<1, 3>              &body_force,
+                const double                     time_step,
+                std::vector<Tensor<1, 3>>       &torque,
+                std::vector<Tensor<1, 3>>       &force,
+                const std::vector<double>       &MOI,
+                const parallel::distributed::Triangulation<dim> &triangulation,
+                AdaptiveSparseContacts<dim, PropertiesIndex>
+                  &sparse_contacts_object) override;
 
   /**
-   * @brief Calculate the integration of the motion of all
-   * particles by using the Velocity Verlet method.
+   * @brief Carry out a regular step of the Velocity Verlet scheme, that is, a full
+   * velocity step followed by a full position step.
+   *
+   * This function is called at every time step but the first one, which is
+   * handled by integrate_start(). It assumes that the velocities are already
+   * staggered, that is, that they are known at t(n-1/2) whereas the positions
+   * are known at t(n), and it preserves that staggering:
+   *
+   * a(n)     = g + F(n) / m
+   * v(n+1/2) = v(n-1/2) + a(n)     * dt
+   * x(n+1)   = x(n)     + v(n+1/2) * dt
+   *
+   * The velocity is advanced before the position and the updated velocity is
+   * the one used to advance the position, which is what makes the scheme
+   * second order and symplectic. Note that the acceleration is evaluated from
+   * the force accumulated by the contact force objects since the previous step,
+   * hence the force and the torque containers are reset to zero once they have
+   * been consumed. The angular velocity is advanced in the same manner from the
+   * torque and the moment of inertia.
+   *
+   * All three components of the velocity and of the angular velocity are
+   * advanced, even in 2D, since the third component of the angular velocity is
+   * the one that carries the rotation in 2D. Only the first @p dim components
+   * of the position are advanced.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
    * @param body_force A constant volumetric body force applied to all particles
    * @param time_step The value of the time step used for the integration
-   * @param torque Torque acting on particles
-   * @param force Force acting on particles
+   * @param torque Torque acting on particles. It is reset to zero at the end of
+   * the integration
+   * @param force Force acting on particles. It is reset to zero at the end of
+   * the integration
    * @param MOI A container of moment of inertia of particles
    */
   virtual void
@@ -159,6 +170,32 @@ public:
             std::vector<Tensor<1, 3>>       &force,
             const std::vector<double>       &MOI) override;
 
+  /**
+   * @brief Carry out a regular step of the Velocity Verlet scheme when the adaptive
+   * sparse contacts are enabled.
+   *
+   * The integration is identical to the one described above, but it is only
+   * carried out for the particles that belong to mobile cells. The particles of
+   * the active and inactive cells only have their force and torque reset, so
+   * that they remain at rest. The particles of the advected cells are displaced
+   * with the average velocity and acceleration of their cell, which is handled
+   * by integrate_with_advected_particles(). When the sparse contacts are
+   * disabled, or on the iteration at which the mobility status is reset, this
+   * function simply falls back to the regular integration.
+   *
+   * @param particle_handler The particle handler whose particle motion we wish
+   * to integrate
+   * @param body_force A constant volumetric body force applied to all particles
+   * @param time_step The value of the time step used for the integration
+   * @param torque Torque acting on particles. It is reset to zero at the end of
+   * the integration
+   * @param force Force acting on particles. It is reset to zero at the end of
+   * the integration
+   * @param MOI A container of moment of inertia of particles
+   * @param triangulation The triangulation of the background mesh
+   * @param sparse_contacts_object The object that stores the mobility status of
+   * the cells
+   */
   virtual void
   integrate(Particles::ParticleHandler<dim>                 &particle_handler,
             const Tensor<1, 3>                              &body_force,

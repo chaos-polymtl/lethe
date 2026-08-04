@@ -53,11 +53,29 @@ DEM
 DEM contact search at dem step 10
 Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -6.7032116896e-12 s^-1
-Max local continuity error: 2.4651069726e-07 s^-1
+Global continuity equation error: -6.7032115988e-12 s^-1
+Max local continuity error: 2.4651069816e-07 s^-1
+
+************************************************************************************
+Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.00412205601
+************************************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+DEM contact search at dem step 10
+Finished 10 DEM iterations
+---------------------------------------------------------------
+Global continuity equation error: 4.9793937344e-13 s^-1
+Max local continuity error: 2.3401333733e-07 s^-1
 
 *************************************************************************************
-Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.004122056016
+Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.004035205273
 *************************************************************************************
 --------------
 Void Fraction
@@ -71,11 +89,11 @@ DEM
 DEM contact search at dem step 10
 Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 4.9792464148e-13 s^-1
-Max local continuity error: 2.3401344919e-07 s^-1
+Global continuity equation error: -5.0889153300e-10 s^-1
+Max local continuity error: 2.2938146500e-07 s^-1
 
 *************************************************************************************
-Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.004035206884
+Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.003972200393
 *************************************************************************************
 --------------
 Void Fraction
@@ -89,23 +107,5 @@ DEM
 DEM contact search at dem step 10
 Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.0888926814e-10 s^-1
-Max local continuity error: 2.2938187545e-07 s^-1
-
-*************************************************************************************
-Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.003972204364
-*************************************************************************************
---------------
-Void Fraction
---------------
--------------------------------
-Volume-Averaged Fluid Dynamics
--------------------------------
-----
-DEM
-----
-DEM contact search at dem step 10
-Finished 10 DEM iterations
----------------------------------------------------------------
-Global continuity equation error: -3.1754124875e-10 s^-1
-Max local continuity error: 2.2571621269e-07 s^-1
+Global continuity equation error: -3.1753989778e-10 s^-1
+Max local continuity error: 2.2571537948e-07 s^-1
