@@ -13,10 +13,11 @@
 int
 main()
 {
-  const unsigned int              dim                 = 3;
-  const std::vector<unsigned int> n_subdivisions      = {10, 3};
-  const unsigned int              n_quadrature_points = 3;
-  const std::vector<double>       radius              = {1.2, 0.4};
+  const unsigned int              dim                     = 3;
+  const std::vector<unsigned int> n_subdivisions          = {10, 3};
+  const unsigned int              n_quadrature_points     = 3;
+  const std::vector<double>       radius                  = {1.2, 0.4};
+  const unsigned int              rotation_axis_direction = 2;
   const std::vector<double> stage_heights = {0.0, 0.4 / 3.0, 0.8 / 3.0, 0.4};
 
   // cell angle variation
@@ -32,6 +33,7 @@ main()
                                                radius,
                                                QGauss<dim>(n_quadrature_points),
                                                rotate,
+                                               rotation_axis_direction,
                                                stage_heights);
 
       std::cout << manager.get_n_mortars() << std::endl;
