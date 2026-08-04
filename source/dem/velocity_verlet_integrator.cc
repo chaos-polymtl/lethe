@@ -11,7 +11,7 @@ using namespace DEM;
 
 template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_location(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_start(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -67,7 +67,7 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_location(
 
 template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_velocity(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_end(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -119,7 +119,7 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_velocity(
 
 template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_velocity(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_end(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const Tensor<1, 3>                              &g,
   const double                                     dt,
@@ -139,7 +139,7 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_velocity(
   // this is the first iteration.
   if (use_default_function)
     {
-      integrate_half_step_velocity(particle_handler, g, dt, torque, force, MOI);
+      integrate_end(particle_handler, g, dt, torque, force, MOI);
       return;
     }
 

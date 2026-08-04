@@ -230,6 +230,15 @@ private:
   void
   sort_particles_into_subdomains_and_cells();
 
+
+  /**
+   * @brief Hook for particular operations that are related to the packed insertion.
+   *
+   * @return Boolean that indicates if the simulation should finish or not.
+   */
+  bool
+  packed_insertion_report_and_status();
+
   /**
    * @brief The MPI communicator used for the parallel simulation.
    */

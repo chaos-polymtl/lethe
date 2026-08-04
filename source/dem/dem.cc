@@ -731,15 +731,14 @@ DEMSolver<dim, PropertiesIndex>::synchronize_velocities()
 
   compute_contact_forces();
 
-  integrator_object->integrate_half_step_velocity(
-    particle_handler,
-    g,
-    simulation_control->get_time_step(),
-    torque,
-    force,
-    MOI,
-    triangulation,
-    sparse_contacts_object);
+  integrator_object->integrate_end(particle_handler,
+                                   g,
+                                   simulation_control->get_time_step(),
+                                   torque,
+                                   force,
+                                   MOI,
+                                   triangulation,
+                                   sparse_contacts_object);
 
   // Reset all trigger flags
   action_manager->reset_triggers();
@@ -1017,6 +1016,50 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
 }
 
 template <int dim, typename PropertiesIndex>
+bool
+DEMSolver<dim, PropertiesIndex>::packed_insertion_report_and_status()
+{
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
+    {
+      unsigned int number_of_pp_contact_on_proc =
+        particle_particle_contact_force_object->get_number_of_contacts();
+
+      unsigned int number_of_pw_contact_on_proc =
+        particle_wall_contact_force_object->get_number_of_contacts();
+
+      const unsigned int total_number_of_pp_contacts =
+        Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
+
+      const unsigned int total_number_of_pw_contacts =
+        Utilities::MPI::sum(number_of_pw_contact_on_proc, mpi_communicator);
+      if (total_number_of_pp_contacts + total_number_of_pw_contacts == 0)
+        {
+          pcout << "No contact detected. Exiting simulation." << std::endl;
+          if (!parameters.test.enabled)
+            write_output_results();
+          return true;
+        }
+      if (simulation_control->is_verbose_iteration())
+        pcout << std::endl
+              << "Total number of p-p contacts: " << total_number_of_pp_contacts
+              << std::endl
+              << "Total number of p-w contacts: " << total_number_of_pw_contacts
+              << std::endl
+              << std::endl;
+
+      particle_particle_contact_force_object->reset_number_of_contacts();
+      particle_wall_contact_force_object->reset_number_of_contacts();
+
+      InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
+        particle_handler, maximum_particle_diameter, displacement);
+      InsertionPacked<dim, PropertiesIndex>::update_previous_position(
+        particle_handler);
+    }
+  return false;
+}
+
+template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::solve()
 {
@@ -1108,17 +1151,15 @@ DEMSolver<dim, PropertiesIndex>::solve()
         }
 
       // Integration of force and velocity for new location of particles.
-      // Staggered schemes are not self-starting: at the very first iteration
-      // they only advance the velocities by half a time step, while the
-      // positions are advanced by a full time step as usual. Restarted
-      // simulations resume with regular steps since the checkpoints store the
-      // staggered velocities.
+      // The very first iteration is handed to integrate_start, which lets the
+      // scheme decide whether it needs a special opening step. Restarted
+      // simulations resume with regular steps, since the checkpoints store the
+      // velocities as the scheme left them.
       if (!disable_position_integration)
         {
-          if (integrator_object->is_half_step_required() &&
-              simulation_control->is_at_start() && !parameters.restart.restart)
+          if (simulation_control->is_at_start() && !parameters.restart.restart)
             {
-              integrator_object->integrate_half_step_location(
+              integrator_object->integrate_start(
                 particle_handler,
                 g,
                 simulation_control->get_time_step(),
@@ -1139,43 +1180,10 @@ DEMSolver<dim, PropertiesIndex>::solve()
             }
         }
 
-      if (parameters.insertion_info.insertion_method ==
-          InsertionInfo<dim>::InsertionMethod::packed)
-        {
-          unsigned int number_of_pp_contact_on_proc =
-            particle_particle_contact_force_object->get_number_of_contacts();
-
-          unsigned int number_of_pw_contact_on_proc =
-            particle_wall_contact_force_object->get_number_of_contacts();
-
-          const unsigned int total_number_of_pp_contacts =
-            Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
-
-          const unsigned int total_number_of_pw_contacts =
-            Utilities::MPI::sum(number_of_pw_contact_on_proc, mpi_communicator);
-          if (total_number_of_pp_contacts + total_number_of_pw_contacts == 0)
-            {
-              pcout << "No contact detected. Exiting simulation." << std::endl;
-              if (!parameters.test.enabled)
-                write_output_results();
-              break;
-            }
-          if (simulation_control->is_verbose_iteration())
-            pcout << std::endl
-                  << "Total number of p-p contacts: "
-                  << total_number_of_pp_contacts << std::endl
-                  << "Total number of p-w contacts: "
-                  << total_number_of_pw_contacts << std::endl
-                  << std::endl;
-
-          particle_particle_contact_force_object->reset_number_of_contacts();
-          particle_wall_contact_force_object->reset_number_of_contacts();
-
-          InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
-            particle_handler, maximum_particle_diameter, displacement);
-          InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-            particle_handler);
-        }
+      // If the packed insertion has reached the end, we break
+      // the simulation control loop. s
+      if (packed_insertion_report_and_status())
+        break;
 
       // Visualization
       if (simulation_control->is_output_iteration())
@@ -1235,11 +1243,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
       action_manager->reset_triggers();
     }
 
-  // Closing half velocity step of the staggered integration schemes. It brings
-  // the velocities of the particles to the final time, at which their positions
-  // already are.
-  if (integrator_object->is_half_step_required() &&
-      !disable_position_integration)
+  // Closing step of the integration scheme. It brings the velocities of the
+  // particles to the final time, at which their positions already are.
+  if (!disable_position_integration)
     {
       synchronize_velocities();
 

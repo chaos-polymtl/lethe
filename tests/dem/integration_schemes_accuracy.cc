@@ -207,7 +207,7 @@ test()
       // sure that the integrator resets it at the end of every step
       force[particle_iterator->get_local_index()][dim - 1] += -x0;
 
-      velocity_verlet_object.integrate_half_step_location(
+      velocity_verlet_object.integrate_start(
         particle_handler, g, dt1, torque, force, MOI);
       t += dt1;
 
@@ -231,7 +231,7 @@ test()
         force_tensor[dim - 1] =
           -spring_constant * particle_iterator->get_location()[dim - 1];
         force[particle_iterator->get_local_index()] += force_tensor;
-        velocity_verlet_object.integrate_half_step_velocity(
+        velocity_verlet_object.integrate_end(
           particle_handler, g, dt1, torque, force, MOI);
       }
 
@@ -270,7 +270,7 @@ test()
       // The force is accumulated, like the contact force objects do, to make
       // sure that the integrator resets it at the end of every step
       force[particle_iterator->get_local_index()][dim - 1] += -x0;
-      velocity_verlet_object.integrate_half_step_location(
+      velocity_verlet_object.integrate_start(
         particle_handler, g, dt2, torque, force, MOI);
       t += dt2;
 
@@ -294,7 +294,7 @@ test()
         force_tensor[dim - 1] =
           -spring_constant * particle_iterator->get_location()[dim - 1];
         force[particle_iterator->get_local_index()] += force_tensor;
-        velocity_verlet_object.integrate_half_step_velocity(
+        velocity_verlet_object.integrate_end(
           particle_handler, g, dt2, torque, force, MOI);
       }
 

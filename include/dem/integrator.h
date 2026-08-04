@@ -33,22 +33,16 @@ public:
   {}
 
   /**
-   * @brief Indicate if the integration scheme stores the velocities staggered by
-   * half a time step with respect to the positions. Such schemes are not
-   * self-starting: they require an opening half velocity step
-   * (integrate_half_step_location) and a closing half velocity step
-   * (integrate_half_step_velocity) to synchronize the velocities with the
-   * positions at the final time.
+   * @brief Integrate the opening step of the scheme, which is carried out once,
+   * at the very first time step. Whatever the scheme, this advances the
+   * positions by a full time step, exactly like integrate() does. Schemes that
+   * are not self-starting, that is, schemes that store the velocities staggered
+   * by half a time step with respect to the positions, use it to bring their
+   * velocities to t(1/2) while the positions reach t(1). Self-starting schemes
+   * simply carry out a regular step.
    *
-   * @return true if the scheme requires an opening and a closing half step.
-   */
-  virtual bool
-  is_half_step_required() const = 0;
-
-  /**
-   * @brief Integrate the opening half step of a staggered scheme. The velocities
-   * are advanced by half a time step and the positions by a full time step,
-   * which brings the velocities to t(1/2) and the positions to t(1).
+   * Calling this at the first time step is unconditional: it is up to the
+   * scheme, and not to the solver, to decide what an opening step means.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -61,18 +55,22 @@ public:
    * @param MOI A container of moment of inertia of particles
    */
   virtual void
-  integrate_half_step_location(
-    Particles::ParticleHandler<dim> &particle_handler,
-    const Tensor<1, 3>              &body_force,
-    const double                     time_step,
-    std::vector<Tensor<1, 3>>       &torque,
-    std::vector<Tensor<1, 3>>       &force,
-    const std::vector<double>       &MOI) = 0;
+  integrate_start(Particles::ParticleHandler<dim> &particle_handler,
+                  const Tensor<1, 3>              &body_force,
+                  const double                     time_step,
+                  std::vector<Tensor<1, 3>>       &torque,
+                  std::vector<Tensor<1, 3>>       &force,
+                  const std::vector<double>       &MOI) = 0;
 
   /**
-   * @brief Integrate the closing half step of a staggered scheme. The velocities
-   * are advanced by half a time step, which synchronizes them with the
-   * positions. The positions are left untouched.
+   * @brief Integrate the closing step of the scheme, which is carried out once the
+   * final position is reached. The positions are never modified. Schemes that
+   * store the velocities staggered by half a time step advance them by half a
+   * time step here, which synchronizes them with the positions. Schemes whose
+   * velocities are already synchronized leave them untouched.
+   *
+   * Whatever the scheme, the force and the torque containers are reset, since
+   * they have been filled by the force evaluation that precedes this call.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -85,18 +83,17 @@ public:
    * @param MOI A container of moment of inertia of particles
    */
   virtual void
-  integrate_half_step_velocity(
-    Particles::ParticleHandler<dim> &particle_handler,
-    const Tensor<1, 3>              &body_force,
-    const double                     time_step,
-    std::vector<Tensor<1, 3>>       &torque,
-    std::vector<Tensor<1, 3>>       &force,
-    const std::vector<double>       &MOI) = 0;
+  integrate_end(Particles::ParticleHandler<dim> &particle_handler,
+                const Tensor<1, 3>              &body_force,
+                const double                     time_step,
+                std::vector<Tensor<1, 3>>       &torque,
+                std::vector<Tensor<1, 3>>       &force,
+                const std::vector<double>       &MOI) = 0;
 
   /**
-   * @brief Integrate the closing half step of a staggered scheme when the
-   * adaptive sparse contacts are enabled. Only the particles located in mobile
-   * cells have their velocities advanced.
+   * @brief Integrate the closing step of the scheme when the adaptive sparse
+   * contacts are enabled. Only the particles located in mobile cells have their
+   * velocities advanced, the other ones only have their force and torque reset.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -112,7 +109,7 @@ public:
    * the cells
    */
   virtual void
-  integrate_half_step_velocity(
+  integrate_end(
     Particles::ParticleHandler<dim>                 &particle_handler,
     const Tensor<1, 3>                              &body_force,
     const double                                     time_step,

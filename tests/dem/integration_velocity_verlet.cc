@@ -120,7 +120,7 @@ test()
   // Opening half step: the velocities are advanced by half a time step and the
   // positions by a full time step
   apply_force_and_torque();
-  integration_object.integrate_half_step_location(
+  integration_object.integrate_start(
     particle_handler, g, dt, torque, force, MOI);
 
   // Regular steps
@@ -132,8 +132,7 @@ test()
 
   // Closing half step: the velocities are synchronized with the positions
   apply_force_and_torque();
-  integration_object.integrate_half_step_velocity(
-    particle_handler, g, dt, torque, force, MOI);
+  integration_object.integrate_end(particle_handler, g, dt, torque, force, MOI);
 
   // Output
   const double final_time = number_of_steps * dt;

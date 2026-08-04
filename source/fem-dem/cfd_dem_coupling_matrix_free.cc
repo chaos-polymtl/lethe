@@ -1448,19 +1448,18 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::dem_iterator()
     this->particle_handler, g, contact_outcome.force, dem_time_step);
 
   // Integration correction step (after force calculation).
-  // Staggered schemes are not self-starting. Since the velocities are
-  // synchronized with the positions at the end of every CFD time step (see
-  // synchronize_particle_velocities), the opening half velocity step has to be
-  // carried out at the first DEM sub-iteration of every CFD time step.
-  if (integrator_object->is_half_step_required() &&
-      this->dem_simulation_control->is_first_iteration())
+  // Since the velocities are synchronized with the positions at the end of
+  // every CFD time step (see synchronize_particle_velocities), the first DEM
+  // sub-iteration of every CFD time step is an opening step, which lets the
+  // scheme restart its staggering if it has one.
+  if (this->dem_simulation_control->is_first_iteration())
     {
-      integrator_object->integrate_half_step_location(this->particle_handler,
-                                                      g,
-                                                      dem_time_step,
-                                                      contact_outcome.torque,
-                                                      contact_outcome.force,
-                                                      MOI);
+      integrator_object->integrate_start(this->particle_handler,
+                                         g,
+                                         dem_time_step,
+                                         contact_outcome.torque,
+                                         contact_outcome.force,
+                                         MOI);
     }
   else
     {
@@ -1528,14 +1527,14 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::synchronize_particle_velocities()
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
-  integrator_object->integrate_half_step_velocity(this->particle_handler,
-                                                  g,
-                                                  dem_time_step,
-                                                  contact_outcome.torque,
-                                                  contact_outcome.force,
-                                                  MOI,
-                                                  *parallel_triangulation,
-                                                  sparse_contacts_object);
+  integrator_object->integrate_end(this->particle_handler,
+                                   g,
+                                   dem_time_step,
+                                   contact_outcome.torque,
+                                   contact_outcome.force,
+                                   MOI,
+                                   *parallel_triangulation,
+                                   sparse_contacts_object);
 
   dem_action_manager->reset_triggers();
 }
@@ -1806,11 +1805,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
             dem_iterator();
           }
 
-        // Closing half velocity step of the staggered integration schemes. It
-        // brings the velocities of the particles to the end of the CFD time
-        // step, at which their positions already are.
-        if (integrator_object->is_half_step_required())
-          synchronize_particle_velocities();
+        // Closing step of the integration scheme. It brings the velocities of
+        // the particles to the end of the CFD time step, at which their
+        // positions already are.
+        synchronize_particle_velocities();
 
         this->pcout << "Finished " << dem_simulation_control->get_iteration()
                     << " DEM iterations" << std::endl;
