@@ -205,7 +205,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
       //             rad1
 
       double rad_0, rad_1, rad_2;
-      // Minimum rotation angle
+      // Minimum rotation angle between two aligned vertices (if rot_min=0, the
+      // meshes are aligned)
       double rot_min =
         rotation_angle - std::floor(rotation_angle / delta_0) * delta_0;
 
@@ -347,7 +348,7 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
   // Mesh alignment type and cell index
   const auto [type, id_in_plane, id_out_plane] =
     get_config(face_center, is_inner);
-  // Angle variation within each cell
+  // Angle span of each cell (in radians)
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   double       delta_1 = 1.0;
 
