@@ -23,6 +23,7 @@ test()
   simulation_control_parameters.maxCFL                        = 2;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+  simulation_control_parameters.end_control = Parameters::SimulationControl::EndControl::time;
   simulation_control_parameters.time_end = 0.5;
   simulation_control_parameters.output_control =
     Parameters::SimulationControl::OutputControl::iteration;

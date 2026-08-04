@@ -24,7 +24,7 @@ test()
   simulationControlParameters.maxCFL                        = 99;
   simulationControlParameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-
+  simulationControlParameters.end_control = Parameters::SimulationControl::EndControl::time;
   simulationControlParameters.time_end                   = 999;
   simulationControlParameters.number_mesh_adaptation     = 9;
   simulationControlParameters.output_name                = "test";
