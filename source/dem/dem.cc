@@ -1019,43 +1019,45 @@ template <int dim, typename PropertiesIndex>
 bool
 DEMSolver<dim, PropertiesIndex>::packed_insertion_report_and_status()
 {
-  if (parameters.insertion_info.insertion_method ==
+  if (parameters.insertion_info.insertion_method !=
       InsertionInfo<dim>::InsertionMethod::packed)
+    return false;
+
+  unsigned int number_of_pp_contact_on_proc =
+    particle_particle_contact_force_object->get_number_of_contacts();
+
+  unsigned int number_of_pw_contact_on_proc =
+    particle_wall_contact_force_object->get_number_of_contacts();
+
+  const unsigned int total_number_of_pp_contacts =
+    Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
+
+  const unsigned int total_number_of_pw_contacts =
+    Utilities::MPI::sum(number_of_pw_contact_on_proc, mpi_communicator);
+  if (total_number_of_pp_contacts + total_number_of_pw_contacts == 0)
     {
-      unsigned int number_of_pp_contact_on_proc =
-        particle_particle_contact_force_object->get_number_of_contacts();
-
-      unsigned int number_of_pw_contact_on_proc =
-        particle_wall_contact_force_object->get_number_of_contacts();
-
-      const unsigned int total_number_of_pp_contacts =
-        Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
-
-      const unsigned int total_number_of_pw_contacts =
-        Utilities::MPI::sum(number_of_pw_contact_on_proc, mpi_communicator);
-      if (total_number_of_pp_contacts + total_number_of_pw_contacts == 0)
-        {
-          pcout << "No contact detected. Exiting simulation." << std::endl;
-          if (!parameters.test.enabled)
-            write_output_results();
-          return true;
-        }
-      if (simulation_control->is_verbose_iteration())
-        pcout << std::endl
-              << "Total number of p-p contacts: " << total_number_of_pp_contacts
-              << std::endl
-              << "Total number of p-w contacts: " << total_number_of_pw_contacts
-              << std::endl
-              << std::endl;
-
-      particle_particle_contact_force_object->reset_number_of_contacts();
-      particle_wall_contact_force_object->reset_number_of_contacts();
-
-      InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
-        particle_handler, maximum_particle_diameter, displacement);
-      InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-        particle_handler);
+      pcout << "No contact detected. Exiting simulation." << std::endl;
+      if (!parameters.test.enabled)
+        write_output_results();
+      return true;
     }
+  if (simulation_control->is_verbose_iteration())
+    pcout << std::endl
+          << "Total number of p-p contacts: " << total_number_of_pp_contacts
+          << std::endl
+          << "Total number of p-w contacts: " << total_number_of_pw_contacts
+          << std::endl
+          << std::endl;
+
+  particle_particle_contact_force_object->reset_number_of_contacts();
+  particle_wall_contact_force_object->reset_number_of_contacts();
+
+  InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
+    particle_handler, maximum_particle_diameter, displacement);
+  InsertionPacked<dim, PropertiesIndex>::update_previous_position(
+    particle_handler);
+
+  // Packed insertion is enabled and simulation will continue.
   return false;
 }
 
@@ -1180,8 +1182,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
             }
         }
 
-      // If the packed insertion has reached the end, we break
-      // the simulation control loop. s
+      // If the packed insertion has reached the end due to the fact
+      // that no particle-wall or particle-particle contact remain, we break
+      // the simulation control loop.
       if (packed_insertion_report_and_status())
         break;
 
