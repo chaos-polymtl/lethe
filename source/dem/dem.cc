@@ -597,6 +597,156 @@ DEMSolver<dim, PropertiesIndex>::update_temperature_solid_objects()
 
 template <int dim, typename PropertiesIndex>
 void
+DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
+{
+  // Check for contact search according to the contact detection method
+  contact_detection_iteration_check_function();
+
+  // Check if solid object needs to be mapped with background mesh
+  // (if solid object)
+  find_floating_mesh_mapping_step(smallest_solid_object_mapping_criterion,
+                                  this->solid_surfaces);
+
+  // Map solid objects if the action was triggered (if solid object)
+  if (action_manager->check_solid_object_search())
+    {
+      // Store information about floating mesh/background mesh
+      // intersection
+      for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
+        {
+          solid_surfaces_mesh_info[i_solid] =
+            solid_surfaces[i_solid]->map_solid_in_background_triangulation(
+              triangulation);
+        }
+
+      for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
+        {
+          solid_volumes_mesh_info[i_solid] =
+            solid_volumes[i_solid]->map_solid_in_background_triangulation(
+              triangulation);
+        }
+    }
+
+  // Execute contact search if the action was triggered
+  if (action_manager->check_contact_search())
+    {
+      // Particles displacement if passing through a periodic boundary
+      // (if PBC enabled)
+      periodic_boundaries_object.execute_particles_displacement(
+        particle_handler, periodic_boundaries_cells_information);
+
+      sort_particles_into_subdomains_and_cells();
+
+      // Compute cell mobility (if ASC enabled)
+      sparse_contacts_object.identify_mobility_status(
+        background_dh,
+        particle_handler,
+        triangulation.n_active_cells(),
+        mpi_communicator);
+
+      // Execute broad search by filling containers of particle-particle
+      // contact pair candidates and containers of particle-wall
+      // contact pair candidates
+      contact_manager.execute_particle_particle_broad_search(
+        particle_handler, sparse_contacts_object);
+
+      contact_manager.execute_particle_wall_broad_search(
+        particle_handler,
+        boundary_cell_object,
+        solid_surfaces_mesh_info,
+        parameters.floating_walls,
+        simulation_control->get_current_time(),
+        sparse_contacts_object);
+
+      // Update contacts, remove replicates and add new contact pairs
+      // to the contact containers when particles are exchanged between
+      // processors
+      contact_manager.update_contacts();
+
+      // Updates the iterators to particles in local-local contact
+      // containers
+      contact_manager.update_local_particles_in_cells(particle_handler);
+
+      // Execute fine search by updating particle-particle contact
+      // containers according to the neighborhood threshold
+      contact_manager.execute_particle_particle_fine_search(
+        neighborhood_threshold_squared);
+
+      // Execute fine search by updating particle-wall contact
+      // containers according to the neighborhood threshold
+      contact_manager.execute_particle_wall_fine_search(
+        parameters.floating_walls,
+        simulation_control->get_current_time(),
+        neighborhood_threshold_squared);
+
+      // Updating number of contact builds
+      contact_build_number++;
+    }
+  else
+    {
+      particle_handler.update_ghost_particles();
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+DEMSolver<dim, PropertiesIndex>::compute_contact_forces()
+{
+  // Particle-particle contact force
+  particle_particle_contact_force_object->calculate_particle_particle_contact(
+    contact_manager.get_local_adjacent_particles(),
+    contact_manager.get_ghost_adjacent_particles(),
+    contact_manager.get_local_local_periodic_adjacent_particles(),
+    contact_manager.get_local_ghost_periodic_adjacent_particles(),
+    contact_manager.get_ghost_local_periodic_adjacent_particles(),
+    simulation_control->get_time_step(),
+    contact_outcome);
+
+  // Update the boundary points and vectors (if grid motion)
+  // We have to update the positions of the points on boundary faces and
+  // their normal vectors here. The update_contacts deletes the
+  // particle-wall contact candidate if it exists in the contact list.
+  // As a result, when we update the points on boundary faces and their
+  // normal vectors, update_contacts deletes it from the output of broad
+  // search, and they are not updated in the contact force calculations.
+  grid_motion_object->update_boundary_points_and_normal_vectors_in_contact_list(
+    contact_manager.get_particle_wall_in_contact(),
+    updated_boundary_points_and_normal_vectors);
+
+  // Particle-wall contact force
+  particle_wall_contact_force();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+DEMSolver<dim, PropertiesIndex>::synchronize_velocities()
+{
+  // The particles have reached their final position, but their velocities are
+  // still lagging by half a time step. The contact forces are re-evaluated at
+  // this final position so that the closing half velocity step can be applied.
+  // Neither the particles nor the solid objects are moved here, hence the
+  // insertion, the grid motion, the load balancing and the solid object motion
+  // are all left out.
+  execute_contact_detection_and_search();
+
+  compute_contact_forces();
+
+  integrator_object->integrate_half_step_velocity(
+    particle_handler,
+    g,
+    simulation_control->get_time_step(),
+    torque,
+    force,
+    MOI,
+    triangulation,
+    sparse_contacts_object);
+
+  // Reset all trigger flags
+  action_manager->reset_triggers();
+}
+
+template <int dim, typename PropertiesIndex>
+void
 DEMSolver<dim, PropertiesIndex>::finish_simulation()
 {
   // Timer output
@@ -934,118 +1084,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // Load balancing (if load balancing enabled and if needed)
       load_balance();
 
-      // Check for contact search according to the contact detection method
-      contact_detection_iteration_check_function();
-
-      // Check if solid object needs to be mapped with background mesh
-      // (if solid object)
-      find_floating_mesh_mapping_step(smallest_solid_object_mapping_criterion,
-                                      this->solid_surfaces);
-
-      // Map solid objects if the action was triggered (if solid object)
-      if (action_manager->check_solid_object_search())
-        {
-          // Store information about floating mesh/background mesh
-          // intersection
-          for (unsigned int i_solid = 0; i_solid < solid_surfaces.size();
-               ++i_solid)
-            {
-              solid_surfaces_mesh_info[i_solid] =
-                solid_surfaces[i_solid]->map_solid_in_background_triangulation(
-                  triangulation);
-            }
-
-          for (unsigned int i_solid = 0; i_solid < solid_volumes.size();
-               ++i_solid)
-            {
-              solid_volumes_mesh_info[i_solid] =
-                solid_volumes[i_solid]->map_solid_in_background_triangulation(
-                  triangulation);
-            }
-        }
-
-      // Execute contact search if the action was triggered
-      if (action_manager->check_contact_search())
-        {
-          // Particles displacement if passing through a periodic boundary
-          // (if PBC enabled)
-          periodic_boundaries_object.execute_particles_displacement(
-            particle_handler, periodic_boundaries_cells_information);
-
-          sort_particles_into_subdomains_and_cells();
-
-          // Compute cell mobility (if ASC enabled)
-          sparse_contacts_object.identify_mobility_status(
-            background_dh,
-            particle_handler,
-            triangulation.n_active_cells(),
-            mpi_communicator);
-
-          // Execute broad search by filling containers of particle-particle
-          // contact pair candidates and containers of particle-wall
-          // contact pair candidates
-          contact_manager.execute_particle_particle_broad_search(
-            particle_handler, sparse_contacts_object);
-
-          contact_manager.execute_particle_wall_broad_search(
-            particle_handler,
-            boundary_cell_object,
-            solid_surfaces_mesh_info,
-            parameters.floating_walls,
-            simulation_control->get_current_time(),
-            sparse_contacts_object);
-
-          // Update contacts, remove replicates and add new contact pairs
-          // to the contact containers when particles are exchanged between
-          // processors
-          contact_manager.update_contacts();
-
-          // Updates the iterators to particles in local-local contact
-          // containers
-          contact_manager.update_local_particles_in_cells(particle_handler);
-
-          // Execute fine search by updating particle-particle contact
-          // containers according to the neighborhood threshold
-          contact_manager.execute_particle_particle_fine_search(
-            neighborhood_threshold_squared);
-
-          // Execute fine search by updating particle-wall contact
-          // containers according to the neighborhood threshold
-          contact_manager.execute_particle_wall_fine_search(
-            parameters.floating_walls,
-            simulation_control->get_current_time(),
-            neighborhood_threshold_squared);
-
-          // Updating number of contact builds
-          contact_build_number++;
-        }
-      else
-        {
-          particle_handler.update_ghost_particles();
-        }
-
-      // Particle-particle contact force
-      particle_particle_contact_force_object
-        ->calculate_particle_particle_contact(
-          contact_manager.get_local_adjacent_particles(),
-          contact_manager.get_ghost_adjacent_particles(),
-          contact_manager.get_local_local_periodic_adjacent_particles(),
-          contact_manager.get_local_ghost_periodic_adjacent_particles(),
-          contact_manager.get_ghost_local_periodic_adjacent_particles(),
-          simulation_control->get_time_step(),
-          contact_outcome);
-
-      // Update the boundary points and vectors (if grid motion)
-      // We have to update the positions of the points on boundary faces and
-      // their normal vectors here. The update_contacts deletes the
-      // particle-wall contact candidate if it exists in the contact list.
-      // As a result, when we update the points on boundary faces and their
-      // normal vectors, update_contacts deletes it from the output of broad
-      // search, and they are not updated in the contact force calculations.
-      grid_motion_object
-        ->update_boundary_points_and_normal_vectors_in_contact_list(
-          contact_manager.get_particle_wall_in_contact(),
-          updated_boundary_points_and_normal_vectors);
+      // Check if a contact detection is required and, if so, execute the
+      // particle-particle and particle-wall broad and fine searches
+      execute_contact_detection_and_search();
 
       // Move solid objects (if solid object)
       move_solid_objects();
@@ -1053,8 +1094,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // Update solid objects temperatures
       update_temperature_solid_objects();
 
-      // Particle-wall contact force
-      particle_wall_contact_force();
+      // Particle-particle and particle-wall contact forces
+      compute_contact_forces();
 
       // Integration of temperature for multiphysic DEM
       if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
@@ -1066,12 +1107,16 @@ DEMSolver<dim, PropertiesIndex>::solve()
             std::vector<double>(force.size()));
         }
 
-      // Integration of force and velocity for new location of particles
-      // The half step is calculated at the first iteration
-
+      // Integration of force and velocity for new location of particles.
+      // Staggered schemes are not self-starting: at the very first iteration
+      // they only advance the velocities by half a time step, while the
+      // positions are advanced by a full time step as usual. Restarted
+      // simulations resume with regular steps since the checkpoints store the
+      // staggered velocities.
       if (!disable_position_integration)
         {
-          if (simulation_control->get_iteration_number() == 0)
+          if (integrator_object->is_half_step_required() &&
+              simulation_control->is_at_start() && !parameters.restart.restart)
             {
               integrator_object->integrate_half_step_location(
                 particle_handler,
@@ -1188,6 +1233,21 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Reset all trigger flags
       action_manager->reset_triggers();
+    }
+
+  // Closing half velocity step of the staggered integration schemes. It brings
+  // the velocities of the particles to the final time, at which their positions
+  // already are.
+  if (integrator_object->is_half_step_required() &&
+      !disable_position_integration)
+    {
+      synchronize_velocities();
+
+      if (simulation_control->is_verbose_iteration())
+        {
+          announce_string(pcout, "Synchronized particle statistics");
+          report_statistics();
+        }
     }
 
   // Write particle-wall collision statistics file if enabled
