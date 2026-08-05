@@ -205,7 +205,7 @@ test()
 
       // The force is accumulated, like the contact force objects do, to make
       // sure that the integrator resets it at the end of every step
-      force[particle_iterator->get_local_index()][dim - 1] += -x0;
+      force[particle_iterator->get_local_index()][dim - 1] -= x0;
 
       velocity_verlet_object.integrate_start(
         particle_handler, g, dt1, torque, force, MOI);
@@ -269,7 +269,7 @@ test()
 
       // The force is accumulated, like the contact force objects do, to make
       // sure that the integrator resets it at the end of every step
-      force[particle_iterator->get_local_index()][dim - 1] += -x0;
+      force[particle_iterator->get_local_index()][dim - 1] -= x0;
       velocity_verlet_object.integrate_start(
         particle_handler, g, dt2, torque, force, MOI);
       t += dt2;
