@@ -381,7 +381,7 @@ Every subsequent time step advances both the velocities and the positions by a f
     \mathbf{v}_{i}^{n+\frac{1}{2}} &= \mathbf{v}_{i}^{n-\frac{1}{2}} + \mathbf{a}_{i}^{n}dt \\
     \mathbf{x}_{i}^{n+1} &= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n+\frac{1}{2}}dt
 
-Once the final position is reached, the accelerations are evaluated one last time at that position and a closing half step synchronizes the velocities with the positions:
+When synchronization is necessary, the accelerations are evaluated and a half step synchronizes the velocities with the positions:
 
 .. math::
     \mathbf{v}_{i}^{n} = \mathbf{v}_{i}^{n-\frac{1}{2}} + \mathbf{a}_{i}^{n}\frac{dt}{2}
