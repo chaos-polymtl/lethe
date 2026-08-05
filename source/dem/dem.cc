@@ -602,15 +602,14 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
   // Check for contact search according to the contact detection method
   contact_detection_iteration_check_function();
 
-  // Check if solid object needs to be mapped with background mesh
-  // (if solid object)
+  // Check whether the solid objects needs to be mapped onto the background mesh.
   find_floating_mesh_mapping_step(smallest_solid_object_mapping_criterion,
                                   this->solid_surfaces);
 
-  // Map solid objects if the action was triggered (if solid object)
+  // Map solid objects if the action was triggered
   if (action_manager->check_solid_object_search())
     {
-      // Store information about floating mesh/background mesh
+      // Store the information about the floating mesh and background mesh
       // intersection
       for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
         {
@@ -627,25 +626,24 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
         }
     }
 
-  // Execute contact search if the action was triggered
+  // Execute the contact search if the action was triggered
   if (action_manager->check_contact_search())
     {
-      // Particles displacement if passing through a periodic boundary
-      // (if PBC enabled)
+      // Apply particle displacement across periodic boundaries. 
       periodic_boundaries_object.execute_particles_displacement(
         particle_handler, periodic_boundaries_cells_information);
 
       sort_particles_into_subdomains_and_cells();
 
-      // Compute cell mobility (if ASC enabled)
+      // Compute the mobility status of the cells.
       sparse_contacts_object.identify_mobility_status(
         background_dh,
         particle_handler,
         triangulation.n_active_cells(),
         mpi_communicator);
 
-      // Execute broad search by filling containers of particle-particle
-      // contact pair candidates and containers of particle-wall
+      // Execute the broad search by filling the particle-particle containers of
+      // contact pair candidates and the containers of particle-wall
       // contact pair candidates
       contact_manager.execute_particle_particle_broad_search(
         particle_handler, sparse_contacts_object);
@@ -658,22 +656,22 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
         simulation_control->get_current_time(),
         sparse_contacts_object);
 
-      // Update contacts, remove replicates and add new contact pairs
-      // to the contact containers when particles are exchanged between
-      // processors
+      // Update contacts by removing duplicates and adding new contact pairs
+      // when particles are exchanged between processors.
       contact_manager.update_contacts();
 
-      // Updates the iterators to particles in local-local contact
+      // Update the particle iterators in local-local contact the 
       // containers
       contact_manager.update_local_particles_in_cells(particle_handler);
 
-      // Execute fine search by updating particle-particle contact
-      // containers according to the neighborhood threshold
+      // Execute particle-particle fine search and update contact pairs
+      // within the neighborhood threshold
+
       contact_manager.execute_particle_particle_fine_search(
         neighborhood_threshold_squared);
 
-      // Execute fine search by updating particle-wall contact
-      // containers according to the neighborhood threshold
+      // Execute the particle-wall fine search and update the contact 
+      // pairs within the neighborhood threshold
       contact_manager.execute_particle_wall_fine_search(
         parameters.floating_walls,
         simulation_control->get_current_time(),
