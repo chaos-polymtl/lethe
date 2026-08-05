@@ -1489,6 +1489,15 @@ CFDDEMSolver<dim, PropertiesIndex>::synchronize_particle_velocities()
   // Particles-walls contact force
   particle_wall_contact_force();
 
+  // The heat transfer rate accumulated by the contact force objects is
+  // discarded. The temperature is not integrated by the closing half step,
+  // since it is not staggered and has already been advanced to the final time
+  // by the last DEM sub-iteration. Leaving the container filled would leak
+  // this heat transfer rate into the temperature integration of the next CFD
+  // time step, which would then be counted twice.
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    std::ranges::fill(contact_outcome.heat_transfer_rate, 0.);
+
   // Add fluid-particle interaction force to the force container
   add_fluid_particle_interaction_force();
 
