@@ -230,7 +230,7 @@ namespace Parameters
         "end control",
         "time",
         Patterns::Selection("iteration|time"),
-        "The control for the end of a transient simulation. The ending "
+        "The control for the end of a transient simulation. The end "
         "condition is either a maximum time value (time end) or a maximum "
         "number of transient iterations (iteration end)");
 
