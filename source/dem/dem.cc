@@ -720,12 +720,13 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::synchronize_velocities()
 {
-  // The particles have reached their final position, but their velocities are
+  // The particle positions have reached time t, but their velocities are
   // still lagging by half a time step. The contact forces are re-evaluated at
-  // this final position so that the closing half velocity step can be applied.
+  // this position so that the closing half velocity step can be applied.
   // Neither the particles nor the solid objects are moved here, hence the
   // insertion, the grid motion, the load balancing and the solid object motion
-  // are all left out.
+  // are all left out. This step is only applied to synchronize velocity and
+  // position at the same time.
   execute_contact_detection_and_search();
 
   compute_contact_forces();
