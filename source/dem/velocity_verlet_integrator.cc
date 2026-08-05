@@ -92,21 +92,21 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_end(
       const double half_dt_MOI_inverse = 0.5 * dt / MOI[particle_id];
 
       // Loop is manually unrolled for performance reason.
-        // Particle velocity integration
-        particle_properties[PropertiesIndex::v_x] +=
-          half_dt_g[0] + particle_force[0] * half_dt_mass_inverse;
-        particle_properties[PropertiesIndex::v_y] +=
-          half_dt_g[1] + particle_force[1] * half_dt_mass_inverse;
-        particle_properties[PropertiesIndex::v_z] +=
-          half_dt_g[2] + particle_force[2] * half_dt_mass_inverse;
+      // Particle velocity integration
+      particle_properties[PropertiesIndex::v_x] +=
+        half_dt_g[0] + particle_force[0] * half_dt_mass_inverse;
+      particle_properties[PropertiesIndex::v_y] +=
+        half_dt_g[1] + particle_force[1] * half_dt_mass_inverse;
+      particle_properties[PropertiesIndex::v_z] +=
+        half_dt_g[2] + particle_force[2] * half_dt_mass_inverse;
 
-        // Updating angular velocity
-        particle_properties[PropertiesIndex::omega_x] +=
-          particle_torque[0] * half_dt_MOI_inverse;
-        particle_properties[PropertiesIndex::omega_y] +=
-          particle_torque[1] * half_dt_MOI_inverse;
-        particle_properties[PropertiesIndex::omega_z] +=
-          particle_torque[2] * half_dt_MOI_inverse;
+      // Updating angular velocity
+      particle_properties[PropertiesIndex::omega_x] +=
+        particle_torque[0] * half_dt_MOI_inverse;
+      particle_properties[PropertiesIndex::omega_y] +=
+        particle_torque[1] * half_dt_MOI_inverse;
+      particle_properties[PropertiesIndex::omega_z] +=
+        particle_torque[2] * half_dt_MOI_inverse;
 
       // Reinitialize force and torque of particle
       particle_force  = 0.;

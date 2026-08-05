@@ -602,7 +602,8 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
   // Check for contact search according to the contact detection method
   contact_detection_iteration_check_function();
 
-  // Check whether the solid objects needs to be mapped onto the background mesh.
+  // Check whether the solid objects needs to be mapped onto the background
+  // mesh.
   find_floating_mesh_mapping_step(smallest_solid_object_mapping_criterion,
                                   this->solid_surfaces);
 
@@ -629,7 +630,7 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
   // Execute the contact search if the action was triggered
   if (action_manager->check_contact_search())
     {
-      // Apply particle displacement across periodic boundaries. 
+      // Apply particle displacement across periodic boundaries.
       periodic_boundaries_object.execute_particles_displacement(
         particle_handler, periodic_boundaries_cells_information);
 
@@ -660,7 +661,7 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
       // when particles are exchanged between processors.
       contact_manager.update_contacts();
 
-      // Update the particle iterators in local-local contact the 
+      // Update the particle iterators in local-local contact the
       // containers
       contact_manager.update_local_particles_in_cells(particle_handler);
 
@@ -670,7 +671,7 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
       contact_manager.execute_particle_particle_fine_search(
         neighborhood_threshold_squared);
 
-      // Execute the particle-wall fine search and update the contact 
+      // Execute the particle-wall fine search and update the contact
       // pairs within the neighborhood threshold
       contact_manager.execute_particle_wall_fine_search(
         parameters.floating_walls,
