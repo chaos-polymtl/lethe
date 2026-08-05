@@ -26,7 +26,7 @@ MortarManagerBase<dim>::is_mesh_aligned() const
 {
   AssertThrow(dim != 1, ExcInternalError());
 
-  // Prescribed tolerance to verify the mesh alignment
+  // Prescribed tolerance to verify the mesh alignment in the real space
   constexpr double tolerance = 1e-8;
   // Angle variation within each cell (in radians)
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
@@ -101,7 +101,7 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center,
 
       for (unsigned int q = 0; q < 2; ++q)
         {
-          // Index of mortar cells in the rotor side
+          // Index of the mortar cell in the rotor side
           const unsigned int index =
             (id_in_plane * 2 + 1 + q) % (n_subdivisions[0] * 2);
           // Assert that the index is within the valid range of mortar cells
@@ -118,7 +118,7 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center,
 
       for (unsigned int q = 0; q < 2; ++q)
         {
-          // Index of mortar cells in the stator side
+          // Index of the mortar cell in the stator side
           const unsigned int index = id_in_plane * 2 + q;
           // Assert that the index is within the valid range of mortar cells
           AssertIndexRange(index, n_subdivisions[0] * 2);
@@ -164,7 +164,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
   // Angle span of each cell (in radians)
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   // Height of the cell in the direction of the rotation axis (in units of
-  // length)
+  // length) in 3D cases. In 2D, the default is 1.0
   double delta_1 = 1.0;
 
   if constexpr (dim == 3)
@@ -205,8 +205,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
       //             rad1
 
       double rad_0, rad_1, rad_2;
-      // Minimum rotation angle between two aligned vertices (if rot_min=0, the
-      // meshes are aligned)
+      // Minimum rotation angle between two vertices in the rotor and stator
+      // sides (if rot_min=0, the meshes are aligned)
       double rot_min =
         rotation_angle - std::floor(rotation_angle / delta_0) * delta_0;
 
@@ -1106,8 +1106,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
                 std::vector<Point<dim - 1>> quad;
 
-                // Invert quadrature point orientation when the face is in the
-                // "positive" domain
                 for (const auto &p : points_ref)
                   {
                     Point<dim - 1> temp;
@@ -1165,10 +1163,14 @@ CouplingOperator<dim, Number>::CouplingOperator(
                       get_face_center(cell, face),
                       cell->face(face_no)->boundary_id() == bid_m);
 
+                    // Verify the orientation of the face vertices (clockwise vs
+                    // counter-clockwise)
                     const bool flip =
                       (face->vertex(0)[0] * face->vertex(1)[1] -
                        face->vertex(0)[1] * face->vertex(1)[0]) < 0.0;
 
+                    // For consistency, flip orientation of quadrature points if
+                    // clockwise
                     if (flip)
                       for (auto &p : points)
                         p[0] = 1.0 - p[0];

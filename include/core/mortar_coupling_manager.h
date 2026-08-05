@@ -29,6 +29,7 @@ public:
    * @brief Mortar manager base constructor used in 2D problems
    * TODO: Combine both 2D and 3D constructors into one
    *
+   * @param dim2 Quadrature dimension
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
    * @param[in] radius Radius at the mortar interface
@@ -50,6 +51,7 @@ public:
    * @brief Mortar manager base constructor used in 3D problems
    * TODO: Combine both 2D and 3D constructors into one
    *
+   * @param dim2 Quadrature dimension
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
    * @param[in] interface_dimensions Vector containing the radius at the mortar
@@ -86,7 +88,11 @@ public:
   get_n_total_mortars() const;
 
   /**
-   * @brief Returns the number of mortars per cell (1 for aligned meshes, 2 for non-aligned meshes)
+   * @brief Returns the number of mortar cells connecting rotor-stator regular cells at the interface
+   * 1 = rotor-stator meshes are aligned. Only one mortar cell is needed to
+   * connect each rotor-stator regular cell pair
+   * 2 = rotor-stator meshes are not aligned. Two mortar cells are linked to
+   * each rotor or stator regular cell
    */
   unsigned int
   get_n_mortars() const;
@@ -350,6 +356,7 @@ public:
    * Poisson/Stokes test cases
    * TODO: Move Poisson/Stokes tests to prototypes and remove this constructor
    *
+   * @param dim2 Quadrature dimension
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
    * @param[in] radius Radius at the mortar interface
@@ -378,6 +385,7 @@ public:
    * Poisson/Stokes test cases
    * TODO: Move Poisson/Stokes tests to prototypes and remove this constructor
    *
+   * @param dim2 Quadrature dimension
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
    * @param[in] interface_dimensions Vector containing the radius at the mortar
@@ -406,6 +414,7 @@ public:
    * @brief Class constructor for circular interface used within the Navier-Stokes
    * base
    *
+   * @param dim2 Quadrature dimension
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] mapping Mapping associated to the domain
    * @param[in] dof_handler DoFHandler associated to the triangulation
@@ -447,6 +456,7 @@ public:
    * @brief Class constructor for linear interface used within the Navier-Stokes
    * base
    *
+   * @param dim2 Quadrature dimension
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] mapping Mapping associated to the domain
    * @param[in] dof_handler DoFHandler associated to the triangulation
