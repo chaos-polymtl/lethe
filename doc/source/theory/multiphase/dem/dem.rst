@@ -386,10 +386,10 @@ When synchronization is necessary, the accelerations are evaluated and a half st
 .. math::
     \mathbf{v}_{i}^{n} = \mathbf{v}_{i}^{n-\frac{1}{2}} + \mathbf{a}_{i}^{n}\frac{dt}{2}
 
-In pure DEM simulations, this closing half step is carried out at the end of the simulation. In CFD-DEM simulations, it is carried out at the end of the DEM sub-iterations of every CFD time step, so that the coupling with the fluid always uses velocities that are synchronized with the positions of the particles.
+In pure DEM simulations, this half step is carried out at the end of the simulation. In CFD-DEM simulations, it is carried out at the end of the DEM sub-iterations of every CFD time step, so that the coupling with the fluid always uses velocities that are synchronized with the positions of the particles.
 
 .. note::
-  Because the velocities are staggered within a run, the velocities written to the visualization files during the simulation lag the positions by half a time step. Only the values obtained after a closing half step are synchronized.
+  Because the velocities are staggered within a run, the velocities written to the visualization files during the simulation lag the positions by half a time step. Only the values obtained after a half step are synchronized.
 
 --------------------------------
 Thermal DEM in a Stagnant Gas
