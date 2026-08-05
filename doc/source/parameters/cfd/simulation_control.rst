@@ -155,7 +155,7 @@ Transient simulations parameters
 
 * ``end control``: control for the end condition of a transient simulation. The available options are: 
 	* ``iteration``: simulation will end at a specified maximum iteration number.
-	* ``time`` : simulation will end at a specified maximum time value.
+	* ``time``: simulation will end at a specified maximum time value.
 
 * ``iteration end``: iteration number at which the simulation ends. Only used when ``end control = iteration``.
 
