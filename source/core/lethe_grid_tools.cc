@@ -1809,9 +1809,9 @@ void
 LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
                                MappingQCache<dim>    &mapping_cache,
                                const Mapping<dim>    &mapping,
-                               const double          &rotation_angle,
+                               const double           rotation_angle,
                                const Point<dim>      &center_of_rotation,
-                               const unsigned int    &rotation_axis_direction)
+                               const unsigned int     rotation_axis_direction)
 {
   if constexpr (dim == 2)
     {
@@ -1866,17 +1866,17 @@ template void
 LetheGridTools::rotate_mapping(const DoFHandler<2> &dof_handler,
                                MappingQCache<2>    &mapping_cache,
                                const Mapping<2>    &mapping,
-                               const double        &rotation_angle,
+                               const double         rotation_angle,
                                const Point<2>      &center_of_rotation,
-                               const unsigned int  &rotation_axis_direction);
+                               const unsigned int   rotation_axis_direction);
 
 template void
 LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                MappingQCache<3>    &mapping_cache,
                                const Mapping<3>    &mapping,
-                               const double        &rotation_angle,
+                               const double         rotation_angle,
                                const Point<3>      &center_of_rotation,
-                               const unsigned int  &rotation_axis_direction);
+                               const unsigned int   rotation_axis_direction);
 
 template <int dim, int spacedim>
 void

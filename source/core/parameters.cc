@@ -4920,9 +4920,8 @@ namespace Parameters
 
       prm.declare_entry("rotation axis direction",
                         "2",
-                        Patterns::Integer(),
-                        "Direction of the rotation axis."
-                        "Choices are <0|1|2>.");
+                        Patterns::Integer(0, 2),
+                        "Direction of the rotation axis. Choices are <0|1|2>.");
 
       prm.enter_subsection("rotor rotation angle");
       rotor_rotation_angle = std::make_shared<Functions::ParsedFunction<dim>>();

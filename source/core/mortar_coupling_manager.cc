@@ -563,13 +563,13 @@ compute_interface_dimensions_circular(
   // Direction of the rotation axis
   const unsigned int rotation_axis_direction =
     mortar_parameters.rotation_axis_direction;
-  // Create rotation axis vector for distance computation in 3D case
+  // Create rotation axis vector for distance computation in 3D cases
   Tensor<1, dim> rotation_axis;
   if constexpr (dim == 3)
     rotation_axis[rotation_axis_direction] = 1.0;
 
   // Min and max vertex coordinates for length computation in the axial
-  // direction. Used in 3D case
+  // direction. Used in 3D cases
   double vertex_min = std::numeric_limits<double>::max();
   double vertex_max = std::numeric_limits<double>::lowest();
 

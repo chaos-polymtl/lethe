@@ -50,7 +50,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 
 * The ``center of rotation`` is the reference point for the prescribed rotation at the rotor domain.
 
-* The ``rotation axis direction`` is the direction of the rotation axis given by 0, 1, or 2 corresponding to the x, y, or z axis respectively.
+* The ``rotation axis direction`` is the direction of the rotation axis given by 0, 1, or 2, corresponding to the x, y, or z axis respectively. In 2D, this parameter is ignored and the rotation is always about the z axis.
 
 * The ``rotor rotation angle`` subsection allows the imposition of a constant or time-dependent rotation angle for the rotor.
 

@@ -417,7 +417,7 @@ namespace LetheGridTools
   inline Tensor<1, dim>
   angular_to_linear_velocity(const double          omega,
                              const Tensor<1, dim> &point,
-                             const unsigned int   &rotation_axis_direction = 2)
+                             const unsigned int    rotation_axis_direction = 2)
   {
     Tensor<1, dim> result;
 
@@ -456,9 +456,9 @@ namespace LetheGridTools
   rotate_mapping(const DoFHandler<dim> &dof_handler,
                  MappingQCache<dim>    &mapping_cache,
                  const Mapping<dim>    &mapping,
-                 const double          &rotation_angle,
+                 const double           rotation_angle,
                  const Point<dim>      &center_of_rotation      = Point<dim>(),
-                 const unsigned int    &rotation_axis_direction = 2);
+                 const unsigned int     rotation_axis_direction = 2);
 
   /**
    * @brief
