@@ -1132,7 +1132,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // particle-particle and particle-wall broad and fine searches
       execute_contact_detection_and_search();
 
-      // Move solid objects (if solid object)
+      // Move solid objects
       move_solid_objects();
 
       // Update solid objects temperatures
