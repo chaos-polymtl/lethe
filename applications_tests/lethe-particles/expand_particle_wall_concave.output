@@ -10,7 +10,6 @@ Finished reading triangulation
 Minimum vertex distance between cell vertices: 0.25
 Minimum cell size to maximum particle diameter ratio: 5
 Warning: expansion of particle-wall contact list is enabled. 
-This feature should be used only in geometries with convex boundaries. (For example, particles flowing inside a cylinder or sphere). For geometries with concave boundaries, this feature MUST NOT be activated.
 *********************************************************************
 1 particles of type 0 were inserted, 0 particles of type 0 remaining
 *********************************************************************
@@ -90,17 +89,17 @@ Transient iteration: 800      Time: 0.25956  Time step: 0.00032445
 *******************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 9.0000e+00 | 4.2500e+00 | 3.4000e+01 | 
-| Velocity magnitude           | 1.1684e+00 | 1.1684e+00 | 1.1684e+00 | 1.1684e+00 | 
-| Angular velocity magnitude   | 6.8081e+00 | 6.8081e+00 | 6.8081e+00 | 6.8081e+00 | 
-| Translational kinetic energy | 1.1169e-01 | 1.1169e-01 | 1.1169e-01 | 1.1169e-01 | 
-| Rotational kinetic energy    | 1.8960e-03 | 1.8960e-03 | 1.8960e-03 | 1.8960e-03 | 
+| Velocity magnitude           | 1.3046e+00 | 1.3046e+00 | 1.3046e+00 | 1.3046e+00 | 
+| Angular velocity magnitude   | 4.0663e-01 | 4.0663e-01 | 4.0663e-01 | 4.0663e-01 | 
+| Translational kinetic energy | 1.3925e-01 | 1.3925e-01 | 1.3925e-01 | 1.3925e-01 | 
+| Rotational kinetic energy    | 6.7636e-06 | 6.7636e-06 | 6.7636e-06 | 6.7636e-06 | 
 
 *******************************************************************
 Transient iteration: 900      Time: 0.292005 Time step: 0.00032445
 *******************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 9.0000e+00 | 4.5556e+00 | 4.1000e+01 | 
-| Velocity magnitude           | 1.4341e+00 | 1.4341e+00 | 1.4341e+00 | 1.4341e+00 | 
-| Angular velocity magnitude   | 5.5214e-01 | 5.5214e-01 | 5.5214e-01 | 5.5214e-01 | 
-| Translational kinetic energy | 1.6825e-01 | 1.6825e-01 | 1.6825e-01 | 1.6825e-01 | 
-| Rotational kinetic energy    | 1.2471e-05 | 1.2471e-05 | 1.2471e-05 | 1.2471e-05 | 
+| Velocity magnitude           | 1.4743e+00 | 1.4743e+00 | 1.4743e+00 | 1.4743e+00 | 
+| Angular velocity magnitude   | 3.9239e-01 | 3.9239e-01 | 3.9239e-01 | 3.9239e-01 | 
+| Translational kinetic energy | 1.7783e-01 | 1.7783e-01 | 1.7783e-01 | 1.7783e-01 | 
+| Rotational kinetic energy    | 6.2984e-06 | 6.2984e-06 | 6.2984e-06 | 6.2984e-06 | 
