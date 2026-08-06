@@ -706,10 +706,6 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   const std::map<int, boundary_cells_info_struct<dim>>
     &global_boundary_cells_information)
 {
-  // // For debugging purposes, we can store the convexity values of the
-  // boundary
-  // // faces
-  // std::map<int, double> convexity_values;
   // Store imaginary faces here and add them to boundary_cells_information
   // after the loop to avoid modifying the map while iterating over it
   std::map<int, boundary_cells_info_struct<dim>> imaginary_boundary_faces;
@@ -822,8 +818,6 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                               bool         is_convex =
                                 (normal_1 * vector_main_to_neighbor) <
                                 -tolerance;
-                              // double convexity =
-                              //   normal_1 * vector_main_to_neighbor;
 
                               if (is_convex)
                                 {
@@ -867,34 +861,6 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
 
                                   imaginary_boundary_faces.insert(
                                     {imaginary_face_id, boundary_information});
-
-                                  // convexity_values[imaginary_face_id] =
-                                  //   convexity;
-
-                                  // std::cout << "imaginary_face_id         = "
-                                  //           << imaginary_face_id <<
-                                  //           std::endl;
-
-                                  // std::cout << "normal_1                  = "
-                                  //           << normal_1 << std::endl;
-
-                                  // std::cout
-                                  //   << "point_1                   = " <<
-                                  //   point_1
-                                  //   << std::endl;
-
-                                  // std::cout
-                                  //   << "point_2                   = " <<
-                                  //   point_2
-                                  //   << std::endl;
-
-                                  // std::cout << "vector_main_to_neighbor   = "
-                                  //           << vector_main_to_neighbor
-                                  //           << std::endl;
-
-                                  // std::cout << "convexity                 = "
-                                  //           << convexity << std::endl;
-                                  // std::cout << std::endl;
                                 }
                             }
                         }
@@ -907,28 +873,6 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   // Add the imaginary boundary faces to the boundary_cells_information map
   // after the loop is finished
   boundary_cells_information.merge(imaginary_boundary_faces);
-
-  // std::cout << "\n=== boundary_cells_information ===\n";
-
-  // std::cout << "Total number of entries: "
-  //         << boundary_cells_information.size()
-  //         << std::endl;
-
-  // for (const auto &[face_id, info] : boundary_cells_information)
-  //   {
-  //     std::cout << "Face ID: " << face_id << std::endl;
-  //     std::cout << "  Boundary ID: " << info.boundary_id << std::endl;
-  //     std::cout << "  Global face ID: " << info.global_face_id << std::endl;
-  //     std::cout << "  Point on face: " << info.point_on_face << std::endl;
-  //     std::cout << "  Normal vector: " << info.normal_vector << std::endl;
-  //     std::cout << "  Cell id: " << info.cell->id() << std::endl;
-  //     std::cout << '\n';
-  //   }
-  // std::cout << "\n=== convexity_values ===\n";
-  // for (const auto &[id, value] : convexity_values)
-  //   {
-  //     std::cout << id << " : " << value << std::endl;
-  //   }
 }
 
 template class BoundaryCellsInformation<2>;
