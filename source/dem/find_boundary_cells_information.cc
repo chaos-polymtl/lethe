@@ -65,10 +65,6 @@ BoundaryCellsInformation<dim>::build(
         {
           pcout
             << "Warning: expansion of particle-wall contact list is enabled. "
-            << std::endl
-            << "This feature should be used only in geometries with convex boundaries. "
-               "(For example, particles flowing inside a cylinder or sphere). For geometries with "
-               "concave boundaries, this feature MUST NOT be activated."
             << std::endl;
           display_pw_contact_expansion_warning = false;
         }
@@ -710,7 +706,8 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   const std::map<int, boundary_cells_info_struct<dim>>
     &global_boundary_cells_information)
 {
-  // // For debugging purposes, we can store the convexity values of the boundary
+  // // For debugging purposes, we can store the convexity values of the
+  // boundary
   // // faces
   // std::map<int, double> convexity_values;
   // Store imaginary faces here and add them to boundary_cells_information
@@ -786,12 +783,13 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                                 {
                                   common_vertices++;
                                 }
-                          // This part assumes a mesh with a uniform refinement level
+                          // This part assumes a mesh with a uniform refinement
+                          // level
                           if constexpr (dim == 2)
                             {
                               share_edge = (common_vertices == 1);
                             }
-                            else if constexpr (dim == 3)
+                          else if constexpr (dim == 3)
                             {
                               share_edge = (common_vertices == 2);
                             }
@@ -809,7 +807,8 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                                 -boundary_cells_info.normal_vector;
                               // Get the point on the face of the main boundary
                               // cell
-                              const auto &point_1 = boundary_cells_info.point_on_face;
+                              const auto &point_1 =
+                                boundary_cells_info.point_on_face;
                               // Get the point on the face of the neighbor
                               // boundary cell
                               const auto &point_2 =
@@ -817,10 +816,12 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                               // Create a vector from point_1 to point_2
                               Tensor<1, dim> vector_main_to_neighbor =
                                 point_2 - point_1;
-                              vector_main_to_neighbor /= vector_main_to_neighbor.norm();
+                              vector_main_to_neighbor /=
+                                vector_main_to_neighbor.norm();
                               const double tolerance = 1e-12;
-                              bool is_convex =
-                                (normal_1 * vector_main_to_neighbor) < -tolerance;
+                              bool         is_convex =
+                                (normal_1 * vector_main_to_neighbor) <
+                                -tolerance;
                               // double convexity =
                               //   normal_1 * vector_main_to_neighbor;
 
@@ -864,23 +865,27 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                                   boundary_information.cell =
                                     boundary_cells_info.cell;
 
-                                  imaginary_boundary_faces.insert({imaginary_face_id, boundary_information});
-                                 
+                                  imaginary_boundary_faces.insert(
+                                    {imaginary_face_id, boundary_information});
+
                                   // convexity_values[imaginary_face_id] =
                                   //   convexity;
 
                                   // std::cout << "imaginary_face_id         = "
-                                  //           << imaginary_face_id << std::endl;
+                                  //           << imaginary_face_id <<
+                                  //           std::endl;
 
                                   // std::cout << "normal_1                  = "
                                   //           << normal_1 << std::endl;
 
                                   // std::cout
-                                  //   << "point_1                   = " << point_1
+                                  //   << "point_1                   = " <<
+                                  //   point_1
                                   //   << std::endl;
 
                                   // std::cout
-                                  //   << "point_2                   = " << point_2
+                                  //   << "point_2                   = " <<
+                                  //   point_2
                                   //   << std::endl;
 
                                   // std::cout << "vector_main_to_neighbor   = "
@@ -908,7 +913,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   // std::cout << "Total number of entries: "
   //         << boundary_cells_information.size()
   //         << std::endl;
-          
+
   // for (const auto &[face_id, info] : boundary_cells_information)
   //   {
   //     std::cout << "Face ID: " << face_id << std::endl;
