@@ -10,7 +10,6 @@ Finished reading triangulation
 Minimum vertex distance between cell vertices: 0.0102513
 Minimum cell size to maximum particle diameter ratio: 2.05025
 Warning: expansion of particle-wall contact list is enabled. 
-This feature should be used only in geometries with convex boundaries. (For example, particles flowing inside a cylinder or sphere). For geometries with concave boundaries, this feature MUST NOT be activated.
 ***********************************************************************
 200 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***********************************************************************
@@ -58,7 +57,11 @@ id, type, dp, x, y, z
 61 0 0.00500 -0.0678 -0.0454 -0.0252
 62 0 0.00500 -0.0581 -0.0456 -0.0255
 64 0 0.00500 -0.0682 -0.0360 -0.0256
+<<<<<<< HEAD
 65 0 0.00500 -0.0585 -0.0351 -0.0259
+=======
+65 0 0.00500 -0.0586 -0.0351 -0.0259
+>>>>>>> 0b52fccdd (Modify tests)
 67 0 0.00500 -0.0677 -0.0255 -0.0250
 68 0 0.00500 -0.0580 -0.0252 -0.0253
 70 0 0.00500 -0.0681 -0.0151 -0.0254
@@ -123,7 +126,11 @@ id, type, dp, x, y, z
 158 0 0.00500 -0.0578 -0.0259 0.0049
 160 0 0.00500 -0.0684 -0.0158 0.0042
 161 0 0.00500 -0.0582 -0.0155 0.0044
+<<<<<<< HEAD
 163 0 0.00500 -0.0683 -0.0053 0.0043
+=======
+163 0 0.00500 -0.0684 -0.0053 0.0043
+>>>>>>> 0b52fccdd (Modify tests)
 164 0 0.00500 -0.0577 -0.0055 0.0050
 166 0 0.00500 -0.0683 0.0041 0.0044
 167 0 0.00500 -0.0581 0.0044 0.0046
