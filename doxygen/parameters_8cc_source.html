@@ -5158,115 +5158,114 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l04918" name="l04918"></a><span class="lineno"> 4918</span>                        Patterns::List(Patterns::Double()),</div>
 <div class="line"><a id="l04919" name="l04919"></a><span class="lineno"> 4919</span>                        <span class="stringliteral">&quot;Center of rotation coordinates of rotor domain&quot;</span>);</div>
 <div class="line"><a id="l04920" name="l04920"></a><span class="lineno"> 4920</span> </div>
-<div class="line"><a id="l04921" name="l04921"></a><span class="lineno"> 4921</span>      prm.declare_entry(<span class="stringliteral">&quot;rotation axis&quot;</span>,</div>
-<div class="line"><a id="l04922" name="l04922"></a><span class="lineno"> 4922</span>                        <span class="stringliteral">&quot;0.0, 0.0, 1.0&quot;</span>,</div>
-<div class="line"><a id="l04923" name="l04923"></a><span class="lineno"> 4923</span>                        Patterns::List(Patterns::Double()),</div>
-<div class="line"><a id="l04924" name="l04924"></a><span class="lineno"> 4924</span>                        <span class="stringliteral">&quot;Unit vector representing the rotor rotation axis.&quot;</span></div>
-<div class="line"><a id="l04925" name="l04925"></a><span class="lineno"> 4925</span>                        <span class="stringliteral">&quot;Choices are &lt;1, 0, 0 | 0, 1, 0 | 0, 0, 1&gt;.&quot;</span>);</div>
-<div class="line"><a id="l04926" name="l04926"></a><span class="lineno"> 4926</span> </div>
-<div class="line"><a id="l04927" name="l04927"></a><span class="lineno"> 4927</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor rotation angle&quot;</span>);</div>
-<div class="line"><a id="l04928" name="l04928"></a><span class="lineno"> 4928</span>      rotor_rotation_angle = std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
-<div class="line"><a id="l04929" name="l04929"></a><span class="lineno"> 4929</span>      rotor_rotation_angle-&gt;declare_parameters(prm);</div>
-<div class="line"><a id="l04930" name="l04930"></a><span class="lineno"> 4930</span>      prm.leave_subsection();</div>
-<div class="line"><a id="l04931" name="l04931"></a><span class="lineno"> 4931</span> </div>
-<div class="line"><a id="l04932" name="l04932"></a><span class="lineno"> 4932</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor angular velocity&quot;</span>);</div>
-<div class="line"><a id="l04933" name="l04933"></a><span class="lineno"> 4933</span>      rotor_angular_velocity =</div>
-<div class="line"><a id="l04934" name="l04934"></a><span class="lineno"> 4934</span>        std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
-<div class="line"><a id="l04935" name="l04935"></a><span class="lineno"> 4935</span>      rotor_angular_velocity-&gt;declare_parameters(prm);</div>
-<div class="line"><a id="l04936" name="l04936"></a><span class="lineno"> 4936</span>      prm.leave_subsection();</div>
-<div class="line"><a id="l04937" name="l04937"></a><span class="lineno"> 4937</span> </div>
-<div class="line"><a id="l04938" name="l04938"></a><span class="lineno"> 4938</span>      prm.declare_entry(<span class="stringliteral">&quot;penalty factor&quot;</span>,</div>
-<div class="line"><a id="l04939" name="l04939"></a><span class="lineno"> 4939</span>                        <span class="stringliteral">&quot;1.&quot;</span>,</div>
-<div class="line"><a id="l04940" name="l04940"></a><span class="lineno"> 4940</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l04941" name="l04941"></a><span class="lineno"> 4941</span>                        <span class="stringliteral">&quot;Penalty factor for mortar elements&quot;</span>);</div>
-<div class="line"><a id="l04942" name="l04942"></a><span class="lineno"> 4942</span>      prm.declare_entry(<span class="stringliteral">&quot;oversampling factor&quot;</span>,</div>
-<div class="line"><a id="l04943" name="l04943"></a><span class="lineno"> 4943</span>                        <span class="stringliteral">&quot;1&quot;</span>,</div>
-<div class="line"><a id="l04944" name="l04944"></a><span class="lineno"> 4944</span>                        Patterns::Integer(),</div>
-<div class="line"><a id="l04945" name="l04945"></a><span class="lineno"> 4945</span>                        <span class="stringliteral">&quot;Oversampling factor for quadrature points&quot;</span>);</div>
-<div class="line"><a id="l04946" name="l04946"></a><span class="lineno"> 4946</span>      prm.declare_entry(<span class="stringliteral">&quot;radius tolerance&quot;</span>,</div>
-<div class="line"><a id="l04947" name="l04947"></a><span class="lineno"> 4947</span>                        <span class="stringliteral">&quot;1e-8&quot;</span>,</div>
-<div class="line"><a id="l04948" name="l04948"></a><span class="lineno"> 4948</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l04949" name="l04949"></a><span class="lineno"> 4949</span>                        <span class="stringliteral">&quot;Tolerance used for the interface radius computation&quot;</span>);</div>
-<div class="line"><a id="l04950" name="l04950"></a><span class="lineno"> 4950</span>      prm.declare_entry(<span class="stringliteral">&quot;cell weight&quot;</span>,</div>
-<div class="line"><a id="l04951" name="l04951"></a><span class="lineno"> 4951</span>                        <span class="stringliteral">&quot;1000&quot;</span>,</div>
-<div class="line"><a id="l04952" name="l04952"></a><span class="lineno"> 4952</span>                        Patterns::Integer(),</div>
-<div class="line"><a id="l04953" name="l04953"></a><span class="lineno"> 4953</span>                        <span class="stringliteral">&quot;Cell weight for load balancing of mortar cells&quot;</span>);</div>
-<div class="line"><a id="l04954" name="l04954"></a><span class="lineno"> 4954</span>      prm.declare_entry(</div>
-<div class="line"><a id="l04955" name="l04955"></a><span class="lineno"> 4955</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
-<div class="line"><a id="l04956" name="l04956"></a><span class="lineno"> 4956</span>        <span class="stringliteral">&quot;quiet&quot;</span>,</div>
-<div class="line"><a id="l04957" name="l04957"></a><span class="lineno"> 4957</span>        Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose|extra verbose&quot;</span>),</div>
-<div class="line"><a id="l04958" name="l04958"></a><span class="lineno"> 4958</span>        <span class="stringliteral">&quot;State whether from the mortar information should be printed &quot;</span></div>
-<div class="line"><a id="l04959" name="l04959"></a><span class="lineno"> 4959</span>        <span class="stringliteral">&quot;Choices are &lt;quiet|verbose|extra verbose&gt;.&quot;</span>);</div>
-<div class="line"><a id="l04960" name="l04960"></a><span class="lineno"> 4960</span>    }</div>
-<div class="line"><a id="l04961" name="l04961"></a><span class="lineno"> 4961</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l04962" name="l04962"></a><span class="lineno"> 4962</span>  }</div>
+<div class="line"><a id="l04921" name="l04921"></a><span class="lineno"> 4921</span>      prm.declare_entry(<span class="stringliteral">&quot;rotation axis direction&quot;</span>,</div>
+<div class="line"><a id="l04922" name="l04922"></a><span class="lineno"> 4922</span>                        <span class="stringliteral">&quot;2&quot;</span>,</div>
+<div class="line"><a id="l04923" name="l04923"></a><span class="lineno"> 4923</span>                        Patterns::Integer(0, 2),</div>
+<div class="line"><a id="l04924" name="l04924"></a><span class="lineno"> 4924</span>                        <span class="stringliteral">&quot;Direction of the rotation axis. Choices are &lt;0|1|2&gt;.&quot;</span>);</div>
+<div class="line"><a id="l04925" name="l04925"></a><span class="lineno"> 4925</span> </div>
+<div class="line"><a id="l04926" name="l04926"></a><span class="lineno"> 4926</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor rotation angle&quot;</span>);</div>
+<div class="line"><a id="l04927" name="l04927"></a><span class="lineno"> 4927</span>      rotor_rotation_angle = std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
+<div class="line"><a id="l04928" name="l04928"></a><span class="lineno"> 4928</span>      rotor_rotation_angle-&gt;declare_parameters(prm);</div>
+<div class="line"><a id="l04929" name="l04929"></a><span class="lineno"> 4929</span>      prm.leave_subsection();</div>
+<div class="line"><a id="l04930" name="l04930"></a><span class="lineno"> 4930</span> </div>
+<div class="line"><a id="l04931" name="l04931"></a><span class="lineno"> 4931</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor angular velocity&quot;</span>);</div>
+<div class="line"><a id="l04932" name="l04932"></a><span class="lineno"> 4932</span>      rotor_angular_velocity =</div>
+<div class="line"><a id="l04933" name="l04933"></a><span class="lineno"> 4933</span>        std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
+<div class="line"><a id="l04934" name="l04934"></a><span class="lineno"> 4934</span>      rotor_angular_velocity-&gt;declare_parameters(prm);</div>
+<div class="line"><a id="l04935" name="l04935"></a><span class="lineno"> 4935</span>      prm.leave_subsection();</div>
+<div class="line"><a id="l04936" name="l04936"></a><span class="lineno"> 4936</span> </div>
+<div class="line"><a id="l04937" name="l04937"></a><span class="lineno"> 4937</span>      prm.declare_entry(<span class="stringliteral">&quot;penalty factor&quot;</span>,</div>
+<div class="line"><a id="l04938" name="l04938"></a><span class="lineno"> 4938</span>                        <span class="stringliteral">&quot;1.&quot;</span>,</div>
+<div class="line"><a id="l04939" name="l04939"></a><span class="lineno"> 4939</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l04940" name="l04940"></a><span class="lineno"> 4940</span>                        <span class="stringliteral">&quot;Penalty factor for mortar elements&quot;</span>);</div>
+<div class="line"><a id="l04941" name="l04941"></a><span class="lineno"> 4941</span>      prm.declare_entry(<span class="stringliteral">&quot;oversampling factor&quot;</span>,</div>
+<div class="line"><a id="l04942" name="l04942"></a><span class="lineno"> 4942</span>                        <span class="stringliteral">&quot;1&quot;</span>,</div>
+<div class="line"><a id="l04943" name="l04943"></a><span class="lineno"> 4943</span>                        Patterns::Integer(),</div>
+<div class="line"><a id="l04944" name="l04944"></a><span class="lineno"> 4944</span>                        <span class="stringliteral">&quot;Oversampling factor for quadrature points&quot;</span>);</div>
+<div class="line"><a id="l04945" name="l04945"></a><span class="lineno"> 4945</span>      prm.declare_entry(<span class="stringliteral">&quot;radius tolerance&quot;</span>,</div>
+<div class="line"><a id="l04946" name="l04946"></a><span class="lineno"> 4946</span>                        <span class="stringliteral">&quot;1e-8&quot;</span>,</div>
+<div class="line"><a id="l04947" name="l04947"></a><span class="lineno"> 4947</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l04948" name="l04948"></a><span class="lineno"> 4948</span>                        <span class="stringliteral">&quot;Tolerance used for the interface radius computation&quot;</span>);</div>
+<div class="line"><a id="l04949" name="l04949"></a><span class="lineno"> 4949</span>      prm.declare_entry(<span class="stringliteral">&quot;cell weight&quot;</span>,</div>
+<div class="line"><a id="l04950" name="l04950"></a><span class="lineno"> 4950</span>                        <span class="stringliteral">&quot;1000&quot;</span>,</div>
+<div class="line"><a id="l04951" name="l04951"></a><span class="lineno"> 4951</span>                        Patterns::Integer(),</div>
+<div class="line"><a id="l04952" name="l04952"></a><span class="lineno"> 4952</span>                        <span class="stringliteral">&quot;Cell weight for load balancing of mortar cells&quot;</span>);</div>
+<div class="line"><a id="l04953" name="l04953"></a><span class="lineno"> 4953</span>      prm.declare_entry(</div>
+<div class="line"><a id="l04954" name="l04954"></a><span class="lineno"> 4954</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
+<div class="line"><a id="l04955" name="l04955"></a><span class="lineno"> 4955</span>        <span class="stringliteral">&quot;quiet&quot;</span>,</div>
+<div class="line"><a id="l04956" name="l04956"></a><span class="lineno"> 4956</span>        Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose|extra verbose&quot;</span>),</div>
+<div class="line"><a id="l04957" name="l04957"></a><span class="lineno"> 4957</span>        <span class="stringliteral">&quot;State whether from the mortar information should be printed &quot;</span></div>
+<div class="line"><a id="l04958" name="l04958"></a><span class="lineno"> 4958</span>        <span class="stringliteral">&quot;Choices are &lt;quiet|verbose|extra verbose&gt;.&quot;</span>);</div>
+<div class="line"><a id="l04959" name="l04959"></a><span class="lineno"> 4959</span>    }</div>
+<div class="line"><a id="l04960" name="l04960"></a><span class="lineno"> 4960</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l04961" name="l04961"></a><span class="lineno"> 4961</span>  }</div>
 </div>
-<div class="line"><a id="l04963" name="l04963"></a><span class="lineno"> 4963</span> </div>
-<div class="line"><a id="l04964" name="l04964"></a><span class="lineno"> 4964</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l04965" name="l04965"></a><span class="lineno"> 4965</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen04966" data-start="{" data-end="}">
-<div class="line"><a id="l04966" name="l04966"></a><span class="lineno"><a class="line" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb"> 4966</a></span>  <a class="code hl_function" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">Mortar&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l04967" name="l04967"></a><span class="lineno"> 4967</span>  {</div>
-<div class="line"><a id="l04968" name="l04968"></a><span class="lineno"> 4968</span>    prm.enter_subsection(<span class="stringliteral">&quot;mortar&quot;</span>);</div>
-<div class="line"><a id="l04969" name="l04969"></a><span class="lineno"> 4969</span>    {</div>
-<div class="line"><a id="l04970" name="l04970"></a><span class="lineno"> 4970</span>      enable = prm.get_bool(<span class="stringliteral">&quot;enable&quot;</span>);</div>
-<div class="line"><a id="l04971" name="l04971"></a><span class="lineno"> 4971</span>      {</div>
-<div class="line"><a id="l04972" name="l04972"></a><span class="lineno"> 4972</span>        <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;interface type&quot;</span>);</div>
-<div class="line"><a id="l04973" name="l04973"></a><span class="lineno"> 4973</span>        <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;circular&quot;</span>)</div>
-<div class="line"><a id="l04974" name="l04974"></a><span class="lineno"> 4974</span>          interface_type = InterfaceType::circular;</div>
-<div class="line"><a id="l04975" name="l04975"></a><span class="lineno"> 4975</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;linear&quot;</span>)</div>
-<div class="line"><a id="l04976" name="l04976"></a><span class="lineno"> 4976</span>          interface_type = InterfaceType::linear;</div>
-<div class="line"><a id="l04977" name="l04977"></a><span class="lineno"> 4977</span>        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l04978" name="l04978"></a><span class="lineno"> 4978</span>          AssertThrow(</div>
-<div class="line"><a id="l04979" name="l04979"></a><span class="lineno"> 4979</span>            <span class="keyword">false</span>,</div>
-<div class="line"><a id="l04980" name="l04980"></a><span class="lineno"> 4980</span>            ExcMessage(</div>
-<div class="line"><a id="l04981" name="l04981"></a><span class="lineno"> 4981</span>              <span class="stringliteral">&quot;Error, invalid mortar interface type. Current choices are &lt;circular|linear&gt;.&quot;</span>));</div>
-<div class="line"><a id="l04982" name="l04982"></a><span class="lineno"> 4982</span>      }</div>
-<div class="line"><a id="l04983" name="l04983"></a><span class="lineno"> 4983</span>      rotor_mesh-&gt;parse_parameters(prm);</div>
-<div class="line"><a id="l04984" name="l04984"></a><span class="lineno"> 4984</span>      rotor_boundary_id  = prm.get_integer(<span class="stringliteral">&quot;rotor boundary id&quot;</span>);</div>
-<div class="line"><a id="l04985" name="l04985"></a><span class="lineno"> 4985</span>      stator_boundary_id = prm.get_integer(<span class="stringliteral">&quot;stator boundary id&quot;</span>);</div>
-<div class="line"><a id="l04986" name="l04986"></a><span class="lineno"> 4986</span>      center_of_rotation =</div>
-<div class="line"><a id="l04987" name="l04987"></a><span class="lineno"> 4987</span>        value_string_to_tensor&lt;dim&gt;(prm.get(<span class="stringliteral">&quot;center of rotation&quot;</span>));</div>
-<div class="line"><a id="l04988" name="l04988"></a><span class="lineno"> 4988</span>      rotation_axis = value_string_to_tensor&lt;dim&gt;(prm.get(<span class="stringliteral">&quot;rotation axis&quot;</span>));</div>
-<div class="line"><a id="l04989" name="l04989"></a><span class="lineno"> 4989</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor rotation angle&quot;</span>);</div>
-<div class="line"><a id="l04990" name="l04990"></a><span class="lineno"> 4990</span>      rotor_rotation_angle-&gt;parse_parameters(prm);</div>
-<div class="line"><a id="l04991" name="l04991"></a><span class="lineno"> 4991</span>      rotor_rotation_angle-&gt;set_time(0);</div>
-<div class="line"><a id="l04992" name="l04992"></a><span class="lineno"> 4992</span>      prm.leave_subsection();</div>
-<div class="line"><a id="l04993" name="l04993"></a><span class="lineno"> 4993</span> </div>
-<div class="line"><a id="l04994" name="l04994"></a><span class="lineno"> 4994</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor angular velocity&quot;</span>);</div>
-<div class="line"><a id="l04995" name="l04995"></a><span class="lineno"> 4995</span>      rotor_angular_velocity-&gt;parse_parameters(prm);</div>
-<div class="line"><a id="l04996" name="l04996"></a><span class="lineno"> 4996</span>      rotor_angular_velocity-&gt;set_time(0);</div>
-<div class="line"><a id="l04997" name="l04997"></a><span class="lineno"> 4997</span>      prm.leave_subsection();</div>
-<div class="line"><a id="l04998" name="l04998"></a><span class="lineno"> 4998</span> </div>
-<div class="line"><a id="l04999" name="l04999"></a><span class="lineno"> 4999</span>      sip_factor          = prm.get_double(<span class="stringliteral">&quot;penalty factor&quot;</span>);</div>
-<div class="line"><a id="l05000" name="l05000"></a><span class="lineno"> 5000</span>      oversampling_factor = prm.get_integer(<span class="stringliteral">&quot;oversampling factor&quot;</span>);</div>
-<div class="line"><a id="l05001" name="l05001"></a><span class="lineno"> 5001</span>      radius_tolerance    = prm.get_double(<span class="stringliteral">&quot;radius tolerance&quot;</span>);</div>
-<div class="line"><a id="l05002" name="l05002"></a><span class="lineno"> 5002</span>      cell_weight         = prm.get_integer(<span class="stringliteral">&quot;cell weight&quot;</span>);</div>
-<div class="line"><a id="l05003" name="l05003"></a><span class="lineno"> 5003</span> </div>
-<div class="line"><a id="l05004" name="l05004"></a><span class="lineno"> 5004</span>      <span class="comment">// Enable printing of mortar information</span></div>
-<div class="line"><a id="l05005" name="l05005"></a><span class="lineno"> 5005</span>      <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>);</div>
-<div class="line"><a id="l05006" name="l05006"></a><span class="lineno"> 5006</span>      <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;verbose&quot;</span>)</div>
-<div class="line"><a id="l05007" name="l05007"></a><span class="lineno"> 5007</span>        <a class="code hl_variable" href="structParameters_1_1PostProcessing.html#aa1406cadbbb4ca1b5d49cf88f60e7acf">verbosity</a> = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Verbosity::verbose</a>;</div>
-<div class="line"><a id="l05008" name="l05008"></a><span class="lineno"> 5008</span>      <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;quiet&quot;</span>)</div>
-<div class="line"><a id="l05009" name="l05009"></a><span class="lineno"> 5009</span>        <a class="code hl_variable" href="structParameters_1_1PostProcessing.html#aa1406cadbbb4ca1b5d49cf88f60e7acf">verbosity</a> = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Verbosity::quiet</a>;</div>
-<div class="line"><a id="l05010" name="l05010"></a><span class="lineno"> 5010</span>      <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;extra verbose&quot;</span>)</div>
-<div class="line"><a id="l05011" name="l05011"></a><span class="lineno"> 5011</span>        <a class="code hl_variable" href="structParameters_1_1PostProcessing.html#aa1406cadbbb4ca1b5d49cf88f60e7acf">verbosity</a> = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Verbosity::extra_verbose</a>;</div>
-<div class="line"><a id="l05012" name="l05012"></a><span class="lineno"> 5012</span>    }</div>
-<div class="line"><a id="l05013" name="l05013"></a><span class="lineno"> 5013</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l05014" name="l05014"></a><span class="lineno"> 5014</span>  }</div>
+<div class="line"><a id="l04962" name="l04962"></a><span class="lineno"> 4962</span> </div>
+<div class="line"><a id="l04963" name="l04963"></a><span class="lineno"> 4963</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l04964" name="l04964"></a><span class="lineno"> 4964</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen04965" data-start="{" data-end="}">
+<div class="line"><a id="l04965" name="l04965"></a><span class="lineno"><a class="line" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb"> 4965</a></span>  <a class="code hl_function" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">Mortar&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l04966" name="l04966"></a><span class="lineno"> 4966</span>  {</div>
+<div class="line"><a id="l04967" name="l04967"></a><span class="lineno"> 4967</span>    prm.enter_subsection(<span class="stringliteral">&quot;mortar&quot;</span>);</div>
+<div class="line"><a id="l04968" name="l04968"></a><span class="lineno"> 4968</span>    {</div>
+<div class="line"><a id="l04969" name="l04969"></a><span class="lineno"> 4969</span>      enable = prm.get_bool(<span class="stringliteral">&quot;enable&quot;</span>);</div>
+<div class="line"><a id="l04970" name="l04970"></a><span class="lineno"> 4970</span>      {</div>
+<div class="line"><a id="l04971" name="l04971"></a><span class="lineno"> 4971</span>        <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;interface type&quot;</span>);</div>
+<div class="line"><a id="l04972" name="l04972"></a><span class="lineno"> 4972</span>        <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;circular&quot;</span>)</div>
+<div class="line"><a id="l04973" name="l04973"></a><span class="lineno"> 4973</span>          interface_type = InterfaceType::circular;</div>
+<div class="line"><a id="l04974" name="l04974"></a><span class="lineno"> 4974</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;linear&quot;</span>)</div>
+<div class="line"><a id="l04975" name="l04975"></a><span class="lineno"> 4975</span>          interface_type = InterfaceType::linear;</div>
+<div class="line"><a id="l04976" name="l04976"></a><span class="lineno"> 4976</span>        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l04977" name="l04977"></a><span class="lineno"> 4977</span>          AssertThrow(</div>
+<div class="line"><a id="l04978" name="l04978"></a><span class="lineno"> 4978</span>            <span class="keyword">false</span>,</div>
+<div class="line"><a id="l04979" name="l04979"></a><span class="lineno"> 4979</span>            ExcMessage(</div>
+<div class="line"><a id="l04980" name="l04980"></a><span class="lineno"> 4980</span>              <span class="stringliteral">&quot;Error, invalid mortar interface type. Current choices are &lt;circular|linear&gt;.&quot;</span>));</div>
+<div class="line"><a id="l04981" name="l04981"></a><span class="lineno"> 4981</span>      }</div>
+<div class="line"><a id="l04982" name="l04982"></a><span class="lineno"> 4982</span>      rotor_mesh-&gt;parse_parameters(prm);</div>
+<div class="line"><a id="l04983" name="l04983"></a><span class="lineno"> 4983</span>      rotor_boundary_id  = prm.get_integer(<span class="stringliteral">&quot;rotor boundary id&quot;</span>);</div>
+<div class="line"><a id="l04984" name="l04984"></a><span class="lineno"> 4984</span>      stator_boundary_id = prm.get_integer(<span class="stringliteral">&quot;stator boundary id&quot;</span>);</div>
+<div class="line"><a id="l04985" name="l04985"></a><span class="lineno"> 4985</span>      center_of_rotation =</div>
+<div class="line"><a id="l04986" name="l04986"></a><span class="lineno"> 4986</span>        value_string_to_tensor&lt;dim&gt;(prm.get(<span class="stringliteral">&quot;center of rotation&quot;</span>));</div>
+<div class="line"><a id="l04987" name="l04987"></a><span class="lineno"> 4987</span>      rotation_axis_direction = prm.get_integer(<span class="stringliteral">&quot;rotation axis direction&quot;</span>);</div>
+<div class="line"><a id="l04988" name="l04988"></a><span class="lineno"> 4988</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor rotation angle&quot;</span>);</div>
+<div class="line"><a id="l04989" name="l04989"></a><span class="lineno"> 4989</span>      rotor_rotation_angle-&gt;parse_parameters(prm);</div>
+<div class="line"><a id="l04990" name="l04990"></a><span class="lineno"> 4990</span>      rotor_rotation_angle-&gt;set_time(0);</div>
+<div class="line"><a id="l04991" name="l04991"></a><span class="lineno"> 4991</span>      prm.leave_subsection();</div>
+<div class="line"><a id="l04992" name="l04992"></a><span class="lineno"> 4992</span> </div>
+<div class="line"><a id="l04993" name="l04993"></a><span class="lineno"> 4993</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor angular velocity&quot;</span>);</div>
+<div class="line"><a id="l04994" name="l04994"></a><span class="lineno"> 4994</span>      rotor_angular_velocity-&gt;parse_parameters(prm);</div>
+<div class="line"><a id="l04995" name="l04995"></a><span class="lineno"> 4995</span>      rotor_angular_velocity-&gt;set_time(0);</div>
+<div class="line"><a id="l04996" name="l04996"></a><span class="lineno"> 4996</span>      prm.leave_subsection();</div>
+<div class="line"><a id="l04997" name="l04997"></a><span class="lineno"> 4997</span> </div>
+<div class="line"><a id="l04998" name="l04998"></a><span class="lineno"> 4998</span>      sip_factor          = prm.get_double(<span class="stringliteral">&quot;penalty factor&quot;</span>);</div>
+<div class="line"><a id="l04999" name="l04999"></a><span class="lineno"> 4999</span>      oversampling_factor = prm.get_integer(<span class="stringliteral">&quot;oversampling factor&quot;</span>);</div>
+<div class="line"><a id="l05000" name="l05000"></a><span class="lineno"> 5000</span>      radius_tolerance    = prm.get_double(<span class="stringliteral">&quot;radius tolerance&quot;</span>);</div>
+<div class="line"><a id="l05001" name="l05001"></a><span class="lineno"> 5001</span>      cell_weight         = prm.get_integer(<span class="stringliteral">&quot;cell weight&quot;</span>);</div>
+<div class="line"><a id="l05002" name="l05002"></a><span class="lineno"> 5002</span> </div>
+<div class="line"><a id="l05003" name="l05003"></a><span class="lineno"> 5003</span>      <span class="comment">// Enable printing of mortar information</span></div>
+<div class="line"><a id="l05004" name="l05004"></a><span class="lineno"> 5004</span>      <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>);</div>
+<div class="line"><a id="l05005" name="l05005"></a><span class="lineno"> 5005</span>      <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;verbose&quot;</span>)</div>
+<div class="line"><a id="l05006" name="l05006"></a><span class="lineno"> 5006</span>        <a class="code hl_variable" href="structParameters_1_1PostProcessing.html#aa1406cadbbb4ca1b5d49cf88f60e7acf">verbosity</a> = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Verbosity::verbose</a>;</div>
+<div class="line"><a id="l05007" name="l05007"></a><span class="lineno"> 5007</span>      <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;quiet&quot;</span>)</div>
+<div class="line"><a id="l05008" name="l05008"></a><span class="lineno"> 5008</span>        <a class="code hl_variable" href="structParameters_1_1PostProcessing.html#aa1406cadbbb4ca1b5d49cf88f60e7acf">verbosity</a> = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Verbosity::quiet</a>;</div>
+<div class="line"><a id="l05009" name="l05009"></a><span class="lineno"> 5009</span>      <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;extra verbose&quot;</span>)</div>
+<div class="line"><a id="l05010" name="l05010"></a><span class="lineno"> 5010</span>        <a class="code hl_variable" href="structParameters_1_1PostProcessing.html#aa1406cadbbb4ca1b5d49cf88f60e7acf">verbosity</a> = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Verbosity::extra_verbose</a>;</div>
+<div class="line"><a id="l05011" name="l05011"></a><span class="lineno"> 5011</span>    }</div>
+<div class="line"><a id="l05012" name="l05012"></a><span class="lineno"> 5012</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l05013" name="l05013"></a><span class="lineno"> 5013</span>  }</div>
 </div>
-<div class="line"><a id="l05015" name="l05015"></a><span class="lineno"> 5015</span> </div>
-<div class="line"><a id="l05016" name="l05016"></a><span class="lineno"> 5016</span>  <span class="comment">// Explicitly instantiate template classes and structs</span></div>
-<div class="line"><a id="l05017" name="l05017"></a><span class="lineno"> 5017</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05018" name="l05018"></a><span class="lineno"> 5018</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05019" name="l05019"></a><span class="lineno"> 5019</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05020" name="l05020"></a><span class="lineno"> 5020</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05021" name="l05021"></a><span class="lineno"> 5021</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05022" name="l05022"></a><span class="lineno"> 5022</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05023" name="l05023"></a><span class="lineno"> 5023</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05024" name="l05024"></a><span class="lineno"> 5024</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05025" name="l05025"></a><span class="lineno"> 5025</span> </div>
-<div class="line"><a id="l05026" name="l05026"></a><span class="lineno"> 5026</span>} <span class="comment">// namespace Parameters</span></div>
+<div class="line"><a id="l05014" name="l05014"></a><span class="lineno"> 5014</span> </div>
+<div class="line"><a id="l05015" name="l05015"></a><span class="lineno"> 5015</span>  <span class="comment">// Explicitly instantiate template classes and structs</span></div>
+<div class="line"><a id="l05016" name="l05016"></a><span class="lineno"> 5016</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05017" name="l05017"></a><span class="lineno"> 5017</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05018" name="l05018"></a><span class="lineno"> 5018</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05019" name="l05019"></a><span class="lineno"> 5019</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05020" name="l05020"></a><span class="lineno"> 5020</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05021" name="l05021"></a><span class="lineno"> 5021</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05022" name="l05022"></a><span class="lineno"> 5022</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05023" name="l05023"></a><span class="lineno"> 5023</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05024" name="l05024"></a><span class="lineno"> 5024</span> </div>
+<div class="line"><a id="l05025" name="l05025"></a><span class="lineno"> 5025</span>} <span class="comment">// namespace Parameters</span></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html"><div class="ttname"><a href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a></div><div class="ttdoc">Class used to rescale physical properties for cases where the main dimensions of the problems (Length...</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00023">dimensionality.h:24</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a1240b4f88b9058e5b5fc3ae8cf28cbb7"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a1240b4f88b9058e5b5fc3ae8cf28cbb7">Parameters::Dimensionality::specific_heat_scaling</a></div><div class="ttdeci">double specific_heat_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00089">dimensionality.h:89</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a320039afb290a0d41880ed9de5dd506b"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a320039afb290a0d41880ed9de5dd506b">Parameters::Dimensionality::viscosity_scaling</a></div><div class="ttdeci">double viscosity_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00088">dimensionality.h:88</a></div></div>
@@ -5479,7 +5478,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructParameters_1_1MobilityCahnHilliardParameters_html_ab9a45d0978953e9e488442b96f05d34e"><div class="ttname"><a href="structParameters_1_1MobilityCahnHilliardParameters.html#ab9a45d0978953e9e488442b96f05d34e">Parameters::MobilityCahnHilliardParameters::mobility_cahn_hilliard_constant</a></div><div class="ttdeci">double mobility_cahn_hilliard_constant</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00434">parameters.h:434</a></div></div>
 <div class="ttc" id="astructParameters_1_1Mortar_html"><div class="ttname"><a href="structParameters_1_1Mortar.html">Parameters::Mortar</a></div><div class="ttdoc">Mortar - Defines parameters used to construct mortar elements.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02049">parameters.h:2050</a></div></div>
 <div class="ttc" id="astructParameters_1_1Mortar_html_a1f56c32ef7a5b9c83d87cdfa6a53b88f"><div class="ttname"><a href="structParameters_1_1Mortar.html#a1f56c32ef7a5b9c83d87cdfa6a53b88f">Parameters::Mortar::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l04891">parameters.cc:4891</a></div></div>
-<div class="ttc" id="astructParameters_1_1Mortar_html_af5442ef0871c207bbadf1b9f699ed4eb"><div class="ttname"><a href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">Parameters::Mortar::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l04966">parameters.cc:4966</a></div></div>
+<div class="ttc" id="astructParameters_1_1Mortar_html_af5442ef0871c207bbadf1b9f699ed4eb"><div class="ttname"><a href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">Parameters::Mortar::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l04965">parameters.cc:4965</a></div></div>
 <div class="ttc" id="astructParameters_1_1MultipleAdaptationParameters_html_a0415d48307e584ae60c4c4fc9ee053c0a6623bdf78746d87e7c6c2888a5c70c9f"><div class="ttname"><a href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0a6623bdf78746d87e7c6c2888a5c70c9f">Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg</a></div><div class="ttdeci">@ dpg</div></div>
 <div class="ttc" id="astructParameters_1_1MultipleAdaptationParameters_html_a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40"><div class="ttname"><a href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly</a></div><div class="ttdeci">@ kelly</div></div>
 <div class="ttc" id="astructParameters_1_1NonLinearSolver_html_ad34fc3d0cd80ab9202a73da29de12f91"><div class="ttname"><a href="structParameters_1_1NonLinearSolver.html#ad34fc3d0cd80ab9202a73da29de12f91">Parameters::NonLinearSolver::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm, const std::string &amp;physics_name)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l02717">parameters.cc:2717</a></div></div>
