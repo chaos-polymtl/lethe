@@ -40,6 +40,18 @@ Physical Properties
       set tracer reaction constant       = 0
       set tracer reaction order          = 1
       set tracer reaction threshold      = 1e-8
+
+      # Electromagnetic material properties
+      set electric conductivity model = constant
+      set electric conductivity       = 0.
+
+      set electric permittivity model     = constant
+      set electric permittivity real part = 9.2
+      set electric permittivity imag part = 0.005
+
+      set magnetic permeability model     = constant
+      set magnetic permeability real part = 1.
+      set magnetic permeability imag part = 0.
     end
 
     set number of solids = 0
@@ -133,6 +145,52 @@ Physical Properties
   .. note::
     The threshold parameter indicates the concentration value below which modifications to the reaction rate become dominant. Depending on the scale, it can be modified as a way to keep numerical stability while keeping a realistic reaction rate as long as :math:`C_\text{interest} \gg \varepsilon`. A scenario where the threshold might need to be lowered is for extremely fast heterogeneous reactions, where the concentration at the surface is close to 0.
 
+* The ``electric conductivity model`` specifies the model used to calculate the electric conductivity. At the moment, only a constant electric conductivity is supported.
+
+* The ``electric conductivity`` parameter is the electric conductivity of the material in its dimensionless form, i.e., the quantity to input is:
+
+  .. math::
+
+    \sigma_r = \frac{\sigma}{\omega \varepsilon_0}
+
+  with :math:`\sigma` the dimensional electric conductivity, :math:`\omega` the angular frequency of the electromagnetic wave, and :math:`\varepsilon_0` the vacuum permittivity.
+
+* The ``electric permittivity model`` specifies the model used to calculate the electric permittivity. At the moment, only a constant electric permittivity is supported.
+
+* The ``electric permittivity real part`` parameter is the real part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity: 
+
+  .. math::
+
+    \Re{(\varepsilon_{r})} = \Re{\left(\frac{\varepsilon}{\varepsilon_0}\right)}
+
+  with :math:`\varepsilon` the dimensional effective electric permittivity, and :math:`\varepsilon_0` the vacuum permittivity.
+
+* The ``electric permittivity imag part`` parameter is the imaginary part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity: 
+
+  .. math::
+
+    \Im{(\varepsilon_{r})} = \Im{\left(\frac{\varepsilon}{\varepsilon_0}\right)}
+
+  with :math:`\varepsilon` the dimensional effective electric permittivity, and :math:`\varepsilon_0` the vacuum permittivity.
+
+* The ``magnetic permeability model`` specifies the model used to calculate the magnetic permeability. At the moment, only a constant magnetic permeability is supported.
+
+* The ``magnetic permeability real part`` parameter is the real part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability: 
+
+  .. math::
+
+    \Re{(\mu_{r})} = \Re{\left(\frac{\mu}{\mu_0}\right)}
+
+  with :math:`\mu` the dimensional effective magnetic permeability, and :math:`\mu_0` the vacuum permeability.
+
+* The ``magnetic permeability imag part`` parameter is the imaginary part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability: 
+
+  .. math::
+
+    \Im{(\mu_{r})} = \Im{\left(\frac{\mu}{\mu_0}\right)}
+
+  with :math:`\mu` the dimensional effective magnetic permeability, and :math:`\mu_0` the vacuum permeability.
+
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
 * The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in `Two Phase Simulations`_.
@@ -217,6 +275,9 @@ For two phases, the properties are defined for each fluid. Default values are:
 .. warning::
   Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
 
+.. Note::
+  The microwave heating simulations are not supported with the current two-phase flow models (CLS or Cahn-Hilliard).
+
 
 .. _conjugate heat transfer:
 
@@ -224,9 +285,6 @@ Conjugate Heat Transfer
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be set to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.
-
-.. warning::
-  This is an experimental feature. It has not been tested on a large range of application cases.
 
 .. code-block:: text
 

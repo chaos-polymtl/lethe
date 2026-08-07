@@ -1,5 +1,0 @@
-================================
-Magnetohydrodynamics Equations
-================================
-
-**Under construction**

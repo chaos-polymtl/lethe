@@ -27,6 +27,9 @@ If the problem being simulated has a known analytical solution, or an exact solu
     subsection cahn hilliard
       set Function expression = 0; 0 # phase order parameter; chemical potential
     end
+    subsection electromagnetics
+      set Function expression = 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0 # E_x real; E_y real; E_z real; E_x imag; E_y imag; E_z imag; H_x real; H_y real; H_z real; H_x imag; H_y imag; H_z imag
+    end
    end
 
 * The ``enable`` parameter is set to true if the problem has an analytical solution. This enables the calculation of the analytical solution and the :math:`L^2` norm of the error.
@@ -49,6 +52,7 @@ Analytical solutions for all physics are supported. They are all declared in the
 * ``tracer``: Analytical solution for the tracer physics.
 * ``CLS``: Analytical solution for the CLS field.
 * ``cahn hilliard``: Analytical solution for the phase order and the chemical potential of the Cahn-Hilliard physics.
+* ``electromagnetics``: Analytical solution for the electric and magnetic fields obtained with the time-harmonic Maxwell physics. The expression must provide :math:`E_x`, :math:`E_y`, :math:`E_z`, :math:`H_x`, :math:`H_y` and :math:`H_z` for a 3D simulation. Each component of the electric and magnetic fields must be provided as a real and imaginary part (e.g. the real part of :math:`E_x`, :math:`E_y`, :math:`E_z` and then it's imaginary part).
 
 .. note:: 
     The variables *x*, *y*, *z* (3D) and *t* (time-dependent) can be used in the function expressions.

@@ -2,7 +2,7 @@
 Linear Solver
 =============
 
-In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``CLS``, ``heat transfer``, ``cahn hilliard``, ``tracer`` and ``void fraction``) and it is possible to specify linear solver parameters for each of them. The ``CLS pde-based interface reinitialization`` subequation has also its own subsection.
+In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``CLS``, ``heat transfer``, ``cahn hilliard``, ``tracer``, ``electromagnetics`` and ``void fraction``) and it is possible to specify linear solver parameters for each of them. The ``CLS pde-based interface reinitialization`` subequation has also its own subsection.
 
 In the example below, only ``fluid dynamics`` is used, however, the same block can be used for other physics.
 
@@ -60,6 +60,9 @@ In the example below, only ``fluid dynamics`` is used, however, the same block c
 
 	.. caution:: 
 		The use of ``direct`` solver should be in general avoided as it is not efficient for large problems. It can be, however, used for debugging purposes or the development of new features.
+
+  .. note::
+    The ``electromagnetics`` solver always uses a conjugate gradient method; therefore the ``method``, ``max iters``, and ``max krylov vectors`` parameters have no effect.
 
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations.
