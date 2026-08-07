@@ -18,6 +18,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , end_time(param.time_end)
   , time_step_independent_of_end_time(param.time_step_independent_of_end_time)
   , iteration_number(0)
+  , end_iteration(param.iteration_end)
   , number_mesh_adapt(param.number_mesh_adaptation)
   , CFL(0)
   , max_CFL(param.maxCFL)
@@ -281,6 +282,7 @@ SimulationControlTransient::SimulationControlTransient(
   , no_more_output_times(false)
   , override_time_step_on_restart(param.override_time_step_on_restart)
   , output_time_interval(param.output_time_interval)
+  , end_control(param.end_control)
   , output_control(param.output_control)
 {}
 
@@ -368,6 +370,9 @@ SimulationControlTransient::integrate()
 bool
 SimulationControlTransient::is_at_end()
 {
+  if (end_control == Parameters::SimulationControl::EndControl::iteration)
+    return iteration_number >= end_iteration;
+
   double floating_point_margin = std::max(1e-6 * time_step, 1e-12 * end_time);
   return current_time >= (end_time - floating_point_margin);
 }
@@ -395,8 +400,10 @@ SimulationControlTransient::calculate_time_step()
     }
 
   // Ensure that the time step for the last iteration is kept regardless of the
-  // end time set
-  if (time_step_independent_of_end_time)
+  // end time set. The end time is also irrelevant when the simulation ends at a
+  // given iteration, in which case the time step is never clipped.
+  if (time_step_independent_of_end_time ||
+      end_control == Parameters::SimulationControl::EndControl::iteration)
     return new_time_step;
 
   // Modify last time step to ensure that the last iteration is exactly the end

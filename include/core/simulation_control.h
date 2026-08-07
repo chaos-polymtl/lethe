@@ -96,6 +96,9 @@ protected:
    */
   unsigned int iteration_number;
 
+  /// Simulation end iteration
+  unsigned int end_iteration;
+
   /// Number of mesh adaptation iterations performed
   unsigned int number_mesh_adapt;
 
@@ -889,7 +892,7 @@ public:
  * This class extends SimulationControl to handle transient (time-dependent)
  * simulations. It implements adaptive time stepping based on CFL conditions,
  * time-based output control, and ensures the simulation progresses until the
- * end time is reached.
+ * end criterion is reached.
  *
  * Key features:
  * - Adaptive time stepping with CFL-based control
@@ -961,6 +964,9 @@ protected:
    */
   std::vector<double> output_time_interval;
 
+  /// End control type: iteration-based or time-based
+  Parameters::SimulationControl::EndControl end_control;
+
   /// Output control type: iteration-based or time-based
   Parameters::SimulationControl::OutputControl output_control;
 
@@ -1021,9 +1027,9 @@ public:
   integrate() override;
 
   /**
-   * @brief End the simulation when the end time is reached
+   * @brief End the simulation when the end condition is reached
    *
-   * @return true if the current time has reached or exceeded the end time, false otherwise
+   * @return true if the current time or transient iteration has reached or exceeded the end time or transient iteration, false otherwise
    */
   virtual bool
   is_at_end() override;
