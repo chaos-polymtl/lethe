@@ -1998,6 +1998,11 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
   // cases.
   if (this->simulation_control->get_iteration_number() <= 1)
     {
+      // Initialize the temperature_last_solved_solution to the initial
+      // temperature solution at the first iteration of the simulation
+      this->temperature_last_solved_solution =
+        this->multiphysics->get_solution(PhysicsID::heat_transfer);
+
       return true;
     }
   else
@@ -2052,13 +2057,127 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                 return false;
             }
           case Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold:
-            AssertThrow(
-              false,
-              ExcMessage(
-                "Time coupling strategy 'threshold' is not yet implemented "
-                "for the time-harmonic Maxwell solver since the physical "
-                "properties only support a constant model."));
-            return true;
+            {
+              auto mpi_communicator = triangulation->get_mpi_communicator();
+              // Initialize the temporary variables to determine if the physical
+              // properties have changed by more than the specified threshold
+              // since the last time the electromagnetics were solved.
+              unsigned int                     material_id;
+              const PhysicalPropertiesManager &physical_properties_manager =
+                this->simulation_parameters.physical_properties_manager;
+              const DoFHandler<dim> &dof_handler_temperature =
+                this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+              const QGauss<dim> temperature_quadrature(
+                dof_handler_temperature.get_fe().degree + 1);
+              const unsigned int n_q_points = temperature_quadrature.size();
+              const GlobalVectorType &temperature_current_solution =
+                this->multiphysics->get_solution(PhysicsID::heat_transfer);
+
+              FEValues<dim> fe_values_temperature(
+                *this->mapping,
+                dof_handler_temperature.get_fe(),
+                temperature_quadrature,
+                update_values | update_quadrature_points);
+
+              std::complex<double> effective_electric_permittivity_last_solved;
+              std::complex<double> effective_magnetic_permeability_last_solved;
+              std::map<field, double> field_values_last_solved;
+              std::vector<double>  temperature_last_solved_values(n_q_points);
+              std::complex<double> effective_electric_permittivity_current;
+              std::complex<double> effective_magnetic_permeability_current;
+              std::vector<double>  temperature_current_values(n_q_points);
+              std::map<field, double> field_values_current;
+
+              double max_relative_change = 0.0;
+
+              // Loop on all cell quadrature points and check if the physical
+              // properties have changed by more than the specified threshold
+              // since the last time the electromagnetics were solved according
+              // to the temperature field. If so, we need to solve the
+              // electromagnetics again.
+              for (const auto &cell :
+                   dof_handler_temperature.active_cell_iterators())
+                {
+                  if (cell->is_locally_owned())
+                    {
+                      fe_values_temperature.reinit(cell);
+                      fe_values_temperature.get_function_values(
+                        temperature_current_solution,
+                        temperature_current_values);
+
+                      fe_values_temperature.get_function_values(
+                        this->temperature_last_solved_solution,
+                        temperature_last_solved_values);
+
+                      material_id = cell->material_id();
+                      for (unsigned int q = 0; q < n_q_points; ++q)
+                        {
+                          field_values_last_solved[field::temperature] =
+                            temperature_last_solved_values[q];
+                          field_values_current[field::temperature] =
+                            temperature_current_values[q];
+
+                          update_material_properties(
+                            physical_properties_manager,
+                            field_values_last_solved,
+                            effective_electric_permittivity_last_solved,
+                            effective_magnetic_permeability_last_solved,
+                            material_id);
+                          update_material_properties(
+                            physical_properties_manager,
+                            field_values_current,
+                            effective_electric_permittivity_current,
+                            effective_magnetic_permeability_current,
+                            material_id);
+
+                          // Here we check if the magnitude of the complexe
+                          // property difference normalized by the magnitude of
+                          // the last solved property is greater than the
+                          // threshold. We start by computing only the absolute
+                          // square to do the comparison, and then we perform
+                          // the square root to get the actual treshold value to
+                          // have a faster computation.
+                          double relative_change_electric_permittivity =
+                            std::norm(
+                              effective_electric_permittivity_current -
+                              effective_electric_permittivity_last_solved) /
+                            std::norm(
+                              effective_electric_permittivity_last_solved);
+                          double relative_change_magnetic_permeability =
+                            std::norm(
+                              effective_magnetic_permeability_current -
+                              effective_magnetic_permeability_last_solved) /
+                            std::norm(
+                              effective_magnetic_permeability_last_solved);
+                          max_relative_change =
+                            std::max({relative_change_electric_permittivity,
+                                     relative_change_magnetic_permeability,
+                                     max_relative_change});
+                        }
+                    }
+                }
+
+              // Reduce the maximum relative change across all MPI ranks
+              max_relative_change =
+                Utilities::MPI::max(max_relative_change, mpi_communicator);
+
+              // Return the treshold comparison result. We take the square root
+              // of the max_relative_change to get the actual relative change
+              // value to compare with the threshold.
+              if (std::sqrt(max_relative_change) >
+                  thm_parameters.coupling_threshold)
+                {
+                  this->temperature_last_solved_solution =
+                    temperature_current_solution;
+                  return true;
+                }
+              else
+                {
+                  return false;
+                }
+            }
+
+
           default:
             AssertThrow(false, ExcMessage("Unknown time coupling strategy."));
             return false;

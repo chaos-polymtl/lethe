@@ -858,6 +858,11 @@ private:
    * @brief A vector containing the electric amplitudes of all the waveguide ports. It is define as the : \f$ \sqrt{P_input/P_port} \f$, where \f$P_input\f$ is the input power provided by the user for a given waveguide port and \f$P_port\f$ is the power computed from integrating the Poynting vector of the electromagnetic fields at the inlet associated with the waveguide port condition.
    */
   std::vector<double> waveguide_ports_electric_amplitudes;
+
+  /**
+   * @brief A vector containing all the values of the temperature solution when the last solve of the time-harmonic Maxwell system was performed. This is used to determine the physical properties of the materials in the domain when they are temperature-dependent.
+   */
+  GlobalVectorType temperature_last_solved_solution;
 };
 
 
