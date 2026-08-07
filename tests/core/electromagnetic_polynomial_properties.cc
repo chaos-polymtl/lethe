@@ -27,7 +27,7 @@ namespace
   template <typename ModelType>
   void
   check_model(const std::string         &name,
-              ModelType           &model,
+              ModelType                 &model,
               const std::vector<double> &temperatures,
               const std::vector<double> &expected_values)
   {
