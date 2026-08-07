@@ -24,12 +24,13 @@ make_default_linear_solver()
   return linear_solver_parameters;
 }
 
-std::shared_ptr<Parameters::VoidFractionParameters<3>>
+template <int dim = 3>
+std::shared_ptr<Parameters::VoidFractionParameters<dim>>
 make_default_void_fraction_parameters()
 {
-  std::shared_ptr<Parameters::VoidFractionParameters<3>>
+  std::shared_ptr<Parameters::VoidFractionParameters<dim>>
     void_fraction_parameters =
-      std::make_shared<Parameters::VoidFractionParameters<3>>();
+      std::make_shared<Parameters::VoidFractionParameters<dim>>();
 
   void_fraction_parameters->mode = Parameters::VoidFractionMode::qcm;
   void_fraction_parameters->l2_smoothing_length          = 0.;

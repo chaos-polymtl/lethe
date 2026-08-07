@@ -1522,10 +1522,14 @@ ParticleProjector<dim, PropertiesIndex>::calculate_field_projection_impl(
                   << linear_solver_tolerance << std::endl;
     }
 
+  // We use the verbosity setting of the void fraction for all projected fields
+  const bool print_linear_solver_log(linear_solver_parameters.verbosity !=
+                                     Parameters::Verbosity::quiet);
+
   SolverControl solver_control(linear_solver_parameters.max_iterations,
                                non_rescaled_linear_solver_tolerance,
-                               true,
-                               true);
+                               print_linear_solver_log,
+                               print_linear_solver_log);
 
   SolverCG<LinearAlgebra::distributed::Vector<double>> solver(solver_control);
 
@@ -1920,10 +1924,14 @@ ParticleProjector<dim,
   GlobalVectorType completely_distributed_solution(
     locally_owned_dofs, this->triangulation->get_mpi_communicator());
 
+  // We use the verbosity setting of the void fraction for all projected fields
+  const bool print_linear_solver_log(linear_solver_parameters.verbosity !=
+                                     Parameters::Verbosity::quiet);
+
   SolverControl solver_control(linear_solver_parameters.max_iterations,
                                non_rescaled_linear_solver_tolerance,
-                               true,
-                               true);
+                               print_linear_solver_log,
+                               print_linear_solver_log);
 
   TrilinosWrappers::SolverCG solver(solver_control);
 
