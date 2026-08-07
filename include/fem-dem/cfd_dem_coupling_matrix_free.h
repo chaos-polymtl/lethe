@@ -307,6 +307,19 @@ private:
   dem_iterator();
 
   /**
+   * @brief Carry out the closing half velocity step of a staggered integration
+   * scheme at the end of the DEM sub-iterations of a CFD time step.
+   *
+   * The contact and the fluid-particle interaction forces are re-evaluated at
+   * the final position of the particles so that their velocities can be
+   * synchronized with their positions. Consequently, n + 1 integration
+   * operations are carried out to complete the n DEM sub-iterations, and the
+   * CFD-DEM coupling of the next CFD time step sees synchronized velocities.
+   */
+  void
+  synchronize_particle_velocities();
+
+  /**
    * @brief Reports the ratio between the DEM time step and the Rayleigh time
    *
    */

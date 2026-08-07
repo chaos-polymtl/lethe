@@ -1,2 +1,17 @@
 
-DEAL::The new position of the particle in z direction after 1.00000e-05 seconds is: -9.81000e-10
+DEAL::Final time: 0.00500000
+DEAL::Position: 1.25000e-05 -0.000122625
+DEAL::Velocity: 0.00500000 -0.0490500 0.00000
+DEAL::Angular velocity: 0.00000 0.00000 0.0100000
+DEAL::Analytical position along the first dimension: 1.25000e-05
+DEAL::Analytical position along the last dimension: -0.000122625
+DEAL::Analytical velocity along the last dimension: -0.0490500
+DEAL::Analytical angular velocity around z: 0.0100000
+DEAL::Final time: 0.00500000
+DEAL::Position: 1.25000e-05 0.00000 -0.000122625
+DEAL::Velocity: 0.00500000 0.00000 -0.0490500
+DEAL::Angular velocity: 0.00000 0.00000 0.0100000
+DEAL::Analytical position along the first dimension: 1.25000e-05
+DEAL::Analytical position along the last dimension: -0.000122625
+DEAL::Analytical velocity along the last dimension: -0.0490500
+DEAL::Analytical angular velocity around z: 0.0100000

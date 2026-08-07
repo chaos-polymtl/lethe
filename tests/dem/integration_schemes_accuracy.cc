@@ -203,9 +203,11 @@ test()
     {
       t = 0;
 
-      force[particle_iterator->get_local_index()][dim - 1] = -x0;
+      // The force is accumulated, like the contact force objects do, to make
+      // sure that the integrator resets it at the end of every step
+      force[particle_iterator->get_local_index()][dim - 1] -= x0;
 
-      velocity_verlet_object.integrate_half_step_location(
+      velocity_verlet_object.integrate_start(
         particle_handler, g, dt1, torque, force, MOI);
       t += dt1;
 
@@ -214,12 +216,25 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
-          force[particle_iterator->get_local_index()] = force_tensor;
+          force[particle_iterator->get_local_index()] += force_tensor;
           velocity_verlet_object.integrate(
             particle_handler, g, dt1, torque, force, MOI);
 
           t += dt1;
         }
+
+      // Closing half step, which synchronizes the velocity with the position.
+      // It does not modify the position and therefore does not affect the
+      // position error measured below.
+      {
+        Tensor<1, dim> force_tensor;
+        force_tensor[dim - 1] =
+          -spring_constant * particle_iterator->get_location()[dim - 1];
+        force[particle_iterator->get_local_index()] += force_tensor;
+        velocity_verlet_object.integrate_end(
+          particle_handler, g, dt1, torque, force, MOI);
+      }
+
       // Output Analytical
       x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * (t));
       particle_axial_position_error_Verlet_dt1 =
@@ -252,9 +267,10 @@ test()
     {
       t = 0;
 
-
-      force[particle_iterator->get_local_index()][dim - 1] = -x0;
-      velocity_verlet_object.integrate_half_step_location(
+      // The force is accumulated, like the contact force objects do, to make
+      // sure that the integrator resets it at the end of every step
+      force[particle_iterator->get_local_index()][dim - 1] -= x0;
+      velocity_verlet_object.integrate_start(
         particle_handler, g, dt2, torque, force, MOI);
       t += dt2;
 
@@ -263,12 +279,25 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
-          force[particle_iterator->get_local_index()] = force_tensor;
+          force[particle_iterator->get_local_index()] += force_tensor;
 
           velocity_verlet_object.integrate(
             particle_handler, g, dt2, torque, force, MOI);
           t += dt2;
         }
+
+      // Closing half step, which synchronizes the velocity with the position.
+      // It does not modify the position and therefore does not affect the
+      // position error measured below.
+      {
+        Tensor<1, dim> force_tensor;
+        force_tensor[dim - 1] =
+          -spring_constant * particle_iterator->get_location()[dim - 1];
+        force[particle_iterator->get_local_index()] += force_tensor;
+        velocity_verlet_object.integrate_end(
+          particle_handler, g, dt2, torque, force, MOI);
+      }
+
       // Output Analytical
       x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * (t));
       particle_axial_position_error_Verlet_dt2 =

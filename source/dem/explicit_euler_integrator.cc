@@ -6,19 +6,62 @@
 
 #include <dem/explicit_euler_integrator.h>
 
+#include <deal.II/base/exceptions.h>
+
 using namespace DEM;
 
-// This function is empty for explicit Euler integrator
+// The explicit Euler scheme is self-starting, so the opening step is simply a
+// regular step.
 template <int dim, typename PropertiesIndex>
 void
-ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate_half_step_location(
-  Particles::ParticleHandler<dim> & /*particle_handler*/,
+ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate_start(
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Tensor<1, 3>              &g,
+  const double                     dt,
+  std::vector<Tensor<1, 3>>       &torque,
+  std::vector<Tensor<1, 3>>       &force,
+  const std::vector<double>       &MOI)
+{
+  integrate(particle_handler, g, dt, torque, force, MOI);
+}
+
+// The velocities of the explicit Euler scheme are always synchronized with the
+// positions, so the closing step leaves them untouched. The force and the
+// torque still have to be reset: the force evaluation that precedes this call
+// has filled them, and the contact force objects accumulate into them.
+template <int dim, typename PropertiesIndex>
+void
+ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate_end(
+  Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3> & /*body_force*/,
   const double /*time_step*/,
-  const std::vector<Tensor<1, 3>> & /*torque*/,
-  const std::vector<Tensor<1, 3>> & /*force*/,
+  std::vector<Tensor<1, 3>> &torque,
+  std::vector<Tensor<1, 3>> &force,
   const std::vector<double> & /*MOI*/)
-{}
+{
+  for (auto &particle : particle_handler)
+    {
+      const types::particle_index particle_id = particle.get_local_index();
+
+      force[particle_id]  = 0.;
+      torque[particle_id] = 0.;
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate_end(
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Tensor<1, 3>              &g,
+  const double                     dt,
+  std::vector<Tensor<1, 3>>       &torque,
+  std::vector<Tensor<1, 3>>       &force,
+  const std::vector<double>       &MOI,
+  const parallel::distributed::Triangulation<dim> & /*triangulation*/,
+  AdaptiveSparseContacts<dim, PropertiesIndex> & /*sparse_contacts_object*/)
+{
+  integrate_end(particle_handler, g, dt, torque, force, MOI);
+}
 
 template <int dim, typename PropertiesIndex>
 void
