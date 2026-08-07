@@ -4,9 +4,9 @@
 #include <core/boundary_conditions.h>
 #include <core/fichera_oven_grid.h>
 #include <core/grid_birmingham_fluidized_bed.h>
-#include <core/grid_cavity_mw.h>
 #include <core/grid_cylinder.h>
 #include <core/grid_impinging_jet_mixer.h>
+#include <core/grid_mw_pipe_and_waveguide.h>
 #include <core/grid_periodic_hills.h>
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
@@ -270,12 +270,12 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
 
           GridTools::scale(mesh_parameters.scale, triangulation);
         }
-      else if (grid_type == "cavity_mw")
+      else if (grid_type == "mw_pipe_and_waveguide")
         {
           AssertThrow(
             !mesh_parameters.simplex,
             ExcMessage(
-              "Unsupported mesh type - uniform_channel_with_meshed_square_prism mesh with simplex is not supported"));
+              "Unsupported mesh type - mw_pipe_and_waveguide mesh with simplex is not supported"));
 
           GridCavityMw<dim, spacedim> grid(mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
