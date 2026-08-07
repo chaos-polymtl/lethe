@@ -13,6 +13,7 @@ add_library(lethe-core
   grid_birmingham_fluidized_bed.cc
   grid_cylinder.cc
   grid_impinging_jet_mixer.cc
+  grid_mw_pipe_and_waveguide.cc
   grid_periodic_hills.cc
   ib_particle.cc
   ib_stencil.cc
