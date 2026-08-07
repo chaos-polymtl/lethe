@@ -295,18 +295,6 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
- * @brief Return the rotation axis direction for the mortar interface
- *
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
- *
- * @return Direction of the rotation axis (x=0, y=1, z=2)
- */
-template <int dim>
-unsigned int
-get_rotation_axis_direction(const Parameters::Mortar<dim> &mortar_parameters);
-
-/**
  * @brief Compute the stage heights in the direction of the
  * rotation axis at the mortar interface. Stages are defined as planes
  * perpendicular to the rotation axis containing vertices of the same
@@ -570,7 +558,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
-      get_rotation_axis_direction(mortar_parameters),
+      mortar_parameters.rotation_axis_direction,
       compute_stage_heights(dof_handler.get_triangulation(), mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(

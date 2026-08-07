@@ -69,10 +69,10 @@ subsection mortar
     set initial rotation axis  = 0, 1, 0
     set initial rotation angle = 1.57079632679
   end
-  set rotor boundary id  = 5
-  set stator boundary id = 0
-  set rotation axis      = 1, 0, 0
-  set penalty factor     = 1
+  set rotor boundary id       = 5
+  set stator boundary id      = 0
+  set rotation axis direction = 0
+  set penalty factor          = 1
 end
 
 #---------------------------------------------------

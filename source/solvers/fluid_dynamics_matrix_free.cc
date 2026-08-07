@@ -1548,7 +1548,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     .rotor_rotation_angle->value(Point<dim>()),
                   this->simulation_parameters.mortar_parameters
                     .center_of_rotation,
-                  this->simulation_parameters.mortar_parameters.rotation_axis);
+                  this->simulation_parameters.mortar_parameters
+                    .rotation_axis_direction);
               else if (this->simulation_parameters.mortar_parameters
                          .interface_type ==
                        Parameters::Mortar<dim>::InterfaceType::linear)
@@ -2681,7 +2682,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
              .get_mapping_info()
              .mapping,
           this->simulation_parameters.mortar_parameters.center_of_rotation,
-          this->simulation_parameters.mortar_parameters.rotation_axis,
+          this->simulation_parameters.mortar_parameters.rotation_axis_direction,
           this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
       this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
@@ -3413,7 +3414,7 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
     this->system_operator->evaluate_velocity_ale(
       *this->get_mapping(),
       this->simulation_parameters.mortar_parameters.center_of_rotation,
-      this->simulation_parameters.mortar_parameters.rotation_axis,
+      this->simulation_parameters.mortar_parameters.rotation_axis_direction,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
@@ -3749,7 +3750,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
     this->system_operator->evaluate_velocity_ale(
       *this->get_mapping(),
       this->simulation_parameters.mortar_parameters.center_of_rotation,
-      this->simulation_parameters.mortar_parameters.rotation_axis,
+      this->simulation_parameters.mortar_parameters.rotation_axis_direction,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
   this->computing_timer.enter_subsection("Evaluate non linear term and tau");

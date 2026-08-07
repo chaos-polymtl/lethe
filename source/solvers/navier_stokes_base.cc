@@ -2224,7 +2224,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
       *this->mapping,
       rotation_angle,
       this->simulation_parameters.mortar_parameters.center_of_rotation,
-      this->simulation_parameters.mortar_parameters.rotation_axis);
+      this->simulation_parameters.mortar_parameters.rotation_axis_direction);
   else if (this->simulation_parameters.mortar_parameters.interface_type ==
            Parameters::Mortar<dim>::InterfaceType::linear)
     this->mapping_cache->initialize(*this->mapping,

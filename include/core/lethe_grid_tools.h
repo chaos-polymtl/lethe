@@ -408,18 +408,16 @@ namespace LetheGridTools
    * @param[in] omega Angular velocity value
    * @param[in] point Coordinates of the point at which the linear velocity is
    * being calculated
-   * @param[in] rotation_axis Rotation axis used in 3D cases, so that the
-   * angular velocity vector is given by omega_vec = omega * rotation_axis. In
-   * 2D, we apply a rotation around the z-axis.
+   * @param[in] rotation_axis_direction Direction of the rotation axis. In 2D,
+   * we apply a rotation around the z-axis.
    *
    * @return Linear velocity at @p point
    */
   template <int dim>
   inline Tensor<1, dim>
-  angular_to_linear_velocity(
-    const double          omega,
-    const Tensor<1, dim> &point,
-    const Tensor<1, dim> &rotation_axis = Tensor<1, dim>())
+  angular_to_linear_velocity(const double          omega,
+                             const Tensor<1, dim> &point,
+                             const unsigned int    rotation_axis_direction = 2)
   {
     Tensor<1, dim> result;
 
@@ -433,7 +431,8 @@ namespace LetheGridTools
       {
         // Store angular velocity according to unit vector that defines the
         // rotation axis
-        const auto omega_vec = omega * rotation_axis;
+        Tensor<1, dim> omega_vec;
+        omega_vec[rotation_axis_direction] = omega;
         // Compute cross product
         result = cross_product_3d(omega_vec, point);
       }
@@ -450,16 +449,16 @@ namespace LetheGridTools
    * @param[in] rotation_angle Rotation angle of the rotor domain
    * @param[in] center_of_rotation Center of rotation of the rotor domain.
    * Default is the origin
-   * @param[in] rotation_axis Rotation axis of the rotor domain for 3D case
+   * @param[in] rotation_axis_direction Direction of the rotation axis
    */
   template <int dim>
   void
   rotate_mapping(const DoFHandler<dim> &dof_handler,
                  MappingQCache<dim>    &mapping_cache,
                  const Mapping<dim>    &mapping,
-                 const double          &rotation_angle,
-                 const Point<dim>      &center_of_rotation = Point<dim>(),
-                 const Tensor<1, dim>  &rotation_axis      = Tensor<1, dim>());
+                 const double           rotation_angle,
+                 const Point<dim>      &center_of_rotation      = Point<dim>(),
+                 const unsigned int     rotation_axis_direction = 2);
 
   /**
    * @brief
