@@ -1,4 +1,4 @@
-#include <core/grid_cavity_mw.h>
+#include <core/grid_mw_pipe_and_waveguide.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
@@ -14,21 +14,16 @@
 
 using namespace dealii;
 
-// READ ME
 /*
-This file creates a mesh named cavity.vtu which represents a rectangular volume
-crossing entering a cylinder on the side.
+This file creates a mesh that represents a rectangular volume entering a cylinder laterally, perpendicular to its axis.
 
-THe program is divided in three steps:
+The program is divided into two parts:
 
-1)First, is defined "detailed_circle", a function strongely inspired by
+1)The function "detailed_circle" is first defined, inspired by
 hyper_ball in the deal.II library. This function creates a 2D coarse mesh of a
-circle which is adapted to be linked with a rectangle on its side.
+circle which is adapted to be connected with a rectangle on its side.
 
-2)Then, the main function creates the shape we want
-
-3)Finally, the main function is called to creat the file cavity.vtu
-
+2)The core of the file creates the 3D pipe assembled with the waveguide
 */
 
 
@@ -40,9 +35,10 @@ detailed_circle(
   const double                 &a,
   const double                 &b,
   const double                  r,
-  const double
-    R, // shape == true : inner circle radius | shape == false : inner square side
-  const bool shape, // true: inner circle | false: inner square
+  const double                  R, 
+  // shape == true : inner circle radius | shape == false : inner square side
+  const bool shape, 
+  // true: inner circle | false: inner square
   const bool internal_manifolds)
 {
   const auto embed_point = [](const double x,
@@ -61,13 +57,13 @@ detailed_circle(
       return {
         p + embed_point(-1., -1.) * (r / std::sqrt(2.0)),
         p + embed_point(+1., -1.) * (r / std::sqrt(2.0)),
-        // The four points which make the inner square
-        p + embed_point(-1., -1.) * (R / std::sqrt(2.0)), 
-        p + embed_point(+1., -1.) * (R / std::sqrt(2.0)),
-        p + embed_point(-1., +1.) * (R / std::sqrt(2.0)),
-        p + embed_point(+1., +1.) * (R / std::sqrt(2.0)),
         p + embed_point(-1., +1.) * (r / std::sqrt(2.0)),
         p + embed_point(+1., +1.) * (r / std::sqrt(2.0)),
+        // The four points which make the inner square
+        p + embed_point(-1., +1.) * (R / std::sqrt(2.0)),
+        p + embed_point(+1., +1.) * (R / std::sqrt(2.0)),
+        p + embed_point(-1., -1.) * (R / std::sqrt(2.0)), 
+        p + embed_point(+1., -1.) * (R / std::sqrt(2.0)),
         // Two points linked with the rectangle on is left
         embed_point(b, 0), 
         embed_point(b, a),
@@ -94,13 +90,13 @@ detailed_circle(
       return {
         p + embed_point(-1., -1.) * (r / std::sqrt(2.0)),
         p + embed_point(+1., -1.) * (r / std::sqrt(2.0)),
+        p + embed_point(-1., +1.) * (r / std::sqrt(2.0)),
+        p + embed_point(+1., +1.) * (r / std::sqrt(2.0)),
         // The other points that form the inner square
         p + embed_point(-1., -1.) * R, 
         p + embed_point(+1., -1.) * R,
         p + embed_point(-1., +1.) * R,
         p + embed_point(+1., +1.) * R,
-        p + embed_point(-1., +1.) * (r / std::sqrt(2.0)),
-        p + embed_point(+1., +1.) * (r / std::sqrt(2.0)),
         // The two points attached to the rectangle
         embed_point(b, 0), 
         embed_point(b, a),
@@ -126,23 +122,23 @@ detailed_circle(
   std::vector<CellData<2>> cells(16, CellData<2>());
   static constexpr int     circle_cell_vertices[16][4] = {
     // We start with the 6 squares in the center square
-    {2, 18, 15, 21}, 
+    {6, 18, 15, 21}, 
     {15, 21, 14, 20},
     {14, 20, 4, 19},
-    {18, 3, 21, 16},
+    {18, 7, 21, 16},
     {21, 16, 20, 17},
     {20, 17, 19, 5},
     // We fill in the outer cells, starting from the top left
-    {9, 14, 6, 4}, 
+    {9, 14, 2, 4}, 
     {8, 15, 9, 14},
-    {0, 2, 8, 15},
-    {0, 10, 2, 18},
-    {10, 1, 18, 3},
-    {3, 1, 16, 12},
+    {0, 6, 8, 15},
+    {0, 10, 6, 18},
+    {10, 1, 18, 7},
+    {7, 1, 16, 12},
     {16, 12, 17, 13},
-    {17, 13, 5, 7},
-    {19, 5, 11, 7},
-    {4, 19, 6, 11}};
+    {17, 13, 5, 3},
+    {19, 5, 11, 3},
+    {4, 19, 2, 11}};
 
   for (unsigned int i = 0; i < 16; ++i)
     {
@@ -164,8 +160,7 @@ detailed_circle(
 
 
 
-// The volume is divided into three parts, the bottom, the center (where the
-// rectangular volume fits in the cylinder), the top, and the bottom
+// The core of the file begins here
 
 template <int dim, int spacedim>
 GridCavityMw<dim, spacedim>::GridCavityMw(const std::string &grid_arguments)
@@ -178,10 +173,10 @@ GridCavityMw<dim, spacedim>::GridCavityMw(const std::string &grid_arguments)
   outer_radius       = std::stod(arguments[2]);
   inner_length       = std::stod(arguments[3]);
   bottom_height      = std::stod(arguments[4]);
-  center_height      = std::stod(arguments[5]);
+  middle_height      = std::stod(arguments[5]);
   top_height         = std::stod(arguments[6]);
   bottom_resolution  = std::stod(arguments[7]);
-  center_resolution  = std::stod(arguments[8]);
+  middle_resolution  = std::stod(arguments[8]);
   top_resolution     = std::stod(arguments[9]);
   shape              = (arguments[10] == "true");
 }
@@ -191,35 +186,31 @@ void
 GridCavityMw<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> &triangulation)
 {
-  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  // TESTS
-  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
   // Tests when the inner shape is a circle
   if (shape)
     {
       AssertThrow(
         inner_length > rectangle_width / 2,
         ExcMessage(
-          "The internal radius is too small compared to the width of the waveguide."));
+          "The internal radius is too small compared to the width of the waveguide. This situations leads to the generation of inverted cells"));
 
       AssertThrow(
         inner_length < outer_radius,
         ExcMessage(
-          "The external radius is too long compared to the external Radius."));
+          "The internal radius is greater than the external radius. This situations leads to the generation of inverted cells"));
     }
 
   // Tests when the inner shape is a square
   else
     {
       AssertThrow(
-        inner_length > rectangle_width / 2,
+        inner_length > rectangle_width / 2, 
         ExcMessage(
-          "The square side is too small compared to the width of the waveguide."));
+          "The square side is too small compared to the width of the waveguide. This situations leads to the generation of inverted cells"));
 
       AssertThrow(inner_length < outer_radius / (std::sqrt(2)),
                   ExcMessage(
-                    "The square is too long compared to the external Radius."));
+          "The inner square length is greater than the external radius. This situations leads to the generation of inverted cells"));
     }
 
   // Dimension Test
@@ -231,16 +222,14 @@ GridCavityMw<dim, spacedim>::make_grid(
 
   else
     {
-      //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       // COARSE 2D PARTS OF THE MESH
-      //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-      // PART -I-:Creating the Shape of the Medium: The paving stone Embedded in
+      
+      // PART -I-:Creating the Shape of the Medium: The paving stone embedded in
       // the Cylinder
 
       // Creating the first shape: a rectangle (after extrusion, this rectangle
-      // will represent the paving stone) This rectangle is the reaso why we
-      // divide the volume into three different pieces
+      // will represent the paving stone). This rectangle is the reason why we
+      // divide the volume into three different pieces.
       Triangulation<2> rect;
       GridGenerator::hyper_rectangle(
         rect, Point<2>(0.0, 0.0), Point<2>(rectangle_length, rectangle_width));
@@ -248,11 +237,12 @@ GridCavityMw<dim, spacedim>::make_grid(
       // Creating the second shape: a rough circle with two points located
       // exactly at the right corners of the rectangle
       Triangulation<2> disk;
+      // Position of the center of the circle
       const Point<2>   center(rectangle_length +
                               sqrt(outer_radius * outer_radius -
                                    rectangle_width * rectangle_width / 4),
                             rectangle_width /
-                              2); // Position of the center of the circle
+                              2); 
       detailed_circle<2, 2>(disk,
                             center,
                             rectangle_width,
@@ -263,11 +253,14 @@ GridCavityMw<dim, spacedim>::make_grid(
                             false);
 
       Triangulation<2> merged;
+      // The last argument of the following function is
+      // false since it is useless to copy the manifolds ids
+      // because we will set them after
       GridGenerator::merge_triangulations(rect,
                                           disk,
                                           merged,
                                           1e-12,
-                                          false); // copy_manifold_ids
+                                          false); 
 
       // PART -II-   Creating the bottom cylinder
       Triangulation<2, 2> base;
@@ -291,55 +284,51 @@ GridCavityMw<dim, spacedim>::make_grid(
                             shape,
                             false);
 
-      //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       // EXTRUDE
-      //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+      
       Triangulation<3> extruded_base;
-      Triangulation<3> extruded_center;
+      Triangulation<3> extruded_middle;
       Triangulation<3> extruded_top;
       GridGenerator::extrude_triangulation(base,
                                            bottom_resolution,
                                            bottom_height,
                                            extruded_base);
       GridGenerator::extrude_triangulation(merged,
-                                           center_resolution,
-                                           center_height,
-                                           extruded_center);
+                                           middle_resolution,
+                                           middle_height,
+                                           extruded_middle);
       GridGenerator::extrude_triangulation(top,
                                            top_resolution,
                                            top_height,
                                            extruded_top);
 
-      //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       // MANIFOLD
-      //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-      // Here is a lambda that places the id of the cylindrical manifold in the
+      
+      // Lambda function that places the id of the cylindrical manifold in the
       // inside of the cylinder
       auto attach_cylindrical_manifold = [&](Triangulation<3> &tria,
                                              double            height) {
         for (auto &cell : tria.active_cell_iterators())
           if (cell->center()[0] >=
               rectangle_length -
-                1e-6) // Concerns only the cylinder because every cell of the
-                      // paving stone part has an x-component that veridies this
-                      // condition
+                1e-6) 
+      // Concerns only the cylinder because every cell of the
+      // waveguide verifies the condition : x >= rectangle_length
             for (const auto f : cell->face_indices())
               if (cell->face(f)->at_boundary())
                 {
                   const Point<3> face_center = cell->face(f)->center();
                   if (std::abs(face_center[2]) > 1e-10 &&
                       std::abs(face_center[2] - height) >
-                        1e-10) // Does not take into account the the flat faces
-                               // at z=0 and z=height because we do not want a
-                               // manifold apllied there
+                        1e-10) 
+      // Does not take into account the the flat faces
+      // at z=0 and z=height because we do not want a manifold applied there.
                     cell->set_all_manifold_ids(1);
                 }
       };
 
       attach_cylindrical_manifold(extruded_base, bottom_height);
-      attach_cylindrical_manifold(extruded_center, center_height);
+      attach_cylindrical_manifold(extruded_middle, middle_height);
       attach_cylindrical_manifold(extruded_top, top_height);
 
       // Now that we have the IDs in the right place, we can install the
@@ -347,33 +336,31 @@ GridCavityMw<dim, spacedim>::make_grid(
       const Point<3>     center_3d(center[0], center[1], 0.0);
       const Tensor<1, 3> axis({0.0, 0.0, 1.0});
       extruded_base.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
-      extruded_center.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
+      extruded_middle.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
       extruded_top.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
 
-      //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       // MERGING THE 3D MESHES
-      //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+      
       // Move the cylinders in the right positions to prepare the merge
       Tensor<1, 3> shift_down;
       shift_down[0] = 0.0;
       shift_down[1] = 0.0;
       shift_down[2] = -bottom_height; // The base_cylinder must have its base at
-                                      // height -bottom_height
+                                      // -bottom_height
       GridTools::shift(shift_down, extruded_base);
 
 
       Tensor<1, 3> shift_up;
       shift_up[0] = 0.0;
       shift_up[1] = 0.0;
-      shift_up[2] = +center_height; // The top_cylinder  must have its base at
-                                    // height +center_height
+      shift_up[2] = +middle_height; // The top_cylinder  must have its base at
+                                    // +middle_height
       GridTools::shift(shift_up, extruded_top);
 
 
       // Merge the 3 parts of the mesh
       std::vector<const Triangulation<3, 3> *> parts = {&extruded_base,
-                                                        &extruded_center,
+                                                        &extruded_middle,
                                                         &extruded_top};
 
       GridGenerator::merge_triangulations(
@@ -387,15 +374,13 @@ GridCavityMw<dim, spacedim>::make_grid(
       triangulation.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
 
 
-      //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       // BOUNDARY AND MATERIAL IDs
-      //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+      
       /*
       //Boundary
       0: MW Inlet (x=0)
-      1: Fluid Inlet (y = -bottom_height)
-      2: Fluid Outle (y = center_height + top_height)
+      1: Fluid Inlet  (y = -bottom_height)
+      2: Fluid Outlet (y = middle_height + top_height)
       3: PEC walls (every other wall)
 
       //Material
@@ -405,7 +390,7 @@ GridCavityMw<dim, spacedim>::make_grid(
 
       for (auto &cell : triangulation.active_cell_iterators())
         {
-          // BOUNDARY IDs
+          // Boundary ids
           for (const auto f : cell->face_indices())
             {
               if (cell->face(f)->at_boundary())
@@ -415,14 +400,14 @@ GridCavityMw<dim, spacedim>::make_grid(
                     cell->face(f)->set_boundary_id(0); // MW Inlet
                   else if (face_center[2] <= -bottom_height + 1e-6)
                     cell->face(f)->set_boundary_id(1); // Fluid Inlet
-                  else if (face_center[2] >= center_height + top_height - 1e-6)
+                  else if (face_center[2] >= middle_height + top_height - 1e-6)
                     cell->face(f)->set_boundary_id(2); // Fluid Outlet
                   else
                     cell->face(f)->set_boundary_id(
                       3); // PEC Walls (Perfect Electric Conductors)
                 }
             }
-          // MATERIAL IDs
+          // Material ids
           if (cell->center()[0] <= rectangle_length)
             cell->set_material_id(1); // waveguide (Paving stone)
           else

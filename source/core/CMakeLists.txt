@@ -9,11 +9,11 @@ add_library(lethe-core
   electric_permittivity_model.cc
   evaporation_model.cc
   grid_birmingham_fluidized_bed.cc
-  grid_cavity_mw.cc
   grid_cube_merged.cc
   grid_cylinder.cc
   grid_fichera_oven.cc
   grid_impinging_jet_mixer.cc
+  grid_mw_pipe_and_waveguide.cc
   grid_periodic_hills.cc
   grid_uniform_channel_with_meshed_cylinder.cc
   grid_uniform_channel_with_meshed_square_prism.cc
