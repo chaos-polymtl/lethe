@@ -53,7 +53,7 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_start(
 
       // Update particle position over a full time step using the half-step
       // velocity
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         particle_position[d] +=
           particle_properties[PropertiesIndex::v_x + d] * dt;
 
