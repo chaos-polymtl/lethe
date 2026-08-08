@@ -38,7 +38,7 @@ GridCubeMerged<dim, spacedim>::GridCubeMerged(const std::string &grid_arguments)
       AssertThrow(
         false,
         ExcMessage(
-          "Mandatory cylinder parameters are (plate file name : cylinder file name : cylindrical BID plate : cylindrical BID cylinder)"));
+          "Mandatory cylinder parameters are (plate file name:cylinder file name: cylindrical BID plate : cylindrical BID cylinder)"));
     }
   else
     {
