@@ -35,10 +35,9 @@ public:
   GridCubeMerged(const std::string &grid_arguments);
 
   /**
-   * @brief make_grid. The make_grid function generates cylindrical meshes with different meshing strategies for the circular part of the geometry, depending on the cylinder type specified in the constructor. It also constructs the geometry manifold with SphericalManifold.
+   * @brief Generate the merged cube mesh.
    *
-   * @param[out] triangulation. The triangulation object on which the grid is
-   * generated
+   * @param[out] triangulation The triangulation to fill with the mesh.
    */
   void
   make_grid(Triangulation<dim, spacedim> &triangulation);
@@ -56,6 +55,5 @@ private:
   /// ID corresponding to the cylindrical boundary at the cylinder mesh
   unsigned int cylindrical_bid_cylinder;
 };
-
 
 #endif
