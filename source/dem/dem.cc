@@ -661,7 +661,7 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
       // when particles are exchanged between processors.
       contact_manager.update_contacts();
 
-      // Update the particle iterators in local-local contact the
+      // Update the particle iterators in local-local contact
       // containers
       contact_manager.update_local_particles_in_cells(particle_handler);
 
