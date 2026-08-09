@@ -1447,18 +1447,19 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::dem_iterator()
   sparse_contacts_object.update_average_velocities_acceleration(
     this->particle_handler, g, contact_outcome.force, dem_time_step);
 
-  // Integration correction step (after force calculation)
-  // In the first step, we have to obtain location of particles at half-step
-  // time
-  // TODO do all DEM time step at first CFD time step are half step?
-  if (this->simulation_control->get_iteration_number() == 0)
+  // Integration correction step (after force calculation).
+  // Since the velocities are synchronized with the positions at the end of
+  // every CFD time step (see synchronize_particle_velocities), the first DEM
+  // sub-iteration of every CFD time step is an opening step, which lets the
+  // scheme restart its staggering if it has one.
+  if (this->dem_simulation_control->is_first_iteration())
     {
-      integrator_object->integrate_half_step_location(this->particle_handler,
-                                                      g,
-                                                      dem_time_step,
-                                                      contact_outcome.torque,
-                                                      contact_outcome.force,
-                                                      MOI);
+      integrator_object->integrate_start(this->particle_handler,
+                                         g,
+                                         dem_time_step,
+                                         contact_outcome.torque,
+                                         contact_outcome.force,
+                                         MOI);
     }
   else
     {
@@ -1488,6 +1489,61 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::dem_iterator()
         ongoing_collision_log,
         collision_event_log);
     }
+
+  dem_action_manager->reset_triggers();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+CFDDEMMatrixFree<dim, PropertiesIndex>::synchronize_particle_velocities()
+{
+  const double dem_time_step = this->dem_simulation_control->get_time_step();
+
+  // The particles have reached their final position for this CFD time step, but
+  // their velocities are still lagging by half a DEM time step. The forces are
+  // re-evaluated at this final position so that the closing half velocity step
+  // can be applied. No contact search is carried out: the contact lists built
+  // at the last DEM sub-iteration are exactly as valid here as they are for any
+  // sub-iteration that does not trigger a search, and only the ghost particles
+  // need to be updated.
+  this->particle_handler.update_ghost_particles();
+
+  // Particle-particle contact force
+  particle_particle_contact_force_object->calculate_particle_particle_contact(
+    contact_manager.get_local_adjacent_particles(),
+    contact_manager.get_ghost_adjacent_particles(),
+    contact_manager.get_local_local_periodic_adjacent_particles(),
+    contact_manager.get_local_ghost_periodic_adjacent_particles(),
+    contact_manager.get_ghost_local_periodic_adjacent_particles(),
+    dem_time_step,
+    contact_outcome);
+
+  // Particles-walls contact force
+  particle_wall_contact_force();
+
+  // The heat transfer rate accumulated by the contact force objects is
+  // discarded. The temperature is not integrated by the closing half step,
+  // since it is not staggered and has already been advanced to the final time
+  // by the last DEM sub-iteration. Leaving the container filled would leak
+  // this heat transfer rate into the temperature integration of the next CFD
+  // time step, which would then be counted twice.
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    std::ranges::fill(contact_outcome.heat_transfer_rate, 0.);
+
+  // Add fluid-particle interaction force to the force container
+  add_fluid_particle_interaction();
+
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+  integrator_object->integrate_end(this->particle_handler,
+                                   g,
+                                   dem_time_step,
+                                   contact_outcome.torque,
+                                   contact_outcome.force,
+                                   MOI,
+                                   *parallel_triangulation,
+                                   sparse_contacts_object);
 
   dem_action_manager->reset_triggers();
 }
@@ -1757,6 +1813,11 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
             // update_ghost
             dem_iterator();
           }
+
+        // Closing step of the integration scheme. It brings the velocities of
+        // the particles to the end of the CFD time step, at which their
+        // positions already are.
+        synchronize_particle_velocities();
 
         this->pcout << "Finished " << dem_simulation_control->get_iteration()
                     << " DEM iterations" << std::endl;

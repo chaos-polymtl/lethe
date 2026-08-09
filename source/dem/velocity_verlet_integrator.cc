@@ -11,15 +11,15 @@ using namespace DEM;
 
 template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_location(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_start(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
-  const std::vector<Tensor<1, 3>> &torque,
-  const std::vector<Tensor<1, 3>> &force,
+  std::vector<Tensor<1, 3>>       &torque,
+  std::vector<Tensor<1, 3>>       &force,
   const std::vector<double>       &MOI)
 {
-  Tensor<1, dim> particle_acceleration;
+  const Tensor<1, 3> half_dt_g = 0.5 * g * dt;
 
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -31,26 +31,181 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_location(
       auto                  particle_position   = particle->get_location();
       types::particle_index particle_id         = particle->get_local_index();
 
-      for (int d = 0; d < dim; ++d)
-        {
-          // Update acceleration
-          particle_acceleration[d] =
-            g[d] + (force[particle_id][d]) /
-                     particle_properties[PropertiesIndex::mass];
+      Tensor<1, 3> &particle_torque = torque[particle_id];
+      Tensor<1, 3> &particle_force  = force[particle_id];
 
+      const double half_dt_mass_inverse =
+        0.5 * dt / particle_properties[PropertiesIndex::mass];
+      const double half_dt_MOI_inverse = 0.5 * dt / MOI[particle_id];
+
+      // The velocities are advanced over all three components, even in 2D,
+      // since the third component is the one that carries the rotation in 2D
+      for (unsigned int d = 0; d < 3; ++d)
+        {
           // Half-step velocity
           particle_properties[PropertiesIndex::v_x + d] +=
-            0.5 * particle_acceleration[d] * dt;
+            half_dt_g[d] + particle_force[d] * half_dt_mass_inverse;
 
           // Half-step angular velocity
           particle_properties[PropertiesIndex::omega_x + d] +=
-            0.5 * (torque[particle_id][d] / MOI[particle_id]) * dt;
-
-          // Update particle position using half-step velocity
-          particle_position[d] +=
-            particle_properties[PropertiesIndex::v_x + d] * dt;
+            particle_torque[d] * half_dt_MOI_inverse;
         }
+
+      // Update particle position over a full time step using the half-step
+      // velocity
+      for (int d = 0; d < dim; ++d)
+        particle_position[d] +=
+          particle_properties[PropertiesIndex::v_x + d] * dt;
+
+      // Reinitialize force and torque of particle
+      particle_force  = 0.;
+      particle_torque = 0.;
+
       particle->set_location(particle_position);
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_end(
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Tensor<1, 3>              &g,
+  const double                     dt,
+  std::vector<Tensor<1, 3>>       &torque,
+  std::vector<Tensor<1, 3>>       &force,
+  const std::vector<double>       &MOI)
+{
+  const Tensor<1, 3> half_dt_g = 0.5 * g * dt;
+
+  for (auto &particle : particle_handler)
+    {
+      // Get the total array view to the particle properties once to improve
+      // efficiency
+      types::particle_index particle_id = particle.get_local_index();
+
+      auto          particle_properties = particle.get_properties();
+      Tensor<1, 3> &particle_torque     = torque[particle_id];
+      Tensor<1, 3> &particle_force      = force[particle_id];
+
+      const double half_dt_mass_inverse =
+        0.5 * dt / particle_properties[PropertiesIndex::mass];
+      const double half_dt_MOI_inverse = 0.5 * dt / MOI[particle_id];
+
+      // Loop is manually unrolled for performance
+      // Particle velocity integration
+      particle_properties[PropertiesIndex::v_x] +=
+        half_dt_g[0] + particle_force[0] * half_dt_mass_inverse;
+      particle_properties[PropertiesIndex::v_y] +=
+        half_dt_g[1] + particle_force[1] * half_dt_mass_inverse;
+      particle_properties[PropertiesIndex::v_z] +=
+        half_dt_g[2] + particle_force[2] * half_dt_mass_inverse;
+
+      // Updating angular velocity
+      particle_properties[PropertiesIndex::omega_x] +=
+        particle_torque[0] * half_dt_MOI_inverse;
+      particle_properties[PropertiesIndex::omega_y] +=
+        particle_torque[1] * half_dt_MOI_inverse;
+      particle_properties[PropertiesIndex::omega_z] +=
+        particle_torque[2] * half_dt_MOI_inverse;
+
+      // Reinitialize force and torque of particle
+      particle_force  = 0.;
+      particle_torque = 0.;
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_end(
+  Particles::ParticleHandler<dim>                 &particle_handler,
+  const Tensor<1, 3>                              &g,
+  const double                                     dt,
+  std::vector<Tensor<1, 3>>                       &torque,
+  std::vector<Tensor<1, 3>>                       &force,
+  const std::vector<double>                       &MOI,
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object)
+{
+  auto *action_manager = DEMActionManager::get_action_manager();
+
+  const bool use_default_function =
+    !action_manager->check_sparse_contacts_enabled() ||
+    action_manager->check_mobility_status_reset();
+
+  // Regular synchronization process if sparse contacts are not enabled or if
+  // this is the first iteration.
+  if (use_default_function)
+    {
+      integrate_end(particle_handler, g, dt, torque, force, MOI);
+      return;
+    }
+
+  const Tensor<1, 3> half_dt_g = 0.5 * g * dt;
+
+  // Get the map of mobility status of cells
+  auto &cell_mobility_status_map = sparse_contacts_object.get_mobility_status();
+
+  // Contrary to the regular integration, the particles of the advected cells do
+  // not need any special treatment here since no position is updated by the
+  // closing half step.
+  for (auto &cell : triangulation.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      // Get the mobility status of the cell
+      const unsigned int mobility_status =
+        cell_mobility_status_map.at(cell->active_cell_index());
+
+      // We loop over the particles, even if cell is not mobile, to reset the
+      // force and torques value of the particle with the particle id
+      auto particles_in_cell = particle_handler.particles_in_cell(cell);
+
+      if (particle_handler.n_particles_in_cell(cell) == 0)
+        continue;
+
+      if (mobility_status ==
+          AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
+        {
+          for (auto &particle : particles_in_cell)
+            {
+              types::particle_index particle_id = particle.get_local_index();
+              auto particle_properties          = particle.get_properties();
+
+              Tensor<1, 3> &particle_torque = torque[particle_id];
+              Tensor<1, 3> &particle_force  = force[particle_id];
+
+              const double half_dt_mass_inverse =
+                0.5 * dt / particle_properties[PropertiesIndex::mass];
+              const double half_dt_MOI_inverse = 0.5 * dt / MOI[particle_id];
+
+              for (unsigned int d = 0; d < 3; ++d)
+                {
+                  // Particle velocity integration
+                  particle_properties[PropertiesIndex::v_x + d] +=
+                    half_dt_g[d] + particle_force[d] * half_dt_mass_inverse;
+
+                  // Updating angular velocity
+                  particle_properties[PropertiesIndex::omega_x + d] +=
+                    particle_torque[d] * half_dt_MOI_inverse;
+                }
+
+              // Reinitialize force and torque of particle
+              particle_force  = 0.;
+              particle_torque = 0.;
+            }
+        }
+      else // Active and inactive cells
+        {
+          for (auto &particle : particles_in_cell)
+            {
+              types::particle_index particle_id = particle.get_local_index();
+
+              // Reset forces
+              force[particle_id]  = 0.;
+              torque[particle_id] = 0.;
+            }
+        }
     }
 }
 

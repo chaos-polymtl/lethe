@@ -166,6 +166,32 @@ private:
   void
   update_temperature_solid_objects();
 
+  /**
+   * @brief Check if a contact detection is required at the current iteration and,
+   * if it is, map the solid objects in the background triangulation, sort the
+   * particles into subdomains and cells and execute the particle-particle and
+   * particle-wall broad and fine searches. Otherwise, only update the ghost
+   * particles.
+   */
+  void
+  execute_contact_detection_and_search();
+
+  /**
+   * @brief Calculate the particle-particle and the particle-wall contact forces
+   * and torques at the current position of the particles.
+   */
+  void
+  compute_contact_forces();
+
+  /**
+   * @brief Carry out the closing half velocity step of a staggered integration
+   * scheme, which synchronizes the velocities of the particles with their
+   * positions at the final time. The contact forces are re-evaluated at the
+   * final position of the particles, hence n + 1 integration operations are
+   * carried out to complete n time steps.
+   */
+  void
+  synchronize_velocities();
 
   /**
    * @brief Execute the last post-processing at the end of the simulation and
@@ -203,6 +229,15 @@ private:
    */
   void
   sort_particles_into_subdomains_and_cells();
+
+
+  /**
+   * @brief Hook for particular operations that are related to the packed insertion.
+   *
+   * @return Boolean that indicates if the simulation should finish or not.
+   */
+  bool
+  packed_insertion_report_and_status();
 
   /**
    * @brief The MPI communicator used for the parallel simulation.

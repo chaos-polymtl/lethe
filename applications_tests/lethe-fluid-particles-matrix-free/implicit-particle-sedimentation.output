@@ -64,7 +64,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 3        Time: 0.015    Time step: 0.005    CFL: 1.41959e-08
+Transient iteration: 3        Time: 0.015    Time step: 0.005    CFL: 1.41858e-08
 **********************************************************************************
 --------------
 Void Fraction
@@ -86,7 +86,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 4        Time: 0.02     Time step: 0.005    CFL: 4.86251e-08
+Transient iteration: 4        Time: 0.02     Time step: 0.005    CFL: 4.85639e-08
 **********************************************************************************
 --------------
 Void Fraction
@@ -104,11 +104,11 @@ Particle statistics
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.000000e+00 | 
 | Velocity magnitude           | 1.693356e-02 | 1.693356e-02  | 1.693356e-02 | 1.693356e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.290261e-09 | 1.290261e-09  | 1.290261e-09 | 1.290261e-09 | 
+| Translational kinetic energy | 1.290262e-09 | 1.290262e-09  | 1.290262e-09 | 1.290262e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 5        Time: 0.025    Time step: 0.005    CFL: 1.07101e-07
+Transient iteration: 5        Time: 0.025    Time step: 0.005    CFL: 1.06905e-07
 **********************************************************************************
 --------------
 Void Fraction
@@ -130,7 +130,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 6        Time: 0.03     Time step: 0.005    CFL: 1.92174e-07
+Transient iteration: 6        Time: 0.03     Time step: 0.005    CFL: 1.91708e-07
 **********************************************************************************
 --------------
 Void Fraction
@@ -152,7 +152,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 7        Time: 0.035    Time step: 0.005    CFL: 3.05557e-07
+Transient iteration: 7        Time: 0.035    Time step: 0.005    CFL: 3.04636e-07
 **********************************************************************************
 --------------
 Void Fraction
@@ -168,14 +168,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 7.000000e+00 | 
-| Velocity magnitude           | 2.736076e-02 | 2.736076e-02  | 2.736076e-02 | 2.736076e-02 | 
+| Velocity magnitude           | 2.736077e-02 | 2.736077e-02  | 2.736077e-02 | 2.736077e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 3.368509e-09 | 3.368509e-09  | 3.368509e-09 | 3.368509e-09 | 
+| Translational kinetic energy | 3.368510e-09 | 3.368510e-09  | 3.368510e-09 | 3.368510e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-*********************************************************************************
-Transient iteration: 8        Time: 0.04     Time step: 0.005    CFL: 4.4831e-07
-*********************************************************************************
+**********************************************************************************
+Transient iteration: 8        Time: 0.04     Time step: 0.005    CFL: 4.46661e-07
+**********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -190,14 +190,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 8.000000e+00 | 
-| Velocity magnitude           | 3.032408e-02 | 3.032408e-02  | 3.032408e-02 | 3.032408e-02 | 
+| Velocity magnitude           | 3.032409e-02 | 3.032409e-02  | 3.032409e-02 | 3.032409e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 4.137678e-09 | 4.137678e-09  | 4.137678e-09 | 4.137678e-09 | 
+| Translational kinetic energy | 4.137679e-09 | 4.137679e-09  | 4.137679e-09 | 4.137679e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-**********************************************************************************
-Transient iteration: 9        Time: 0.045    Time step: 0.005    CFL: 6.21139e-07
-**********************************************************************************
+********************************************************************************
+Transient iteration: 9        Time: 0.045    Time step: 0.005    CFL: 6.183e-07
+********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -212,13 +212,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 9.000000e+00 | 
-| Velocity magnitude           | 3.303316e-02 | 3.303316e-02  | 3.303316e-02 | 3.303316e-02 | 
+| Velocity magnitude           | 3.303317e-02 | 3.303317e-02  | 3.303317e-02 | 3.303317e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 4.910002e-09 | 4.910002e-09  | 4.910002e-09 | 4.910002e-09 | 
+| Translational kinetic energy | 4.910004e-09 | 4.910004e-09  | 4.910004e-09 | 4.910004e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 10       Time: 0.05     Time step: 0.005    CFL: 8.25063e-07
+Transient iteration: 10       Time: 0.05     Time step: 0.005    CFL: 8.20361e-07
 **********************************************************************************
 --------------
 Void Fraction
@@ -234,13 +234,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.000000e+01 | 
-| Velocity magnitude           | 3.549606e-02 | 3.549606e-02  | 3.549606e-02 | 3.549606e-02 | 
+| Velocity magnitude           | 3.549607e-02 | 3.549607e-02  | 3.549607e-02 | 3.549607e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 5.669459e-09 | 5.669459e-09  | 5.669459e-09 | 5.669459e-09 | 
+| Translational kinetic energy | 5.669462e-09 | 5.669462e-09  | 5.669462e-09 | 5.669462e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 11       Time: 0.055    Time step: 0.005    CFL: 1.06023e-06
+Transient iteration: 11       Time: 0.055    Time step: 0.005    CFL: 1.05298e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -256,13 +256,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.100000e+01 | 
-| Velocity magnitude           | 3.772393e-02 | 3.772393e-02  | 3.772393e-02 | 3.772393e-02 | 
+| Velocity magnitude           | 3.772394e-02 | 3.772394e-02  | 3.772394e-02 | 3.772394e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 6.403467e-09 | 6.403467e-09  | 6.403467e-09 | 6.403467e-09 | 
+| Translational kinetic energy | 6.403471e-09 | 6.403471e-09  | 6.403471e-09 | 6.403471e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 12       Time: 0.06     Time step: 0.005    CFL: 1.32744e-06
+Transient iteration: 12       Time: 0.06     Time step: 0.005    CFL: 1.31689e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -278,13 +278,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.200000e+01 | 
-| Velocity magnitude           | 3.973014e-02 | 3.973014e-02  | 3.973014e-02 | 3.973014e-02 | 
+| Velocity magnitude           | 3.973015e-02 | 3.973015e-02  | 3.973015e-02 | 3.973015e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 7.102668e-09 | 7.102668e-09  | 7.102668e-09 | 7.102668e-09 | 
+| Translational kinetic energy | 7.102673e-09 | 7.102673e-09  | 7.102673e-09 | 7.102673e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 13       Time: 0.065    Time step: 0.005    CFL: 1.62597e-06
+Transient iteration: 13       Time: 0.065    Time step: 0.005    CFL: 1.61184e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -300,14 +300,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.300000e+01 | 
-| Velocity magnitude           | 4.152947e-02 | 4.152947e-02  | 4.152947e-02 | 4.152947e-02 | 
+| Velocity magnitude           | 4.152949e-02 | 4.152949e-02  | 4.152949e-02 | 4.152949e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 7.760580e-09 | 7.760580e-09  | 7.760580e-09 | 7.760580e-09 | 
+| Translational kinetic energy | 7.760585e-09 | 7.760585e-09  | 7.760585e-09 | 7.760585e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-**********************************************************************************
-Transient iteration: 14       Time: 0.07     Time step: 0.005    CFL: 1.95555e-06
-**********************************************************************************
+*********************************************************************************
+Transient iteration: 14       Time: 0.07     Time step: 0.005    CFL: 1.9373e-06
+*********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -322,13 +322,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.400000e+01 | 
-| Velocity magnitude           | 4.313747e-02 | 4.313747e-02  | 4.313747e-02 | 4.313747e-02 | 
+| Velocity magnitude           | 4.313748e-02 | 4.313748e-02  | 4.313748e-02 | 4.313748e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 8.373184e-09 | 8.373184e-09  | 8.373184e-09 | 8.373184e-09 | 
+| Translational kinetic energy | 8.373188e-09 | 8.373188e-09  | 8.373188e-09 | 8.373188e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 15       Time: 0.075    Time step: 0.005    CFL: 2.31475e-06
+Transient iteration: 15       Time: 0.075    Time step: 0.005    CFL: 2.29231e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -344,13 +344,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.500000e+01 | 
-| Velocity magnitude           | 4.456988e-02 | 4.456988e-02  | 4.456988e-02 | 4.456988e-02 | 
+| Velocity magnitude           | 4.456989e-02 | 4.456989e-02  | 4.456989e-02 | 4.456989e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 8.938493e-09 | 8.938493e-09  | 8.938493e-09 | 8.938493e-09 | 
+| Translational kinetic energy | 8.938496e-09 | 8.938496e-09  | 8.938496e-09 | 8.938496e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 16       Time: 0.08     Time step: 0.005    CFL: 2.70155e-06
+Transient iteration: 16       Time: 0.08     Time step: 0.005    CFL: 2.67518e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -368,11 +368,11 @@ Particle statistics
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.600000e+01 | 
 | Velocity magnitude           | 4.584228e-02 | 4.584228e-02  | 4.584228e-02 | 4.584228e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 9.456137e-09 | 9.456137e-09  | 9.456137e-09 | 9.456137e-09 | 
+| Translational kinetic energy | 9.456136e-09 | 9.456136e-09  | 9.456136e-09 | 9.456136e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 17       Time: 0.085    Time step: 0.005    CFL: 3.11306e-06
+Transient iteration: 17       Time: 0.085    Time step: 0.005    CFL: 3.08342e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -388,14 +388,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.700000e+01 | 
-| Velocity magnitude           | 4.696972e-02 | 4.696972e-02  | 4.696972e-02 | 4.696972e-02 | 
+| Velocity magnitude           | 4.696970e-02 | 4.696970e-02  | 4.696970e-02 | 4.696970e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 9.926982e-09 | 9.926982e-09  | 9.926982e-09 | 9.926982e-09 | 
+| Translational kinetic energy | 9.926976e-09 | 9.926976e-09  | 9.926976e-09 | 9.926976e-09 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-**********************************************************************************
-Transient iteration: 18       Time: 0.09     Time step: 0.005    CFL: 3.54559e-06
-**********************************************************************************
+*********************************************************************************
+Transient iteration: 18       Time: 0.09     Time step: 0.005    CFL: 3.5137e-06
+*********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -410,13 +410,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.800000e+01 | 
-| Velocity magnitude           | 4.796652e-02 | 4.796652e-02  | 4.796652e-02 | 4.796652e-02 | 
+| Velocity magnitude           | 4.796649e-02 | 4.796649e-02  | 4.796649e-02 | 4.796649e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.035280e-08 | 1.035280e-08  | 1.035280e-08 | 1.035280e-08 | 
+| Translational kinetic energy | 1.035278e-08 | 1.035278e-08  | 1.035278e-08 | 1.035278e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 19       Time: 0.095    Time step: 0.005    CFL: 3.99472e-06
+Transient iteration: 19       Time: 0.095    Time step: 0.005    CFL: 3.96194e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -432,13 +432,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.900000e+01 | 
-| Velocity magnitude           | 4.884613e-02 | 4.884613e-02  | 4.884613e-02 | 4.884613e-02 | 
+| Velocity magnitude           | 4.884607e-02 | 4.884607e-02  | 4.884607e-02 | 4.884607e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.073598e-08 | 1.073598e-08  | 1.073598e-08 | 1.073598e-08 | 
+| Translational kinetic energy | 1.073595e-08 | 1.073595e-08  | 1.073595e-08 | 1.073595e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 20       Time: 0.1      Time step: 0.005    CFL: 4.45682e-06
+Transient iteration: 20       Time: 0.1      Time step: 0.005    CFL: 4.42392e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -454,13 +454,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.000000e+01 | 
-| Velocity magnitude           | 4.962103e-02 | 4.962103e-02  | 4.962103e-02 | 4.962103e-02 | 
+| Velocity magnitude           | 4.962095e-02 | 4.962095e-02  | 4.962095e-02 | 4.962095e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.107931e-08 | 1.107931e-08  | 1.107931e-08 | 1.107931e-08 | 
+| Translational kinetic energy | 1.107928e-08 | 1.107928e-08  | 1.107928e-08 | 1.107928e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 21       Time: 0.105    Time step: 0.005    CFL: 4.92867e-06
+Transient iteration: 21       Time: 0.105    Time step: 0.005    CFL: 4.89639e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -476,14 +476,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.100000e+01 | 
-| Velocity magnitude           | 5.030269e-02 | 5.030269e-02  | 5.030269e-02 | 5.030269e-02 | 
+| Velocity magnitude           | 5.030258e-02 | 5.030258e-02  | 5.030258e-02 | 5.030258e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.138580e-08 | 1.138580e-08  | 1.138580e-08 | 1.138580e-08 | 
+| Translational kinetic energy | 1.138576e-08 | 1.138576e-08  | 1.138576e-08 | 1.138576e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-**********************************************************************************
-Transient iteration: 22       Time: 0.11     Time step: 0.005    CFL: 5.40716e-06
-**********************************************************************************
+*********************************************************************************
+Transient iteration: 22       Time: 0.11     Time step: 0.005    CFL: 5.3763e-06
+*********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -498,13 +498,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.200000e+01 | 
-| Velocity magnitude           | 5.090158e-02 | 5.090158e-02  | 5.090158e-02 | 5.090158e-02 | 
+| Velocity magnitude           | 5.090145e-02 | 5.090145e-02  | 5.090145e-02 | 5.090145e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.165853e-08 | 1.165853e-08  | 1.165853e-08 | 1.165853e-08 | 
+| Translational kinetic energy | 1.165847e-08 | 1.165847e-08  | 1.165847e-08 | 1.165847e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 23       Time: 0.115    Time step: 0.005    CFL: 5.88996e-06
+Transient iteration: 23       Time: 0.115    Time step: 0.005    CFL: 5.86081e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -520,13 +520,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.300000e+01 | 
-| Velocity magnitude           | 5.142720e-02 | 5.142720e-02  | 5.142720e-02 | 5.142720e-02 | 
+| Velocity magnitude           | 5.142703e-02 | 5.142703e-02  | 5.142703e-02 | 5.142703e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.190055e-08 | 1.190055e-08  | 1.190055e-08 | 1.190055e-08 | 
+| Translational kinetic energy | 1.190047e-08 | 1.190047e-08  | 1.190047e-08 | 1.190047e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 24       Time: 0.12     Time step: 0.005    CFL: 6.37587e-06
+Transient iteration: 24       Time: 0.12     Time step: 0.005    CFL: 6.34858e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -542,13 +542,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.400000e+01 | 
-| Velocity magnitude           | 5.188808e-02 | 5.188808e-02  | 5.188808e-02 | 5.188808e-02 | 
+| Velocity magnitude           | 5.188789e-02 | 5.188789e-02  | 5.188789e-02 | 5.188789e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.211481e-08 | 1.211481e-08  | 1.211481e-08 | 1.211481e-08 | 
+| Translational kinetic energy | 1.211472e-08 | 1.211472e-08  | 1.211472e-08 | 1.211472e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 25       Time: 0.125    Time step: 0.005    CFL: 6.86293e-06
+Transient iteration: 25       Time: 0.125    Time step: 0.005    CFL: 6.83725e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -564,13 +564,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.500000e+01 | 
-| Velocity magnitude           | 5.229191e-02 | 5.229191e-02  | 5.229191e-02 | 5.229191e-02 | 
+| Velocity magnitude           | 5.229169e-02 | 5.229169e-02  | 5.229169e-02 | 5.229169e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.230411e-08 | 1.230411e-08  | 1.230411e-08 | 1.230411e-08 | 
+| Translational kinetic energy | 1.230401e-08 | 1.230401e-08  | 1.230401e-08 | 1.230401e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 26       Time: 0.13     Time step: 0.005    CFL: 7.35221e-06
+Transient iteration: 26       Time: 0.13     Time step: 0.005    CFL: 7.32782e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -586,13 +586,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.600000e+01 | 
-| Velocity magnitude           | 5.264553e-02 | 5.264553e-02  | 5.264553e-02 | 5.264553e-02 | 
+| Velocity magnitude           | 5.264527e-02 | 5.264527e-02  | 5.264527e-02 | 5.264527e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.247109e-08 | 1.247109e-08  | 1.247109e-08 | 1.247109e-08 | 
+| Translational kinetic energy | 1.247097e-08 | 1.247097e-08  | 1.247097e-08 | 1.247097e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 27       Time: 0.135    Time step: 0.005    CFL: 7.84281e-06
+Transient iteration: 27       Time: 0.135    Time step: 0.005    CFL: 7.81938e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -608,14 +608,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.700000e+01 | 
-| Velocity magnitude           | 5.295502e-02 | 5.295502e-02  | 5.295502e-02 | 5.295502e-02 | 
+| Velocity magnitude           | 5.295474e-02 | 5.295474e-02  | 5.295474e-02 | 5.295474e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.261815e-08 | 1.261815e-08  | 1.261815e-08 | 1.261815e-08 | 
+| Translational kinetic energy | 1.261802e-08 | 1.261802e-08  | 1.261802e-08 | 1.261802e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-*********************************************************************************
-Transient iteration: 28       Time: 0.14     Time step: 0.005    CFL: 8.3347e-06
-*********************************************************************************
+**********************************************************************************
+Transient iteration: 28       Time: 0.14     Time step: 0.005    CFL: 8.31189e-06
+**********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -630,14 +630,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.800000e+01 | 
-| Velocity magnitude           | 5.322581e-02 | 5.322581e-02  | 5.322581e-02 | 5.322581e-02 | 
+| Velocity magnitude           | 5.322550e-02 | 5.322550e-02  | 5.322550e-02 | 5.322550e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.274753e-08 | 1.274753e-08  | 1.274753e-08 | 1.274753e-08 | 
+| Translational kinetic energy | 1.274738e-08 | 1.274738e-08  | 1.274738e-08 | 1.274738e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-**********************************************************************************
-Transient iteration: 29       Time: 0.145    Time step: 0.005    CFL: 8.82815e-06
-**********************************************************************************
+*********************************************************************************
+Transient iteration: 29       Time: 0.145    Time step: 0.005    CFL: 8.8056e-06
+*********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -652,13 +652,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.900000e+01 | 
-| Velocity magnitude           | 5.346260e-02 | 5.346260e-02  | 5.346260e-02 | 5.346260e-02 | 
+| Velocity magnitude           | 5.346234e-02 | 5.346234e-02  | 5.346234e-02 | 5.346234e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.286120e-08 | 1.286120e-08  | 1.286120e-08 | 1.286120e-08 | 
+| Translational kinetic energy | 1.286108e-08 | 1.286108e-08  | 1.286108e-08 | 1.286108e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 30       Time: 0.15     Time step: 0.005    CFL: 9.32342e-06
+Transient iteration: 30       Time: 0.15     Time step: 0.005    CFL: 9.30077e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -674,13 +674,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.000000e+01 | 
-| Velocity magnitude           | 5.366950e-02 | 5.366950e-02  | 5.366950e-02 | 5.366950e-02 | 
+| Velocity magnitude           | 5.366930e-02 | 5.366930e-02  | 5.366930e-02 | 5.366930e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.296094e-08 | 1.296094e-08  | 1.296094e-08 | 1.296094e-08 | 
+| Translational kinetic energy | 1.296084e-08 | 1.296084e-08  | 1.296084e-08 | 1.296084e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 31       Time: 0.155    Time step: 0.005    CFL: 9.82055e-06
+Transient iteration: 31       Time: 0.155    Time step: 0.005    CFL: 9.79761e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -696,13 +696,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.100000e+01 | 
-| Velocity magnitude           | 5.385022e-02 | 5.385022e-02  | 5.385022e-02 | 5.385022e-02 | 
+| Velocity magnitude           | 5.385008e-02 | 5.385008e-02  | 5.385008e-02 | 5.385008e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.304837e-08 | 1.304837e-08  | 1.304837e-08 | 1.304837e-08 | 
+| Translational kinetic energy | 1.304830e-08 | 1.304830e-08  | 1.304830e-08 | 1.304830e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 32       Time: 0.16     Time step: 0.005    CFL: 1.03196e-05
+Transient iteration: 32       Time: 0.16     Time step: 0.005    CFL: 1.02961e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -718,13 +718,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.200000e+01 | 
-| Velocity magnitude           | 5.400804e-02 | 5.400804e-02  | 5.400804e-02 | 5.400804e-02 | 
+| Velocity magnitude           | 5.400796e-02 | 5.400796e-02  | 5.400796e-02 | 5.400796e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.312496e-08 | 1.312496e-08  | 1.312496e-08 | 1.312496e-08 | 
+| Translational kinetic energy | 1.312492e-08 | 1.312492e-08  | 1.312492e-08 | 1.312492e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 33       Time: 0.165    Time step: 0.005    CFL: 1.08204e-05
+Transient iteration: 33       Time: 0.165    Time step: 0.005    CFL: 1.07964e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -740,13 +740,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.300000e+01 | 
-| Velocity magnitude           | 5.414584e-02 | 5.414584e-02  | 5.414584e-02 | 5.414584e-02 | 
+| Velocity magnitude           | 5.414581e-02 | 5.414581e-02  | 5.414581e-02 | 5.414581e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.319202e-08 | 1.319202e-08  | 1.319202e-08 | 1.319202e-08 | 
+| Translational kinetic energy | 1.319201e-08 | 1.319201e-08  | 1.319201e-08 | 1.319201e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 34       Time: 0.17     Time step: 0.005    CFL: 1.13223e-05
+Transient iteration: 34       Time: 0.17     Time step: 0.005    CFL: 1.12982e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -762,13 +762,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.400000e+01 | 
-| Velocity magnitude           | 5.426614e-02 | 5.426614e-02  | 5.426614e-02 | 5.426614e-02 | 
+| Velocity magnitude           | 5.426616e-02 | 5.426616e-02  | 5.426616e-02 | 5.426616e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.325071e-08 | 1.325071e-08  | 1.325071e-08 | 1.325071e-08 | 
+| Translational kinetic energy | 1.325072e-08 | 1.325072e-08  | 1.325072e-08 | 1.325072e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 35       Time: 0.175    Time step: 0.005    CFL: 1.18238e-05
+Transient iteration: 35       Time: 0.175    Time step: 0.005    CFL: 1.18002e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -784,14 +784,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.500000e+01 | 
-| Velocity magnitude           | 5.437116e-02 | 5.437116e-02  | 5.437116e-02 | 5.437116e-02 | 
+| Velocity magnitude           | 5.437122e-02 | 5.437122e-02  | 5.437122e-02 | 5.437122e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.330205e-08 | 1.330205e-08  | 1.330205e-08 | 1.330205e-08 | 
+| Translational kinetic energy | 1.330208e-08 | 1.330208e-08  | 1.330208e-08 | 1.330208e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-*********************************************************************************
-Transient iteration: 36       Time: 0.18     Time step: 0.005    CFL: 1.2322e-05
-*********************************************************************************
+**********************************************************************************
+Transient iteration: 36       Time: 0.18     Time step: 0.005    CFL: 1.23005e-05
+**********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -806,13 +806,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.600000e+01 | 
-| Velocity magnitude           | 5.446284e-02 | 5.446284e-02  | 5.446284e-02 | 5.446284e-02 | 
+| Velocity magnitude           | 5.446294e-02 | 5.446294e-02  | 5.446294e-02 | 5.446294e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.334695e-08 | 1.334695e-08  | 1.334695e-08 | 1.334695e-08 | 
+| Translational kinetic energy | 1.334700e-08 | 1.334700e-08  | 1.334700e-08 | 1.334700e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 37       Time: 0.185    Time step: 0.005    CFL: 1.28137e-05
+Transient iteration: 37       Time: 0.185    Time step: 0.005    CFL: 1.27958e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -828,13 +828,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.700000e+01 | 
-| Velocity magnitude           | 5.454287e-02 | 5.454287e-02  | 5.454287e-02 | 5.454287e-02 | 
+| Velocity magnitude           | 5.454301e-02 | 5.454301e-02  | 5.454301e-02 | 5.454301e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.338620e-08 | 1.338620e-08  | 1.338620e-08 | 1.338620e-08 | 
+| Translational kinetic energy | 1.338627e-08 | 1.338627e-08  | 1.338627e-08 | 1.338627e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 38       Time: 0.19     Time step: 0.005    CFL: 1.32954e-05
+Transient iteration: 38       Time: 0.19     Time step: 0.005    CFL: 1.32828e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -850,14 +850,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.800000e+01 | 
-| Velocity magnitude           | 5.461273e-02 | 5.461273e-02  | 5.461273e-02 | 5.461273e-02 | 
+| Velocity magnitude           | 5.461291e-02 | 5.461291e-02  | 5.461291e-02 | 5.461291e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.342051e-08 | 1.342051e-08  | 1.342051e-08 | 1.342051e-08 | 
+| Translational kinetic energy | 1.342060e-08 | 1.342060e-08  | 1.342060e-08 | 1.342060e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-*********************************************************************************
-Transient iteration: 39       Time: 0.195    Time step: 0.005    CFL: 1.3762e-05
-*********************************************************************************
+**********************************************************************************
+Transient iteration: 39       Time: 0.195    Time step: 0.005    CFL: 1.37575e-05
+**********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -872,13 +872,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.900000e+01 | 
-| Velocity magnitude           | 5.467371e-02 | 5.467371e-02  | 5.467371e-02 | 5.467371e-02 | 
+| Velocity magnitude           | 5.467393e-02 | 5.467393e-02  | 5.467393e-02 | 5.467393e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.345050e-08 | 1.345050e-08  | 1.345050e-08 | 1.345050e-08 | 
+| Translational kinetic energy | 1.345061e-08 | 1.345061e-08  | 1.345061e-08 | 1.345061e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 40       Time: 0.2      Time step: 0.005    CFL: 1.42088e-05
+Transient iteration: 40       Time: 0.2      Time step: 0.005    CFL: 1.42145e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -894,13 +894,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.000000e+01 | 
-| Velocity magnitude           | 5.472694e-02 | 5.472694e-02  | 5.472694e-02 | 5.472694e-02 | 
+| Velocity magnitude           | 5.472720e-02 | 5.472720e-02  | 5.472720e-02 | 5.472720e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.347670e-08 | 1.347670e-08  | 1.347670e-08 | 1.347670e-08 | 
+| Translational kinetic energy | 1.347683e-08 | 1.347683e-08  | 1.347683e-08 | 1.347683e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 41       Time: 0.205    Time step: 0.005    CFL: 1.46321e-05
+Transient iteration: 41       Time: 0.205    Time step: 0.005    CFL: 1.46495e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -916,13 +916,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.100000e+01 | 
-| Velocity magnitude           | 5.477340e-02 | 5.477340e-02  | 5.477340e-02 | 5.477340e-02 | 
+| Velocity magnitude           | 5.477369e-02 | 5.477369e-02  | 5.477369e-02 | 5.477369e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.349959e-08 | 1.349959e-08  | 1.349959e-08 | 1.349959e-08 | 
+| Translational kinetic energy | 1.349974e-08 | 1.349974e-08  | 1.349974e-08 | 1.349974e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 42       Time: 0.21     Time step: 0.005    CFL: 1.50307e-05
+Transient iteration: 42       Time: 0.21     Time step: 0.005    CFL: 1.50602e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -938,13 +938,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.200000e+01 | 
-| Velocity magnitude           | 5.481393e-02 | 5.481393e-02  | 5.481393e-02 | 5.481393e-02 | 
+| Velocity magnitude           | 5.481427e-02 | 5.481427e-02  | 5.481427e-02 | 5.481427e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.351958e-08 | 1.351958e-08  | 1.351958e-08 | 1.351958e-08 | 
+| Translational kinetic energy | 1.351975e-08 | 1.351975e-08  | 1.351975e-08 | 1.351975e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 43       Time: 0.215    Time step: 0.005    CFL: 1.54054e-05
+Transient iteration: 43       Time: 0.215    Time step: 0.005    CFL: 1.54463e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -960,13 +960,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.300000e+01 | 
-| Velocity magnitude           | 5.484928e-02 | 5.484928e-02  | 5.484928e-02 | 5.484928e-02 | 
+| Velocity magnitude           | 5.484966e-02 | 5.484966e-02  | 5.484966e-02 | 5.484966e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.353702e-08 | 1.353702e-08  | 1.353702e-08 | 1.353702e-08 | 
+| Translational kinetic energy | 1.353721e-08 | 1.353721e-08  | 1.353721e-08 | 1.353721e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 44       Time: 0.22     Time step: 0.005    CFL: 1.57583e-05
+Transient iteration: 44       Time: 0.22     Time step: 0.005    CFL: 1.58093e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -982,13 +982,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.400000e+01 | 
-| Velocity magnitude           | 5.488011e-02 | 5.488011e-02  | 5.488011e-02 | 5.488011e-02 | 
+| Velocity magnitude           | 5.488053e-02 | 5.488053e-02  | 5.488053e-02 | 5.488053e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.355224e-08 | 1.355224e-08  | 1.355224e-08 | 1.355224e-08 | 
+| Translational kinetic energy | 1.355246e-08 | 1.355246e-08  | 1.355246e-08 | 1.355246e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 45       Time: 0.225    Time step: 0.005    CFL: 1.60987e-05
+Transient iteration: 45       Time: 0.225    Time step: 0.005    CFL: 1.61526e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -1004,13 +1004,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.500000e+01 | 
-| Velocity magnitude           | 5.490697e-02 | 5.490697e-02  | 5.490697e-02 | 5.490697e-02 | 
+| Velocity magnitude           | 5.490744e-02 | 5.490744e-02  | 5.490744e-02 | 5.490744e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.356551e-08 | 1.356551e-08  | 1.356551e-08 | 1.356551e-08 | 
+| Translational kinetic energy | 1.356575e-08 | 1.356575e-08  | 1.356575e-08 | 1.356575e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 46       Time: 0.23     Time step: 0.005    CFL: 1.64763e-05
+Transient iteration: 46       Time: 0.23     Time step: 0.005    CFL: 1.64997e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -1026,14 +1026,14 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.600000e+01 | 
-| Velocity magnitude           | 5.493037e-02 | 5.493037e-02  | 5.493037e-02 | 5.493037e-02 | 
+| Velocity magnitude           | 5.493089e-02 | 5.493089e-02  | 5.493089e-02 | 5.493089e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.357708e-08 | 1.357708e-08  | 1.357708e-08 | 1.357708e-08 | 
+| Translational kinetic energy | 1.357734e-08 | 1.357734e-08  | 1.357734e-08 | 1.357734e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-**********************************************************************************
-Transient iteration: 47       Time: 0.235    Time step: 0.005    CFL: 1.68484e-05
-**********************************************************************************
+*********************************************************************************
+Transient iteration: 47       Time: 0.235    Time step: 0.005    CFL: 1.6874e-05
+*********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -1048,13 +1048,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.700000e+01 | 
-| Velocity magnitude           | 5.495076e-02 | 5.495076e-02  | 5.495076e-02 | 5.495076e-02 | 
+| Velocity magnitude           | 5.495131e-02 | 5.495131e-02  | 5.495131e-02 | 5.495131e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.358716e-08 | 1.358716e-08  | 1.358716e-08 | 1.358716e-08 | 
+| Translational kinetic energy | 1.358743e-08 | 1.358743e-08  | 1.358743e-08 | 1.358743e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 48       Time: 0.24     Time step: 0.005    CFL: 1.72147e-05
+Transient iteration: 48       Time: 0.24     Time step: 0.005    CFL: 1.72433e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -1070,13 +1070,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.800000e+01 | 
-| Velocity magnitude           | 5.496853e-02 | 5.496853e-02  | 5.496853e-02 | 5.496853e-02 | 
+| Velocity magnitude           | 5.496910e-02 | 5.496910e-02  | 5.496910e-02 | 5.496910e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.359595e-08 | 1.359595e-08  | 1.359595e-08 | 1.359595e-08 | 
+| Translational kinetic energy | 1.359623e-08 | 1.359623e-08  | 1.359623e-08 | 1.359623e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 49       Time: 0.245    Time step: 0.005    CFL: 1.75717e-05
+Transient iteration: 49       Time: 0.245    Time step: 0.005    CFL: 1.76051e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -1092,13 +1092,13 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.900000e+01 | 
-| Velocity magnitude           | 5.498400e-02 | 5.498400e-02  | 5.498400e-02 | 5.498400e-02 | 
+| Velocity magnitude           | 5.498459e-02 | 5.498459e-02  | 5.498459e-02 | 5.498459e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.360360e-08 | 1.360360e-08  | 1.360360e-08 | 1.360360e-08 | 
+| Translational kinetic energy | 1.360390e-08 | 1.360390e-08  | 1.360390e-08 | 1.360390e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 50       Time: 0.25     Time step: 0.005    CFL: 1.79159e-05
+Transient iteration: 50       Time: 0.25     Time step: 0.005    CFL: 1.79557e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -1114,7 +1114,7 @@ Particle statistics
 --------------------
 | Variable                     | Min          | Max           | Average      | Total        | 
 | Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 5.000000e+01 | 
-| Velocity magnitude           | 5.499748e-02 | 5.499748e-02  | 5.499748e-02 | 5.499748e-02 | 
+| Velocity magnitude           | 5.499809e-02 | 5.499809e-02  | 5.499809e-02 | 5.499809e-02 | 
 | Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
-| Translational kinetic energy | 1.361027e-08 | 1.361027e-08  | 1.361027e-08 | 1.361027e-08 | 
+| Translational kinetic energy | 1.361058e-08 | 1.361058e-08  | 1.361058e-08 | 1.361058e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
