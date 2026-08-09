@@ -52,8 +52,8 @@ public:
    * starts the staggering. The velocities are advanced by half a time step,
    * from v(0) to v(1/2), whereas the positions are advanced by a full time
    * step, from x(0) to x(1). No time is therefore lost by the opening step: it
-   * consumes a full time step of the simulation, only the velocity is left
-   * behind by dt/2.
+   * consumes a full time step of the simulation, only the velocity is lagging
+   * by dt/2.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
