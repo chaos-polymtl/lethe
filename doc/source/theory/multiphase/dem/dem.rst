@@ -389,7 +389,7 @@ When synchronization is necessary, the accelerations are evaluated and a half st
 In pure DEM simulations, this half step is carried out at the end of the simulation. In CFD-DEM simulations, it is carried out at the end of the DEM sub-iterations of every CFD time step, so that the coupling with the fluid always uses velocities that are synchronized with the positions of the particles.
 
 .. note::
-  Because the velocities are staggered within a run, the velocities written to the visualization files during the simulation lag the positions by half a time step. Only the values obtained after a half step are synchronized.
+  Because the velocities are staggered within a run, the velocities written to the visualization files during the simulation lag the positions by half a time step. Only the velocities obtained at the end of a simulation are synchronized with the position. In CFD-DEM simulations, this synchronization occurs at the end of every coupling interval.
 
 --------------------------------
 Thermal DEM in a Stagnant Gas
