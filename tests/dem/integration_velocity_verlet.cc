@@ -150,7 +150,7 @@ test()
 
       Tensor<1, 3> velocity;
       Tensor<1, 3> angular_velocity;
-      for (unsigned int d = 0; d < 3; ++d)
+      for (int d = 0; d < 3; ++d)
         {
           velocity[d] = particle_properties[PropertiesIndex::v_x + d];
           angular_velocity[d] =
@@ -172,7 +172,7 @@ test()
   // Only the first dim components of the acceleration contribute to the motion
   // of the particle, which lives in a dim-dimensional space
   Tensor<1, dim> analytical_position;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     analytical_position[d] = 0.5 * acceleration[d] * final_time * final_time;
 
   deallog << "Analytical position: " << analytical_position << std::endl;
