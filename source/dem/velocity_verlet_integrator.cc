@@ -91,7 +91,7 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_end(
         0.5 * dt / particle_properties[PropertiesIndex::mass];
       const double half_dt_MOI_inverse = 0.5 * dt / MOI[particle_id];
 
-      // Loop is manually unrolled for performance reason.
+      // Loop is manually unrolled for performance
       // Particle velocity integration
       particle_properties[PropertiesIndex::v_x] +=
         half_dt_g[0] + particle_force[0] * half_dt_mass_inverse;
