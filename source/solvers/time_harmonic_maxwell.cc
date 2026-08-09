@@ -671,16 +671,15 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
       // the quadrature points and its container to store the values.
       const DoFHandler<dim> &dof_handler_temperature =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      FEValues<dim>           fe_values_temperature(*this->mapping,
-                                          dof_handler_temperature.get_fe(),
-                                          *this->cell_quadrature,
-                                          update_values |
-                                            update_quadrature_points);
+      FEFaceValues<dim> fe_face_values_temperature(
+        *this->mapping,
+        dof_handler_temperature.get_fe(),
+        *this->face_quadrature,
+        update_values | update_quadrature_points);
       std::map<field, double> field_values;
       const GlobalVectorType &temperature_solution =
         this->multiphysics->get_solution(PhysicsID::heat_transfer);
-      std::vector<double> temperature_values;
-      temperature_values.reserve(n_q_points_face);
+      std::vector<double> temperature_values(n_q_points_face);
 
       // Containers for electromagnetic quantities at the quadrature points
       Tensor<1, dim, std::complex<double>> E_inc;
@@ -718,28 +717,29 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                   .get_magnetic_permeability_imag(0, material_id)
                   ->depends_on(field::temperature);
 
-              if (needs_temperature)
-                {
-                  const typename DoFHandler<dim>::active_cell_iterator
-                    cell_temperature =
-                      cell->as_dof_handler_iterator(dof_handler_temperature);
-                  fe_values_temperature.reinit(cell_temperature);
-                  fe_values_temperature.get_function_values(
-                    temperature_solution, temperature_values);
-                }
-              else
-                {
-                  std::fill(temperature_values.begin(),
-                            temperature_values.end(),
-                            0.);
-                }
-
               for (const auto &face : cell->face_iterators())
                 {
-                  fe_face_values_trial_skeleton.reinit(cell, face);
-
                   if (!(face->at_boundary()))
                     continue;
+
+                  fe_face_values_trial_skeleton.reinit(cell, face);
+
+                  if (needs_temperature)
+                    {
+                      const typename DoFHandler<dim>::active_cell_iterator
+                        cell_temperature = cell->as_dof_handler_iterator(
+                          dof_handler_temperature);
+                      fe_face_values_temperature.reinit(cell_temperature, face);
+                      fe_face_values_temperature.get_function_values(
+                        temperature_solution, temperature_values);
+                    }
+                  else
+                    {
+                      std::fill(temperature_values.begin(),
+                                temperature_values.end(),
+                                0.);
+                    }
+
                   bc_type =
                     this->simulation_parameters
                       .boundary_conditions_time_harmonic_electromagnetics.type
@@ -2151,8 +2151,8 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                               effective_magnetic_permeability_last_solved);
                           max_relative_change =
                             std::max({relative_change_electric_permittivity,
-                                     relative_change_magnetic_permeability,
-                                     max_relative_change});
+                                      relative_change_magnetic_permeability,
+                                      max_relative_change});
                         }
                     }
                 }
@@ -2276,8 +2276,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   std::map<field, double> field_values;
   const GlobalVectorType &temperature_solution =
     this->multiphysics->get_solution(PhysicsID::heat_transfer);
-  std::vector<double> temperature_values;
-  temperature_values.reserve(n_q_points);
+  std::vector<double> temperature_values(n_q_points);
 
   // We also create all the relevant matrices and vector to build the DPG
   // system. To do so we first need the number of dofs per cell for each of
@@ -3316,8 +3315,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   std::map<field, double> field_values;
   const GlobalVectorType &temperature_solution =
     this->multiphysics->get_solution(PhysicsID::heat_transfer);
-  std::vector<double> temperature_values;
-  temperature_values.reserve(n_q_points);
+  std::vector<double> temperature_values(n_q_points);
 
   // We also create all the relevant matrices and vector to build the DPG
   // system. To do so we first need the number of dofs per cell for each of
