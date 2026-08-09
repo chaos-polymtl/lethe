@@ -66,6 +66,10 @@ test()
   constexpr double       dt              = 0.001;
   constexpr unsigned int number_of_steps = 5;
 
+  // Mass and moment of inertia of the particle
+  constexpr double particle_mass     = 1.;
+  constexpr double moment_of_inertia = 1.;
+
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, PropertiesIndex::n_properties);
@@ -101,11 +105,11 @@ test()
   pit->get_properties()[PropertiesIndex::omega_y] = 0;
   pit->get_properties()[PropertiesIndex::omega_z] = 0;
   // Mass
-  pit->get_properties()[PropertiesIndex::mass] = 1;
+  pit->get_properties()[PropertiesIndex::mass] = particle_mass;
 
   std::vector<Tensor<1, 3>> torque(1);
   std::vector<Tensor<1, 3>> force(1);
-  std::vector<double>       MOI(1, 1.);
+  std::vector<double>       MOI(1, moment_of_inertia);
 
   // The integrator resets the force and the torque at the end of every step,
   // exactly like the contact force objects, which accumulate into these
@@ -144,26 +148,37 @@ test()
     {
       const auto particle_properties = particle_iterator->get_properties();
 
+      Tensor<1, 3> velocity;
+      Tensor<1, 3> angular_velocity;
+      for (unsigned int d = 0; d < 3; ++d)
+        {
+          velocity[d] = particle_properties[PropertiesIndex::v_x + d];
+          angular_velocity[d] =
+            particle_properties[PropertiesIndex::omega_x + d];
+        }
+
       deallog << "Position: " << particle_iterator->get_location() << std::endl;
-      deallog << "Velocity: " << particle_properties[PropertiesIndex::v_x]
-              << " " << particle_properties[PropertiesIndex::v_y] << " "
-              << particle_properties[PropertiesIndex::v_z] << std::endl;
-      deallog << "Angular velocity: "
-              << particle_properties[PropertiesIndex::omega_x] << " "
-              << particle_properties[PropertiesIndex::omega_y] << " "
-              << particle_properties[PropertiesIndex::omega_z] << std::endl;
+      deallog << "Velocity: " << velocity << std::endl;
+      deallog << "Angular velocity: " << angular_velocity << std::endl;
     }
 
   // Analytical solution of a uniformly accelerated motion. The velocity Verlet
-  // scheme is exact in this case.
-  deallog << "Analytical position along the first dimension: "
-          << 0.5 * applied_force[0] * final_time * final_time << std::endl;
-  deallog << "Analytical position along the last dimension: "
-          << 0.5 * g[dim - 1] * final_time * final_time << std::endl;
-  deallog << "Analytical velocity along the last dimension: "
-          << g[dim - 1] * final_time << std::endl;
-  deallog << "Analytical angular velocity around z: "
-          << applied_torque[2] * final_time << std::endl;
+  // scheme is exact in this case, so it must be recovered to machine precision.
+  // The analytical quantities are printed exactly like the ones above so that
+  // both can be compared directly.
+  const Tensor<1, 3> acceleration         = g + applied_force / particle_mass;
+  const Tensor<1, 3> angular_acceleration = applied_torque / moment_of_inertia;
+
+  // Only the first dim components of the acceleration contribute to the motion
+  // of the particle, which lives in a dim-dimensional space
+  Tensor<1, dim> analytical_position;
+  for (unsigned int d = 0; d < dim; ++d)
+    analytical_position[d] = 0.5 * acceleration[d] * final_time * final_time;
+
+  deallog << "Analytical position: " << analytical_position << std::endl;
+  deallog << "Analytical velocity: " << acceleration * final_time << std::endl;
+  deallog << "Analytical angular velocity: "
+          << angular_acceleration * final_time << std::endl;
 }
 
 int

@@ -107,17 +107,40 @@ test()
        particle_iterator != particle_handler.end();
        ++particle_iterator)
     {
+      // The force is accumulated, like the contact force objects do, to make
+      // sure that the integrator resets it at the end of every step
+      force[particle_iterator->get_local_index()][dim - 1] -= x0;
+
+      // Opening step. The explicit Euler scheme is self-starting, so this is
+      // simply a regular step.
+      explicit_euler_object.integrate_start(
+        particle_handler, g, dt1, torque, force, MOI);
+      t += dt1;
+
       while (t < t_final)
         {
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
-          force[particle_iterator->get_local_index()] = force_tensor;
+          force[particle_iterator->get_local_index()] += force_tensor;
           explicit_euler_object.integrate(
             particle_handler, g, dt1, torque, force, MOI);
 
           t += dt1;
         }
+
+      // Closing step. The velocity of the explicit Euler scheme is already
+      // synchronized with the position, so it is left untouched and only the
+      // force and the torque are reset.
+      {
+        Tensor<1, dim> force_tensor;
+        force_tensor[dim - 1] =
+          -spring_constant * particle_iterator->get_location()[dim - 1];
+        force[particle_iterator->get_local_index()] += force_tensor;
+        explicit_euler_object.integrate_end(
+          particle_handler, g, dt1, torque, force, MOI);
+      }
+
       // Output Analytical
       x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * (t));
       particle_axial_position_error_Euler_dt1 =
@@ -151,16 +174,39 @@ test()
     {
       t = 0;
 
+      // The force is accumulated, like the contact force objects do, to make
+      // sure that the integrator resets it at the end of every step
+      force[particle_iterator->get_local_index()][dim - 1] -= x0;
+
+      // Opening step. The explicit Euler scheme is self-starting, so this is
+      // simply a regular step.
+      explicit_euler_object.integrate_start(
+        particle_handler, g, dt2, torque, force, MOI);
+      t += dt2;
+
       while (t < t_final)
         {
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
-          force[particle_iterator->get_local_index()] = force_tensor;
+          force[particle_iterator->get_local_index()] += force_tensor;
           explicit_euler_object.integrate(
             particle_handler, g, dt2, torque, force, MOI);
           t += dt2;
         }
+
+      // Closing step. The velocity of the explicit Euler scheme is already
+      // synchronized with the position, so it is left untouched and only the
+      // force and the torque are reset.
+      {
+        Tensor<1, dim> force_tensor;
+        force_tensor[dim - 1] =
+          -spring_constant * particle_iterator->get_location()[dim - 1];
+        force[particle_iterator->get_local_index()] += force_tensor;
+        explicit_euler_object.integrate_end(
+          particle_handler, g, dt2, torque, force, MOI);
+      }
+
       // Output Analytical
       x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * (t));
       particle_axial_position_error_Euler_dt2 =
