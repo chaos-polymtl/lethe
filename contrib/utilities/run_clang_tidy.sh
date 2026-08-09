@@ -54,7 +54,13 @@ fi
 
 CC=clang CXX=clang++ cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
-CXXFLAGS="-Wno-unknown-warning-option";  cmake --build . -j 12 
+# Build only the static libraries. Linking the applications and the tests is
+# unnecessary for static analysis, and it fails whenever deal.II was built with
+# a compiler other than clang: GCC and clang mangle deal.II's enable_if-based
+# template signatures (e.g. TrilinosWrappers::SparseMatrix::vmult) differently,
+# so the explicit instantiations shipped in libdeal_II cannot be resolved.
+CXXFLAGS="-Wno-unknown-warning-option";  cmake --build . -j 12 \
+  --target lethe-core lethe-dem lethe-solvers lethe-fem-dem
 
 # generate allheaders.h
 #(cd include; find . -name '*.h'; cd $SRC/include/; find . -name '*.h') | grep -v allheaders.h | grep -v undefine_macros.h | sed 's|^./|#include <|' | sed 's|$|>|' >include/deal.II/allheaders.h
