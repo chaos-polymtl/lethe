@@ -811,12 +811,28 @@ a &amp;= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{\mathrm{2}} + s + \la
 \[\begin{split}\mathbf{v}_{i}^{n+1} &amp;= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}dt \\
 \mathbf{x}_{i}^{n+1} &amp;= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n}dt\end{split}\]</div>
 </div>
-<p>And velocity Verlet method is calculated with half-step velocity as:</p>
+<p>The velocity Verlet method is implemented in its staggered (leapfrog) form: the velocities are stored at the half steps whereas the positions are stored at the integer steps. The scheme is not self-starting, so completing <span class="math notranslate nohighlight">\(n\)</span> time steps requires <span class="math notranslate nohighlight">\(n+1\)</span> integration operations.</p>
+<p>The opening half step is carried out once, at the first time step. The velocities are advanced by half a time step and the positions by a full time step:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}\mathbf{v}_{i}^{n+\frac{1}{2}} &amp;= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}\frac{dt}{2} \\
-\mathbf{x}_{i}^{n+1} &amp;= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n+\frac{1}{2}}dt \\
-\mathbf{v}_{i}^{n+1} &amp;= \mathbf{v}_{i}^{n+\frac{1}{2}} + \mathbf{a}_{i}^{n+1}\frac{dt}{2}\end{split}\]</div>
+\[\begin{split}\mathbf{v}_{i}^{\frac{1}{2}} &amp;= \mathbf{v}_{i}^{0} + \mathbf{a}_{i}^{0}\frac{dt}{2} \\
+\mathbf{x}_{i}^{1} &amp;= \mathbf{x}_{i}^{0} + \mathbf{v}_{i}^{\frac{1}{2}}dt\end{split}\]</div>
+</div>
+<p>Every subsequent time step advances both the velocities and the positions by a full time step, which keeps the velocities staggered:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{v}_{i}^{n+\frac{1}{2}} &amp;= \mathbf{v}_{i}^{n-\frac{1}{2}} + \mathbf{a}_{i}^{n}dt \\
+\mathbf{x}_{i}^{n+1} &amp;= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n+\frac{1}{2}}dt\end{split}\]</div>
+</div>
+<p>When synchronization is necessary, the accelerations are evaluated and a half step synchronizes the velocities with the positions:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{v}_{i}^{n} = \mathbf{v}_{i}^{n-\frac{1}{2}} + \mathbf{a}_{i}^{n}\frac{dt}{2}\]</div>
+</div>
+<p>In pure DEM simulations, this half step is carried out at the end of the simulation. In CFD-DEM simulations, it is carried out at the end of the DEM sub-iterations of every CFD time step, so that the coupling with the fluid always uses velocities that are synchronized with the positions of the particles.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because the velocities are staggered within a run, the velocities written to the visualization files during the simulation lag the positions by half a time step. Only the velocities obtained at the end of a simulation are synchronized with the position. In CFD-DEM simulations, this synchronization occurs at the end of every coupling interval.</p>
 </div>
 </section>
 <section id="thermal-dem-in-a-stagnant-gas">

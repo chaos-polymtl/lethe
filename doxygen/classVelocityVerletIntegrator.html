@@ -103,8 +103,12 @@ Inheritance diagram for VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;:<
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a53e433c21292e2cb775cfc86c0836572" id="r_a53e433c21292e2cb775cfc86c0836572"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVelocityVerletIntegrator.html#a53e433c21292e2cb775cfc86c0836572">VelocityVerletIntegrator</a> ()</td></tr>
 <tr class="separator:a53e433c21292e2cb775cfc86c0836572"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a832e9d5983e5ffe7bedf9016fe3a03a1" id="r_a832e9d5983e5ffe7bedf9016fe3a03a1"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVelocityVerletIntegrator.html#a832e9d5983e5ffe7bedf9016fe3a03a1">integrate_half_step_location</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI) override</td></tr>
-<tr class="separator:a832e9d5983e5ffe7bedf9016fe3a03a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36828fcf0a2bfd316c9d717887477d8f" id="r_a36828fcf0a2bfd316c9d717887477d8f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVelocityVerletIntegrator.html#a36828fcf0a2bfd316c9d717887477d8f">integrate_start</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI) override</td></tr>
+<tr class="separator:a36828fcf0a2bfd316c9d717887477d8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bb9a94d84d7569dc4fde09cb6452b85" id="r_a3bb9a94d84d7569dc4fde09cb6452b85"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVelocityVerletIntegrator.html#a3bb9a94d84d7569dc4fde09cb6452b85">integrate_end</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI) override</td></tr>
+<tr class="separator:a3bb9a94d84d7569dc4fde09cb6452b85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57f4926206182d6c7fb68b8f837f0273" id="r_a57f4926206182d6c7fb68b8f837f0273"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVelocityVerletIntegrator.html#a57f4926206182d6c7fb68b8f837f0273">integrate_end</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;sparse_contacts_object) override</td></tr>
+<tr class="separator:a57f4926206182d6c7fb68b8f837f0273"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6777fd5216fe0b789e1d3e06c0bd0372" id="r_a6777fd5216fe0b789e1d3e06c0bd0372"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVelocityVerletIntegrator.html#a6777fd5216fe0b789e1d3e06c0bd0372">integrate</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI) override</td></tr>
 <tr class="separator:a6777fd5216fe0b789e1d3e06c0bd0372"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed654e4f50c0d552e9369798f128927a" id="r_aed654e4f50c0d552e9369798f128927a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVelocityVerletIntegrator.html#aed654e4f50c0d552e9369798f128927a">integrate</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;sparse_contacts_object) override</td></tr>
@@ -120,11 +124,11 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
 class VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</div><p>Implementation of a classical velocity verlet scheme for the integration of the particle motion. Note that reinitialization of force and torque is also integrated into integration class. </p>
-<p>Velocity Verlet is a second-order integration scheme.</p>
+<p>Velocity Verlet is a second-order integration scheme. It is implemented in its staggered (leapfrog) form: the velocities are stored at the half steps and the positions at the integer steps. Consequently, carrying out n time steps requires n + 1 integration operations.</p>
 <p>Calculation procedure:</p>
-<p>Calculation of half-step velocity v(n+1/2) = v(n) + 1/2 * a(n) * dt</p>
-<p>Updating particle position x(n+1) = x(n) + v(n+1/2) * dt</p>
-<p>Updating acceleration and velocity of particle a(n+1) = F(n+1) / m v(n+1) = v(n+1/2) + 1/2 * a(n+1) * dt</p>
+<p>Opening half step (integrate_start), carried out once at the first time step v(1/2) = v(0) + 1/2 * a(0) * dt x(1) = x(0) + v(1/2) * dt</p>
+<p>Regular steps (integrate), carried out at every subsequent time step a(n) = F(n) / m v(n+1/2) = v(n-1/2) + a(n) * dt x(n+1) = x(n) + v(n+1/2) * dt</p>
+<p>Closing half step (integrate_end), carried out once the final position is reached to synchronize the velocities with the positions a(n) = F(n) / m v(n) = v(n-1/2) + 1/2 * a(n) * dt</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
@@ -133,7 +137,7 @@ class VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</div><p>Implementat
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8h_source.html#l00036">36</a> of file <a class="el" href="velocity__verlet__integrator_8h_source.html">velocity_verlet_integrator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8h_source.html#l00044">44</a> of file <a class="el" href="velocity__verlet__integrator_8h_source.html">velocity_verlet_integrator.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a53e433c21292e2cb775cfc86c0836572" name="a53e433c21292e2cb775cfc86c0836572"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a53e433c21292e2cb775cfc86c0836572">&#9670;&#160;</a></span>VelocityVerletIntegrator()</h2>
@@ -160,7 +164,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8h_source.html#l00039">39</a> of file <a class="el" href="velocity__verlet__integrator_8h_source.html">velocity_verlet_integrator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8h_source.html#l00047">47</a> of file <a class="el" href="velocity__verlet__integrator_8h_source.html">velocity_verlet_integrator.h</a>.</p>
 
 </div>
 </div>
@@ -225,14 +229,18 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Calculate the integration of the motion of all particles by using the Velocity Verlet method. </p>
+<p>Carry out a regular step of the Velocity Verlet scheme, that is, a full velocity step followed by a full position step. </p>
+<p>This function is called at every time step but the first one, which is handled by <a class="el" href="classVelocityVerletIntegrator.html#a36828fcf0a2bfd316c9d717887477d8f" title="Integrate the opening half step of the Velocity Verlet scheme, which starts the staggering....">integrate_start()</a>. It assumes that the velocities are already staggered, that is, that they are known at t(n-1/2) whereas the positions are known at t(n), and it preserves that staggering:</p>
+<p>a(n) = g + F(n) / m v(n+1/2) = v(n-1/2) + a(n) * dt x(n+1) = x(n) + v(n+1/2) * dt</p>
+<p>The velocity is advanced before the position and the updated velocity is the one used to advance the position, which is what makes the scheme second order and symplectic. Note that the acceleration is evaluated from the force accumulated by the contact force objects since the previous step, hence the force and the torque containers are reset to zero once they have been consumed. The angular velocity is advanced in the same manner from the torque and the moment of inertia.</p>
+<p>All three components of the velocity and of the angular velocity are advanced, even in 2D, since the third component of the angular velocity is the one that carries the rotation in 2D. Only the first <code>dim</code> components of the position are advanced.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
     <tr><td class="paramname">body_force</td><td>A constant volumetric body force applied to all particles </td></tr>
     <tr><td class="paramname">time_step</td><td>The value of the time step used for the integration </td></tr>
-    <tr><td class="paramname">torque</td><td>Torque acting on particles </td></tr>
-    <tr><td class="paramname">force</td><td>Force acting on particles </td></tr>
+    <tr><td class="paramname">torque</td><td>Torque acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">force</td><td>Force acting on particles. It is reset to zero at the end of the integration </td></tr>
     <tr><td class="paramname">MOI</td><td>A container of moment of inertia of particles </td></tr>
   </table>
   </dd>
@@ -240,7 +248,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implements <a class="el" href="classIntegrator.html#ab2e9a98de375547a9c0dbd0334b1c93a">Integrator&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00059">59</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00214">214</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
 
@@ -318,16 +326,32 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Carry out a regular step of the Velocity Verlet scheme when the adaptive sparse contacts are enabled. </p>
+<p>The integration is identical to the one described above, but it is only carried out for the particles that belong to mobile cells. The particles of the active and inactive cells only have their force and torque reset, so that they remain at rest. The particles of the advected cells are displaced with the average velocity and acceleration of their cell, which is handled by <a class="el" href="classVelocityVerletIntegrator.html#a25fb0404a6696580153043d37d051c96">integrate_with_advected_particles()</a>. When the sparse contacts are disabled, or on the iteration at which the mobility status is reset, this function simply falls back to the regular integration.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
+    <tr><td class="paramname">body_force</td><td>A constant volumetric body force applied to all particles </td></tr>
+    <tr><td class="paramname">time_step</td><td>The value of the time step used for the integration </td></tr>
+    <tr><td class="paramname">torque</td><td>Torque acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">force</td><td>Force acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">MOI</td><td>A container of moment of inertia of particles </td></tr>
+    <tr><td class="paramname">triangulation</td><td>The triangulation of the background mesh </td></tr>
+    <tr><td class="paramname">sparse_contacts_object</td><td>The object that stores the mobility status of the cells </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p>Implements <a class="el" href="classIntegrator.html#ac505be44f309a8df93e4f9b38caec55f">Integrator&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00139">139</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00294">294</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00330">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_mobility_status()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00349">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::has_advected_particles()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
 
 </div>
 </div>
-<a id="a832e9d5983e5ffe7bedf9016fe3a03a1" name="a832e9d5983e5ffe7bedf9016fe3a03a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a832e9d5983e5ffe7bedf9016fe3a03a1">&#9670;&#160;</a></span>integrate_half_step_location()</h2>
+<a id="a3bb9a94d84d7569dc4fde09cb6452b85" name="a3bb9a94d84d7569dc4fde09cb6452b85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bb9a94d84d7569dc4fde09cb6452b85">&#9670;&#160;</a></span>integrate_end() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -338,7 +362,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classVelocityVerletIntegrator.html">VelocityVerletIntegrator</a>&lt; dim, PropertiesIndex &gt;::integrate_half_step_location </td>
+          <td class="memname">void <a class="el" href="classVelocityVerletIntegrator.html">VelocityVerletIntegrator</a>&lt; dim, PropertiesIndex &gt;::integrate_end </td>
           <td>(</td>
           <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
@@ -358,13 +382,13 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>torque</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>force</em>, </td>
         </tr>
         <tr>
@@ -386,20 +410,194 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Integrate new particles' location after insertion. </p>
+<p>Integrate the closing half step of the Velocity Verlet scheme. The velocities are advanced by half a time step to synchronize them with the positions. The positions are left untouched. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
     <tr><td class="paramname">body_force</td><td>A constant volumetric body force applied to all particles </td></tr>
     <tr><td class="paramname">time_step</td><td>The value of the time step used for the integration </td></tr>
-    <tr><td class="paramname">torque</td><td>Torque acting on particles </td></tr>
-    <tr><td class="paramname">force</td><td>Force acting on particles </td></tr>
+    <tr><td class="paramname">torque</td><td>Torque acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">force</td><td>Force acting on particles. It is reset to zero at the end of the integration </td></tr>
     <tr><td class="paramname">MOI</td><td>A container of moment of inertia of particles </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classIntegrator.html#a603a2ae5d83ca8674a55dd3cf500bcca">Integrator&lt; dim, PropertiesIndex &gt;</a>.</p>
+<p>Implements <a class="el" href="classIntegrator.html#a017f7d112a8679026ca7e21e3d1febc7">Integrator&lt; dim, PropertiesIndex &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00070">70</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
+
+</div>
+</div>
+<a id="a57f4926206182d6c7fb68b8f837f0273" name="a57f4926206182d6c7fb68b8f837f0273"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57f4926206182d6c7fb68b8f837f0273">&#9670;&#160;</a></span>integrate_end() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classVelocityVerletIntegrator.html">VelocityVerletIntegrator</a>&lt; dim, PropertiesIndex &gt;::integrate_end </td>
+          <td>(</td>
+          <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>body_force</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>time_step</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>torque</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>force</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MOI</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const parallel::distributed::Triangulation&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Integrate the closing half step of the Velocity Verlet scheme when the adaptive sparse contacts are enabled. Only the particles located in mobile cells have their velocities advanced, the other ones only have their force and torque reset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
+    <tr><td class="paramname">body_force</td><td>A constant volumetric body force applied to all particles </td></tr>
+    <tr><td class="paramname">time_step</td><td>The value of the time step used for the integration </td></tr>
+    <tr><td class="paramname">torque</td><td>Torque acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">force</td><td>Force acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">MOI</td><td>A container of moment of inertia of particles </td></tr>
+    <tr><td class="paramname">triangulation</td><td>The triangulation of the background mesh </td></tr>
+    <tr><td class="paramname">sparse_contacts_object</td><td>The object that stores the mobility status of the cells </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classIntegrator.html#a2012725ee8fdd9e0d1ffbb8abb865047">Integrator&lt; dim, PropertiesIndex &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00119">119</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, and <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00330">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_mobility_status()</a>.</p>
+
+</div>
+</div>
+<a id="a36828fcf0a2bfd316c9d717887477d8f" name="a36828fcf0a2bfd316c9d717887477d8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36828fcf0a2bfd316c9d717887477d8f">&#9670;&#160;</a></span>integrate_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classVelocityVerletIntegrator.html">VelocityVerletIntegrator</a>&lt; dim, PropertiesIndex &gt;::integrate_start </td>
+          <td>(</td>
+          <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>body_force</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>time_step</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>torque</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>force</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MOI</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Integrate the opening half step of the Velocity Verlet scheme, which starts the staggering. The velocities are advanced by half a time step, from v(0) to v(1/2), whereas the positions are advanced by a full time step, from x(0) to x(1). No time is therefore lost by the opening step: it consumes a full time step of the simulation, only the velocity is lagging by dt/2. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
+    <tr><td class="paramname">body_force</td><td>A constant volumetric body force applied to all particles </td></tr>
+    <tr><td class="paramname">time_step</td><td>The value of the time step used for the integration </td></tr>
+    <tr><td class="paramname">torque</td><td>Torque acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">force</td><td>Force acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">MOI</td><td>A container of moment of inertia of particles </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classIntegrator.html#a5b0107690ce13b75037556c299b60842">Integrator&lt; dim, PropertiesIndex &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00014">14</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
 
@@ -469,7 +667,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00284">284</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00439">439</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00330">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_mobility_status()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00340">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_velocities_accelerations()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
 

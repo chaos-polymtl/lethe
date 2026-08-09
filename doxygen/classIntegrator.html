@@ -105,8 +105,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aea8acb2f324355c5209f9eda45824c52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afebd3fa762340e10712447d1605860e8" id="r_afebd3fa762340e10712447d1605860e8"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIntegrator.html#afebd3fa762340e10712447d1605860e8">~Integrator</a> ()</td></tr>
 <tr class="separator:afebd3fa762340e10712447d1605860e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a603a2ae5d83ca8674a55dd3cf500bcca" id="r_a603a2ae5d83ca8674a55dd3cf500bcca"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIntegrator.html#a603a2ae5d83ca8674a55dd3cf500bcca">integrate_half_step_location</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI)=0</td></tr>
-<tr class="separator:a603a2ae5d83ca8674a55dd3cf500bcca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b0107690ce13b75037556c299b60842" id="r_a5b0107690ce13b75037556c299b60842"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIntegrator.html#a5b0107690ce13b75037556c299b60842">integrate_start</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI)=0</td></tr>
+<tr class="separator:a5b0107690ce13b75037556c299b60842"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a017f7d112a8679026ca7e21e3d1febc7" id="r_a017f7d112a8679026ca7e21e3d1febc7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIntegrator.html#a017f7d112a8679026ca7e21e3d1febc7">integrate_end</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI)=0</td></tr>
+<tr class="separator:a017f7d112a8679026ca7e21e3d1febc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2012725ee8fdd9e0d1ffbb8abb865047" id="r_a2012725ee8fdd9e0d1ffbb8abb865047"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIntegrator.html#a2012725ee8fdd9e0d1ffbb8abb865047">integrate_end</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;sparse_contacts_object)=0</td></tr>
+<tr class="separator:a2012725ee8fdd9e0d1ffbb8abb865047"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2e9a98de375547a9c0dbd0334b1c93a" id="r_ab2e9a98de375547a9c0dbd0334b1c93a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIntegrator.html#ab2e9a98de375547a9c0dbd0334b1c93a">integrate</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI)=0</td></tr>
 <tr class="separator:ab2e9a98de375547a9c0dbd0334b1c93a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac505be44f309a8df93e4f9b38caec55f" id="r_ac505be44f309a8df93e4f9b38caec55f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIntegrator.html#ac505be44f309a8df93e4f9b38caec55f">integrate</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, <a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;sparse_contacts_object)=0</td></tr>
@@ -339,8 +343,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 </div>
 </div>
-<a id="a603a2ae5d83ca8674a55dd3cf500bcca" name="a603a2ae5d83ca8674a55dd3cf500bcca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a603a2ae5d83ca8674a55dd3cf500bcca">&#9670;&#160;</a></span>integrate_half_step_location()</h2>
+<a id="a017f7d112a8679026ca7e21e3d1febc7" name="a017f7d112a8679026ca7e21e3d1febc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a017f7d112a8679026ca7e21e3d1febc7">&#9670;&#160;</a></span>integrate_end() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -351,7 +355,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classIntegrator.html">Integrator</a>&lt; dim, PropertiesIndex &gt;::integrate_half_step_location </td>
+          <td class="memname">virtual void <a class="el" href="classIntegrator.html">Integrator</a>&lt; dim, PropertiesIndex &gt;::integrate_end </td>
           <td>(</td>
           <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
@@ -371,13 +375,13 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>torque</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>force</em>, </td>
         </tr>
         <tr>
@@ -399,20 +403,190 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Integrate new particles' location after insertion. </p>
+<p>Integrate the closing step of the scheme, which is carried out once the final position is reached. The positions are never modified. Schemes that store the velocities staggered by half a time step advance them by half a time step here, which synchronizes them with the positions. Schemes whose velocities are already synchronized leave them untouched. </p>
+<p>Whatever the scheme, the force and the torque containers are reset, since they have been filled by the force evaluation that precedes this call.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
     <tr><td class="paramname">body_force</td><td>A constant volumetric body force applied to all particles </td></tr>
     <tr><td class="paramname">time_step</td><td>The value of the time step used for the integration </td></tr>
-    <tr><td class="paramname">torque</td><td>Torque acting on particles </td></tr>
-    <tr><td class="paramname">force</td><td>Force acting on particles </td></tr>
+    <tr><td class="paramname">torque</td><td>Torque acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">force</td><td>Force acting on particles. It is reset to zero at the end of the integration </td></tr>
     <tr><td class="paramname">MOI</td><td>A container of moment of inertia of particles </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classExplicitEulerIntegrator.html#ad525fbec4de0040623f71d0bba166f20">ExplicitEulerIntegrator&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classVelocityVerletIntegrator.html#a832e9d5983e5ffe7bedf9016fe3a03a1">VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classExplicitEulerIntegrator.html#aab9fe8e737bad4fbb8de839713baec04">ExplicitEulerIntegrator&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classVelocityVerletIntegrator.html#a3bb9a94d84d7569dc4fde09cb6452b85">VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a2012725ee8fdd9e0d1ffbb8abb865047" name="a2012725ee8fdd9e0d1ffbb8abb865047"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2012725ee8fdd9e0d1ffbb8abb865047">&#9670;&#160;</a></span>integrate_end() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="classIntegrator.html">Integrator</a>&lt; dim, PropertiesIndex &gt;::integrate_end </td>
+          <td>(</td>
+          <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>body_force</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>time_step</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>torque</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>force</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MOI</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const parallel::distributed::Triangulation&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sparse_contacts_object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Integrate the closing step of the scheme when the adaptive sparse contacts are enabled. Only the particles located in mobile cells have their velocities advanced, the other ones only have their force and torque reset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
+    <tr><td class="paramname">body_force</td><td>A constant volumetric body force applied to all particles </td></tr>
+    <tr><td class="paramname">time_step</td><td>The value of the time step used for the integration </td></tr>
+    <tr><td class="paramname">torque</td><td>Torque acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">force</td><td>Force acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">MOI</td><td>A container of moment of inertia of particles </td></tr>
+    <tr><td class="paramname">triangulation</td><td>The triangulation of the background mesh </td></tr>
+    <tr><td class="paramname">sparse_contacts_object</td><td>The object that stores the mobility status of the cells </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classExplicitEulerIntegrator.html#a9ea23cf908b6214c522d1617ec23ceca">ExplicitEulerIntegrator&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classVelocityVerletIntegrator.html#a57f4926206182d6c7fb68b8f837f0273">VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a5b0107690ce13b75037556c299b60842" name="a5b0107690ce13b75037556c299b60842"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b0107690ce13b75037556c299b60842">&#9670;&#160;</a></span>integrate_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="classIntegrator.html">Integrator</a>&lt; dim, PropertiesIndex &gt;::integrate_start </td>
+          <td>(</td>
+          <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>body_force</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>time_step</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>torque</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>force</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MOI</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Integrate the opening step of the scheme, which is carried out once, at the very first time step. Whatever the scheme, this advances the positions by a full time step, exactly like <a class="el" href="classIntegrator.html#ab2e9a98de375547a9c0dbd0334b1c93a" title="Integrate particles&#39; velocity and position.">integrate()</a> does. Schemes that are not self-starting, that is, schemes that store the velocities staggered by half a time step with respect to the positions, use it to bring their velocities to t(1/2) while the positions reach t(1). Self-starting schemes simply carry out a regular step. </p>
+<p>Calling this at the first time step is unconditional: it is up to the scheme, and not to the solver, to decide what an opening step means.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
+    <tr><td class="paramname">body_force</td><td>A constant volumetric body force applied to all particles </td></tr>
+    <tr><td class="paramname">time_step</td><td>The value of the time step used for the integration </td></tr>
+    <tr><td class="paramname">torque</td><td>Torque acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">force</td><td>Force acting on particles. It is reset to zero at the end of the integration </td></tr>
+    <tr><td class="paramname">MOI</td><td>A container of moment of inertia of particles </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classExplicitEulerIntegrator.html#a08436c990be51e9556b96950cf534556">ExplicitEulerIntegrator&lt; dim, PropertiesIndex &gt;</a>, and <a class="el" href="classVelocityVerletIntegrator.html#a36828fcf0a2bfd316c9d717887477d8f">VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</a>.</p>
 
 </div>
 </div>

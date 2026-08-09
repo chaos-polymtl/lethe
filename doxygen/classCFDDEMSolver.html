@@ -185,6 +185,8 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:aa9bce3278bc14b23596f619945f94719"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd49d89e6bfa020e375b675f5a4dfead" id="r_abd49d89e6bfa020e375b675f5a4dfead"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#abd49d89e6bfa020e375b675f5a4dfead">dem_iterator</a> ()</td></tr>
 <tr class="separator:abd49d89e6bfa020e375b675f5a4dfead"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0b2679065387c99d4603c991ffa5629" id="r_ab0b2679065387c99d4603c991ffa5629"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#ab0b2679065387c99d4603c991ffa5629">synchronize_particle_velocities</a> ()</td></tr>
+<tr class="separator:ab0b2679065387c99d4603c991ffa5629"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42758de8263cec53a03d1c7ee2264131" id="r_a42758de8263cec53a03d1c7ee2264131"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#a42758de8263cec53a03d1c7ee2264131">report_rayleigh_time_ratio</a> ()</td></tr>
 <tr class="separator:a42758de8263cec53a03d1c7ee2264131"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17db4dbe4f6f9ded33ac6fbd614748ac" id="r_a17db4dbe4f6f9ded33ac6fbd614748ac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMSolver.html#a17db4dbe4f6f9ded33ac6fbd614748ac">dem_contact_build</a> ()</td></tr>
@@ -793,7 +795,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Perform contact detection and build contact lists. </p>
 <p>Checks if a contact search should be performed based on the contact detection frequency and executes the appropriate contact detection algorithm to identify particle-particle and particle-wall contacts. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01465">1465</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01526">1526</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
 </div>
 </div>
@@ -1304,9 +1306,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Reports the ratio between the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step and the Rayleigh time. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00338">338</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00351">351</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cfd__dem__coupling_8h_source.html#l00364">CFDDEMSolver&lt; dim, PropertiesIndex &gt;::dem_simulation_control</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>, and <a class="el" href="cfd__dem__coupling_8h_source.html#l00491">CFDDEMSolver&lt; dim, PropertiesIndex &gt;::rayleigh_time_step</a>.</p>
+<p class="reference">References <a class="el" href="cfd__dem__coupling_8h_source.html#l00377">CFDDEMSolver&lt; dim, PropertiesIndex &gt;::dem_simulation_control</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>, and <a class="el" href="cfd__dem__coupling_8h_source.html#l00504">CFDDEMSolver&lt; dim, PropertiesIndex &gt;::rayleigh_time_step</a>.</p>
 
 </div>
 </div>
@@ -1459,7 +1461,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsVANS.html#afeda83a2a8113e645de972036ae74cb9">FluidDynamicsVANS&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01544">1544</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01605">1605</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00466">announce_string()</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::mobility_status</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::particles</a>, <a class="el" href="grids_8cc_source.html#l00314">read_mesh_and_manifolds()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00794">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>, <a class="el" href="dem_2utilities_8h_source.html#l00035">report_cell_size_to_particle_diameter_ratio()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="log__collision__data_8cc_source.html#l00158">write_collision_stats()</a>.</p>
 
@@ -1494,6 +1496,38 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Redistributes particles among computational subdomains and associates them with their containing cells, then reinitialize containers that depend on local particle identifiers. </p>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01330">1330</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
+
+</div>
+</div>
+<a id="ab0b2679065387c99d4603c991ffa5629" name="ab0b2679065387c99d4603c991ffa5629"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0b2679065387c99d4603c991ffa5629">&#9670;&#160;</a></span>synchronize_particle_velocities()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCFDDEMSolver.html">CFDDEMSolver</a>&lt; dim, PropertiesIndex &gt;::synchronize_particle_velocities </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Carry out the closing half velocity step of a staggered integration scheme at the end of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> sub-iterations of a CFD time step. </p>
+<p>The contact and the fluid-particle interaction forces are re-evaluated at the final position of the particles so that their velocities can be synchronized with their positions. Consequently, n + 1 integration operations are carried out to complete the n <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> sub-iterations, and the CFD-DEM coupling of the next CFD time step sees synchronized velocities. </p>
+
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01466">1466</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
 </div>
 </div>
@@ -1592,7 +1626,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Information about boundary cells for contact detection. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00441">441</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00454">454</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1621,7 +1655,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Object to store completed collision events. </p>
 <p>Stores complete collision event data including start and end information for post-processing and analysis purposes. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00410">410</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00423">423</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1649,7 +1683,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Statistics container for timing and contact list information. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00476">476</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00489">489</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1676,7 +1710,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </div><div class="memdoc">
 <p>Manager for particle-particle and particle-wall contact detection and handling </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00414">414</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00427">427</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1704,7 +1738,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Container for particle interaction outcomes (forces and torques) </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00370">370</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00383">383</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1732,7 +1766,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Counter for contact searches performed in the current CFD iteration. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00470">470</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00483">483</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1760,7 +1794,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Total number of contact searches since simulation start. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00473">473</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00486">486</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1788,7 +1822,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Pointer to <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> action manager for handling DEM-specific operations. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00504">504</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00517">517</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1816,7 +1850,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation parameters container. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00488">488</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00501">501</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1843,7 +1877,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </div><div class="memdoc">
 <p>Sub simulation control object used to control the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> sub iterations for each CFD time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00364">364</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00377">377</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1871,7 +1905,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Displacement vector for particle motion calculations. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00379">379</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00392">392</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1899,7 +1933,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Reference to force vector from contact outcomes. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00376">376</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00389">389</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1927,7 +1961,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Force information stored on boundary elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00453">453</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00466">466</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1955,7 +1989,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Gravitational acceleration vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00367">367</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00380">380</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -1983,7 +2017,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>PVD handler for grid visualization output. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00482">482</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00495">495</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2011,7 +2045,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Particle insertion method handler. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00427">427</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00440">440</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2039,7 +2073,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Time integration scheme for particle motion equations. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00424">424</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00437">437</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2067,7 +2101,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Load balancing handler for distributing particles across MPI processes. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00417">417</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00430">430</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2095,7 +2129,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Maximum diameter among all particles in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00391">391</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00404">404</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2123,7 +2157,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Moment of inertia values for all particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00382">382</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00395">395</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2151,7 +2185,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Total number of MPI processes. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00497">497</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00510">510</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2179,7 +2213,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Squared threshold distance for neighborhood particle detection. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00385">385</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00398">398</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2208,7 +2242,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Object to store ongoing collision information. </p>
 <p>Stores particle ID, boundary ID, velocity tensor, angular velocity tensor, and collision time for collisions currently in progress. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00402">402</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00415">415</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2236,7 +2270,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Contact force model for particle-particle interactions. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00431">431</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00444">444</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2264,7 +2298,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Handler for point and line contact forces between particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00421">421</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00434">434</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2292,7 +2326,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Contact force model for particle-wall interactions. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00435">435</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00448">448</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2320,7 +2354,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>PVD handler for particle visualization output. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00485">485</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00498">498</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2348,7 +2382,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Information about cells involved in periodic boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00461">461</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00474">474</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2376,7 +2410,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Handler for periodic boundary condition manipulations. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00464">464</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00477">477</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2404,7 +2438,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Particle properties handler for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00479">479</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00492">492</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2432,7 +2466,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Rayleigh time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00491">491</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00504">504</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2460,7 +2494,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Container for particle size distribution objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00388">388</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00401">401</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2488,7 +2522,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Smallest criterion used for contact search algorithms. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00394">394</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00407">407</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2516,7 +2550,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Mesh information for solid surfaces in contact with particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00445">445</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00458">458</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2544,7 +2578,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Object for handling adaptive sparse contact detection algorithms. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00467">467</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00480">480</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2571,7 +2605,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </div><div class="memdoc">
 <p>TableHandler for post-processing phase volume calculations Stores total fluid volume and total particle volume data </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00501">501</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00514">514</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2599,7 +2633,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Current MPI process identifier. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00494">494</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00507">507</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2627,7 +2661,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Reference to torque vector from contact outcomes. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00373">373</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00386">386</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2655,7 +2689,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Torque information stored on boundary elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00457">457</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00470">470</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2683,7 +2717,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Updated boundary points and their corresponding normal vectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00449">449</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00462">462</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
@@ -2711,7 +2745,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p><a class="el" href="classVisualization.html" title="Building patches of particle properties for visualization. This function is taken from Aspect and dea...">Visualization</a> handler for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> output generation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00438">438</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00451">451</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
 </div>
 </div>
