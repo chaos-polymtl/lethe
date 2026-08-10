@@ -96,6 +96,9 @@ namespace Parameters
     // End time
     double time_end;
 
+    // End iteration (only used when end_control is EndControl::iteration)
+    unsigned int iteration_end;
+
     // Boolean to keep the time step for the last iteration regardless of the
     // end time specify. Both for fixed time step and adaptive time step.
     bool time_step_independent_of_end_time;
@@ -165,6 +168,21 @@ namespace Parameters
 
     // Prefix for simulation output
     std::string output_name;
+
+    /**
+     * Criterion used to end a transient simulation: either a maximum time
+     * (SimulationControl::time_end) or a maximum number of transient
+     * iterations (SimulationControl::iteration_end).
+     *
+     * @remark By default, this is set to @p EndControl::time. The default value
+     * matters since this structure is also filled programmatically (e.g. in
+     * unit tests) instead of being parsed from a parameter file.
+     */
+    enum class EndControl : std::uint8_t
+    {
+      iteration,
+      time
+    } end_control;
 
     enum class OutputControl : std::uint8_t
     {

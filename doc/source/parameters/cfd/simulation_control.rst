@@ -2,7 +2,7 @@
 Simulation Control
 ==================
 
-This subsection is the most important in a simulation and therefore, the most commonly modified in a parameter file. It controls the general parameters of the simulation, such as, the time integration method, end time of a simulation and output settings for paraview files. 
+This subsection is the most important in a simulation and therefore, the most commonly modified in a parameter file. It controls the general parameters of the simulation, such as the time integration method, end time of a simulation and output settings for Paraview files. 
 
 .. tip::
 	A standard convention in Lethe is to keep this section at the top of the parameter file, since it is generally the most accessed one.
@@ -34,6 +34,12 @@ This subsection is the most important in a simulation and therefore, the most co
     #---------------------------------------------------
     # Transient simulations parameters
     #---------------------------------------------------
+    # The control for the end condition of the simulation
+    set end control = time
+
+    # End iteration for the simulation
+    set iteration end = 10
+
     # End time value of the simulation
     set time end = 1
   
@@ -141,13 +147,22 @@ BDF scheme parameters
 * ``startup time scaling``: scaling factor used in the iterations necessary to startup the BDF schemes.
 
 .. note::
-	SDIRK schemes are self-starting and do not require any additional parameter.
+	SDIRK schemes are self-starting and do not require any additional parameters.
 
 ---------------------------------
 Transient simulations parameters
 ---------------------------------
 
-* ``time end``: value of the time at which the simulation ends.
+* ``end control``: control for the end condition of a transient simulation. The available options are: 
+	* ``iteration``: simulation will end at a specified maximum iteration number.
+	* ``time``: simulation will end at a specified maximum time value.
+
+* ``iteration end``: iteration number at which the simulation ends. Only used when ``end control = iteration``.
+
+* ``time end``: value of the time at which the simulation ends. Only used when ``end control = time``.
+
+  .. note::
+	  When ``end control = iteration``, the end time has no effect on the simulation, including on the value of the last time step. Consequently, ``time step independent of end time`` is irrelevant in that case.
 
 * ``time step``: value of the time step.
 
@@ -160,7 +175,7 @@ Transient simulations parameters
   .. math::
     N_{\mathrm{CFL}} = \max_q \frac{|\mathbf{u}_q| \Delta t} {h}
 
-  where :math:`q` the Gauss points and :math:`|\mathbf{u}_q|` is the velocity at the Gauss points. Essentially, the maximum CFL is the max of the CFL evaluated at every Gauss point in the mesh.
+  where :math:`q` are the Gauss points and :math:`|\mathbf{u}_q|` is the velocity at the Gauss points. Essentially, the maximum CFL is the max of the CFL evaluated at every Gauss point in the mesh.
 
 * ``max time step``: maximum time step value that can be reached during the simulation. It is useful when the problem of interest has an additional time-step constraint.
 
@@ -170,7 +185,7 @@ Transient simulations parameters
 
    ``max time step`` and ``adaptative time step scaling`` are only used when either ``adapt time step to respect CFL`` or ``adapt time step to respect CTR`` is set to ``true`` (adaptive time-stepping enabled). ``max time step`` enforces a strict upper bound to the time step, while ``adaptative time step scaling`` controls the adaptive time-stepping, by limiting the time-step variation from one time iteration to the following.
 
-* ``time step independent of end time``: this variable ensures that the time step of the simulation is always consistent at the end of the simulation. If one uses a time step that eventually leads exactly to the end time of the simulation this variable does not do anything. However, if adaptive time stepping is used or the end time is not exactly reached when using certain fixed time step, this flag ensures that the simulation does not change the last time step to reach the end time. For example, if your end time is 20, and you have a time step that leads to a last iteration until 20.1, all your results will be outputted until 20.1. If you wish to have exactly 20, you need to set this flag to ``false``. 
+* ``time step independent of end time``: this variable ensures that the time step of the simulation is always consistent at the end of the simulation. If one uses a time step that eventually leads exactly to the end time of the simulation this variable does not do anything. However, if adaptive time stepping is used or the end time is not exactly reached when using certain fixed time step, this flag ensures that the simulation does not change the last time step to reach the end time. For example, if your end time is 20, and you have a time step that leads to a last iteration at 20.1, all your results will be outputted at 20.1. If you wish to have exactly 20, you need to set this flag to ``false``. 
 
 --------------------
 Log file parameters

@@ -288,7 +288,9 @@ test()
   // Manually alter some of the default parameters of the solver
   NSparam.simulation_control.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  NSparam.simulation_control.dt       = 0.1;
+  NSparam.simulation_control.dt = 0.1;
+  NSparam.simulation_control.end_control =
+    Parameters::SimulationControl::EndControl::time;
   NSparam.simulation_control.time_end = 1.0;
 
   // A degree=2 element is used so that the reynolds stresses, which are

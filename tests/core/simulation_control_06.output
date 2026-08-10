@@ -1,0 +1,64 @@
+
+DEAL::*************************************************
+DEAL::Default end control - time end at 0.5
+DEAL::*************************************************
+DEAL::Iteration : 0    Time : 0.00000
+DEAL::Iteration : 1    Time : 0.100000
+DEAL::Iteration : 2    Time : 0.200000
+DEAL::Iteration : 3    Time : 0.300000
+DEAL::Iteration : 4    Time : 0.400000
+DEAL::Iteration : 5    Time : 0.500000
+DEAL::*************************************************
+DEAL::Iteration end control - iteration end at 3
+DEAL::*************************************************
+DEAL::Iteration : 0    Time : 0.00000
+DEAL::Iteration : 1    Time : 0.100000
+DEAL::Iteration : 2    Time : 0.200000
+DEAL::Iteration : 3    Time : 0.300000
+DEAL::*************************************************
+DEAL::Iteration end control - time end reached before the last iteration
+DEAL::*************************************************
+DEAL::Iteration : 0    Time : 0.00000
+DEAL::Iteration : 1    Time : 0.100000
+DEAL::Iteration : 2    Time : 0.200000
+DEAL::Iteration : 3    Time : 0.300000
+DEAL::Iteration : 4    Time : 0.400000
+DEAL::Iteration : 5    Time : 0.500000
+DEAL::Iteration : 6    Time : 0.600000
+DEAL::Iteration : 7    Time : 0.700000
+DEAL::Iteration : 8    Time : 0.800000
+DEAL::*************************************************
+DEAL::Iteration end control - time step not independent of end time
+DEAL::*************************************************
+DEAL::Iteration : 0    Time : 0.00000    Time step : 0.100000
+DEAL::Iteration : 1    Time : 0.100000    Time step : 0.100000
+DEAL::Iteration : 2    Time : 0.200000    Time step : 0.100000
+DEAL::Iteration : 3    Time : 0.300000    Time step : 0.100000
+DEAL::Iteration : 4    Time : 0.400000    Time step : 0.100000
+DEAL::Iteration : 5    Time : 0.500000    Time step : 0.100000
+DEAL::Iteration : 6    Time : 0.600000    Time step : 0.100000
+DEAL::Iteration : 7    Time : 0.700000    Time step : 0.100000
+DEAL::Iteration : 8    Time : 0.800000    Time step : 0.100000
+DEAL::*************************************************
+DEAL::Iteration end control - adaptative time stepping
+DEAL::*************************************************
+DEAL::Iteration : 0    Time : 0.00000    Time step : 1.00000
+DEAL::Iteration : 1    Time : 1.00000    Time step : 1.00000
+DEAL::Iteration : 2    Time : 2.20000    Time step : 1.20000
+DEAL::Iteration : 3    Time : 3.64000    Time step : 1.44000
+DEAL::Iteration : 4    Time : 5.36800    Time step : 1.72800
+DEAL::Iteration : 5    Time : 7.36800    Time step : 2.00000
+DEAL::*************************************************
+DEAL::Iteration end control - iteration end at 0
+DEAL::*************************************************
+DEAL::Dummy iteration, no integration
+DEAL::Iteration : 0    Time : 0.00000
+DEAL::*************************************************
+DEAL::Time end control - iteration end has no effect
+DEAL::*************************************************
+DEAL::Iteration : 0    Time : 0.00000
+DEAL::Iteration : 1    Time : 0.100000
+DEAL::Iteration : 2    Time : 0.200000
+DEAL::Iteration : 3    Time : 0.300000
+DEAL::Iteration : 4    Time : 0.400000
+DEAL::Iteration : 5    Time : 0.500000
