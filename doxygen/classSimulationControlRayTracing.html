@@ -232,6 +232,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:af8d2314e48124b0a3b90523ae1561f91 inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ab5fb4679cef5aeca745bf0e76cc6e5 inherit pro_attribs_classSimulationControl" id="r_a4ab5fb4679cef5aeca745bf0e76cc6e5"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a4ab5fb4679cef5aeca745bf0e76cc6e5">iteration_number</a></td></tr>
 <tr class="separator:a4ab5fb4679cef5aeca745bf0e76cc6e5 inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec805fc116d68e6a35323f01781f016a inherit pro_attribs_classSimulationControl" id="r_aec805fc116d68e6a35323f01781f016a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#aec805fc116d68e6a35323f01781f016a">end_iteration</a></td></tr>
+<tr class="separator:aec805fc116d68e6a35323f01781f016a inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5969a5ad321536ea68ab238330510648 inherit pro_attribs_classSimulationControl" id="r_a5969a5ad321536ea68ab238330510648"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a5969a5ad321536ea68ab238330510648">number_mesh_adapt</a></td></tr>
 <tr class="separator:a5969a5ad321536ea68ab238330510648 inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b3cc016a68348146112de04c7820020 inherit pro_attribs_classSimulationControl" id="r_a3b3cc016a68348146112de04c7820020"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a3b3cc016a68348146112de04c7820020">CFL</a></td></tr>
@@ -283,7 +285,7 @@ Additional Inherited Members</h2></td></tr>
 <p>This class manages ray tracing simulations where photons are traced through a computational domain. The simulation terminates when all photons have exited the triangulation or been absorbed.</p>
 <p>Ray tracing simulations do not use time stepping in the traditional sense; instead, iterations represent photon propagation steps until all photons have completed their trajectories. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01205">1205</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01211">1211</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af1278e7833c9988425bb097039a5183a" name="af1278e7833c9988425bb097039a5183a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af1278e7833c9988425bb097039a5183a">&#9670;&#160;</a></span>SimulationControlRayTracing()</h2>
@@ -320,7 +322,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00668">668</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00675">675</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
 </div>
 </div>
@@ -354,9 +356,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a67aa726e7105dd0af92f47dac688e001">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00676">676</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00683">683</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8cc_source.html#l00688">is_at_end()</a>, and <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8cc_source.html#l00695">is_at_end()</a>, and <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>.</p>
 
 </div>
 </div>
@@ -388,7 +390,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a08bd0100d59a88e4aaf607f70f803aba">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01243">1243</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01249">1249</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -420,9 +422,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#ace7a05ca520659fb2178d26a536b07f4">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00688">688</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00695">695</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l01262">photon_handler</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l01268">photon_handler</a>.</p>
 
 </div>
 </div>
@@ -460,9 +462,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#aad36188d4b8b60828b33284ca0858211">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00694">694</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00701">701</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l01262">photon_handler</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l01268">photon_handler</a>.</p>
 
 </div>
 </div>
@@ -482,7 +484,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Reference to the photon handler used during the ray-tracing simulation. </p>
 <p>This handler manages the photons being traced through the domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01262">1262</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01268">1268</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>

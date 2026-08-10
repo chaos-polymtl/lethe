@@ -85,6 +85,7 @@ var searchData=
   ['isovalue_82',['isovalue',['../structParameters_1_1PostProcessing_1_1IsocontourBoundingBoxes_1_1Isocontour.html#afea39ab91697463da02f28502aa55133',1,'Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour']]],
   ['iterable_5fnodes_83',['iterable_nodes',['../classRBFShape.html#a0c93189216143c45549d01818ace16a1',1,'RBFShape']]],
   ['iteration_5fcheck_5ffunction_84',['iteration_check_function',['../classLagrangianLoadBalancing.html#aa45b9e32d705899fbdd9a1d584752c08',1,'LagrangianLoadBalancing']]],
-  ['iteration_5flogic_85',['iteration_logic',['../classSubSimulationControlDEM.html#a1ddde614f266ae1e5b0453d85f98b817',1,'SubSimulationControlDEM']]],
-  ['iteration_5fnumber_86',['iteration_number',['../classSimulationControl.html#a4ab5fb4679cef5aeca745bf0e76cc6e5',1,'SimulationControl::iteration_number'],['../classSubSimulationControlDEM.html#a1b1ae5421b8d2543e4f00d8c66d67396',1,'SubSimulationControlDEM::iteration_number']]]
+  ['iteration_5fend_85',['iteration_end',['../structParameters_1_1SimulationControl.html#a071cd7ef590992755a9b540d70b4fe47',1,'Parameters::SimulationControl']]],
+  ['iteration_5flogic_86',['iteration_logic',['../classSubSimulationControlDEM.html#a1ddde614f266ae1e5b0453d85f98b817',1,'SubSimulationControlDEM']]],
+  ['iteration_5fnumber_87',['iteration_number',['../classSimulationControl.html#a4ab5fb4679cef5aeca745bf0e76cc6e5',1,'SimulationControl::iteration_number'],['../classSubSimulationControlDEM.html#a1b1ae5421b8d2543e4f00d8c66d67396',1,'SubSimulationControlDEM::iteration_number']]]
 ];

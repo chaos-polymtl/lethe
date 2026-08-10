@@ -226,6 +226,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:af8d2314e48124b0a3b90523ae1561f91 inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ab5fb4679cef5aeca745bf0e76cc6e5 inherit pro_attribs_classSimulationControl" id="r_a4ab5fb4679cef5aeca745bf0e76cc6e5"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a4ab5fb4679cef5aeca745bf0e76cc6e5">iteration_number</a></td></tr>
 <tr class="separator:a4ab5fb4679cef5aeca745bf0e76cc6e5 inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec805fc116d68e6a35323f01781f016a inherit pro_attribs_classSimulationControl" id="r_aec805fc116d68e6a35323f01781f016a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#aec805fc116d68e6a35323f01781f016a">end_iteration</a></td></tr>
+<tr class="separator:aec805fc116d68e6a35323f01781f016a inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5969a5ad321536ea68ab238330510648 inherit pro_attribs_classSimulationControl" id="r_a5969a5ad321536ea68ab238330510648"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a5969a5ad321536ea68ab238330510648">number_mesh_adapt</a></td></tr>
 <tr class="separator:a5969a5ad321536ea68ab238330510648 inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b3cc016a68348146112de04c7820020 inherit pro_attribs_classSimulationControl" id="r_a3b3cc016a68348146112de04c7820020"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a3b3cc016a68348146112de04c7820020">CFL</a></td></tr>
@@ -277,7 +279,7 @@ Additional Inherited Members</h2></td></tr>
 <p>This class handles steady-state simulations where time integration is not required. The simulation progresses through iterations until the specified number of mesh adaptations is reached or the maximum number of iterations is completed.</p>
 <dl class="section note"><dt>Note</dt><dd>Steady-state simulations do not use adaptive time stepping. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01105">1105</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01111">1111</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a32cdcb209c18cccde4871a5b798c2a24" name="a32cdcb209c18cccde4871a5b798c2a24"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a32cdcb209c18cccde4871a5b798c2a24">&#9670;&#160;</a></span>SimulationControlSteady()</h2>
@@ -303,7 +305,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00590">590</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00597">597</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
 </div>
 </div>
@@ -337,9 +339,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a67aa726e7105dd0af92f47dac688e001">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00596">596</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00603">603</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8cc_source.html#l00630">is_at_end()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8cc_source.html#l00637">is_at_end()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>.</p>
 
 </div>
 </div>
@@ -371,7 +373,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a08bd0100d59a88e4aaf607f70f803aba">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01130">1130</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01136">1136</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -403,9 +405,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#ace7a05ca520659fb2178d26a536b07f4">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00630">630</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00637">637</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00100">SimulationControl::number_mesh_adapt</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00103">SimulationControl::number_mesh_adapt</a>.</p>
 
 </div>
 </div>
@@ -443,9 +445,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#aad36188d4b8b60828b33284ca0858211">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00613">613</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00620">620</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00466">announce_string()</a>, <a class="el" href="simulation__control_8cc_source.html#l00200">SimulationControl::is_verbose_iteration()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00100">SimulationControl::number_mesh_adapt</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00466">announce_string()</a>, <a class="el" href="simulation__control_8cc_source.html#l00201">SimulationControl::is_verbose_iteration()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00103">SimulationControl::number_mesh_adapt</a>.</p>
 
 </div>
 </div>
