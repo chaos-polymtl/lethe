@@ -39,7 +39,7 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt                                   = 0.1;
+  simulation_control_parameters.dt = 0.1;
   simulation_control_parameters.end_control =
     Parameters::SimulationControl::EndControl::time;
 
