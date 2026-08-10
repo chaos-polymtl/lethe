@@ -1598,30 +1598,6 @@ namespace Parameters
         }
       else if (op == "polynomial")
         {
-          // Ensure a temperature initial condition is configured
-          {
-            // The EM solver only supports 3D, so we can use a fixed dimension
-            // of 3 here
-            Functions::ParsedFunction<3> temperature_function;
-            prm.enter_subsection("initial conditions");
-            {
-              prm.enter_subsection("temperature");
-              try
-                {
-                  temperature_function.parse_parameters(prm);
-                }
-              catch (const std::exception &e)
-                {
-                  AssertThrow(
-                    false,
-                    ExcMessage(
-                      "Polynomial physical properties model for electric conductivity model requires a temperature field initial condition, but 'initial conditions/temperature' is not initialized."));
-                }
-              prm.leave_subsection();
-            }
-            prm.leave_subsection();
-          }
-
           electric_conductivity_model = ElectricConductivityModel::polynomial;
 
           const std::string electric_conductivity_coefficients_string =
@@ -1650,30 +1626,6 @@ namespace Parameters
         }
       else if (op == "polynomial")
         {
-          // Ensure a temperature initial condition is configured
-          {
-            // The EM solver only supports 3D, so we can use a fixed dimension
-            // of 3 here
-            Functions::ParsedFunction<3> temperature_function;
-            prm.enter_subsection("initial conditions");
-            {
-              prm.enter_subsection("temperature");
-              try
-                {
-                  temperature_function.parse_parameters(prm);
-                }
-              catch (const std::exception &e)
-                {
-                  AssertThrow(
-                    false,
-                    ExcMessage(
-                      "Polynomial physical properties model for electric permittivity model requires a temperature field initial condition, but 'initial conditions/temperature' is not initialized."));
-                }
-              prm.leave_subsection();
-            }
-            prm.leave_subsection();
-          }
-
           electric_permittivity_model = ElectricPermittivityModel::polynomial;
 
           const std::string electric_permittivity_real_coefficients_string =
@@ -1715,29 +1667,6 @@ namespace Parameters
         }
       else if (op == "polynomial")
         {
-          // Ensure a temperature initial condition is configured
-          {
-            // The EM solver only supports 3D, so we can use a fixed dimension
-            // of 3 here
-            Functions::ParsedFunction<3> temperature_function;
-            prm.enter_subsection("initial conditions");
-            {
-              prm.enter_subsection("temperature");
-              try
-                {
-                  temperature_function.parse_parameters(prm);
-                }
-              catch (const std::exception &e)
-                {
-                  AssertThrow(
-                    false,
-                    ExcMessage(
-                      "Polynomial physical properties model for magnetic permeability model requires a temperature field initial condition, but 'initial conditions/temperature' is not initialized."));
-                }
-              prm.leave_subsection();
-            }
-            prm.leave_subsection();
-          }
           magnetic_permeability_model = MagneticPermeabilityModel::polynomial;
 
           const std::string magnetic_permeability_real_coefficients_string =

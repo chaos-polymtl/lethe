@@ -1554,6 +1554,12 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
       }
 
       this->system_matrix.reinit(sparsity_pattern);
+
+      // Additionally, when solving temperature dependent physics, we need to
+      // update the container for the temperature field since the last time the
+      // electromagnetic system was solved.
+      this->temperature_last_solved_solution =
+        this->multiphysics->get_solution(PhysicsID::heat_transfer);
     }
   else
     {
@@ -1998,11 +2004,6 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
   // cases.
   if (this->simulation_control->get_iteration_number() <= 1)
     {
-      // Initialize the temperature_last_solved_solution to the initial
-      // temperature solution at the first iteration of the simulation
-      this->temperature_last_solved_solution =
-        this->multiphysics->get_solution(PhysicsID::heat_transfer);
-
       return true;
     }
   else
@@ -2167,8 +2168,6 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
               if (std::sqrt(max_relative_change) >
                   thm_parameters.coupling_threshold)
                 {
-                  this->temperature_last_solved_solution =
-                    temperature_current_solution;
                   return true;
                 }
               else
