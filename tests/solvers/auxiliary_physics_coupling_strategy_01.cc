@@ -229,9 +229,8 @@ test()
 
     // should_solve_auxiliary_physics() reads the temperature field through
     // this->multiphysics, so (unlike Tests 1-3) it cannot be null here.
-    ConditionalOStream pcout(std::cout,
-                             Utilities::MPI::this_mpi_process(
-                               mpi_communicator) == 0);
+    ConditionalOStream pcout(
+      std::cout, Utilities::MPI::this_mpi_process(mpi_communicator) == 0);
     MultiphysicsInterface<dim> multiphysics(solver_parameters,
                                             tria,
                                             simulation_control,
@@ -270,14 +269,16 @@ test()
       {
         simulation_control->integrate();
 
-        // Jump the temperature right before step 3: at 0°C, |eps| = 84.0, at 300°C, |eps| = 81.0 + i0.3 = 84.3, a 3.6% change that is > 1% threshold.
+        // Jump the temperature right before step 3: at 0°C, |eps| = 84.0, at
+        // 300°C, |eps| = 81.0 + i0.3 = 84.3, a 3.6% change that is > 1%
+        // threshold.
         if (i == 2)
           *temperature_solution = 300.0;
 
-        const bool solved = electromagnetics_auxiliary_physics
-                              .should_solve_auxiliary_physics();
-        deallog << "Step " << simulation_control->get_iteration_number()
-                << ": " << (solved ? "true" : "false") << std::endl;
+        const bool solved =
+          electromagnetics_auxiliary_physics.should_solve_auxiliary_physics();
+        deallog << "Step " << simulation_control->get_iteration_number() << ": "
+                << (solved ? "true" : "false") << std::endl;
 
         // Mirror what the real solver does after it solves: pull the
         // current temperature from the multiphysics interface as the new
