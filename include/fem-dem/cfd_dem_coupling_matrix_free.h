@@ -61,7 +61,11 @@ public:
   void
   solve() override;
 
-private:
+  // The members below are protected rather than private so that the unit tests
+  // of the tests/fem-dem folder can derive from this class to drive the
+  // restart and the load balance of the solver directly, as is done for the
+  // other solvers.
+protected:
   /**
    * @brief Set up the various parameters related to the DEM simulation.
    *
