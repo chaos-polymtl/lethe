@@ -23,6 +23,8 @@
 
 #include <deal.II/fe/fe_system.h>
 
+#include <deal.II/matrix_free/fe_point_evaluation.h>
+
 #include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
@@ -882,19 +884,25 @@ public:
       ExcMessage(
         "gather_void_fraction has been set to false, yet you are trying to gather the void fraction at the location of the particles. The scratch data is currently unaware of the finite element interpolation for the void fraction and the simulation will abort."));
 
-    FEValues<dim> fe_values_particles_void_fraction(
-      this->fe_values_void_fraction->get_fe(),
-      q_particles_location,
-      update_values);
-
     Assert(
       cell_void_fraction.size() == q_particles_location.size(),
       ExcMessage(
         "The vector for the void fraction at the particle location does not have the same size as the quadrature used to evaluate it."));
-    fe_values_particles_void_fraction.reinit(void_fraction_cell);
 
-    fe_values_particles_void_fraction.get_function_values(
-      void_fraction_solution, cell_void_fraction);
+    Vector<double> local_void_fraction_dof_values(
+      void_fraction_cell->get_fe().n_dofs_per_cell());
+    void_fraction_cell->get_dof_values(void_fraction_solution,
+                                       local_void_fraction_dof_values);
+
+    point_evaluator_void_fraction->reinit(
+      void_fraction_cell, make_array_view(q_particles_location.get_points()));
+    point_evaluator_void_fraction->evaluate(
+      make_array_view(local_void_fraction_dof_values), EvaluationFlags::values);
+
+    for (unsigned int i_particle = 0; i_particle < q_particles_location.size();
+         ++i_particle)
+      cell_void_fraction[i_particle] =
+        point_evaluator_void_fraction->get_value(i_particle);
   }
 
   /**
@@ -1026,19 +1034,23 @@ public:
       ExcMessage(
         "gather_cls has been set to false, yet you are trying to gather the CLS at the location of the particles. The scratch data is currently unaware of the finite element interpolation for CLS and the simulation will abort."));
 
-
-    FEValues<dim> fe_values_cls_local_particles((*this->fe_values_cls).get_fe(),
-                                                q_particles_location,
-                                                update_values |
-                                                  update_quadrature_points |
-                                                  update_JxW_values);
-
     filtered_phase_values_at_particle_location.resize(number_of_particles);
 
-    fe_values_cls_local_particles.reinit(phase_cell);
+    Vector<double> local_filtered_phase_dof_values(
+      phase_cell->get_fe().n_dofs_per_cell());
+    phase_cell->get_dof_values(current_filtered_solution,
+                               local_filtered_phase_dof_values);
 
-    fe_values_cls_local_particles.get_function_values(
-      current_filtered_solution, filtered_phase_values_at_particle_location);
+    point_evaluator_cls->reinit(
+      phase_cell, make_array_view(q_particles_location.get_points()));
+    point_evaluator_cls->evaluate(make_array_view(
+                                    local_filtered_phase_dof_values),
+                                  EvaluationFlags::values);
+
+    for (unsigned int i_particle = 0; i_particle < number_of_particles;
+         ++i_particle)
+      filtered_phase_values_at_particle_location[i_particle] =
+        point_evaluator_cls->get_value(i_particle);
   }
 
   /**
@@ -1586,6 +1598,10 @@ public:
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_cls;
+  // Used to evaluate the filtered CLS solution at particle locations
+  // (arbitrary points within the cell); stored as a shared_ptr because it is
+  // only instantiated when needed
+  std::shared_ptr<FEPointEvaluation<1, dim>> point_evaluator_cls;
   std::shared_ptr<ConservativeLevelSetFilterBase>
     filter; // Phase indicator filter
 
@@ -1606,6 +1622,10 @@ public:
   std::vector<Tensor<1, dim>>      void_fraction_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_void_fraction;
+  // Used to evaluate the void fraction at particle locations (arbitrary
+  // points within the cell); stored as a shared_ptr because it is only
+  // instantiated when needed
+  std::shared_ptr<FEPointEvaluation<1, dim>> point_evaluator_void_fraction;
 
   /**
    * Scratch component for the particle fluid interaction auxiliary physics
