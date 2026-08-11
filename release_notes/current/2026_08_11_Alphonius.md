@@ -1,5 +1,11 @@
-## [Master] - 2026/06/02
+## [Master] - 2026/08/11
 
 ### Added
 
-- MINOR Adds wall time monitoring for algebraic melt volume, geometric melt volume, and cls mass conservation post-processing. [#2007](https://github.com/chaos-polymtl/lethe/pull/2007)
+- MAJOR Adds probes to the postprocessing module. This allows evaluation of solved variables at remote points of the domain. Values are outputted in ``.dat`` files (1 per probing point).  Each probing point is characterized by a unique ID and a user-specified ``location``. Multiple variables can be evaluated at a same probing point and values will be written in the same output file. The first column of the file is the time and the subsequent columns are either evaluated scalar fields or components of evaluated vector fields.
+  Remote point evaluation is done by the functions ``evaluate_values_at_points()`` using Utilities::MPI::RemotePointEvaluation<dim, dim>. It was added to the utilities of Lethe. It is templated for both scalar and vector evaluation.
+  This implementation introduces a new PostprocessingProbes<dim> class which evaluates quantities of interest at probing point and holds all the data tables of probes. It is instantiated as a member of the MultiphysicsInterface<dim> class. Evaluation of each physics' probed quantities is done within the ``postprocess()`` (or ``postprocess_fd()``) attribute of the physics by communicating to PostprocessingProbes<dim> through the MultiphysicsInterface<dim> object. The probe tables management (i.e., writing in output file, serializing, deserializing) is handled by the PostprocessingProbes<dim> object.
+  At the moment, the probes are only implemented for the following variables: velocity, pressure, phase, and temperature. Other variables will follow in a future PR.
+  A unit test was added to test both the scalar and vector evaluation of ``evaluate_values_at_points()``: ``evaluate_values_at_points.cc``. Two ``lethe-fluid`` application tests were updated to test the new feature (``cls-velocity-extrapolation`` and ``heat_transfer_stefan``).
+  This implementation required points to describe the location of probe, as a consequence the Parameters::PostProcessing struct needed to be templated with ``dim``.  Appropriate updates due to this change were made in the code.
+  [#2090](https://github.com/chaos-polymtl/lethe/pull/2090)
