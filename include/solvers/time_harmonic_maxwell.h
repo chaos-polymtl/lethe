@@ -865,6 +865,12 @@ private:
    */
   std::vector<double> waveguide_ports_electric_amplitudes;
 
+
+  /**
+   * @brief A boolean variable that indicates whether the time-harmonic Maxwell solver needs to define temperature-dependent variables and store the temperature solution from the last solve.
+   */
+  bool needs_temperature;
+
   /**
    * @brief A vector containing all the values of the temperature solution when the last solve of the time-harmonic Maxwell system was performed. This is used to determine the physical properties of the materials in the domain when they are temperature-dependent.
    */

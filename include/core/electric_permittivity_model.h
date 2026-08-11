@@ -150,9 +150,9 @@ public:
   }
 
   /**
-   * @brief vector_value Calculates the vector value of magnetic permeabilities
-   * @param field_vectors Vector of properties on which the magnetic permeabilities depend
-   * @param property_vector Values of the magnetic permeabilities
+   * @brief vector_value Calculates the vector value of electric permittivities
+   * @param field_vectors Vector of properties on which the electric permittivities depend
+   * @param property_vector Values of the electric permittivities
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,

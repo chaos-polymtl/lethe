@@ -606,7 +606,6 @@ namespace Parameters
 
     /// Electric_conductivity
     double              electric_conductivity;
-    int                 electric_conductivity_polynomial_degree;
     std::vector<double> electric_conductivity_polynomial_coefficients;
 
     /// Magnetic_permeability

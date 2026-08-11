@@ -188,7 +188,8 @@ test()
   //         threshold:
   //         - Step 1 -> true  (always solve at the first step)
   //         - Step 2 -> false (temperature unchanged since step 1)
-  //         - Step 3 -> true  (T: 300K->330K changes eps_i by 10%, > 1%)
+  //         - Step 3 -> true  (T: 0 C -> 300 C trigger a > 1% relative change
+  //         in |eps|)
   //         - Step 4 -> false (temperature unchanged since step 3)
   // -------------------------------------------------------
   {

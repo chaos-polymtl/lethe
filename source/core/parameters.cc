@@ -1595,6 +1595,7 @@ namespace Parameters
       if (op == "constant")
         {
           electric_conductivity_model = ElectricConductivityModel::constant;
+          electric_conductivity       = prm.get_double("electric conductivity");
         }
       else if (op == "polynomial")
         {
