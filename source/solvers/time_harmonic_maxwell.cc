@@ -1175,6 +1175,16 @@ TimeHarmonicMaxwell<dim>::finish_simulation()
 
 template <int dim>
 void
+TimeHarmonicMaxwell<dim>::update_material_properties_dependencies()
+{
+  // The material properties can only depend on the temperature field at the
+  // moment
+  this->temperature_last_solved_solution =
+    this->multiphysics->get_solution(PhysicsID::heat_transfer);
+}
+
+template <int dim>
+void
 TimeHarmonicMaxwell<dim>::percolate_time_vectors()
 {
   // No time-dependent vectors to percolate in time-harmonic Maxwell
@@ -1976,11 +1986,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
   scale_solution_components(*this->dof_handler_trial_skeleton,
                             *this->present_solution_skeleton);
 
-  // Additionally, when solving temperature dependent physics, we need to
-  // update the container for the temperature field since the last time the
-  // electromagnetic system was solved.
-  this->temperature_last_solved_solution =
-    this->multiphysics->get_solution(PhysicsID::heat_transfer);
+  update_material_properties_dependencies();
 }
 
 template <int dim>
@@ -2160,9 +2166,14 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
               // Reduce the maximum relative change across all MPI ranks
               max_relative_change =
                 Utilities::MPI::max(max_relative_change, mpi_communicator);
-              this->pcout
-                << "  -The maximum relative change in the physical properties since the last time the electromagnetics were solved is "
-                << std::sqrt(max_relative_change) << std::endl;
+
+              if (simulation_parameters.analytical_solution->verbosity !=
+                  Parameters::Verbosity::quiet)
+                {
+                  this->pcout
+                    << "  - The maximum relative change in the electromagnetics physical properties since the last time the time-harmonic Maxwell equations were solved is "
+                    << std::sqrt(max_relative_change) << std::endl;
+                }
 
               // Return the treshold comparison result. We take the square root
               // of the max_relative_change to get the actual relative change

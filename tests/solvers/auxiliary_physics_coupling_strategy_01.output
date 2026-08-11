@@ -24,3 +24,8 @@ DEAL::Step 7 (t=0.700000): false
 DEAL::Step 8 (t=0.800000): true
 DEAL::Step 9 (t=0.900000): false
 DEAL::Step 10 (t=1.00000): true
+DEAL::--- Test: TimeHarmonicMaxwellCouplingStrategy::threshold (1% threshold) ---
+DEAL::Step 1: true
+DEAL::Step 2: false
+DEAL::Step 3: true
+DEAL::Step 4: false

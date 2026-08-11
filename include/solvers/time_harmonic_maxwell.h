@@ -418,6 +418,12 @@ public:
   bool
   should_solve_auxiliary_physics() override;
 
+  /**
+   * @brief Update the containers that stores the properties from which the material properties of the time-harmonic Maxwell equations can depend on.
+   */
+  void
+  update_material_properties_dependencies();
+
 private:
   /**
    * @brief Verify consistency of the input parameters for boundary

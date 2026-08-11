@@ -198,10 +198,6 @@ test()
 
     // Temperature-dependent electric permittivity:
     //   eps_r(T) = -0.01*T + 84.0, eps_i(T) = 0.001*T
-    // NOTE: the "polynomial" electric permittivity model and its
-    // coefficient vectors used below are assumed to already exist on your
-    // branch alongside the threshold implementation; they are not yet part
-    // of upstream Lethe as of this writing.
     Parameters::PhysicalProperties physical_properties;
     physical_properties.number_of_fluids                = 1;
     physical_properties.number_of_solids                = 0;
@@ -233,8 +229,9 @@ test()
 
     // should_solve_auxiliary_physics() reads the temperature field through
     // this->multiphysics, so (unlike Tests 1-3) it cannot be null here.
-    ConditionalOStream pcout(
-      std::cout, Utilities::MPI::this_mpi_process(mpi_communicator) == 0);
+    ConditionalOStream pcout(std::cout,
+                             Utilities::MPI::this_mpi_process(
+                               mpi_communicator) == 0);
     MultiphysicsInterface<dim> multiphysics(solver_parameters,
                                             tria,
                                             simulation_control,
@@ -254,13 +251,16 @@ test()
     // as the "current" temperature: we drive it directly between steps.
     auto temperature_solution = std::make_shared<GlobalVectorType>(
       dof_handler_temperature->locally_owned_dofs(), mpi_communicator);
-    *temperature_solution = 300.0; // K
+    *temperature_solution = 0.0; // Celsius
     multiphysics.set_solution(PhysicsID::heat_transfer, temperature_solution);
 
     TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
       &multiphysics, solver_parameters, tria, simulation_control);
-    electromagnetics_auxiliary_physics.temperature_last_solved_solution =
-      *temperature_solution;
+    // temperature_last_solved_solution starts out default-constructed, but
+    // that's fine: step 1 always returns true via the early
+    // "iteration_number <= 1" return, before the threshold branch (and thus
+    // temperature_last_solved_solution) is ever touched. The loop below
+    // initializes it for real right after that first step.
 
     deallog
       << "--- Test: TimeHarmonicMaxwellCouplingStrategy::threshold (1% threshold) ---"
@@ -270,21 +270,21 @@ test()
       {
         simulation_control->integrate();
 
-        // Jump the temperature right before step 3: at 300K, eps_i = 0.3;
-        // at 330K, eps_i = 0.33, a 10% change that crosses the 1% threshold.
+        // Jump the temperature right before step 3: at 0°C, |eps| = 84.0, at 300°C, |eps| = 81.0 + i0.3 = 84.3, a 3.6% change that is > 1% threshold.
         if (i == 2)
-          *temperature_solution = 330.0;
+          *temperature_solution = 300.0;
 
-        const bool solved =
-          electromagnetics_auxiliary_physics.should_solve_auxiliary_physics();
-        deallog << "Step " << simulation_control->get_iteration_number() << ": "
-                << (solved ? "true" : "false") << std::endl;
+        const bool solved = electromagnetics_auxiliary_physics
+                              .should_solve_auxiliary_physics();
+        deallog << "Step " << simulation_control->get_iteration_number()
+                << ": " << (solved ? "true" : "false") << std::endl;
 
-        // Mirror what the real solver does after it solves: the last-solved
-        // temperature becomes the new reference point for future checks.
+        // Mirror what the real solver does after it solves: pull the
+        // current temperature from the multiphysics interface as the new
+        // reference point for future threshold checks.
         if (solved)
-          electromagnetics_auxiliary_physics.temperature_last_solved_solution =
-            *temperature_solution;
+          electromagnetics_auxiliary_physics
+            .update_material_properties_dependencies();
       }
   }
 }
