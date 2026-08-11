@@ -2515,18 +2515,6 @@ namespace Parameters
         ExcMessage(
           "The current maximum of probing points allowed is 25. Please adjust 'number of probing points'."));
 
-      // Parse map entries for variables. At the moment, only the
-      // variables "velocity", "pressure", "phase", and "temperature" are
-      // accepted.
-      // probing_points_per_variable.insert(
-      //   {Variable::velocity, ProbingPointsPerVariable()});
-      // probing_points_per_variable.insert(
-      //   {Variable::pressure, ProbingPointsPerVariable()});
-      // probing_points_per_variable.insert(
-      //   {Variable::phase, ProbingPointsPerVariable()});
-      // probing_points_per_variable.insert(
-      //   {Variable::temperature, ProbingPointsPerVariable()});
-
       for (unsigned int id = 0; id < number_of_probing_points; ++id)
         {
           prm.enter_subsection("probe " + Utilities::int_to_string(id));
