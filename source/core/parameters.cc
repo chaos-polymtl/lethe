@@ -2345,8 +2345,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  PostProcessing::IsocontourBoundingBoxes::declare_parameters(
+  PostProcessing<dim>::IsocontourBoundingBoxes::declare_parameters(
     ParameterHandler &prm)
   {
     prm.enter_subsection("isocontour bounding box");
@@ -2385,8 +2386,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  PostProcessing::IsocontourBoundingBoxes::parse_parameters(
+  PostProcessing<dim>::IsocontourBoundingBoxes::parse_parameters(
     ParameterHandler &prm)
   {
     prm.enter_subsection("isocontour bounding box");
@@ -2426,7 +2428,7 @@ namespace Parameters
 
       if (number_of_isocontour_bounding_boxes > 0)
         {
-          // Build maps of isocontours
+          // Build map of isocontours
           for (unsigned int i = 0; i < variables_vec.size(); ++i)
             {
               // Initialize Isocontour
@@ -2457,8 +2459,121 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  PostProcessing::declare_parameters(ParameterHandler &prm)
+  PostProcessing<dim>::ProbingPoints::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("probing points");
+    {
+      prm.declare_entry("number of probing points",
+                        "0",
+                        Patterns::Integer(0),
+                        "Number of probing points");
+
+      const std::string default_point_entry_sting =
+        (dim == 2) ? "0., 0." : "0., 0., 0.";
+
+      for (unsigned int i = 0; i < max_number_of_probing_points; ++i)
+        {
+          prm.enter_subsection("probe " + Utilities::int_to_string(i));
+          {
+            prm.declare_entry(
+              "location",
+              default_point_entry_sting,
+              Patterns::List(Patterns::Double()),
+              "Probe point(s) location(s) in the mesh's reference. "
+              "The different components of the point must be separated comma (e.g., ``set location = 0.0, 0.0, 0.0``). ");
+            prm.declare_entry(
+              "variable",
+              "velocity",
+              Patterns::List(
+                Patterns::Selection("velocity|pressure|phase|temperature")),
+              "Variable(s) evaluated at the probing point. "
+              "Choices are <velocity|pressure|phase|temperature>. "
+              "When multiple variables are defined, the different variables must "
+              "be separated by commas (e.g., ``set variable = velocity, pressure, temperature``).");
+            prm.declare_entry("probing point filename",
+                              "probe_" + Utilities::int_to_string(i, 2),
+                              Patterns::FileName(),
+                              "Filename for outputted probing point value(s).");
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  PostProcessing<dim>::ProbingPoints::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("probing points");
+    {
+      number_of_probing_points = prm.get_integer("number of probing points");
+      AssertThrow(
+        number_of_probing_points <= max_number_of_probing_points,
+        ExcMessage(
+          "The current maximum of probing points allowed is 25. Please adjust 'number of probing points'."));
+
+      // Parse map entries for variables. At the moment, only the
+      // variables "velocity", "pressure", "phase", and "temperature" are
+      // accepted.
+      // probing_points_per_variable.insert(
+      //   {Variable::velocity, ProbingPointsPerVariable()});
+      // probing_points_per_variable.insert(
+      //   {Variable::pressure, ProbingPointsPerVariable()});
+      // probing_points_per_variable.insert(
+      //   {Variable::phase, ProbingPointsPerVariable()});
+      // probing_points_per_variable.insert(
+      //   {Variable::temperature, ProbingPointsPerVariable()});
+
+      for (unsigned int id = 0; id < number_of_probing_points; ++id)
+        {
+          prm.enter_subsection("probe " + Utilities::int_to_string(id));
+          {
+            const std::string        variables_list = prm.get("variable");
+            std::vector<std::string> variables_vec =
+              Utilities::split_string_list(variables_list);
+
+            const Point<dim> point(
+              value_string_to_tensor<dim>(prm.get("location")));
+
+            for (const std::string &variable : variables_vec)
+              {
+                if (variable == "velocity")
+                  {
+                    add_probing_point(Variable::velocity, id, point);
+                  }
+                else if (variable == "pressure")
+                  {
+                    add_probing_point(Variable::pressure, id, point);
+                  }
+                else if (variable == "phase")
+                  {
+                    add_probing_point(Variable::phase, id, point);
+                  }
+                else if (variable == "temperature")
+                  {
+                    add_probing_point(Variable::temperature, id, point);
+                  }
+                else
+                  throw std::invalid_argument(
+                    "Error, the only valid variables for a 'probing point' are: "
+                    "'velocity', 'pressure','phase' and 'temperature'.");
+              }
+
+            const std::string filename = prm.get("probing point filename");
+            probing_points_output_names.emplace_back(filename);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  PostProcessing<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("post-processing");
     {
@@ -2759,12 +2874,14 @@ namespace Parameters
         "Enable output of velocity gradient field <true|false>");
 
       isocontour_bounding_boxes.declare_parameters(prm);
+      probing_points.declare_parameters(prm);
     }
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  PostProcessing::parse_parameters(ParameterHandler &prm)
+  PostProcessing<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("post-processing");
     {
@@ -2861,6 +2978,7 @@ namespace Parameters
                              "Options are 'fluid 0', 'fluid 1' or 'both'."));
 
       isocontour_bounding_boxes.parse_parameters(prm);
+      probing_points.parse_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -5167,6 +5285,8 @@ namespace Parameters
   // Explicitly instantiate template classes and structs
   template class Laser<2>;
   template class Laser<3>;
+  template class PostProcessing<2>;
+  template class PostProcessing<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
   template struct ConstrainSolidDomain<2>;

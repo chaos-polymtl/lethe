@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_average_scalar_in_time_h
@@ -50,10 +50,11 @@ public:
    * @param[in] time_step The time step.
    */
   void
-  calculate_average_scalar(const GlobalVectorType &local_evaluation_point,
-                           const Parameters::PostProcessing &post_processing,
-                           const double                      current_time,
-                           const double                      time_step);
+  calculate_average_scalar(
+    const GlobalVectorType                &local_evaluation_point,
+    const Parameters::PostProcessing<dim> &post_processing,
+    const double                           current_time,
+    const double                           time_step);
 
   /**
    * @brief Calculate time-averaged scalar field using vector with no ghost

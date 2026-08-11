@@ -40,7 +40,7 @@ public:
   Parameters::FEM                                   fem_parameters;
   Parameters::Forces                                forces_parameters;
   std::shared_ptr<Parameters::Laser<dim>>           laser_parameters;
-  Parameters::PostProcessing                        post_processing;
+  Parameters::PostProcessing<dim>                   post_processing;
   Parameters::Restart                               restart_parameters;
   Parameters::Manifolds                             manifolds_parameters;
   BoundaryConditions::NSBoundaryConditions<dim>     boundary_conditions;
@@ -520,6 +520,28 @@ public:
         multiphysics.CLS,
         ExcMessage(
           "You are attempting to monitor phase indicator isocontours, but 'cls = false' in the 'multiphysics' subsection."));
+
+    // For postprocessing probes
+    if (post_processing.probing_points.probing_points_per_variable.contains(
+          Variable::velocity) ||
+        post_processing.probing_points.probing_points_per_variable.contains(
+          Variable::pressure))
+      AssertThrow(
+        multiphysics.fluid_dynamics,
+        ExcMessage(
+          "You are attempting to evaluate velocity or pressure vales using at least one postprocessing probe, but 'fluid dynamics = false' in the 'multiphysics' subsection."));
+    if (post_processing.probing_points.probing_points_per_variable.contains(
+          Variable::phase))
+      AssertThrow(
+        multiphysics.CLS,
+        ExcMessage(
+          "You are attempting to evaluate phase indicator values using at least one postprocessing probe, but 'cls = false' in the 'multiphysics' subsection."));
+    if (post_processing.probing_points.probing_points_per_variable.contains(
+          Variable::temperature))
+      AssertThrow(
+        multiphysics.heat_transfer,
+        ExcMessage(
+          "You are attempting to evaluate temperature values using at least one postprocessing probe, but 'heat transfer = false' in the 'multiphysics' subsection."));
   }
 
   inline bool

@@ -1054,7 +1054,10 @@ namespace Parameters
    * implies the calculation of quantities derived from the principal
    * variables. For example, the integral kinetic energy or the integral
    * enstrophy.
+   *
+   * @tparam dim Denotes the number of spatial dimensions.
    */
+  template <int dim>
   struct PostProcessing
   {
     /**
@@ -1111,8 +1114,81 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
+    /**
+     * @brief Probing points parameters. This is used to monitor the evolution
+     * of variables (e.g., temperature) at specified points in the domain.
+     *
+     * @remark The points defined must be part of the domain.
+     */
+    struct ProbingPoints
+    {
+      /**
+       * @brief IDs and locations associated with probe points of a given
+       * variable.
+       */
+      struct ProbingPointsPerVariable
+      {
+        /// Identifier of the probe points
+        std::vector<unsigned int> ids;
+
+        /// Point locations where we want to evaluate values
+        std::vector<Point<dim>> points;
+      };
+
+      /// Number of probing points
+      unsigned int number_of_probing_points;
+
+      /// Maximum number of probing points
+      unsigned int max_number_of_probing_points = 25;
+
+      /// Probing point output names ordered by ID
+      std::vector<std::string> probing_points_output_names;
+
+      /** Map that regroups all probing points information of a same variable
+       * under the same variable key */
+      std::map<Variable, ProbingPointsPerVariable> probing_points_per_variable;
+
+      /**
+       * @brief Declares the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
+      void
+      declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parses the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
+      void
+      parse_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Adds an entry to probing_points_per_variable.
+       *
+       * @param[in] variable Variable of the monitored quantity.
+       * @param[in] id Identifier of the probe.
+       * @param[in] point Location of the probe.
+       */
+      void inline add_probing_point(const Variable     &variable,
+                                    const unsigned int &id,
+                                    const Point<dim>   &point)
+      {
+        if (!probing_points_per_variable.contains(variable))
+          probing_points_per_variable.insert(
+            {variable, ProbingPointsPerVariable()});
+
+        probing_points_per_variable[variable].ids.emplace_back(id);
+        probing_points_per_variable[variable].points.emplace_back(point);
+      }
+    };
+
     /// Contains all isocontour bounding boxes
     IsocontourBoundingBoxes isocontour_bounding_boxes;
+
+    /// Contains all probing points
+    ProbingPoints probing_points;
 
     /// Verbosity level of the post-processed quantities
     Verbosity verbosity;

@@ -1835,7 +1835,7 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
       if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        InterfaceTools::write_isocontour_bounding_values_tables(
+        InterfaceTools::write_isocontour_bounding_values_tables<dim>(
           this->dof_handler->get_mpi_communicator(),
           this->simulation_parameters.simulation_control.output_folder,
           Variable::phase,
@@ -1843,6 +1843,16 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
             .ids_and_isocontours_per_variable,
           this->phase_indicator_isocontour_bounding_values_tables);
     }
+
+  // Postprocess probes
+  if (this->simulation_parameters.post_processing.probing_points
+        .probing_points_per_variable.contains(Variable::phase))
+    this->multiphysics->postprocess_probes(*triangulation,
+                                           *mapping,
+                                           *dof_handler,
+                                           *present_solution,
+                                           Variable::phase,
+                                           this->pcout);
 
   // Compute and update current capillary time-step constraint
   if (this->simulation_parameters.simulation_control.method !=

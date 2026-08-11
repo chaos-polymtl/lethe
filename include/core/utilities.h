@@ -17,6 +17,8 @@
 
 #include <deal.II/fe/fe_values.h>
 
+#include <deal.II/numerics/vector_tools.h>
+
 #include <deal.II/particles/particle_iterator.h>
 
 #include <boost/archive/text_iarchive.hpp>
@@ -1191,10 +1193,15 @@ struct cut_cell_comparison
  * @param[in] triangulation Triangulation object.
  * @param[in] mapping Mapping of the domain.
  * @param[in] dof_handler DoF handler associated to the solution field.
- * @param[in] solution_field Vector containing the scalar solution field.
+ * @param[in] solution_field Vector containing the solution field.
  * @param[in] evaluation_points Vector of points where the values of the
  * solution field are to be evaluated.
  * @param[in,out] evaluated_scalar_values Vector of evaluated scalar values.
+ * @param[in] first_selected_component First component of the solution to select
+ * if the solution field is a vector field.
+ *
+ * @remark If a given evaluation point is not within the simulated domain, an
+ * exception is thrown.
  */
 template <int dim, typename VectorType>
 void
@@ -1203,13 +1210,14 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
                           const DoFHandler<dim>         &dof_handler,
                           const VectorType              &solution_field,
                           const std::vector<Point<dim>> &evaluation_points,
-                          std::vector<double> &evaluated_scalar_values);
+                          std::vector<double> &evaluated_scalar_values,
+                          const unsigned int   first_selected_component = 0);
 
 /**
  * @brief Evaluates the values of a vector field at remote points of the domain
  * from the mapping, the DoF handler and the solution field.
  *
- * @tparam n_component Number of components of the vector solution.
+ * @tparam n_component Number of components of the evaluated vector solution.
  * @tparam dim Denotes the number of spatial dimensions.
  * @tparam VectorType Vector type of the solution vector.
  *
@@ -1220,6 +1228,11 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
  * @param[in] evaluation_points Vector of points where the values of the
  * solution field are to be evaluated.
  * @param[in,out] evaluated_vector_values Vector of evaluated vector values.
+ * @param[in] first_selected_component First component of the solution to
+ * select.
+ *
+ * @remark If a given evaluation point is not within the simulated domain, an
+ * exception is thrown.
  */
 template <int n_component, int dim, typename VectorType>
 void
@@ -1229,7 +1242,8 @@ evaluate_values_at_points(
   const DoFHandler<dim>               &dof_handler,
   const VectorType                    &solution_field,
   const std::vector<Point<dim>>       &evaluation_points,
-  std::vector<Tensor<1, dim, double>> &evaluated_vector_values);
+  std::vector<Tensor<1, dim, double>> &evaluated_vector_values,
+  const unsigned int                   first_selected_component = 0);
 
 /**
  * @brief Checks that the evaluation points are within the simulated domain and
