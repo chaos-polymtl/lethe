@@ -15,7 +15,8 @@
 using namespace dealii;
 
 /*
-This file creates a mesh that represents a rectangular volume entering a cylinder laterally, perpendicular to its axis.
+This file creates a mesh that represents a rectangular volume entering a
+cylinder laterally, perpendicular to its axis.
 
 The program is divided into two parts:
 
@@ -26,33 +27,24 @@ circle which is adapted to be connected with a rectangle on its side.
 2)The core of the file creates the 3D pipe assembled with the waveguide
 */
 
-
+// See the doxygen documentation to learn more about this function
 template <int dim, int spacedim>
 void
-detailed_circle(
-  Triangulation<dim, spacedim> &tria,
-  const Point<spacedim>        &p,
-  const double                 &a,
-  const double                 &b,
-  const double                  r,
-  const double                  R, 
-  // shape == true : inner circle radius | shape == false : inner square side
-  const bool shape, 
-  // true: inner circle | false: inner square
-  const bool internal_manifolds)
+GridMwPipeAndWaveguide<dim, spacedim>::detailed_circle(
+  Triangulation<2, 2> &tria,
+  const Point<2>      &p,
+  const double        &a,
+  const double        &b,
+  const double         r,
+  const double         R,
+  const bool           shape)
 {
-  const auto embed_point = [](const double x,
-                              const double y) -> Point<spacedim> {
-    if constexpr (spacedim == 2)
-      return Point<spacedim>(x, y);
-    else if constexpr (spacedim == 3)
-      return Point<spacedim>(x, y, 0);
-    else
-      DEAL_II_NOT_IMPLEMENTED();
+  const auto embed_point = [](const double x, const double y) -> Point<2> {
+    return Point<2>(x, y);
   };
 
-  const auto vertices = [&]() -> std::vector<Point<spacedim>> {
-    if (shape) 
+  const auto vertices = [&]() -> std::vector<Point<2>> {
+    if (shape)
       // Inner circle
       return {
         p + embed_point(-1., -1.) * (r / std::sqrt(2.0)),
@@ -62,30 +54,33 @@ detailed_circle(
         // The four points which make the inner square
         p + embed_point(-1., +1.) * (R / std::sqrt(2.0)),
         p + embed_point(+1., +1.) * (R / std::sqrt(2.0)),
-        p + embed_point(-1., -1.) * (R / std::sqrt(2.0)), 
+        p + embed_point(-1., -1.) * (R / std::sqrt(2.0)),
         p + embed_point(+1., -1.) * (R / std::sqrt(2.0)),
         // Two points linked with the rectangle on is left
-        embed_point(b, 0), 
+        embed_point(b, 0),
         embed_point(b, a),
         // The two points (0, r) and (0, -r) from the center of the circle
-        p + embed_point(0, -r), 
+        p + embed_point(0, -r),
         p + embed_point(0, +r),
-        // The two points on the right side of the outer circle that lie along the width of the rectangle
-        p + embed_point(std::sqrt(r * r - a * a / 4), -a / 2), 
+        // The two points on the right side of the outer circle that lie along
+        // the width of the rectangle
+        p + embed_point(std::sqrt(r * r - a * a / 4), -a / 2),
         p + embed_point(std::sqrt(r * r - a * a / 4), +a / 2),
-        // The other points where the width of the rectangle intersects the central square
-        p + embed_point(-(std::sqrt(R * R - a * a / 4)), +a / 2), 
+        // The other points where the width of the rectangle intersects the
+        // central square
+        p + embed_point(-(std::sqrt(R * R - a * a / 4)), +a / 2),
         p + embed_point(-(std::sqrt(R * R - a * a / 4)), -a / 2),
         p + embed_point(+(std::sqrt(R * R - a * a / 4)), -a / 2),
         p + embed_point(+(std::sqrt(R * R - a * a / 4)), +a / 2),
         // The two points of the central square on the circle's axis of symmetry
-        p + embed_point(0, -R), 
+        p + embed_point(0, -R),
         p + embed_point(0, +R),
-        // The two points where the width of the rectangle intersects the axis of symmetry of the circle
-        p + embed_point(0, +a / 2), 
+        // The two points where the width of the rectangle intersects the axis
+        // of symmetry of the circle
+        p + embed_point(0, +a / 2),
         p + embed_point(0, -a / 2)};
 
-    else 
+    else
       // Inner square
       return {
         p + embed_point(-1., -1.) * (r / std::sqrt(2.0)),
@@ -93,43 +88,46 @@ detailed_circle(
         p + embed_point(-1., +1.) * (r / std::sqrt(2.0)),
         p + embed_point(+1., +1.) * (r / std::sqrt(2.0)),
         // The other points that form the inner square
-        p + embed_point(-1., -1.) * R, 
+        p + embed_point(-1., -1.) * R,
         p + embed_point(+1., -1.) * R,
         p + embed_point(-1., +1.) * R,
         p + embed_point(+1., +1.) * R,
         // The two points attached to the rectangle
-        embed_point(b, 0), 
+        embed_point(b, 0),
         embed_point(b, a),
         // The two points (0, r) and (0, -r) from the center of the circle
-        p + embed_point(0, -r), 
+        p + embed_point(0, -r),
         p + embed_point(0, +r),
-        // The two points on the right side of the outer circle that lie along the width of the rectangle
-        p + embed_point(std::sqrt(r * r - a * a / 4), -a / 2), 
+        // The two points on the right side of the outer circle that lie along
+        // the width of the rectangle
+        p + embed_point(std::sqrt(r * r - a * a / 4), -a / 2),
         p + embed_point(std::sqrt(r * r - a * a / 4), +a / 2),
-        // The other points where the width of the rectangle intersects the central square
-        p + embed_point(-R, +a / 2), 
+        // The other points where the width of the rectangle intersects the
+        // central square
+        p + embed_point(-R, +a / 2),
         p + embed_point(-R, -a / 2),
         p + embed_point(+R, -a / 2),
         p + embed_point(+R, +a / 2),
         // The two points of the central square on the circle's axis of symmetry
-        p + embed_point(0, -R), 
+        p + embed_point(0, -R),
         p + embed_point(0, +R),
-        // The two points where the width of the rectangle intersects the axis of symmetry of the circle
-        p + embed_point(0, +a / 2), 
+        // The two points where the width of the rectangle intersects the axis
+        // of symmetry of the circle
+        p + embed_point(0, +a / 2),
         p + embed_point(0, -a / 2)};
   }();
 
   std::vector<CellData<2>> cells(16, CellData<2>());
   static constexpr int     circle_cell_vertices[16][4] = {
     // We start with the 6 squares in the center square
-    {6, 18, 15, 21}, 
+    {6, 18, 15, 21},
     {15, 21, 14, 20},
     {14, 20, 4, 19},
     {18, 7, 21, 16},
     {21, 16, 20, 17},
     {20, 17, 19, 5},
     // We fill in the outer cells, starting from the top left
-    {9, 14, 2, 4}, 
+    {9, 14, 2, 4},
     {8, 15, 9, 14},
     {0, 6, 8, 15},
     {0, 10, 6, 18},
@@ -146,16 +144,13 @@ detailed_circle(
         cells[i].vertices[j] = circle_cell_vertices[i][j];
     }
 
-  tria.create_triangulation(std::vector<Point<spacedim>>(std::begin(vertices),
-                                                         std::end(vertices)),
+  tria.create_triangulation(std::vector<Point<2>>(std::begin(vertices),
+                                                  std::end(vertices)),
                             cells,
                             SubCellData()); // no boundary information
   tria.set_all_manifold_ids_on_boundary(0);
-  tria.set_manifold(0, SphericalManifold<dim, spacedim>(p));
-  if (internal_manifolds)
-    tria.set_manifold(1, SphericalManifold<dim, spacedim>(p));
-  else
-    tria.set_manifold(1, FlatManifold<dim, spacedim>());
+  tria.set_manifold(0, SphericalManifold<2, 2>(p));
+  tria.set_manifold(1, FlatManifold<2, 2>());
 }
 
 
@@ -163,36 +158,51 @@ detailed_circle(
 // The core of the file begins here
 
 template <int dim, int spacedim>
-GridCavityMw<dim, spacedim>::GridCavityMw(const std::string &grid_arguments)
+GridMwPipeAndWaveguide<dim, spacedim>::GridMwPipeAndWaveguide(
+  const std::string &grid_arguments)
 {
   const std::vector<std::string> arguments =
     Utilities::split_string_list(grid_arguments, ':');
 
-  rectangle_width    = std::stod(arguments[0]);
-  rectangle_length   = std::stod(arguments[1]);
-  outer_radius       = std::stod(arguments[2]);
-  inner_length       = std::stod(arguments[3]);
-  bottom_height      = std::stod(arguments[4]);
-  middle_height      = std::stod(arguments[5]);
-  top_height         = std::stod(arguments[6]);
-  bottom_resolution  = std::stod(arguments[7]);
-  middle_resolution  = std::stod(arguments[8]);
-  top_resolution     = std::stod(arguments[9]);
-  shape              = (arguments[10] == "true");
+  rectangle_width   = std::stod(arguments[0]);
+  rectangle_length  = std::stod(arguments[1]);
+  outer_radius      = std::stod(arguments[2]);
+  inner_length      = std::stod(arguments[3]);
+  bottom_height     = std::stod(arguments[4]);
+  middle_height     = std::stod(arguments[5]);
+  top_height        = std::stod(arguments[6]);
+  bottom_resolution = std::stod(arguments[7]);
+  middle_resolution = std::stod(arguments[8]);
+  top_resolution    = std::stod(arguments[9]);
+  shape             = (arguments[10] == "true");
 }
 
 template <int dim, int spacedim>
 void
-GridCavityMw<dim, spacedim>::make_grid(
+GridMwPipeAndWaveguide<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> &triangulation)
 {
+  /*
+  Two geometric conditions that need to be verified to prevent the generation of
+  inverted cells.
+
+  The first condition concerns the inner shape. To improve mesh quality, a
+  central rectangle of width equal to the waveguide width is introduced. After
+  extrusion, the cells within this rectangle are nearly hexahedral, which
+  minimizes aspect ratio. However, this rectangle imposes a geometric
+  constraint: the inner shape must be large enough to fully contain it,
+  otherwise inverted cells are generated.
+
+  Then, the inner shape have to be strictly inscribed in the outer shape.
+  */
+
   // Tests when the inner shape is a circle
   if (shape)
     {
       AssertThrow(
         inner_length > rectangle_width / 2,
         ExcMessage(
-          "The internal radius is too small compared to the width of the waveguide. This situations leads to the generation of inverted cells"));
+          "The inner shape is not bigger than the rectangle that crosses the cylinder along the x-axis. This situations leads to the generation of inverted cells"));
 
       AssertThrow(
         inner_length < outer_radius,
@@ -204,12 +214,13 @@ GridCavityMw<dim, spacedim>::make_grid(
   else
     {
       AssertThrow(
-        inner_length > rectangle_width / 2, 
+        inner_length > rectangle_width / 2,
         ExcMessage(
           "The square side is too small compared to the width of the waveguide. This situations leads to the generation of inverted cells"));
 
-      AssertThrow(inner_length < outer_radius / (std::sqrt(2)),
-                  ExcMessage(
+      AssertThrow(
+        inner_length < outer_radius / (std::sqrt(2)),
+        ExcMessage(
           "The inner square length is greater than the external radius. This situations leads to the generation of inverted cells"));
     }
 
@@ -223,7 +234,7 @@ GridCavityMw<dim, spacedim>::make_grid(
   else
     {
       // COARSE 2D PARTS OF THE MESH
-      
+
       // PART -I-:Creating the Shape of the Medium: The paving stone embedded in
       // the Cylinder
 
@@ -238,54 +249,46 @@ GridCavityMw<dim, spacedim>::make_grid(
       // exactly at the right corners of the rectangle
       Triangulation<2> disk;
       // Position of the center of the circle
-      const Point<2>   center(rectangle_length +
+      const Point<2> center(rectangle_length +
                               sqrt(outer_radius * outer_radius -
                                    rectangle_width * rectangle_width / 4),
-                            rectangle_width /
-                              2); 
-      detailed_circle<2, 2>(disk,
-                            center,
-                            rectangle_width,
-                            rectangle_length,
-                            outer_radius,
-                            inner_length,
-                            shape,
-                            false);
+                            rectangle_width / 2);
+      detailed_circle(disk,
+                      center,
+                      rectangle_width,
+                      rectangle_length,
+                      outer_radius,
+                      inner_length,
+                      shape);
 
       Triangulation<2> merged;
       // The last argument of the following function is
       // false since it is useless to copy the manifolds ids
       // because we will set them after
-      GridGenerator::merge_triangulations(rect,
-                                          disk,
-                                          merged,
-                                          1e-12,
-                                          false); 
+      GridGenerator::merge_triangulations(rect, disk, merged, 1e-12, false);
 
       // PART -II-   Creating the bottom cylinder
-      Triangulation<2, 2> base;
-      detailed_circle<2, 2>(base,
-                            center,
-                            rectangle_width,
-                            rectangle_length,
-                            outer_radius,
-                            inner_length,
-                            shape,
-                            false);
+      Triangulation<dim - 1, spacedim - 1> base;
+      detailed_circle(base,
+                      center,
+                      rectangle_width,
+                      rectangle_length,
+                      outer_radius,
+                      inner_length,
+                      shape);
 
       // PART -III-  Creating the top cylinder
       Triangulation<2, 2> top;
-      detailed_circle<2, 2>(top,
-                            center,
-                            rectangle_width,
-                            rectangle_length,
-                            outer_radius,
-                            inner_length,
-                            shape,
-                            false);
+      detailed_circle(top,
+                      center,
+                      rectangle_width,
+                      rectangle_length,
+                      outer_radius,
+                      inner_length,
+                      shape);
 
       // EXTRUDE
-      
+
       Triangulation<3> extruded_base;
       Triangulation<3> extruded_middle;
       Triangulation<3> extruded_top;
@@ -303,33 +306,31 @@ GridCavityMw<dim, spacedim>::make_grid(
                                            extruded_top);
 
       // MANIFOLD
-      
+
       // Lambda function that places the id of the cylindrical manifold in the
       // inside of the cylinder
-      auto attach_cylindrical_manifold = [&](Triangulation<3> &tria,
-                                             double            height) {
+      auto attach_cylindrical_manifold_id = [&](Triangulation<3> &tria,
+                                                double            height) {
         for (auto &cell : tria.active_cell_iterators())
-          if (cell->center()[0] >=
-              rectangle_length -
-                1e-6) 
-      // Concerns only the cylinder because every cell of the
-      // waveguide verifies the condition : x >= rectangle_length
+          if (cell->center()[0] >= rectangle_length - 1e-6)
+            // Concerns only the cylinder because every cell of the
+            // waveguide verifies the condition : x >= rectangle_length
             for (const auto f : cell->face_indices())
               if (cell->face(f)->at_boundary())
                 {
                   const Point<3> face_center = cell->face(f)->center();
                   if (std::abs(face_center[2]) > 1e-10 &&
-                      std::abs(face_center[2] - height) >
-                        1e-10) 
-      // Does not take into account the the flat faces
-      // at z=0 and z=height because we do not want a manifold applied there.
+                      std::abs(face_center[2] - height) > 1e-10)
+                    // Does not take into account the the flat faces
+                    // at z=0 and z=height because we do not want a manifold
+                    // applied there.
                     cell->set_all_manifold_ids(1);
                 }
       };
 
-      attach_cylindrical_manifold(extruded_base, bottom_height);
-      attach_cylindrical_manifold(extruded_middle, middle_height);
-      attach_cylindrical_manifold(extruded_top, top_height);
+      attach_cylindrical_manifold_id(extruded_base, bottom_height);
+      attach_cylindrical_manifold_id(extruded_middle, middle_height);
+      attach_cylindrical_manifold_id(extruded_top, top_height);
 
       // Now that we have the IDs in the right place, we can install the
       // manifolds
@@ -340,7 +341,7 @@ GridCavityMw<dim, spacedim>::make_grid(
       extruded_top.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
 
       // MERGING THE 3D MESHES
-      
+
       // Move the cylinders in the right positions to prepare the merge
       Tensor<1, 3> shift_down;
       shift_down[0] = 0.0;
@@ -375,7 +376,7 @@ GridCavityMw<dim, spacedim>::make_grid(
 
 
       // BOUNDARY AND MATERIAL IDs
-      
+
       /*
       //Boundary
       0: MW Inlet (x=0)
@@ -384,7 +385,7 @@ GridCavityMw<dim, spacedim>::make_grid(
       3: PEC walls (every other wall)
 
       //Material
-      0: Fluid part (x> rectangle_length) 
+      0: Fluid part (x> rectangle_length)
       1: Waveguide paving stone (x<=  rectangle_length)
       */
 
@@ -417,6 +418,6 @@ GridCavityMw<dim, spacedim>::make_grid(
 }
 
 // Explicit instantiations
-template class GridCavityMw<2, 2>;
-template class GridCavityMw<2, 3>;
-template class GridCavityMw<3, 3>;
+template class GridMwPipeAndWaveguide<2, 2>;
+template class GridMwPipeAndWaveguide<2, 3>;
+template class GridMwPipeAndWaveguide<3, 3>;

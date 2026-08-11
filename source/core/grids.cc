@@ -277,7 +277,8 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - mw_pipe_and_waveguide mesh with simplex is not supported"));
 
-          GridCavityMw<dim, spacedim> grid(mesh_parameters.grid_arguments);
+          GridMwPipeAndWaveguide<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
           GridTools::scale(mesh_parameters.scale, triangulation);
