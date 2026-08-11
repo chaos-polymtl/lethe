@@ -105,6 +105,8 @@ NavierStokesScratchData<dim>::enable_cls(
   gather_cls    = true;
   fe_values_cls = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
+  point_evaluator_cls =
+    std::make_shared<FEPointEvaluation<1, dim>>(mapping, fe, update_values);
 
   // Allocate CLS values
   phase_values          = std::vector<double>(this->n_q_points);
@@ -146,6 +148,8 @@ NavierStokesScratchData<dim>::enable_cls(
   gather_cls    = true;
   fe_values_cls = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
+  point_evaluator_cls =
+    std::make_shared<FEPointEvaluation<1, dim>>(mapping, fe, update_values);
 
   // Allocate CLS values
   phase_values          = std::vector<double>(this->n_q_points);
@@ -329,6 +333,8 @@ NavierStokesScratchData<dim>::enable_void_fraction(
                                     quadrature,
                                     update_values | update_gradients |
                                       update_JxW_values);
+  point_evaluator_void_fraction =
+    std::make_shared<FEPointEvaluation<1, dim>>(mapping, fe, update_values);
 
   // Void Fraction
   void_fraction_values = std::vector<double>(this->n_q_points);
