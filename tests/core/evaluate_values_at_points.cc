@@ -27,8 +27,8 @@ using namespace dealii;
 /**
  * DESCRIPTION:
  * Tests the evaluate_values_at_points() function located in utilities.h
- * using different a linear and cosine solution fields. Both a scalar and vector
- * fields (\f$dim \in \{2, 3\} \f$) are tested here.
+ * using a linear and a cosine solution field. Both a scalar and vector
+ * fields (for \f$dim \in \{2, 3\} \f$) are tested here.
  *
  * For the cosine and cosine gradient functions, since we are using linear
  * elements to approximate them, a small error is expected and observed except
