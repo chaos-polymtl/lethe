@@ -95,4 +95,96 @@ get_physics_id(std::string physics_name)
                   "An unknown Physics name was requested"));
 }
 
+/**
+ * @brief Gets for every available Variable the string corresponding to the variable.
+ *
+ * @param variable Variable of interest.
+ *
+ * @return String corresponding to the variable specified:
+ *  - @p "velocity"
+ *  - @p "pressure"
+ *  - @p "phase"
+ *  - @p "temperature"
+ *  - @p "phase cahn hilliard"
+ *  - @p "chemical potential cahn hilliard"
+ *  - @p "tracer"
+ *  - @p "electric field"
+ *  - @p "magnetic field"
+ *  - @p "electromagnetic fields"
+ */
+inline std::string
+get_variable_string(Variable variable)
+{
+  if (variable == Variable::velocity)
+    return "velocity";
+  else if (variable == Variable::pressure)
+    return "pressure";
+  else if (variable == Variable::phase)
+    return "phase";
+  else if (variable == Variable::temperature)
+    return "temperature";
+  else if (variable == Variable::phase_cahn_hilliard)
+    return "phase cahn hilliard";
+  else if (variable == Variable::chemical_potential_cahn_hilliard)
+    return "chemical potential cahn_hilliard";
+  else if (variable == Variable::tracer)
+    return "tracer";
+  else if (variable == Variable::electric_field)
+    return "electric field";
+  else if (variable == Variable::magnetic_field)
+    return "magnetic field";
+  else if (variable == Variable::electromagnetic_fields)
+    return "electromagnetic fields";
+  else
+    AssertThrow(false,
+                dealii::ExcMessage("An unknown Variable string was requested"));
+}
+
+/**
+ * @brief Gets for every available Variable the string corresponding to the variable.
+ * Words are separated by underscores to form 1-word strings used for example in
+ * column names in output .dat files.
+ *
+ * @param variable Variable of interest.
+ *
+ * @return 1-word string corresponding to the variable specified:
+ *  - @p "velocity"
+ *  - @p "pressure"
+ *  - @p "phase"
+ *  - @p "temperature"
+ *  - @p "phase_cahn_hilliard"
+ *  - @p "chemical_potential_cahn_hilliard"
+ *  - @p "tracer"
+ *  - @p "electric_field"
+ *  - @p "magnetic_field"
+ *  - @p "electromagnetic_fields"
+ */
+inline std::string
+get_variable_string_with_underscores(Variable variable)
+{
+  if (variable == Variable::velocity)
+    return "velocity";
+  else if (variable == Variable::pressure)
+    return "pressure";
+  else if (variable == Variable::phase)
+    return "phase";
+  else if (variable == Variable::temperature)
+    return "temperature";
+  else if (variable == Variable::phase_cahn_hilliard)
+    return "phase_cahn_hilliard";
+  else if (variable == Variable::chemical_potential_cahn_hilliard)
+    return "chemical_potential_cahn_hilliard";
+  else if (variable == Variable::tracer)
+    return "tracer";
+  else if (variable == Variable::electric_field)
+    return "electric_field";
+  else if (variable == Variable::magnetic_field)
+    return "magnetic_field";
+  else if (variable == Variable::electromagnetic_fields)
+    return "electromagnetic_fields";
+  else
+    AssertThrow(false,
+                dealii::ExcMessage("An unknown Variable string was requested"));
+}
+
 #endif

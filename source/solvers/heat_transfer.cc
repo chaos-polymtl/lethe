@@ -1230,7 +1230,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        InterfaceTools::write_isocontour_bounding_values_tables(
+        InterfaceTools::write_isocontour_bounding_values_tables<dim>(
           this->dof_handler->get_mpi_communicator(),
           this->simulation_parameters.simulation_control.output_folder,
           Variable::temperature,
@@ -1238,6 +1238,16 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
             .ids_and_isocontours_per_variable,
           this->temperature_isocontour_bounding_values_tables);
     }
+
+  // Postprocess probes
+  if (this->simulation_parameters.post_processing.probing_points
+        .probing_points_per_variable.contains(Variable::temperature))
+    this->multiphysics->postprocess_probes(*triangulation,
+                                           *temperature_mapping,
+                                           *dof_handler,
+                                           *present_solution,
+                                           Variable::temperature,
+                                           this->pcout);
 
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)

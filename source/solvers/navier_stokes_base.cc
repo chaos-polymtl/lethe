@@ -1403,6 +1403,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
+  this->multiphysics->prepare_for_postprocessing();
+
   auto &present_solution = *this->present_solution;
 
   // Enstrophy
@@ -1842,6 +1844,24 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             }
         }
     }
+
+  // Postprocess probes
+  if (this->simulation_parameters.post_processing.probing_points
+        .probing_points_per_variable.contains(Variable::velocity))
+    this->multiphysics->postprocess_probes(*triangulation,
+                                           *mapping,
+                                           *dof_handler,
+                                           present_solution,
+                                           Variable::velocity,
+                                           this->pcout);
+  if (this->simulation_parameters.post_processing.probing_points
+        .probing_points_per_variable.contains(Variable::pressure))
+    this->multiphysics->postprocess_probes(*triangulation,
+                                           *mapping,
+                                           *dof_handler,
+                                           present_solution,
+                                           Variable::pressure,
+                                           this->pcout);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -3086,7 +3106,7 @@ std::vector<OutputStructTableHandler>
 NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
 {
   std::vector<OutputStructTableHandler> table_output_structs;
-  const Parameters::PostProcessing      post_processing =
+  const Parameters::PostProcessing<dim> post_processing =
     this->simulation_parameters.post_processing;
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;

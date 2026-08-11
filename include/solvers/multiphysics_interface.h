@@ -19,6 +19,7 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/postprocessing_probes.h>
 
 #include <deal.II/base/exceptions.h>
 
@@ -317,6 +318,17 @@ public:
   }
 
   /**
+   * @brief Prepares for the postprocessing of the current time step.
+   */
+  void
+  prepare_for_postprocessing()
+  {
+    // Clear out the set used for identifying probes that contain the current
+    // time step.
+    this->probe_postprocessor.reset_current_time_set();
+  }
+
+  /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
    * the calculation of all derived quantities using the solution vector
    * of the physics. It does not concern the output of the solution using
@@ -334,6 +346,8 @@ public:
       {
         iphys.second->postprocess(first_iteration);
       }
+
+    this->probe_postprocessor.write_probing_points_tables();
   }
 
 
@@ -436,7 +450,6 @@ public:
     return block_physics_solutions.find(PhysicsID::fluid_dynamics) !=
            block_physics_solutions.end();
   }
-
 
 
   /**
@@ -897,6 +910,7 @@ public:
       {
         iphys.second->write_checkpoint();
       }
+    this->probe_postprocessor.write_checkpoint();
   };
 
   /**
@@ -914,7 +928,61 @@ public:
       {
         iphys.second->read_checkpoint();
       }
+    this->probe_postprocessor.read_checkpoint();
   };
+
+  /**
+   * @brief Checks validity of the variable and if valid, calls probe
+   * postprocessing function of the PostprocessingProbes object.
+   *
+   * @tparam VectorType Type of vector of the solution vector.
+   *
+   * @param[in] triangulation Triangulation object.
+   * @param[in] mapping Mapping of the domain.
+   * @param[in] dof_handler DoF handler associated to the solution field.
+   * @param[in] present_solution Vector containing the scalar solution field.
+   * @param[in] variable Variable of interest.
+   * @param[in] pcout Parallel console output stream.
+   */
+  template <typename VectorType>
+  void
+  postprocess_probes(const Triangulation<dim> &triangulation,
+                     const Mapping<dim>       &mapping,
+                     const DoFHandler<dim>    &dof_handler,
+                     const VectorType         &present_solution,
+                     const Variable            variable,
+                     const ConditionalOStream &pcout)
+  {
+    if (probe_postprocessor.implemented_scalar_variables.contains(variable))
+      {
+        std::vector<double> evaluated_scalar_values;
+        probe_postprocessor.postprocess_probes(triangulation,
+                                               mapping,
+                                               dof_handler,
+                                               present_solution,
+                                               variable,
+                                               pcout,
+                                               evaluated_scalar_values);
+      }
+    else if (probe_postprocessor.implemented_vector_variables.contains(
+               variable))
+      {
+        std::vector<Tensor<1, dim, double>> evaluated_vector_values;
+        probe_postprocessor.postprocess_probes(triangulation,
+                                               mapping,
+                                               dof_handler,
+                                               present_solution,
+                                               variable,
+                                               pcout,
+                                               evaluated_vector_values);
+      }
+    else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The probe functionality has only been implemented and tested "
+          "for the variables: velocity, pressure, phase, and temperature."));
+  }
 
 private:
   const Parameters::Multiphysics<dim>        multiphysics_parameters;
@@ -1022,11 +1090,18 @@ private:
   std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
     block_physics_solutions_m1;
 
-  // Checks the required dependencies between multiphase models and handles
-  // the corresponding assertions
+  /**
+   * @brief Checks the required dependencies between multiphase models and handles
+   * the corresponding assertions.
+   *
+   * @param[in] nsparam Simulation parameters.
+   */
   void
   inspect_multiphysics_models_dependencies(
     const SimulationParameters<dim> &nsparam);
+
+  /// Probe postprocessing object
+  PostprocessingProbes<dim> probe_postprocessor;
 };
 
 

@@ -8,6 +8,8 @@
 # conduction on the left side of the domain.
 # The melt volume post-processing is also tested here (both algebraic and
 # geometric).
+# Additionally, the postprocessing probe feature is tested with the variable
+# temperature.
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -133,6 +135,24 @@ subsection post-processing
   set calculate geometric melt volume = true
   set calculate algebraic melt volume = true
   set melting temperature             = 0.02
+  subsection probing points
+    set number of probing points = 3
+    subsection probe 0
+      set location               = 0.005,0.05
+      set variable               = temperature
+      set probing point filename = probe_middle_left
+    end
+    subsection probe 1
+      set location               = 0.05,0.05
+      set variable               = temperature
+      set probing point filename = probe_middle_center
+    end
+    subsection probe 2
+      set location               = 0.995,0.05
+      set variable               = temperature
+      set probing point filename = probe_middle_right
+    end
+  end
 end
 
 #---------------------------------------------------
