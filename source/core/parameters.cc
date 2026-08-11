@@ -2481,7 +2481,7 @@ namespace Parameters
               "location",
               default_point_entry_sting,
               Patterns::List(Patterns::Double()),
-              "Probe point(s) location(s) in the mesh's reference. "
+              "Probe point location in the mesh's reference. "
               "The different components of the point must be separated comma (e.g., ``set location = 0.0, 0.0, 0.0``). ");
             prm.declare_entry(
               "variable",
@@ -2495,7 +2495,7 @@ namespace Parameters
             prm.declare_entry("probing point filename",
                               "probe_" + Utilities::int_to_string(i, 2),
                               Patterns::FileName(),
-                              "Filename for outputted probing point value(s).");
+                              "Filename for outputted probing point values.");
           }
           prm.leave_subsection();
         }
