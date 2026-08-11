@@ -118,6 +118,18 @@ This subsection controls the post-processing other than the forces and torque on
       set bounding box filename               = isocontour_bounding_box
     end
 
+    #---------------------------------------------------
+    # Probing points
+    #---------------------------------------------------
+    subsection probing points
+      set number of probing points = 0
+      subsection probe 0
+        set location               = 0, 0     # 0, 0, 0 (in 3D)
+        set variable               = velocity
+        set probing point filename = probe_00
+      end
+    end
+
   end
 
 General Parameters
@@ -426,3 +438,22 @@ This feature can be used to evaluate heights, depths, or lengths when quantities
 * ``isovalue``: isovalue(s) of monitored isocontour(s). When multiple isocontours are defined, the different isovalues must be separated by commas (e.g., ``set isovalue = 0.5, 300, 500``) and follow the same order as ``variable`` and ``bounding box filename``.
 
 * ``bounding box filename``: filename(s) for outputted isocontour(s). When multiple isocontours are defined, the different filenames must be separated by commas (e.g., ``set bounding box filename = interface_bounding_box, solidus_bounding_box, liquidus_bounding_box``) and follow the same order as ``variable`` and ``isovalue``.
+
+Probing points
+~~~~~~~~~~~~~~
+
+The ``probing points`` subsection defines probes that can evaluate ``variable`` (e.g., velocity) values at remote locations of the domain throughout the simulation. Each probe has its own subsection ``probe x``, where ``x`` is the ID of the probe ranging from ``0`` to  ``number of probing points - 1``. The monitored time-evolving values are saved in a `.dat` file (``probing point filename``). Each probe has its own ``location``, list of variables and output file. A given probe can evaluate multiple variables as specified below. All variable values of a same probe is saved in the same output file. Each scalar field represents a column and the same goes for components of vector fields.
+
+* ``number of probing points``: number of probes defined.
+
+  .. attention::
+    A maximum of 25 probes can be defined.
+
+* ``location``: location of the probing point. Separate components of the points with comma.
+
+* ``variable``: variable or list of variables (separated by comma) to evaluate at the probing location.
+
+  .. note::
+    The current implementation only allows for probing the ``velocity``, the ``pressure``, the CLS ``phase`` indicator, and the ``temperature``. Other variables will follow in a subsequent implementation.
+
+* ``probing point filename``: filename for the output file of the probe.
