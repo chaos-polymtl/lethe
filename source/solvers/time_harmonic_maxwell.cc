@@ -708,7 +708,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                                                       update_quadrature_points |
                                                         update_normal_vectors |
                                                         update_JxW_values);
-      const unsigned int n_q_points_face =
+      const unsigned int n_face_q_points =
         fe_face_values_trial_skeleton.n_quadrature_points;
       BoundaryConditions::BoundaryType bc_type;
 
@@ -726,8 +726,8 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
       std::unique_ptr<FEFaceValues<dim>> fe_face_values_temperature;
       const DoFHandler<dim>             *dof_handler_temperature = nullptr;
       const GlobalVectorType            *temperature_solution    = nullptr;
-      std::vector<double>                temperature_face_values;
-      std::map<field, double>            field_values;
+      std::vector<double>     temperature_face_values(n_face_q_points);
+      std::map<field, double> field_values;
 
       if (needs_temperature)
         {
@@ -740,7 +740,6 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
             update_values | update_quadrature_points);
           temperature_solution =
             &this->multiphysics->get_solution(PhysicsID::heat_transfer);
-          temperature_face_values.resize(n_q_points_face);
         }
 
 
@@ -813,7 +812,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                       face->boundary_id()));
 
                   // Loop over all face quadrature points
-                  for (unsigned int q_point = 0; q_point < n_q_points_face;
+                  for (unsigned int q_point = 0; q_point < n_face_q_points;
                        ++q_point)
                     {
                       // Initialize reusable variables
@@ -825,7 +824,9 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                         fe_face_values_trial_skeleton.JxW(q_point);
 
                       // We update the material properties for the current face
-                      // quadrature points.
+                      // quadrature points. If no temperature field is needed,
+                      // the temperature_face_values vector is filled with zeros
+                      // and will not affect the material properties.
                       field_values[field::temperature] =
                         temperature_face_values[q_point];
 
@@ -1231,10 +1232,11 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::update_material_properties_dependencies()
 {
-  // The material properties can only depend on the temperature field at the
-  // moment
-  this->temperature_last_solved_solution =
-    this->multiphysics->get_solution(PhysicsID::heat_transfer);
+  if (needs_temperature)
+    {
+      this->temperature_last_solved_solution =
+        this->multiphysics->get_solution(PhysicsID::heat_transfer);
+    }
 }
 
 template <int dim>
@@ -2349,8 +2351,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   std::unique_ptr<FEFaceValues<dim>> fe_face_values_temperature;
   const DoFHandler<dim>             *dof_handler_temperature = nullptr;
   const GlobalVectorType            *temperature_solution    = nullptr;
-  std::vector<double>                temperature_values;
-  std::vector<double>                temperature_face_values;
+  std::vector<double>                temperature_values(n_q_points);
+  std::vector<double>                temperature_face_values(n_face_q_points);
   std::map<field, double>            field_values;
 
   if (needs_temperature)
@@ -2371,8 +2373,6 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                                               update_quadrature_points);
       temperature_solution =
         &this->multiphysics->get_solution(PhysicsID::heat_transfer);
-      temperature_values.resize(n_q_points);
-      temperature_face_values.resize(n_face_q_points);
     }
 
   // We also create all the relevant matrices and vector to build the DPG
@@ -2560,13 +2560,6 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
           const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
             cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
 
-          // We also reinitialize the FEValues for the temperature field and
-          // make sure that is the same cell as the one used for the trial
-          // space.
-          const typename DoFHandler<dim>::active_cell_iterator
-            cell_temperature =
-              cell->as_dof_handler_iterator(*dof_handler_temperature);
-
           // We check if the physical properties depend on the temperature
           // field. If so, we will need to evaluate the temperature field at the
           // quadrature points.
@@ -2589,6 +2582,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
 
           if (cell_material_needs_temperature)
             {
+              const typename DoFHandler<dim>::active_cell_iterator
+                cell_temperature =
+                  cell->as_dof_handler_iterator(*dof_handler_temperature);
               fe_values_temperature->reinit(cell_temperature);
               fe_values_temperature->get_function_values(*temperature_solution,
                                                          temperature_values);
@@ -2737,9 +2733,10 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
           // Now we loop over all quadrature points of the cell
           for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
             {
-              // We update the material properties for the current cell
-              // quadrature points and define
-              // some constants that will be used during the assembly.
+              // We update the material properties for the current face
+              // quadrature points. If no temperature field is needed, the
+              // temperature_face_values vector is filled with zeros and will
+              // not affect the material properties.
               field_values[field::temperature] = temperature_values[q_point];
 
               update_material_properties(physical_properties_manager,
@@ -2888,6 +2885,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
 
               if (cell_material_needs_temperature)
                 {
+                  const typename DoFHandler<dim>::active_cell_iterator
+                    cell_temperature =
+                      cell->as_dof_handler_iterator(*dof_handler_temperature);
                   fe_face_values_temperature->reinit(cell_temperature, face);
                   fe_face_values_temperature->get_function_values(
                     *temperature_solution, temperature_face_values);
@@ -3048,7 +3048,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                     fe_face_values_trial_skeleton.JxW(q_point);
 
                   // We update the material properties for the current face
-                  // quadrature
+                  // quadrature points. If no temperature field is needed, the
+                  // temperature_face_values vector is filled with zeros and
+                  // will not affect the material properties.
                   field_values[field::temperature] =
                     temperature_face_values[q_point];
                   update_material_properties(physical_properties_manager,
@@ -3428,8 +3430,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   std::unique_ptr<FEFaceValues<dim>> fe_face_values_temperature;
   const DoFHandler<dim>             *dof_handler_temperature = nullptr;
   const GlobalVectorType            *temperature_solution    = nullptr;
-  std::vector<double>                temperature_values;
-  std::vector<double>                temperature_face_values;
+  std::vector<double>                temperature_values(n_q_points);
+  std::vector<double>                temperature_face_values(n_face_q_points);
   std::map<field, double>            field_values;
 
   if (needs_temperature)
@@ -3450,8 +3452,6 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                                               update_quadrature_points);
       temperature_solution =
         &this->multiphysics->get_solution(PhysicsID::heat_transfer);
-      temperature_values.resize(n_q_points);
-      temperature_face_values.resize(n_face_q_points);
     }
 
   // We also create all the relevant matrices and vector to build the DPG
@@ -3652,14 +3652,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
           // the cells faces.
           const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
             cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
-
-          // We also reinitialize the FEValues for the temperature field and
-          // make sure that is the same cell as the one used for the trial
-          // space.
-          const typename DoFHandler<dim>::active_cell_iterator
-            cell_temperature =
-              cell->as_dof_handler_iterator(*dof_handler_temperature);
-
+          ;
 
           // We check if the physical properties depend on the temperature
           // field. If so, we will need to evaluate the temperature field at the
@@ -3683,6 +3676,9 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 
           if (cell_material_needs_temperature)
             {
+              const typename DoFHandler<dim>::active_cell_iterator
+                cell_temperature =
+                  cell->as_dof_handler_iterator(*dof_handler_temperature);
               fe_values_temperature->reinit(cell_temperature);
               fe_values_temperature->get_function_values(*temperature_solution,
                                                          temperature_values);
@@ -3829,9 +3825,10 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
           // Now we loop over all quadrature points of the cell
           for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
             {
-              // We update the material properties for the current cell
-              // quadrature points and define
-              // some constants that will be used during the assembly.
+              // We update the material properties for the current face
+              // quadrature points. If no temperature field is needed, the
+              // temperature_face_values vector is filled with zeros and will
+              // not affect the material properties.
               field_values[field::temperature] = temperature_values[q_point];
 
               update_material_properties(physical_properties_manager,
@@ -3980,13 +3977,16 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 
               if (cell_material_needs_temperature)
                 {
+                  const typename DoFHandler<dim>::active_cell_iterator
+                    cell_temperature =
+                      cell->as_dof_handler_iterator(*dof_handler_temperature);
                   fe_face_values_temperature->reinit(cell_temperature, face);
                   fe_face_values_temperature->get_function_values(
                     *temperature_solution, temperature_face_values);
                 }
               else
                 {
-                  std::ranges::fill(temperature_values, 0.);
+                  std::ranges::fill(temperature_face_values, 0.);
                 }
 
               // Get the boundary condition type on the current face
@@ -4140,9 +4140,12 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                     fe_face_values_trial_skeleton.JxW(q_point);
 
                   // We update the material properties for the current face
-                  // quadrature
+                  // quadrature points. If no temperature field is needed, the
+                  // temperature_face_values vector is filled with zeros and
+                  // will not affect the material properties.
                   field_values[field::temperature] =
                     temperature_face_values[q_point];
+
                   update_material_properties(physical_properties_manager,
                                              field_values,
                                              effective_electric_permittivity,
