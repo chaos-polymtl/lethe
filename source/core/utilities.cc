@@ -942,6 +942,7 @@ evaluate_values_at_points<3, GlobalBlockVectorType>(
   std::vector<double>         &evaluated_scalar_values,
   const unsigned int           first_selected_component);
 
+#ifndef LETHE_USE_LDV
 template void
 evaluate_values_at_points<2, LinearAlgebra::distributed::Vector<double>>(
   const Triangulation<2>                           &triangulation,
@@ -961,6 +962,7 @@ evaluate_values_at_points<3, LinearAlgebra::distributed::Vector<double>>(
   const std::vector<Point<3>>                      &evaluation_points,
   std::vector<double>                              &evaluated_scalar_values,
   const unsigned int                                first_selected_component);
+#endif
 
 template <int n_component, int dim, typename VectorType>
 void
@@ -1033,6 +1035,7 @@ evaluate_values_at_points<3, 3, GlobalBlockVectorType>(
   std::vector<Tensor<1, 3, double>> &evaluated_vector_values,
   const unsigned int                 first_selected_component);
 
+#ifndef LETHE_USE_LDV
 template void
 evaluate_values_at_points<2, 2, LinearAlgebra::distributed::Vector<double>>(
   const Triangulation<2>                           &triangulation,
@@ -1052,3 +1055,4 @@ evaluate_values_at_points<3, 3, LinearAlgebra::distributed::Vector<double>>(
   const std::vector<Point<3>>                      &evaluation_points,
   std::vector<Tensor<1, 3, double>>                &evaluated_vector_values,
   const unsigned int                                first_selected_component);
+#endif
