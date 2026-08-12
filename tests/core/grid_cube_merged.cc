@@ -56,7 +56,7 @@ main()
 
       // Input arguments: name of the two mesh files to be merged and boundary
       // IDs corresponding to the cylindrical boundaries
-      test("../mesh_plate3d.msh:../mesh_cylinder.msh: 4 : 7");
+      test("../mesh_plate3d.msh : ../mesh_cylinder.msh : 4 : 7");
     }
   catch (std::exception &exc)
     {

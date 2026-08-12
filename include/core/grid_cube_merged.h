@@ -13,7 +13,8 @@
 using namespace dealii;
 
 /**
- * @brief Class that creates a custom geometry that combines an extruded plate with a hole and an inner cylinder to form a cube.
+ * @brief Class that creates a custom geometry that combines an extruded plate
+ * with a hole and an inner cylinder to form a cube.
  *
  * @tparam dim The dimension of the mesh, must be 3.
  * @tparam spacedim The dimension of the space where the mesh is defined, must be 3.
@@ -24,13 +25,15 @@ class GridCubeMerged
 {
 public:
   /**
-   * @brief Constructor for the CubeMergedGrid.
+   * @brief Constructor for the GridCubeMerged
    *
-   * @param[in] grid_arguments. A string with 3 parameters, @code "subdivisions:
-   * radius : half height", separated by a colon. The subdivisions parameter is
-   * the number of subdivisions in the x direction, the radius parameter is the
-   * radius of the cylinder and the half height parameter is half the height of
-   * the cylinder.
+   * @param[in] grid_arguments A string with 4 parameters, 'plate file name :
+   * cylinder file name : cylindrical BID plate : cylindrical BID cylinder',
+   * separated by colons. The 'plate file name' and 'cylinder file name' are
+   * the .msh file names of the two initial geometries, and 'cylindrical BID
+   * plate', 'cylindrical BID cylinder' are the boundary IDs of the cylindrical
+   * boundaries in such initial geometries (needed to properly apply the
+   * manifolds)
    */
   GridCubeMerged(const std::string &grid_arguments);
 
@@ -47,12 +50,12 @@ private:
   std::string grid_arguments;
   /// File name of the extruded plate with hole mesh
   std::string plate_file_name;
-  /// ID corresponding to the cylindrical boundary at the extruded plate with
+  /// ID corresponding to the cylindrical boundary of the extruded plate with
   /// hole mesh
   unsigned int cylindrical_bid_plate;
   /// File name of the cylinder mesh
   std::string cylinder_file_name;
-  /// ID corresponding to the cylindrical boundary at the cylinder mesh
+  /// ID corresponding to the cylindrical boundary of the cylinder mesh
   unsigned int cylindrical_bid_cylinder;
 };
 
