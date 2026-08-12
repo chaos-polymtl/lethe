@@ -66,4 +66,4 @@ For numerical purposes, in Lethe, the time-harmonic Maxwell's equations are solv
     
 where :math:`\mu_r` is the relative permeability and :math:`\varepsilon_{r,\mathrm{eff}}` is the effective relative permittivity of the medium. 
 
-.. [1] Lethe uses the physicist convention for the wave propagation, which describes a traveling wave as :math:`e^{\mathbf{k}\cdot \mathbf{x} - i\omega t}`. This has some implications on the sign at multiple places in the equations, and the user should be aware of this when comparing with other references.
+.. [1] Lethe uses the physicist convention for the wave propagation, which describes a traveling wave as :math:`e^{i (\mathbf{k}\cdot \mathbf{x} - \omega t)}`. This has some implications on the sign at multiple places in the equations, and the user should be aware of this when comparing with other references.

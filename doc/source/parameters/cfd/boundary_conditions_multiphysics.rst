@@ -58,6 +58,9 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
 .. warning::
     The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
 
+.. warning::
+    The time dependent boundary conditions are not yet implemented for the time-harmonic Maxwell's equations. 
+
 .. note::
     The index in ``subsection bc ..`` must be coherent with the ``number`` of boundary conditions set: if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist. 
 
@@ -292,7 +295,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
     * ``electric field`` to impose a prescribed electric field. The boundary values are taken from the parsed functions in the ``E x/y/z real part`` and ``E x/y/z imag part`` subsections,
 
       .. math::
-        \mathbf{E} = \mathbf{E}^{\mathrm{inc}}
+        \mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}^{\mathrm{inc}}
 
       Example:
 
@@ -324,7 +327,9 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
     * ``magnetic field`` to impose a prescribed magnetic field. The boundary values are taken from the parsed functions in the ``H x/y/z real part`` and ``H x/y/z imag part`` subsections,
 
       .. math::
-        \mathbf{H} = \mathbf{H}^{\mathrm{inc}} - \mathbf{J}_\mathrm{s}
+        \mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}^{\mathrm{inc}} - \mathbf{J}_\mathrm{s}
+
+    where :math:`\mathbf{J}_\mathrm{s}` is the surface current density. 
 
       Example:
 
@@ -393,8 +398,15 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
 
     * ``waveguide port`` to impose a waveguide port boundary condition. The parameters for this boundary conditions are defined in the Time-Harmonic Maxwell section of the input file. In the following, :math:`k_l` is the wave number in the longitudinal direction of the waveguide.
 
+      For TE modes, the boundary condition is expressed as:
+
       .. math::
         \mathbf{n} \times \mathbf{H} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{n} \times \mathbf{H}_{\mathrm{mode}} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E}_{\mathrm{mode}} \times \mathbf{n} )
+
+      For TM modes, the boundary condition is expressed as:
+      
+      .. math::
+        \mathbf{n} \times \mathbf{H} + \frac{\omega \varepsilon_{r,\mathrm{eff}}}{k_{l}} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{n} \times \mathbf{H}_{\mathrm{mode}} + \frac{\omega \varepsilon_{r,\mathrm{eff}}}{k_{l}} \mathbf{n} \times ( \mathbf{E}_{\mathrm{mode}} \times \mathbf{n} )
 
       Example:
 
@@ -404,5 +416,9 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
           set id   = 0
           set type = waveguide port
         end
+
+      .. Seealso::
+
+        For more information on how to specify the waveguide port, see the :doc:`./time_harmonic_maxwell` section.
 
 

@@ -42,16 +42,22 @@ Physical Properties
       set tracer reaction threshold      = 1e-8
 
       # Electromagnetic material properties
-      set electric conductivity model = constant
+      set electric conductivity model = <constant|polynomial>
       set electric conductivity       = 0.
+      set electric conductivity polynomial coefficients = 0.
 
-      set electric permittivity model     = constant
-      set electric permittivity real part = 9.2
-      set electric permittivity imag part = 0.005
+      set electric permittivity model     = <constant|polynomial>
+      set electric permittivity real part = 1.
+      set electric permittivity imag part = 0.
+      set electric permittivity real part polynomial coefficients = 1.
+      set electric permittivity imag part polynomial coefficients = 0.
 
-      set magnetic permeability model     = constant
+      set magnetic permeability model     = <constant|polynomial>
       set magnetic permeability real part = 1.
       set magnetic permeability imag part = 0.
+      set magnetic permeability real part polynomial coefficients = 1.
+      set magnetic permeability imag part polynomial coefficients = 0.
+
     end
 
     set number of solids = 0
@@ -145,9 +151,9 @@ Physical Properties
   .. note::
     The threshold parameter indicates the concentration value below which modifications to the reaction rate become dominant. Depending on the scale, it can be modified as a way to keep numerical stability while keeping a realistic reaction rate as long as :math:`C_\text{interest} \gg \varepsilon`. A scenario where the threshold might need to be lowered is for extremely fast heterogeneous reactions, where the concentration at the surface is close to 0.
 
-* The ``electric conductivity model`` specifies the model used to calculate the electric conductivity. At the moment, only a constant electric conductivity is supported.
+* The ``electric conductivity model`` specifies the model used to calculate the electric conductivity. The choice of model are ``<constant|polynomial>``. 
 
-* The ``electric conductivity`` parameter is the electric conductivity of the material in its dimensionless form, i.e., the quantity to input is:
+* The ``electric conductivity`` parameter is used by the constant model to specify the electric conductivity of the material in its dimensionless form, i.e., the quantity to input is:
 
   .. math::
 
@@ -155,7 +161,9 @@ Physical Properties
 
   with :math:`\sigma` the dimensional electric conductivity, :math:`\omega` the angular frequency of the electromagnetic wave, and :math:`\varepsilon_0` the vacuum permittivity.
 
-* The ``electric permittivity model`` specifies the model used to calculate the electric permittivity. At the moment, only a constant electric permittivity is supported.
+* The ``electric conductivity polynomial coefficients`` parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the electric conductivity. The coefficients needs to be given in decreasing order of the polynomial degree. For example, if the polynomial is :math:`\sigma_r(T)= a_2 T^2 + a_0`, the coefficients are given as ``set electric conductivity polynomial coefficients = a_2, 0, a_0``. 
+
+* The ``electric permittivity model`` specifies the model used to calculate the electric permittivity. The choice of model are ``<constant|polynomial>``. The polynomial model is used to calculate the electric permittivity as a polynomial function of the temperature (i.e., :math:`\varepsilon_r(T)`).
 
 * The ``electric permittivity real part`` parameter is the real part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity: 
 
@@ -173,7 +181,11 @@ Physical Properties
 
   with :math:`\varepsilon` the dimensional effective electric permittivity, and :math:`\varepsilon_0` the vacuum permittivity.
 
-* The ``magnetic permeability model`` specifies the model used to calculate the magnetic permeability. At the moment, only a constant magnetic permeability is supported.
+* The ``electric permittivity real part polynomial coefficients`` parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the real part of the electric permittivity. It follows the same rules as the ``electric conductivity polynomial coefficients`` parameter.
+
+* The ``electric permittivity imag part polynomial coefficients`` parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the imaginary part of the electric permittivity. It follows the same rules as the ``electric conductivity polynomial coefficients`` parameter.
+
+* The ``magnetic permeability model`` specifies the model used to calculate the magnetic permeability. The choice of model are ``<constant|polynomial>``. The polynomial model is used to calculate the magnetic permeability as a polynomial function of the temperature (i.e., :math:`\mu_r(T)`).
 
 * The ``magnetic permeability real part`` parameter is the real part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability: 
 
@@ -190,6 +202,13 @@ Physical Properties
     \Im{(\mu_{r})} = \Im{\left(\frac{\mu}{\mu_0}\right)}
 
   with :math:`\mu` the dimensional effective magnetic permeability, and :math:`\mu_0` the vacuum permeability.
+
+* The ``magnetic permeability real part polynomial coefficients`` parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the real part of the magnetic permeability. It follows the same rules as the ``electric conductivity polynomial coefficients`` parameter.
+
+* The ``magnetic permeability imag part polynomial coefficients`` parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the imaginary part of the magnetic permeability. It follows the same rules as the ``electric conductivity polynomial coefficients`` parameter.
+
+.. warning::
+  When using the polynomial model for the electric permittivity or magnetic permeability, the ``heat transfer`` physics must be enabled in the :doc:`./multiphysics` section of the input file. This is because the polynomial model is a function of the temperature, which is only available when the heat transfer physics is enabled. Additionally, since the time-harmonic Maxwell solver is solved before the heat transfer solver, the temperature field must be initialized in the :doc:`./initial_conditions` section of the input file.
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
@@ -285,6 +304,9 @@ Conjugate Heat Transfer
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be set to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.
+
+.. warning::
+  This is an experimental feature. It has not been tested on a large range of application cases.
 
 .. code-block:: text
 
@@ -825,6 +847,18 @@ Lethe supports two types of mobility models for the Cahn-Hilliard equations. Set
   M(\phi) = D(1-\phi^2)^2
 
 with :math:`D` the value set for ``cahn hilliard mobility constant``. A quartic mobility is required to recover a correct velocity according to Bretin *et al.* `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_ Therefore, it is preferable to use it when solving the coupled Cahn-Hilliard and Navier-Stokes equations. A good rule of thumb for setting the mobility constant is to have it proportionnal to the square of the minimum cell size. This rule may depend on the duration of the simulation, so a finer tuning may be necessary.
+
+Time-Harmonic Maxwell Models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Lethe supports two types of models for the time-harmonic Maxwell equations. Setting ``electric conductivity model = constant`` sets a constant electric conductivity. Setting a ``electric conductivity model = polynomial`` sets a polynomial model for the electric conductivity depending on the temperature. The order of the polynomial can be anything and is determined by the number of coefficients specified in the ``electric conductivity polynomial coefficients`` parameter. The polynomial model is defined as follows:
+
+.. math::
+  \sigma_r(T) = \sum_{i=0}^{n} a_i T^i
+
+where :math:`\sigma_r(T)` is the dimensionless electric conductivity at temperature :math:`T`, :math:`a_i` are the polynomial coefficients, and :math:`n` is the order of the polynomial.
+
+The same polynomial model is also available for the ``electric permittivity model`` parameter and ``magnetic permeability model`` parameter. 
 
 References
 ***********

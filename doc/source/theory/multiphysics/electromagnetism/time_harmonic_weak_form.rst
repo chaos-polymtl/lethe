@@ -47,7 +47,7 @@ gives:
 .. math::
     \begin{align*}
      \int_{\Omega} i \omega \mathbf{J}_{\mathrm{ext}} \cdot \mathbf{v^*} \mathrm{d}\Omega = &
-     \int_{\Omega}  \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega - \int_{\Omega} \omega^2 \varepsilon_{\mathrm{em},{eff}} \mathbf{E} \cdot \mathbf{v^*} \mathrm{d}\Omega \\ & + \int_{\Gamma} \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\mathbf{v^*} \times \mathbf{n}) \mathrm{d}\Gamma .
+     \int_{\Omega}  \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega - \int_{\Omega} \omega^2 \varepsilon_{\mathrm{em},\mathrm{eff}} \mathbf{E} \cdot \mathbf{v^*} \mathrm{d}\Omega \\ & + \int_{\Gamma} \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\mathbf{v^*} \times \mathbf{n}) \mathrm{d}\Gamma .
     \end{align*}
 
 
@@ -71,7 +71,7 @@ Thus, the boundary term vanishes
 and the weak form of the time-harmonic Maxwell equations becomes:
 
 .. math::
-    B(\mathbf{E}, \mathbf{v}) = &\int_{\Omega}  \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega + \int_{\Omega} \omega^2 \varepsilon_{\mathrm{em},{eff}} \mathbf{E} \cdot \mathbf{v^*} \mathrm{d}\Omega  \\
+    B(\mathbf{E}, \mathbf{v}) = &\int_{\Omega}  \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega - \int_{\Omega} \omega^2 \varepsilon_{\mathrm{em},\mathrm{eff}} \mathbf{E} \cdot \mathbf{v^*} \mathrm{d}\Omega  \\
     L(\mathbf{v}) = &\int_{\Omega} i \omega \mathbf{J}_{\mathrm{ext}} \cdot \mathbf{v^*} \mathrm{d}\Omega .
 
 Formally, :math:`\mathbf{E}` should also satisfy Gauss's law
@@ -130,7 +130,7 @@ respectively, and integrated by parts over the mesh :math:`\Omega_h`:
       (\nabla \times \mathbf{F},\mathbf{H})_{\Omega_h} + (\mathbf{F}, i \omega \varepsilon_{r,\text{eff}} \mathbf{E})_{\Omega_h}
       + \langle \mathbf{F} , \mathbf{n}\times \hat{\mathbf{H}}\rangle_{\partial \Omega_h \backslash \Gamma_R }
       - \langle \mathbf{F} ,Z_\mathrm{s}^{-1} \mathbf{E}\rangle_{ \Gamma_R }
-        &=(\mathbf{F},\mathbf{J})_{\Omega_h} -  \langle \mathbf{F} , \mathbf{g} \rangle_{ \Gamma_R },
+        &=(\mathbf{F},\mathbf{J})_{\Omega_h} -  \langle \mathbf{F} , \mathbf{E_\mathrm{R}} \rangle_{ \Gamma_R },
    \end{align}
 
 where the Robin boundary condition is applied to the electric field without
@@ -199,7 +199,7 @@ present.
     * **Perfect magnetic conductor (PMC)**: :math:`\mathbf{n} \times \mathbf{H} = 0`.
     * **Prescribed electric field (Dirichlet)**: :math:`\mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}_D`.
     * **Prescribed magnetic field (Neumann)**: :math:`\mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}_N - \mathbf{J}_{\mathrm{s}}`, with :math:`\mathbf{J}_{\mathrm{s}}` a prescribed surface current density.
-    * **Impedance condition (Robin)**: :math:`\mathbf{n} \times \mathbf{H} + Z_\mathrm{s}^{-1} \mathbf{E}_\parallel = \mathbf{g}`, with :math:`Z_\mathrm{s}` the surface impedance of the boundary.
+    * **Impedance condition (Robin)**: :math:`\mathbf{n} \times \mathbf{H} + Z_\mathrm{s}^{-1} \mathbf{E}_\parallel = \mathbf{E_\mathrm{R}}`, with :math:`Z_\mathrm{s}` the surface impedance of the boundary.
     * **Absorbing / radiation condition (Silver–Müller)**: :math:`\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_r/\mu_r}\, \mathbf{E}_\parallel = 0`. This is the impedance condition above with :math:`Z_\mathrm{s} = \sqrt{\mu_r/\varepsilon_r}` (the impedance of the exterior medium) and no source term.
     * **Lossy / imperfect conductor**: :math:`\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_{r,\mathrm{eff},2}/\mu_{r,2}}\, \mathbf{E}_\parallel = 0`, the same form as the radiation condition above, using the (possibly complex) effective properties :math:`\varepsilon_{r,\mathrm{eff},2}`, :math:`\mu_{r,2}` of the adjacent conducting medium.
     * **Waveguide inlet port, TE**\ :math:`_{mn}` **mode**: :math:`\mathbf{n} \times \mathbf{H} + \dfrac{\mathbf{k} \cdot \mathbf{n}}{\omega \mu_r} \mathbf{E}_\parallel = \mathbf{n} \times \mathbf{H}_{inc} + \dfrac{\mathbf{k} \cdot \mathbf{n}}{\omega \mu_r} \mathbf{E}_{inc,\parallel}`.

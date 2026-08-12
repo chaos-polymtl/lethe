@@ -24,12 +24,12 @@ residual problem. Given the abstract problem
    \end{aligned}
 
 the DPG method seeks an approximation in a finite-dimensional trial space
-:math:`U_h \subset U` by minimizing the residual in the dual of the test space
-:math:`V'`. The discrete solution is therefore defined as
+:math:`U_h \subset U` that solves the minimum residual problem
 
 .. math::
 
-  \text{Find } u_h \in U_h \text{ such that } (R_V^{-1} (l - B u_h), R_V^{-1} B \delta u_h)_V = 0, \quad \forall \delta u_h \in U_h,
+   u_h = \arg\min_{w_h \in U_h} J(w_h), \qquad
+   J(w_h) = \frac{1}{2}\|l-Bw_h\|_{V'}^2,
 
 where :math:`B : U \rightarrow V'` is the operator satisfying
 
@@ -41,8 +41,8 @@ The operator :math:`B` maps a trial function to its corresponding residual
 functional. Here, :math:`\langle \cdot,\cdot \rangle_{V \times V'}` denotes the
 duality pairing between the test space and its dual.
 
-Since minimizing the residual directly in the dual norm is generally
-impractical, the DPG method introduces the Riesz operator
+Since minimizing the residual directly in the dual norm :math:`\|\cdot\|_{V'}` is
+generally impractical, the DPG method introduces the Riesz operator
 
 .. math::
 
@@ -231,7 +231,7 @@ implementation,
 
 .. math::
 
-   \Delta p = 1.
+   \Delta p \geq 1.
 
 The discrete fields are expanded in terms of their respective basis functions,
 
@@ -382,7 +382,7 @@ representation function are recovered independently on each element,
 
    \Psi^r
    =
-   G^{-1}(Bu_h+\hat{B}\hat{u}_h-l).
+   G^{-1}(l-Bu_h-\hat{B}\hat{u}_h).
 
 The local residual norm,
 

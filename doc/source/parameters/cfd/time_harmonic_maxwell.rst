@@ -84,7 +84,7 @@ density.
 Parameter File Syntax
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The example of the time-harmonic Maxwell parameters are given in the text
+An example of the time-harmonic Maxwell parameters is given in the text
 box below.
 
 .. code-block:: text
@@ -148,7 +148,7 @@ box below.
     :math:`H_0 = E_0 / Z_0`.
   * ``magnetic field``: rescaled so the magnetic field matches
     ``magnetic field amplitude``, and the electric field matches
-    :math:`E_0 = H_0 \times Z_0`.
+    :math:`E_0 = Z_0 H_0`.
   * ``power``: rescaled so the power delivered through the waveguide inlet
     matches the ``waveguide power`` given in watts by the user for that inlet.
     The scaling is done internally by isolating the electric field amplitude
@@ -234,7 +234,7 @@ excited at the inlet.
   .. math::
     \begin{align}
         \mathbf{E}_{TM} & = \begin{bmatrix} i \frac{k_{x_3} k_{x_1}}{k_c^2} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2) \\  i \frac{k_{x_3} k_{x_2}}{k_c^2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2) \\ \sin(k_{x_1} x_1) \sin(k_{x_2} x_2) \end{bmatrix} e^{i k_{x_3} x_3}, \\
-        \mathbf{H}_{TM} & = i\frac{\omega \epsilon_{r,eff}}{k_c^2} \begin{bmatrix} k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\-k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
+        \mathbf{H}_{TM} & = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\-k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
     \end{align}
 
   In the above equations, :math:`k_{x_1}` and :math:`k_{x_2}` are the
@@ -300,6 +300,10 @@ electromagnetic fields are recomputed during the time evolution of a coupled
 * ``coupling time``: physical time interval between two electromagnetic
   solves when ``type = time``.
 
-* ``coupling threshold``: the maximum, in percent, change across all
-  electromagnetic properties of the medium that triggers a new solve when
-  ``type = threshold``.
+* ``coupling threshold``: the maximum change ratio across all
+  electromagnetic properties of the medium :math:`\Delta_{\mathrm{properties}}> \mathrm{threshold}` that triggers a new solve when ``type = threshold``. The computation of this ratio is given by the following formula:
+
+  .. math::
+    \Delta_{\mathrm{properties}} = \max_{K,q}\left(\frac{\left|\varepsilon_{r,\mathrm{eff}}^{\mathrm{current}}(\mathbf{x}_{K,q})-\varepsilon_{r,\mathrm{eff}}^{\mathrm{last}}(\mathbf{x}_{K,q})\right|}{\left|\varepsilon_{r,\mathrm{eff}}^{\mathrm{last}}(\mathbf{x}_{K,q})\right|},\frac{\left|\mu_{r}^{\mathrm{current}}(\mathbf{x}_{K,q})-\mu_{r}^{\mathrm{last}}(\mathbf{x}_{K,q})\right|}{\left|\mu_{r}^{\mathrm{last}}(\mathbf{x}_{K,q})\right|}\right)
+
+  where :math:`K` is the element index, :math:`q` is the quadrature point index, and :math:`\mathbf{x}_{K,q}` is the physical coordinate of the quadrature point. The superscripts ``current`` and ``last`` refer to the current and last time the electromagnetic fields were solved, respectively.
