@@ -2196,6 +2196,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                                 effective_electric_permittivity_last_solved,
                                 effective_magnetic_permeability_last_solved,
                                 material_id);
+
                               update_material_properties(
                                 physical_properties_manager,
                                 field_values_current,
@@ -2209,7 +2210,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                               // threshold. We start by computing only the
                               // absolute square to do the comparison, and then
                               // we perform the square root to get the actual
-                              // treshold value to have a faster computation.
+                              // threshold value to have a faster computation.
                               double relative_change_electric_permittivity =
                                 std::norm(
                                   effective_electric_permittivity_current -
@@ -2245,7 +2246,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                     << std::sqrt(max_relative_change) << std::endl;
                 }
 
-              // Return the treshold comparison result. We take the square root
+              // Return the threshold comparison result. We take the square root
               // of the max_relative_change to get the actual relative change
               // value to compare with the threshold.
               if (std::sqrt(max_relative_change) >

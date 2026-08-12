@@ -210,6 +210,12 @@ test()
       .electric_permittivity_real_polynomial_coefficients = {-0.01, 84.0};
     physical_properties.fluids[0]
       .electric_permittivity_imag_polynomial_coefficients = {0.001, 0.0};
+    physical_properties.fluids[0].magnetic_permeability_model =
+      Parameters::Material::MagneticPermeabilityModel::constant;
+    physical_properties.fluids[0]
+      .magnetic_permeability_real = 1.0;
+    physical_properties.fluids[0]
+      .magnetic_permeability_imag = 0.0;
 
     PhysicalPropertiesManager physical_properties_manager;
     physical_properties_manager.initialize(physical_properties);
@@ -276,6 +282,7 @@ test()
         if (i == 2)
           *temperature_solution = 300.0;
 
+        // Update the temperature solution for the current step.
         const bool solved =
           electromagnetics_auxiliary_physics.should_solve_auxiliary_physics();
         deallog << "Step " << simulation_control->get_iteration_number() << ": "
