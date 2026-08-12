@@ -85,7 +85,7 @@ public:
   {
     double c = static_cast<double>(component + 1);
     double v = 0.0;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       v += c * p[d];
     return c * v;
   }
@@ -93,7 +93,7 @@ public:
   void
   vector_value(const Point<dim> &p, Vector<double> &values) const override
   {
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       values[d] = value(p, d);
   }
 };
