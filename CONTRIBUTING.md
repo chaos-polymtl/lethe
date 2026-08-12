@@ -34,7 +34,7 @@ request.
     the source of the bug should be explained and the way it was identified should be briefly described. 
     A unit test or application test that reproduces the bug should be added.
 
-See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests) for more information about the pull request process.
+See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing/pull-requests.html) for more information about the pull request process.
 
 
 # Good practices
