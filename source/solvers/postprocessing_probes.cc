@@ -129,6 +129,7 @@ PostprocessingProbes<3>::postprocess_probes(
   const ConditionalOStream    &pcout,
   std::vector<double>         &evaluated_scalar_values);
 
+#ifndef LETHE_USE_LDV
 template void
 PostprocessingProbes<2>::postprocess_probes(
   const Triangulation<2>                           &triangulation,
@@ -148,6 +149,7 @@ PostprocessingProbes<3>::postprocess_probes(
   const Variable                                    variable,
   const ConditionalOStream                         &pcout,
   std::vector<double>                              &evaluated_scalar_values);
+#endif
 
 template <int dim>
 template <typename VectorType>
@@ -264,6 +266,7 @@ PostprocessingProbes<3>::postprocess_probes(
   const ConditionalOStream          &pcout,
   std::vector<Tensor<1, 3, double>> &evaluated_vector_values);
 
+#ifndef LETHE_USE_LDV
 template void
 PostprocessingProbes<2>::postprocess_probes(
   const Triangulation<2>                           &triangulation,
@@ -283,7 +286,7 @@ PostprocessingProbes<3>::postprocess_probes(
   const Variable                                    variable,
   const ConditionalOStream                         &pcout,
   std::vector<Tensor<1, 3, double>>                &evaluated_vector_values);
-
+#endif
 
 template <int dim>
 std::vector<OutputStructTableHandler>

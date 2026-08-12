@@ -380,6 +380,8 @@ MultiphysicsInterface<3>::postprocess_probes(
   const GlobalBlockVectorType &present_solution,
   const Variable               variable,
   const ConditionalOStream    &pcout);
+
+#ifndef LETHE_USE_LDV
 template void
 MultiphysicsInterface<2>::postprocess_probes(
   const Triangulation<2>                           &triangulation,
@@ -396,6 +398,7 @@ MultiphysicsInterface<3>::postprocess_probes(
   const LinearAlgebra::distributed::Vector<double> &present_solution,
   const Variable                                    variable,
   const ConditionalOStream                         &pcout);
+#endif
 
 template class MultiphysicsInterface<2>;
 template class MultiphysicsInterface<3>;
