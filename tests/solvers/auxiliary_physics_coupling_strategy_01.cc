@@ -84,7 +84,7 @@ test()
         solver_parameters.simulation_control);
 
     TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
-      &multiphysics_interface, solver_parameters, tria, simulation_control);
+      nullptr, solver_parameters, tria, simulation_control);
 
     deallog << "--- Test: TimeHarmonicMaxwellCouplingStrategy::none ---"
             << std::endl;
@@ -118,7 +118,7 @@ test()
         solver_parameters.simulation_control);
 
     TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
-      &multiphysics_interface, solver_parameters, tria, simulation_control);
+      nullptr, solver_parameters, tria, simulation_control);
 
     deallog
       << "--- Test: TimeHarmonicMaxwellCouplingStrategy::iteration (every 3) ---"
@@ -153,7 +153,7 @@ test()
         solver_parameters.simulation_control);
 
     TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
-      &multiphysics_interface, solver_parameters, tria, simulation_control);
+      nullptr, solver_parameters, tria, simulation_control);
 
     deallog
       << "--- Test: TimeHarmonicMaxwellCouplingStrategy::time (every 0.24s, dt=0.1) ---"
