@@ -30,7 +30,7 @@ public:
    * temperature variables are implemented. Implementation for other variables
    * will follow.
    */
-  PostprocessingProbes(std::shared_ptr<SimulationControl> simulation_control,
+  PostprocessingProbes(std::shared_ptr<SimulationControl> &simulation_control,
                        const Parameters::PostProcessing<dim>::ProbingPoints
                                                    &probing_points_parameters,
                        const double                 output_frequency,

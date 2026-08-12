@@ -5,7 +5,7 @@
 
 template <int dim>
 PostprocessingProbes<dim>::PostprocessingProbes(
-  std::shared_ptr<SimulationControl> simulation_control,
+  std::shared_ptr<SimulationControl> &simulation_control,
   const Parameters::PostProcessing<dim>::ProbingPoints
                               &probing_points_parameters,
   const double                 output_frequency,
