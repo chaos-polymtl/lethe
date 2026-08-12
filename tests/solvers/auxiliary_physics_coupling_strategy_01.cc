@@ -212,10 +212,8 @@ test()
       .electric_permittivity_imag_polynomial_coefficients = {0.001, 0.0};
     physical_properties.fluids[0].magnetic_permeability_model =
       Parameters::Material::MagneticPermeabilityModel::constant;
-    physical_properties.fluids[0]
-      .magnetic_permeability_real = 1.0;
-    physical_properties.fluids[0]
-      .magnetic_permeability_imag = 0.0;
+    physical_properties.fluids[0].magnetic_permeability_real = 1.0;
+    physical_properties.fluids[0].magnetic_permeability_imag = 0.0;
 
     PhysicalPropertiesManager physical_properties_manager;
     physical_properties_manager.initialize(physical_properties);
