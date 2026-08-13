@@ -126,7 +126,7 @@ get_variable_string(Variable variable)
   else if (variable == Variable::phase_cahn_hilliard)
     return "phase cahn hilliard";
   else if (variable == Variable::chemical_potential_cahn_hilliard)
-    return "chemical potential cahn_hilliard";
+    return "chemical potential cahn hilliard";
   else if (variable == Variable::tracer)
     return "tracer";
   else if (variable == Variable::electric_field)

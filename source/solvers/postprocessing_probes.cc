@@ -8,7 +8,7 @@ PostprocessingProbes<dim>::PostprocessingProbes(
   std::shared_ptr<SimulationControl> &simulation_control,
   const Parameters::PostProcessing<dim>::ProbingPoints
                               &probing_points_parameters,
-  const double                 output_frequency,
+  const unsigned int          output_frequency,
   const std::string           &output_folder,
   const Parameters::Verbosity &verbosity)
   : simulation_control(simulation_control)
@@ -80,7 +80,7 @@ PostprocessingProbes<dim>::postprocess_probes(
                 << " value: " << evaluated_value << std::endl;
         }
 
-      TableHandler &current_table = probe_tables[i];
+      TableHandler &current_table = probe_tables[id];
 
       // Add entries to table
       if (!check_if_table_contains_current_time(id))
@@ -213,8 +213,7 @@ PostprocessingProbes<dim>::postprocess_probes(
                 << std::endl;
         }
 
-
-      TableHandler &current_table = probe_tables[i];
+      TableHandler &current_table = probe_tables[id];
 
       // Add entries to table
       if (!check_if_table_contains_current_time(id))

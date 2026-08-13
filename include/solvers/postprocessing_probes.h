@@ -16,15 +16,17 @@ class PostprocessingProbes
 {
 public:
   /**
-   * @brief Object that evaluated variables (e.g., velocity) at specified points
+   * @brief Object that evaluates variables (e.g., velocity) at specified points
    * in the domain.
    *
    * @param[in] simulation_control SimulationControl object which is used to
    * obtain the current time and current iteration number.
    * @param[in] probing_points_parameters Set of parameters describing the
    * specified probing point and variables of interest.
+   * @param[in] output_frequency Output iteration frequency.
    * @param[in] output_folder Path to the output folder where the .dat files
    * are saved.
+   * @param[in] verbosity Verbosity level for console output.
    *
    * @remark At the moment, probing for only the velocity, pressure, phase, and
    * temperature variables are implemented. Implementation for other variables
@@ -33,7 +35,7 @@ public:
   PostprocessingProbes(std::shared_ptr<SimulationControl> &simulation_control,
                        const Parameters::PostProcessing<dim>::ProbingPoints
                                                    &probing_points_parameters,
-                       const double                 output_frequency,
+                       const unsigned int          output_frequency,
                        const std::string           &output_folder,
                        const Parameters::Verbosity &verbosity);
 
@@ -63,10 +65,10 @@ public:
           probing_points_parameters.probing_points_per_variable.at(
             *variable_it);
 
-        // Go trough tables and prepare them
-        for (unsigned int i = 0; i < probing_points_of_variable.ids.size(); ++i)
+        // Go through tables and prepare them
+        for (const unsigned int &id: probing_points_of_variable.ids)
           {
-            TableHandler     &current_table = probe_tables[i];
+            TableHandler     &current_table = probe_tables[id];
             const std::string column_name =
               get_variable_string_with_underscores(*variable_it);
 
@@ -227,8 +229,8 @@ public:
 
 private:
   /**
-   * @brief Checks if the table of a specified probing point (@p probe_id) has
-   * already a row entry for the current time step.
+   * @brief Checks if the table of a specified probing point (@p probe_id)
+   * already has a row entry for the current time step.
    *
    * @param[in] probe_id Identifier of the probing point investigated.
    *

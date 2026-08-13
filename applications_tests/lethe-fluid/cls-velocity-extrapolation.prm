@@ -158,19 +158,19 @@ subsection post-processing
   subsection probing points
     set number of probing points = 3
     subsection probe 0
+      set location               = -0.85,-0.85
+      set variable               = phase
+      set probing point filename = probe_in_fluid_1
+    end
+    subsection probe 1
       set location               = 0,0
       set variable               = pressure, phase, velocity
       set probing point filename = probe_origin
     end
-    subsection probe 1
+    subsection probe 2
       set location               = 0,0.01
       set variable               = pressure, phase, velocity
       set probing point filename = probe_wave_top
-    end
-    subsection probe 2
-      set location               = -0.85,-0.85
-      set variable               = phase
-      set probing point filename = probe_in_fluid_1
     end
   end
 end
