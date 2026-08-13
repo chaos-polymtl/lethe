@@ -529,7 +529,7 @@ public:
       AssertThrow(
         multiphysics.fluid_dynamics,
         ExcMessage(
-          "You are attempting to evaluate velocity or pressure vales using at least one postprocessing probe, but 'fluid dynamics = false' in the 'multiphysics' subsection."));
+          "You are attempting to evaluate velocity or pressure values using at least one postprocessing probe, but 'fluid dynamics = false' in the 'multiphysics' subsection."));
     if (post_processing.probing_points.probing_points_per_variable.contains(
           Variable::phase))
       AssertThrow(

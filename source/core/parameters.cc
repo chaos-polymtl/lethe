@@ -2470,7 +2470,7 @@ namespace Parameters
                         Patterns::Integer(0),
                         "Number of probing points");
 
-      const std::string default_point_entry_sting =
+      const std::string default_point_entry_string =
         (dim == 2) ? "0., 0." : "0., 0., 0.";
 
       for (unsigned int i = 0; i < max_number_of_probing_points; ++i)
@@ -2479,10 +2479,10 @@ namespace Parameters
           {
             prm.declare_entry(
               "location",
-              default_point_entry_sting,
+              default_point_entry_string,
               Patterns::List(Patterns::Double()),
               "Probe point location in the mesh's reference. "
-              "The different components of the point must be separated comma (e.g., ``set location = 0.0, 0.0, 0.0``). ");
+              "The different components of the point must be separated by commas (e.g., ``set location = 0.0, 0.0, 0.0``). ");
             prm.declare_entry(
               "variable",
               "velocity",
