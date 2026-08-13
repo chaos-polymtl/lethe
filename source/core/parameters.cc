@@ -1386,7 +1386,7 @@ namespace Parameters
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "electric permittivity real part polynomial coefficients",
-        "0",
+        "1",
         Patterns::List(Patterns::Double()),
         "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
@@ -1420,7 +1420,7 @@ namespace Parameters
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "magnetic permeability real part polynomial coefficients",
-        "0",
+        "1",
         Patterns::List(Patterns::Double()),
         "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
