@@ -90,12 +90,11 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   ConditionalOStream                &p_pcout)
   : multiphysics_parameters(nsparam.multiphysics)
   , pcout(p_pcout)
-  , probe_postprocessor(
-      p_simulation_control,
-      nsparam.post_processing.probing_points,
-      nsparam.post_processing.output_frequency,
-      nsparam.simulation_control.output_folder,
-      nsparam.post_processing.verbosity)
+  , probe_postprocessor(p_simulation_control,
+                        nsparam.post_processing.probing_points,
+                        nsparam.post_processing.output_frequency,
+                        nsparam.simulation_control.output_folder,
+                        nsparam.post_processing.verbosity)
 {
   inspect_multiphysics_models_dependencies(nsparam);
 

@@ -35,7 +35,7 @@ public:
   PostprocessingProbes(std::shared_ptr<SimulationControl> &simulation_control,
                        const Parameters::PostProcessing<dim>::ProbingPoints
                                                    &probing_points_parameters,
-                       const unsigned int          output_frequency,
+                       const unsigned int           output_frequency,
                        const std::string           &output_folder,
                        const Parameters::Verbosity &verbosity);
 
@@ -66,7 +66,7 @@ public:
             *variable_it);
 
         // Go through tables and prepare them
-        for (const unsigned int &id: probing_points_of_variable.ids)
+        for (const unsigned int &id : probing_points_of_variable.ids)
           {
             TableHandler     &current_table = probe_tables[id];
             const std::string column_name =
