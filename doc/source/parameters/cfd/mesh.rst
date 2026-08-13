@@ -114,8 +114,8 @@ This subsection provides information of the simulation geometry and its mesh. Th
 
 * The ``scale`` parameter is used to scale the mesh. This is useful when the mesh is made in a different set of unit than what is desired by the simulation.
 
-.. warning::
-    When scale, translation and rotation are used together, the scaling is applied first, then the rotation, then the translation.
+  .. warning::
+      When scale, translation and rotation are used together, the scaling is applied first, then the rotation, then the translation.
 
 
 Lethe Grid Generators
@@ -152,7 +152,10 @@ Fichera Oven
     set grid arguments  = bottom_left : top_right : colorize
 
 If this grid type is chosen, a mesh for the Fichera oven time-harmonic Maxwell benchmark is created. 
-More details on this type of mesh and its grid arguments will be provided in the future example.
+
+.. admonition:: Upcoming update
+  
+  More details on this type of mesh and its grid arguments will be provided in a future example.
 
 
 .. _channel-cylinder:
@@ -256,7 +259,7 @@ The ``grid arguments`` accepts either an empty string (which uses the default di
 * ``L_cone`` is the axial length of the conical reduction
 * ``L_outlet`` is the length of the straight outlet pipe
 * ``L_inlet`` is the length of each inlet pipe
-* ``z_inlet`` is the height of the inlet axis above the chamber floor (which must satisfy :math:`0 < z_{inlet} < H_{chamber}`)
+* ``z_inlet`` is the height of the inlet axis above the chamber floor (which must satisfy :math:`0 < z_\text{inlet} < H_\text{chamber}`)
 
 The default dimensions are ``0.05 : 0.02 : 0.025 : 0.16 : 0.06 : 0.05 : 0.08 : 0.08``. The mesh discretisation is not exposed and is fixed internally. 
 Boundary IDs are: 0 for the :math:`+x` inlet, 1 for the :math:`-x` inlet, 2 for the outlet, and 3 for all walls.
@@ -272,7 +275,7 @@ Cylinder
     set type            = lethe
     # Cylinder type. Choices are <cylinder_classic | cylinder_balanced | cylinder_squared | cylinder_regularized>
     set grid type       = cylinder_classic
-    set grid arguments  = x_subdivisions : radius : half_lenght
+    set grid arguments  = x_subdivisions : radius : half_length
 
 If this grid type is chosen, one of the following ``grid type`` options must be declared : ``cylinder_classic | cylinder_balanced | cylinder_squared | cylinder_regularized``. 
 
@@ -280,7 +283,7 @@ The ``cylinder_classic`` type is equivalent to a subdivided cylinder from deal.I
 The other cylinder types follow the same ``grid arguments``:
 
 * ``x_subdivisions`` is the number of cells to generate in the x direction
-* ``radius`` is the radius of the circle in the yz-pnate
+* ``radius`` is the radius of the circle in the yz-plane
 * ``half_length`` is the half-length of the cylinder in the x direction
 
 
