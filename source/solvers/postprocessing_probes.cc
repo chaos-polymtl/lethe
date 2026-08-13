@@ -8,7 +8,7 @@ PostprocessingProbes<dim>::PostprocessingProbes(
   std::shared_ptr<SimulationControl> &simulation_control,
   const Parameters::PostProcessing<dim>::ProbingPoints
                               &probing_points_parameters,
-  const unsigned int          output_frequency,
+  const unsigned int           output_frequency,
   const std::string           &output_folder,
   const Parameters::Verbosity &verbosity)
   : simulation_control(simulation_control)
