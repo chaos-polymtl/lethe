@@ -3021,8 +3021,8 @@ namespace Parameters
       AssertThrow(
         !(check_for_diamond_cells && expand_particle_wall_contact_search),
         ExcMessage(
-          "Lethe DEM does not currently support the simultaneous use of the 'check diamond " 
-          "cells' and 'expand particle-wall contact search' options. Please set one of " 
+          "Lethe DEM does not currently support the simultaneous use of the 'check diamond "
+          "cells' and 'expand particle-wall contact search' options. Please set one of "
           "these two options to false."));
 
 

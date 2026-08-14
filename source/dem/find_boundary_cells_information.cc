@@ -736,7 +736,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
             }
         }
       Assert(found_face,
-                  ExcMessage("Boundary face not found in boundary cell."));
+             ExcMessage("Boundary face not found in boundary cell."));
 
       for (auto vertex_id : main_face_iterator->vertex_indices())
         {
