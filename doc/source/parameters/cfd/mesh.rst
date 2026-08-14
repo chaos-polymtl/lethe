@@ -180,7 +180,7 @@ The ``grid arguments`` accepts up to fourteen colon-separated values as listed a
 * In 3D, ``height`` (default ``1.0``) sets the extrusion height and ``n_slices`` (default and minimum ``2``) sets the number of layers in the :math:`z` direction.
 * The last 3 parameters are boolean: ``use_transfinite_region``, ``mesh_obstacle`` and ``colorize`` which are by default all set to ``false``. 
     * ``use_transfinite_region`` is use to enable the use of transfinite interpolation for the transition region between the inner and outer radii. 
-    * ``mesh_obstacle`` is used to indicate whether the obstacle is meshed and given a material ID for the solid region or or if the obstacle is not meshed and a new boundary is created. 
+    * ``mesh_obstacle`` is used to indicate whether the obstacle is meshed and given a material ID for the solid region or if the obstacle is not meshed and a new boundary is created. 
     * ``colorize`` applies the following boundary ID convention: 0 for the obstacle (if not meshed), then follows the deal.II ``subdivided_hyper_rectangle`` convention for the outer boundaries but shifted by +1 for all of them to accommodate the obstacle boundary ID. 
     
 .. note::
