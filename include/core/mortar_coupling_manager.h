@@ -26,30 +26,7 @@ class MortarManagerBase
 {
 public:
   /**
-   * @brief Mortar manager base constructor used in 2D problems
-   * TODO: Combine both 2D and 3D constructors into one
-   *
-   * @tparam dim2 Quadrature dimension
-   * @param[in] n_subdivisions Number of cells at the interface between inner
-   * and outer domains
-   * @param[in] radius Radius at the mortar interface
-   * @param[in] quadrature Quadrature for local cell operations
-   * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] rotation_axis_direction Direction of the rotation axis
-   * @param[in] stage_heights Domain height in the direction of the rotation
-   * axis at the mortar interface, which should be 0 for 2D problems
-   */
-  template <int dim2>
-  MortarManagerBase(unsigned int            n_subdivisions,
-                    double                  radius,
-                    const Quadrature<dim2> &quadrature,
-                    const double            rotation_angle,
-                    const unsigned int      rotation_axis_direction = 2,
-                    const double            stage_heights           = 0.0);
-
-  /**
-   * @brief Mortar manager base constructor used in 3D problems
-   * TODO: Combine both 2D and 3D constructors into one
+   * @brief Mortar manager base constructor
    *
    * @tparam dim2 Quadrature dimension
    * @param[in] n_subdivisions Number of cells at the interface between inner
@@ -67,7 +44,7 @@ public:
                     const std::vector<double>       &interface_dimensions,
                     const Quadrature<dim2>          &quadrature,
                     const double                     rotation_angle,
-                    const unsigned int               rotation_axis_direction,
+                    const unsigned int               rotation_axis_direction = 2,
                     const std::vector<double> stage_heights = {0.0, 1.0});
 
   /**
@@ -340,36 +317,7 @@ class MortarManagerCircle : public MortarManagerBase<dim>
 {
 public:
   /**
-   * @brief Class constructor for circular mortar interface used in 2D
-   * Poisson/Stokes test cases
-   * TODO: Move Poisson/Stokes tests to prototypes and remove this constructor
-   *
-   * @tparam dim2 Quadrature dimension
-   * @param[in] n_subdivisions Number of cells at the interface between inner
-   * and outer domains
-   * @param[in] radius Radius at the mortar interface
-   * @param[in] quadrature Quadrature for local cell operations
-   * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] rotation_axis_direction Direction of the rotation axis
-   * @param[in] stage_heights Domain height in the direction of the rotation
-   * axis at the mortar interface, which should be 0 for 2D problems
-   * @param[in] center_of_rotation Center of rotation of the inner domain
-   * @param[in] pre_rotation_angle Initial rotation angle used for computing
-   * mortar locations, accounting for cases here the element edges are not
-   * aligned with the x axis
-   */
-  template <int dim2>
-  MortarManagerCircle(unsigned int            n_subdivisions,
-                      double                  radius,
-                      const Quadrature<dim2> &quadrature,
-                      const double            rotation_angle,
-                      const unsigned int      rotation_axis_direction = 2,
-                      const double            stage_heights           = 0.0,
-                      const Point<dim>       &center_of_rotation = Point<dim>(),
-                      const double            pre_rotation_angle = 0.0);
-
-  /**
-   * @brief Class constructor for circular mortar interface used in 3D
+   * @brief Class constructor for circular mortar interface used in
    * Poisson/Stokes test cases
    * TODO: Move Poisson/Stokes tests to prototypes and remove this constructor
    *
@@ -393,7 +341,7 @@ public:
                       std::vector<double>       interface_dimensions,
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
-                      const unsigned int        rotation_axis_direction,
+                      const unsigned int        rotation_axis_direction = 2,
                       const std::vector<double> stage_heights = {0.0, 1.0},
                       const Point<dim> &center_of_rotation    = Point<dim>(),
                       const double      pre_rotation_angle    = 0.0);
@@ -476,24 +424,6 @@ protected:
 template <int dim>
 template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(
-  unsigned int            n_subdivisions,
-  double                  radius,
-  const Quadrature<dim2> &quadrature_in,
-  const double            rotation_angle,
-  const unsigned int      rotation_axis_direction,
-  const double            stage_heights)
-  : MortarManagerBase(std::vector<unsigned int>{n_subdivisions, 1},
-                      std::vector<double>{radius, 1.0},
-                      quadrature_in,
-                      rotation_angle,
-                      rotation_axis_direction,
-                      std::vector<double>{stage_heights, stage_heights + 1.0})
-{}
-
-
-template <int dim>
-template <int dim2>
-MortarManagerBase<dim>::MortarManagerBase(
   const std::vector<unsigned int> &n_subdivisions,
   const std::vector<double>       &interface_dimensions,
   const Quadrature<dim2>          &quadrature_in,
@@ -507,27 +437,6 @@ MortarManagerBase<dim>::MortarManagerBase(
   , rotation_angle(rotation_angle)
   , rotation_axis_direction(rotation_axis_direction)
   , stage_heights(stage_heights)
-{}
-
-template <int dim>
-template <int dim2>
-MortarManagerCircle<dim>::MortarManagerCircle(
-  unsigned int            n_subdivisions,
-  double                  radius,
-  const Quadrature<dim2> &quadrature,
-  const double            rotation_angle,
-  const unsigned int      rotation_axis_direction,
-  const double            stage_heights,
-  const Point<dim>       &center_of_rotation,
-  const double            pre_rotation_angle)
-  : MortarManagerBase<dim>(n_subdivisions,
-                           radius,
-                           quadrature,
-                           rotation_angle,
-                           rotation_axis_direction,
-                           stage_heights)
-  , pre_rotation_angle(pre_rotation_angle)
-  , center_of_rotation(center_of_rotation)
 {}
 
 template <int dim>
@@ -586,8 +495,8 @@ MortarManagerLinear<dim>::MortarManagerLinear(
   const Parameters::Mortar<dim> &mortar_parameters)
   : MortarManagerBase<dim>(
       compute_number_interface_cells(dof_handler.get_triangulation(),
-                                     mortar_parameters)[0],
-      (std::get<1>(
+                                     mortar_parameters),
+      std::vector<double> {(std::get<1>(
          compute_interface_dimensions_linear(dof_handler.get_triangulation(),
                                              mapping,
                                              mortar_parameters)) -
@@ -595,11 +504,11 @@ MortarManagerLinear<dim>::MortarManagerLinear(
          compute_interface_dimensions_linear(dof_handler.get_triangulation(),
                                              mapping,
                                              mortar_parameters))) /
-        (2.0 * numbers::PI),
+        (2.0 * numbers::PI), 1.0},
       construct_quadrature(quadrature, mortar_parameters),
       0.0,
       2,
-      0.0)
+      std::vector<double> {0.0, 1.0})
 {
   std::tie(this->coord_min, this->coord_max) =
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),
@@ -607,6 +516,14 @@ MortarManagerLinear<dim>::MortarManagerLinear(
                                         mortar_parameters);
 }
 
+
+  // MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
+  //                   const std::vector<double>       &interface_dimensions,
+  //                   const Quadrature<dim2>          &quadrature,
+  //                   const double                     rotation_angle,
+  //                   const unsigned int               rotation_axis_direction = 2,
+  //                   const std::vector<double> stage_heights = {0.0, 1.0});
+                    
 /**
  * @brief Compute inner product
  *

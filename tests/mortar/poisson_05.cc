@@ -39,8 +39,8 @@ public:
   MyMortarManager(const unsigned int      n_subdivisions,
                   const Quadrature<dim2> &quadrature,
                   const double            shift)
-    : MortarManagerBase<dim>(n_subdivisions,
-                             1.0 / (2.0 * numbers::PI),
+    : MortarManagerBase<dim>(std::vector<unsigned int> {n_subdivisions, 1},
+                             std::vector<double> {1.0 / (2.0 * numbers::PI), 1.0},
                              quadrature,
                              shift * (2.0 * numbers::PI))
   {}

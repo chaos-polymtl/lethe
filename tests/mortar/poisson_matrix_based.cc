@@ -76,8 +76,8 @@ public:
 
     // create mortar manager
     const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-      6 * Utilities::pow(2, n_global_refinements),
-      0.5 * radius,
+      std::vector<unsigned int> {6 * Utilities::pow(2, n_global_refinements), 1},
+      std::vector<double> {0.5 * radius, 1.0},
       quadrature,
       0.0);
 

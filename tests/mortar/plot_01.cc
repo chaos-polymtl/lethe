@@ -110,10 +110,10 @@ main(int argc, char *argv[])
   tria.refine_global(n_global_refinements);
   output_mesh<dim, dim>(tria, 3, "outer.0.vtu");
 
-  const MortarManagerCircle<dim> mm(4 *
+  const MortarManagerCircle<dim> mm(std::vector<unsigned int> {4 *
                                       Utilities::pow(2,
-                                                     n_global_refinements + 1),
-                                    radius,
+                                                     n_global_refinements + 1), 1},
+                                    std::vector<double> {radius, 1.0},
                                     QGauss<dim>(n_quadrature_points),
                                     rotate_pi);
 

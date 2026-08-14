@@ -1279,8 +1279,8 @@ public:
                const double       sip_factor = 1.0)
   {
     const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-      std::make_shared<MortarManagerCircle<dim>>(n_subdivisions,
-                                                 radius,
+      std::make_shared<MortarManagerCircle<dim>>(std::vector<unsigned int> {n_subdivisions, 1},
+                                                 std::vector<double> {radius, 1.0},
                                                  matrix_free.get_quadrature(),
                                                  rotate_pi);
 

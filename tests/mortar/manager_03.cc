@@ -344,8 +344,8 @@ main(int argc, char **argv)
                          locally_relevant_dofs);
 
       const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-        4 * Utilities::pow(2, n_global_refinements + 1),
-        radius,
+        std::vector<unsigned int> {4 * Utilities::pow(2, n_global_refinements + 1), 1},
+        std::vector<double> {radius, 1.0},
         quadrature,
         0.0);
 
