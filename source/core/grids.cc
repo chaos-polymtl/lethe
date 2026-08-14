@@ -6,8 +6,8 @@
 #include <core/grid_birmingham_fluidized_bed.h>
 #include <core/grid_cylinder.h>
 #include <core/grid_impinging_jet_mixer.h>
-#include <core/grid_pipe_and_waveguide.h>
 #include <core/grid_periodic_hills.h>
+#include <core/grid_pipe_and_waveguide.h>
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
 #include <core/grids.h>
