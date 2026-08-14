@@ -44,8 +44,8 @@ public:
                   const Quadrature<dim2> &quadrature,
                   const double            left,
                   const double            right)
-    : MortarManagerBase<dim>(n_subdivisions,
-                             (right - left) / (2.0 * numbers::PI),
+    : MortarManagerBase<dim>(std::vector<unsigned int {n_subdivisions, 1},
+                             std::vector<double> {(right - left) / (2.0 * numbers::PI), 1.0},
                              quadrature,
                              0.0)
     , left(left)
@@ -209,8 +209,8 @@ run(const std::string &formulation,
     {
       const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
         std::make_shared<MortarManagerCircle<dim>>(
-          4 * Utilities::pow(2, n_global_refinements + 1),
-          radius,
+          std::vector<unsigned int> {4 * Utilities::pow(2, n_global_refinements + 1), 1},
+          std::vector<double> {radius, 1.0},
           quadrature,
           rotate_pi);
 

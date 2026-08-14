@@ -269,8 +269,8 @@ test(const unsigned int n_refinements, const unsigned int fe_degree_fine)
       op.reinit(*mappings[l], dof_handler, constraint, *quads[l]);
 
       const auto mortar_manager =
-        std::make_shared<MortarManagerCircle<dim>>(4 * Utilities::pow(2, l + 1),
-                                                   radius,
+        std::make_shared<MortarManagerCircle<dim>>(std::vector<unsigned int> {4 * Utilities::pow(2, l + 1), 1},
+                                                   std::vector<double> {radius, 1.0},
                                                    construct_quadrature(
                                                      *quads[l]),
                                                    rotate_pi);

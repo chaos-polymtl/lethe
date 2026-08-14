@@ -44,8 +44,8 @@ public:
                   const Quadrature<dim2> &quadrature,
                   const double            left,
                   const double            right)
-    : MortarManagerBase<dim>(n_subdivisions,
-                             (right - left) / numbers::PI,
+    : MortarManagerBase<dim>(std::vector<unsigned int> {n_subdivisions, 1},
+                             std::vector<double> {(right - left) / numbers::PI, 1.0},
                              quadrature,
                              0.0)
     , left(left)

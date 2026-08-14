@@ -10,28 +10,28 @@
 int
 main()
 {
-  const unsigned int dim                 = 2;
-  const unsigned int n_subdivisions      = 10;
-  const unsigned int n_quadrature_points = 3;
-  const double       radius              = 1.2;
+  const unsigned int              dim                  = 2;
+  const std::vector<unsigned int> n_subdivisions       = {10, 1};
+  const unsigned int              n_quadrature_points  = 3;
+  const std::vector<double>       interface_dimensions = {1.2, 1.0};
 
   // cell angle variation
-  const double delta = 2 * numbers::PI / n_subdivisions;
+  const double delta = 2 * numbers::PI / n_subdivisions[0];
 
   // rotate inner mesh using random scaling factors
   for (const double scale :
-       {0.0, 0.1, 0.5, 0.9, 1.1, 2.1, n_subdivisions - 0.9})
+       {0.0, 0.1, 0.5, 0.9, 1.1, 2.1, n_subdivisions[0] - 0.9})
     {
       const double rotate = delta * scale;
       std::cout << "Rotation angle: " << rotate << std::endl;
 
       const MortarManagerCircle<dim> manager(n_subdivisions,
-                                             radius,
+                                             interface_dimensions,
                                              QGauss<dim>(n_quadrature_points),
                                              rotate);
 
       const auto print = [&](const double shift, const bool is_inner) {
-        for (unsigned int i = 0; i < n_subdivisions; ++i)
+        for (unsigned int i = 0; i < n_subdivisions[0]; ++i)
           {
             // center point of each cell (in radians)
             const double rad = delta * (i + shift + 0.5);
@@ -39,7 +39,7 @@ main()
             std::cout << "Shift: " << shift << std::endl;
             std::cout << "Cell center at " << rad << ": " << std::endl;
 
-            const auto p = radius_to_point<dim>(radius, rad);
+            const auto p = radius_to_point<dim>(interface_dimensions[0], rad);
 
             const auto indices = manager.get_mortar_indices(p, is_inner);
 
