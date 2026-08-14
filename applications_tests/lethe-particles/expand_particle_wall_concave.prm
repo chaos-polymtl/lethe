@@ -7,7 +7,7 @@
 # consisting of a horizontal section followed by an downwards section.  Using the
 # feature should only add convex neighboring boundary faces to the list of contacts
 # for the cell containing the particle and avoid adding neighboring boundary faces of
-# adjacent cells that form a concave shape with the boundary faces of the cell 
+# adjacent cells that form a concave shape with the boundary faces of the cell
 # containing the particle, thus avoiding unphysical contacts.
 
 #---------------------------------------------------
