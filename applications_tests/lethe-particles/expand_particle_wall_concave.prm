@@ -1,16 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-/**
- * @brief This test checks the behavior of the `expand particle-wall contact search`
- * feature for a particle moving along a geometry with concave boundary faces.
- * A single particle is subjected to an inclined gravity field in a geometry
- * consisting of a horizontal section followed by an downwards section.  Using the
- * feature should only add convex neighboring boundary faces to the list of contacts
- * for the cell containing the particle and avoid adding neighboring boundary faces of
- * adjacent cells that form a concave shape with the boundary faces of the cell 
- * containing the particle, thus avoiding unphysical contacts.
- */
+# This test checks the behavior of the `expand particle-wall contact search`
+# feature for a particle moving along a geometry with concave boundary faces.
+# A single particle is subjected to an inclined gravity field in a geometry
+# consisting of a horizontal section followed by an downwards section.  Using the
+# feature should only add convex neighboring boundary faces to the list of contacts
+# for the cell containing the particle and avoid adding neighboring boundary faces of
+# adjacent cells that form a concave shape with the boundary faces of the cell 
+# containing the particle, thus avoiding unphysical contacts.
 
 #---------------------------------------------------
 # Listing of Parameters
@@ -23,9 +21,10 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step     = 3.2445e-4
-  set time end      = 0.3
-  set log frequency = 100
+  set time step        = 3.2445e-4
+  set time end         = 0.3
+  set log frequency    = 100
+  set output frequency = 0
 end
 
 #---------------------------------------------------
