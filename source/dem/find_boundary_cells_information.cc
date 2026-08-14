@@ -65,6 +65,8 @@ BoundaryCellsInformation<dim>::build(
         {
           pcout
             << "Warning: expansion of particle-wall contact list is enabled. "
+            << std::endl
+            << "This feature is only useful in geometries with convex boundaries."
             << std::endl;
           display_pw_contact_expansion_warning = false;
         }
@@ -733,7 +735,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
               break;
             }
         }
-      AssertThrow(found_face,
+      Assert(found_face,
                   ExcMessage("Boundary face not found in boundary cell."));
 
       for (auto vertex_id : main_face_iterator->vertex_indices())

@@ -1,8 +1,19 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+/**
+ * @brief This test checks the behavior of the `expand particle-wall contact search`
+ * feature for a particle moving along a geometry with convex boundary faces.
+ * A single particle is subjected to an inclined gravity field in a geometry
+ * consisting of a horizontal section followed by an ascending section. Using the
+ * feature should correctly add the neighboring boundary faces that form a convex 
+ * shape with the boundary faces of the cell containing the particle, to the list
+ * of contacts of this cell.
+ */
+
+#---------------------------------------------------
 # Listing of Parameters
-#----------------------
+#---------------------------------------------------
 
 set dimension = 3
 
