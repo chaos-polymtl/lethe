@@ -48,15 +48,14 @@ public:
 private:
   /// Arguments used to generate the grid
   std::string grid_arguments;
-  /// File name of the extruded plate with hole mesh
-  std::string plate_file_name;
-  /// ID corresponding to the cylindrical boundary of the extruded plate with
-  /// hole mesh
-  unsigned int cylindrical_bid_plate;
-  /// File name of the cylinder mesh
-  std::string cylinder_file_name;
-  /// ID corresponding to the cylindrical boundary of the cylinder mesh
-  unsigned int cylindrical_bid_cylinder;
+  /// Radius of the cylindrical mesh
+  double cylinder_radius;
+  /// Half edge length of the square in the extruded plate with hole mesh
+  double plate_half_length;
+  /// Height in the extruded direction (z axis)
+  double height;
+  /// Number of subdivisions in the extruded direction (z axis)
+  unsigned int n_subdivisions;
 };
 
 #endif

@@ -54,9 +54,9 @@ main()
     {
       initlog();
 
-      // Input arguments: name of the two mesh files to be merged and boundary
-      // IDs corresponding to the cylindrical boundaries
-      test("../mesh_plate3d.msh : ../mesh_cylinder.msh : 4 : 7");
+      // Input arguments: cylinder radius, plate half length, height in z,
+      // number of subdivisions in z
+      test("1.0 : 1.5 : 2.0 : 2");
     }
   catch (std::exception &exc)
     {

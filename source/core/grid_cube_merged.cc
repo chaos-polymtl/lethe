@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grid_cube_merged.h>
+#include <core/lethe_grid_tools.h>
 
 #include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
 
@@ -32,14 +32,23 @@ GridCubeMerged<dim, spacedim>::GridCubeMerged(const std::string &grid_arguments)
       AssertThrow(
         false,
         ExcMessage(
-          "Mandatory cylinder parameters are (plate file name:cylinder file name: cylindrical BID plate : cylindrical BID cylinder)"));
+          "Mandatory cylinder parameters are (cylinder radius : plate half length : height : number of subdivisions in z)"));
     }
   else
     {
-      this->plate_file_name          = arguments[0];
-      this->cylinder_file_name       = arguments[1];
-      this->cylindrical_bid_plate    = Utilities::string_to_int(arguments[2]);
-      this->cylindrical_bid_cylinder = Utilities::string_to_int(arguments[3]);
+      this->cylinder_radius   = Utilities::string_to_double(arguments[0]);
+      this->plate_half_length = Utilities::string_to_double(arguments[1]);
+      this->height            = Utilities::string_to_double(arguments[2]);
+      this->n_subdivisions    = Utilities::string_to_int(arguments[3]);
+
+      // To match the number of cells at the cylindrical interface, the cylinder
+      // geometry is refined once before being merged into the extruded plate.
+      // The prescribed number of subdivisions, therefore, needs to be divided
+      // by half to create the initial cylinder. Hence, he number of
+      // subdivisions needs to be an even number
+      AssertThrow(this->n_subdivisions % 2 == 0,
+                  ExcMessage(
+                    "The number of subdivisions needs to be an even number."));
     }
 }
 
@@ -48,59 +57,85 @@ template <>
 void
 GridCubeMerged<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 {
-  // Create a temporary triangulation for the extruded plate with hole
+  // Create grid of extruded plate with hole
   Triangulation<3, 3> tria_plate;
-  GridIn<3, 3>        grid_plate;
-  grid_plate.attach_triangulation(tria_plate);
-  std::ifstream plate_input_file(this->plate_file_name);
-  grid_plate.read_msh(plate_input_file);
+  GridGenerator::hyper_cube_with_cylindrical_hole(tria_plate,
+                                                  cylinder_radius,
+                                                  plate_half_length,
+                                                  height,
+                                                  n_subdivisions,
+                                                  false);
 
-  // Create a temporary triangulation for the inner cylinder
+  // Create grid of cylinder
   Triangulation<3, 3> tria_cylinder;
-  GridIn<3, 3>        grid_cylinder;
-  grid_cylinder.attach_triangulation(tria_cylinder);
-  std::ifstream cylinder_input_file(this->cylinder_file_name);
-  grid_cylinder.read_msh(cylinder_input_file);
+  GridGenerator::subdivided_cylinder(tria_cylinder,
+                                     n_subdivisions / 2,
+                                     cylinder_radius,
+                                     height / 2);
 
-  // Set cylindrical manifolds in plate triangulation
-  tria_plate.set_manifold(this->cylindrical_bid_plate,
-                          CylindricalManifold<3>(Tensor<1, 3>({0, 0, 1}),
-                                                 Point<3>({0, 0, 0})));
-
-  for (const auto &cell : tria_plate.active_cell_iterators())
-    for (const auto &face : cell->face_iterators())
-      if (face->at_boundary() &&
-          face->boundary_id() == this->cylindrical_bid_plate)
-        {
-          face->set_all_manifold_ids(this->cylindrical_bid_plate);
-          cell->set_manifold_id(this->cylindrical_bid_plate);
-        }
-
-  // Set cylindrical manifolds in cylinder triangulation
-  tria_cylinder.set_manifold(this->cylindrical_bid_cylinder,
+  // Rotate the cylinder so that it is aligned with the z axis
+  GridTools::rotate(Tensor<1, 3>({0, 1, 0}),
+                    std::numbers::pi / 2,
+                    tria_cylinder);
+  // Shift the cylinder so that its 2D extrusion plane is the same as tria_plate
+  GridTools::shift(Tensor<1, 3>({0, 0, 1}), tria_cylinder);
+  // Remove cylindrical manifold in x direction
+  tria_cylinder.reset_all_manifolds();
+  // Set new manifold on z direction (manifold ID for the hull of the cylinder
+  // is 0)
+  tria_cylinder.set_manifold(0,
                              CylindricalManifold<3>(Tensor<1, 3>({0, 0, 1}),
-                                                    Point<3>({0, 0, 0})));
+                                                    Point<3>()));
 
-  for (const auto &cell : tria_cylinder.active_cell_iterators())
-    for (const auto &face : cell->face_iterators())
-      if (face->at_boundary() &&
-          face->boundary_id() == this->cylindrical_bid_cylinder)
-        {
-          face->set_all_manifold_ids(this->cylindrical_bid_cylinder);
-          cell->set_manifold_id(this->cylindrical_bid_cylinder);
-        }
+  // Refine the cylinder mesh once so that the number of cells at the interface
+  // match with tria_plate
+  tria_cylinder.refine_global(1);
+
+  // Flatten cylinder triangulation so that it can be merged with the extruded
+  // plate with hole
+  Triangulation<3, 3> tria_cylinder_flat;
+  GridGenerator::flatten_triangulation(tria_cylinder, tria_cylinder_flat);
 
   // Merge triangulations
-  GridGenerator::merge_triangulations(
-    tria_plate, tria_cylinder, triangulation, 1e-8, true, false);
+  GridGenerator::merge_triangulations(tria_plate,
+                                      tria_cylinder_flat,
+                                      triangulation,
+                                      1e-8);
 
-  // Re-attach cylindrical manifolds
-  triangulation.set_manifold(this->cylindrical_bid_plate,
+  // Re-assign cylindrical manifold
+  double tol = 1e-10;
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f)
+        {
+          bool is_cylindrical_boundary = true;
+          for (unsigned int v = 0; v < GeometryInfo<3>::vertices_per_face; ++v)
+            {
+              const auto vertex = cell->face(f)->vertex(v);
+
+              // Check if vertex lies on the former cylindrical boundary
+              double distance = LetheGridTools::find_point_line_distance(
+                Point<3>(), Tensor<1, 3>({0, 0, 1}), vertex);
+              if (std::abs(distance - this->cylinder_radius) > tol)
+                {
+                  is_cylindrical_boundary = false;
+                  break;
+                }
+            }
+
+          if (is_cylindrical_boundary)
+            {
+              cell->face(f)->set_manifold_id(1);
+              for (unsigned int l = 0; l < GeometryInfo<3>::lines_per_face; ++l)
+                cell->face(f)->line(l)->set_manifold_id(1);
+            }
+        }
+    }
+
+  triangulation.set_manifold(0, FlatManifold<3>());
+  triangulation.set_manifold(1,
                              CylindricalManifold<3>(Tensor<1, 3>({0, 0, 1}),
-                                                    Point<3>({0, 0, 0})));
-  triangulation.set_manifold(this->cylindrical_bid_cylinder,
-                             CylindricalManifold<3>(Tensor<1, 3>({0, 0, 1}),
-                                                    Point<3>({0, 0, 0})));
+                                                    Point<3>()));
 }
 
 // Fallback make_grid definition for unsupported template parameters. This

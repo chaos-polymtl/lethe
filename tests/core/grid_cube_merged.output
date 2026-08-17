@@ -1,6 +1,6 @@
 
 DEAL::==================================================
-DEAL::Grid arguments: "../mesh_plate3d.msh:../mesh_cylinder.msh: 4 : 7"
-DEAL::Number of active cells : 40
-DEAL::Number of vertices     : 75
-DEAL::Mesh volume            : 8.00000
+DEAL::Grid arguments: "1.0 : 1.5 : 2.0 : 2"
+DEAL::Number of active cells : 56
+DEAL::Number of vertices     : 99
+DEAL::Mesh volume            : 18.0000
