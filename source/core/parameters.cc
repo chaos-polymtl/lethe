@@ -1361,7 +1361,7 @@ namespace Parameters
       prm.declare_entry(
         "electric conductivity polynomial coefficients",
         "0",
-        Patterns::List(Patterns::Double()),
+        Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the electric conductivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
@@ -1387,7 +1387,7 @@ namespace Parameters
       prm.declare_entry(
         "electric permittivity real part polynomial coefficients",
         "1",
-        Patterns::List(Patterns::Double()),
+        Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
@@ -1395,7 +1395,7 @@ namespace Parameters
       prm.declare_entry(
         "electric permittivity imag part polynomial coefficients",
         "0",
-        Patterns::List(Patterns::Double()),
+        Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
@@ -1421,14 +1421,14 @@ namespace Parameters
       prm.declare_entry(
         "magnetic permeability real part polynomial coefficients",
         "1",
-        Patterns::List(Patterns::Double()),
+        Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
       prm.declare_entry(
         "magnetic permeability imag part polynomial coefficients",
         "0",
-        Patterns::List(Patterns::Double()),
+        Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
