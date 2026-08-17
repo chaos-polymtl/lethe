@@ -15,6 +15,7 @@
 #define lethe_parameters_lagrangian_h
 
 #include <core/parameters.h>
+#include <core/periodic_boundary_information.h>
 
 #include <deal.II/base/parameter_handler.h>
 
@@ -781,8 +782,13 @@ namespace Parameters
      * information for each boundary of the DEM domain. A boundary's type is
      * encoded by which container holds it (see outlet_boundaries below); fixed
      * walls are the default and are not stored in any container.
+     *
+     * The periodic boundary maps are inherited from
+     * Parameters::PeriodicBoundaryInformation, which is shared with the CFD
+     * boundary conditions so that the periodicity of the triangulation is set
+     * up by a single routine for both solvers.
      */
-    struct BCDEM
+    struct BCDEM : public PeriodicBoundaryInformation
     {
     public:
       /// Number of DEM boundary conditions.
@@ -811,15 +817,6 @@ namespace Parameters
       /// Point on the rotational axis of each rotational boundary, keyed by the
       /// mesh boundary id. Only rotational boundaries have an entry.
       std::map<types::boundary_id, Point<3>> point_on_rotation_axis;
-
-      /// Neighbor periodic boundary id for each periodic boundary pair, keyed
-      /// by the principal periodic boundary id (periodic id 0 -> periodic id
-      /// 1).
-      std::map<types::boundary_id, types::boundary_id> periodic_neighbor_id;
-
-      /// Direction of periodicity for each periodic boundary pair, keyed by the
-      /// principal periodic boundary id (periodic id 0).
-      std::map<types::boundary_id, unsigned int> periodic_direction;
 
       /**
        * @brief Declare the parameters in the parameter handler.

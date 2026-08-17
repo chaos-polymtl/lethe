@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/grids.h>
+#include <core/lethe_grid_tools.h>
 #include <core/manifolds.h>
 #include <core/solutions_output.h>
 
@@ -14,7 +16,6 @@
 #include <dem/multiphysics_integrator.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/read_checkpoint.h>
-#include <dem/read_mesh.h>
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
@@ -42,7 +43,8 @@ DEMSolver<dim, PropertiesIndex>::DEMSolver(
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , parameters(std::move(dem_parameters))
   , checkpoint_controller(parameters.restart)
-  , triangulation(this->mpi_communicator)
+  , triangulation(this->mpi_communicator,
+                  Triangulation<dim>::limit_level_difference_at_vertices)
   , mapping(1)
   , particle_handler(triangulation, mapping, PropertiesIndex::n_properties)
   , computing_timer(this->mpi_communicator,
@@ -59,6 +61,16 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::setup_parameters()
 {
+  // DEM relies on a parallel::distributed::Triangulation throughout (boundary
+  // cell information, load balancing and checkpointing all require it), whereas
+  // simplex meshes need a parallel::fullydistributed::Triangulation. Reject
+  // them explicitly rather than letting the grid reading reach an unimplemented
+  // deal.II code path.
+  AssertThrow(
+    !parameters.mesh.simplex,
+    ExcMessage(
+      "Simplex meshes are not supported by DEM simulations. Set 'simplex = false' in the mesh subsection."));
+
   // Print simulation starting information
   pcout << std::endl;
   std::stringstream ss;
@@ -275,6 +287,50 @@ DEMSolver<dim, PropertiesIndex>::set_integrator_type()
           ExplicitEulerIntegrator<dim, PropertiesIndex>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+DEMSolver<dim, PropertiesIndex>::box_refine_mesh(const bool restart)
+{
+  if (restart)
+    return;
+
+  const Parameters::MeshBoxRefinement &box_refinement =
+    *parameters.mesh_box_refinement;
+
+  for (unsigned int i_box = 0;
+       i_box < box_refinement.number_of_refinement_boxes;
+       ++i_box)
+    {
+      // Read the mesh that delimits the box
+      Triangulation<dim> box_to_refine;
+      build_refinement_box_triangulation(
+        (*box_refinement.refinement_boxes_meshes)[i_box], box_to_refine);
+
+      for (unsigned int i = 0;
+           i < box_refinement.box_additional_refinements[i_box];
+           ++i)
+        {
+          TimerOutput::Scope t(this->computing_timer, "Box refine");
+          pcout << "Initial refinement in box " << i_box << " - Step  " << i + 1
+                << " of " << box_refinement.box_additional_refinements[i_box]
+                << std::endl;
+
+          // A DoFHandler on the background triangulation is required to search
+          // for the cells lying inside the box. No dofs need to be distributed
+          // on it, since the search is purely geometric. It is rebuilt at every
+          // step because the triangulation is refined below.
+          const DoFHandler<dim> background_dof_handler(triangulation);
+
+          LetheGridTools::flag_cells_in_refinement_box(background_dof_handler,
+                                                       box_to_refine);
+
+          // No solution transfer is needed: particles have not been inserted
+          // yet, so the triangulation carries no data.
+          triangulation.execute_coarsening_and_refinement();
+        }
     }
 }
 
@@ -1069,11 +1125,15 @@ DEMSolver<dim, PropertiesIndex>::solve()
   setup_parameters();
 
   // Reading mesh
-  read_mesh(parameters.mesh,
-            action_manager->check_restart_simulation(),
-            pcout,
-            triangulation,
-            parameters.boundary_conditions);
+  pcout << "Reading triangulation" << std::endl;
+
+  read_mesh_and_manifolds(triangulation,
+                          parameters.mesh,
+                          parameters.manifolds_parameters,
+                          action_manager->check_restart_simulation(),
+                          parameters.boundary_conditions);
+
+  pcout << std::endl << "Finished reading triangulation" << std::endl;
 
   // Set up functions and pointers according to parameters
   setup_functions_and_pointers();
@@ -1089,6 +1149,11 @@ DEMSolver<dim, PropertiesIndex>::solve()
                   insertion_object,
                   solid_surfaces,
                   checkpoint_controller);
+
+  // Refine the background mesh within the user-specified refinement boxes. This
+  // must happen before the triangulation-dependent parameters are set up, since
+  // they are derived from the smallest cell of the final mesh.
+  box_refine_mesh(action_manager->check_restart_simulation());
 
   report_cell_size_to_particle_diameter_ratio(triangulation,
                                               maximum_particle_diameter,

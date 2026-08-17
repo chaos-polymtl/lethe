@@ -54,18 +54,20 @@ main(int argc, char *argv[])
         }
       else if (solver_family == "lethe-particles")
         {
+          const Parameters::SizeOfSubsections size_of_subsections =
+            Parameters::get_size_of_subsections(argv[1]);
           if (dim == 2)
             {
               ParameterHandler       prm;
               DEMSolverParameters<2> parameters;
-              parameters.declare(prm);
+              parameters.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
             }
           if (dim == 3)
             {
               ParameterHandler       prm;
               DEMSolverParameters<3> parameters;
-              parameters.declare(prm);
+              parameters.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
             }
         }

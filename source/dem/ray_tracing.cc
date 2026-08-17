@@ -8,7 +8,6 @@
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
 #include <dem/ray_tracing.h>
-#include <dem/read_mesh.h>
 #include <dem/visualization.h>
 
 #include <deal.II/particles/data_out.h>
@@ -25,7 +24,8 @@ RayTracingSolver<dim>::RayTracingSolver(
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , parameters(parameters)
   , dem_parameters(dem_parameters)
-  , triangulation(this->mpi_communicator)
+  , triangulation(this->mpi_communicator,
+                  Triangulation<dim>::limit_level_difference_at_vertices)
   , mapping(1)
   , particle_handler(triangulation,
                      mapping,
@@ -53,6 +53,15 @@ template <int dim>
 void
 RayTracingSolver<dim>::setup_parameters()
 {
+  // Ray tracing relies on a parallel::distributed::Triangulation throughout,
+  // whereas simplex meshes need a parallel::fullydistributed::Triangulation.
+  // Reject them explicitly rather than letting the grid reading reach an
+  // unimplemented deal.II code path.
+  AssertThrow(
+    !parameters.mesh.simplex,
+    ExcMessage(
+      "Simplex meshes are not supported by ray tracing simulations. Set 'simplex = false' in the mesh subsection."));
+
   // Print simulation starting information
   pcout << std::endl;
   std::string msg =
@@ -658,11 +667,15 @@ RayTracingSolver<dim>::solve()
   setup_parameters();
 
   // Reading mesh
-  read_mesh(parameters.mesh,
-            action_manager->check_restart_simulation(),
-            pcout,
-            triangulation,
-            dem_parameters.boundary_conditions);
+  pcout << "Reading triangulation" << std::endl;
+
+  read_mesh_and_manifolds(triangulation,
+                          parameters.mesh,
+                          parameters.manifolds_parameters,
+                          action_manager->check_restart_simulation(),
+                          dem_parameters.boundary_conditions);
+
+  pcout << std::endl << "Finished reading triangulation" << std::endl;
 
   displacement_distance = 0.5 * GridTools::minimal_cell_diameter(triangulation);
 

@@ -4,6 +4,7 @@
 #ifndef lethe_boundary_conditions_h
 #define lethe_boundary_conditions_h
 
+#include <core/periodic_boundary_information.h>
 #include <core/utilities.h>
 
 #include <deal.II/base/function.h>
@@ -101,9 +102,12 @@ namespace BoundaryConditions
    * the general information that all boundary condition share.
    * In Lethe, boundary conditions are identified with an id, a type and, in the
    * special case of periodic boundary condition, a periodic matching id
-   * (periodic_id) and a periodic direction (0, 1 or 2).
+   * (periodic_id) and a periodic direction (0, 1 or 2). The latter two are
+   * inherited from Parameters::PeriodicBoundaryInformation, which is shared
+   * with the DEM boundary conditions so that the periodicity of the
+   * triangulation is set up by a single routine for both solvers.
    */
-  class BoundaryConditions
+  class BoundaryConditions : public Parameters::PeriodicBoundaryInformation
   {
   public:
     /// Map containing the boundary id and the boundary type
@@ -123,13 +127,6 @@ namespace BoundaryConditions
 
     /// indicator for transient BCs
     bool time_dependent;
-
-    /// Map containing the boundary id and its corresponding periodic boundary
-    /// condition match
-    std::map<types::boundary_id, types::boundary_id> periodic_neighbor_id;
-
-    /// Map containing the boundary id and its periodic direction
-    std::map<types::boundary_id, unsigned int> periodic_direction;
   };
 
 
