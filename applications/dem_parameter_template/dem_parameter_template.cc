@@ -12,17 +12,22 @@ main()
 {
   try
     {
+      // Declare dummy size of subsections to declare a single of each entity
+      Parameters::SizeOfSubsections size_of_subsections;
+      size_of_subsections.boundary_conditions = 1;
+      size_of_subsections.manifolds           = 1;
+
       {
         ParameterHandler       prm;
         DEMSolverParameters<2> dem_parameters;
-        dem_parameters.declare(prm);
+        dem_parameters.declare(prm, size_of_subsections);
         std::ofstream output_prm("dem-2d.prm");
         prm.print_parameters(output_prm, prm.PRM);
       }
       {
         ParameterHandler       prm;
         DEMSolverParameters<3> dem_parameters;
-        dem_parameters.declare(prm);
+        dem_parameters.declare(prm, size_of_subsections);
         std::ofstream output_prm("dem-3d.prm");
         prm.print_parameters(output_prm, prm.PRM);
       }

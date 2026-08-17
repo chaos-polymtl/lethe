@@ -26,18 +26,22 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
                              const Parameters::Mesh       &mesh_parameters);
 
 /**
- * @brief Modifies the triangulation to set up periodic boundary conditions in the case of CFD simulations
+ * @brief Modifies the triangulation to set up its periodic boundary conditions
+ *
+ * The periodic boundary information is the part of the boundary conditions that
+ * is shared by the CFD and the DEM solvers, so this function is used by both.
  *
  * @param[in,out] triangulation The triangulation to which a grid is attached
  *
- * @param[in] boundary_conditions The information about the boundary conditions
- * id. This is used to set up the periodicity of the domain
+ * @param[in] periodic_boundary_information The periodic boundary pairs and
+ * their direction of periodicity. This is used to set up the periodicity of the
+ * domain
  */
 template <int dim, int spacedim = dim>
 void
 setup_periodic_boundary_conditions(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const BoundaryConditions::BoundaryConditions          &boundary_conditions);
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
 
 /**
  * @brief Completely sets up a mesh and its manifolds.
@@ -56,8 +60,8 @@ setup_periodic_boundary_conditions(
  * to boundaries.
  * @param[in]     restart              Flag indicating whether this is a
  * restart.
- * @param[in]     boundary_conditions  Boundary condition information, used for
- * periodicity.
+ * @param[in]     periodic_boundary_information The periodic boundary pairs and
+ * their direction of periodicity, used to set up the periodicity of the domain.
  */
 template <int dim, int spacedim = dim>
 void
@@ -66,7 +70,7 @@ read_mesh_and_manifolds(
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   bool                                                   restart,
-  const BoundaryConditions::BoundaryConditions          &boundary_conditions);
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
 
 /**
  * @brief Completely sets up a mesh and its manifolds for rotor-stator domains.
@@ -85,8 +89,8 @@ read_mesh_and_manifolds(
  * to boundaries.
  * @param[in]     restart              Flag indicating whether this is a
  * restart.
- * @param[in]     boundary_conditions  Boundary condition information, used for
- * periodicity.
+ * @param[in]     periodic_boundary_information The periodic boundary pairs and
+ * their direction of periodicity, used to set up the periodicity of the domain.
  * @param[in]     mortar_parameters    Parameters controlling the mortar method,
  * including rotor mesh info.
  */
@@ -97,8 +101,8 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   bool                                                   restart,
-  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
-  const Parameters::Mortar<dim>                         &mortar_parameters);
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information,
+  const Parameters::Mortar<dim>                 &mortar_parameters);
 
 /**
  * @brief Refine a mesh around specific boundary ids
@@ -147,6 +151,25 @@ refine_triangulation_at_boundaries(
       triangulation.execute_coarsening_and_refinement();
     }
 }
+
+/**
+ * @brief Build the triangulation which delimits a mesh refinement box
+ *
+ * The box is described by a full set of mesh parameters, so any mesh type
+ * supported by attach_grid_to_triangulation() can be used to delimit a
+ * refinement region. The initial refinement of the box mesh is applied here, so
+ * the resulting triangulation is ready to be used to flag cells.
+ *
+ * @param[in] box_mesh_parameters The mesh parameters describing the box
+ *
+ * @param[in,out] box_triangulation The triangulation which will hold the box
+ * mesh
+ */
+template <int dim, int spacedim = dim>
+void
+build_refinement_box_triangulation(
+  const Parameters::Mesh       &box_mesh_parameters,
+  Triangulation<dim, spacedim> &box_triangulation);
 
 /**
  * @brief Apply scaling, rotation and translation to the mesh in the listed

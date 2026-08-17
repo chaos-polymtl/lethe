@@ -143,6 +143,26 @@ namespace LetheGridTools
     Point<dim>                                           &point_2);
 
   /**
+   * @brief Flag for refinement all the cells of a triangulation which lie within
+   * a refinement box
+   *
+   * @param[in] dof_handler The DoFHandler of the triangulation whose cells must
+   * be flagged. No dofs need to be distributed on it, since the search is
+   * purely geometric.
+   *
+   * @param[in] box_triangulation The triangulation delimiting the refinement
+   * box, as built by build_refinement_box_triangulation()
+   *
+   * @remark Only the refinement flags are set. It is up to the caller to
+   * execute the coarsening and refinement of the triangulation, since the
+   * solvers must transfer their solutions across it.
+   */
+  template <int dim>
+  void
+  flag_cells_in_refinement_box(const DoFHandler<dim>    &dof_handler,
+                               const Triangulation<dim> &box_triangulation);
+
+  /**
    * @brief
    * Return a vector of cells from the dof_handler that are inside a cell from
    * another mesh.

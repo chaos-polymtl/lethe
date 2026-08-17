@@ -29,8 +29,8 @@ namespace Parameters
 {
   struct SizeOfSubsections
   {
-    int boundary_conditions;
-    int manifolds;
+    int boundary_conditions = 0;
+    int manifolds           = 0;
   };
 
 

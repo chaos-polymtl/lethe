@@ -56,8 +56,11 @@ main(int argc, char *argv[])
           RayTracingSolverParameters<3> parameters;
           DEMSolverParameters<3>        dem_parameters;
 
-          parameters.declare(prm);
-          dem_parameters.declare(prm);
+          const Parameters::SizeOfSubsections size_of_subsections =
+            Parameters::get_size_of_subsections(file_name);
+
+          parameters.declare(prm, size_of_subsections);
+          dem_parameters.declare(prm, size_of_subsections);
 
           // Parsing of the file
           prm.parse_input(file_name);
