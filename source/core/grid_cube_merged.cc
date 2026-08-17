@@ -32,7 +32,7 @@ GridCubeMerged<dim, spacedim>::GridCubeMerged(const std::string &grid_arguments)
       AssertThrow(
         false,
         ExcMessage(
-          "Mandatory cylinder parameters are (cylinder radius : plate half length : height : number of subdivisions in z)"));
+          "Mandatory cylinder parameters are (R_cylinder : L_plate : H : n_sudivisions)"));
     }
   else
     {

@@ -91,6 +91,9 @@ This subsection provides information of the simulation geometry and its mesh. Th
    * - :ref:`Cylinder <cylinder>`
      - .. image:: images/mesh_cylinder.png
           :align: center
+   * - :ref:`Merged Cube <merged-cube>`
+     - .. image:: images/mesh_cube_merged.png
+          :align: center 
 
 * The ``initial refinement`` number determines the number of refinements the grid will undergo in the simulation before the simulation is run. This allows one to refine a coarse grid automatically. By default, most deal.II grids will be as coarse as possible and need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cells will lead to a prohibitive memory consumption.
 
@@ -290,3 +293,29 @@ The other cylinder types follow the same ``grid arguments``:
 .. warning::
     The squared cylinder may eventually leads to ill-posed jacobian transformation. As said in the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/namespaceGridTools.html#a3f129213c63c92a6ed84c6f2a906048b>`_ : "The four cells that were originally the corners of a square will give you some troubles during computations, as the jacobian of the transformation from the reference cell to those cells will go to zero, affecting the error constants of the finite element estimates".
     This type of mesh is available, but its usage is not recommended.
+
+.. _merged-cube:
+
+Merged Cube
+^^^^^^^^^^^
+
+.. code-block:: text
+
+  subsection mesh
+    set type            = lethe
+    set grid type       = cube_merged
+    set grid arguments  = R_cylinder : L_plate : H : n_subdivisions
+
+This three-dimensional mesh is a combination of an extruded square plate into a cube with a circular hole at the center and a cylinder that fits perfectly in the hole.
+The following ``grid arguments`` can be prescribed:
+
+* ``R_cylinder`` is the radius of the cylinder mesh and of the hole in the extruded square plate;
+* ``L_plate`` is the half of the edge length of the square;
+* ``H`` is the extension in the z direction;
+* ``n_subdivisions`` is the number of subdivisions along the z direction.
+
+The resulting cube will contain only the boundary ID ``0`` to identify its whole external boundary.
+
+.. admonition:: Upcoming update
+  
+  A generalization to allow the prescription of different boundary conditions at each cube face will be done in the future.
