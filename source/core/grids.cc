@@ -7,6 +7,7 @@
 #include <core/grid_cylinder.h>
 #include <core/grid_impinging_jet_mixer.h>
 #include <core/grid_periodic_hills.h>
+#include <core/grid_pipe_and_waveguide.h>
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
 #include <core/grids.h>
@@ -264,6 +265,19 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
               "Unsupported mesh type - uniform_channel_with_meshed_square_prism mesh with simplex is not supported"));
 
           GridUniformChannelWithMeshedSquarePrism<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+      else if (grid_type == "pipe_and_waveguide")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - mw_pipe_and_waveguide mesh with simplex is not supported"));
+
+          GridPipeAndWaveguide<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
