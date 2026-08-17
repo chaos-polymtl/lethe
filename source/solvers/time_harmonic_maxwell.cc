@@ -1341,18 +1341,32 @@ void
 TimeHarmonicMaxwell<dim>::write_checkpoint()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
-  std::vector<const GlobalVectorType *> sol_set_transfer;
 
+  // Checkpoint interior
+  std::vector<const GlobalVectorType *> sol_set_transfer;
   solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
     *dof_handler_trial_interior);
 
   sol_set_transfer.emplace_back(&(*present_solution));
 
-  std::string checkpoint_file_prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
-
   solution_transfer->prepare_for_serialization(sol_set_transfer);
+
+  // When temperature-dependent electromagnetic properties are used by the
+  // simulation, we need to checkpoint the last temperature solution vector
+  if (needs_temperature)
+    {
+      std::vector<const GlobalVectorType *> temperature_sol_set_transfer;
+
+      temperature_last_solved_solution_transfer =
+        std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
+          this->multiphysics->get_dof_handler(PhysicsID::heat_transfer));
+
+      temperature_sol_set_transfer.emplace_back(
+        &temperature_last_solved_solution);
+
+      temperature_last_solved_solution_transfer->prepare_for_serialization(
+        temperature_sol_set_transfer);
+    }
 
   // Serialize all post-processing tables that are currently used with the
   // TimeHarmonicMaxwell solver
@@ -1368,18 +1382,36 @@ TimeHarmonicMaxwell<dim>::read_checkpoint()
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading time-harmonic Maxwell checkpoint" << std::endl;
 
+  // Time-harmonic Maxwell solution interior
   std::vector<GlobalVectorType *> input_vectors(1);
   GlobalVectorType distributed_system(locally_owned_dofs_trial_interior,
                                       mpi_communicator);
   input_vectors[0] = &distributed_system;
 
-  std::string checkpoint_file_prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
-
   solution_transfer->deserialize(input_vectors);
 
   *present_solution = distributed_system;
+
+
+  // Temperature solution
+  if (needs_temperature)
+    {
+      const auto &temperature_dof_handler =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+      temperature_last_solved_solution.reinit(
+        temperature_dof_handler.locally_owned_dofs(), mpi_communicator);
+      temperature_last_solved_solution_transfer =
+        std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
+          temperature_dof_handler);
+
+      std::vector<GlobalVectorType *> temperature_input_vectors(1);
+
+      temperature_input_vectors[0] = &temperature_last_solved_solution;
+
+      temperature_last_solved_solution_transfer->deserialize(
+        temperature_input_vectors);
+    }
 
   // Deserialize all post-processing tables that are currently used with the
   // TimeHarmonicMaxwell solver
@@ -1586,8 +1618,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
 
   // Sparse matrices initialization
   // In DPG, the sparse matrix and the dynamic sparsity pattern are very
-  // expensive so we only build them if we need to compute a new physical
-  // solution. Additionally, we recast the dynamic sparsity pattern to a
+  // expensive so we recast the dynamic sparsity pattern to a
   // sparsity pattern before initializing the system matrix to save memory
   // because the dynamic sparsity pattern is more expensive in terms of
   // memory consumption than the static sparsity pattern.
@@ -1595,36 +1626,28 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     sparsity_pattern; // This needs to be defined outside the if statement
                       // because it is used in extra_verbose to report the
                       // memory consumption of the sparsity pattern.
-  if (should_solve_auxiliary_physics())
-    {
-      {
-        DynamicSparsityPattern dsp(this->locally_relevant_dofs_trial_skeleton);
-        DoFTools::make_sparsity_pattern(*this->dof_handler_trial_skeleton,
-                                        dsp,
-                                        this->nonzero_constraints,
-                                        /*keep_constrained_dofs = */ false);
-        SparsityTools::distribute_sparsity_pattern(
-          dsp,
-          this->locally_owned_dofs_trial_skeleton,
-          mpi_communicator,
-          this->locally_relevant_dofs_trial_skeleton);
 
-        sparsity_pattern.reinit(this->locally_owned_dofs_trial_skeleton,
-                                this->locally_owned_dofs_trial_skeleton,
-                                dsp,
-                                mpi_communicator);
-        sparsity_pattern.compress();
-      }
+  {
+    DynamicSparsityPattern dsp(this->locally_relevant_dofs_trial_skeleton);
+    DoFTools::make_sparsity_pattern(*this->dof_handler_trial_skeleton,
+                                    dsp,
+                                    this->nonzero_constraints,
+                                    /*keep_constrained_dofs = */ false);
+    SparsityTools::distribute_sparsity_pattern(
+      dsp,
+      this->locally_owned_dofs_trial_skeleton,
+      mpi_communicator,
+      this->locally_relevant_dofs_trial_skeleton);
 
-      this->system_matrix.reinit(sparsity_pattern);
-    }
-  else
-    {
-      // If we are not solving the physical system, we don't need to build the
-      // system matrix and sparsity pattern, so we can skip their initialization
-      // to save time and memory.
-      this->system_matrix.clear();
-    }
+    sparsity_pattern.reinit(this->locally_owned_dofs_trial_skeleton,
+                            this->locally_owned_dofs_trial_skeleton,
+                            dsp,
+                            mpi_communicator);
+    sparsity_pattern.compress();
+  }
+
+  this->system_matrix.reinit(sparsity_pattern);
+
 
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)

@@ -830,7 +830,8 @@ private:
    * @brief SolutionTransfer<dim, GlobalVectorType>> is
    * used to implement the transfer of a discrete FE function
    * (e.g. a solution vector) from one mesh to another. This Deal.ii class is
-   * used for mesh_refinement and simulation restarts.
+   * used for mesh_refinement and simulation restarts. This transfer the
+   * interior solution.
    */
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 
@@ -875,6 +876,18 @@ private:
    * @brief A vector containing all the values of the temperature solution when the last solve of the time-harmonic Maxwell system was performed. This is used to determine the physical properties of the materials in the domain when they are temperature-dependent.
    */
   GlobalVectorType temperature_last_solved_solution;
+
+
+  /**
+   * @brief SolutionTransfer<dim, GlobalVectorType>> is
+   * used to implement the transfer of a discrete FE function
+   * (e.g. a solution vector) from one mesh to another. This Deal.ii class is
+   * used for mesh_refinement and simulation restarts. The temperature field
+   * last solved needs its own solution transfer since it does not have the same
+   * dof handler than the time-harmonic Maxwell physics.
+   */
+  std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>>
+    temperature_last_solved_solution_transfer;
 };
 
 
