@@ -87,6 +87,7 @@ add_library(lethe-core
   ../../include/core/parameters_cfd_dem.h
   ../../include/core/parameters_lagrangian.h
   ../../include/core/parameters_multiphysics.h
+  ../../include/core/periodic_boundary_information.h
   ../../include/core/phase_change.h
   ../../include/core/physical_property_model.h
   ../../include/core/physics_solver.h

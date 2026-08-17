@@ -285,27 +285,86 @@ template <int dim, int spacedim>
 void
 setup_periodic_boundary_conditions(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const BoundaryConditions::BoundaryConditions          &boundary_conditions)
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information)
 
 {
-  // Setup periodic boundary conditions
-  for (auto const &[id, type] : boundary_conditions.type)
-    {
-      if (type == BoundaryConditions::BoundaryType::periodic)
-        {
-          auto triangulation_ptr = &triangulation;
+  AssertThrow(
+    periodic_boundary_information.periodic_direction.size() ==
+      periodic_boundary_information.periodic_neighbor_id.size(),
+    ExcMessage(
+      "There is a mismatch between the size of the periodic_direction and the periodic_neighbor_id maps"));
 
-          std::vector<GridTools::PeriodicFacePair<
-            typename Triangulation<dim, spacedim>::cell_iterator>>
-            periodicity_vector;
-          GridTools::collect_periodic_faces(
-            *dynamic_cast<Triangulation<dim, spacedim> *>(triangulation_ptr),
-            id,
-            boundary_conditions.periodic_neighbor_id.at(id),
-            boundary_conditions.periodic_direction.at(id),
-            periodicity_vector);
-          triangulation.add_periodicity(periodicity_vector);
-        }
+  // Setup periodic boundary conditions. Each periodic pair is stored once,
+  // keyed by the principal boundary id of the pair.
+  for (auto const &[id, neighbor_id] :
+       periodic_boundary_information.periodic_neighbor_id)
+    {
+      auto triangulation_ptr = &triangulation;
+
+      std::vector<GridTools::PeriodicFacePair<
+        typename Triangulation<dim, spacedim>::cell_iterator>>
+        periodicity_vector;
+      GridTools::collect_periodic_faces(
+        *dynamic_cast<Triangulation<dim, spacedim> *>(triangulation_ptr),
+        id,
+        neighbor_id,
+        periodic_boundary_information.periodic_direction.at(id),
+        periodicity_vector);
+      triangulation.add_periodicity(periodicity_vector);
+    }
+}
+
+
+
+/**
+ * @brief Apply the initial refinement described by the mesh parameters
+ *
+ * This is the refinement carried out once, right after the grid has been
+ * attached to the triangulation. Nothing is refined when restarting, since the
+ * mesh stored in the checkpoint has already been refined.
+ *
+ * @param[in] mesh_parameters The mesh parameters used to decide how the
+ * triangulation is refined
+ *
+ * @param[in] restart Flag indicating whether this is a restart
+ *
+ * @param[in,out] triangulation The triangulation which must be refined
+ */
+template <int dim, int spacedim>
+static void
+apply_initial_refinement(
+  const Parameters::Mesh                                &mesh_parameters,
+  const bool                                             restart,
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation)
+{
+  // Refinement of simplex meshes isn't possible yet. For dealii simplex meshes,
+  // the initial refinement was already applied to the quad/hex mesh from which
+  // the simplex mesh was generated, within attach_grid_to_triangulation.
+  if (mesh_parameters.simplex)
+    return;
+
+  // On a restart, the triangulation is subsequently replaced by the one stored
+  // in the checkpoint, which already carries its refinement.
+  if (restart)
+    return;
+
+  if (mesh_parameters.refine_until_target_size)
+    {
+      const double minimal_cell_size =
+        GridTools::minimal_cell_diameter(triangulation);
+      const double       target_size = mesh_parameters.target_size;
+      const unsigned int number_refinement =
+        static_cast<unsigned int>(std::floor(
+          std::log(minimal_cell_size / target_size) / std::numbers::ln2));
+      triangulation.refine_global(number_refinement);
+    }
+  else
+    {
+      triangulation.refine_global(mesh_parameters.initial_refinement);
+      refine_triangulation_at_boundaries(
+        mesh_parameters.boundaries_to_refine,
+        mesh_parameters.initial_refinement_at_boundaries,
+        triangulation);
     }
 }
 
@@ -316,11 +375,12 @@ read_mesh_and_manifolds(
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                             restart,
-  const BoundaryConditions::BoundaryConditions          &boundary_conditions)
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information)
 {
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
-  setup_periodic_boundary_conditions(triangulation, boundary_conditions);
+  setup_periodic_boundary_conditions(triangulation,
+                                     periodic_boundary_information);
 
   // If the mesh is a GMSH mesh, we need to manually set the manifold id
   // of the face to be that of the boundary
@@ -360,31 +420,7 @@ read_mesh_and_manifolds(
   // generic enough.
   attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
 
-  if (mesh_parameters.simplex)
-    {
-      // Refinement isn't possible yet
-    }
-  else
-    {
-      if (mesh_parameters.refine_until_target_size)
-        {
-          double minimal_cell_size =
-            GridTools::minimal_cell_diameter(triangulation);
-          double       target_size       = mesh_parameters.target_size;
-          unsigned int number_refinement = static_cast<unsigned int>(floor(
-            std::log(minimal_cell_size / target_size) / std::numbers::ln2));
-          triangulation.refine_global(number_refinement);
-        }
-      else if (!restart)
-        {
-          const int initial_refinement = mesh_parameters.initial_refinement;
-          triangulation.refine_global(initial_refinement);
-          refine_triangulation_at_boundaries(
-            mesh_parameters.boundaries_to_refine,
-            mesh_parameters.initial_refinement_at_boundaries,
-            triangulation);
-        }
-    }
+  apply_initial_refinement(mesh_parameters, restart, triangulation);
 }
 
 template <int dim, int spacedim>
@@ -394,8 +430,8 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                             restart,
-  const BoundaryConditions::BoundaryConditions          &boundary_conditions,
-  const Parameters::Mortar<dim>                         &mortar_parameters)
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information,
+  const Parameters::Mortar<dim>                 &mortar_parameters)
 {
   // If linear mortar manager, only two-dimensional cases are supported
   if (mortar_parameters.interface_type ==
@@ -556,35 +592,11 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       "Unsupported mesh type - mesh will not be created");
 
   // Setup boundary conditions
-  setup_periodic_boundary_conditions(triangulation, boundary_conditions);
+  setup_periodic_boundary_conditions(triangulation,
+                                     periodic_boundary_information);
 
   // Initial mesh refinement
-  if (mesh_parameters.simplex)
-    {
-      // Refinement isn't possible yet
-    }
-  else
-    {
-      if (mesh_parameters.refine_until_target_size)
-        {
-          const double minimal_cell_size =
-            GridTools::minimal_cell_diameter(triangulation);
-          const double       target_size = mesh_parameters.target_size;
-          const unsigned int number_refinement =
-            static_cast<unsigned int>(floor(
-              std::log(minimal_cell_size / target_size) / std::numbers::ln2));
-          triangulation.refine_global(number_refinement);
-        }
-      else if (!restart)
-        {
-          const int initial_refinement = mesh_parameters.initial_refinement;
-          triangulation.refine_global(initial_refinement);
-          refine_triangulation_at_boundaries(
-            mesh_parameters.boundaries_to_refine,
-            mesh_parameters.initial_refinement_at_boundaries,
-            triangulation);
-        }
-    }
+  apply_initial_refinement(mesh_parameters, restart, triangulation);
 
   // Faces at rotor-stator interface
   unsigned int n_faces_rotor_interface  = 0;
@@ -621,6 +633,22 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       ") is different from the number of faces at the stator interface ID #" +
       std::to_string(mortar_parameters.stator_boundary_id) + " (" +
       std::to_string(n_faces_stator_interface_total) + ")."));
+}
+
+template <int dim, int spacedim>
+void
+build_refinement_box_triangulation(
+  const Parameters::Mesh       &box_mesh_parameters,
+  Triangulation<dim, spacedim> &box_triangulation)
+{
+  attach_grid_to_triangulation(box_triangulation, box_mesh_parameters);
+
+  // The initial refinement of a simplex dealii box mesh has already been
+  // applied to the quad/hex mesh it was generated from, within
+  // attach_grid_to_triangulation. Applying it again here would refine the box
+  // twice.
+  if (!box_mesh_parameters.simplex)
+    box_triangulation.refine_global(box_mesh_parameters.initial_refinement);
 }
 
 template <int dim, int spacedim>
@@ -677,55 +705,65 @@ attach_grid_to_triangulation(Triangulation<2, 3>    &triangulation,
 
 template void
 setup_periodic_boundary_conditions(
-  parallel::DistributedTriangulationBase<2, 2> &triangulation,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions);
+  parallel::DistributedTriangulationBase<2, 2>  &triangulation,
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
 template void
 setup_periodic_boundary_conditions(
-  parallel::DistributedTriangulationBase<2, 3> &triangulation,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions);
+  parallel::DistributedTriangulationBase<2, 3>  &triangulation,
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
 template void
 setup_periodic_boundary_conditions(
-  parallel::DistributedTriangulationBase<3, 3> &triangulation,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions);
+  parallel::DistributedTriangulationBase<3, 3>  &triangulation,
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
 
 template void
 read_mesh_and_manifolds(
-  parallel::DistributedTriangulationBase<2>    &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
-  const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                    restart,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions);
+  parallel::DistributedTriangulationBase<2>     &triangulation,
+  const Parameters::Mesh                        &mesh_parameters,
+  const Parameters::Manifolds                   &manifolds_parameters,
+  const bool                                     restart,
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
 template void
 read_mesh_and_manifolds(
-  parallel::DistributedTriangulationBase<3>    &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
-  const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                    restart,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions);
+  parallel::DistributedTriangulationBase<3>     &triangulation,
+  const Parameters::Mesh                        &mesh_parameters,
+  const Parameters::Manifolds                   &manifolds_parameters,
+  const bool                                     restart,
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
 template void
 read_mesh_and_manifolds(
-  parallel::DistributedTriangulationBase<2, 3> &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
-  const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                    restart,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions);
+  parallel::DistributedTriangulationBase<2, 3>  &triangulation,
+  const Parameters::Mesh                        &mesh_parameters,
+  const Parameters::Manifolds                   &manifolds_parameters,
+  const bool                                     restart,
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
 
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
-  parallel::DistributedTriangulationBase<2>    &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
-  const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                    restart,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions,
-  const Parameters::Mortar<2>                  &mortar_parameters);
+  parallel::DistributedTriangulationBase<2>     &triangulation,
+  const Parameters::Mesh                        &mesh_parameters,
+  const Parameters::Manifolds                   &manifolds_parameters,
+  const bool                                     restart,
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information,
+  const Parameters::Mortar<2>                   &mortar_parameters);
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
-  parallel::DistributedTriangulationBase<3>    &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
-  const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                    restart,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions,
-  const Parameters::Mortar<3>                  &mortar_parameters);
+  parallel::DistributedTriangulationBase<3>     &triangulation,
+  const Parameters::Mesh                        &mesh_parameters,
+  const Parameters::Manifolds                   &manifolds_parameters,
+  const bool                                     restart,
+  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information,
+  const Parameters::Mortar<3>                   &mortar_parameters);
+
+template void
+build_refinement_box_triangulation(const Parameters::Mesh &box_mesh_parameters,
+                                   Triangulation<2, 2>    &box_triangulation);
+template void
+build_refinement_box_triangulation(const Parameters::Mesh &box_mesh_parameters,
+                                   Triangulation<2, 3>    &box_triangulation);
+template void
+build_refinement_box_triangulation(const Parameters::Mesh &box_mesh_parameters,
+                                   Triangulation<3, 3>    &box_triangulation);
 
 template void
 apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,

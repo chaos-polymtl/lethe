@@ -40,11 +40,14 @@ main(int argc, char *argv[])
 
       const unsigned int dim = get_dimension(file_name);
 
+      const Parameters::SizeOfSubsections size_of_subsections =
+        Parameters::get_size_of_subsections(file_name);
+
       if (dim == 2)
         {
           ParameterHandler       prm;
           DEMSolverParameters<2> dem_parameters;
-          dem_parameters.declare(prm);
+          dem_parameters.declare(prm, size_of_subsections);
 
           // Parsing of the file
           prm.parse_input(file_name);
@@ -97,7 +100,7 @@ main(int argc, char *argv[])
         {
           ParameterHandler       prm;
           DEMSolverParameters<3> dem_parameters;
-          dem_parameters.declare(prm);
+          dem_parameters.declare(prm, size_of_subsections);
 
           // Parsing of the file
           prm.parse_input(file_name);

@@ -47,8 +47,8 @@ namespace Parameters
     std::vector<std::string> cad_files;
 
     // Number of boundary conditions
-    unsigned int size;
-    unsigned int max_size;
+    unsigned int size     = 0;
+    unsigned int max_size = 0;
 
     void
     parse_boundary(const ParameterHandler &prm, unsigned int i_bc);

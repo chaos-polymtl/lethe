@@ -98,6 +98,9 @@ This subsection provides information of the simulation geometry and its mesh. Th
 
 * The ``enable target size`` and ``target size`` respectively enable and provide a maximal target size that initial refinement cycles must lead towards, in contrast to the more common way of specifying the number of refinement cycles to apply.
 
+  .. note::
+    Like ``initial refinement`` and ``initial boundary refinement``, the refinement until the target size is only applied when starting a new simulation. It is skipped when restarting from a checkpoint, since the triangulation stored in the checkpoint already carries its refinement.
+
 * The ``check diamond cells`` and ``expand particle-wall contact search`` are parameters used in particles simulations. The former is used to verify the quality of the background mesh; detecting diamond cells is important as they should be avoided. The latter serves a purpose in contact detection when the background mesh is concave.
 
 * ``simplex``. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of ``type = dealii`` it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of ``type = gsmh``, it will be read from a file as long as it is only made of simplices.

@@ -42,7 +42,6 @@ add_library(lethe-dem
   ray_tracing.cc
   ray_tracing_solver_parameters.cc
   read_checkpoint.cc
-  read_mesh.cc
   set_particle_particle_contact_force_model.cc
   set_particle_wall_contact_force_model.cc
   update_fine_search_candidates.cc
@@ -97,7 +96,6 @@ add_library(lethe-dem
   ../../include/dem/ray_tracing.h
   ../../include/dem/ray_tracing_solver_parameters.h
   ../../include/dem/read_checkpoint.h
-  ../../include/dem/read_mesh.h
   ../../include/dem/rolling_resistance_torque_models.h
   ../../include/dem/set_insertion_method.h
   ../../include/dem/set_particle_particle_contact_force_model.h
