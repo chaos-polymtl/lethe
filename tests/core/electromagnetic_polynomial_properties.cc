@@ -29,12 +29,16 @@ namespace
   check_model(const std::string         &name,
               ModelType                 &model,
               const std::vector<double> &temperatures,
-              const std::vector<double> &expected_values)
+              const std::vector<double> &expected_values,
+              const std::vector<double> &expected_jacobians)
   {
     deallog << "Testing " << name << std::endl;
 
     AssertThrow(temperatures.size() == expected_values.size(),
                 ExcMessage("Temperatures and expected values must have the "
+                           "same size."));
+    AssertThrow(temperatures.size() == expected_jacobians.size(),
+                ExcMessage("Temperatures and expected Jacobians must have the "
                            "same size."));
 
     for (unsigned int i = 0; i < temperatures.size(); ++i)
@@ -43,11 +47,17 @@ namespace
         field_values[field::temperature] = temperatures[i];
 
         const double value = model.value(field_values);
+        const double jacobian =
+          model.jacobian(field_values, field::temperature);
 
-        deallog << "  T = " << temperatures[i] << " -> " << value << std::endl;
+        deallog << "  T = " << temperatures[i] << " -> value = " << value
+                << ", jacobian = " << jacobian << std::endl;
 
         AssertThrow(std::abs(value - expected_values[i]) < tolerance,
                     ExcMessage("Unexpected value for " + name));
+
+        AssertThrow(std::abs(jacobian - expected_jacobians[i]) < tolerance,
+                    ExcMessage("Unexpected Jacobian for " + name));
       }
   }
 
@@ -71,7 +81,8 @@ namespace
     check_model("Electric conductivity",
                 *model,
                 {0.0, 1.0, -2.0},
-                {-5.0, -2.0, 7.0});
+                {-5.0, -2.0, 7.0},
+                {0.0, 6.0, -12.0});
   }
 
 
@@ -107,12 +118,14 @@ namespace
     check_model("Electric permittivity real",
                 *real_model,
                 {0.0, 1.0, -2.0},
-                {-5.0, -2.0, 7.0});
+                {-5.0, -2.0, 7.0},
+                {0.0, 6.0, -12.0});
 
     check_model("Electric permittivity imaginary",
                 *imag_model,
                 {0.0, 1.0, -2.0},
-                {1.0, 7.0, 7.0});
+                {1.0, 7.0, 7.0},
+                {1.0, 12.0, -3.0});
   }
 
 
@@ -144,12 +157,14 @@ namespace
     check_model("Magnetic permeability real",
                 *real_model,
                 {0.0, 1.0, 2.0},
-                {2.0, 2.0, 2.0});
+                {2.0, 2.0, 2.0},
+                {0.0, 0.0, 0.0});
 
     check_model("Magnetic permeability imaginary",
                 *imag_model,
                 {0.0, 1.0, 2.0},
-                {3.0, 1.0, 59.0});
+                {3.0, 1.0, 59.0},
+                {-4.0, 6.0, 156.0});
   }
 
 

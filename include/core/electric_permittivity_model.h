@@ -131,9 +131,9 @@ public:
   double
   value(const std::map<field, double> &field_values) override
   {
-    Assert(field_values.contains(field::temperature),
-           PhysicialPropertyModelFieldUndefined(
-             "PolynomialElectricPermittivity", "temperature"));
+    AssertThrow(field_values.contains(field::temperature),
+                PhysicialPropertyModelFieldUndefined(
+                  "PolynomialElectricPermittivity", "temperature"));
     const double temperature = field_values.at(field::temperature);
 
     // COmpute the polynomial power using Horner's method for efficiency (.i.e,
@@ -158,9 +158,9 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    Assert(field_vectors.find(field::temperature) != field_vectors.end(),
-           PhysicialPropertyModelFieldUndefined(
-             "PolynomialElectricPermittivity", "temperature"));
+    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "PolynomialElectricPermittivity", "temperature"));
 
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
@@ -193,9 +193,9 @@ public:
     // since the polynomial is a function of temperature.
     if (id == field::temperature)
       {
-        Assert(field_values.find(field::temperature) != field_values.end(),
-               PhysicialPropertyModelFieldUndefined(
-                 "PolynomialElectricPermittivity", "temperature"));
+        AssertThrow(field_values.find(field::temperature) != field_values.end(),
+                    PhysicialPropertyModelFieldUndefined(
+                      "PolynomialElectricPermittivity", "temperature"));
 
         // Use a Horner accumulator to evaluate the derivative directly.
         unsigned int polynomial_order =
@@ -232,9 +232,10 @@ public:
   {
     if (id == field::temperature)
       {
-        Assert(field_vectors.find(field::temperature) != field_vectors.end(),
-               PhysicialPropertyModelFieldUndefined(
-                 "PolynomialElectricPermittivity", "temperature"));
+        AssertThrow(
+          field_vectors.find(field::temperature) != field_vectors.end(),
+          PhysicialPropertyModelFieldUndefined("PolynomialElectricPermittivity",
+                                               "temperature"));
 
         const std::vector<double> &temperature =
           field_vectors.at(field::temperature);

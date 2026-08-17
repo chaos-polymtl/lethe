@@ -2238,8 +2238,9 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
               max_relative_change =
                 Utilities::MPI::max(max_relative_change, mpi_communicator);
 
-              if (simulation_parameters.analytical_solution->verbosity !=
-                  Parameters::Verbosity::quiet)
+              if (simulation_parameters.linear_solver
+                    .at(PhysicsID::electromagnetics)
+                    .verbosity != Parameters::Verbosity::quiet)
                 {
                   this->pcout
                     << "  - The maximum relative change in the electromagnetics physical properties since the last time the time-harmonic Maxwell equations were solved is "
