@@ -3673,7 +3673,6 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
           // the cells faces.
           const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
             cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
-          ;
 
           // We check if the physical properties depend on the temperature
           // field. If so, we will need to evaluate the temperature field at the

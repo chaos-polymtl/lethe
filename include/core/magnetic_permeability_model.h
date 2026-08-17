@@ -49,7 +49,8 @@ public:
 
   /**
    * @brief Calculates the value the magnetic permeability
-   * @param[in] field_values Values of the various fields on which the magnetic permeability depends.
+   * @param[in] field_values Values of the various fields on which the magnetic
+   * permeability depends.
    * @return Value of the magnetic permeability calculated with the field_values.
    */
   double
@@ -60,7 +61,8 @@ public:
 
   /**
    * @brief Calculates, in a vector, values of magnetic permeabilities
-   * @param[in] field_vectors Vector of properties on which the magnetic permeabilities depend
+   * @param[in] field_vectors Vector of properties on which the magnetic
+   * permeabilities depend
    * @param[in,out] property_vector Values of the magnetic permeabilities
    */
   void
@@ -73,7 +75,8 @@ public:
 
   /**
    * @brief Calculates the jacobian (the partial derivative) of the magnetic permeability with respect to a field
-   * @param[in] field_values Value of the various fields on which the property may depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    * @param[in] id Identifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the magnetic permeability with respect to the specified field.
@@ -88,9 +91,12 @@ public:
 
   /**
    * @brief Calculates, in a vector, the derivatives of the magnetic permeability with respect to a field
-   * @param[in] field_vectors Vector for the values of the fields used to evaluate the property
-   * @param[in] id Identifier of the field with respect to which a derivative should be calculated
-   * @param[in,out] jacobian Vector of values of the derivatives of the magnetic permeability with respect to the specified field
+   * @param[in] field_vectors Vector for the values of the fields used to
+   * evaluate the property
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be calculated
+   * @param[in,out] jacobian Vector of values of the derivatives of the magnetic
+   * permeability with respect to the specified field
    */
 
   void
@@ -125,7 +131,8 @@ public:
 
   /**
    * @brief Calculates the value the magnetic permeability
-   * @param[in] field_values Values of the various fields on which the magnetic permeability depends.
+   * @param[in] field_values Values of the various fields on which the magnetic
+   * permeability depends.
    * @return Value of the magnetic permeability calculated with the field_values.
    */
   double
@@ -151,7 +158,8 @@ public:
 
   /**
    * @brief Calculates, in a vector, values of magnetic permeabilities
-   * @param[in] field_vectors Vector of properties on which the magnetic permeabilities depend
+   * @param[in] field_vectors Vector of properties on which the magnetic
+   * permeabilities depend
    * @param[in,out] property_vector Values of the magnetic permeabilities
    */
   void
@@ -166,7 +174,9 @@ public:
       field_vectors.at(field::temperature);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
-        // Compute the polynomial power using Horner's method for efficiency, i.e. P(x) = (...((a_n * x + a_{n-1}) * x + a_{n-2}) * x + ... + a_1) * x + a_0
+        // Compute the polynomial power using Horner's method for efficiency,
+        // i.e. P(x) = (...((a_n * x + a_{n-1}) * x + a_{n-2}) * x + ... + a_1)
+        // * x + a_0
         double magnetic_permeability = 0.0;
         for (const auto &coefficient :
              magnetic_permeability_polynomial_coefficients)
@@ -180,11 +190,12 @@ public:
 
   /**
    * @brief Calculates the jacobian (the partial derivative) of the magnetic permeability with respect to a field
-   * @param[in] field_values Value of the various fields on which the property may depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    * @param[in] id Identifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the magnetic permeability with respect to the specified field.
-   * 
+   *
    * @remark The jacobian is only implemented with respect to the temperature.
    */
   double
@@ -222,11 +233,15 @@ public:
 
   /**
    * @brief Calculates, in a vector, the derivatives of the magnetic permeability with respect to a field
-   * @param[in] field_vectors Vector for the values of the fields used to evaluate the property
-   * @param[in] id Identifier of the field with respect to which a derivative should be calculated
-   * @param[in,out] jacobian Vector of values of the derivatives of the magnetic permeability with respect to the specified field
-   * 
-   * @remark The vector_jacobian is only implemented with respect to the temperature.
+   * @param[in] field_vectors Vector for the values of the fields used to
+   * evaluate the property
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be calculated
+   * @param[in,out] jacobian Vector of values of the derivatives of the magnetic
+   * permeability with respect to the specified field
+   *
+   * @remark The vector_jacobian is only implemented with respect to the
+   * temperature.
    */
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,

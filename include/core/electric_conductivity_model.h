@@ -15,7 +15,7 @@ class ElectricConductivityModel : public PhysicalPropertyModel
 {
 public:
   /**
-   * @brief Instantiates and returns a pointer to a ElectricConductivityModel 
+   * @brief Instantiates and returns a pointer to a ElectricConductivityModel
    * object by casting it to the proper child class
    *
    * @param[in] material_properties Parameters for a material
@@ -40,7 +40,8 @@ public:
 
   /**
    * @brief Calculates the value the electric conductivity
-   * @param[in] fields_value Values of the various fields on which the electric conductivity depends.
+   * @param[in] fields_value Values of the various fields on which the electric
+   * conductivity depends.
    * @return Value of the electric conductivity calculated with the fields_value.
    */
   double
@@ -51,7 +52,8 @@ public:
 
   /**
    * @brief Calculates, in a vector, values of of electric conductivities
-   * @param[in] field_vectors Vector of fields on which the electric conductivities depend
+   * @param[in] field_vectors Vector of fields on which the electric
+   * conductivities depend
    * @param[in,out] property_vector Values of the electric conductivities
    */
   void
@@ -64,7 +66,8 @@ public:
 
   /**
    * @brief Calculates the jacobian (the partial derivative) of the electric conductivity with respect to a field
-   * @param[in] field_values Value of the various fields on which the property may depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    * @param[in] id Indentifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the electric conductivity with respect to the field.
@@ -79,9 +82,12 @@ public:
 
   /**
    * @brief Calculates the derivatives of the electric conductivity with respect to a field
-   * @param[in] field_vectors Vector for the values of the fields used to evaluate the property
-   * @param[in] id Identifier of the field with respect to which a derivative should be calculated
-   * @param[in,out] jacobian_vector Vector of the values of the derivatives of the electric conductivity with respect to the specified field
+   * @param[in] field_vectors Vector for the values of the fields used to
+   * evaluate the property
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be calculated
+   * @param[in,out] jacobian_vector Vector of the values of the derivatives of
+   * the electric conductivity with respect to the specified field
    */
 
   void
@@ -116,7 +122,8 @@ public:
 
   /**
    * @brief Calculates the value the electric conductivity
-   * @param[in] fields_value Values of the various fields on which the electric conductivity depends.
+   * @param[in] fields_value Values of the various fields on which the electric
+   * conductivity depends.
    * @return Value of the electric conductivity calculated with the fields_value.
    */
   double
@@ -142,7 +149,8 @@ public:
 
   /**
    * @brief Calculates, in a vector, values of of electric conductivities
-   * @param[in] field_vectors Vector of fields on which the electric conductivities depend
+   * @param[in] field_vectors Vector of fields on which the electric
+   * conductivities depend
    * @param[in,out] property_vector Values of the electric conductivities
    */
   void
@@ -158,7 +166,8 @@ public:
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
         // Compute the polynomial power using Horner's method for efficiency
-        // , i.e. P(x) = (...((a_n * x + a_{n-1}) * x + a_{n-2}) * x + ... + a_1) * x + a_0
+        // , i.e. P(x) = (...((a_n * x + a_{n-1}) * x + a_{n-2}) * x + ... +
+        // a_1) * x + a_0
         double electric_conductivity = 0.0;
         for (const auto &coefficient :
              electric_conductivity_polynomial_coefficients)
@@ -172,12 +181,14 @@ public:
 
   /**
    * @brief Calculates the jacobian (the partial derivative) of the electric conductivity with respect to a field
-   * @param[in] field_values Value of the various fields on which the property may depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    * @param[in] id Indentifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the electric conductivity with respect to the field.
-   * 
-   * @remark The jacobian is only implemented with respect to the temperature field.
+   *
+   * @remark The jacobian is only implemented with respect to the temperature
+   * field.
    */
   double
   jacobian(const std::map<field, double> &field_values, const field id) override
@@ -214,11 +225,15 @@ public:
 
   /**
    * @brief Calculates the derivatives of the electric conductivity with respect to a field
-   * @param[in] field_vectors Vector for the values of the fields used to evaluate the property
-   * @param[in] id Identifier of the field with respect to which a derivative should be calculated
-   * @param[in,out] jacobian_vector Vector of the values of the derivatives of the electric conductivity with respect to the specified field
-   * 
-   * @remark The vector_jacobian is only implemented with respect to the temperature field.
+   * @param[in] field_vectors Vector for the values of the fields used to
+   * evaluate the property
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be calculated
+   * @param[in,out] jacobian_vector Vector of the values of the derivatives of
+   * the electric conductivity with respect to the specified field
+   *
+   * @remark The vector_jacobian is only implemented with respect to the
+   * temperature field.
    */
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,

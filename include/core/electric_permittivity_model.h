@@ -49,7 +49,8 @@ public:
 
   /**
    * @brief Calculates the value the electric permittivity
-   * @param[in] fields_values Value of the various fields on which the electric permittivity depends.
+   * @param[in] fields_values Value of the various fields on which the electric
+   * permittivity depends.
    * @return Value of the electric permittivity calculated with the fields_value.
    */
   double
@@ -60,7 +61,8 @@ public:
 
   /**
    * @brief Calculates, in a vector, values of electric permittivities
-   * @param[in] field_vectors Vector of properties on which the electric permittivities depend
+   * @param[in] field_vectors Vector of properties on which the electric
+   * permittivities depend
    * @param[in,out] property_vector Values of the electric permittivities
    */
   void
@@ -73,7 +75,8 @@ public:
 
   /**
    * @brief Calculates the jacobian (the partial derivative) of the electric permittivity with respect to a field
-   * @param[in] field_values Value of the various fields on which the property may depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    * @param[in] id Indentifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the electric permittivity with respect to the specified field.
@@ -88,9 +91,12 @@ public:
 
   /**
    * @brief Calculates, in a vector, the derivatives of the electric permittivity with respect to a field
-   * @param[in] field_vectors Vector for the values of the fields used to evaluate the property
-   * @param[in] id Identifier of the field with respect to which a derivative should be calculated
-   * @param[in,out] jacobian_vector Vector of values of the derivatives of the electric permittivity with respect to the specified field
+   * @param[in] field_vectors Vector for the values of the fields used to
+   * evaluate the property
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be calculated
+   * @param[in,out] jacobian_vector Vector of values of the derivatives of the
+   * electric permittivity with respect to the specified field
    */
 
   void
@@ -125,7 +131,8 @@ public:
 
   /**
    * @brief Calculates the value the electric permittivity
-   * @param[in] fields_values Value of the various fields on which the electric permittivity depends.
+   * @param[in] fields_values Value of the various fields on which the electric
+   * permittivity depends.
    * @return Value of the electric permittivity calculated with the fields_value.
    */
   double
@@ -151,7 +158,8 @@ public:
 
   /**
    * @brief Calculates, in a vector, values of electric permittivities
-   * @param[in] field_vectors Vector of properties on which the electric permittivities depend
+   * @param[in] field_vectors Vector of properties on which the electric
+   * permittivities depend
    * @param[in,out] property_vector Values of the electric permittivities
    */
   void
@@ -167,7 +175,8 @@ public:
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
         // Compute the polynomial power using Horner's method for efficiency
-        // , i.e. P(x) = (...((a_n * x + a_{n-1}) * x + a_{n-2}) * x + ... + a_1) * x + a_0
+        // , i.e. P(x) = (...((a_n * x + a_{n-1}) * x + a_{n-2}) * x + ... +
+        // a_1) * x + a_0
         double electric_permittivity = 0.0;
         for (const auto &coefficient :
              electric_permittivity_polynomial_coefficients)
@@ -181,12 +190,14 @@ public:
 
   /**
    * @brief Calculates the jacobian (the partial derivative) of the electric permittivity with respect to a field
-   * @param[in] field_values Value of the various fields on which the property may depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    * @param[in] id Indentifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the electric permittivity with respect to the specified field.
-   * 
-   * @remark The jacobian is only implemented with respect to the temperature field.
+   *
+   * @remark The jacobian is only implemented with respect to the temperature
+   * field.
    */
   double
   jacobian(const std::map<field, double> &field_values, const field id) override
@@ -223,10 +234,13 @@ public:
 
   /**
    * @brief Calculates, in a vector, the derivatives of the electric permittivity with respect to a field
-   * @param[in] field_vectors Vector for the values of the fields used to evaluate the property
-   * @param[in] id Identifier of the field with respect to which a derivative should be calculated
-   * @param[in,out] jacobian_vector Vector of values of the derivatives of the electric permittivity with respect to the specified field
-   * 
+   * @param[in] field_vectors Vector for the values of the fields used to
+   * evaluate the property
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be calculated
+   * @param[in,out] jacobian_vector Vector of values of the derivatives of the
+   * electric permittivity with respect to the specified field
+   *
    * @remark The vector_jacobian is only implemented for the temperature field.
    */
   void
