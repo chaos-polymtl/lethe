@@ -141,7 +141,7 @@ public:
   modify_solution() override;
 
   /**
-   * @brief Update non zero constraints if the boundary is time-dependent
+   * @brief Updates non zero constraints if the boundary is time-dependent
    */
   virtual void
   update_boundary_conditions() override;
@@ -419,7 +419,7 @@ public:
   should_solve_auxiliary_physics() override;
 
   /**
-   * @brief Update the containers that stores the properties from which the material properties of the time-harmonic Maxwell equations can depend on.
+   * @brief Updates the containers that stores the properties from which the material properties of the time-harmonic Maxwell equations can depend on.
    */
   void
   update_material_properties_dependencies();
@@ -593,7 +593,7 @@ private:
     const types::boundary_id    boundary_id_index = 0);
 
   /**
-   * @brief Update the material properties during the assembly of the system matrix.
+   * @brief Updates the material properties during the assembly of the system matrix.
    * @note The time-harmonic Maxwell equations do not support multiple
    * fluids so the fluid_id is not necessary to determine the material
    * properties. The material properties only depend on the material_id, which

@@ -105,8 +105,7 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
     *dof_handler_trial_interior);
 
   // We may need the temperature field for the physical properties. If so,
-  // we
-  // create the corresponding FEValues object to evaluate the temperature at
+  // we create the corresponding FEValues object to evaluate the temperature at
   // the quadrature points and its container to store the values.
   const PhysicalPropertiesManager &physical_properties_manager =
     simulation_parameters.physical_properties_manager;
@@ -135,20 +134,19 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
            ->depends_on(field::temperature));
 
       if (needs_temperature)
-        break;
-    }
+        {
+          // If temperature-dependent electromagnetic properties are requested,
+          // heat transfer must be enabled.
 
-  // If temperature-dependent electromagnetic properties are requested, //
-  // heat transfer must be enabled.
-  if (needs_temperature)
-    {
-      const std::vector<PhysicsID> active_physics_ids =
-        multiphysics->get_active_physics();
-      AssertThrow(
-        std::ranges::find(active_physics_ids, PhysicsID::heat_transfer) !=
-          active_physics_ids.end(),
-        ExcMessage(
-          "User defined temperature-dependent electromagnetic properties. Make sure the heat transfer physics is enabled."));
+          const std::vector<PhysicsID> active_physics_ids =
+            multiphysics->get_active_physics();
+          AssertThrow(
+            std::ranges::find(active_physics_ids, PhysicsID::heat_transfer) !=
+              active_physics_ids.end(),
+            ExcMessage(
+              "User defined temperature-dependent electromagnetic properties. Make sure the heat transfer physics is enabled."));
+          break;
+        }
     }
 }
 
@@ -1648,8 +1646,6 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
 
   this->system_matrix.reinit(sparsity_pattern);
 
-
-
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
         .verbosity == Parameters::Verbosity::extra_verbose)
     {
@@ -2058,7 +2054,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
 
   // We also apply the scaling to the skeleton solution for
   // consistency, even if it is not used for the multiphysics coupling nor
-  // outputed at the moment.
+  // outputted at the moment.
   scale_solution_components(*this->dof_handler_trial_skeleton,
                             *this->present_solution_skeleton);
 
@@ -2159,8 +2155,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
               unsigned int            n_q_points          = 0;
 
               // The temperature field is only needed when at least one
-              // electromagnetic
-              // property depends on temperature.
+              // electromagnetic property depends on temperature.
               std::unique_ptr<FEValues<dim>> fe_values_temperature;
               const DoFHandler<dim>         *dof_handler_temperature = nullptr;
               const GlobalVectorType *temperature_current_solution   = nullptr;
@@ -2185,9 +2180,8 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                   temperature_last_solved_values.resize(n_q_points);
                   temperature_current_values.resize(n_q_points);
 
-                  // Loop on all cell quadrature points and check if the
-                  // physical
-                  // properties have changed by more than the specified
+                  // Loop over all cell quadrature points and check if the
+                  // physical properties have changed by more than the specified
                   // threshold since the last time the electromagnetics were
                   // solved according to the temperature field. If so, we need
                   // to solve the electromagnetics again.
@@ -2270,11 +2264,13 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                     << std::sqrt(max_relative_change) << std::endl;
                 }
 
-              // Return the threshold comparison result. We take the square root
-              // of the max_relative_change to get the actual relative change
-              // value to compare with the threshold.
-              if (std::sqrt(max_relative_change) >
-                  thm_parameters.coupling_threshold)
+              // Return the threshold comparison result. We take the square
+              // of the coupling_threshold to get the actual relative change,
+              // because max_relative_change is already square and it is more
+              // efficient to elevate to the power 2 rather than computing a
+              // square root.
+              if (max_relative_change >
+                  Utilities::fixed_power<2>(thm_parameters.coupling_threshold))
                 {
                   return true;
                 }
@@ -2919,7 +2915,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                 }
               else
                 {
-                  std::ranges::fill(temperature_values, 0.);
+                  std::ranges::fill(temperature_face_values, 0.);
                 }
 
               // Get the boundary condition type on the current face

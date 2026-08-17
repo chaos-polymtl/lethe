@@ -178,7 +178,7 @@ test()
   //         temperature DoFHandler and solution through the multiphysics
   //         interface, so it cannot be exercised with a null interface or
   //         an empty triangulation the way Tests 1-3 are. This test wires up
-  //         the minimum needed for the branch to actually run:
+  //         the minimum needed for the test to actually run:
   //           - a single-cell mesh (the threshold check loops over cells)
   //           - a real MultiphysicsInterface with heat_transfer active,
   //             carrying a minimal FE_Q(1) temperature DoFHandler/solution
