@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -110,12 +110,12 @@ main(int argc, char *argv[])
   tria.refine_global(n_global_refinements);
   output_mesh<dim, dim>(tria, 3, "outer.0.vtu");
 
-  const MortarManagerCircle<dim> mm(std::vector<unsigned int> {4 *
-                                      Utilities::pow(2,
-                                                     n_global_refinements + 1), 1},
-                                    std::vector<double> {radius, 1.0},
-                                    QGauss<dim>(n_quadrature_points),
-                                    rotate_pi);
+  const MortarManagerCircle<dim> mm(
+    std::vector<unsigned int>{4 * Utilities::pow(2, n_global_refinements + 1),
+                              1},
+    std::vector<double>{radius, 1.0},
+    QGauss<dim>(n_quadrature_points),
+    rotate_pi);
 
   const unsigned int n_points = mm.get_n_total_points();
 

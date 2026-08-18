@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -268,12 +268,11 @@ test(const unsigned int n_refinements, const unsigned int fe_degree_fine)
       // set up operator
       op.reinit(*mappings[l], dof_handler, constraint, *quads[l]);
 
-      const auto mortar_manager =
-        std::make_shared<MortarManagerCircle<dim>>(std::vector<unsigned int> {4 * Utilities::pow(2, l + 1), 1},
-                                                   std::vector<double> {radius, 1.0},
-                                                   construct_quadrature(
-                                                     *quads[l]),
-                                                   rotate_pi);
+      const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+        std::vector<unsigned int>{4 * Utilities::pow(2, l + 1), 1},
+        std::vector<double>{radius, 1.0},
+        construct_quadrature(*quads[l]),
+        rotate_pi);
 
       op.add_coupling(mortar_manager, 0, 5);
     }

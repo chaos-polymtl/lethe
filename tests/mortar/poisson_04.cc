@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -106,8 +106,9 @@ main(int argc, char **argv)
                                        quadrature);
 
   const auto mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-    std::vector<unsigned int> {4 * Utilities::pow(2, n_global_refinements + 1), 1},
-    std::vector<double> {radius, 1.0},
+    std::vector<unsigned int>{4 * Utilities::pow(2, n_global_refinements + 1),
+                              1},
+    std::vector<double>{radius, 1.0},
     construct_quadrature(quadrature),
     rotate_pi);
 
