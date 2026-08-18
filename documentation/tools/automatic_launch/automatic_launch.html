@@ -530,9 +530,9 @@ We can generate these folders locally and even on a Digital Alliance cluster.</p
 </div>
 <p>The first thing to do is set up the constants of the script.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">CASE_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;cylinder_u_&#39;</span>
-<span class="n">PRM_FILE</span> <span class="o">=</span> <span class="s1">&#39;cylinder.prm&#39;</span>
-<span class="n">MESH_FILE</span> <span class="o">=</span> <span class="s1">&#39;cylinder-structured.msh&#39;</span>
+<span class="n">CASE_PREFIX</span> <span class="o">=</span> <span class="s1">'cylinder_u_'</span>
+<span class="n">PRM_FILE</span> <span class="o">=</span> <span class="s1">'cylinder.prm'</span>
+<span class="n">MESH_FILE</span> <span class="o">=</span> <span class="s1">'cylinder-structured.msh'</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -580,22 +580,22 @@ In this example, we will generate 20 cases of the flow around a cylinder, where 
 <ol class="arabic simple" start="2">
 <li><p>Name the <code class="docutils literal notranslate"><span class="pre">case_path</span></code> and create it.</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">case_folder_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">CASE_PREFIX</span><span class="si">}{</span><span class="n">u</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span>
-<span class="n">case_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PATH</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">case_folder_name</span><span class="si">}</span><span class="s1">&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">case_folder_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">CASE_PREFIX</span><span class="si">}{</span><span class="n">u</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span>
+<span class="n">case_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">PATH</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">case_folder_name</span><span class="si">}</span><span class="s1">'</span>
 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">case_path</span><span class="p">)</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
 <li><p>Copy the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file and the <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file from the current <code class="docutils literal notranslate"><span class="pre">PATH</span></code> to the <code class="docutils literal notranslate"><span class="pre">case_path</span></code>.</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PATH</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">PRM_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">case_path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">PRM_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PATH</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">MESH_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">case_path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">MESH_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">PATH</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">PRM_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">case_path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">PRM_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">PATH</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">MESH_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">case_path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">MESH_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
 <li><p>Write the parameter file of the case with the rendered template.</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">case_path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">PRM_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">case_path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">PRM_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -660,13 +660,13 @@ In this example, we will generate 20 cases of the flow around a cylinder, where 
 <ol class="arabic simple">
 <li><p>Specify the shell script that will launch a job on the cluster.</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SHELL_FILE</span> <span class="o">=</span> <span class="s1">&#39;launch_lethe.sh&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SHELL_FILE</span> <span class="o">=</span> <span class="s1">'launch_lethe.sh'</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
 <li><p>Copy the <code class="docutils literal notranslate"><span class="pre">.sh</span></code> from the current <code class="docutils literal notranslate"><span class="pre">PATH</span></code> to the <code class="docutils literal notranslate"><span class="pre">case_path</span></code>.</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PATH</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">SHELL_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">case_path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">SHELL_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">PATH</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">SHELL_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">case_path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">SHELL_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This last step allows to launch one job script for each case.
@@ -706,8 +706,8 @@ srun python3 launch_cases.py
 <li><p>Set up the constants of the script.</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">PRM_FILE</span> <span class="o">=</span> <span class="s1">&#39;cylinder.prm&#39;</span>
-<span class="n">LETHE_EXEC</span> <span class="o">=</span> <span class="s1">&#39;lethe-fluid&#39;</span>
+<span class="n">PRM_FILE</span> <span class="o">=</span> <span class="s1">'cylinder.prm'</span>
+<span class="n">LETHE_EXEC</span> <span class="o">=</span> <span class="s1">'lethe-fluid'</span>
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -721,7 +721,7 @@ If your Lethe executable is elsewhere, just change the path to the right destina
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">directories</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">PATH</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">PRM_FILE</span> <span class="ow">in</span> <span class="n">files</span> <span class="ow">and</span> <span class="n">root</span> <span class="o">!=</span> <span class="n">PATH</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">LETHE_EXEC</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">PRM_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">LETHE_EXEC</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">PRM_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -737,14 +737,14 @@ The only difference is the command line to launch the job script.</p>
 <ol class="arabic simple">
 <li><p>Specify the shell script that will launch a job on the cluster.</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SHELL_FILE</span> <span class="o">=</span> <span class="s1">&#39;launch_lethe.sh&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SHELL_FILE</span> <span class="o">=</span> <span class="s1">'launch_lethe.sh'</span>
 </pre></div>
 </div>
 <ol class="arabic simple">
 <li><p>Instead of launching the Lethe executable, launch a job using the <code class="docutils literal notranslate"><span class="pre">sbatch</span></code> command.</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">case_name</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sbatch -J </span><span class="si">{</span><span class="n">case_name</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">SHELL_FILE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">case_name</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'sbatch -J </span><span class="si">{</span><span class="n">case_name</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">SHELL_FILE</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>And you are done!</p>

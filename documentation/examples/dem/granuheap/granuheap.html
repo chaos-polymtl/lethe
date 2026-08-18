@@ -702,11 +702,11 @@ python3 launch_lethe_locally.py
 <p>The post-processing feature is launched using PvPython, the Python interface to the Paraview Software. It allows users to control ParaView with Python, thus without opening the user interface. PvPython can also run python scripts.</p>
 <p>If the experimental file is not the one provided in this example, the <code class="docutils literal notranslate"><span class="pre">exp_path</span></code>, <code class="docutils literal notranslate"><span class="pre">height_exp</span></code>, and <code class="docutils literal notranslate"><span class="pre">width_exp</span></code> will need to be updated in the <code class="docutils literal notranslate"><span class="pre">post_processing.py</span></code> file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span># Path to the granuheap experimental result
-exp_path = &#39;experimental_result.png&#39;
+exp_path = 'experimental_result.png'
 # Name of simulation output (see OUTPUT NAME set in the simulation subsection of the parameter file)
-num_output = &#39;granuheap&#39;
+num_output = 'granuheap'
 # Output path (see OUTPUT PATH set in the simulation subsection of the parameter file)
-out_path = &#39;output&#39;
+out_path = 'output'
 # Number of pixels in height and width of your experimental support (to adjust if you change experimental result)
 height_exp = 60
 width_exp = 85
@@ -726,17 +726,17 @@ width_exp = 85
 </div>
 <p>If the experimental file is not the one provided in this example, the <code class="docutils literal notranslate"><span class="pre">exp_path</span></code>, <code class="docutils literal notranslate"><span class="pre">height_exp</span></code> and <code class="docutils literal notranslate"><span class="pre">width_exp</span></code> will need to be updated in the <code class="docutils literal notranslate"><span class="pre">post_processing_multicase.py</span></code> file. The parameters’ names and values for each case can also be modified in the python file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span># Path of the granuheap experimental result
-exp_path = &#39;experimental_result.png&#39;
+exp_path = 'experimental_result.png'
 # Name of directory for each simulation (see CASE_PREFIX from the launch_lethe_locally.py file used)
-num_name = &#39;wetsand&#39;
+num_name = 'wetsand'
 # Name of simulation output (see OUTPUT NAME set in the simulation subsection of the parameter file)
-num_output = &#39;granuheap&#39;
+num_output = 'granuheap'
 # Output path (see OUTPUT PATH set in the simulation subsection of the parameter file)
-out_path = &#39;output&#39;
+out_path = 'output'
 # Definition of variable parameters
-parameter1_name = &#39;Surface Energy&#39;
+parameter1_name = 'Surface Energy'
 parameter1 = [0.0010, 0.0040, 0.0070, 0.0100]
-parameter2_name = &#39;Rolling Friction&#39;
+parameter2_name = 'Rolling Friction'
 parameter2 = [0.70, 0.50, 0.30]
 # Number of pixels in height and width of your experimental support (to adjust if you change experimental result)
 height_exp = 60

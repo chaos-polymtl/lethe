@@ -464,12 +464,12 @@
 <p>Clone the candi git repository in a folder of your choice  (e.g. <code class="docutils literal notranslate"><span class="pre">$HOME/software/</span></code>). You can edit the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file if you want to force the installation of the deal.II master version instead of the current stable version by setting <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code> on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.</p>
 <p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail.</p>
 <p>From the candi folder, the installation of candi can be launched using:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./candi.sh -j $num_proc --prefix=$path --packages=&quot;parmetis p4est trilinos dealii&quot;
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./candi.sh -j $num_proc --prefix=$path --packages="parmetis p4est trilinos dealii"
 </pre></div>
 </div>
 <p>After installation, you should have a <code class="docutils literal notranslate"><span class="pre">deal.ii-candi</span></code> folder in the installation prefix directory, with the dealii folder of the desired version (see section <a class="reference internal" href="regular_installation.html#update-dealii"><span class="std std-ref">Updating deal.II</span></a>), as well as the required dependencies (p4est, trilinos, etc.).</p>
 <p>After installation, add an environment variable to your <code class="docutils literal notranslate"><span class="pre">~/.zshrc</span></code> either manually or through the following command:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo &quot;export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-&lt;version&gt;&quot; &gt;&gt; ~/.zshrc
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-&lt;version&gt;" &gt;&gt; ~/.zshrc
 </pre></div>
 </div>
 <section id="setting-the-library-and-include-paths">

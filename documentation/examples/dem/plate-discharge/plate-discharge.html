@@ -762,13 +762,13 @@ To make things easier a script is provided to run all the simulations in a seque
 </pre></div>
 </div>
 <p>Which corresponds to:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">simulations</span><span class="o">=(</span><span class="s2">&quot;base&quot;</span><span class="w"> </span><span class="s2">&quot;asc&quot;</span><span class="w"> </span><span class="s2">&quot;lb&quot;</span><span class="w"> </span><span class="s2">&quot;asc-lb&quot;</span><span class="o">)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">simulations</span><span class="o">=(</span><span class="s2">"base"</span><span class="w"> </span><span class="s2">"asc"</span><span class="w"> </span><span class="s2">"lb"</span><span class="w"> </span><span class="s2">"asc-lb"</span><span class="o">)</span>
 
 <span class="nb">cd</span><span class="w"> </span>performance/
 
-<span class="k">for</span><span class="w"> </span>sim<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">simulations</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">for</span><span class="w"> </span>sim<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">simulations</span><span class="p">[@]</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">do</span>
-<span class="w">   </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Running the </span><span class="nv">$sim</span><span class="s2"> simulation&quot;</span>
+<span class="w">   </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Running the </span><span class="nv">$sim</span><span class="s2"> simulation"</span>
 <span class="w">   </span><span class="nb">time</span><span class="w"> </span>mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">8</span><span class="w"> </span>lethe-particles<span class="w"> </span>plate-discharge_<span class="nv">$sim</span>.prm<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>log_<span class="nv">$sim</span>.out
 <span class="k">done</span>
 </pre></div>

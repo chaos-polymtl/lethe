@@ -497,13 +497,13 @@ sudo apt update
 <p>Clone the candi git repository in a folder of your choice  (e.g. <code class="docutils literal notranslate"><span class="pre">/home/username/software</span></code>). Edit the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file to alter which dependencies are compiled. This file should notably be used to force the installation of the deal.II master version directly instead of the current stable version by setting <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code> on line 97.</p>
 <p>The following packages (which are specified after line 57) should be installed:</p>
 <blockquote>
-<div><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>PACKAGES=&quot;load:dealii-prepare&quot;
-PACKAGES=&quot;${PACKAGES} once:numdiff&quot;
-PACKAGES=&quot;${PACKAGES} once:opencascade&quot;
-PACKAGES=&quot;${PACKAGES} once:parmetis&quot;
-PACKAGES=&quot;${PACKAGES} once:p4est&quot;
-PACKAGES=&quot;${PACKAGES} once:trilinos&quot;
-PACKAGES=&quot;${PACKAGES} dealii&quot;
+<div><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>PACKAGES="load:dealii-prepare"
+PACKAGES="${PACKAGES} once:numdiff"
+PACKAGES="${PACKAGES} once:opencascade"
+PACKAGES="${PACKAGES} once:parmetis"
+PACKAGES="${PACKAGES} once:p4est"
+PACKAGES="${PACKAGES} once:trilinos"
+PACKAGES="${PACKAGES} dealii"
 </pre></div>
 </div>
 </div></blockquote>
@@ -549,7 +549,7 @@ cd build
 </pre></div>
 </div>
 <p>It is generally recommended to add the variable to your bashrc so it is always loaded:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo &quot;export DEAL_II_DIR=/path/to/dealii/installation&quot; &gt;&gt; ~/.bashrc
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo "export DEAL_II_DIR=/path/to/dealii/installation" &gt;&gt; ~/.bashrc
 </pre></div>
 </div>
 </section>
@@ -584,7 +584,7 @@ cd build
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Hyper-threading will result in poor performance when running Lethe. Make sure that it is not turned on for your machine if you have more logical CPU(s) than the number of Core(s). To obtain this information, you can run the following command in a linux terminal:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lscpu | grep -E &#39;^Thread|^Core|^Socket|^CPU\(&#39;
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
 </pre></div>
 </div>
 <p>To limit the number of thread you can set the environment variable <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> to 1 in the terminal you are running the application or in your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file to make it the default:</p>

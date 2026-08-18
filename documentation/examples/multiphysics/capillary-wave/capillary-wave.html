@@ -669,7 +669,7 @@ This simulation takes <span class="math notranslate nohighlight">\(\sim \, 35\)<
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If you want to <strong>generate and launch multiple cases</strong> consecutively, a Bash script (<code class="docutils literal notranslate"><span class="pre">capillary-wave-time-step-sensitivity.sh</span></code>) is provided. Make sure that the file has executable permissions before calling it with:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./capillary-wave-time-step-sensitivity.sh &quot;{0.95,15,20}&quot;
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./capillary-wave-time-step-sensitivity.sh "{0.95,15,20}"
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">&quot;{0.95,15,20}&quot;</span></code> is the sequence of time-step multipliers (<span class="math notranslate nohighlight">\(\mathrm{TSM}\)</span>) of the different cases.</p>
@@ -743,7 +743,7 @@ Make sure that the information entered in the Python script corresponds to the o
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If you want to <strong>postprocess multiple cases consecutively and generate the comparison figure</strong> in one entry, a Bash script (<code class="docutils literal notranslate"><span class="pre">capillary-wave-time-step-sensitivity-postprocess.sh</span></code>) is provided. Make sure that the file has executable permissions before calling it using:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./capillary-wave-time-step-sensitivity-postprocess.sh ./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv &quot;{0.95,15,20}&quot; -sa
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./capillary-wave-time-step-sensitivity-postprocess.sh ./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv "{0.95,15,20}" -sa
 </pre></div>
 </div>
 <p>with <code class="docutils literal notranslate"><span class="pre">./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv</span></code> being the path to the analytical solution csv file and <code class="docutils literal notranslate"><span class="pre">&quot;{0.95,15,20}&quot;</span></code> the sequence of <span class="math notranslate nohighlight">\(\mathrm{TSM}\)</span> of the different cases to postprocess. The last argument, <code class="docutils literal notranslate"><span class="pre">-sa</span></code>, stands for <em>solve analytical</em>, if this argument is added to the command, it will solve the analytical solution before postprocessing the results.</p>

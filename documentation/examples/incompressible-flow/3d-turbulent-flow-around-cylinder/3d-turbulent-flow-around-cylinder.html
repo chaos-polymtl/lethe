@@ -479,19 +479,20 @@
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection specifies the computational grid. We use a custom mesh generated using the functionality <code class="docutils literal notranslate"><span class="pre">uniform_channel_with_cylinder</span></code>  of the deal.II library’s <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">GridGenerator</a> to discretize the domain using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">boundary</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">boundaries</span> <span class="pre">refined</span> <span class="pre">=</span> <span class="pre">2</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection specifies the computational grid. We use a mesh generated with the <code class="docutils literal notranslate"><span class="pre">uniform_channel_with_cylinder</span></code> function of the deal.II library’s <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">GridGenerator</a> to discretize the domain using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">boundary</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">boundaries</span> <span class="pre">refined</span> <span class="pre">=</span> <span class="pre">2</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
   set type                        = dealii
   set grid type                   = uniform_channel_with_cylinder
-  set grid arguments              = 25 : 8 : 52 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false : true
+  set grid arguments              = 8, 52, 25, 25 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
   set initial boundary refinement = 1
   set boundaries refined          = 2
 end
 </pre></div>
 </div>
+<p>The <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code> are those of the deal.II generator. The first field is the list of the four distances (expressed in cylinder diameters) between the center of the cylinder and, respectively, the inlet, the outlet, the bottom and the top of the channel. The following fields are the depth of the channel (<span class="math notranslate nohighlight">\(1.5 \pi D\)</span>), the number of cells used to discretize it in the <span class="math notranslate nohighlight">\(z\)</span> direction, the radius of the region of shells around the cylinder, the number of shells, the skewness of the shells, whether a transfinite manifold is used in the region between the shells and the channel, and whether the boundaries are colorized.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>This <code class="docutils literal notranslate"><span class="pre">uniform_channel_with_cylinder</span></code> grid generator is only present in the 9.7 version of the deal.II library.</p>
+<p>This <code class="docutils literal notranslate"><span class="pre">uniform_channel_with_cylinder</span></code> grid generator requires deal.II 9.7 or a more recent version. In earlier development versions of deal.II, this generator was named <code class="docutils literal notranslate"><span class="pre">custom_channel_with_cylinder</span></code>.</p>
 </div>
 </section>
 <section id="box-refinement">

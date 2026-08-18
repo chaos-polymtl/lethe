@@ -682,7 +682,7 @@ This simulation takes <span class="math notranslate nohighlight">\(\sim \, 20\)<
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If you want to <strong>generate and launch multiple cases</strong> consecutively, a Bash script (<code class="docutils literal notranslate"><span class="pre">rayleigh-plateau-launch.sh</span></code>) is provided. Make sure that the file has executable permissions before calling it with:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./rayleigh-plateau-launch.sh rayleigh-plateau-J1-We050-Oh0_10.tpl &quot;{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}&quot;
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./rayleigh-plateau-launch.sh rayleigh-plateau-J1-We050-Oh0_10.tpl "{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}"
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">&quot;{0.05</span> <span class="pre">0.1</span> <span class="pre">0.15</span> <span class="pre">0.2</span> <span class="pre">0.25</span> <span class="pre">0.3</span> <span class="pre">0.35</span> <span class="pre">0.4</span> <span class="pre">0.5</span> <span class="pre">0.6}&quot;</span></code> is the sequence of <span class="math notranslate nohighlight">\(\delta_0\)</span> values of the different cases.</p>
@@ -712,7 +712,7 @@ This simulation takes <span class="math notranslate nohighlight">\(\sim \, 20\)<
 <h3>Code to Code Comparison<a class="headerlink" href="#code-to-code-comparison" title="Link to this heading">#</a></h3>
 <p>We compare the dimensionless breakup length <span class="math notranslate nohighlight">\(\left(\frac{L_\mathrm{b}}{R_\mathrm{jet}}\right)\)</span> with the simulation results from Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <span class="math notranslate nohighlight">\(L_\mathrm{b}\)</span> is the breakup length defined as <strong>the shortest distance from the nozzle (inlet) to the tip of the continuous jet</strong>.</p>
 <p>The results can be postprocessed using the provided Bash script (<code class="docutils literal notranslate"><span class="pre">rayleigh-plateau-postprocess.sh</span></code>). Make sure that the file has executable permissions before calling it with:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./rayleigh-plateau-postprocess.sh denner-et-al-2022-We050.csv &quot;{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}&quot;
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./rayleigh-plateau-postprocess.sh denner-et-al-2022-We050.csv "{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}"
 </pre></div>
 </div>
 <p>with <code class="docutils literal notranslate"><span class="pre">denner-et-al-2022-We050.csv</span></code> being the path to the reference data csv file.</p>

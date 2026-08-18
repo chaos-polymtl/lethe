@@ -541,13 +541,13 @@ end
 import numpy as np
 
 
-x, y, z,  ox, oy, oz, pi, t= symbols(&#39;x y z ox oy oz pi t &#39;)
+x, y, z,  ox, oy, oz, pi, t= symbols('x y z ox oy oz pi t ')
 
 def rot_axisx(theta):
-    &quot;&quot;&quot;Returns a rotation matrix for a rotation of theta (in radians) about
+    """Returns a rotation matrix for a rotation of theta (in radians) about
     the 1-axis.
     [...]
-    &quot;&quot;&quot;
+    """
     ct = cos(theta)
     st = sin(theta)
     lil = ((1, 0, 0),
@@ -557,10 +557,10 @@ def rot_axisx(theta):
 
 
 def rot_axisy(theta):
-    &quot;&quot;&quot;Returns a rotation matrix for a rotation of theta (in radians) about
+    """Returns a rotation matrix for a rotation of theta (in radians) about
     the 2-axis.
     [...]
-    &quot;&quot;&quot;
+    """
     ct = cos(theta)
     st = sin(theta)
     lil = ((ct,0,st),
@@ -569,10 +569,10 @@ def rot_axisy(theta):
     return Matrix(lil)
 
 def rot_axisz(theta):
-    &quot;&quot;&quot;Returns a rotation matrix for a rotation of theta (in radians) about
+    """Returns a rotation matrix for a rotation of theta (in radians) about
     the 3-axis.
     [...]
-    &quot;&quot;&quot;
+    """
     ct = cos(theta)
     st = sin(theta)
     lil = ((ct, -st, 0),
@@ -582,7 +582,7 @@ def rot_axisz(theta):
 
 
 def rotation_matrix_to_xyz_angles(R):
-    &quot;&quot;&quot;
+    """
     Extracts XYZ rotation angles from a given rotation matrix.
 
     Parameters:
@@ -590,9 +590,9 @@ def rotation_matrix_to_xyz_angles(R):
 
     Returns:
     tuple: A tuple of rotation angles (theta_x, theta_y, theta_z) in radians.
-    &quot;&quot;&quot;
+    """
     if R.shape != (3, 3):
-        raise ValueError(&quot;Input must be a 3x3 matrix.&quot;)
+        raise ValueError("Input must be a 3x3 matrix.")
 
     # Calculating the angles
     theta_x = atan2(-R[1, 2], R[2, 2])
@@ -622,7 +622,7 @@ u_x = ox / omega_mag
 u_y = oy / omega_mag
 u_z = oz / omega_mag
 
-# Rodrigues&#39; rotation formula components
+# Rodrigues' rotation formula components
 K = Matrix([[0, -u_z, u_y],
             [u_z, 0, -u_x],
             [-u_y, u_x, 0]])
@@ -638,7 +638,7 @@ R = I + sin(omega_mag*t) * K + (1 - cos(omega_mag*t)) * K**2
 theta_x, theta_y, theta_z=rotation_matrix_to_xyz_angles(R*Initial_rotation)
 
 # Print orientation
-print(str(theta_x).replace(&quot;**&quot;,&quot;^&quot;)+&#39;;&#39;+str(theta_y).replace(&quot;**&quot;,&quot;^&quot;)+&#39;;&#39;+str(theta_z).replace(&quot;**&quot;,&quot;^&quot;))
+print(str(theta_x).replace("**","^")+';'+str(theta_y).replace("**","^")+';'+str(theta_z).replace("**","^"))
 </pre></div>
 </div>
 <p>From this Python code, we obtained the following expression of the orientation using the XYZ rotation convention of the impeller as it rotates:</p>

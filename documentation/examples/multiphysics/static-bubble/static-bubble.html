@@ -626,7 +626,7 @@ run in parallel using mpirun. This simulation takes
 <h2>Results and Discussion<a class="headerlink" href="#results-and-discussion" title="Link to this heading">#</a></h2>
 <p>Using Paraview, we can visualize the evolution of the velocity field over the time:</p>
 <iframe width="822" height="615" src="https://www.youtube.com/embed/rrwNpdlIVYQ" title="2D Static bubble with surface tension" frameborder="0" allowfullscreen></iframe><p>The time evolution of the <span class="math notranslate nohighlight">\(\mathcal{L}^2\)</span> norm of the error on the velocity magnitude is obtained from a Gnuplot script available in the example folder by launching in the same directory the following command:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>gnuplot -c &quot;./postprocess.gnu&quot; &quot;./output&quot;
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>gnuplot -c "./postprocess.gnu" "./output"
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">./postprocess.gnu</span></code> is the path to the provided script and <code class="docutils literal notranslate"><span class="pre">./output</span></code> is the path to the directory that contains the <code class="docutils literal notranslate"><span class="pre">L2Error.dat</span></code> file. The figure, named <code class="docutils literal notranslate"><span class="pre">L2Error.png</span></code>, is outputted in the directory <code class="docutils literal notranslate"><span class="pre">./output</span></code>.</p>

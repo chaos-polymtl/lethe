@@ -50,22 +50,24 @@ Parameter File
 Mesh
 ~~~~
 
-The ``mesh`` subsection specifies the computational grid. We use a custom mesh generated using the functionality ``uniform_channel_with_cylinder``  of the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to discretize the domain using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting ``initial boundary refinement = 1`` and ``boundaries refined = 2``. 
+The ``mesh`` subsection specifies the computational grid. We use a mesh generated with the ``uniform_channel_with_cylinder`` function of the deal.II library's `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ to discretize the domain using high-order elements. The mesh is also refined once in the vicinity of the cylinder to capture the boundary layer and wake region more accurately. This is achieved by setting ``initial boundary refinement = 1`` and ``boundaries refined = 2``. 
 
 .. code-block:: text
   
   subsection mesh
     set type                        = dealii
     set grid type                   = uniform_channel_with_cylinder
-    set grid arguments              = 25 : 8 : 52 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false : true
+    set grid arguments              = 8, 52, 25, 25 : 4.71238898038 : 4 : 0.75 : 5 : 1:  false: true
     set initial boundary refinement = 1 
     set boundaries refined          = 2
   end
 
 
+The ``grid arguments`` are those of the deal.II generator. The first field is the list of the four distances (expressed in cylinder diameters) between the center of the cylinder and, respectively, the inlet, the outlet, the bottom and the top of the channel. The following fields are the depth of the channel (:math:`1.5 \pi D`), the number of cells used to discretize it in the :math:`z` direction, the radius of the region of shells around the cylinder, the number of shells, the skewness of the shells, whether a transfinite manifold is used in the region between the shells and the channel, and whether the boundaries are colorized.
+
 .. warning::
 
-  This ``uniform_channel_with_cylinder`` grid generator is only present in the 9.7 version of the deal.II library.
+  This ``uniform_channel_with_cylinder`` grid generator requires deal.II 9.7 or a more recent version. In earlier development versions of deal.II, this generator was named ``custom_channel_with_cylinder``.
 
 Box refinement
 ~~~~~~~~~~~~~~~~

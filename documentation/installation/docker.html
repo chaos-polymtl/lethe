@@ -488,8 +488,8 @@
 <p>In some directory run:</p>
 <div class="copy-button highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>local:~$<span class="w"> </span>mkdir<span class="w"> </span>lethe-simulations<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>lethe-simulations
 <span class="w">  </span>local:~/lethe-simulations$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--name<span class="w"> </span>lethe-container<span class="w"> </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/home/docker-host<span class="w"> </span>dealii/dealii:master-focal
-<span class="w">  </span>To<span class="w"> </span>run<span class="w"> </span>a<span class="w"> </span><span class="nb">command</span><span class="w"> </span>as<span class="w"> </span>administrator<span class="w"> </span><span class="o">(</span>user<span class="w"> </span><span class="s2">&quot;root&quot;</span><span class="o">)</span>,<span class="w"> </span>use<span class="w"> </span><span class="s2">&quot;sudo &lt;command&gt;&quot;</span>.
-<span class="w">  </span>See<span class="w"> </span><span class="s2">&quot;man sudo_root&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>details.
+<span class="w">  </span>To<span class="w"> </span>run<span class="w"> </span>a<span class="w"> </span><span class="nb">command</span><span class="w"> </span>as<span class="w"> </span>administrator<span class="w"> </span><span class="o">(</span>user<span class="w"> </span><span class="s2">"root"</span><span class="o">)</span>,<span class="w"> </span>use<span class="w"> </span><span class="s2">"sudo &lt;command&gt;"</span>.
+<span class="w">  </span>See<span class="w"> </span><span class="s2">"man sudo_root"</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>details.
 
 <span class="w">  </span>dealii@2e92a38a6223:~$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/docker-host/
 <span class="w">  </span>dealii@2e92a38a6223:/home/docker-host/$<span class="w"> </span><span class="c1"># compile lethe and run simulations here</span>
@@ -523,7 +523,7 @@ This starts a new docker container with an interactive terminal (<code class="co
 <div class="copy-button highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>ps<span class="w"> </span>-a
 
 CONTAINER<span class="w"> </span>ID<span class="w">   </span>IMAGE<span class="w">                        </span>COMMAND<span class="w">   </span>CREATED<span class="w">          </span>STATUS<span class="w">                      </span>PORTS<span class="w">     </span>NAMES
-e3a7f71639f6<span class="w">   </span>dealii/dealii:master-focal<span class="w">   </span><span class="s2">&quot;bash&quot;</span><span class="w">    </span><span class="m">14</span><span class="w"> </span>minutes<span class="w"> </span>ago<span class="w">   </span>Exited<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="o">)</span><span class="w"> </span><span class="m">35</span><span class="w"> </span>seconds<span class="w"> </span>ago<span class="w">             </span>lethe-container
+e3a7f71639f6<span class="w">   </span>dealii/dealii:master-focal<span class="w">   </span><span class="s2">"bash"</span><span class="w">    </span><span class="m">14</span><span class="w"> </span>minutes<span class="w"> </span>ago<span class="w">   </span>Exited<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="o">)</span><span class="w"> </span><span class="m">35</span><span class="w"> </span>seconds<span class="w"> </span>ago<span class="w">             </span>lethe-container
 </pre></div>
 </div>
 <p>This container saved your changes. You can restart and attach to the container’s terminal by running:</p>
@@ -538,11 +538,11 @@ local:~$<span class="w"> </span><span class="nb">cd</span><span class="w"> </spa
 local:~/lethe-simulations$<span class="w"> </span>ls
 
 local$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--name<span class="w"> </span>lethe-container<span class="w"> </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/home/docker-host<span class="w"> </span>dealii/dealii:master-focal
-To<span class="w"> </span>run<span class="w"> </span>a<span class="w"> </span><span class="nb">command</span><span class="w"> </span>as<span class="w"> </span>administrator<span class="w"> </span><span class="o">(</span>user<span class="w"> </span><span class="s2">&quot;root&quot;</span><span class="o">)</span>,<span class="w"> </span>use<span class="w"> </span><span class="s2">&quot;sudo &lt;command&gt;&quot;</span>.
-See<span class="w"> </span><span class="s2">&quot;man sudo_root&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>details.
+To<span class="w"> </span>run<span class="w"> </span>a<span class="w"> </span><span class="nb">command</span><span class="w"> </span>as<span class="w"> </span>administrator<span class="w"> </span><span class="o">(</span>user<span class="w"> </span><span class="s2">"root"</span><span class="o">)</span>,<span class="w"> </span>use<span class="w"> </span><span class="s2">"sudo &lt;command&gt;"</span>.
+See<span class="w"> </span><span class="s2">"man sudo_root"</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>details.
 
 dealii@2e92a38a6223:~$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/docker-host/
-dealii@2e92a38a6223:/home/docker-host$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Hello lethe!&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>somefile.txt
+dealii@2e92a38a6223:/home/docker-host$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Hello lethe!"</span><span class="w"> </span>&gt;<span class="w"> </span>somefile.txt
 dealii@2e92a38a6223:/home/docker-host$<span class="w"> </span><span class="nb">exit</span>
 
 local:~/lethe-simulations$<span class="w"> </span>ls
@@ -560,27 +560,27 @@ somefile.txt
 <span class="c1"># future runs.</span>
 <span class="c1">#</span>
 <span class="c1"># The current local directory is mounted in /home/docker-host within the container; run any</span>
-<span class="c1"># simulations there to save results on the local machine&#39;s current directory.</span>
+<span class="c1"># simulations there to save results on the local machine's current directory.</span>
 
-<span class="nv">DOCKER_IMAGE</span><span class="o">=</span><span class="s1">&#39;dealii/dealii:master-focal&#39;</span>
-<span class="nv">DOCKER_CONTAINER</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">-</span><span class="si">${</span><span class="nv">DOCKER_IMAGE</span><span class="p">##*/</span><span class="si">}</span><span class="s2">&quot;</span><span class="w">        </span><span class="c1"># Remove repository prefix</span>
+<span class="nv">DOCKER_IMAGE</span><span class="o">=</span><span class="s1">'dealii/dealii:master-focal'</span>
+<span class="nv">DOCKER_CONTAINER</span><span class="o">=</span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">-</span><span class="si">${</span><span class="nv">DOCKER_IMAGE</span><span class="p">##*/</span><span class="si">}</span><span class="s2">"</span><span class="w">        </span><span class="c1"># Remove repository prefix</span>
 <span class="nv">DOCKER_CONTAINER</span><span class="o">=</span><span class="si">${</span><span class="nv">DOCKER_CONTAINER</span><span class="p">/:/-</span><span class="si">}</span><span class="w">            </span><span class="c1"># Replace : with -</span>
 
 <span class="nv">HOST_DIR</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
-<span class="nv">REMOTE_DIR</span><span class="o">=</span><span class="s2">&quot;/home/docker-host&quot;</span>
+<span class="nv">REMOTE_DIR</span><span class="o">=</span><span class="s2">"/home/docker-host"</span>
 
 
-<span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;Image:     </span><span class="si">${</span><span class="nv">DOCKER_IMAGE</span><span class="si">}</span><span class="s2">\nContainer: </span><span class="si">${</span><span class="nv">DOCKER_CONTAINER</span><span class="si">}</span><span class="s2">\n\n&quot;</span>
+<span class="nb">printf</span><span class="w"> </span><span class="s2">"Image:     </span><span class="si">${</span><span class="nv">DOCKER_IMAGE</span><span class="si">}</span><span class="s2">\nContainer: </span><span class="si">${</span><span class="nv">DOCKER_CONTAINER</span><span class="si">}</span><span class="s2">\n\n"</span>
 
 
 <span class="c1"># If a container with this name already exists, re-attach to it</span>
-<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>docker<span class="w"> </span>ps<span class="w"> </span>-q<span class="w"> </span>-af<span class="w"> </span><span class="nv">name</span><span class="o">=</span><span class="si">${</span><span class="nv">DOCKER_CONTAINER</span><span class="si">}</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>docker<span class="w"> </span>ps<span class="w"> </span>-q<span class="w"> </span>-af<span class="w"> </span><span class="nv">name</span><span class="o">=</span><span class="si">${</span><span class="nv">DOCKER_CONTAINER</span><span class="si">}</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span>
 <span class="k">then</span>
-<span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;Found previous container with same name; starting and attaching...\n\n&quot;</span>
+<span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s2">"Found previous container with same name; starting and attaching...\n\n"</span>
 <span class="w">    </span>docker<span class="w"> </span>start<span class="w"> </span><span class="si">${</span><span class="nv">DOCKER_CONTAINER</span><span class="si">}</span>
 <span class="w">    </span>docker<span class="w"> </span>attach<span class="w"> </span><span class="si">${</span><span class="nv">DOCKER_CONTAINER</span><span class="si">}</span>
 <span class="k">else</span>
-<span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;Launching new container...\n\n&quot;</span>
+<span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s2">"Launching new container...\n\n"</span>
 <span class="w">    </span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span><span class="se">\</span>
 <span class="w">        </span>--name<span class="w"> </span><span class="nv">$DOCKER_CONTAINER</span><span class="w"> </span><span class="se">\</span>
 <span class="w">        </span>-v<span class="w"> </span><span class="nv">$HOST_DIR</span>:<span class="nv">$REMOTE_DIR</span><span class="w"> </span><span class="se">\</span>

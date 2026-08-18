@@ -482,7 +482,7 @@
 <h3>Importing without installing<a class="headerlink" href="#importing-without-installing" title="Link to this heading">#</a></h3>
 <p>In this case, we use the <a class="reference external" href="https://docs.python.org/3/library/sys.html">sys</a> module to import it directly from Lethe’s directory into a python session:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="n">path_to_module</span> <span class="o">=</span> <span class="s1">&#39;$LETHE_PATH/contrib/postprocessing/&#39;</span>
+<span class="n">path_to_module</span> <span class="o">=</span> <span class="s1">'$LETHE_PATH/contrib/postprocessing/'</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_to_module</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">lethe_pyvista_tools</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
