@@ -269,6 +269,10 @@ test(const MPI_Comm      &mpi_communicator,
   std::vector<Point<dim>> evaluation_points;
   initialize_evaluation_points(evaluation_points);
 
+  // Initialize remote point evaluator
+  Utilities::MPI::RemotePointEvaluation<dim> remote_point_evaluator;
+  remote_point_evaluator.reinit(evaluation_points, triangulation, mapping);
+
   // Initialize solution vectors
   std::vector<double>                 evaluated_scalar_values;
   std::vector<Tensor<1, dim, double>> evaluated_vector_values;
@@ -278,12 +282,14 @@ test(const MPI_Comm      &mpi_communicator,
                             dof_handler,
                             solution_field_scalar_relevant,
                             evaluation_points,
+                            remote_point_evaluator,
                             evaluated_scalar_values);
 
   evaluate_values_at_points<dim>(mapping,
                                  dof_handler_vector,
                                  solution_field_vector_relevant,
                                  evaluation_points,
+                                 remote_point_evaluator,
                                  evaluated_vector_values);
 
   // Print results

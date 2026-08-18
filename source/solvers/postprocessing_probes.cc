@@ -41,10 +41,14 @@ PostprocessingProbes<dim>::postprocess_probes(
     (variable == Variable::chemical_potential_cahn_hilliard) ? 1 :
                                                                0;
 
+  setup_and_reinitialize_remote_point_evaluator(dof_handler.get_triangulation(),
+                                                mapping,
+                                                variable);
   evaluate_values_at_points(mapping,
                             dof_handler,
                             present_solution,
                             probing_points_of_the_variable.points,
+                            remote_point_evaluators.at(variable),
                             evaluated_scalar_values,
                             first_selected_component);
 
@@ -61,8 +65,10 @@ PostprocessingProbes<dim>::postprocess_probes(
   // For each probing point fill the correct table
   for (unsigned int i = 0; i < probing_points_of_the_variable.ids.size(); ++i)
     {
+      // Get ID of the probe
       const unsigned int &id = probing_points_of_the_variable.ids[i];
-      const std::string  &table_name =
+
+      const std::string &table_name =
         probing_points_parameters.probing_points_output_names[id];
       const double &evaluated_value = evaluated_scalar_values[i];
 
@@ -77,6 +83,7 @@ PostprocessingProbes<dim>::postprocess_probes(
                 << " value: " << evaluated_value << std::endl;
         }
 
+      // Access the table associated with the probe
       TableHandler &current_table = probe_tables[id];
 
       // Add entries to table
@@ -163,10 +170,14 @@ PostprocessingProbes<dim>::postprocess_probes(
 
   const unsigned int first_selected_component = 0;
 
+  setup_and_reinitialize_remote_point_evaluator(dof_handler.get_triangulation(),
+                                                mapping,
+                                                variable);
   evaluate_values_at_points<dim>(mapping,
                                  dof_handler,
                                  present_solution,
                                  probing_points_of_the_variable.points,
+                                 remote_point_evaluators.at(variable),
                                  evaluated_vector_values,
                                  first_selected_component);
 
@@ -183,8 +194,10 @@ PostprocessingProbes<dim>::postprocess_probes(
   // For each probing point fill the correct table
   for (unsigned int i = 0; i < probing_points_of_the_variable.ids.size(); ++i)
     {
+      // Get ID of the probe
       const unsigned int &id = probing_points_of_the_variable.ids[i];
-      const std::string  &table_name =
+
+      const std::string &table_name =
         probing_points_parameters.probing_points_output_names[id];
       const Tensor<1, dim, double> &evaluated_value =
         evaluated_vector_values[i];
@@ -202,6 +215,7 @@ PostprocessingProbes<dim>::postprocess_probes(
                 << std::endl;
         }
 
+      // Access the table associated with the probe
       TableHandler &current_table = probe_tables[id];
 
       // Add entries to table
