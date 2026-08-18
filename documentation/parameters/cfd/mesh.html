@@ -552,6 +552,10 @@ end
 <td><img alt="../../_images/mesh_cylinder.png" class="align-center" src="../../_images/mesh_cylinder.png" />
 </td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#merged-cube"><span class="std std-ref">Merged Cube</span></a></p></td>
+<td><img alt="../../_images/mesh_cube_merged.png" class="align-center" src="../../_images/mesh_cube_merged.png" />
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -732,6 +736,28 @@ The other cylinder types follow the same <code class="docutils literal notransla
 This type of mesh is available, but its usage is not recommended.</p>
 </div>
 </section>
+<section id="merged-cube">
+<span id="id5"></span><h3>Merged Cube<a class="headerlink" href="#merged-cube" title="Link to this heading">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
+  set type            = lethe
+  set grid type       = cube_merged
+  set grid arguments  = R_cylinder : L_plate : H : n_subdivisions
+</pre></div>
+</div>
+<p>This three-dimensional mesh is a combination of an extruded square plate into a cube with a circular hole at the center and a cylinder that fits perfectly in the hole.
+The following <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code> can be prescribed:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">R_cylinder</span></code> is the radius of the cylinder mesh and of the hole in the extruded square plate;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">L_plate</span></code> is the half of the edge length of the square;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">H</span></code> is the height in the z direction;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_subdivisions</span></code> is the number of subdivisions along the z direction.</p></li>
+</ul>
+<p>The resulting cube will contain only the boundary ID <code class="docutils literal notranslate"><span class="pre">0</span></code> to identify its whole external boundary.</p>
+<div class="admonition-upcoming-update admonition">
+<p class="admonition-title">Upcoming update</p>
+<p>A generalization to allow the prescription of different boundary conditions at each cube face will be done in the future.</p>
+</div>
+</section>
 </section>
 </section>
 
@@ -799,6 +825,7 @@ This type of mesh is available, but its usage is not recommended.</p>
 <li><a class="reference internal" href="#birmingham-fluidized-bed">Birmingham Fluidized Bed</a></li>
 <li><a class="reference internal" href="#impinging-jet-mixer">Impinging Jet Mixer</a></li>
 <li><a class="reference internal" href="#cylinder">Cylinder</a></li>
+<li><a class="reference internal" href="#merged-cube">Merged Cube</a></li>
 </ul>
 </li>
 </ul>
