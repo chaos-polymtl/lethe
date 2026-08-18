@@ -27,13 +27,12 @@ public:
   /**
    * @brief Constructor for the GridCubeMerged
    *
-   * @param[in] grid_arguments A string with 4 parameters, `plate file name :
-   * cylinder file name : cylindrical BID plate : cylindrical BID cylinder`,
-   * separated by colons. The `plate file name` and `cylinder file name` are
-   * the .msh file names of the two initial geometries, and `cylindrical BID
-   * plate`, `cylindrical BID cylinder` are the boundary IDs of the cylindrical
-   * boundaries in such initial geometries (needed to properly apply the
-   * manifolds).
+   * @param[in] grid_arguments A string with 4 parameters, `R_cylinder :
+   * L_plate : H : n_subdivisions`, separated by colons. `R_cylinder` is the
+   * radius of the cylinder mesh and of the hole in the extruded square plate;
+   * `L_plate` is the half of the edge length of the square; `H` is the height
+   * in the z direction; `n_subdivisions` is the number of subdivisions along
+   * the z direction.
    */
   GridCubeMerged(const std::string &grid_arguments);
 

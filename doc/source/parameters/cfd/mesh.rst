@@ -311,7 +311,7 @@ The following ``grid arguments`` can be prescribed:
 
 * ``R_cylinder`` is the radius of the cylinder mesh and of the hole in the extruded square plate;
 * ``L_plate`` is the half of the edge length of the square;
-* ``H`` is the extension in the z direction;
+* ``H`` is the height in the z direction;
 * ``n_subdivisions`` is the number of subdivisions along the z direction.
 
 The resulting cube will contain only the boundary ID ``0`` to identify its whole external boundary.
