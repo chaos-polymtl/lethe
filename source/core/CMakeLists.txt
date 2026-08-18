@@ -9,11 +9,14 @@ add_library(lethe-core
   electric_permittivity_model.cc
   evaporation_model.cc
   fichera_oven_grid.cc
-  grids.cc
   grid_birmingham_fluidized_bed.cc
+  grid_cube_merged.cc
   grid_cylinder.cc
   grid_impinging_jet_mixer.cc
   grid_periodic_hills.cc
+  grid_uniform_channel_with_meshed_cylinder.cc
+  grid_uniform_channel_with_meshed_square_prism.cc
+  grids.cc
   ib_particle.cc
   ib_stencil.cc
   interface_tools.cc
@@ -45,8 +48,6 @@ add_library(lethe-core
   thermal_expansion_model.cc
   tracer_diffusivity_model.cc
   tracer_reaction_model.cc
-  grid_uniform_channel_with_meshed_cylinder.cc
-  grid_uniform_channel_with_meshed_square_prism.cc
   utilities.cc
   # Headers
   ../../include/core/ale.h
@@ -62,11 +63,14 @@ add_library(lethe-core
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
   ../../include/core/fichera_oven_grid.h
-  ../../include/core/grids.h
   ../../include/core/grid_birmingham_fluidized_bed.h
+  ../../include/core/grid_cube_merged.h
   ../../include/core/grid_cylinder.h
   ../../include/core/grid_impinging_jet_mixer.h
   ../../include/core/grid_periodic_hills.h
+  ../../include/core/grid_uniform_channel_with_meshed_cylinder.h
+  ../../include/core/grid_uniform_channel_with_meshed_square_prism.h
+  ../../include/core/grids.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
   ../../include/core/inexact_newton_non_linear_solver_strategy.h
@@ -109,8 +113,6 @@ add_library(lethe-core
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/tracer_reaction_model.h
-  ../../include/core/grid_uniform_channel_with_meshed_cylinder.h
-  ../../include/core/grid_uniform_channel_with_meshed_square_prism.h
   ../../include/core/utilities.h)
 
 deal_ii_setup_target(lethe-core)

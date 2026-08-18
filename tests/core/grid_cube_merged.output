@@ -1,0 +1,6 @@
+
+DEAL::==================================================
+DEAL::Grid arguments: "1.0 : 1.5 : 2.0 : 2"
+DEAL::Number of active cells : 56
+DEAL::Number of vertices     : 99
+DEAL::Mesh volume            : 18.0000
