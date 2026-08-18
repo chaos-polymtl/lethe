@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_fichera_oven_grid_h
-#define lethe_fichera_oven_grid_h
+#ifndef lethe_grid_fichera_oven_h
+#define lethe_grid_fichera_oven_h
 
 #include <deal.II/base/utilities.h>
 
@@ -24,7 +24,7 @@ using namespace dealii;
  * all other boundary faces retain the default boundary_id = 0.
  */
 template <int dim, int spacedim>
-class FicheraOvenGrid
+class GridFicheraOven
 {
 public:
   /**
@@ -44,7 +44,7 @@ public:
    * Example: @code "0,0,0 :2,2,3 : true" @endcode
    *
    */
-  FicheraOvenGrid(const std::string &grid_arguments);
+  GridFicheraOven(const std::string &grid_arguments);
 
   /**
    * @brief Generate the Fichera oven mesh by removing cells from a subdivided
