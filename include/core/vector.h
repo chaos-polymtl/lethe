@@ -4,6 +4,8 @@
 #ifndef lethe_vector_h
 #define lethe_vector_h
 
+#include <core/utilities.h>
+
 #include <deal.II/lac/la_parallel_block_vector.h>
 #include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/read_write_vector.h>
@@ -59,6 +61,31 @@ convert_vector_trilinos_to_dealii(
     out.locally_owned_elements());
   rwv.reinit(in);
   out.import_elements(rwv, dealii::VectorOperation::insert);
+}
+
+/**
+ * @brief Assert when running with multiple processes if the `solution_vector`
+ * contains also relevant solutions from ghost elements.
+ *
+ * @tparam VectorType Type of vector of the solution vector.
+ *
+ * @param solution_vector Solution vector.
+ * @param mpi_communicator MPI communicator.
+ * @param caller Function that requires solutions of ghost elements.
+ */
+template <typename VectorType>
+inline void
+assert_vector_has_ghost_elements(const VectorType  &solution_vector,
+                                 const MPI_Comm    &mpi_communicator,
+                                 const std::string &caller)
+{
+  if (Utilities::MPI::n_mpi_processes(mpi_communicator) == 1)
+    return;
+
+  AssertThrow(solution_vector.has_ghost_elements(),
+              ExcMessage(
+                caller +
+                "() requires a solution vector with up-to-date ghost values."));
 }
 
 #endif

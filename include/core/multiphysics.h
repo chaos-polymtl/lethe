@@ -14,6 +14,8 @@
 #ifndef lethe_multiphysics_h
 #define lethe_multiphysics_h
 
+#include <string>
+
 /**
  * @brief Unique identifiers for each physics module in Lethe.
  *
@@ -162,29 +164,10 @@ get_variable_string(Variable variable)
 inline std::string
 get_variable_string_with_underscores(Variable variable)
 {
-  if (variable == Variable::velocity)
-    return "velocity";
-  else if (variable == Variable::pressure)
-    return "pressure";
-  else if (variable == Variable::phase)
-    return "phase";
-  else if (variable == Variable::temperature)
-    return "temperature";
-  else if (variable == Variable::phase_cahn_hilliard)
-    return "phase_cahn_hilliard";
-  else if (variable == Variable::chemical_potential_cahn_hilliard)
-    return "chemical_potential_cahn_hilliard";
-  else if (variable == Variable::tracer)
-    return "tracer";
-  else if (variable == Variable::electric_field)
-    return "electric_field";
-  else if (variable == Variable::magnetic_field)
-    return "magnetic_field";
-  else if (variable == Variable::electromagnetic_fields)
-    return "electromagnetic_fields";
-  else
-    AssertThrow(false,
-                dealii::ExcMessage("An unknown Variable string was requested"));
+  std::string variable_string = get_variable_string(variable);
+  std::ranges::replace(variable_string, ' ', '_');
+
+  return variable_string;
 }
 
 #endif

@@ -1242,8 +1242,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Postprocess probes
   if (this->simulation_parameters.post_processing.probing_points
         .probing_points_per_variable.contains(Variable::temperature))
-    this->multiphysics->postprocess_probes(*triangulation,
-                                           *temperature_mapping,
+    this->multiphysics->postprocess_probes(*temperature_mapping,
                                            *dof_handler,
                                            *present_solution,
                                            Variable::temperature,

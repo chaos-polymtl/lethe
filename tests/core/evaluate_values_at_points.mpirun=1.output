@@ -44,15 +44,15 @@ DEAL::  Evaluated value: 0.500000
 DEAL::  Function value:  0.500000
 DEAL::
 DEAL::Evaluation point: (0.100000, 0.100000)
-DEAL::  Evaluated value: 0.975153
+DEAL::  Evaluated value: 0.972869
 DEAL::  Function value:  0.975528
 DEAL::
 DEAL::Evaluation point: (0.700000, 0.300000)
-DEAL::  Evaluated value: 0.404275
+DEAL::  Evaluated value: 0.402858
 DEAL::  Function value:  0.404508
 DEAL::
 DEAL::Evaluation point: (0.425000, 0.635000)
-DEAL::  Evaluated value: 0.425754
+DEAL::  Evaluated value: 0.424797
 DEAL::  Function value:  0.425989
 DEAL::
 DEAL::
@@ -62,15 +62,15 @@ DEAL::  Evaluated value: -0.785398 -0.785398
 DEAL::  Function value:  -0.785398 -0.785398
 DEAL::
 DEAL::Evaluation point: (0.100000, 0.100000)
-DEAL::  Evaluated value: -0.242605 -0.242605
+DEAL::  Evaluated value: -0.241983 -0.241983
 DEAL::  Function value:  -0.242701 -0.242701
 DEAL::
 DEAL::Evaluation point: (0.700000, 0.300000)
-DEAL::  Evaluated value: -1.24632 -0.323567
+DEAL::  Evaluated value: -1.24190 -0.322446
 DEAL::  Function value:  -1.24704 -0.323753
 DEAL::
 DEAL::Evaluation point: (0.425000, 0.635000)
-DEAL::  Evaluated value: -0.527220 -1.03574
+DEAL::  Evaluated value: -0.526003 -1.03347
 DEAL::  Function value:  -0.527508 -1.03632
 DEAL::
 DEAL::
@@ -120,15 +120,15 @@ DEAL::  Evaluated value: 0.353553
 DEAL::  Function value:  0.353553
 DEAL::
 DEAL::Evaluation point: (0.100000, 0.100000, 0.100000)
-DEAL::  Evaluated value: 0.962962
+DEAL::  Evaluated value: 0.959580
 DEAL::  Function value:  0.963518
 DEAL::
 DEAL::Evaluation point: (0.700000, 0.300000, 0.400000)
-DEAL::  Evaluated value: 0.327002
+DEAL::  Evaluated value: 0.325464
 DEAL::  Function value:  0.327254
 DEAL::
 DEAL::Evaluation point: (0.425000, 0.635000, 0.815000)
-DEAL::  Evaluated value: 0.121979
+DEAL::  Evaluated value: 0.121521
 DEAL::  Function value:  0.122056
 DEAL::
 DEAL::
@@ -138,15 +138,15 @@ DEAL::  Evaluated value: -0.555360 -0.555360 -0.555360
 DEAL::  Function value:  -0.555360 -0.555360 -0.555360
 DEAL::
 DEAL::Evaluation point: (0.100000, 0.100000, 0.100000)
-DEAL::  Evaluated value: -0.239572 -0.239572 -0.239572
+DEAL::  Evaluated value: -0.238678 -0.238678 -0.238678
 DEAL::  Function value:  -0.239713 -0.239713 -0.239713
 DEAL::
 DEAL::Evaluation point: (0.700000, 0.300000, 0.400000)
-DEAL::  Evaluated value: -1.00810 -0.261720 -0.373193
+DEAL::  Evaluated value: -1.00332 -0.260500 -0.371464
 DEAL::  Function value:  -1.00888 -0.261921 -0.373479
 DEAL::
 DEAL::Evaluation point: (0.425000, 0.635000, 0.815000)
-DEAL::  Evaluated value: -0.151049 -0.296741 -0.640677
+DEAL::  Evaluated value: -0.150473 -0.295643 -0.638360
 DEAL::  Function value:  -0.151144 -0.296930 -0.641086
 DEAL::
 DEAL::

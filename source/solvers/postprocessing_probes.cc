@@ -9,12 +9,11 @@ PostprocessingProbes<dim>::PostprocessingProbes(
   const Parameters::PostProcessing<dim>::ProbingPoints
                               &probing_points_parameters,
   const unsigned int           output_frequency,
-  const std::string           &output_folder,
   const Parameters::Verbosity &verbosity)
   : simulation_control(simulation_control)
   , probing_points_parameters(probing_points_parameters)
   , output_frequency(output_frequency)
-  , output_folder(output_folder)
+  , output_folder(simulation_control->get_output_path())
   , verbosity(verbosity)
   , probe_tables(probing_points_parameters.number_of_probing_points)
 {
@@ -25,7 +24,6 @@ template <int dim>
 template <typename VectorType>
 void
 PostprocessingProbes<dim>::postprocess_probes(
-  const Triangulation<dim> &triangulation,
   const Mapping<dim>       &mapping,
   const DoFHandler<dim>    &dof_handler,
   const VectorType         &present_solution,
@@ -43,8 +41,7 @@ PostprocessingProbes<dim>::postprocess_probes(
     (variable == Variable::chemical_potential_cahn_hilliard) ? 1 :
                                                                0;
 
-  evaluate_values_at_points(triangulation,
-                            mapping,
+  evaluate_values_at_points(mapping,
                             dof_handler,
                             present_solution,
                             probing_points_of_the_variable.points,
@@ -91,7 +88,6 @@ PostprocessingProbes<dim>::postprocess_probes(
 
 template void
 PostprocessingProbes<2>::postprocess_probes(
-  const Triangulation<2>   &triangulation,
   const Mapping<2>         &mapping,
   const DoFHandler<2>      &dof_handler,
   const GlobalVectorType   &present_solution,
@@ -101,7 +97,6 @@ PostprocessingProbes<2>::postprocess_probes(
 
 template void
 PostprocessingProbes<3>::postprocess_probes(
-  const Triangulation<3>   &triangulation,
   const Mapping<3>         &mapping,
   const DoFHandler<3>      &dof_handler,
   const GlobalVectorType   &present_solution,
@@ -111,7 +106,6 @@ PostprocessingProbes<3>::postprocess_probes(
 
 template void
 PostprocessingProbes<2>::postprocess_probes(
-  const Triangulation<2>      &triangulation,
   const Mapping<2>            &mapping,
   const DoFHandler<2>         &dof_handler,
   const GlobalBlockVectorType &present_solution,
@@ -121,7 +115,6 @@ PostprocessingProbes<2>::postprocess_probes(
 
 template void
 PostprocessingProbes<3>::postprocess_probes(
-  const Triangulation<3>      &triangulation,
   const Mapping<3>            &mapping,
   const DoFHandler<3>         &dof_handler,
   const GlobalBlockVectorType &present_solution,
@@ -132,7 +125,6 @@ PostprocessingProbes<3>::postprocess_probes(
 #ifndef LETHE_USE_LDV
 template void
 PostprocessingProbes<2>::postprocess_probes(
-  const Triangulation<2>                           &triangulation,
   const Mapping<2>                                 &mapping,
   const DoFHandler<2>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_solution,
@@ -142,7 +134,6 @@ PostprocessingProbes<2>::postprocess_probes(
 
 template void
 PostprocessingProbes<3>::postprocess_probes(
-  const Triangulation<3>                           &triangulation,
   const Mapping<3>                                 &mapping,
   const DoFHandler<3>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_solution,
@@ -155,7 +146,6 @@ template <int dim>
 template <typename VectorType>
 void
 PostprocessingProbes<dim>::postprocess_probes(
-  const Triangulation<dim>            &triangulation,
   const Mapping<dim>                  &mapping,
   const DoFHandler<dim>               &dof_handler,
   const VectorType                    &present_solution,
@@ -173,8 +163,7 @@ PostprocessingProbes<dim>::postprocess_probes(
 
   const unsigned int first_selected_component = 0;
 
-  evaluate_values_at_points<dim>(triangulation,
-                                 mapping,
+  evaluate_values_at_points<dim>(mapping,
                                  dof_handler,
                                  present_solution,
                                  probing_points_of_the_variable.points,
@@ -227,7 +216,6 @@ PostprocessingProbes<dim>::postprocess_probes(
 
 template void
 PostprocessingProbes<2>::postprocess_probes(
-  const Triangulation<2>            &triangulation,
   const Mapping<2>                  &mapping,
   const DoFHandler<2>               &dof_handler,
   const GlobalVectorType            &present_solution,
@@ -237,7 +225,6 @@ PostprocessingProbes<2>::postprocess_probes(
 
 template void
 PostprocessingProbes<3>::postprocess_probes(
-  const Triangulation<3>            &triangulation,
   const Mapping<3>                  &mapping,
   const DoFHandler<3>               &dof_handler,
   const GlobalVectorType            &present_solution,
@@ -247,7 +234,6 @@ PostprocessingProbes<3>::postprocess_probes(
 
 template void
 PostprocessingProbes<2>::postprocess_probes(
-  const Triangulation<2>            &triangulation,
   const Mapping<2>                  &mapping,
   const DoFHandler<2>               &dof_handler,
   const GlobalBlockVectorType       &present_solution,
@@ -257,7 +243,6 @@ PostprocessingProbes<2>::postprocess_probes(
 
 template void
 PostprocessingProbes<3>::postprocess_probes(
-  const Triangulation<3>            &triangulation,
   const Mapping<3>                  &mapping,
   const DoFHandler<3>               &dof_handler,
   const GlobalBlockVectorType       &present_solution,
@@ -268,7 +253,6 @@ PostprocessingProbes<3>::postprocess_probes(
 #ifndef LETHE_USE_LDV
 template void
 PostprocessingProbes<2>::postprocess_probes(
-  const Triangulation<2>                           &triangulation,
   const Mapping<2>                                 &mapping,
   const DoFHandler<2>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_solution,
@@ -278,7 +262,6 @@ PostprocessingProbes<2>::postprocess_probes(
 
 template void
 PostprocessingProbes<3>::postprocess_probes(
-  const Triangulation<3>                           &triangulation,
   const Mapping<3>                                 &mapping,
   const DoFHandler<3>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_solution,

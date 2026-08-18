@@ -2480,8 +2480,8 @@ namespace Parameters
             prm.declare_entry(
               "location",
               default_point_entry_string,
-              Patterns::List(Patterns::Double()),
-              "Probe point location in the mesh's reference. "
+              Patterns::List(Patterns::Double(), dim, dim),
+              "Probe point location in the mesh's reference frame. "
               "The different components of the point must be separated by commas (e.g., ``set location = 0.0, 0.0, 0.0``). ");
             prm.declare_entry(
               "variable",
@@ -2510,10 +2510,11 @@ namespace Parameters
     prm.enter_subsection("probing points");
     {
       number_of_probing_points = prm.get_integer("number of probing points");
-      AssertThrow(
-        number_of_probing_points <= max_number_of_probing_points,
-        ExcMessage(
-          "The current maximum of probing points allowed is 25. Please adjust 'number of probing points'."));
+      AssertThrow(number_of_probing_points <= max_number_of_probing_points,
+                  ExcMessage(
+                    "The current maximum of probing points allowed is " +
+                    Utilities::int_to_string(max_number_of_probing_points) +
+                    ". Please adjust 'number of probing points'."));
 
       for (unsigned int id = 0; id < number_of_probing_points; ++id)
         {

@@ -1190,23 +1190,24 @@ struct cut_cell_comparison
  * @tparam dim Denotes the number of spatial dimensions.
  * @tparam VectorType Vector type of the solution vector.
  *
- * @param[in] triangulation Triangulation object.
  * @param[in] mapping Mapping of the domain.
  * @param[in] dof_handler DoF handler associated to the solution field.
- * @param[in] solution_field Vector containing the solution field.
+ * @param[in] solution_field Vector containing the solution field. For
+ * distributed meshes, ghost elements must be updated.
  * @param[in] evaluation_points Vector of points where the values of the
  * solution field are to be evaluated.
  * @param[in,out] evaluated_scalar_values Vector of evaluated scalar values.
  * @param[in] first_selected_component First component of the solution to select
- * if the solution field is a vector field.
+ * if the solution field is a vector field. This is used to extract the correct
+ * field when the solution vector contains multiple fields (e.g., velocity and
+ * pressure are stored in a same solution vector).
  *
  * @remark If a given evaluation point is not within the simulated domain, an
  * exception is thrown.
  */
 template <int dim, typename VectorType>
 void
-evaluate_values_at_points(const Triangulation<dim>      &triangulation,
-                          const Mapping<dim>            &mapping,
+evaluate_values_at_points(const Mapping<dim>            &mapping,
                           const DoFHandler<dim>         &dof_handler,
                           const VectorType              &solution_field,
                           const std::vector<Point<dim>> &evaluation_points,
@@ -1221,7 +1222,6 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
  * @tparam dim Denotes the number of spatial dimensions.
  * @tparam VectorType Vector type of the solution vector.
  *
- * @param[in] triangulation Triangulation object.
  * @param[in] mapping Mapping of the domain.
  * @param[in] dof_handler DoF handler associated to the solution field.
  * @param[in] solution_field Vector containing the vector solution field.
@@ -1229,7 +1229,9 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
  * solution field are to be evaluated.
  * @param[in,out] evaluated_vector_values Vector of evaluated vector values.
  * @param[in] first_selected_component First component of the solution to
- * select.
+ * select. This is used to extract the correct fields when the solution vector
+ * contains multiple fields (e.g., velocity and
+ * pressure are stored in a same solution vector).
  *
  * @remark If a given evaluation point is not within the simulated domain, an
  * exception is thrown.
@@ -1237,7 +1239,6 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
 template <int n_component, int dim, typename VectorType>
 void
 evaluate_values_at_points(
-  const Triangulation<dim>            &triangulation,
   const Mapping<dim>                  &mapping,
   const DoFHandler<dim>               &dof_handler,
   const VectorType                    &solution_field,

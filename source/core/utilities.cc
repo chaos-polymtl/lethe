@@ -873,19 +873,21 @@ delete_vtu_and_pvd_files(const std::string &output_path)
 
 template <int dim, typename VectorType>
 void
-evaluate_values_at_points(const Triangulation<dim>      &triangulation,
-                          const Mapping<dim>            &mapping,
+evaluate_values_at_points(const Mapping<dim>            &mapping,
                           const DoFHandler<dim>         &dof_handler,
                           const VectorType              &solution_field,
                           const std::vector<Point<dim>> &evaluation_points,
                           std::vector<double> &evaluated_scalar_values,
                           const unsigned int   first_selected_component)
 {
-  // Update ghost values of the scalar solution field
-  VectorType solution_field_owned_copy;
-  solution_field_owned_copy.reinit(solution_field);
-  solution_field_owned_copy = solution_field;
-  solution_field_owned_copy.update_ghost_values();
+  // Get triangulation
+  const auto &triangulation = dof_handler.get_triangulation();
+
+  // Check if solution vector is relevant
+  assert_vector_has_ghost_elements<VectorType>(
+    solution_field,
+    dof_handler.get_mpi_communicator(),
+    "evaluate_values_at_points");
 
   // Evaluate scalar values at points using RemotePointEvaluation if they are
   // found within the domain
@@ -895,7 +897,7 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
     evaluated_scalar_values = VectorTools::point_values<1>(
       mapping,
       dof_handler,
-      solution_field_owned_copy,
+      solution_field,
       evaluation_points,
       remote_point_evaluator,
       VectorTools::EvaluationFlags::EvaluationFlags::avg,
@@ -904,7 +906,6 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
 
 template void
 evaluate_values_at_points<2, GlobalVectorType>(
-  const Triangulation<2>      &triangulation,
   const Mapping<2>            &mapping,
   const DoFHandler<2>         &dof_handle,
   const GlobalVectorType      &solution_field,
@@ -914,7 +915,6 @@ evaluate_values_at_points<2, GlobalVectorType>(
 
 template void
 evaluate_values_at_points<3, GlobalVectorType>(
-  const Triangulation<3>      &triangulation,
   const Mapping<3>            &mapping,
   const DoFHandler<3>         &dof_handle,
   const GlobalVectorType      &solution_field,
@@ -924,7 +924,6 @@ evaluate_values_at_points<3, GlobalVectorType>(
 
 template void
 evaluate_values_at_points<2, GlobalBlockVectorType>(
-  const Triangulation<2>      &triangulation,
   const Mapping<2>            &mapping,
   const DoFHandler<2>         &dof_handle,
   const GlobalBlockVectorType &solution_field,
@@ -934,7 +933,6 @@ evaluate_values_at_points<2, GlobalBlockVectorType>(
 
 template void
 evaluate_values_at_points<3, GlobalBlockVectorType>(
-  const Triangulation<3>      &triangulation,
   const Mapping<3>            &mapping,
   const DoFHandler<3>         &dof_handle,
   const GlobalBlockVectorType &solution_field,
@@ -945,7 +943,6 @@ evaluate_values_at_points<3, GlobalBlockVectorType>(
 #ifndef LETHE_USE_LDV
 template void
 evaluate_values_at_points<2, LinearAlgebra::distributed::Vector<double>>(
-  const Triangulation<2>                           &triangulation,
   const Mapping<2>                                 &mapping,
   const DoFHandler<2>                              &dof_handle,
   const LinearAlgebra::distributed::Vector<double> &solution_field,
@@ -955,7 +952,6 @@ evaluate_values_at_points<2, LinearAlgebra::distributed::Vector<double>>(
 
 template void
 evaluate_values_at_points<3, LinearAlgebra::distributed::Vector<double>>(
-  const Triangulation<3>                           &triangulation,
   const Mapping<3>                                 &mapping,
   const DoFHandler<3>                              &dof_handle,
   const LinearAlgebra::distributed::Vector<double> &solution_field,
@@ -967,7 +963,6 @@ evaluate_values_at_points<3, LinearAlgebra::distributed::Vector<double>>(
 template <int n_component, int dim, typename VectorType>
 void
 evaluate_values_at_points(
-  const Triangulation<dim>            &triangulation,
   const Mapping<dim>                  &mapping,
   const DoFHandler<dim>               &dof_handler,
   const VectorType                    &solution_field,
@@ -975,11 +970,14 @@ evaluate_values_at_points(
   std::vector<Tensor<1, dim, double>> &evaluated_vector_values,
   const unsigned int                   first_selected_component)
 {
-  // Update ghost values of the vector solution field
-  VectorType solution_field_owned_copy;
-  solution_field_owned_copy.reinit(solution_field);
-  solution_field_owned_copy = solution_field;
-  solution_field_owned_copy.update_ghost_values();
+  // Get triangulation
+  const auto &triangulation = dof_handler.get_triangulation();
+
+  // Check if solution vector is relevant
+  assert_vector_has_ghost_elements<VectorType>(
+    solution_field,
+    dof_handler.get_mpi_communicator(),
+    "evaluate_values_at_points");
 
   // Evaluate scalar values at points using RemotePointEvaluation
   Utilities::MPI::RemotePointEvaluation<dim, dim> remote_point_evaluator;
@@ -988,7 +986,7 @@ evaluate_values_at_points(
     evaluated_vector_values = VectorTools::point_values<n_component>(
       mapping,
       dof_handler,
-      solution_field_owned_copy,
+      solution_field,
       evaluation_points,
       remote_point_evaluator,
       VectorTools::EvaluationFlags::EvaluationFlags::avg,
@@ -997,7 +995,6 @@ evaluate_values_at_points(
 
 template void
 evaluate_values_at_points<2, 2, GlobalVectorType>(
-  const Triangulation<2>            &triangulation,
   const Mapping<2>                  &mapping,
   const DoFHandler<2>               &dof_handle,
   const GlobalVectorType            &solution_field,
@@ -1007,7 +1004,6 @@ evaluate_values_at_points<2, 2, GlobalVectorType>(
 
 template void
 evaluate_values_at_points<3, 3, GlobalVectorType>(
-  const Triangulation<3>            &triangulation,
   const Mapping<3>                  &mapping,
   const DoFHandler<3>               &dof_handle,
   const GlobalVectorType            &solution_field,
@@ -1017,7 +1013,6 @@ evaluate_values_at_points<3, 3, GlobalVectorType>(
 
 template void
 evaluate_values_at_points<2, 2, GlobalBlockVectorType>(
-  const Triangulation<2>            &triangulation,
   const Mapping<2>                  &mapping,
   const DoFHandler<2>               &dof_handle,
   const GlobalBlockVectorType       &solution_field,
@@ -1027,7 +1022,6 @@ evaluate_values_at_points<2, 2, GlobalBlockVectorType>(
 
 template void
 evaluate_values_at_points<3, 3, GlobalBlockVectorType>(
-  const Triangulation<3>            &triangulation,
   const Mapping<3>                  &mapping,
   const DoFHandler<3>               &dof_handle,
   const GlobalBlockVectorType       &solution_field,
@@ -1038,7 +1032,6 @@ evaluate_values_at_points<3, 3, GlobalBlockVectorType>(
 #ifndef LETHE_USE_LDV
 template void
 evaluate_values_at_points<2, 2, LinearAlgebra::distributed::Vector<double>>(
-  const Triangulation<2>                           &triangulation,
   const Mapping<2>                                 &mapping,
   const DoFHandler<2>                              &dof_handle,
   const LinearAlgebra::distributed::Vector<double> &solution_field,
@@ -1048,7 +1041,6 @@ evaluate_values_at_points<2, 2, LinearAlgebra::distributed::Vector<double>>(
 
 template void
 evaluate_values_at_points<3, 3, LinearAlgebra::distributed::Vector<double>>(
-  const Triangulation<3>                           &triangulation,
   const Mapping<3>                                 &mapping,
   const DoFHandler<3>                              &dof_handle,
   const LinearAlgebra::distributed::Vector<double> &solution_field,

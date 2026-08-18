@@ -19,13 +19,20 @@ public:
    * @brief Object that evaluates variables (e.g., velocity) at specified points
    * in the domain.
    *
+   * Within every physics postprocessing attribute (either
+   * NavierStokesBase::postprocess_fd() or AuxiliaryPhysics::postprocess())
+   * the evaluation can made by calling the postprocess_probes() attribute of
+   * this object through the MultiphysicsInterface object.
+   * All evaluated values of variables of a same probe are stored within a same
+   * table. All tables are grouped in the PostprocessingProbes::probe_tables
+   * vector. Within the vector, the tables are ordered according to the probe
+   * IDs.
+   *
    * @param[in] simulation_control SimulationControl object which is used to
    * obtain the current time and current iteration number.
    * @param[in] probing_points_parameters Set of parameters describing the
    * specified probing point and variables of interest.
-   * @param[in] output_frequency Output iteration frequency.
-   * @param[in] output_folder Path to the output folder where the .dat files
-   * are saved.
+   * @param[in] output_frequency Output iteration frequency for postprocessing.
    * @param[in] verbosity Verbosity level for console output.
    *
    * @remark At the moment, probing for only the velocity, pressure, phase, and
@@ -36,7 +43,6 @@ public:
                        const Parameters::PostProcessing<dim>::ProbingPoints
                                                    &probing_points_parameters,
                        const unsigned int           output_frequency,
-                       const std::string           &output_folder,
                        const Parameters::Verbosity &verbosity);
 
   /**
@@ -49,6 +55,7 @@ public:
     const auto &probing_points_per_variable =
       probing_points_parameters.probing_points_per_variable;
 
+    // Initialize time column for all tables
     for (auto &current_table : probe_tables)
       {
         current_table.declare_column("time");
@@ -56,8 +63,11 @@ public:
         current_table.set_scientific("time", true);
       }
 
+    // Get all variable with probes
     auto keys_range = std::views::keys(probing_points_per_variable);
 
+    // Loop over all variables with probes to initialize table fields with
+    // correct formating of columns
     for (auto variable_it = keys_range.begin(); variable_it != keys_range.end();
          ++variable_it)
       {
@@ -65,7 +75,8 @@ public:
           probing_points_parameters.probing_points_per_variable.at(
             *variable_it);
 
-        // Go through tables and prepare them
+        // Go through tables of the variable and prepare them by declaring and
+        // formating the column(s) of the variable
         for (const unsigned int &id : probing_points_of_variable.ids)
           {
             TableHandler     &current_table = probe_tables[id];
@@ -108,7 +119,6 @@ public:
    *
    * @tparam VectorType Type of vector of the solution vector.
    *
-   * @param[in] triangulation Triangulation object.
    * @param[in] mapping Mapping of the domain.
    * @param[in] dof_handler DoF handler associated to the solution field.
    * @param[in] present_solution Vector containing the scalar solution field.
@@ -118,8 +128,7 @@ public:
    */
   template <typename VectorType>
   void
-  postprocess_probes(const Triangulation<dim> &triangulation,
-                     const Mapping<dim>       &mapping,
+  postprocess_probes(const Mapping<dim>       &mapping,
                      const DoFHandler<dim>    &dof_handler,
                      const VectorType         &present_solution,
                      const Variable            variable,
@@ -128,15 +137,15 @@ public:
 
   /**
    * @brief Evaluates vector variables (e.g., velocity) at specified points
-   * in the domain using evaluate_values_at_points and fills appropriate probe
+   * in the domain using evaluate_values_at_points() and fills appropriate probe
    * tables.
    *
    * @tparam VectorType Type of vector of the solution vector.
    *
-   * @param[in] triangulation Triangulation object.
    * @param[in] mapping Mapping of the domain.
    * @param[in] dof_handler DoF handler associated to the solution field.
    * @param[in] present_solution Vector containing the vector solution field.
+   * For distributed meshes, ghost elements must be updated.
    * @param[in] variable Variable of interest.
    * @param[in] pcout Parallel console output stream.
    * @param[out] evaluated_vector_values Vector of evaluated vector values.
@@ -146,7 +155,6 @@ public:
   template <typename VectorType>
   void
   postprocess_probes(
-    const Triangulation<dim>            &triangulation,
     const Mapping<dim>                  &mapping,
     const DoFHandler<dim>               &dof_handler,
     const VectorType                    &present_solution,
@@ -155,19 +163,20 @@ public:
     std::vector<Tensor<1, dim, double>> &evaluated_vector_values);
 
   /**
-   * @brief Writes probe table into output .dat file.
+   * @brief Writes the probe tables into output `.dat` file.
    */
   inline void
   write_probing_points_tables()
   {
-    if (simulation_control->get_iteration_number() % output_frequency == 0)
+    if (simulation_control->get_iteration_number() % output_frequency == 0 ||
+        simulation_control->is_at_end())
       if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
         {
           for (unsigned int i = 0; i < probe_tables.size(); ++i)
             {
               std::string file_path =
-                output_folder +
-                probing_points_parameters.probing_points_output_names[i] +
+                output_folder + "probe_" + Utilities::int_to_string(i, 2) +
+                "_" + probing_points_parameters.probing_points_output_names[i] +
                 ".dat";
               std::ofstream output(file_path.c_str());
 
@@ -277,7 +286,9 @@ private:
   std::vector<TableHandler> probe_tables;
 
   /// Precision of table entries
-  const unsigned int table_precision = 6;
+  const unsigned int table_precision =
+    6; // TODO change the value with user-input parameter when issue #2039 is
+       // being resolved
 };
 
 #endif

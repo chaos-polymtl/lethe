@@ -169,7 +169,7 @@ subsection post-processing
     end
     subsection probe 2
       set location               = 0,0.01
-      set variable               = pressure, phase, velocity
+      set variable               = velocity
       set probing point filename = probe_wave_top
     end
   end

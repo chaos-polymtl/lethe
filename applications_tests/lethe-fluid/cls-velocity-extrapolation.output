@@ -35,8 +35,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: 0.000000e+00
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: 0.000000e+00
 
 ----------------------
 CLS Mass Conservation
@@ -50,8 +48,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 1.000000e+00
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: 7.090909e-01
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.04     Time step: 0.04     CFL: 0       
@@ -72,8 +68,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: 1.034432e-02
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: 1.031504e-03
 
 ----------------------
 CLS Mass Conservation
@@ -87,8 +81,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 1.002319e+00
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: 6.908052e-01
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.216    Time step: 0.11     CFL: 0.145625
@@ -109,8 +101,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: 9.928013e-03
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: 8.784011e-04
 
 ----------------------
 CLS Mass Conservation
@@ -124,8 +114,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 1.021603e+00
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: 4.918089e-01
 
 ********************************************************************************
 Transient iteration: 5        Time: 0.401429 Time step: 0.0817608 CFL: 0.507179
@@ -146,8 +134,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: 4.190060e-03
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -4.175671e-04
 
 ----------------------
 CLS Mass Conservation
@@ -161,8 +147,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 9.907638e-01
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: 2.337843e-01
 
 ********************************************************************************
 Transient iteration: 7        Time: 0.542935 Time step: 0.0684574 CFL: 0.426824
@@ -183,8 +167,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: 4.319870e-03
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -4.209734e-04
 
 ----------------------
 CLS Mass Conservation
@@ -198,8 +180,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 8.749920e-01
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: 5.755755e-02
 
 ********************************************************************************
 Transient iteration: 9        Time: 0.672579 Time step: 0.0639966 CFL: 0.410318
@@ -220,8 +200,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: 1.807077e-03
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -4.085365e-04
 
 ----------------------
 CLS Mass Conservation
@@ -235,8 +213,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 6.982686e-01
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: -3.164660e-02
 
 ********************************************************************************
 Transient iteration: 11       Time: 0.799503 Time step: 0.0636178 CFL: 0.398043
@@ -257,8 +233,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: 5.403783e-04
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -3.980585e-04
 
 ----------------------
 CLS Mass Conservation
@@ -272,8 +246,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 5.044795e-01
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: -6.133427e-02
 
 ********************************************************************************
 Transient iteration: 13       Time: 0.931897 Time step: 0.0672624 CFL: 0.387329
@@ -294,8 +266,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: 5.153952e-04
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -3.954605e-04
 
 ----------------------
 CLS Mass Conservation
@@ -309,8 +279,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 3.085963e-01
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: -5.476052e-02
 
 ********************************************************************************
 Transient iteration: 15       Time: 1.0744   Time step: 0.0727146 CFL: 0.383918
@@ -331,8 +299,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: -3.624895e-04
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -3.778489e-04
 
 ----------------------
 CLS Mass Conservation
@@ -346,8 +312,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 1.460337e-01
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: -3.378219e-02
 
 ********************************************************************************
 Transient iteration: 17       Time: 1.23601  Time step: 0.0845188 CFL: 0.364844
@@ -368,8 +332,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: -3.622752e-04
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -3.724145e-04
 
 ----------------------
 CLS Mass Conservation
@@ -383,8 +345,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: 3.942819e-02
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: -1.463466e-02
 
 *******************************************************************************
 Transient iteration: 19       Time: 1.43125  Time step: 0.102268 CFL: 0.328105
@@ -405,8 +365,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: -3.574476e-04
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -3.676516e-04
 
 ----------------------
 CLS Mass Conservation
@@ -420,8 +378,6 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: -2.167019e-02
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: -2.936342e-03
 
 *******************************************************************************
 Transient iteration: 21       Time: 1.66749  Time step: 0.123744 CFL: 0.245207
@@ -438,8 +394,6 @@ pressure probes
 ----------------
 At probe 1 (0, 0) - probe_origin
  Evaluated pressure value: -3.504563e-04
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated pressure value: -3.609168e-04
 
 ----------------------
 CLS Mass Conservation
@@ -453,5 +407,3 @@ At probe 0 (-0.85, -0.85) - probe_in_fluid_1
  Evaluated phase value: 1.000000e+00
 At probe 1 (0, 0) - probe_origin
  Evaluated phase value: -3.721707e-02
-At probe 2 (0, 0.01) - probe_wave_top
- Evaluated phase value: 9.704916e-05
