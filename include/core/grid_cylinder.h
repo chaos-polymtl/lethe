@@ -24,7 +24,7 @@ class GridCylinder
 {
 public:
   /**
-   * @brief Constructor for the CylinderGrid.
+   * @brief Constructor for the GridCylinder.
    *
    * @param[in] grid_type. The type of cylinder mesh to be generated. The
    * choices are:
