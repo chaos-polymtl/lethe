@@ -85,13 +85,13 @@ main()
       initlog();
 
       // 2D cases: spacing_y ; alpha ; repetitions_x ; repetitions_y
-      test<2>("0;1;10;2", "default");
-      test<2>("0;1.5;1;1", "stretched");
+      test<2>("0 : 1 : 10 : 2", "default");
+      test<2>("0 : 1.5 : 1 : 1", "stretched");
 
       // 3D cases: spacing_y ; alpha ; repetitions_x ; repetitions_y ;
       // repetitions_z
-      test<3>("0;1;10;2;1", "default");
-      test<3>("0;1.5;1;1;1", "stretched");
+      test<3>("0 : 1 : 10 : 2 : 1", "default");
+      test<3>("0 : 1.5 : 1 : 1 : 1", "stretched");
     }
   catch (std::exception &exc)
     {
