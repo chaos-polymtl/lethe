@@ -44,7 +44,7 @@ public:
                     const std::vector<double>       &interface_dimensions,
                     const Quadrature<dim2>          &quadrature,
                     const double                     rotation_angle,
-                    const unsigned int               rotation_axis_direction = 2,
+                    const unsigned int        rotation_axis_direction = 2,
                     const std::vector<double> stage_heights = {0.0, 1.0});
 
   /**
@@ -496,19 +496,21 @@ MortarManagerLinear<dim>::MortarManagerLinear(
   : MortarManagerBase<dim>(
       compute_number_interface_cells(dof_handler.get_triangulation(),
                                      mortar_parameters),
-      std::vector<double> {(std::get<1>(
-         compute_interface_dimensions_linear(dof_handler.get_triangulation(),
-                                             mapping,
-                                             mortar_parameters)) -
-       std::get<0>(
-         compute_interface_dimensions_linear(dof_handler.get_triangulation(),
-                                             mapping,
-                                             mortar_parameters))) /
-        (2.0 * numbers::PI), 1.0},
+      std::vector<double>{
+        (std::get<1>(
+           compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                               mapping,
+                                               mortar_parameters)) -
+         std::get<0>(
+           compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                               mapping,
+                                               mortar_parameters))) /
+          (2.0 * numbers::PI),
+        1.0},
       construct_quadrature(quadrature, mortar_parameters),
       0.0,
       2,
-      std::vector<double> {0.0, 1.0})
+      std::vector<double>{0.0, 1.0})
 {
   std::tie(this->coord_min, this->coord_max) =
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),
@@ -516,14 +518,6 @@ MortarManagerLinear<dim>::MortarManagerLinear(
                                         mortar_parameters);
 }
 
-
-  // MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
-  //                   const std::vector<double>       &interface_dimensions,
-  //                   const Quadrature<dim2>          &quadrature,
-  //                   const double                     rotation_angle,
-  //                   const unsigned int               rotation_axis_direction = 2,
-  //                   const std::vector<double> stage_heights = {0.0, 1.0});
-                    
 /**
  * @brief Compute inner product
  *

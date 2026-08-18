@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -44,8 +44,9 @@ public:
                   const Quadrature<dim2> &quadrature,
                   const double            left,
                   const double            right)
-    : MortarManagerBase<dim>(std::vector<unsigned int> {n_subdivisions, 1},
-                             std::vector<double> {(right - left) / numbers::PI, 1.0},
+    : MortarManagerBase<dim>(std::vector<unsigned int>{n_subdivisions, 1},
+                             std::vector<double>{(right - left) / numbers::PI,
+                                                 1.0},
                              quadrature,
                              0.0)
     , left(left)

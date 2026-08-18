@@ -1279,10 +1279,11 @@ public:
                const double       sip_factor = 1.0)
   {
     const std::shared_ptr<MortarManagerBase<dim>> mortar_manager =
-      std::make_shared<MortarManagerCircle<dim>>(std::vector<unsigned int> {n_subdivisions, 1},
-                                                 std::vector<double> {radius, 1.0},
-                                                 matrix_free.get_quadrature(),
-                                                 rotate_pi);
+      std::make_shared<MortarManagerCircle<dim>>(
+        std::vector<unsigned int>{n_subdivisions, 1},
+        std::vector<double>{radius, 1.0},
+        matrix_free.get_quadrature(),
+        rotate_pi);
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator = std::make_shared<
