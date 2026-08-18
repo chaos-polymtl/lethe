@@ -1386,10 +1386,11 @@ TimeHarmonicMaxwell<dim>::read_checkpoint()
                                       mpi_communicator);
   input_vectors[0] = &distributed_system;
 
+  solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
+    *dof_handler_trial_interior);
   solution_transfer->deserialize(input_vectors);
 
   *present_solution = distributed_system;
-
 
   // Temperature solution
   if (needs_temperature)
@@ -1397,18 +1398,28 @@ TimeHarmonicMaxwell<dim>::read_checkpoint()
       const auto &temperature_dof_handler =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
+      const IndexSet locally_relevant_temperature_dofs =
+        DoFTools::extract_locally_relevant_dofs(temperature_dof_handler);
       temperature_last_solved_solution.reinit(
+        temperature_dof_handler.locally_owned_dofs(),
+        locally_relevant_temperature_dofs,
+        mpi_communicator);
+
+      GlobalVectorType distributed_temperature_last_solved(
         temperature_dof_handler.locally_owned_dofs(), mpi_communicator);
+
       temperature_last_solved_solution_transfer =
         std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
           temperature_dof_handler);
 
       std::vector<GlobalVectorType *> temperature_input_vectors(1);
 
-      temperature_input_vectors[0] = &temperature_last_solved_solution;
+      temperature_input_vectors[0] = &distributed_temperature_last_solved;
 
       temperature_last_solved_solution_transfer->deserialize(
         temperature_input_vectors);
+
+      temperature_last_solved_solution = distributed_temperature_last_solved;
     }
 
   // Deserialize all post-processing tables that are currently used with the
@@ -2159,6 +2170,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
               std::unique_ptr<FEValues<dim>> fe_values_temperature;
               const DoFHandler<dim>         *dof_handler_temperature = nullptr;
               const GlobalVectorType *temperature_current_solution   = nullptr;
+
 
               if (needs_temperature)
                 {
