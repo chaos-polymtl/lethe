@@ -155,7 +155,7 @@ with :math:`\mathbf{v}` and :math:`\mathbf{u}` being arbitrary complex-valued ve
      \hat{\mathbf{E}},\hat{\mathbf{H}} &\in \hat{\mathcal{X}}_{\mathrm{em}},
        & \hat{\mathcal{X}}_{\mathrm{em}} &:= \bigl\{ \hat{\mathbf{x}} \in H^{-1/2}(\mathrm{curl},\Omega_h) : \mathbf{n}\times \hat{\mathbf{x}} = \mathbf{n}\times \mathbf{x}_\mathrm{D} \text{ on } \Gamma_D \bigr\}, \\
      \mathbf{F},\mathbf{I} &\in \mathcal{Y}_{\mathrm{em}},
-       & \mathcal{Y}_{\mathrm{em}} &:= \bigl\{ \mathbf{y} \in H(\mathrm{curl},\Omega_h) : \mathbf{n}\times \mathbf{y} = 0 \text{ on } \partial\Omega \bigr\}.
+       & \mathcal{Y}_{\mathrm{em}} &:= \bigl\{ \mathbf{y} \in H(\mathrm{curl},\Omega_h) \bigr\}.
    \end{align}
 
 For an ultraweak formulation, the Neumann boundary condition is, in fact, a
@@ -200,12 +200,12 @@ present.
     * **Prescribed electric field (Dirichlet)**: :math:`\mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}_D`.
     * **Prescribed magnetic field (Neumann)**: :math:`\mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}_N - \mathbf{J}_{\mathrm{s}}`, with :math:`\mathbf{J}_{\mathrm{s}}` a prescribed surface current density.
     * **Impedance condition (Robin)**: :math:`\mathbf{n} \times \mathbf{H} + Z_\mathrm{s}^{-1} \mathbf{E}_\parallel = \mathbf{E_\mathrm{R}}`, with :math:`Z_\mathrm{s}` the surface impedance of the boundary.
-    * **Absorbing / radiation condition (Silver–Müller)**: :math:`\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_r/\mu_r}\, \mathbf{E}_\parallel = 0`. This is the impedance condition above with :math:`Z_\mathrm{s} = \sqrt{\mu_r/\varepsilon_r}` (the impedance of the exterior medium) and no source term.
+    * **Absorbing / radiation condition (Silver–Müller)**: :math:`\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_{r,\mathrm{eff}}/\mu_r}\, \mathbf{E}_\parallel = 0`. This is the impedance condition above with :math:`Z_\mathrm{s} = \sqrt{\mu_r/\varepsilon_{r,\mathrm{eff}}}` (the impedance of the exterior medium) and no source term.
     * **Lossy / imperfect conductor**: :math:`\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_{r,\mathrm{eff},2}/\mu_{r,2}}\, \mathbf{E}_\parallel = 0`, the same form as the radiation condition above, using the (possibly complex) effective properties :math:`\varepsilon_{r,\mathrm{eff},2}`, :math:`\mu_{r,2}` of the adjacent conducting medium.
     * **Waveguide inlet port, TE**\ :math:`_{mn}` **mode**: :math:`\mathbf{n} \times \mathbf{H} + \dfrac{\mathbf{k} \cdot \mathbf{n}}{\omega \mu_r} \mathbf{E}_\parallel = \mathbf{n} \times \mathbf{H}_{inc} + \dfrac{\mathbf{k} \cdot \mathbf{n}}{\omega \mu_r} \mathbf{E}_{inc,\parallel}`.
     * **Waveguide inlet port, TM**\ :math:`_{mn}` **mode**: :math:`\mathbf{n} \times \mathbf{H} + \dfrac{\omega \varepsilon_{r,\mathrm{eff}}}{\mathbf{k} \cdot \mathbf{n}} \mathbf{E}_\parallel = \mathbf{n} \times \mathbf{H}_{inc} + \dfrac{\omega \varepsilon_{r,\mathrm{eff}}}{\mathbf{k} \cdot \mathbf{n}} \mathbf{E}_{inc,\parallel}`.
 
     In each waveguide, :math:`\mathbf{H}_{inc}` and
     :math:`\mathbf{E}_{inc,\parallel}` denote the incident field of the excited
-    mode, and :math:`k = \omega \sqrt{\varepsilon_r \mu_r}` its wavevector amplitude.
+    mode, and :math:`k = \omega \sqrt{\varepsilon_{r,\mathrm{eff}} \mu_r}` its wavevector amplitude.
 
