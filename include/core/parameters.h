@@ -1128,7 +1128,9 @@ namespace Parameters
        */
       struct ProbingPointsPerVariable
       {
-        /// Identifier of the probe points
+        /** Identifier of the probe points. This is required since multiple
+         * variable can be evaluated a same probing location, but all fields of
+         * a same probe are written in the same file. */
         std::vector<unsigned int> ids;
 
         /// Point locations where we want to evaluate values
@@ -1144,8 +1146,10 @@ namespace Parameters
       /// Probing point output names ordered by ID
       std::vector<std::string> probing_points_output_names;
 
-      /** Map that regroups all probing points information of a same variable
-       * under the same variable key */
+      /** Map that regroups all probing points information (ID and coordinates)
+       * of a same variable under the same variable key. This map is used within
+       * the physics to quickly identify the probes that request an evaluation
+       * of one of its variables.*/
       std::map<Variable, ProbingPointsPerVariable> probing_points_per_variable;
 
       /**
@@ -1178,6 +1182,16 @@ namespace Parameters
         if (!probing_points_per_variable.contains(variable))
           probing_points_per_variable.insert(
             {variable, ProbingPointsPerVariable()});
+
+        auto &ids = probing_points_per_variable[variable].ids;
+
+        AssertThrow(std::find(ids.begin(), ids.end(), id) == ids.end(),
+                    ExcMessage(
+                      "For the probing point " + Utilities::int_to_string(id) +
+                      ", you are specifying multiple times the variable '" +
+                      get_variable_string(variable) +
+                      "'. Please only specify it once."));
+
 
         probing_points_per_variable[variable].ids.emplace_back(id);
         probing_points_per_variable[variable].points.emplace_back(point);

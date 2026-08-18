@@ -1848,16 +1848,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Postprocess probes
   if (this->simulation_parameters.post_processing.probing_points
         .probing_points_per_variable.contains(Variable::velocity))
-    this->multiphysics->postprocess_probes(*triangulation,
-                                           *mapping,
+    this->multiphysics->postprocess_probes(*mapping,
                                            *dof_handler,
                                            present_solution,
                                            Variable::velocity,
                                            this->pcout);
   if (this->simulation_parameters.post_processing.probing_points
         .probing_points_per_variable.contains(Variable::pressure))
-    this->multiphysics->postprocess_probes(*triangulation,
-                                           *mapping,
+    this->multiphysics->postprocess_probes(*mapping,
                                            *dof_handler,
                                            present_solution,
                                            Variable::pressure,

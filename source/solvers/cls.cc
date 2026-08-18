@@ -1957,12 +1957,8 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
   // Postprocess probes
   if (this->simulation_parameters.post_processing.probing_points
         .probing_points_per_variable.contains(Variable::phase))
-    this->multiphysics->postprocess_probes(*triangulation,
-                                           *mapping,
-                                           *dof_handler,
-                                           *present_solution,
-                                           Variable::phase,
-                                           this->pcout);
+    this->multiphysics->postprocess_probes(
+      *mapping, *dof_handler, *present_solution, Variable::phase, this->pcout);
 
   // Compute and update current capillary time-step constraint
   if (this->simulation_parameters.simulation_control.method !=

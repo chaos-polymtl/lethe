@@ -459,16 +459,16 @@ This feature can be used to evaluate heights, depths, or lengths when quantities
 Probing points
 ~~~~~~~~~~~~~~
 
-The ``probing points`` subsection defines probes that can evaluate ``variable`` (e.g., velocity) values at remote locations of the domain throughout the simulation. Each probe has its own subsection ``probe x``, where ``x`` is the ID of the probe ranging from ``0`` to  ``number of probing points - 1``. The monitored time-evolving values are saved in a ``.dat`` file (``probing point filename``). Each probe has its own ``location``, list of variables and output file. A given probe can evaluate multiple variables as specified below. All variable values of a same probe is saved in the same output file. Each scalar field represents a column and the same goes for components of vector fields.
+The ``probing points`` subsection defines probes that can evaluate ``variable`` (e.g., velocity) values at remote locations of the domain throughout the simulation. Each probe has its own subsection ``probe x``, where ``x`` is the ID of the probe ranging from ``0`` to  ``number of probing points - 1``. The monitored time-evolving values are saved in a ``.dat`` file (``probing point filename``). Each probe has its own ``location``, list of variables and output file. A given probe can evaluate multiple variables as specified below. All variable values of a same probe are saved in the same output file. Each scalar field represents a column and the same goes for components of vector fields.
 
 * ``number of probing points``: number of probes defined.
 
   .. attention::
     A maximum of 25 probes can be defined.
 
-* ``location``: location of the probing point. Separate components of the points with comma.
+* ``location``: location of the probing point. Separate components of the points with commas.
 
-* ``variable``: variable or list of variables (separated by comma) to evaluate at the probing location.
+* ``variable``: variable or list of variables (separated by commas) to evaluate at the probing location.
 
   .. note::
     The current implementation only allows for probing the ``velocity``, the ``pressure``, the CLS ``phase`` indicator, and the ``temperature``. Other variables will follow in a subsequent implementation.

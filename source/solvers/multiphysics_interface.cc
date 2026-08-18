@@ -93,7 +93,6 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   , probe_postprocessor(p_simulation_control,
                         nsparam.post_processing.probing_points,
                         nsparam.post_processing.output_frequency,
-                        nsparam.simulation_control.output_folder,
                         nsparam.post_processing.verbosity)
 {
   inspect_multiphysics_models_dependencies(nsparam);
@@ -347,7 +346,6 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
 
 template void
 MultiphysicsInterface<2>::postprocess_probes(
-  const Triangulation<2>   &triangulation,
   const Mapping<2>         &mapping,
   const DoFHandler<2>      &dof_handler,
   const GlobalVectorType   &present_solution,
@@ -355,7 +353,6 @@ MultiphysicsInterface<2>::postprocess_probes(
   const ConditionalOStream &pcout);
 template void
 MultiphysicsInterface<3>::postprocess_probes(
-  const Triangulation<3>   &triangulation,
   const Mapping<3>         &mapping,
   const DoFHandler<3>      &dof_handler,
   const GlobalVectorType   &present_solution,
@@ -363,7 +360,6 @@ MultiphysicsInterface<3>::postprocess_probes(
   const ConditionalOStream &pcout);
 template void
 MultiphysicsInterface<2>::postprocess_probes(
-  const Triangulation<2>      &triangulation,
   const Mapping<2>            &mapping,
   const DoFHandler<2>         &dof_handler,
   const GlobalBlockVectorType &present_solution,
@@ -371,7 +367,6 @@ MultiphysicsInterface<2>::postprocess_probes(
   const ConditionalOStream    &pcout);
 template void
 MultiphysicsInterface<3>::postprocess_probes(
-  const Triangulation<3>      &triangulation,
   const Mapping<3>            &mapping,
   const DoFHandler<3>         &dof_handler,
   const GlobalBlockVectorType &present_solution,
@@ -381,7 +376,6 @@ MultiphysicsInterface<3>::postprocess_probes(
 #ifndef LETHE_USE_LDV
 template void
 MultiphysicsInterface<2>::postprocess_probes(
-  const Triangulation<2>                           &triangulation,
   const Mapping<2>                                 &mapping,
   const DoFHandler<2>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_solution,
@@ -389,7 +383,6 @@ MultiphysicsInterface<2>::postprocess_probes(
   const ConditionalOStream                         &pcout);
 template void
 MultiphysicsInterface<3>::postprocess_probes(
-  const Triangulation<3>                           &triangulation,
   const Mapping<3>                                 &mapping,
   const DoFHandler<3>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_solution,

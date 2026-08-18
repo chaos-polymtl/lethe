@@ -220,12 +220,11 @@ void inline print_results(
  */
 template <int dim>
 void
-test(const unsigned int   n_repetitions,
+test(const MPI_Comm      &mpi_communicator,
+     const unsigned int   n_repetitions,
      const Function<dim> &scalar_function,
      const Function<dim> &vector_function)
 {
-  const MPI_Comm mpi_communicator(MPI_COMM_WORLD);
-
   parallel::distributed::Triangulation<dim> triangulation(mpi_communicator);
   GridGenerator::subdivided_hyper_cube(triangulation, n_repetitions);
 
@@ -240,20 +239,31 @@ test(const unsigned int   n_repetitions,
   dof_handler.distribute_dofs(fe);
   dof_handler_vector.distribute_dofs(fe_vector);
 
-  // Initialize and fill solution fields with function
-  TrilinosWrappers::MPI::Vector solution_field_scalar(
+  // Initialize, fill solution fields with functions and update ghost values
+  TrilinosWrappers::MPI::Vector solution_field_scalar_owned(
     dof_handler.locally_owned_dofs(), mpi_communicator);
+  TrilinosWrappers::MPI::Vector solution_field_scalar_relevant(
+    dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(dof_handler),
+    mpi_communicator);
   VectorTools::interpolate(mapping,
                            dof_handler,
                            scalar_function,
-                           solution_field_scalar);
+                           solution_field_scalar_owned);
+  solution_field_scalar_relevant = solution_field_scalar_owned;
 
-  TrilinosWrappers::MPI::Vector solution_field_vector(
+
+  TrilinosWrappers::MPI::Vector solution_field_vector_owned(
     dof_handler_vector.locally_owned_dofs(), mpi_communicator);
+  TrilinosWrappers::MPI::Vector solution_field_vector_relevant(
+    dof_handler_vector.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(dof_handler_vector),
+    mpi_communicator);
   VectorTools::interpolate(mapping,
                            dof_handler_vector,
                            vector_function,
-                           solution_field_vector);
+                           solution_field_vector_owned);
+  solution_field_vector_relevant = solution_field_vector_owned;
 
   // Define evaluation points
   std::vector<Point<dim>> evaluation_points;
@@ -264,27 +274,32 @@ test(const unsigned int   n_repetitions,
   std::vector<Tensor<1, dim, double>> evaluated_vector_values;
 
   // Evaluate values at evaluation points
-  evaluate_values_at_points(triangulation,
-                            mapping,
+  evaluate_values_at_points(mapping,
                             dof_handler,
-                            solution_field_scalar,
+                            solution_field_scalar_relevant,
                             evaluation_points,
                             evaluated_scalar_values);
 
-  evaluate_values_at_points<dim>(triangulation,
-                                 mapping,
+  evaluate_values_at_points<dim>(mapping,
                                  dof_handler_vector,
-                                 solution_field_vector,
+                                 solution_field_vector_relevant,
                                  evaluation_points,
                                  evaluated_vector_values);
 
   // Print results
-  deallog << "Scalar field results: " << std::endl;
-  print_results(evaluation_points, evaluated_scalar_values, scalar_function);
-  deallog << std::endl;
-  deallog << "Vector field results: " << std::endl;
-  print_results(evaluation_points, evaluated_vector_values, vector_function);
-  deallog << std::endl;
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      deallog << "Scalar field results: " << std::endl;
+      print_results(evaluation_points,
+                    evaluated_scalar_values,
+                    scalar_function);
+      deallog << std::endl;
+      deallog << "Vector field results: " << std::endl;
+      print_results(evaluation_points,
+                    evaluated_vector_values,
+                    vector_function);
+      deallog << std::endl;
+    }
 }
 
 
@@ -293,24 +308,56 @@ main(int argc, char *argv[])
 {
   try
     {
-      initlog();
+      mpi_initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-      deallog << "Running dim == 2, linear functions" << std::endl;
-      test<2>(8, LinearScalarField<2>(), LinearVectorField<2>());
-      deallog << "************************************************************"
-              << std::endl;
-      deallog << "Running dim == 2, cosine functions" << std::endl;
-      test<2>(32,
+
+      const MPI_Comm mpi_communicator(MPI_COMM_WORLD);
+
+
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+        deallog << "Running dim == 2, linear functions" << std::endl;
+
+      test<2>(mpi_communicator,
+              8,
+              LinearScalarField<2>(),
+              LinearVectorField<2>());
+
+
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+        {
+          deallog
+            << "************************************************************"
+            << std::endl;
+          deallog << "Running dim == 2, cosine functions" << std::endl;
+        }
+      test<2>(mpi_communicator,
+              12,
               Functions::CosineFunction<2>(1),
               Functions::CosineGradFunction<2>());
-      deallog << "************************************************************"
-              << std::endl;
-      deallog << "Running dim == 3, linear functions" << std::endl;
-      test<3>(8, LinearScalarField<3>(), LinearVectorField<3>());
-      deallog << "************************************************************"
-              << std::endl;
-      deallog << "Running dim == 3, cosine functions" << std::endl;
-      test<3>(32,
+
+
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+        {
+          deallog
+            << "************************************************************"
+            << std::endl;
+          deallog << "Running dim == 3, linear functions" << std::endl;
+        }
+      test<3>(mpi_communicator,
+              8,
+              LinearScalarField<3>(),
+              LinearVectorField<3>());
+
+
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+        {
+          deallog
+            << "************************************************************"
+            << std::endl;
+          deallog << "Running dim == 3, cosine functions" << std::endl;
+        }
+      test<3>(mpi_communicator,
+              12,
               Functions::CosineFunction<3>(1),
               Functions::CosineGradFunction<3>());
     }

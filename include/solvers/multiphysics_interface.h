@@ -932,22 +932,22 @@ public:
   };
 
   /**
-   * @brief Checks validity of the variable and if valid, calls probe
-   * postprocessing function of the PostprocessingProbes object.
+   * @brief Checks validity of the variable and if valid, calls the appropriate
+   * PostprocessingProbes::postprocess_probes() function for the specified
+   * variable.
    *
    * @tparam VectorType Type of vector of the solution vector.
    *
-   * @param[in] triangulation Triangulation object.
    * @param[in] mapping Mapping of the domain.
    * @param[in] dof_handler DoF handler associated to the solution field.
    * @param[in] present_solution Vector containing the scalar solution field.
+   * For distributed meshes, ghost elements must be updated.
    * @param[in] variable Variable of interest.
    * @param[in] pcout Parallel console output stream.
    */
   template <typename VectorType>
   void
-  postprocess_probes(const Triangulation<dim> &triangulation,
-                     const Mapping<dim>       &mapping,
+  postprocess_probes(const Mapping<dim>       &mapping,
                      const DoFHandler<dim>    &dof_handler,
                      const VectorType         &present_solution,
                      const Variable            variable,
@@ -956,8 +956,7 @@ public:
     if (probe_postprocessor.implemented_scalar_variables.contains(variable))
       {
         std::vector<double> evaluated_scalar_values;
-        probe_postprocessor.postprocess_probes(triangulation,
-                                               mapping,
+        probe_postprocessor.postprocess_probes(mapping,
                                                dof_handler,
                                                present_solution,
                                                variable,
@@ -968,8 +967,7 @@ public:
                variable))
       {
         std::vector<Tensor<1, dim, double>> evaluated_vector_values;
-        probe_postprocessor.postprocess_probes(triangulation,
-                                               mapping,
+        probe_postprocessor.postprocess_probes(mapping,
                                                dof_handler,
                                                present_solution,
                                                variable,
