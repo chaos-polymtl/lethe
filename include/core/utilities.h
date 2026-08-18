@@ -1196,6 +1196,9 @@ struct cut_cell_comparison
  * distributed meshes, ghost elements must be updated.
  * @param[in] evaluation_points Vector of points where the values of the
  * solution field are to be evaluated.
+ * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation
+ * object used to evaluate values  of the variable of interest at a given points
+ * of the domain.
  * @param[in,out] evaluated_scalar_values Vector of evaluated scalar values.
  * @param[in] first_selected_component First component of the solution to select
  * if the solution field is a vector field. This is used to extract the correct
@@ -1207,12 +1210,14 @@ struct cut_cell_comparison
  */
 template <int dim, typename VectorType>
 void
-evaluate_values_at_points(const Mapping<dim>            &mapping,
-                          const DoFHandler<dim>         &dof_handler,
-                          const VectorType              &solution_field,
-                          const std::vector<Point<dim>> &evaluation_points,
-                          std::vector<double> &evaluated_scalar_values,
-                          const unsigned int   first_selected_component = 0);
+evaluate_values_at_points(
+  const Mapping<dim>                         &mapping,
+  const DoFHandler<dim>                      &dof_handler,
+  const VectorType                           &solution_field,
+  const std::vector<Point<dim>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<dim> &remote_point_evaluator,
+  std::vector<double>                        &evaluated_scalar_values,
+  const unsigned int                          first_selected_component = 0);
 
 /**
  * @brief Evaluates the values of a vector field at remote points of the domain
@@ -1227,11 +1232,14 @@ evaluate_values_at_points(const Mapping<dim>            &mapping,
  * @param[in] solution_field Vector containing the vector solution field.
  * @param[in] evaluation_points Vector of points where the values of the
  * solution field are to be evaluated.
+ * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation
+ * object used to evaluate values  of the variable of interest at a given points
+ * of the domain.
  * @param[in,out] evaluated_vector_values Vector of evaluated vector values.
  * @param[in] first_selected_component First component of the solution to
  * select. This is used to extract the correct fields when the solution vector
- * contains multiple fields (e.g., velocity and
- * pressure are stored in a same solution vector).
+ * contains multiple fields (e.g., velocity and pressure are stored in a same
+ * solution vector).
  *
  * @remark If a given evaluation point is not within the simulated domain, an
  * exception is thrown.
@@ -1239,12 +1247,13 @@ evaluate_values_at_points(const Mapping<dim>            &mapping,
 template <int n_component, int dim, typename VectorType>
 void
 evaluate_values_at_points(
-  const Mapping<dim>                  &mapping,
-  const DoFHandler<dim>               &dof_handler,
-  const VectorType                    &solution_field,
-  const std::vector<Point<dim>>       &evaluation_points,
-  std::vector<Tensor<1, dim, double>> &evaluated_vector_values,
-  const unsigned int                   first_selected_component = 0);
+  const Mapping<dim>                         &mapping,
+  const DoFHandler<dim>                      &dof_handler,
+  const VectorType                           &solution_field,
+  const std::vector<Point<dim>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<dim> &remote_point_evaluator,
+  std::vector<Tensor<1, dim, double>>        &evaluated_vector_values,
+  const unsigned int                          first_selected_component = 0);
 
 /**
  * @brief Checks that the evaluation points are within the simulated domain and

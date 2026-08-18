@@ -25,8 +25,8 @@ public:
    * this object through the MultiphysicsInterface object.
    * All evaluated values of variables of a same probe are stored within a same
    * table. All tables are grouped in the PostprocessingProbes::probe_tables
-   * vector. Within the vector, the tables are ordered according to the probe
-   * IDs.
+   * vector. Within the vector, the tables are ordered in increasing order of
+   * probe IDs.
    *
    * @param[in] simulation_control SimulationControl object which is used to
    * obtain the current time and current iteration number.
@@ -45,72 +45,7 @@ public:
                        const unsigned int           output_frequency,
                        const Parameters::Verbosity &verbosity);
 
-  /**
-   * @brief Prepares probe tables by setting the entry formats and precisions
-   * for all specified probes.
-   */
-  inline void
-  prepare_probe_tables()
-  {
-    const auto &probing_points_per_variable =
-      probing_points_parameters.probing_points_per_variable;
 
-    // Initialize time column for all tables
-    for (auto &current_table : probe_tables)
-      {
-        current_table.declare_column("time");
-        current_table.set_precision("time", table_precision);
-        current_table.set_scientific("time", true);
-      }
-
-    // Get all variable with probes
-    auto keys_range = std::views::keys(probing_points_per_variable);
-
-    // Loop over all variables with probes to initialize table fields with
-    // correct formating of columns
-    for (auto variable_it = keys_range.begin(); variable_it != keys_range.end();
-         ++variable_it)
-      {
-        const auto &probing_points_of_variable =
-          probing_points_parameters.probing_points_per_variable.at(
-            *variable_it);
-
-        // Go through tables of the variable and prepare them by declaring and
-        // formating the column(s) of the variable
-        for (const unsigned int &id : probing_points_of_variable.ids)
-          {
-            TableHandler     &current_table = probe_tables[id];
-            const std::string column_name =
-              get_variable_string_with_underscores(*variable_it);
-
-            if (implemented_scalar_variables.contains(*variable_it))
-              {
-                current_table.declare_column(column_name);
-                current_table.set_precision(column_name, table_precision);
-                current_table.set_scientific(column_name, true);
-              }
-            else if (implemented_vector_variables.contains(*variable_it))
-              {
-                // Only velocity is implemented at the moment
-                current_table.declare_column(column_name + "_x");
-                current_table.set_precision(column_name + "_x",
-                                            table_precision);
-                current_table.set_scientific(column_name + "_x", true);
-                current_table.declare_column(column_name + "_y");
-                current_table.set_precision(column_name + "_y",
-                                            table_precision);
-                current_table.set_scientific(column_name + "_y", true);
-                if constexpr (dim == 3)
-                  {
-                    current_table.declare_column(column_name + "_z");
-                    current_table.set_precision(column_name + "_z",
-                                                table_precision);
-                    current_table.set_scientific(column_name + "_z", true);
-                  }
-              }
-          }
-      }
-  }
 
   /**
    * @brief Evaluates scalar variables (e.g., pressure) at specified points
@@ -238,6 +173,102 @@ public:
 
 private:
   /**
+   * @brief Prepares probe tables by setting the entry formats and precisions
+   * for all specified probes.
+   */
+  inline void
+  prepare_probe_tables()
+  {
+    const auto &probing_points_per_variable =
+      probing_points_parameters.probing_points_per_variable;
+
+    // Initialize time column for all tables
+    for (auto &current_table : probe_tables)
+      {
+        current_table.declare_column("time");
+        current_table.set_precision("time", table_precision);
+        current_table.set_scientific("time", true);
+      }
+
+    // Get all variable with probes
+    auto keys_range = std::views::keys(probing_points_per_variable);
+
+    // Loop over all variables with probes to initialize table fields with
+    // correct formating of columns
+    for (auto variable_it = keys_range.begin(); variable_it != keys_range.end();
+         ++variable_it)
+      {
+        const auto &probing_points_of_variable =
+          probing_points_parameters.probing_points_per_variable.at(
+            *variable_it);
+
+        // Go through tables of the variable and prepare them by declaring and
+        // formating the column(s) of the variable
+        for (const unsigned int &id : probing_points_of_variable.ids)
+          {
+            TableHandler     &current_table = probe_tables[id];
+            const std::string column_name =
+              get_variable_string_with_underscores(*variable_it);
+
+            if (implemented_scalar_variables.contains(*variable_it))
+              {
+                current_table.declare_column(column_name);
+                current_table.set_precision(column_name, table_precision);
+                current_table.set_scientific(column_name, true);
+              }
+            else if (implemented_vector_variables.contains(*variable_it))
+              {
+                // Only velocity is implemented at the moment
+                current_table.declare_column(column_name + "_x");
+                current_table.set_precision(column_name + "_x",
+                                            table_precision);
+                current_table.set_scientific(column_name + "_x", true);
+                current_table.declare_column(column_name + "_y");
+                current_table.set_precision(column_name + "_y",
+                                            table_precision);
+                current_table.set_scientific(column_name + "_y", true);
+                if constexpr (dim == 3)
+                  {
+                    current_table.declare_column(column_name + "_z");
+                    current_table.set_precision(column_name + "_z",
+                                                table_precision);
+                    current_table.set_scientific(column_name + "_z", true);
+                  }
+              }
+          }
+      }
+  }
+
+  /**
+   * @brief Sets up and reinitializes the Utilities::MPI::RemotePointEvaluation
+   * object for a given variable when needed.
+   *
+   * @param[in] triangulation Triangulation object.
+   * @param[in] mapping Mapping of the domain.
+   * @param[in] variable Variable of interest.
+   */
+  inline void
+  setup_and_reinitialize_remote_point_evaluator(
+    const Triangulation<dim> &triangulation,
+    const Mapping<dim>       &mapping,
+    const Variable           &variable)
+  {
+    // Reinitialize the evaluator if needed (when changes in the triangulation
+    // occur)
+    Utilities::MPI::RemotePointEvaluation<dim> &remote_point_evaluator =
+      remote_point_evaluators.try_emplace(variable).first->second;
+    if (!remote_point_evaluator.is_ready())
+      {
+        const std::vector<Point<dim>> &evaluation_points =
+          probing_points_parameters.probing_points_per_variable.at(variable)
+            .points;
+        remote_point_evaluator.reinit(evaluation_points,
+                                      triangulation,
+                                      mapping);
+      }
+  }
+
+  /**
    * @brief Checks if the table of a specified probing point (@p probe_id)
    * already has a row entry for the current time step.
    *
@@ -282,8 +313,13 @@ private:
    * multiple variables */
   std::set<unsigned int> probe_tables_with_current_time;
 
-  /// Tables of probe measures
+  /** Tables of probe measures (1 table per probe). The table index in the
+   * vector corresponds to the probe ID. */
   std::vector<TableHandler> probe_tables;
+
+  /// Remote point evaluators (1 evaluator per variable)
+  std::map<Variable, Utilities::MPI::RemotePointEvaluation<dim>>
+    remote_point_evaluators;
 
   /// Precision of table entries
   const unsigned int table_precision =

@@ -1118,6 +1118,13 @@ namespace Parameters
      * @brief Probing points parameters. This is used to monitor the evolution
      * of variables (e.g., temperature) at specified points in the domain.
      *
+     * The probing points are grouped according the evaluated variables in the
+     * map ProbingPoints::probing_points_per_variable for easier access when
+     * postprocessing in the different physics. The names (output filenames) of
+     * the probes are stored in the vector
+     * ProbingPoints::probing_points_output_names. The indices of the vector
+     * correspond to the probe IDs.
+     *
      * @remark The points defined must be part of the domain.
      */
     struct ProbingPoints
@@ -1128,7 +1135,7 @@ namespace Parameters
        */
       struct ProbingPointsPerVariable
       {
-        /** Identifier of the probe points. This is required since multiple
+        /** Identifiers of the probe points. This is required since multiple
          * variable can be evaluated a same probing location, but all fields of
          * a same probe are written in the same file. */
         std::vector<unsigned int> ids;
@@ -1146,10 +1153,15 @@ namespace Parameters
       /// Probing point output names ordered by ID
       std::vector<std::string> probing_points_output_names;
 
-      /** Map that regroups all probing points information (ID and coordinates)
+      /**
+       * Map that regroups all probing points information (ID and coordinates)
        * of a same variable under the same variable key. This map is used within
        * the physics to quickly identify the probes that request an evaluation
-       * of one of its variables.*/
+       * of one of its variables.
+       *
+       * @remark This is the only place where the probing points are stored.
+       * They are directly parsed in this map from the parameter file.
+       */
       std::map<Variable, ProbingPointsPerVariable> probing_points_per_variable;
 
       /**
@@ -1179,11 +1191,12 @@ namespace Parameters
                                     const unsigned int &id,
                                     const Point<dim>   &point)
       {
-        if (!probing_points_per_variable.contains(variable))
-          probing_points_per_variable.insert(
-            {variable, ProbingPointsPerVariable()});
+        // Initialize new variable entry if there is none and get probes of the
+        // variable
+        ProbingPointsPerVariable &probes_of_variable =
+          probing_points_per_variable.try_emplace(variable).first->second;
 
-        auto &ids = probing_points_per_variable[variable].ids;
+        auto &ids = probes_of_variable.ids;
 
         AssertThrow(std::find(ids.begin(), ids.end(), id) == ids.end(),
                     ExcMessage(
@@ -1192,9 +1205,9 @@ namespace Parameters
                       get_variable_string(variable) +
                       "'. Please only specify it once."));
 
-
-        probing_points_per_variable[variable].ids.emplace_back(id);
-        probing_points_per_variable[variable].points.emplace_back(point);
+        // Emplace back id and point coordinates if entry is not duplicated
+        ids.emplace_back(id);
+        probes_of_variable.points.emplace_back(point);
       }
     };
 
