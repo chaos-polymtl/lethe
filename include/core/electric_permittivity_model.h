@@ -48,7 +48,7 @@ public:
   {}
 
   /**
-   * @brief Calculates the value the electric permittivity
+   * @brief Calculates the value of the electric permittivity
    * @param[in] fields_values Value of the various fields on which the electric
    * permittivity depends.
    * @return Value of the electric permittivity calculated with the fields_value.
@@ -130,7 +130,7 @@ public:
   }
 
   /**
-   * @brief Calculates the value the electric permittivity
+   * @brief Calculates the value of the electric permittivity
    * @param[in] fields_values Value of the various fields on which the electric
    * permittivity depends.
    * @return Value of the electric permittivity calculated with the fields_value.

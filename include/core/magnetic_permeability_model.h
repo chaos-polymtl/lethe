@@ -48,7 +48,7 @@ public:
   {}
 
   /**
-   * @brief Calculates the value the magnetic permeability
+   * @brief Calculates the value of the magnetic permeability
    * @param[in] field_values Values of the various fields on which the magnetic
    * permeability depends.
    * @return Value of the magnetic permeability calculated with the field_values.
@@ -130,7 +130,7 @@ public:
   }
 
   /**
-   * @brief Calculates the value the magnetic permeability
+   * @brief Calculates the value of the magnetic permeability
    * @param[in] field_values Values of the various fields on which the magnetic
    * permeability depends.
    * @return Value of the magnetic permeability calculated with the field_values.

@@ -657,6 +657,52 @@ TimeHarmonicMaxwell<dim>::update_material_properties(
 
 template <int dim>
 void
+TimeHarmonicMaxwell<dim>::update_material_properties(
+  const PhysicalPropertiesManager            &physical_properties_manager,
+  const std::map<field, std::vector<double>> &field_values_vectors,
+  std::vector<std::complex<double>>          &effective_electric_permittivities,
+  std::vector<std::complex<double>>          &effective_magnetic_permeabilities,
+  const unsigned int                          material_id)
+{
+  const unsigned int n_q_points =
+    field_values_vectors.at(field::temperature).size();
+
+  // Create temporary vectors to store the real and imaginary parts of the
+  // electromagnetic properties
+  std::vector<double> permittivity_real(n_q_points);
+  std::vector<double> permittivity_imag(n_q_points);
+  std::vector<double> conductivity(n_q_points);
+  std::vector<double> permeability_real(n_q_points);
+  std::vector<double> permeability_imag(n_q_points);
+
+  physical_properties_manager.get_electric_permittivity_real(0, material_id)
+    ->vector_value(field_values_vectors, permittivity_real);
+  physical_properties_manager.get_electric_permittivity_imag(0, material_id)
+    ->vector_value(field_values_vectors, permittivity_imag);
+  physical_properties_manager.get_electric_conductivity(0, material_id)
+    ->vector_value(field_values_vectors, conductivity);
+  physical_properties_manager.get_magnetic_permeability_real(0, material_id)
+    ->vector_value(field_values_vectors, permeability_real);
+  physical_properties_manager.get_magnetic_permeability_imag(0, material_id)
+    ->vector_value(field_values_vectors, permeability_imag);
+
+  // We resize the effective electromagnetic property vectors to match the
+  // number of quadrature points because this can be called
+  effective_electric_permittivities.resize(n_q_points);
+  effective_magnetic_permeabilities.resize(n_q_points);
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      effective_electric_permittivities[q] = {permittivity_real[q],
+                                              permittivity_imag[q] +
+                                                conductivity[q]};
+      effective_magnetic_permeabilities[q] = {permeability_real[q],
+                                              permeability_imag[q]};
+    }
+}
+
+template <int dim>
+void
 TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
   const PhysicalPropertiesManager &physical_properties_manager)
 {
@@ -713,10 +759,12 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
       // Containers for electromagnetic quantities at the quadrature points
       Tensor<1, dim, std::complex<double>> E_inc;
       Tensor<1, dim, std::complex<double>> H_inc;
-      std::complex<double>                 effective_electric_permittivity;
-      std::complex<double>                 effective_magnetic_permeability;
-      unsigned int                         material_id;
-      bool cell_material_needs_temperature = false;
+      std::vector<std::complex<double>>    effective_electric_permittivities(
+        n_face_q_points);
+      std::vector<std::complex<double>> effective_magnetic_permeabilities(
+        n_face_q_points);
+      unsigned int material_id;
+      bool         cell_material_needs_temperature = false;
 
       // The temperature field is only needed when at least one electromagnetic
       // property depends on temperature.
@@ -724,8 +772,8 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
       std::unique_ptr<FEFaceValues<dim>> fe_face_values_temperature;
       const DoFHandler<dim>             *dof_handler_temperature = nullptr;
       const GlobalVectorType            *temperature_solution    = nullptr;
-      std::vector<double>     temperature_face_values(n_face_q_points);
-      std::map<field, double> field_values;
+      std::vector<double> temperature_face_values(n_face_q_points);
+      std::map<field, std::vector<double>> field_values_vector;
 
       if (needs_temperature)
         {
@@ -809,6 +857,19 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                       electromagnetic_parameters.waveguide_boundary_ids,
                       face->boundary_id()));
 
+                  // We update the material properties for the current face
+                  // quadrature points. If no temperature field is needed,
+                  // the temperature_face_values vector is filled with zeros
+                  // and will not affect the material properties.
+                  field_values_vector[field::temperature] =
+                    temperature_face_values;
+
+                  update_material_properties(physical_properties_manager,
+                                             field_values_vector,
+                                             effective_electric_permittivities,
+                                             effective_magnetic_permeabilities,
+                                             material_id);
+
                   // Loop over all face quadrature points
                   for (unsigned int q_point = 0; q_point < n_face_q_points;
                        ++q_point)
@@ -821,26 +882,12 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                       const double JxW_face =
                         fe_face_values_trial_skeleton.JxW(q_point);
 
-                      // We update the material properties for the current face
-                      // quadrature points. If no temperature field is needed,
-                      // the temperature_face_values vector is filled with zeros
-                      // and will not affect the material properties.
-                      field_values[field::temperature] =
-                        temperature_face_values[q_point];
-
-                      update_material_properties(
-                        physical_properties_manager,
-                        field_values,
-                        effective_electric_permittivity,
-                        effective_magnetic_permeability,
-                        material_id);
-
                       std::tie(E_inc, H_inc) =
                         compute_waveguide_port_incident_fields(
                           position,
                           normal,
-                          effective_electric_permittivity,
-                          effective_magnetic_permeability,
+                          effective_electric_permittivities[q_point],
+                          effective_magnetic_permeabilities[q_point],
                           boundary_index);
 
                       // The Poynting vector is given by S = 0.5 * Re(E
@@ -2154,16 +2201,21 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
               unsigned int                     material_id;
               const PhysicalPropertiesManager &physical_properties_manager =
                 this->simulation_parameters.physical_properties_manager;
-              std::complex<double> effective_electric_permittivity_last_solved;
-              std::complex<double> effective_magnetic_permeability_last_solved;
-              std::map<field, double> field_values_last_solved;
-              std::vector<double>     temperature_last_solved_values;
-              std::complex<double>    effective_electric_permittivity_current;
-              std::complex<double>    effective_magnetic_permeability_current;
-              std::map<field, double> field_values_current;
-              std::vector<double>     temperature_current_values;
-              double                  max_relative_change = 0.0;
-              unsigned int            n_q_points          = 0;
+              std::vector<std::complex<double>>
+                effective_electric_permittivities_last_solved;
+              std::vector<std::complex<double>>
+                effective_magnetic_permeabilities_last_solved;
+              std::map<field, std::vector<double>>
+                                  field_values_vector_last_solved;
+              std::vector<double> temperature_last_solved_values;
+              std::vector<std::complex<double>>
+                effective_electric_permittivities_current;
+              std::vector<std::complex<double>>
+                effective_magnetic_permeabilities_current;
+              std::map<field, std::vector<double>> field_values_vector_current;
+              std::vector<double>                  temperature_current_values;
+              double                               max_relative_change = 0.0;
+              unsigned int                         n_q_points          = 0;
 
               // The temperature field is only needed when at least one
               // electromagnetic property depends on temperature.
@@ -2211,28 +2263,29 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                             this->temperature_last_solved_solution,
                             temperature_last_solved_values);
 
+                          field_values_vector_last_solved[field::temperature] =
+                            temperature_last_solved_values;
+                          field_values_vector_current[field::temperature] =
+                            temperature_current_values;
+
                           material_id = cell->material_id();
+
+                          update_material_properties(
+                            physical_properties_manager,
+                            field_values_vector_last_solved,
+                            effective_electric_permittivities_last_solved,
+                            effective_magnetic_permeabilities_last_solved,
+                            material_id);
+
+                          update_material_properties(
+                            physical_properties_manager,
+                            field_values_vector_current,
+                            effective_electric_permittivities_current,
+                            effective_magnetic_permeabilities_current,
+                            material_id);
+
                           for (unsigned int q = 0; q < n_q_points; ++q)
                             {
-                              field_values_last_solved[field::temperature] =
-                                temperature_last_solved_values[q];
-                              field_values_current[field::temperature] =
-                                temperature_current_values[q];
-
-                              update_material_properties(
-                                physical_properties_manager,
-                                field_values_last_solved,
-                                effective_electric_permittivity_last_solved,
-                                effective_magnetic_permeability_last_solved,
-                                material_id);
-
-                              update_material_properties(
-                                physical_properties_manager,
-                                field_values_current,
-                                effective_electric_permittivity_current,
-                                effective_magnetic_permeability_current,
-                                material_id);
-
                               // Here we check if the magnitude of the complexe
                               // property difference normalized by the magnitude
                               // of the last solved property is greater than the
@@ -2242,16 +2295,20 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                               // threshold value to have a faster computation.
                               double relative_change_electric_permittivity =
                                 std::norm(
-                                  effective_electric_permittivity_current -
-                                  effective_electric_permittivity_last_solved) /
+                                  effective_electric_permittivities_current[q] -
+                                  effective_electric_permittivities_last_solved
+                                    [q]) /
                                 std::norm(
-                                  effective_electric_permittivity_last_solved);
+                                  effective_electric_permittivities_last_solved
+                                    [q]);
                               double relative_change_magnetic_permeability =
                                 std::norm(
-                                  effective_magnetic_permeability_current -
-                                  effective_magnetic_permeability_last_solved) /
+                                  effective_magnetic_permeabilities_current[q] -
+                                  effective_magnetic_permeabilities_last_solved
+                                    [q]) /
                                 std::norm(
-                                  effective_magnetic_permeability_last_solved);
+                                  effective_magnetic_permeabilities_last_solved
+                                    [q]);
                               max_relative_change =
                                 std::max({relative_change_electric_permittivity,
                                           relative_change_magnetic_permeability,
@@ -2327,10 +2384,10 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   // Get properties manager and define model physical properties
   const auto &physical_properties_manager =
     this->simulation_parameters.physical_properties_manager;
-  std::complex<double> effective_electric_permittivity;
-  std::complex<double> effective_magnetic_permeability;
-  unsigned int         material_id;
-  bool                 cell_material_needs_temperature;
+  std::vector<std::complex<double>> effective_electric_permittivities;
+  std::vector<std::complex<double>> effective_magnetic_permeabilities;
+  unsigned int                      material_id;
+  bool                              cell_material_needs_temperature;
 
   /// Excitation properties
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
@@ -2380,13 +2437,13 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                                         update_values);
 
   // We may need the temperature field for the physical properties.
-  std::unique_ptr<FEValues<dim>>     fe_values_temperature;
-  std::unique_ptr<FEFaceValues<dim>> fe_face_values_temperature;
-  const DoFHandler<dim>             *dof_handler_temperature = nullptr;
-  const GlobalVectorType            *temperature_solution    = nullptr;
-  std::vector<double>                temperature_values(n_q_points);
-  std::vector<double>                temperature_face_values(n_face_q_points);
-  std::map<field, double>            field_values;
+  std::unique_ptr<FEValues<dim>>       fe_values_temperature;
+  std::unique_ptr<FEFaceValues<dim>>   fe_face_values_temperature;
+  const DoFHandler<dim>               *dof_handler_temperature = nullptr;
+  const GlobalVectorType              *temperature_solution    = nullptr;
+  std::vector<double>                  temperature_values(n_q_points);
+  std::vector<double>                  temperature_face_values(n_face_q_points);
+  std::map<field, std::vector<double>> field_values_vector;
 
   if (needs_temperature)
     {
@@ -2763,27 +2820,28 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                 }
             }
 
+          // We update the material properties for the current face
+          // quadrature points. If no temperature field is needed, the
+          // temperature_face_values vector is filled with zeros and will
+          // not affect the material properties.
+          field_values_vector[field::temperature] = temperature_values;
+
+          update_material_properties(physical_properties_manager,
+                                     field_values_vector,
+                                     effective_electric_permittivities,
+                                     effective_magnetic_permeabilities,
+                                     material_id);
+
           // Now we loop over all quadrature points of the cell
           for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
             {
-              // We update the material properties for the current face
-              // quadrature points. If no temperature field is needed, the
-              // temperature_face_values vector is filled with zeros and will
-              // not affect the material properties.
-              field_values[field::temperature] = temperature_values[q_point];
-
-              update_material_properties(physical_properties_manager,
-                                         field_values,
-                                         effective_electric_permittivity,
-                                         effective_magnetic_permeability,
-                                         material_id);
               const std::complex<double> iweffective_magnetic_permeability =
-                imag * omega * effective_magnetic_permeability;
+                imag * omega * effective_magnetic_permeabilities[q_point];
               const std::complex<double>
                 conj_iweffective_magnetic_permeability =
                   std::conj(iweffective_magnetic_permeability);
               const std::complex<double> iweps_r =
-                imag * omega * effective_electric_permittivity;
+                imag * omega * effective_electric_permittivities[q_point];
               const std::complex<double> conj_iweps_r = std::conj(iweps_r);
 
               // To avoid unnecessary computation, we fill the shape values
@@ -3068,6 +3126,17 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                     }
                 }
 
+              // We update the material properties for the current face
+              // quadrature points. If no temperature field is needed, the
+              // temperature_face_values vector is filled with zeros and
+              // will not affect the material properties.
+              field_values_vector[field::temperature] = temperature_face_values;
+              update_material_properties(physical_properties_manager,
+                                         field_values_vector,
+                                         effective_electric_permittivities,
+                                         effective_magnetic_permeabilities,
+                                         material_id);
+
               // Loop over all face quadrature points
               for (unsigned int q_point = 0; q_point < n_face_q_points;
                    ++q_point)
@@ -3079,18 +3148,6 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                     fe_face_values_trial_skeleton.normal_vector(q_point);
                   const double JxW_face =
                     fe_face_values_trial_skeleton.JxW(q_point);
-
-                  // We update the material properties for the current face
-                  // quadrature points. If no temperature field is needed, the
-                  // temperature_face_values vector is filled with zeros and
-                  // will not affect the material properties.
-                  field_values[field::temperature] =
-                    temperature_face_values[q_point];
-                  update_material_properties(physical_properties_manager,
-                                             field_values,
-                                             effective_electric_permittivity,
-                                             effective_magnetic_permeability,
-                                             material_id);
 
                   // As for the cell, we first loop over the test dofs to fill
                   // the face values containers
@@ -3175,8 +3232,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                       BoundaryConditions::BoundaryType::silver_muller)
                     {
                       boundary_surface_admittance =
-                        sqrt(effective_electric_permittivity /
-                             effective_magnetic_permeability);
+                        sqrt(effective_electric_permittivities[q_point] /
+                             effective_magnetic_permeabilities[q_point]);
                       conj_boundary_surface_admittance =
                         std::conj(boundary_surface_admittance);
                       g_inc = 0.;
@@ -3248,8 +3305,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                         compute_waveguide_port_excitation(
                           position,
                           normal,
-                          effective_electric_permittivity,
-                          effective_magnetic_permeability,
+                          effective_electric_permittivities[q_point],
+                          effective_magnetic_permeabilities[q_point],
                           boundary_index);
 
                       conj_boundary_surface_admittance =
@@ -3414,10 +3471,10 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   // Get properties manager and define model physical properties
   const auto &physical_properties_manager =
     this->simulation_parameters.physical_properties_manager;
-  std::complex<double> effective_electric_permittivity;
-  std::complex<double> effective_magnetic_permeability;
-  unsigned int         material_id;
-  bool                 cell_material_needs_temperature;
+  std::vector<std::complex<double>> effective_electric_permittivities;
+  std::vector<std::complex<double>> effective_magnetic_permeabilities;
+  unsigned int                      material_id;
+  bool                              cell_material_needs_temperature;
 
   /// Excitation properties
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
@@ -3459,13 +3516,13 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                                         update_values);
 
   // We may need the temperature field for the physical properties.
-  std::unique_ptr<FEValues<dim>>     fe_values_temperature;
-  std::unique_ptr<FEFaceValues<dim>> fe_face_values_temperature;
-  const DoFHandler<dim>             *dof_handler_temperature = nullptr;
-  const GlobalVectorType            *temperature_solution    = nullptr;
-  std::vector<double>                temperature_values(n_q_points);
-  std::vector<double>                temperature_face_values(n_face_q_points);
-  std::map<field, double>            field_values;
+  std::unique_ptr<FEValues<dim>>       fe_values_temperature;
+  std::unique_ptr<FEFaceValues<dim>>   fe_face_values_temperature;
+  const DoFHandler<dim>               *dof_handler_temperature = nullptr;
+  const GlobalVectorType              *temperature_solution    = nullptr;
+  std::vector<double>                  temperature_values(n_q_points);
+  std::vector<double>                  temperature_face_values(n_face_q_points);
+  std::map<field, std::vector<double>> field_values_vector;
 
   if (needs_temperature)
     {
@@ -3854,27 +3911,28 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                 }
             }
 
+          // We update the material properties for the current face
+          // quadrature points. If no temperature field is needed, the
+          // temperature_face_values vector is filled with zeros and will
+          // not affect the material properties.
+          field_values_vector[field::temperature] = temperature_values;
+
+          update_material_properties(physical_properties_manager,
+                                     field_values_vector,
+                                     effective_electric_permittivities,
+                                     effective_magnetic_permeabilities,
+                                     material_id);
+
           // Now we loop over all quadrature points of the cell
           for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
             {
-              // We update the material properties for the current face
-              // quadrature points. If no temperature field is needed, the
-              // temperature_face_values vector is filled with zeros and will
-              // not affect the material properties.
-              field_values[field::temperature] = temperature_values[q_point];
-
-              update_material_properties(physical_properties_manager,
-                                         field_values,
-                                         effective_electric_permittivity,
-                                         effective_magnetic_permeability,
-                                         material_id);
               const std::complex<double> iweffective_magnetic_permeability =
-                imag * omega * effective_magnetic_permeability;
+                imag * omega * effective_magnetic_permeabilities[q_point];
               const std::complex<double>
                 conj_iweffective_magnetic_permeability =
                   std::conj(iweffective_magnetic_permeability);
               const std::complex<double> iweps_r =
-                imag * omega * effective_electric_permittivity;
+                imag * omega * effective_electric_permittivities[q_point];
               const std::complex<double> conj_iweps_r = std::conj(iweps_r);
 
               // To avoid unnecessary computation, we fill the shape values
@@ -4159,6 +4217,18 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                     }
                 }
 
+              // We update the material properties for the current face
+              // quadrature points. If no temperature field is needed, the
+              // temperature_face_values vector is filled with zeros and
+              // will not affect the material properties.
+              field_values_vector[field::temperature] = temperature_face_values;
+
+              update_material_properties(physical_properties_manager,
+                                         field_values_vector,
+                                         effective_electric_permittivities,
+                                         effective_magnetic_permeabilities,
+                                         material_id);
+
               // Loop over all face quadrature points
               for (unsigned int q_point = 0; q_point < n_face_q_points;
                    ++q_point)
@@ -4170,19 +4240,6 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                     fe_face_values_trial_skeleton.normal_vector(q_point);
                   const double JxW_face =
                     fe_face_values_trial_skeleton.JxW(q_point);
-
-                  // We update the material properties for the current face
-                  // quadrature points. If no temperature field is needed, the
-                  // temperature_face_values vector is filled with zeros and
-                  // will not affect the material properties.
-                  field_values[field::temperature] =
-                    temperature_face_values[q_point];
-
-                  update_material_properties(physical_properties_manager,
-                                             field_values,
-                                             effective_electric_permittivity,
-                                             effective_magnetic_permeability,
-                                             material_id);
 
                   // As for the cell, we first loop over the test dofs to fill
                   // the face values containers
@@ -4267,8 +4324,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                       BoundaryConditions::BoundaryType::silver_muller)
                     {
                       boundary_surface_admittance =
-                        sqrt(effective_electric_permittivity /
-                             effective_magnetic_permeability);
+                        sqrt(effective_electric_permittivities[q_point] /
+                             effective_magnetic_permeabilities[q_point]);
                       conj_boundary_surface_admittance =
                         std::conj(boundary_surface_admittance);
                       g_inc = 0.;
@@ -4340,8 +4397,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                         compute_waveguide_port_excitation(
                           position,
                           normal,
-                          effective_electric_permittivity,
-                          effective_magnetic_permeability,
+                          effective_electric_permittivities[q_point],
+                          effective_magnetic_permeabilities[q_point],
                           boundary_index);
 
                       conj_boundary_surface_admittance =

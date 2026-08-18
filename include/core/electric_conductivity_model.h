@@ -39,7 +39,7 @@ public:
   {}
 
   /**
-   * @brief Calculates the value the electric conductivity
+   * @brief Calculates the value of the electric conductivity
    * @param[in] fields_value Values of the various fields on which the electric
    * conductivity depends.
    * @return Value of the electric conductivity calculated with the fields_value.
@@ -121,7 +121,7 @@ public:
   }
 
   /**
-   * @brief Calculates the value the electric conductivity
+   * @brief Calculates the value of the electric conductivity
    * @param[in] fields_value Values of the various fields on which the electric
    * conductivity depends.
    * @return Value of the electric conductivity calculated with the fields_value.
