@@ -324,7 +324,7 @@ Multiphysics Post-processing
 Multiphase Post-processing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+* ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. Two definitions are used for CLS simulation: the algebraic definition where the barycenter :math:`\mathbf{x_b}` and its velocity :math:`\mathbf{v_b}` are 
 
   .. math::
 
@@ -334,7 +334,16 @@ Multiphase Post-processing
 
       \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
-  where :math:`\psi \in [0,1]` is the filtered phase indicator for CLS simulations. 
+  with :math:`\psi \in [0,1]` corresponding to the filtered phase indicator, and the geometric definition where the barycenter :math:`\mathbf{x_{b,geo}}` and its velocity :math:`\mathbf{v_{b,geo}}` are 
+
+  .. math::
+
+      \mathbf{x_{b,geo}} = \frac{\int_{\Omega_1} \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega_1}  \mathrm{d}\Omega}
+
+  .. math::
+
+      \mathbf{v_{b,geo}} = \frac{\int_{\Omega_1} \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega_1} \mathrm{d}\Omega}
+
   
   For Cahn-Hilliard the formula is slightly different since the phase order parameter :math:`\phi` belongs to the :math:`[-1,1]` interval:
   

@@ -185,7 +185,7 @@ InterfaceTools::integrate_volume_and_surface(
   const double            iso_level);
 
 template <int dim, typename VectorType>
-std::pair<Point<dim> , Tensor<1,dim> >
+std::pair<Point<dim>, Tensor<1, dim>>
 InterfaceTools::integrate_barycenter(
   const DoFHandler<dim>    &dof_handler,
   const FiniteElement<dim> &fe,
@@ -207,7 +207,8 @@ InterfaceTools::integrate_barycenter(
   const QGauss<1> quadrature_1D(fe.degree + 1);
 
   NonMatching::RegionUpdateFlags region_update_flags;
-  region_update_flags.inside  = update_JxW_values|update_quadrature_points|update_values;
+  region_update_flags.inside =
+    update_JxW_values | update_quadrature_points | update_values;
 
   NonMatching::FEValues<dim> non_matching_fe_values(
     fe_collection,
@@ -217,16 +218,17 @@ InterfaceTools::integrate_barycenter(
     dof_handler,
     level_set_vector_relevant_copy);
 
-  double volume  = 0.0;
-  
-  Point<dim> barycenter;
-  Tensor<1,dim> barycenter_velocity;
+  double volume = 0.0;
+
+  Point<dim>     barycenter;
+  Tensor<1, dim> barycenter_velocity;
 
   Vector<double> cell_dof_values(fe_velocity.dofs_per_cell);
 
-  FEPointEvaluation<dim+1, dim> fe_point_evaluation(
-    mapping_velocity, fe_velocity, update_values);
-  
+  FEPointEvaluation<dim + 1, dim> fe_point_evaluation(mapping_velocity,
+                                                      fe_velocity,
+                                                      update_values);
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -237,53 +239,57 @@ InterfaceTools::integrate_barycenter(
             non_matching_fe_values.get_inside_fe_values();
 
           if (inside_fe_values)
-          {
-            auto quadrature_points = inside_fe_values->get_quadrature_points();
-
-
-
-            typename DoFHandler<dim>::active_cell_iterator cell_fd(
-                                                            &(dof_handler_velocity.get_triangulation()),
-                                                            cell->level(),
-                                                            cell->index(),
-                                                            &dof_handler_velocity);
-
-            fe_point_evaluation.reinit(cell, quadrature_points);
-
-            cell_fd->get_dof_values(velocity_vector,
-                                   cell_dof_values.begin(),
-                                   cell_dof_values.end());
-
-            fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::values);
-
-            for (const unsigned int q :
-                inside_fe_values->quadrature_point_indices())
             {
-              volume += inside_fe_values->JxW(q);
+              auto quadrature_points =
+                inside_fe_values->get_quadrature_points();
 
-              for (unsigned int i=0; i<dim; i++)
-              {
-                barycenter[i] += quadrature_points[q][i]*inside_fe_values->JxW(q);
+              typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                &(dof_handler_velocity.get_triangulation()),
+                cell->level(),
+                cell->index(),
+                &dof_handler_velocity);
 
-                auto velocity_value = fe_point_evaluation.get_value(q);
-                barycenter_velocity[i] += velocity_value[i]*inside_fe_values->JxW(q);
-              }
+              fe_point_evaluation.reinit(cell, quadrature_points);
+
+              cell_fd->get_dof_values(velocity_vector,
+                                      cell_dof_values.begin(),
+                                      cell_dof_values.end());
+
+              fe_point_evaluation.evaluate(cell_dof_values,
+                                           EvaluationFlags::values);
+
+              for (const unsigned int q :
+                   inside_fe_values->quadrature_point_indices())
+                {
+                  volume += inside_fe_values->JxW(q);
+
+                  for (unsigned int i = 0; i < dim; i++)
+                    {
+                      barycenter[i] +=
+                        quadrature_points[q][i] * inside_fe_values->JxW(q);
+
+                      auto velocity_value = fe_point_evaluation.get_value(q);
+                      barycenter_velocity[i] +=
+                        velocity_value[i] * inside_fe_values->JxW(q);
+                    }
+                }
             }
-          }
         }
     }
 
-  volume  = Utilities::MPI::sum(volume, mpi_communicator);
-  for (unsigned int i=0; i<dim; i++)
+  volume = Utilities::MPI::sum(volume, mpi_communicator);
+  for (unsigned int i = 0; i < dim; i++)
     {
-      barycenter[i] = Utilities::MPI::sum(barycenter[i], mpi_communicator)/volume;
-      barycenter_velocity[i] = Utilities::MPI::sum(barycenter_velocity[i], mpi_communicator)/volume;
+      barycenter[i] =
+        Utilities::MPI::sum(barycenter[i], mpi_communicator) / volume;
+      barycenter_velocity[i] =
+        Utilities::MPI::sum(barycenter_velocity[i], mpi_communicator) / volume;
     }
 
   return {barycenter, barycenter_velocity};
 }
 
-template std::pair<Point<2> , Tensor<1,2> >
+template std::pair<Point<2>, Tensor<1, 2>>
 InterfaceTools::integrate_barycenter(
   const DoFHandler<2>    &dof_handler,
   const FiniteElement<2> &fe,
@@ -291,9 +297,9 @@ InterfaceTools::integrate_barycenter(
   const Mapping<2>       &mapping_velocity,
   const DoFHandler<2>    &dof_handler_velocity,
   const FiniteElement<2> &fe_velocity,
-  const GlobalVectorType         &velocity);
+  const GlobalVectorType &velocity);
 
-template std::pair<Point<3> , Tensor<1,3> >
+template std::pair<Point<3>, Tensor<1, 3>>
 InterfaceTools::integrate_barycenter(
   const DoFHandler<3>    &dof_handler,
   const FiniteElement<3> &fe,
@@ -301,11 +307,11 @@ InterfaceTools::integrate_barycenter(
   const Mapping<3>       &mapping_velocity,
   const DoFHandler<3>    &dof_handler_velocity,
   const FiniteElement<3> &fe_velocity,
-  const GlobalVectorType         &velocity);
+  const GlobalVectorType &velocity);
 
 
 template <int dim, typename VectorType>
-std::pair<Point<dim> , Tensor<1,dim> >
+std::pair<Point<dim>, Tensor<1, dim>>
 InterfaceTools::integrate_barycenter(
   const DoFHandler<dim>    &dof_handler,
   const FiniteElement<dim> &fe,
@@ -314,7 +320,7 @@ InterfaceTools::integrate_barycenter(
   const DoFHandler<dim>    &dof_handler_velocity,
   const FiniteElement<dim> &fe_velocity,
   const VectorType         &velocity_vector,
-  const double iso_level)
+  const double              iso_level)
 {
   // Get MPI communicator
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -324,7 +330,7 @@ InterfaceTools::integrate_barycenter(
 
   level_set_vector_owned_copy = level_set_vector;
 
-  level_set_vector_owned_copy*=-1.0;
+  level_set_vector_owned_copy *= -1.0;
   level_set_vector_owned_copy.add(iso_level);
 
   VectorType level_set_vector_relevant_copy(
@@ -334,8 +340,7 @@ InterfaceTools::integrate_barycenter(
 
   level_set_vector_relevant_copy = level_set_vector_owned_copy;
 
-  return integrate_barycenter(
-                              dof_handler,
+  return integrate_barycenter(dof_handler,
                               fe,
                               level_set_vector_relevant_copy,
                               mapping_velocity,
@@ -344,27 +349,25 @@ InterfaceTools::integrate_barycenter(
                               velocity_vector);
 }
 
-template std::pair<Point<2> , Tensor<1,2> >
-InterfaceTools::integrate_barycenter(
-  const DoFHandler<2>    &dof_handler,
-  const FiniteElement<2> &fe,
-  const GlobalVectorType &level_set_vector,
-  const Mapping<2>       &mapping_velocity,
-  const DoFHandler<2>    &dof_handler_velocity,
-  const FiniteElement<2> &fe_velocity,
-  const GlobalVectorType         &velocity,
-  const double            iso_level);
+template std::pair<Point<2>, Tensor<1, 2>>
+InterfaceTools::integrate_barycenter(const DoFHandler<2>    &dof_handler,
+                                     const FiniteElement<2> &fe,
+                                     const GlobalVectorType &level_set_vector,
+                                     const Mapping<2>       &mapping_velocity,
+                                     const DoFHandler<2> &dof_handler_velocity,
+                                     const FiniteElement<2> &fe_velocity,
+                                     const GlobalVectorType &velocity,
+                                     const double            iso_level);
 
-template std::pair<Point<3> , Tensor<1,3> >
-InterfaceTools::integrate_barycenter(
-  const DoFHandler<3>    &dof_handler,
-  const FiniteElement<3> &fe,
-  const GlobalVectorType &level_set_vector,
-  const Mapping<3>       &mapping_velocity,
-  const DoFHandler<3>    &dof_handler_velocity,
-  const FiniteElement<3> &fe_velocity,
-  const GlobalVectorType &velocity,
-  const double           iso_level);
+template std::pair<Point<3>, Tensor<1, 3>>
+InterfaceTools::integrate_barycenter(const DoFHandler<3>    &dof_handler,
+                                     const FiniteElement<3> &fe,
+                                     const GlobalVectorType &level_set_vector,
+                                     const Mapping<3>       &mapping_velocity,
+                                     const DoFHandler<3> &dof_handler_velocity,
+                                     const FiniteElement<3> &fe_velocity,
+                                     const GlobalVectorType &velocity,
+                                     const double            iso_level);
 
 template <int dim, typename VectorType>
 void
