@@ -199,6 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stabilization.html">Stabilization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
 </ul>
@@ -374,7 +375,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell.html">DPG formulation for time-harmonic Maxwell problems</a></li>
 </ul>
 </li>
 </ul>
@@ -457,7 +458,7 @@
   # Thermal physics
   set heat transfer                   = false
   set viscous dissipation             = false
-  set thermal buoyancy force           = false
+  set thermal buoyancy force          = false
 
   # Tracer
   set tracer                          = false
@@ -465,8 +466,13 @@
   # Multiphase flow
   # Conservative Level-Set method
   set cls                             = false
+
   # Cahn-Hilliard equations
   set cahn hilliard                   = false
+
+  # Electromagnetics
+  set electromagnetics                = false
+  set microwave heating               = false
 end
 </pre></div>
 </div>
@@ -507,6 +513,24 @@ end
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>The CLS solver is used in the example <a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html"><span class="doc">Dam-Break</span></a>.</p>
+</div>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> parameter enables multiphase flow simulations, with two fluids separated by a free surface, using the Cahn-Hilliard equations.</p>
+<p>See <a class="reference internal" href="cahn_hilliard.html"><span class="doc">Cahn-Hilliard</span></a> for advanced Cahn-Hilliard parameters, <a class="reference internal" href="initial_conditions.html"><span class="doc">Initial Conditions</span></a> for the definition of the Cahn-Hilliard conditions and <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#two-phase-simulations">Physical properties - two phase simulations</a> for the definition of the physical properties of both fluids.</p>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electromagnetics</span></code> parameter enables the solution of the time-harmonic Maxwell equations.</p>
+<p>See <a class="reference internal" href="time_harmonic_maxwell.html"><span class="doc">Time-Harmonic Maxwell</span></a> for advanced time-harmonic Maxwell parameters, <a class="reference internal" href="boundary_conditions_multiphysics.html"><span class="doc">Boundary Conditions - Multiphysics</span></a> for the definition of the electromagnetic boundary conditions and <a class="reference internal" href="physical_properties.html"><span class="doc">Physical Properties</span></a> for the definition of the physical properties of the medium.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">heat</span> <span class="pre">transfer</span> <span class="pre">=</span> <span class="pre">true</span></code>, in addition to the electromagnetic solver, the optional parameter <code class="docutils literal notranslate"><span class="pre">microwave</span> <span class="pre">heating</span></code> can be used to enable the calculation of the heat source due to the electromagnetic fields. If <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">microwave</span> <span class="pre">heating</span> <span class="pre">=</span> <span class="pre">true</span></code>, the following heat source is calculated and added to the right-hand side of the heat transfer equation:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[Q_\text{em}=-\nabla \cdot \overline{\mathbf{S}} = \frac{1}{2}\sigma|\mathbf{E}|^2 + \frac{1}{2}\omega\varepsilon_0\varepsilon_\mathrm{im}|\mathbf{E}|^2 + \frac{1}{2}\omega\mu_0\mu_\mathrm{im}|\mathbf{H}|^2,\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\overline{\mathbf{S}}\)</span> is the time-averaged Poynting vector, <span class="math notranslate nohighlight">\(\sigma\)</span> is the conductivity, <span class="math notranslate nohighlight">\(\varepsilon_0\)</span> is the vacuum permittivity, <span class="math notranslate nohighlight">\(\varepsilon_\mathrm{im}\)</span> is the imaginary part of the relative permittivity, <span class="math notranslate nohighlight">\(\mu_0\)</span> is the vacuum permeability, <span class="math notranslate nohighlight">\(\mu_\mathrm{im}\)</span> is the imaginary part of the relative permeability, and <span class="math notranslate nohighlight">\(\mathbf{E}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{H}\)</span> are the electric and magnetic fields, respectively.</p>
+</li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The electromagnetic solver can be used on its own, an example is available in <a class="reference internal" href="../../examples/multiphysics/waveguide/waveguide.html"><span class="doc">Waveguide</span></a>.</p>
 </div>
 </section>
 
@@ -565,5 +589,6 @@ end
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

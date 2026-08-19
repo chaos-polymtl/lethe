@@ -1744,34 +1744,37 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01594" name="l01594"></a><span class="lineno"> 1594</span>        scratch_data.<a class="code hl_variable" href="classHeatTransferScratchData.html#a35b80e1753e0e5a35d62bc2bc62e241e">magnetic_field_real_values</a>[q].norm_square() +</div>
 <div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span>        scratch_data.<a class="code hl_variable" href="classHeatTransferScratchData.html#ada3f7cf28a8b6c8f7206e282250d1107">magnetic_field_imag_values</a>[q].norm_square();</div>
 <div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span> </div>
-<div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>      <span class="comment">// Joule heating: 0.5 * sigma * |E|^2</span></div>
-<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> joule_heating =</div>
-<div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>        0.5 * electric_conductivity * electric_field_squared_amplitude;</div>
-<div class="line"><a id="l01600" name="l01600"></a><span class="lineno"> 1600</span> </div>
-<div class="line"><a id="l01601" name="l01601"></a><span class="lineno"> 1601</span>      <span class="comment">// Dielectric loss heating: 0.5 * omega * epsilon_0 * epsilon_r&#39;&#39; * |E|^2</span></div>
-<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> dielectric_loss_heating =</div>
-<div class="line"><a id="l01603" name="l01603"></a><span class="lineno"> 1603</span>        0.5 * angular_frequency * vacuum_permittivity *</div>
-<div class="line"><a id="l01604" name="l01604"></a><span class="lineno"> 1604</span>        electric_permittivity_imag * electric_field_squared_amplitude;</div>
-<div class="line"><a id="l01605" name="l01605"></a><span class="lineno"> 1605</span> </div>
-<div class="line"><a id="l01606" name="l01606"></a><span class="lineno"> 1606</span>      <span class="comment">// Magnetic loss heating: 0.5 * omega * mu_0 * mu_r&#39;&#39; * |H|^2</span></div>
-<div class="line"><a id="l01607" name="l01607"></a><span class="lineno"> 1607</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> magnetic_loss_heating =</div>
-<div class="line"><a id="l01608" name="l01608"></a><span class="lineno"> 1608</span>        0.5 * angular_frequency * vacuum_permeability *</div>
-<div class="line"><a id="l01609" name="l01609"></a><span class="lineno"> 1609</span>        magnetic_permeability_imag * magnetic_field_squared_amplitude;</div>
-<div class="line"><a id="l01610" name="l01610"></a><span class="lineno"> 1610</span> </div>
-<div class="line"><a id="l01611" name="l01611"></a><span class="lineno"> 1611</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW = scratch_data.<a class="code hl_variable" href="classHeatTransferScratchData.html#a3e89bc4490159f33ee1f3f0ee8bbd602">JxW</a>[q];</div>
-<div class="line"><a id="l01612" name="l01612"></a><span class="lineno"> 1612</span> </div>
-<div class="line"><a id="l01613" name="l01613"></a><span class="lineno"> 1613</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a id="l01614" name="l01614"></a><span class="lineno"> 1614</span>        {</div>
-<div class="line"><a id="l01615" name="l01615"></a><span class="lineno"> 1615</span>          local_rhs(i) +=</div>
-<div class="line"><a id="l01616" name="l01616"></a><span class="lineno"> 1616</span>            (joule_heating + dielectric_loss_heating + magnetic_loss_heating) *</div>
-<div class="line"><a id="l01617" name="l01617"></a><span class="lineno"> 1617</span>            scratch_data.<a class="code hl_variable" href="classHeatTransferScratchData.html#a36fbec24528ee4ae95f39e4e31ee469e">phi_T</a>[q][i] * JxW;</div>
-<div class="line"><a id="l01618" name="l01618"></a><span class="lineno"> 1618</span>        }</div>
-<div class="line"><a id="l01619" name="l01619"></a><span class="lineno"> 1619</span>    } <span class="comment">// end loop on quadrature points</span></div>
-<div class="line"><a id="l01620" name="l01620"></a><span class="lineno"> 1620</span>}</div>
+<div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>      <span class="comment">// Joule heating: 0.5 * sigma * |E|^2, the factor omega*epsilon_0 is</span></div>
+<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>      <span class="comment">// included to recover the electric conductivity in its dimensional form,</span></div>
+<div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>      <span class="comment">// i.e., sigma = omega * epsilon_0 * sigma_r.</span></div>
+<div class="line"><a id="l01600" name="l01600"></a><span class="lineno"> 1600</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> joule_heating = 0.5 * angular_frequency *</div>
+<div class="line"><a id="l01601" name="l01601"></a><span class="lineno"> 1601</span>                                   vacuum_permittivity * electric_conductivity *</div>
+<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span>                                   electric_field_squared_amplitude;</div>
+<div class="line"><a id="l01603" name="l01603"></a><span class="lineno"> 1603</span> </div>
+<div class="line"><a id="l01604" name="l01604"></a><span class="lineno"> 1604</span>      <span class="comment">// Dielectric loss heating: 0.5 * omega * epsilon_0 * epsilon_r&#39;&#39; * |E|^2</span></div>
+<div class="line"><a id="l01605" name="l01605"></a><span class="lineno"> 1605</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> dielectric_loss_heating =</div>
+<div class="line"><a id="l01606" name="l01606"></a><span class="lineno"> 1606</span>        0.5 * angular_frequency * vacuum_permittivity *</div>
+<div class="line"><a id="l01607" name="l01607"></a><span class="lineno"> 1607</span>        electric_permittivity_imag * electric_field_squared_amplitude;</div>
+<div class="line"><a id="l01608" name="l01608"></a><span class="lineno"> 1608</span> </div>
+<div class="line"><a id="l01609" name="l01609"></a><span class="lineno"> 1609</span>      <span class="comment">// Magnetic loss heating: 0.5 * omega * mu_0 * mu_r&#39;&#39; * |H|^2</span></div>
+<div class="line"><a id="l01610" name="l01610"></a><span class="lineno"> 1610</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> magnetic_loss_heating =</div>
+<div class="line"><a id="l01611" name="l01611"></a><span class="lineno"> 1611</span>        0.5 * angular_frequency * vacuum_permeability *</div>
+<div class="line"><a id="l01612" name="l01612"></a><span class="lineno"> 1612</span>        magnetic_permeability_imag * magnetic_field_squared_amplitude;</div>
+<div class="line"><a id="l01613" name="l01613"></a><span class="lineno"> 1613</span> </div>
+<div class="line"><a id="l01614" name="l01614"></a><span class="lineno"> 1614</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW = scratch_data.<a class="code hl_variable" href="classHeatTransferScratchData.html#a3e89bc4490159f33ee1f3f0ee8bbd602">JxW</a>[q];</div>
+<div class="line"><a id="l01615" name="l01615"></a><span class="lineno"> 1615</span> </div>
+<div class="line"><a id="l01616" name="l01616"></a><span class="lineno"> 1616</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a id="l01617" name="l01617"></a><span class="lineno"> 1617</span>        {</div>
+<div class="line"><a id="l01618" name="l01618"></a><span class="lineno"> 1618</span>          local_rhs(i) +=</div>
+<div class="line"><a id="l01619" name="l01619"></a><span class="lineno"> 1619</span>            (joule_heating + dielectric_loss_heating + magnetic_loss_heating) *</div>
+<div class="line"><a id="l01620" name="l01620"></a><span class="lineno"> 1620</span>            scratch_data.<a class="code hl_variable" href="classHeatTransferScratchData.html#a36fbec24528ee4ae95f39e4e31ee469e">phi_T</a>[q][i] * JxW;</div>
+<div class="line"><a id="l01621" name="l01621"></a><span class="lineno"> 1621</span>        }</div>
+<div class="line"><a id="l01622" name="l01622"></a><span class="lineno"> 1622</span>    } <span class="comment">// end loop on quadrature points</span></div>
+<div class="line"><a id="l01623" name="l01623"></a><span class="lineno"> 1623</span>}</div>
 </div>
-<div class="line"><a id="l01621" name="l01621"></a><span class="lineno"> 1621</span> </div>
-<div class="line"><a id="l01622" name="l01622"></a><span class="lineno"> 1622</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classHeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell.html">HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell&lt;2&gt;</a>;</div>
-<div class="line"><a id="l01623" name="l01623"></a><span class="lineno"> 1623</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classHeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell.html">HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell&lt;3&gt;</a>;</div>
+<div class="line"><a id="l01624" name="l01624"></a><span class="lineno"> 1624</span> </div>
+<div class="line"><a id="l01625" name="l01625"></a><span class="lineno"> 1625</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classHeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell.html">HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell&lt;2&gt;</a>;</div>
+<div class="line"><a id="l01626" name="l01626"></a><span class="lineno"> 1626</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classHeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell.html">HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="abdf_8h_html_a79e44dc10ababc737a8659c2f5f8c18a"><div class="ttname"><a href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a></div><div class="ttdeci">unsigned int number_of_previous_solutions(const Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Get the number of previous time steps for a specific BDF scheme.</div><div class="ttdef"><b>Definition</b> <a href="bdf_8h_source.html#l00097">bdf.h:97</a></div></div>
 <div class="ttc" id="aclassHeatTransferAssemblerBDF_html"><div class="ttname"><a href="classHeatTransferAssemblerBDF.html">HeatTransferAssemblerBDF</a></div><div class="ttdoc">Class that assembles the transient time arising from BDF time integration for the heat transfer solve...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00088">heat_transfer_assemblers.h:89</a></div></div>

@@ -9,4 +9,4 @@ Electromagnetism
 
     time_harmonic
     time_harmonic_weak_form
-    magnetohydrodynamics
+    dpg_time_harmonic_maxwell

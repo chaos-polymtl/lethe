@@ -199,6 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stabilization.html">Stabilization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
 </ul>
@@ -374,7 +375,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell.html">DPG formulation for time-harmonic Maxwell problems</a></li>
 </ul>
 </li>
 </ul>
@@ -487,6 +488,24 @@
     set tracer reaction constant       = 0
     set tracer reaction order          = 1
     set tracer reaction threshold      = 1e-8
+
+    # Electromagnetic material properties
+    set electric conductivity model = &lt;constant|polynomial&gt;
+    set electric conductivity       = 0.
+    set electric conductivity polynomial coefficients = 0.
+
+    set electric permittivity model     = &lt;constant|polynomial&gt;
+    set electric permittivity real part = 1.
+    set electric permittivity imag part = 0.
+    set electric permittivity real part polynomial coefficients = 1.
+    set electric permittivity imag part polynomial coefficients = 0.
+
+    set magnetic permeability model     = &lt;constant|polynomial&gt;
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.
+    set magnetic permeability real part polynomial coefficients = 1.
+    set magnetic permeability imag part polynomial coefficients = 0.
+
   end
 
   set number of solids = 0
@@ -570,6 +589,55 @@ end
 <p>The threshold parameter indicates the concentration value below which modifications to the reaction rate become dominant. Depending on the scale, it can be modified as a way to keep numerical stability while keeping a realistic reaction rate as long as <span class="math notranslate nohighlight">\(C_\text{interest} \gg \varepsilon\)</span>. A scenario where the threshold might need to be lowered is for extremely fast heterogeneous reactions, where the concentration at the surface is close to 0.</p>
 </div>
 </li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">model</span></code> specifies the model used to calculate the electric conductivity. The choice of model are <code class="docutils literal notranslate"><span class="pre">&lt;constant|polynomial&gt;</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span></code> parameter is used by the constant model to specify the electric conductivity of the material in its dimensionless form, i.e., the quantity to input is:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sigma_r = \frac{\sigma}{\omega \varepsilon_0}\]</div>
+</div>
+<p>with <span class="math notranslate nohighlight">\(\sigma\)</span> the dimensional electric conductivity, <span class="math notranslate nohighlight">\(\omega\)</span> the angular frequency of the electromagnetic wave, and <span class="math notranslate nohighlight">\(\varepsilon_0\)</span> the vacuum permittivity.</p>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the electric conductivity. The coefficients needs to be given in decreasing order of the polynomial degree. For example, if the polynomial is <span class="math notranslate nohighlight">\(\sigma_r(T)= a_2 T^2 + a_0\)</span>, the coefficients are given as <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span> <span class="pre">=</span> <span class="pre">a_2,</span> <span class="pre">0,</span> <span class="pre">a_0</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">model</span></code> specifies the model used to calculate the electric permittivity. The choice of model are <code class="docutils literal notranslate"><span class="pre">&lt;constant|polynomial&gt;</span></code>. The polynomial model is used to calculate the electric permittivity as a polynomial function of the temperature (i.e., <span class="math notranslate nohighlight">\(\varepsilon_r(T)\)</span>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">real</span> <span class="pre">part</span></code> parameter is the real part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Re{(\varepsilon_{r})} = \Re{\left(\frac{\varepsilon}{\varepsilon_0}\right)}\]</div>
+</div>
+<p>with <span class="math notranslate nohighlight">\(\varepsilon\)</span> the dimensional effective electric permittivity, and <span class="math notranslate nohighlight">\(\varepsilon_0\)</span> the vacuum permittivity.</p>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">imag</span> <span class="pre">part</span></code> parameter is the imaginary part of the electric permittivity of the material in its dimensionless form, i.e., the quantity to input is the relative permittivity:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Im{(\varepsilon_{r})} = \Im{\left(\frac{\varepsilon}{\varepsilon_0}\right)}\]</div>
+</div>
+<p>with <span class="math notranslate nohighlight">\(\varepsilon\)</span> the dimensional effective electric permittivity, and <span class="math notranslate nohighlight">\(\varepsilon_0\)</span> the vacuum permittivity.</p>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">real</span> <span class="pre">part</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the real part of the electric permittivity. It follows the same rules as the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">imag</span> <span class="pre">part</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the imaginary part of the electric permittivity. It follows the same rules as the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">model</span></code> specifies the model used to calculate the magnetic permeability. The choice of model are <code class="docutils literal notranslate"><span class="pre">&lt;constant|polynomial&gt;</span></code>. The polynomial model is used to calculate the magnetic permeability as a polynomial function of the temperature (i.e., <span class="math notranslate nohighlight">\(\mu_r(T)\)</span>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">real</span> <span class="pre">part</span></code> parameter is the real part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Re{(\mu_{r})} = \Re{\left(\frac{\mu}{\mu_0}\right)}\]</div>
+</div>
+<p>with <span class="math notranslate nohighlight">\(\mu\)</span> the dimensional effective magnetic permeability, and <span class="math notranslate nohighlight">\(\mu_0\)</span> the vacuum permeability.</p>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">imag</span> <span class="pre">part</span></code> parameter is the imaginary part of the magnetic permeability of the material in its dimensionless form, i.e., the quantity to input is the relative permeability:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Im{(\mu_{r})} = \Im{\left(\frac{\mu}{\mu_0}\right)}\]</div>
+</div>
+<p>with <span class="math notranslate nohighlight">\(\mu\)</span> the dimensional effective magnetic permeability, and <span class="math notranslate nohighlight">\(\mu_0\)</span> the vacuum permeability.</p>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">real</span> <span class="pre">part</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the real part of the magnetic permeability. It follows the same rules as the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">imag</span> <span class="pre">part</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the imaginary part of the magnetic permeability. It follows the same rules as the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When using the polynomial model for the electric permittivity or magnetic permeability, the <code class="docutils literal notranslate"><span class="pre">heat</span> <span class="pre">transfer</span></code> physics must be enabled in the <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a> section of the input file. This is because the polynomial model is a function of the temperature, which is only available when the heat transfer physics is enabled. Additionally, since the time-harmonic Maxwell solver is solved before the heat transfer solver, the temperature field  should be initialized to a realistic guess value in the <a class="reference internal" href="initial_conditions.html"><span class="doc">Initial Conditions</span></a> section of the input file.</p>
+</div>
+<ul>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">solids</span></code> parameter controls the number of solid regions. Solid regions are currently only implemented for <a class="reference internal" href="#conjugate-heat-transfer">Conjugate Heat Transfer</a>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">material</span> <span class="pre">interactions</span></code> parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in <a class="reference internal" href="#two-phase-simulations">Two Phase Simulations</a>.</p>
 <ul>
@@ -647,6 +715,10 @@ end
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Microwave heating simulations are not supported with the current two-phase flow models (CLS or Cahn-Hilliard).</p>
 </div>
 </section>
 <section id="conjugate-heat-transfer">
@@ -1120,6 +1192,16 @@ end
 </div>
 <p>with <span class="math notranslate nohighlight">\(D\)</span> the value set for <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">mobility</span> <span class="pre">constant</span></code>. A quartic mobility is required to recover a correct velocity according to Bretin <em>et al.</em> <a class="reference external" href="https://doi.org/10.48550/arXiv.2105.09627">[2]</a> Therefore, it is preferable to use it when solving the coupled Cahn-Hilliard and Navier-Stokes equations. A good rule of thumb for setting the mobility constant is to have it proportionnal to the square of the minimum cell size. This rule may depend on the duration of the simulation, so a finer tuning may be necessary.</p>
 </section>
+<section id="time-harmonic-maxwell-models">
+<h3>Time-Harmonic Maxwell Models<a class="headerlink" href="#time-harmonic-maxwell-models" title="Link to this heading">#</a></h3>
+<p>Lethe supports two types of models for the time-harmonic Maxwell equations. Setting <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">constant</span></code> sets a constant electric conductivity. Setting a <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">polynomial</span></code> sets a polynomial model for the electric conductivity depending on the temperature. The order of the polynomial can be anything and is determined by the number of coefficients specified in the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">conductivity</span> <span class="pre">polynomial</span> <span class="pre">coefficients</span></code> parameter. The polynomial model is defined as follows:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sigma_r(T) = \sum_{i=0}^{n} a_i T^i\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma_r(T)\)</span> is the dimensionless electric conductivity at temperature <span class="math notranslate nohighlight">\(T\)</span>, <span class="math notranslate nohighlight">\(a_i\)</span> are the polynomial coefficients, and <span class="math notranslate nohighlight">\(n\)</span> is the order of the polynomial.</p>
+<p>The same polynomial model is also available for the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">model</span></code> parameter and <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">model</span></code> parameter.</p>
+</section>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
@@ -1204,6 +1286,7 @@ end
 <li><a class="reference internal" href="#interface-physical-property-models">Interface Physical Property Models</a><ul>
 <li><a class="reference internal" href="#surface-tension-models">Surface Tension Models</a></li>
 <li><a class="reference internal" href="#cahn-hilliard-mobility-models">Cahn-Hilliard Mobility Models</a></li>
+<li><a class="reference internal" href="#time-harmonic-maxwell-models">Time-Harmonic Maxwell Models</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#references">References</a></li>

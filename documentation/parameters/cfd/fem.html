@@ -199,6 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stabilization.html">Stabilization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
 </ul>
@@ -374,7 +375,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell.html">DPG formulation for time-harmonic Maxwell problems</a></li>
 </ul>
 </li>
 </ul>
@@ -472,6 +473,10 @@
   set phase cahn hilliard degree     = 1
   set potential cahn hilliard degree = 1
 
+  # interpolation degree electromagnetics
+  set electromagnetics trial degree = 1
+  set electromagnetics test degree  = 2
+
   # bubble enrichment function
   set enable bubble function velocity = false
   set enable bubble function pressure = false
@@ -492,6 +497,13 @@ end
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">CLS</span> <span class="pre">degree</span></code> specifies the polynomial degree for the CLS phase indicator. It is not recommended to use higher polynomial degrees for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">degree</span></code> and <code class="docutils literal notranslate"><span class="pre">potential</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">degree</span></code> specify the polynomial degree for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The degrees chosen should be equal. They are left as two separate parameters for debugging purposes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electromagnetics</span> <span class="pre">trial</span> <span class="pre">degree</span></code> and <code class="docutils literal notranslate"><span class="pre">electromagnetics</span> <span class="pre">test</span> <span class="pre">degree</span></code> specify the polynomial degree for the trial and test functions in the time-harmonic Maxwell equations. The trial function is the degree that will determine the accuracy of the solution, while the test function is used by the DPG method to solve the system.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The test function degree needs to be at least one degree higher than the trial space for the linear system to be well-posed. It can be set to a higher value than the minimum required, but this will increase the computational cost, and no significant improvement in accuracy has been observed in our experience.</p>
+</div>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">bubble</span> <span class="pre">function</span> <span class="pre">velocity</span></code> and <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">bubble</span> <span class="pre">function</span> <span class="pre">pressure</span></code> specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/004578259400721X">Franca and Farhat 1995</a> and <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/004578259290102P">Brezzi et al 1992</a> for more detail.</p></li>
 </ul>
 <div class="admonition warning">

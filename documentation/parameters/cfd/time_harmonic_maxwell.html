@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Multiphysics" href="multiphysics.html" /><link rel="prev" title="Mesh Adaptation" href="mesh_adaptation_control.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Tracer Drift Velocity" href="tracer_drift_velocity.html" /><link rel="prev" title="Timer" href="timer.html" />
 
     <link rel="shortcut icon" href="../../_static/lethe_favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Mortar - Lethe documentation</title>
+        <title>Time-Harmonic Maxwell - Lethe documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -188,7 +188,7 @@
 <li class="toctree-l3"><a class="reference internal" href="manifolds.html">Manifolds</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh.html">Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_adaptation_control.html">Mesh Adaptation</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Mortar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mortar.html">Mortar</a></li>
 <li class="toctree-l3"><a class="reference internal" href="multiphysics.html">Multiphysics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nitsche.html">Nitsche Immersed Boundary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="non-linear_solver_control.html">Non-linear Solver</a></li>
@@ -199,7 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stabilization.html">Stabilization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Time-Harmonic Maxwell</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
 </ul>
@@ -449,108 +449,298 @@
           </label>
         </div>
         <article role="main">
-          <section id="mortar">
-<h1>Mortar<a class="headerlink" href="#mortar" title="Link to this heading">#</a></h1>
-<p>The mortar section is used when simulating rotor-stator geometries, in which the rotor mesh is attached to the stator by mortar elements.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mortar
-  set enable          = true
-  set interface type  = circular
-  subsection mesh
-    set type                   = dealii
-    set grid type              = subdivided_hyper_rectangle
-    set grid arguments         = 1,1,1 : -1,-1,-1 : 1,1,1 : true
-    set initial refinement     = 0
+          <section id="time-harmonic-maxwell">
+<h1>Time-Harmonic Maxwell<a class="headerlink" href="#time-harmonic-maxwell" title="Link to this heading">#</a></h1>
+<p>This subsection describes the parameters for the time-harmonic Maxwell solver, a
+Discontinuous Petrov-Galerkin (DPG) formulation for time-harmonic electromagnetic
+problems, i.e., problems in which the fields oscillate at a single, fixed frequency
+and are represented by their complex-valued phasor amplitudes. These parameters are
+declared in the <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">harmonic</span> <span class="pre">maxwell</span></code> subsection of the parameter file.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The time-harmonic Maxwell solver currently supports 3D problems only.</p>
+</div>
+<p>Before detailing the parameters, we first describe the non-dimensionalization
+convention used internally by the solver, since some parameters (e.g., the field
+amplitudes) are defined with respect to it.</p>
+<section id="dimensionless-formulation">
+<span id="time-harmonic-maxwell-dimensionless-formulation"></span><h2>Dimensionless Formulation<a class="headerlink" href="#dimensionless-formulation" title="Link to this heading">#</a></h2>
+<p>The solver always works internally in dimensionless form, and rescales the solution
+back to physical units only at the end, according to the selected
+<code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span></code>. The system of equations is non-dimensionalized
+using the following conventions:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+   &amp; \tilde{\mathbf{E}} = \frac{1}{E_0}\mathbf{E}_\mathrm{spatial}, &amp;                                                     &amp; \tilde{\mathbf{H}} = \frac{Z_0}{E_0} \mathbf{H}_\mathrm{spatial},
+   &amp;                                                                &amp; \varepsilon_r = \frac{1}{\varepsilon_0}\varepsilon, &amp;                                                                                 &amp; \mu_r = \frac{1}{\mu_0}\mu, \nonumber \\
+   &amp; \tilde{\nabla} = L \nabla,                                     &amp;                                                     &amp; \sigma_r = \frac{1}{\omega \varepsilon_0}\sigma,                                &amp;
+   &amp; \tilde{\omega} =  \frac{ L}{c_0}\omega,                        &amp;                                                     &amp; \tilde{ \mathbf{J} } = \frac{L Z_0}{E_0} \mathbf{J}_\mathrm{spatial}. \nonumber
+\end{align}\end{split}\]</div>
+</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(E_0\)</span> is the reference electric-field amplitude, set via
+<code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(Z_0 = \sqrt{\mu_0/\varepsilon_0}\)</span> is the impedance of free space,</p></li>
+<li><p><span class="math notranslate nohighlight">\(L\)</span> is the reference length scale of the mesh,</p></li>
+<li><p><span class="math notranslate nohighlight">\(c_0\)</span> is the speed of light in vacuum,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\varepsilon_0\)</span> and <span class="math notranslate nohighlight">\(\mu_0\)</span> are the permittivity and permeability of
+vacuum,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\varepsilon\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span>, and <span class="math notranslate nohighlight">\(\sigma\)</span> are the (dimensional)
+permittivity, permeability, and electrical conductivity of the medium, and</p></li>
+<li><p><span class="math notranslate nohighlight">\(\omega\)</span> is the (dimensional) angular frequency, set internally from the
+<code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">frequency</span></code> parameter.</p></li>
+</ul>
+<p>Using these conventions, the time-harmonic Maxwell system is written in
+dimensionless form (using the time-harmonic ansatz <span class="math notranslate nohighlight">\(\mathbf{E}(\mathbf{x},t) = \Re(\mathbf{E}_\mathrm{spatial}(\mathbf{x})e^{-i\omega t})\)</span>) as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+  \nabla \times \tilde{\mathbf{E}} - i \tilde{\omega} \mu_r \tilde{\mathbf{H}}                      &amp; = 0,                  \\
+  \nabla \times \tilde{\mathbf{H}} + i \tilde{\omega} \varepsilon_{r,\text{eff}} \tilde{\mathbf{E}} &amp; = \tilde{\mathbf{J}},
+\end{align}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\tilde{\mathbf{E}}\)</span> and <span class="math notranslate nohighlight">\(\tilde{\mathbf{H}}\)</span> are the
+dimensionless electric and magnetic fields, <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> is the
+dimensionless angular frequency, <span class="math notranslate nohighlight">\(\mu_r\)</span> is the relative magnetic
+permeability, and <span class="math notranslate nohighlight">\(\tilde{\mathbf{J}}\)</span> is the dimensionless current
+density.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The effective relative permittivity <span class="math notranslate nohighlight">\(\varepsilon_{r,\text{eff}}\)</span>
+combines the medium’s relative permittivity <span class="math notranslate nohighlight">\(\varepsilon_r\)</span> with its
+conductive losses <span class="math notranslate nohighlight">\(\sigma_r\)</span> into a single complex coefficient via the
+relation <span class="math notranslate nohighlight">\(\varepsilon_{r,\text{eff}} = \varepsilon_r + i \sigma_r\)</span>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the user wants to use different units than the MKS system because, for
+example, the problem is defined in centimeters, we recommend using the <a class="reference internal" href="dimensionality.html"><span class="doc">dimensionality</span></a> subsection to set the
+reference length scale <span class="math notranslate nohighlight">\(L\)</span> to 0.01 m, and leave all the parameters in the
+PRM file in MKS units. The solver will then automatically convert the
+parameters to the correct dimensionless form. If not using the dimensionality
+subsection, the user must ensure that all parameters are consistent with the
+desired behavior following the conventions described above.</p>
+</div>
+</section>
+<section id="parameter-file-syntax">
+<h2>Parameter File Syntax<a class="headerlink" href="#parameter-file-syntax" title="Link to this heading">#</a></h2>
+<p>An example of the time-harmonic Maxwell parameters is given in the text
+box below.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection time harmonic maxwell
+
+  set electromagnetic frequency    = 1 # Hz
+
+  set electromagnetic scaling type = &lt;none|electric field|magnetic field|power&gt;
+
+  set electric field amplitude     = 1
+  set magnetic field amplitude     = 1
+
+  set number of waveguide inlets   = 0
+
+  # The block below illustrates the syntax of a waveguide inlet subsection.
+  # It is only parsed if "number of waveguide inlets" is at least 1.
+  subsection waveguide inlet 0
+    set port boundary id = 0
+    set waveguide power  = 1 # Watts
+
+    subsection waveguide mode
+      set mode type    = &lt;TE|TM&gt;
+      set mode order m = 1
+      set mode order n = 0
+    end
+
+    set corner 0 = 0,0,0
+    set corner 1 = 1,0,0
+    set corner 2 = 0,1,0
+    set corner 3 = 1,1,0
   end
-  set rotor boundary id         = 4
-  set stator boundary id        = 2
-  set center of rotation        = 0, 0
-  set rotation axis direction   = 2
-  subsection rotor rotation angle
-    set Function expression = 0
+
+  subsection time coupling strategy
+    set type               = &lt;none|iteration|time|threshold&gt;
+    set coupling iteration = 1
+    set coupling time      = 1
+    set coupling threshold = 0.1
   end
-  subsection rotor angular velocity
-    set Function expression = 0
-  end
-  set penalty factor      = 1.0
-  set oversampling factor = 2
-  set radius tolerance    = 1e-8
-  set cell weight         = 1000
-  set verbosity           = quiet
 end
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>The available options for the mortar <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">type</span></code> are <code class="docutils literal notranslate"><span class="pre">circular</span></code> and <code class="docutils literal notranslate"><span class="pre">linear</span></code>.</p></li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">linear</span></code> interface type supports only two-dimensional problems. It assumes that the domain is rectangular, and that the mortar interface is parallel to the y axis.</p>
-</div>
-<ul class="simple">
-<li><p>The mesh parameters in the <a class="reference internal" href="mesh.html"><span class="doc">Mesh</span></a> subsection refer to the stator domain. The <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in <a class="reference internal" href="mesh.html"><span class="doc">Mesh</span></a>.</p></li>
-</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The initial number of cells at the rotor-stator interface has to be the same; the simulation will be aborted if that is not respected. This restriction will be automatically constrained throughout the simulation if the mesh is refined.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">waveguide</span> <span class="pre">inlets</span></code> is at most 10, and the inlets are numbered
+from 0 to 9. Their properties are defined in the <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">inlet</span> <span class="pre">i</span></code>
+subsections, where <code class="docutils literal notranslate"><span class="pre">i</span></code> is the inlet number. At the moment, all inlets need to
+have the same frequency, which is set in the parent
+<code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">harmonic</span> <span class="pre">maxwell</span></code> subsection, as the solver does not support solving
+for multiple frequencies at the same time.</p>
 </div>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">boundary</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">stator</span> <span class="pre">boundary</span> <span class="pre">id</span></code> refer to the boundary index at the rotor-stator interface.</p></li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>In <code class="docutils literal notranslate"><span class="pre">dealii</span></code> meshes the boundary IDs are automatically assigned to the geometries using the deal.II <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/DEALGlossary.html#GlossColorization">colorization</a> function, and thus the rotor/stator IDs might be duplicated.
-To circumvent this, the rotor boundary IDs are shifted. The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">boundary</span> <span class="pre">id</span></code> entry refers to the shifted ID number, assuming that the enumeration starts sequentially from the last entry of the stator boundary IDs.</p>
-</div>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> is the reference point for the prescribed rotation at the rotor domain.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">rotation</span> <span class="pre">axis</span> <span class="pre">direction</span></code> is the direction of the rotation axis given by 0, 1, or 2, corresponding to the x, y, or z axis respectively. In 2D, this parameter is ignored and the rotation is always about the z axis.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">rotation</span> <span class="pre">angle</span></code> subsection allows the imposition of a constant or time-dependent rotation angle for the rotor.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">angular</span> <span class="pre">velocity</span></code> subsection allows the imposition of a constant or time-dependent angular velocity for the rotor.</p></li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">angular</span> <span class="pre">velocity</span></code> expression needs to correspond to the time derivative of the <code class="docutils literal notranslate"><span class="pre">rotor</span> <span class="pre">rotation</span> <span class="pre">angle</span></code>.</p>
-</div>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">penalty</span> <span class="pre">factor</span></code> is used for the weak imposition of the mortar coupling at the interface. This parameter is akin to the symmetric interior penalty factor in SIPG (Symmetric Interior penalty Galerkin Method) <a class="footnote-reference brackets" href="#larson2013" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">oversampling</span> <span class="pre">factor</span></code> is used to increase the number of quadrature points. This feature is used to better approximate the weak imposition of the interface coupling.</p></li>
-<li><p>When computing the rotor-stator interface radius, the radial distance of every node at both rotor and stator boundaries to the <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> is computed, and the following check is performed:</p></li>
-</ul>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">frequency</span></code>: excitation frequency of the time-harmonic
+wave, in Hz. This is required for any time-harmonic Maxwell problem.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span></code>: selects how the solution is rescaled back
+to physical units after the linear system is solved. The choices are:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">none</span></code> (default): the solution is left in dimensionless form and output
+as such.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code>: rescaled so the electric field matches
+<code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>, and the magnetic field matches
+<span class="math notranslate nohighlight">\(H_0 = E_0 / Z_0\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span></code>: rescaled so the magnetic field matches
+<code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>, and the electric field matches
+<span class="math notranslate nohighlight">\(E_0 = Z_0 H_0\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">power</span></code>: rescaled so the power delivered through the waveguide inlet
+matches the <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">power</span></code> given in watts by the user for that inlet.
+The scaling is done internally by isolating the electric field amplitude
+using the Poynting vector and the waveguide mode properties, and then
+rescaling the magnetic field accordingly, via the relation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[|r_{max} - r_{min}| &lt; tol\]</div>
+\[\overline{P}_\text{input} = \frac{1}{2} \frac{E_0^2}{Z_0} \int_A \Re{(\mathbf{E} \times \mathbf{H}^*)} \cdot \mathbf{n} \text{d}A,\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(r_{max}\)</span>, <span class="math notranslate nohighlight">\(r_{min}\)</span> are the maximum and minimum values obtained, respectively, and  <span class="math notranslate nohighlight">\(tol\)</span> is the prescribed <code class="docutils literal notranslate"><span class="pre">radius</span> <span class="pre">tolerance</span></code> parameter.</p>
+<p>where <span class="math notranslate nohighlight">\(\overline{P}_\text{input}\)</span> is the input power defined by the
+user, <span class="math notranslate nohighlight">\(E_0\)</span> is the electric field amplitude, <span class="math notranslate nohighlight">\(Z_0\)</span> is the
+impedance of free space, and the integral is taken over the waveguide inlet
+area <span class="math notranslate nohighlight">\(A\)</span>. The Poynting vector is computed using the electric and
+magnetic fields of the selected waveguide mode.</p>
+</li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">power</span></code> requires
+<code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">waveguide</span> <span class="pre">inlets</span></code> to be at least 1, since there would otherwise
+be no waveguide power to normalize against.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span></code> parameter only rescales the solution
+back to physical units after the linear system is solved; it does not
+affect the non-dimensionalization of the equations, which always uses the
+reference electric-field amplitude <span class="math notranslate nohighlight">\(E_0\)</span> and the impedance of free
+space <span class="math notranslate nohighlight">\(Z_0\)</span>. However, in multiphysics simulations, the scaling type
+must not be <code class="docutils literal notranslate"><span class="pre">none</span></code> if the electromagnetic fields are to be coupled to
+other physics, since the other physics expect dimensional fields.</p>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>: the reference amplitude <span class="math notranslate nohighlight">\(E_0\)</span> used as the
+target amplitude when <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">electric</span> <span class="pre">field</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>: the reference amplitude <span class="math notranslate nohighlight">\(H_0 = E_0 / Z_0\)</span> used as
+the target amplitude when <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">magnetic</span> <span class="pre">field</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">waveguide</span> <span class="pre">inlets</span></code>: number of <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">inlet</span></code> subsections to
+apply on the geometry boundary. See also the
+<a class="reference internal" href="boundary_conditions_multiphysics.html"><span class="doc">boundary conditions</span></a> section for
+more information on the waveguide boundary conditions.</p></li>
+</ul>
+</section>
+<section id="waveguide-inlets">
+<span id="time-harmonic-maxwell-waveguide-inlets"></span><h2>Waveguide Inlets<a class="headerlink" href="#waveguide-inlets" title="Link to this heading">#</a></h2>
+<p>Each <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">inlet</span> <span class="pre">i</span></code> subsection describes one rectangular waveguide port
+through which a mode is excited, where <code class="docutils literal notranslate"><span class="pre">i</span></code> is the inlet number (<code class="docutils literal notranslate"><span class="pre">0</span></code> to
+<code class="docutils literal notranslate"><span class="pre">9</span></code>).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The default value for <code class="docutils literal notranslate"><span class="pre">radius</span> <span class="pre">tolerance</span></code> is <span class="math notranslate nohighlight">\(10^{-8}\)</span>, which should cover the precision range of deal.II-generated grids. The tolerance might need to be increased for some <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> mesh type cases or for large simulations running in multiple cores, when the above verification fails even if the mesh discretization is coherent.</p>
+<p>At the moment only rectangular waveguide modes are supported, and the user
+must ensure that the selected mode is valid according to the waveguide
+geometry.</p>
 </div>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">cell</span> <span class="pre">weight</span></code> allows the imposition of a higher cell weight for the cells located at the mortar interface, which is then accounted for in the workload balancing between processors. The default value of <code class="docutils literal notranslate"><span class="pre">1000</span></code> assumes that mortar cells have the same weight as other cells.</p></li>
-<li><p>When enabling <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>), the rotor rotation information is printed at every iteration. The option <code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code> also prints the workload imbalance of mortar cells. We consider that an ideal work imbalance is given by:</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">port</span> <span class="pre">boundary</span> <span class="pre">id</span></code>: the boundary id of the mesh on which the inlet is
+applied.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">power</span></code>: excitation power in Watts of the waveguide inlet. This
+is used to rescale the solution back to physical units when
+<code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">power</span></code>.</p></li>
 </ul>
+<section id="waveguide-mode">
+<h3>Waveguide Mode<a class="headerlink" href="#waveguide-mode" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">waveguide</span> <span class="pre">mode</span></code> defines the rectangular waveguide mode
+excited at the inlet.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">type</span></code>: <code class="docutils literal notranslate"><span class="pre">TE</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">TM</span></code>, standing for transverse electric
+or transverse magnetic, respectively. The <code class="docutils literal notranslate"><span class="pre">TE</span></code> mode is defined by the
+following equations:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\text{ideal} = \dfrac{\sum_i^{n_{proc}} cells_{(i)}}{n_{proc}}\]</div>
+\[\begin{split}\begin{align}
+    \mathbf{E}_{TE} &amp; = i\frac{\omega \mu_r}{k_c^2}  \begin{bmatrix} -k_{x_2} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2) \\ k_{x_1} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2) \\ 0 \end{bmatrix} e^{i k_{x_3} x_3},                                    \\
+    \mathbf{H}_{TE} &amp; = \begin{bmatrix} - i \frac{k_{x_3} k_{x_1}}{k_c^2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)   \\-i \frac{k_{x_3} k_{x_2}}{k_c^2} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ \cos(k_{x_1} x_1) \cos(k_{x_2} x_2) \end{bmatrix} e^{i k_{x_3} x_3}.
+\end{align}\end{split}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(n_{proc}\)</span> is the total number of processes and <span class="math notranslate nohighlight">\(cells_{(i)}\)</span> is the number of cells at each process <span class="math notranslate nohighlight">\(i\)</span>. The actual workload imbalance is given by the ratio between the maximum number of cells in a processor, <span class="math notranslate nohighlight">\(cells_{(max)}\)</span>, and the ideal workload:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">TM</span></code> mode is defined by the following equations:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\text{workload} = \dfrac{cells_{(max)}}{\text{ideal}}\]</div>
+\[\begin{split}\begin{align}
+    \mathbf{E}_{TM} &amp; = \begin{bmatrix} i \frac{k_{x_3} k_{x_1}}{k_c^2} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2) \\  i \frac{k_{x_3} k_{x_2}}{k_c^2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2) \\ \sin(k_{x_1} x_1) \sin(k_{x_2} x_2) \end{bmatrix} e^{i k_{x_3} x_3}, \\
+    \mathbf{H}_{TM} &amp; = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\-k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
+\end{align}\end{split}\]</div>
 </div>
-<p>Ideally, this parallel distribution imbalance is equal to 1; values greater than 1 indicate a slowdown compared to a perfectly distributed scenario in which all processes would contain the same number of mortar cells.</p>
+<p>In the above equations, <span class="math notranslate nohighlight">\(k_{x_1}\)</span> and <span class="math notranslate nohighlight">\(k_{x_2}\)</span> are the
+wavenumbers in the two transverse directions, and <span class="math notranslate nohighlight">\(k_{x_3}\)</span> is the
+wavenumber in the propagation direction. The cutoff wavenumber <span class="math notranslate nohighlight">\(k_c\)</span> is
+defined as <span class="math notranslate nohighlight">\(k_c^2 = k_{x_1}^2 + k_{x_2}^2\)</span>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">order</span> <span class="pre">m</span></code>, <code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">order</span> <span class="pre">n</span></code>: mode orders in the two transverse
+directions. They are used to compute the wavenumbers <span class="math notranslate nohighlight">\(k_{x_1}\)</span> and
+<span class="math notranslate nohighlight">\(k_{x_2}\)</span> in the above equations, given by <span class="math notranslate nohighlight">\(k_{x_1} = m \pi / a\)</span>
+and <span class="math notranslate nohighlight">\(k_{x_2} = n \pi / b\)</span>, where <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are the
+waveguide dimensions in the two transverse directions.</p></li>
+</ul>
+</section>
+<section id="corner-coordinates">
+<h3>Corner Coordinates<a class="headerlink" href="#corner-coordinates" title="Link to this heading">#</a></h3>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">corner</span> <span class="pre">0</span></code> through <code class="docutils literal notranslate"><span class="pre">corner</span> <span class="pre">3</span></code>: the four corners of the inlet, as 3D
+coordinates. They must be coplanar to define a valid rectangular waveguide
+inlet.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The corners follow the convention below to associate the mode orders
+<code class="docutils literal notranslate"><span class="pre">m</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code> with the correct transverse directions. In the reference
+frame of the inlet, the first transverse direction is defined by the
+vector from <code class="docutils literal notranslate"><span class="pre">corner</span> <span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">corner</span> <span class="pre">1</span></code>, and the second transverse
+direction is defined by the vector from <code class="docutils literal notranslate"><span class="pre">corner</span> <span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">corner</span> <span class="pre">2</span></code>. The
+mode orders <code class="docutils literal notranslate"><span class="pre">m</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code> are associated with these two transverse
+directions, respectively. The following diagram illustrates this
+convention:</p>
+<a class="reference internal image-reference" href="../../_images/corners_schematic.png"><img alt="Corner Convention" class="align-center" src="../../_images/corners_schematic.png" style="width: 300px;" /></a>
+</div>
+</li>
+</ul>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>The workload imbalance computation used here follows the same idea as the deal.II <code class="docutils literal notranslate"><span class="pre">workload_imbalance()</span></code> function used in the <a class="reference external" href="https://dealii.org/current/doxygen/deal.II/namespaceMGTools.html">geometric multigrid setup</a>, enabled in the <a class="reference internal" href="linear_solver_control.html"><span class="doc">Linear Solver</span></a> when <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">preconditioner</span> <span class="pre">=</span> <span class="pre">gcmg</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">mg</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">extra</span> <span class="pre">verbose</span></code>.</p>
+<p>The <a class="reference internal" href="../../examples/multiphysics/waveguide/waveguide.html"><span class="doc">waveguide example</span></a>
+shows a full waveguide inlet setup on a rectangular geometry.</p>
 </div>
-<section id="reference">
-<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
-<aside class="footnote-list brackets">
-<aside class="footnote brackets" id="larson2013" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
-<p>M. G. Larson, F. Bengzon. <em>The Finite Element Method: Theory, Implementation, and Applications</em>, vol. 10. Springer Berlin, Heidelberg, 2013.</p>
-</aside>
-</aside>
+</section>
+</section>
+<section id="time-coupling-strategy">
+<span id="time-harmonic-maxwell-time-coupling-strategy"></span><h2>Time Coupling Strategy<a class="headerlink" href="#time-coupling-strategy" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">time</span> <span class="pre">coupling</span> <span class="pre">strategy</span></code> controls how often the
+electromagnetic fields are recomputed during the time evolution of a coupled
+(multiphysics) problem.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: selects the coupling strategy:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">none</span></code> (default): solved once before the first time step and never
+recomputed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">iteration</span></code>: recompute every <code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">iteration</span></code> time iterations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span></code>: recompute every <code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">time</span></code> units of physical time.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code>: recompute whenever the electromagnetic properties of the
+medium change by more than <code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">threshold</span></code>.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">iteration</span></code>: number of time iterations between two
+electromagnetic solves when <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">iteration</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">time</span></code>: physical time interval between two electromagnetic
+solves when <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">time</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">threshold</span></code>: the maximum change ratio across all
+electromagnetic properties of the medium <span class="math notranslate nohighlight">\(\Delta_{\mathrm{properties}}&gt; \mathrm{threshold}\)</span> that triggers a new solve when <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">threshold</span></code>. The computation of this ratio is given by the following formula:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Delta_{\mathrm{properties}} = \max_{K,q}\left(\frac{\left|\varepsilon_{r,\mathrm{eff}}^{\mathrm{current}}(\mathbf{x}_{K,q})-\varepsilon_{r,\mathrm{eff}}^{\mathrm{last}}(\mathbf{x}_{K,q})\right|}{\left|\varepsilon_{r,\mathrm{eff}}^{\mathrm{last}}(\mathbf{x}_{K,q})\right|},\frac{\left|\mu_{r}^{\mathrm{current}}(\mathbf{x}_{K,q})-\mu_{r}^{\mathrm{last}}(\mathbf{x}_{K,q})\right|}{\left|\mu_{r}^{\mathrm{last}}(\mathbf{x}_{K,q})\right|}\right)\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(K\)</span> is the element index, <span class="math notranslate nohighlight">\(q\)</span> is the quadrature point index, and <span class="math notranslate nohighlight">\(\mathbf{x}_{K,q}\)</span> is the physical coordinate of the quadrature point. The superscripts <code class="docutils literal notranslate"><span class="pre">current</span></code> and <code class="docutils literal notranslate"><span class="pre">last</span></code> refer to the current and last time the electromagnetic fields were solved, respectively.</p>
+</li>
+</ul>
 </section>
 </section>
 
@@ -559,23 +749,23 @@ To circumvent this, the rotor boundary IDs are shifted. The <code class="docutil
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="multiphysics.html">
+          <a class="next-page" href="tracer_drift_velocity.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Multiphysics</div>
+                <div class="title">Tracer Drift Velocity</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="mesh_adaptation_control.html">
+          <a class="prev-page" href="timer.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Mesh Adaptation</div>
+                <div class="title">Timer</div>
                 
               </div>
             </a>
@@ -609,8 +799,15 @@ To circumvent this, the rotor boundary IDs are shifted. The <code class="docutil
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Mortar</a><ul>
-<li><a class="reference internal" href="#reference">Reference</a></li>
+<li><a class="reference internal" href="#">Time-Harmonic Maxwell</a><ul>
+<li><a class="reference internal" href="#dimensionless-formulation">Dimensionless Formulation</a></li>
+<li><a class="reference internal" href="#parameter-file-syntax">Parameter File Syntax</a></li>
+<li><a class="reference internal" href="#waveguide-inlets">Waveguide Inlets</a><ul>
+<li><a class="reference internal" href="#waveguide-mode">Waveguide Mode</a></li>
+<li><a class="reference internal" href="#corner-coordinates">Corner Coordinates</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#time-coupling-strategy">Time Coupling Strategy</a></li>
 </ul>
 </li>
 </ul>

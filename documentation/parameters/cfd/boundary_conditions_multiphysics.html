@@ -199,6 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stabilization.html">Stabilization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
 </ul>
@@ -374,7 +375,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell.html">DPG formulation for time-harmonic Maxwell problems</a></li>
 </ul>
 </li>
 </ul>
@@ -673,6 +674,197 @@ end
 </li>
 </ul>
 </section>
+<section id="time-harmonic-maxwell">
+<h2>Time-Harmonic Maxwell<a class="headerlink" href="#time-harmonic-maxwell" title="Link to this heading">#</a></h2>
+<p>For Time-Harmonic Maxwell boundary conditions, the possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">pec</span></code> (perfect electric conductor), <code class="docutils literal notranslate"><span class="pre">pmc</span></code> (perfect magnetic conductor), <code class="docutils literal notranslate"><span class="pre">silver</span> <span class="pre">muller</span></code>, <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code>, <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span></code>, <code class="docutils literal notranslate"><span class="pre">impedance</span> <span class="pre">boundary</span></code> and <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">port</span></code>. The default parameters are shown below.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions time harmonic maxwell
+  set number         = 1
+  set time dependent = false
+  subsection bc 0
+    set id   = 0
+    set type = silver muller
+  end
+end
+</pre></div>
+</div>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">number</span></code>: This is the number of boundary conditions of the problem.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">dependent</span></code> specifies if a boundary condition is time-dependent (<code class="docutils literal notranslate"><span class="pre">true</span></code>) or steady (<code class="docutils literal notranslate"><span class="pre">false</span></code>). By default, this parameter is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>. This improves the computational efficiency for transient cases in which the boundary conditions do not change.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code> is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number <code class="docutils literal notranslate"><span class="pre">#</span></code> of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">0,1,2</span></code>.</p></li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">type</span></code>: This is the type of boundary condition being imposed. At the moment, the choices are:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">pec</span></code> for a perfect electric conductor boundary. The tangential electric field is forced to vanish on the boundary,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times \mathbf{E} = 0\]</div>
+</div>
+<p>Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
+  set id   = 0
+  set type = pec
+end
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pmc</span></code> for a perfect magnetic conductor boundary. The tangential magnetic field is forced to vanish on the boundary,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times \mathbf{H} = 0\]</div>
+</div>
+<p>Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
+  set id   = 0
+  set type = pmc
+end
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">silver</span> <span class="pre">muller</span></code> for a Silver-Müller absorbing boundary condition. In its standard form, the boundary relation is written as</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times \mathbf{H} + \sqrt{\frac{\varepsilon_{r,\mathrm{eff}}}{\mu_r}} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = 0\]</div>
+</div>
+<p>Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
+  set id   = 0
+  set type = silver muller
+end
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code> to impose a prescribed electric field. The boundary values are taken from the parsed functions in the <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}^{\mathrm{inc}}\]</div>
+</div>
+<p>Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
+  set id   = 0
+  set type = electric field
+  subsection E x real part
+    set Function expression = 1
+  end
+  subsection E x imag part
+    set Function expression = 1
+  end
+  subsection E y real part
+    set Function expression = 0
+  end
+  subsection E y imag part
+    set Function expression = 0
+  end
+  subsection E z real part
+    set Function expression = 0
+  end
+  subsection E z imag part
+    set Function expression = 0
+  end
+end
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span></code> to impose a prescribed magnetic field. The boundary values are taken from the parsed functions in the <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}^{\mathrm{inc}} - \mathbf{J}_\mathrm{s}\]</div>
+</div>
+</li>
+</ul>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{J}_\mathrm{s}\)</span> is the surface current density.</p>
+<blockquote>
+<div><p>Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
+  set id   = 0
+  set type = magnetic field
+  subsection H x real part
+    set Function expression = 1
+  end
+  subsection H x imag part
+    set Function expression = 1
+  end
+  subsection H y real part
+    set Function expression = 0
+  end
+  subsection H y imag part
+    set Function expression = 0
+  end
+  subsection H z real part
+    set Function expression = 0
+  end
+  subsection H z imag part
+    set Function expression = 0
+  end
+end
+</pre></div>
+</div>
+</div></blockquote>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">impedance</span> <span class="pre">boundary</span></code> to impose an impedance boundary condition. The boundary is governed by the surface admittance <span class="math notranslate nohighlight">\(Y_s\)</span> supplied through the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">admittance</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">admittance</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections and the electromagnetic excitation <span class="math notranslate nohighlight">\(\mathbf{g}\)</span> supplied through the <code class="docutils literal notranslate"><span class="pre">excitation</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">excitation</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times \mathbf{H} + Y_s \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{g}\]</div>
+</div>
+<p>Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
+  set id   = 0
+  set type = impedance boundary
+  subsection surface admittance real part
+    set Function expression = 0.1
+  end
+  subsection surface admittance imag part
+    set Function expression = 0
+  end
+  subsection excitation x real part
+    set Function expression = 0
+  end
+  subsection excitation x imag part
+    set Function expression = 0
+  end
+  subsection excitation y real part
+    set Function expression = 0
+  end
+  subsection excitation y imag part
+    set Function expression = 0
+  end
+  subsection excitation z real part
+    set Function expression = 0
+  end
+  subsection excitation z imag part
+    set Function expression = 0
+  end
+end
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">port</span></code> to impose a waveguide port boundary condition. The parameters for this boundary conditions are defined in the Time-Harmonic Maxwell section of the input file. In the following, <span class="math notranslate nohighlight">\(k_l\)</span> is the wave number in the longitudinal direction of the waveguide.</p>
+<p>For TE modes, the boundary condition is expressed as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times \mathbf{H} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{n} \times \mathbf{H}_{\mathrm{mode}} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E}_{\mathrm{mode}} \times \mathbf{n} )\]</div>
+</div>
+<p>For TM modes, the boundary condition is expressed as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times \mathbf{H} + \frac{\omega \varepsilon_{r,\mathrm{eff}}}{k_{l}} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{n} \times \mathbf{H}_{\mathrm{mode}} + \frac{\omega \varepsilon_{r,\mathrm{eff}}}{k_{l}} \mathbf{n} \times ( \mathbf{E}_{\mathrm{mode}} \times \mathbf{n} )\]</div>
+</div>
+<p>Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
+  set id   = 0
+  set type = waveguide port
+end
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For more information on how to specify the waveguide port, see the <a class="reference internal" href="time_harmonic_maxwell.html"><span class="doc">Time-Harmonic Maxwell</span></a> section.</p>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
 </section>
 
         </article>
@@ -735,6 +927,7 @@ end
 <li><a class="reference internal" href="#tracer">Tracer</a></li>
 <li><a class="reference internal" href="#cls">CLS</a></li>
 <li><a class="reference internal" href="#cahn-hilliard">Cahn-Hilliard</a></li>
+<li><a class="reference internal" href="#time-harmonic-maxwell">Time-Harmonic Maxwell</a></li>
 </ul>
 </li>
 </ul>

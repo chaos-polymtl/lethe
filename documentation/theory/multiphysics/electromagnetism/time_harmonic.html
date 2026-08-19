@@ -199,6 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/source_term.html">Source Term</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/stabilization.html">Stabilization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/velocity_source.html">Velocity Source</a></li>
 </ul>
@@ -374,7 +375,7 @@
 <li class="toctree-l3 current has-children"><a class="reference internal" href="electromagnetism.html">Electromagnetism</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Time Harmonic Maxwell’s Equations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dpg_time_harmonic_maxwell.html">DPG formulation for time-harmonic Maxwell problems</a></li>
 </ul>
 </li>
 </ul>
@@ -450,7 +451,7 @@
         <article role="main">
           <section id="time-harmonic-maxwell-s-equations">
 <h1>Time Harmonic Maxwell’s Equations<a class="headerlink" href="#time-harmonic-maxwell-s-equations" title="Link to this heading">#</a></h1>
-<p>In a future version of Lethe, there will be a module to solve time-harmonic Maxwell’s equations which are used in microwave heating processes. The scope of this theory section is to give a brief description of where the equations come from, for further details, the reader is invited to look at the <a class="reference external" href="https://en.wikipedia.org/wiki/Introduction_to_Electrodynamics(book)">Griffiths</a> book for an introduction on electromagnetism theory and on the following <a class="reference external" href="https://ieeexplore.ieee.org/document/9682427">article</a> for a review on computational electromagnetism.</p>
+<p>Lethe features a solver for the time-harmonic Maxwell’s equations that can be coupled to the heat transfer, enabling the simulation of microwave heating processes. The scope of this theory section is to give a brief description of where the equations come from, for further details, the reader is invited to look at the <a class="reference external" href="https://en.wikipedia.org/wiki/Introduction_to_Electrodynamics(book)">Griffiths</a> book for an introduction on electromagnetism theory and on the following <a class="reference external" href="https://ieeexplore.ieee.org/document/9682427">article</a> for a review on computational electromagnetism.</p>
 <p>Maxwell’s equations are a set of partial differential equations that form the foundation of classical electromagnetism. This famous set of equations can take multiple forms, but one of the most common ones is the macroscopic volumetric equations in matter :</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -470,33 +471,53 @@
 <li><p><span class="math notranslate nohighlight">\(\rho_f\)</span> is the free electric charge density;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{J}_f\)</span> is the free current density, and <span class="math notranslate nohighlight">\(t\)</span> is time.</p></li>
 </ul>
-<p>For linear medium, the electromagnetic fluxes can be related to their intensity with the following constitutive relations and the electric current is proportional to the electric field intensity:</p>
+<p>For linear medium, the electromagnetic fluxes and current can be related to their intensity with the following constitutive relations:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-\mathbf{D} &amp;= \varepsilon_{em} \mathbf{E} \\
-\mathbf{B} &amp;= \mu_{em} \mathbf{H}\\
-\mathbf{J}_f &amp;= \sigma_e \mathbf{E} + \mathbf{J}_{ext}
+\mathbf{D} &amp;= \varepsilon_{\mathrm{em}} \mathbf{E} \\
+\mathbf{B} &amp;= \mu_{\mathrm{em}} \mathbf{H}\\
+\mathbf{J}_f &amp;= \sigma_e \mathbf{E} + \mathbf{J}_{\mathrm{ext}}
 \end{align*}\end{split}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\varepsilon_{em}\)</span> is the permittivity, <span class="math notranslate nohighlight">\(\mu_{em}\)</span> is the permeability, <span class="math notranslate nohighlight">\(\sigma_e\)</span> is the conductivity of the medium and <span class="math notranslate nohighlight">\(\mathbf{J}_{ext}\)</span> is the externally applied current density. When one is confronted with oscillating electromagnetic fields, a simplification that is commonly made is to consider the fields and exciting currents as time harmonic, <cite>i.e.</cite> they can be expressed as :</p>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon_{\mathrm{em}}\)</span> is the permittivity, <span class="math notranslate nohighlight">\(\mu_{\mathrm{em}}\)</span> is the permeability, <span class="math notranslate nohighlight">\(\sigma_e\)</span> is the conductivity of the medium and <span class="math notranslate nohighlight">\(\mathbf{J}_{\mathrm{ext}}\)</span> is the externally applied current density. When one is confronted with oscillating electromagnetic fields, a simplification that is commonly made is to consider the fields and exciting currents as time harmonic, <cite>i.e.</cite> they can be expressed as <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-\mathbf{E}(\mathbf{x},t) &amp;= \Re{\{\mathbf{\hat{E}}(\mathbf{x}) e^{i\omega t}\}},\\
-\mathbf{H}(\mathbf{x},t) &amp;= \Re{\{\mathbf{\hat{H}}(\mathbf{x}) e^{i\omega t}\}},\\
-\mathbf{J}_{ext}(\mathbf{x},t) &amp;= \Re{\{\mathbf{\hat{J}}_{ext}(\mathbf{x}) e^{i\omega t}\}},
+\mathbf{E}(\mathbf{x},t) &amp;= \Re{\{\mathbf{E}_{\mathrm{spatial}}(\mathbf{x}) e^{-i\omega t}\}},\\
+\mathbf{H}(\mathbf{x},t) &amp;= \Re{\{\mathbf{H}_{\mathrm{spatial}}(\mathbf{x}) e^{-i\omega t}\}},\\
+\mathbf{J}_{\mathrm{ext}}(\mathbf{x},t) &amp;= \Re{\left\{\mathbf{J}_{\mathrm{ext, spatial}}(\mathbf{x}) e^{-i\omega t}\right\}},
 \end{align*}\end{split}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\omega\)</span> is the angular frequency of the oscillating fields. By substituting these expressions in Maxwell’s equations presented above and cleverly combining them, one can obtain the following set of equations:</p>
+<p>where <span class="math notranslate nohighlight">\(\omega\)</span> is the angular frequency of the oscillating fields and <span class="math notranslate nohighlight">\(t\)</span> is the time.</p>
+<p>By substituting these expressions in Maxwell’s equations presented above and cleverly combining them, one can obtain either of the following equations:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-\nabla \times \left( \frac{1}{\mu_{em}} \nabla \times \mathbf{\hat{E}} \right) -\omega^2 \varepsilon_{em_{eff}} \mathbf{\hat{E}} &amp;= -i \omega \mathbf{\hat{J}}_{ext},\\
-\nabla \times \left( \frac{1}{\varepsilon_{em_{eff}}} \nabla \times \mathbf{\hat{H}} \right) - \omega^2 \mu_{em} \mathbf{\hat{H}} &amp;= \nabla \times \frac{\mathbf{\hat{J}}_{ext}}{\varepsilon_{em_{eff}}},
+\nabla \times \left( \frac{1}{\mu_{\mathrm{em}}} \nabla \times \mathbf{E} \right) -\omega^2 \varepsilon_{\mathrm{em},\mathrm{eff}} \mathbf{E} &amp;= i \omega \mathbf{J}_{\mathrm{ext}},\\
+\nabla \times \left( \frac{1}{\varepsilon_{\mathrm{em},\mathrm{eff}}} \nabla \times \mathbf{H} \right) - \omega^2 \mu_{\mathrm{em}} \mathbf{H} &amp;= \nabla \times \frac{\mathbf{J}_{\mathrm{ext}}}{\varepsilon_{\mathrm{em},\mathrm{eff}}},
 \end{align*}\end{split}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\varepsilon_{em_{eff}} = \varepsilon_{em} - i \frac{\sigma_e}{\omega}\)</span> is the effective permittivity of the medium. These equations are the time-harmonic Maxwell’s equations for spatially varying permittivity and permeability, which can be rank 2 tensors when the medium is anisotropic. Note that even if the harmonic oscillation is assumed, it is not a restrictive simplification. Indeed, any signal can be obtained by a summation of harmonic frequencies, and the time dependence of the electromagnetic field, if it is a quantity of interest, can be obtained by performing an inverse Fourier transform.</p>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon_{\mathrm{em},{\mathrm{eff}}} = \varepsilon_{\mathrm{em}} + i \frac{\sigma_e}{\omega}\)</span> is the effective permittivity of the medium. These equations are the time-harmonic Maxwell’s equations for spatially varying permittivity and permeability, which can be rank 2 tensors when the medium is anisotropic. Note that even if the harmonic oscillation is assumed, it is not a restrictive simplification. Indeed, any signal can be obtained by a summation of harmonic frequencies, and the time dependence of the electromagnetic field, if it is a quantity of interest, can be obtained by performing an inverse Fourier transform.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In Lethe, however, we only support solving for a single frequency and the reconstruction of a multi-frequency signal or its time dependence needs to be done externally.</p>
+</div>
+<p>For numerical purposes, in Lethe, the time-harmonic Maxwell’s equations are solved in a dimensionless coupled system that takes the following form:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\nabla \times \mathbf{E} -i\omega \mu_r \mathbf{H} &amp;= 0,\\
+\nabla \times \mathbf{H} + i\omega \varepsilon_{r,\mathrm{eff}} \mathbf{E} &amp;=  \mathbf{J}_{\mathrm{ext}},
+\end{align*}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\mu_r\)</span> is the relative permeability and <span class="math notranslate nohighlight">\(\varepsilon_{r,\mathrm{eff}}\)</span> is the effective relative permittivity of the medium.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Lethe uses the physicist convention for the wave propagation, which describes a traveling wave as <span class="math notranslate nohighlight">\(e^{i (\mathbf{k}\cdot \mathbf{x} - \omega t)}\)</span>. This has some implications on the sign at multiple places in the equations, and the user should be aware of this when comparing with other references.</p>
+</aside>
+</aside>
 </section>
 
         </article>

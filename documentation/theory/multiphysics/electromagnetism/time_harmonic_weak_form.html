@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Magnetohydrodynamics Equations" href="magnetohydrodynamics.html" /><link rel="prev" title="Time Harmonic Maxwell’s Equations" href="time_harmonic.html" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="DPG formulation for time-harmonic Maxwell problems" href="dpg_time_harmonic_maxwell.html" /><link rel="prev" title="Time Harmonic Maxwell’s Equations" href="time_harmonic.html" />
 
     <link rel="shortcut icon" href="../../../_static/lethe_favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
         <title>Finite Element Method for Time-Harmonic Maxwell’s Equations - Lethe documentation</title>
@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -199,6 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/source_term.html">Source Term</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/stabilization.html">Stabilization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/velocity_source.html">Velocity Source</a></li>
 </ul>
@@ -374,7 +375,7 @@
 <li class="toctree-l3 current has-children"><a class="reference internal" href="electromagnetism.html">Electromagnetism</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dpg_time_harmonic_maxwell.html">DPG formulation for time-harmonic Maxwell problems</a></li>
 </ul>
 </li>
 </ul>
@@ -442,7 +443,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -450,47 +451,203 @@
         <article role="main">
           <section id="finite-element-method-for-time-harmonic-maxwell-s-equations">
 <h1>Finite Element Method for Time-Harmonic Maxwell’s Equations<a class="headerlink" href="#finite-element-method-for-time-harmonic-maxwell-s-equations" title="Link to this heading">#</a></h1>
-<p>This section describes the FEM formulation of the time-harmonic Maxwell’s equations. For further details on the subject, the reader is referred to the following references: <a class="reference external" href="https://books.google.ca/books/about/The_Finite_Element_Method_Theory_Impleme.html?id=Vek_AAAAQBAJ&amp;redir_esc=y">Larson</a> and <a class="reference external" href="https://www.wiley.com/en-br/The+Finite+Element+Method+in+Electromagnetics%2C+3rd+Edition-p-9781118571361">Jian-Ming</a> .</p>
-<p>Starting from the strong form of the electromagnetic field showed in the <a class="reference internal" href="time_harmonic.html"><span class="doc">Time Harmonic Maxwell’s Equations</span></a> section:</p>
+<p>This section presents two finite-element formulations of the time-harmonic
+Maxwell equations. We first introduce the conventional weak form (the primal
+formulation), then the ultraweak formulation used by Lethe’s DPG solver.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For additional details on the DPG setting, see <a class="reference internal" href="dpg_time_harmonic_maxwell.html"><span class="doc">DPG formulation of time-harmonic Maxwell problems</span></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When solving time-harmonic problems numerically, the mesh resolution should be chosen to ensure that the dimensionless wavenumber <span class="math notranslate nohighlight">\(k h / (2 \pi)\)</span> is sufficiently small, where <span class="math notranslate nohighlight">\(h\)</span> is the characteristic mesh size. A common rule of thumb is to have at least 10 degree 1 elements per wavelength, i.e., <span class="math notranslate nohighlight">\(k h / (2 \pi) \leq 0.1\)</span>.</p>
+</div>
+<section id="primal-formulation">
+<h2>Primal Formulation<a class="headerlink" href="#primal-formulation" title="Link to this heading">#</a></h2>
+<p>Starting from the electric-field wave equation shown in
+<a class="reference internal" href="time_harmonic.html"><span class="doc">Time Harmonic Maxwell’s Equations</span></a>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}\nabla \times \left( \mu_{em}^{-1} \nabla \times \mathbf{\hat{E}} \right) -\omega^2 \varepsilon_{em_{eff}} \mathbf{\hat{E}} = -i \omega \mathbf{\hat{J}}_{ext}, \\\end{split}\]</div>
+\[\nabla \times \left( \mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E} \right) -\omega^2 \varepsilon_{\mathrm{em,eff}} \mathbf{E} = i \omega \mathbf{J}_{\mathrm{ext}},\]</div>
 </div>
 <p>we consider a domain <span class="math notranslate nohighlight">\(\Omega\)</span> with boundary <span class="math notranslate nohighlight">\(\Gamma\)</span>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In general, it is not necessary to solve both the magnetic and the electric field wave equation since one results from the other. One can choose the field to solve that suits the best the problem under consideration.</p>
+<p>In general, it is not necessary to solve both the electric- and
+magnetic-field wave equations, since one can be derived from the other.
+The field to solve for can be chosen based on the problem at hand.</p>
 </div>
-<p>The choice of boundary conditions can vary greatly depending on the problem to be solved (e.g., Sommerfeld condition, absorbing boundary condition, impedance condition, etc.), but the two most common types are:</p>
+<p>Boundary conditions depend on the problem (for example Sommerfeld,
+absorbing/radiation, or impedance conditions), but they can be grouped into
+three main categories:</p>
 <ul class="simple">
-<li><p>Dirichlet boundary conditions: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{\hat{E}} = \mathbf{\hat{E}}_{Dirichlet}\)</span>;</p></li>
-<li><p>Neumann boundary conditions: <span class="math notranslate nohighlight">\(\mu_{em}^{-1}(\nabla \times \mathbf{\hat{E}}) \times \mathbf{n} = -i \omega \mathbf{J}_{ext_{Neumann}}\)</span>.</p></li>
+<li><p>First-type (Dirichlet) boundary conditions: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{E} = \mathbf{E}_{\mathrm{D}}\)</span>;</p></li>
+<li><p>Second-type (Neumann) boundary conditions: <span class="math notranslate nohighlight">\(\mu_{\mathrm{em}}^{-1} \mathbf{n} \times (\nabla \times \mathbf{E})  = i \omega \mathbf{J}_{\mathrm{ext,N}}\)</span>;</p></li>
+<li><p>Robin boundary conditions: <span class="math notranslate nohighlight">\(\mathbf{n} \times (\mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E}) + Y_\mathrm{s} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n}) = \mathbf{E}_\mathrm{R}\)</span>,</p></li>
 </ul>
-<p>The <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> represent the unit normal vector. For simplicity, in the current derivation of the weak form, a perfect electric conductor (PEC) is considered, which implies that <span class="math notranslate nohighlight">\(\mathbf{E}_{Dirichlet} = 0\)</span>. Now, multiplying the strong form by a complex test function <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> that satisfies <span class="math notranslate nohighlight">\(\mathbf{v} \times \mathbf{n}=0\)</span> and integrating over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
+<p>In the expressions above, <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> is the outward unit normal and
+<span class="math notranslate nohighlight">\(Y_\mathrm{s}\)</span> is the boundary surface admittance. The Robin condition
+generalizes Dirichlet and Neumann conditions, and can represent impedance,
+absorbing, and related boundary models.</p>
+<p>For simplicity, we consider a perfect electric conductor (PEC), so
+<span class="math notranslate nohighlight">\(\mathbf{E}_{\mathrm{D}} = 0\)</span>. Multiplying the strong form by a complex
+test function <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> satisfying
+<span class="math notranslate nohighlight">\(\mathbf{v} \times \mathbf{n}=0\)</span>, and integrating over <span class="math notranslate nohighlight">\(\Omega\)</span>,
+gives:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
- \int_{\Omega} -i \omega \mathbf{J}_{ext} \cdot \mathbf{v^*} \mathrm{d}\Omega = &amp;
- \int_{\Omega}  \mu_{em}^{-1} (\nabla \times \mathbf{\hat{E}}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega - \int_{\Omega} \omega^2 \varepsilon_{em_{eff}} \mathbf{\hat{E}} \cdot \mathbf{v^*} \mathrm{d}\Omega \\ &amp; + \int_{\Gamma} \mu_{em}^{-1} (\nabla \times \mathbf{\hat{E}}) \cdot (\mathbf{v^*} \times \mathbf{n}) \mathrm{d}\Gamma .
-\end{align*} \\\end{split}\]</div>
+ \int_{\Omega} i \omega \mathbf{J}_{\mathrm{ext}} \cdot \mathbf{v^*} \mathrm{d}\Omega = &amp;
+ \int_{\Omega}  \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega - \int_{\Omega} \omega^2 \varepsilon_{\mathrm{em},\mathrm{eff}} \mathbf{E} \cdot \mathbf{v^*} \mathrm{d}\Omega \\ &amp; + \int_{\Gamma} \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\mathbf{v^*} \times \mathbf{n}) \mathrm{d}\Gamma .
+\end{align*}\end{split}\]</div>
 </div>
-<p>Note that the terms above involve complex values, so the usual <span class="math notranslate nohighlight">\(L^2\)</span> inner product is replaced by <span class="math notranslate nohighlight">\(\int_{\Omega} \mathbf{u}\mathbf{v^*} \mathrm{d}\Omega\)</span>, where <span class="math notranslate nohighlight">\(\mathbf{v^*}\)</span> is the complex conjugate of <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>. Finally, for the above integral to be well defined, <span class="math notranslate nohighlight">\(\mathbf{E}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> must belong to the Sobolev space <span class="math notranslate nohighlight">\(H(curl, \Omega)\)</span> defined by:</p>
+<p>Because the fields are complex-valued, the usual <span class="math notranslate nohighlight">\(L^2\)</span> inner product is
+replaced by <span class="math notranslate nohighlight">\(\int_{\Omega} \mathbf{u}\mathbf{v^*} \, \mathrm{d}\Omega\)</span>,
+where <span class="math notranslate nohighlight">\(\mathbf{v^*}\)</span> denotes the complex conjugate of
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span>. For these integrals to be well-defined,
+<span class="math notranslate nohighlight">\(\mathbf{E}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> must belong to the Sobolev space
+<span class="math notranslate nohighlight">\(H(\mathrm{curl}, \Omega)\)</span>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[H(curl, \Omega) = \{ \mathbf{v} \in [L^2(\Omega)]^3 : \nabla \times \mathbf{v} \in [L^2(\Omega)]^3 \},\]</div>
+\[H(\mathrm{curl}, \Omega) = \{ \mathbf{v} \in [L^2(\Omega)]^3 : \nabla \times \mathbf{v} \in [L^2(\Omega)]^3 \},\]</div>
 </div>
-<p>and the Dirichlet boundary condition imposed the homogeneous curl space:</p>
+<p>and the Dirichlet boundary condition imposes the homogeneous curl space:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[H_0(curl, \Omega) = \{ \mathbf{v} \in H(curl, \Omega) : \mathbf{n} \times \mathbf{v}|_{\Gamma} = 0 \}.\]</div>
+\[H_0(\mathrm{curl}, \Omega) = \{ \mathbf{v} \in H(\mathrm{curl}, \Omega) : \mathbf{n} \times \mathbf{v}|_{\Gamma} = 0 \}.\]</div>
 </div>
-<p>Thus the boundary term vanishes (<span class="math notranslate nohighlight">\(\int_{\Gamma} \mu_{em}^{-1} (\nabla \times \mathbf{\hat{E}}) \cdot (\mathbf{v^*} \times \mathbf{n}) \mathrm{d}\Gamma = 0\)</span>) and the weak form of the time-harmonic Maxwell’s equations is:</p>
+<p>Thus, the boundary term vanishes
+(<span class="math notranslate nohighlight">\(\int_{\Gamma} \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\mathbf{v^*} \times \mathbf{n}) \mathrm{d}\Gamma = 0\)</span>),
+and the weak form of the time-harmonic Maxwell equations becomes:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}B(\mathbf{E}, \mathbf{v}) = &amp;\int_{\Omega}  \mu_{em}^{-1} (\nabla \times \mathbf{\hat{E}}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega + \int_{\Omega} \omega^2 \varepsilon_{em_{eff}} \mathbf{\hat{E}} \cdot \mathbf{v^*} \mathrm{d}\Omega  \\
-L(\mathbf{v}) = &amp;\int_{\Omega} -i \omega \mathbf{J}_{ext} \cdot \mathbf{v^*} \mathrm{d}\Omega .\end{split}\]</div>
+\[\begin{split}B(\mathbf{E}, \mathbf{v}) = &amp;\int_{\Omega}  \mu_{\mathrm{em}}^{-1} (\nabla \times \mathbf{E}) \cdot (\nabla \times \mathbf{v^*}) \mathrm{d}\Omega - \int_{\Omega} \omega^2 \varepsilon_{\mathrm{em},\mathrm{eff}} \mathbf{E} \cdot \mathbf{v^*} \mathrm{d}\Omega  \\
+L(\mathbf{v}) = &amp;\int_{\Omega} i \omega \mathbf{J}_{\mathrm{ext}} \cdot \mathbf{v^*} \mathrm{d}\Omega .\end{split}\]</div>
 </div>
-<p>Formally, <span class="math notranslate nohighlight">\(\mathbf{E}\)</span> should also satisfy Gauss’s law (<span class="math notranslate nohighlight">\(\nabla \cdot \mathbf{D} = \rho_f\)</span>), but it is implicitly taken into account by the electromagnetic wave equation and holds in the weak form presented above.</p>
+<p>Formally, <span class="math notranslate nohighlight">\(\mathbf{E}\)</span> should also satisfy Gauss’s law
+(<span class="math notranslate nohighlight">\(\nabla \cdot \mathbf{D} = \rho_f\)</span>). In this setting, it is
+implicitly enforced by the electromagnetic wave equation and is therefore
+contained in the weak form above.</p>
+</section>
+<section id="ultraweak-formulation">
+<h2>Ultraweak Formulation<a class="headerlink" href="#ultraweak-formulation" title="Link to this heading">#</a></h2>
+<p>The formulation above is the conventional weak form, used here as a reference
+for comparison with other implementations of the time-harmonic Maxwell
+equations. In Lethe’s DPG setting, the ultraweak formulation is used instead.
+The main practical difference is that the primal formulation above eliminates
+the magnetic field to obtain a single second-order equation for the electric
+field, whereas the ultraweak formulation solves for the electric and magnetic
+fields simultaneously by weakening both equations without eliminating either
+one.</p>
+<p>Retaining both fields as independent unknowns is especially useful when the
+electromagnetic power dissipated in the medium must be evaluated, since some
+materials exhibit non-negligible magnetic losses in addition to dielectric
+losses; recovering <span class="math notranslate nohighlight">\(\mathbf{H}\)</span> directly, rather than reconstructing it from
+<span class="math notranslate nohighlight">\(\mathbf{E}\)</span> after the fact, avoids an additional loss of accuracy in
+that calculation. Additionally, studies have shown that the ultraweak
+formulation is more robust than the primal formulation in the context of the
+DPG method.</p>
+<p>The starting point is the time-harmonic Maxwell system written in the form</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+\nabla \times \mathbf{E} - i\omega \mu_{r} \mathbf{H}       &amp;= 0, \\
+\nabla \times \mathbf{H} + i\omega \varepsilon_{r,\mathrm{eff}} \mathbf{E} &amp;= \mathbf{J},
+\end{align}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon_{r,\mathrm{eff}} = \varepsilon_r + i \frac{\sigma_e}{\omega \varepsilon_0}\)</span>. The system is supplemented with boundary conditions of three kinds:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+  \mathbf{n} \times \mathbf{E} &amp;= \mathbf{n} \times \mathbf{E}_D; \\
+  \mathbf{n} \times \mathbf{H} &amp;= \mathbf{n} \times \mathbf{H}_N - \mathbf{J}_{\mathrm{s}}; \\
+  \mathbf{n} \times \mathbf{H} + Z_{\mathrm{s}}^{-1}\mathbf{n} \times (\mathbf{E}\times \mathbf{n}) &amp;= \mathbf{E}_\mathrm{R}.
+\end{align}\end{split}\]</div>
+</div>
+<p>To obtain the ultraweak formulation, Faraday’s law and Ampère-Maxwell equations are multiplied by independent test functions <span class="math notranslate nohighlight">\(\mathbf{I}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{F}\)</span>,
+respectively, and integrated by parts over the mesh <span class="math notranslate nohighlight">\(\Omega_h\)</span>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+   (\nabla \times\mathbf{I},\mathbf{E})_{\Omega_h} - ( \mathbf{I}, i\omega \mu_r\mathbf{H})_{\Omega_h} + \langle \mathbf{I}, \mathbf{n}\times \hat{\mathbf{E}} \rangle_{\partial \Omega_h}
+     &amp;= 0 , \\
+   (\nabla \times \mathbf{F},\mathbf{H})_{\Omega_h} + (\mathbf{F}, i \omega \varepsilon_{r,\text{eff}} \mathbf{E})_{\Omega_h}
+   + \langle \mathbf{F} , \mathbf{n}\times \hat{\mathbf{H}}\rangle_{\partial \Omega_h \backslash \Gamma_R }
+   - \langle \mathbf{F} ,Y_\mathrm{s} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n})\rangle_{ \Gamma_R }
+     &amp;=(\mathbf{F},\mathbf{J})_{\Omega_h} -  \langle \mathbf{F} , \mathbf{E_\mathrm{R}} \rangle_{ \Gamma_R },
+\end{align}\end{split}\]</div>
+</div>
+<p>where the Robin boundary condition is applied to the electric field without
+loss of generality, and <span class="math notranslate nohighlight">\(\hat{\mathbf{E}}\)</span>, <span class="math notranslate nohighlight">\(\hat{\mathbf{H}}\)</span> are
+the trace unknowns on the mesh skeleton. Each product above is understood to
+be complex-conjugate in its first argument:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{align}
+(\mathbf{v},\mathbf{u})_{\Omega_h} &amp;:= \sum_{K\in\Omega_h} \int_{K} \mathbf{v}^* \cdot \mathbf{u}\,\mathrm{d}x, &amp;
+\langle \mathbf{v},\mathbf{u} \rangle_{\partial\Omega_h} &amp;:= \sum_{K\in\Omega_h} \int_{\partial K} \mathbf{v}^* \cdot \mathbf{u}\, \mathrm{d}s,
+\end{align}\]</div>
+</div>
+<p>with <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> being arbitrary complex-valued vector fields. From the above ultraweak system, the trial and test spaces are defined as :</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+  \mathbf{E},\mathbf{H} &amp;\in \mathcal{X}_{\mathrm{em}},
+    &amp; \mathcal{X}_{\mathrm{em}} &amp;:= (L^2(\Omega))^3, \\
+  \hat{\mathbf{E}},\hat{\mathbf{H}} &amp;\in \hat{\mathcal{X}}_{\mathrm{em}},
+    &amp; \hat{\mathcal{X}}_{\mathrm{em}} &amp;:= \bigl\{ \hat{\mathbf{x}} \in H^{-1/2}(\mathrm{curl},\partial\Omega_h) : \mathbf{n}\times \hat{\mathbf{x}} = \mathbf{n}\times \mathbf{x}_\mathrm{D} \text{ on } \Gamma_D \bigr\}, \\
+  \mathbf{F},\mathbf{I} &amp;\in \mathcal{Y}_{\mathrm{em}},
+    &amp; \mathcal{Y}_{\mathrm{em}} &amp;:= \bigl\{ \mathbf{y} \in H(\mathrm{curl},\Omega_h) \bigr\}.
+\end{align}\end{split}\]</div>
+</div>
+<p>For an ultraweak formulation, the Neumann boundary condition is, in fact, a
+Dirichlet condition on the flux variable (here, the magnetic field
+<span class="math notranslate nohighlight">\(\mathbf{H}\)</span>). This is why only a Dirichlet-type condition needs to be
+imposed on the trace space <span class="math notranslate nohighlight">\(\hat{\mathcal{X}}_{\mathrm{em}}\)</span>, which
+covers both the electric and magnetic trace unknowns.</p>
+<p>To complete the discrete DPG formulation, the test space is equipped with the
+adjoint graph norm induced by the operator associated with the bilinear form
+of the system:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+\|(\mathbf{F}, \mathbf{I})\|^2_V &amp;= \|  \nabla \times \mathbf{F} - i \omega \mu_r \mathbf{I} \|^2_{\Omega_h} + \| \nabla \times \mathbf{I} + i \omega \varepsilon_{r,\mathrm{eff}} \mathbf{F} \|^2_{\Omega_h} \\
+  &amp;\quad + \alpha\left(\|\mathbf{F}\|^2_{\Omega_h} + \|\mathbf{I}\|^2_{\Omega_h}\right)
+   + \| \mathbf{n} \times \mathbf{I} + Y_\mathrm{s} \mathbf{n} \times (\mathbf{F} \times \mathbf{n}) \|^2_{\Gamma_R},
+\end{align}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha \sim 1\)</span> is a strictly positive constant (<span class="math notranslate nohighlight">\(\alpha=1\)</span>
+in practice) introduced to ensure that the test norm remains localizable once
+the test space is broken. The boundary term on
+<span class="math notranslate nohighlight">\(\Gamma_R\)</span> enforces the Robin boundary condition and is required to
+obtain convergence of the method when this type of boundary condition is
+present.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The general Dirichlet, Neumann, and Robin conditions introduced above cover a
+range of standard boundary condition types encountered in electromagnetic
+simulations, each corresponding to a particular choice of <span class="math notranslate nohighlight">\(\mathbf{E}_\mathrm{D}\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{H}_\mathrm{N}\)</span>, <span class="math notranslate nohighlight">\(Y_\mathrm{s}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{E}_\mathrm{R}\)</span>. Writing
+<span class="math notranslate nohighlight">\(\mathbf{E}_\parallel = \mathbf{n} \times (\mathbf{E} \times \mathbf{n})\)</span>
+for the tangential component of a field (and similarly
+<span class="math notranslate nohighlight">\(\mathbf{H}_\parallel\)</span>), the list below is not exhaustive but covers the
+conditions commonly used in practice.</p>
+<ul class="simple">
+<li><p><strong>Perfect electric conductor (PEC)</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{E} = 0\)</span>.</p></li>
+<li><p><strong>Perfect magnetic conductor (PMC)</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{H} = 0\)</span>.</p></li>
+<li><p><strong>Prescribed electric field (Dirichlet)</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}_D\)</span>.</p></li>
+<li><p><strong>Prescribed magnetic field (Neumann)</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}_N - \mathbf{J}_{\mathrm{s}}\)</span>, with <span class="math notranslate nohighlight">\(\mathbf{J}_{\mathrm{s}}\)</span> a prescribed surface current density.</p></li>
+<li><p><strong>Impedance condition (Robin)</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{H} + Y_\mathrm{s} \mathbf{E}_\parallel = \mathbf{E_\mathrm{R}}\)</span>, with <span class="math notranslate nohighlight">\(Y_\mathrm{s}\)</span> the surface admittance of the boundary.</p></li>
+<li><p><strong>Absorbing / radiation condition (Silver–Müller)</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_{r,\mathrm{eff}}/\mu_r}\, \mathbf{E}_\parallel = 0\)</span>. This is the impedance condition above with <span class="math notranslate nohighlight">\(Y_\mathrm{s} = \sqrt{\varepsilon_{r,\mathrm{eff}}/\mu_r}\)</span> (the admittance of the exterior medium) and no source term.</p></li>
+<li><p><strong>Lossy / imperfect conductor</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_{r,\mathrm{eff},2}/\mu_{r,2}}\, \mathbf{E}_\parallel = 0\)</span>, the same form as the radiation condition above, using the (possibly complex) effective properties <span class="math notranslate nohighlight">\(\varepsilon_{r,\mathrm{eff},2}\)</span>, <span class="math notranslate nohighlight">\(\mu_{r,2}\)</span> of the adjacent conducting medium.</p></li>
+<li><p><strong>Waveguide inlet port, TE</strong><span class="math notranslate nohighlight">\(_{mn}\)</span> <strong>mode</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{H} + \dfrac{\mathbf{k} \cdot \mathbf{n}}{\omega \mu_r} \mathbf{E}_\parallel = \mathbf{n} \times \mathbf{H}_{inc} + \dfrac{\mathbf{k} \cdot \mathbf{n}}{\omega \mu_r} \mathbf{E}_{inc,\parallel}\)</span>.</p></li>
+<li><p><strong>Waveguide inlet port, TM</strong><span class="math notranslate nohighlight">\(_{mn}\)</span> <strong>mode</strong>: <span class="math notranslate nohighlight">\(\mathbf{n} \times \mathbf{H} + \dfrac{\omega \varepsilon_{r,\mathrm{eff}}}{\mathbf{k} \cdot \mathbf{n}} \mathbf{E}_\parallel = \mathbf{n} \times \mathbf{H}_{inc} + \dfrac{\omega \varepsilon_{r,\mathrm{eff}}}{\mathbf{k} \cdot \mathbf{n}} \mathbf{E}_{inc,\parallel}\)</span>.</p></li>
+</ul>
+<p>In each waveguide, <span class="math notranslate nohighlight">\(\mathbf{H}_{inc}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{E}_{inc,\parallel}\)</span> denote the incident field of the excited
+mode, and <span class="math notranslate nohighlight">\(k = \omega \sqrt{\varepsilon_{r,\mathrm{eff}} \mu_r}\)</span> its wavevector amplitude.</p>
+</div>
+</section>
 </section>
 
         </article>
@@ -498,12 +655,12 @@ L(\mathbf{v}) = &amp;\int_{\Omega} -i \omega \mathbf{J}_{ext} \cdot \mathbf{v^*}
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="magnetohydrodynamics.html">
+          <a class="next-page" href="dpg_time_harmonic_maxwell.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Magnetohydrodynamics Equations</div>
+                <div class="title">DPG formulation for time-harmonic Maxwell problems</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -536,8 +693,28 @@ L(\mathbf{v}) = &amp;\int_{\Omega} -i \omega \mathbf{J}_{ext} \cdot \mathbf{v^*}
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Finite Element Method for Time-Harmonic Maxwell’s Equations</a><ul>
+<li><a class="reference internal" href="#primal-formulation">Primal Formulation</a></li>
+<li><a class="reference internal" href="#ultraweak-formulation">Ultraweak Formulation</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Multiphase" href="../../multiphase/multiphase.html" /><link rel="prev" title="Finite Element Method for Time-Harmonic Maxwell’s Equations" href="time_harmonic_weak_form.html" />
 
     <link rel="shortcut icon" href="../../../_static/lethe_favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Magnetohydrodynamics Equations - Lethe documentation</title>
+        <title>DPG formulation for time-harmonic Maxwell problems - Lethe documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -199,6 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/source_term.html">Source Term</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/stabilization.html">Stabilization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/velocity_source.html">Velocity Source</a></li>
 </ul>
@@ -374,7 +375,7 @@
 <li class="toctree-l3 current has-children"><a class="reference internal" href="electromagnetism.html">Electromagnetism</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
-<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Magnetohydrodynamics Equations</a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">DPG formulation for time-harmonic Maxwell problems</a></li>
 </ul>
 </li>
 </ul>
@@ -442,15 +443,537 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="magnetohydrodynamics-equations">
-<h1>Magnetohydrodynamics Equations<a class="headerlink" href="#magnetohydrodynamics-equations" title="Link to this heading">#</a></h1>
-<p><strong>Under construction</strong></p>
+          <section id="dpg-formulation-for-time-harmonic-maxwell-problems">
+<h1>DPG formulation for time-harmonic Maxwell problems<a class="headerlink" href="#dpg-formulation-for-time-harmonic-maxwell-problems" title="Link to this heading">#</a></h1>
+<p>The discontinuous Petrov-Galerkin (DPG) method is a residual-minimizing finite
+element strategy that is particularly effective for wave propagation and
+high-frequency electromagnetic problems. Rather than using the same space for
+trial and test functions, DPG uses different spaces and seeks the discrete
+solution by minimizing the residual of the PDE in a norm induced by the test
+space. For a review of the DPG method, see the following <a class="reference external" href="https://pdxscholar.library.pdx.edu/mth_fac/426/">review article</a> written by the original authors of the method, <a class="reference external" href="https://users.oden.utexas.edu/~leszek/">Demkowicz</a> and <a class="reference external" href="https://web.pdx.edu/~gjay/">Gopalakrishnan</a>.</p>
+<section id="a-brief-introduction-to-dpg">
+<h2>A Brief Introduction to DPG<a class="headerlink" href="#a-brief-introduction-to-dpg" title="Link to this heading">#</a></h2>
+<p>The Discontinuous Petrov–Galerkin (DPG) method is a class of discontinuous finite
+element methods that reformulates the standard variational problem as a minimum
+residual problem. Given the abstract problem</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\text{Find } u \in U \text{ such that } \\
+b(v,u)=l(v), \qquad \forall v \in V,
+\end{aligned}\end{split}\]</div>
+</div>
+<p>the DPG method seeks an approximation in a finite-dimensional trial space
+<span class="math notranslate nohighlight">\(U_h \subset U\)</span> that solves the minimum residual problem</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[u_h = \arg\min_{w_h \in U_h} J(w_h), \qquad
+J(w_h) = \frac{1}{2}\|l-Bw_h\|_{V'}^2,\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(B : U \rightarrow V'\)</span> is the operator satisfying</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[b(v,u)=\langle v, Bu \rangle_{V \times V'}.\]</div>
+</div>
+<p>The operator <span class="math notranslate nohighlight">\(B\)</span> maps a trial function to its corresponding residual
+functional. Here, <span class="math notranslate nohighlight">\(\langle \cdot,\cdot \rangle_{V \times V'}\)</span> denotes the
+duality pairing between the test space and its dual.</p>
+<p>Since minimizing the residual directly in the dual norm <span class="math notranslate nohighlight">\(\|\cdot\|_{V'}\)</span> is
+generally impractical, the DPG method introduces the Riesz operator</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\langle v, R_V w \rangle_{V \times V'}
+=
+(v,w)_V,
+\qquad
+\forall v,w \in V,\]</div>
+</div>
+<p>whose inverse maps functionals in <span class="math notranslate nohighlight">\(V'\)</span> back into the test space
+<span class="math notranslate nohighlight">\(V\)</span>. The functional <span class="math notranslate nohighlight">\(J\)</span> can then be rewritten as</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[J(w_h)
+=
+\frac{1}{2}
+\|R_V^{-1}(l-Bw_h)\|_V^2
+=
+\frac{1}{2}
+\left(
+R_V^{-1}(l-Bw_h),
+R_V^{-1}(l-Bw_h)
+\right)_V.\]</div>
+</div>
+<p>Taking the Gâteaux derivative of <span class="math notranslate nohighlight">\(J\)</span> and setting it equal to zero yields</p>
+<div class="math-wrapper docutils container" id="equation-minimization-problem">
+<div class="math notranslate nohighlight" id="equation-minimization-problem">
+<span class="eqno">(1)<a class="headerlink" href="#equation-minimization-problem" title="Link to this equation">#</a></span>\[(R_V^{-1}(l-Bu_h),
+R_V^{-1}B\delta u_h)_V
+=0,
+\qquad
+\forall \delta u_h \in U_h.\]</div>
+</div>
+<p>This naturally introduces the <strong>error representation function</strong></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Psi = R_V^{-1}(l-Bu_h),\]</div>
+</div>
+<p>which belongs to the test space <span class="math notranslate nohighlight">\(V\)</span>. Its norm is equal to the residual
+measured in the dual norm,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\|l-Bu_h\|_{V'}
+=
+\|\Psi\|_V,\]</div>
+</div>
+<p>making it a natural a posteriori error estimator.</p>
+<p>The error representation function also satisfies</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[(v,\Psi)_V
+=
+l(v)-b(v,u_h),
+\qquad
+\forall v \in V,\]</div>
+</div>
+<p>which, together with Equation <a class="reference internal" href="#equation-minimization-problem">(1)</a>, leads to the mixed DPG
+formulation</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{cases}
+   &amp; \text{Find } u_h \in U_h \text{ and } \Psi \in V \text{ such that }     \\
+   &amp; (v,\Psi)_V + b(v,u_h) = l(v), \quad \forall v \in V,                    \\
+   &amp; (R_V^{-1} B w_h, \Psi)_V = b(w_h, \Psi) = 0, \quad \forall w_h \in U_h.
+\end{cases}\end{split}\]</div>
+</div>
+<p>In practice, computing the exact optimal test functions would require inverting
+the Riesz operator over the infinite-dimensional space <span class="math notranslate nohighlight">\(V\)</span>, which is not
+feasible. Instead, the test space is approximated by an enriched finite-dimensional
+space <span class="math notranslate nohighlight">\(V_r \subset V\)</span>. The polynomial order of <span class="math notranslate nohighlight">\(V_r\)</span> is chosen higher
+than that of the trial space <span class="math notranslate nohighlight">\(U_h\)</span>.</p>
+<p>Furthermore, the test space is chosen to be <strong>broken</strong>, meaning that its basis
+functions are supported independently on each mesh element. This localization
+makes the Riesz operator block diagonal, allowing the local problems defining the
+optimal test functions to be solved independently on each element.</p>
+<p>Breaking the test space introduces additional trace unknowns
+<span class="math notranslate nohighlight">\(\hat{u}_h \in \hat{U}_h\)</span>, defined on the mesh skeleton, to recover
+inter-element conformity. The bilinear form becomes</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[b(v,(u_h,\hat{u}_h))
+=
+b(v,u_h)
++
+\langle v,\hat{u}_h \rangle,\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\langle\cdot,\cdot\rangle\)</span> denotes the duality pairing between the
+trace unknowns and the test functions.</p>
+<p>The practical DPG formulation on a discretized domain
+<span class="math notranslate nohighlight">\(\Omega_h\)</span> is therefore</p>
+<div class="math-wrapper docutils container" id="equation-final-dpg-formulation">
+<div class="math notranslate nohighlight" id="equation-final-dpg-formulation">
+<span class="eqno">(2)<a class="headerlink" href="#equation-final-dpg-formulation" title="Link to this equation">#</a></span>\[\begin{split}\begin{cases}
+   &amp; \text{Find } u_h \in U_h, \hat{u}_h \in \hat{U}_h \text{ and } \Psi \in V_r(\Omega_h) \text{ such that } \\
+   &amp; (v,\Psi)_V + b(v,u_h) + \langle v, \hat{u}_h \rangle = l(v), \quad \forall v \in V_r(\Omega_h),          \\
+   &amp; b(w_h, \Psi) = 0, \quad \forall w_h \in U_h,                                                             \\
+   &amp; \langle \hat{w}_h, \Psi \rangle = 0, \quad \forall \hat{w}_h \in \hat{U}_h.
+\end{cases}\end{split}\]</div>
+</div>
+<p>This is the formulation implemented in Lethe. The use of an enriched broken test
+space allows the optimal test functions to be computed locally, while the trace
+unknowns ensure global continuity through the mesh skeleton.</p>
+</section>
+<section id="numerical-implementation-and-discretization">
+<h2>Numerical implementation and discretization<a class="headerlink" href="#numerical-implementation-and-discretization" title="Link to this heading">#</a></h2>
+<p>To take advantage of the extensive support for real-valued finite element
+problems available in deal.II, all complex-valued fields are decomposed into
+their real and imaginary components. Consequently, the entire linear system is
+assembled and solved using standard double-precision floating-point arithmetic.</p>
+<section id="discrete-spaces">
+<h3>Discrete spaces<a class="headerlink" href="#discrete-spaces" title="Link to this heading">#</a></h3>
+<p>The discrete trial, trace, and test spaces are defined as</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+U_h
+&amp;=
+\mathbf{E}_{\mathrm{re}}
+\times
+\mathbf{E}_{\mathrm{im}}
+\times
+\mathbf{H}_{\mathrm{re}}
+\times
+\mathbf{H}_{\mathrm{im}}, \\
+\hat{U}_h
+&amp;=
+\hat{\mathbf{E}}_{\mathrm{re}}
+\times
+\hat{\mathbf{E}}_{\mathrm{im}}
+\times
+\hat{\mathbf{H}}_{\mathrm{re}}
+\times
+\hat{\mathbf{H}}_{\mathrm{im}}, \\
+V_r
+&amp;=
+\mathbf{F}_{\mathrm{re}}
+\times
+\mathbf{F}_{\mathrm{im}}
+\times
+\mathbf{I}_{\mathrm{re}}
+\times
+\mathbf{I}_{\mathrm{im}}.
+\end{aligned}\end{split}\]</div>
+</div>
+<p>Each component of the interior trial space is discretized using discontinuous
+tensor-product Lagrange finite elements
+<span class="math notranslate nohighlight">\((\mathcal{Q}^{-}_{p}\Lambda^3)\)</span>, providing an approximation of
+<span class="math notranslate nohighlight">\(L^2(\Omega_h)\)</span>.</p>
+<p>The trace unknowns are discretized using first-kind Nédélec elements
+<span class="math notranslate nohighlight">\((\mathcal{Q}^{-}_{p}\Lambda^1)\)</span>. The tangential trace operator
+<span class="math notranslate nohighlight">\(\mathrm{tr}_{\mathrm{curl},\top}\)</span> is applied, and the interior degrees
+of freedom are discarded so that the resulting finite element space
+approximates <span class="math notranslate nohighlight">\(H^{-1/2}(\mathrm{curl},\Omega_h)\)</span>.</p>
+<p>The enriched test space is also constructed from first-kind Nédélec elements,
+but without applying the trace operator, making it conforming in
+<span class="math notranslate nohighlight">\(H(\mathrm{curl},\Omega_h)\)</span>. As required by the DPG method, the test space
+uses a higher polynomial degree than the trial space,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[p_{\mathrm{test}} = p + \Delta p,\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\Delta p\)</span> is the enrichment parameter. Throughout this
+implementation,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Delta p \geq 1.\]</div>
+</div>
+<p>The discrete fields are expanded in terms of their respective basis functions,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+u_h^{(k)}(\mathbf{x})
+&amp;=
+\sum_i
+\mathbf{w}^{(k)}_i
+\boldsymbol{\phi}_i(\mathbf{x}), \\
+\hat{u}_h^{(k)}(\mathbf{x})
+&amp;=
+\sum_i
+\hat{\mathbf{w}}^{(k)}_i
+\hat{\boldsymbol{\phi}}_i(\mathbf{x}), \\
+v^{(k)}(\mathbf{x})
+&amp;=
+\sum_i
+\mathbf{q}^{(k)}_i
+\boldsymbol{\psi}_i(\mathbf{x}),
+\end{aligned}\end{split}\]</div>
+</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\phi}_i\)</span> are the interior trial basis functions,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{\boldsymbol{\phi}}_i\)</span> are the trace basis functions,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\psi}_i\)</span> are the test basis functions,</p></li>
+</ul>
+<p>and <span class="math notranslate nohighlight">\(\mathbf{w}_i\)</span>, <span class="math notranslate nohighlight">\(\hat{\mathbf{w}}_i\)</span>, and
+<span class="math notranslate nohighlight">\(\mathbf{q}_i\)</span> denote their corresponding coefficients. The superscript
+<span class="math notranslate nohighlight">\(k \in \{1,2,3,4\}\)</span> identifies the field component
+(<span class="math notranslate nohighlight">\(\mathbf{E}_{\mathrm{re}}\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{E}_{\mathrm{im}}\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{H}_{\mathrm{re}}\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{H}_{\mathrm{im}}\)</span>).</p>
+</section>
+<section id="discrete-linear-system">
+<h3>Discrete linear system<a class="headerlink" href="#discrete-linear-system" title="Link to this heading">#</a></h3>
+<p>Combining the finite element discretization with the practical DPG formulation
+<a class="reference internal" href="#equation-final-dpg-formulation">(2)</a> yields the block system</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix}
+G &amp; B &amp; \hat{B} \\
+B^\dagger &amp; 0 &amp; 0 \\
+\hat{B}^\dagger &amp; 0 &amp; 0
+\end{bmatrix}
+\begin{bmatrix}
+\Psi^r \\
+u_h \\
+\hat{u}_h
+\end{bmatrix}
+=
+\begin{bmatrix}
+l \\
+0 \\
+0
+\end{bmatrix}.\end{split}\]</div>
+</div>
+<p>The matrices are defined as</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+G_{(i,k),(j,l)}
+&amp;= (\psi_i^{(k)},\psi_j^{(l)})_V, \\
+B_{(i,k),(j,l)}
+&amp;= b(\psi_i^{(k)},\phi_j^{(l)}), \\
+\hat{B}_{(i,k),(j,l)}
+&amp;= \langle
+\psi_i^{(k)},
+\hat{\phi}_j^{(l)}
+\rangle,
+\end{aligned}\end{split}\]</div>
+</div>
+<p>while the load vector is</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[l_{(i,k)} = l(\psi_i^{(k)}).\]</div>
+</div>
+<p>The indices <span class="math notranslate nohighlight">\((i,k)\)</span> combine the finite element basis index with the field
+component.</p>
+</section>
+<section id="static-condensation">
+<h3>Static condensation<a class="headerlink" href="#static-condensation" title="Link to this heading">#</a></h3>
+<p>Because the test space is broken, the Gram matrix <span class="math notranslate nohighlight">\(G\)</span> is block diagonal,
+allowing the error representation function to be eliminated locally. This
+produces the condensed system</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix}
+B^\dagger G^{-1}B &amp;
+B^\dagger G^{-1}\hat{B} \\
+\hat{B}^\dagger G^{-1}B &amp;
+\hat{B}^\dagger G^{-1}\hat{B}
+\end{bmatrix}
+\begin{bmatrix}
+u_h \\
+\hat{u}_h
+\end{bmatrix}
+=
+\begin{bmatrix}
+B^\dagger G^{-1}l \\
+\hat{B}^\dagger G^{-1}l
+\end{bmatrix}.\end{split}\]</div>
+</div>
+<p>A second static condensation is also performed since interior elements are discontinuous, which eliminates the interior unknowns from the linear system. Defining</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+M_1 &amp;= B^\dagger G^{-1}B, \\
+M_2 &amp;= B^\dagger G^{-1}\hat{B}, \\
+M_3 &amp;= \hat{B}^\dagger G^{-1}\hat{B}, \\
+M_4 &amp;= B^\dagger G^{-1}, \\
+M_5 &amp;= \hat{B}^\dagger G^{-1},
+\end{aligned}\end{split}\]</div>
+</div>
+<p>the final system becomes</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[(M_3-M_2^\dagger M_1^{-1}M_2)\hat{u}_h
+=
+(M_5-M_2^\dagger M_1^{-1}M_4)l.\]</div>
+</div>
+<p>This Schur complement system is the one solved by Lethe’s DPG solver.</p>
+</section>
+<section id="recovery-of-local-fields">
+<h3>Recovery of local fields<a class="headerlink" href="#recovery-of-local-fields" title="Link to this heading">#</a></h3>
+<p>Once the trace unknowns have been computed, the interior fields and the error
+representation function are recovered independently on each element,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[u_h
+=
+M_1^{-1}(M_4l-M_2\hat{u}_h),\]</div>
+</div>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Psi^r
+=
+G^{-1}(l-Bu_h-\hat{B}\hat{u}_h).\]</div>
+</div>
+<p>The local residual norm,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\|\Psi^r\|_V
+=
+\sqrt{(\Psi^r)^\dagger G\Psi^r},\]</div>
+</div>
+<p>provides the DPG a posteriori error estimator used for adaptive mesh
+refinement.</p>
+</section>
+</section>
+<section id="polynomial-spaces">
+<h2>Polynomial spaces<a class="headerlink" href="#polynomial-spaces" title="Link to this heading">#</a></h2>
+<p>The DPG method relies on several Sobolev, broken, and trace spaces. Their
+precise definition is important when selecting compatible finite element
+spaces for the trial, test, and trace unknowns. This page summarizes the spaces used by the implementation mentioned above.</p>
+<section id="sobolev-spaces">
+<h3>Sobolev spaces<a class="headerlink" href="#sobolev-spaces" title="Link to this heading">#</a></h3>
+<p>The implementation is based on the standard Sobolev spaces defined over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+H^1(\Omega)
+&amp;=
+\left\{
+u :
+\Omega \rightarrow \mathbb{R}
+\text{ (or } \mathbb{C}\text{)}
+\;:\;
+u,\nabla u \in (L^2(\Omega))^d
+\right\},\\
+H(\mathrm{curl},\Omega)
+&amp;=
+\left\{
+\mathbf{E}
+:
+\Omega \rightarrow \mathbb{R}^d
+\text{ (or } \mathbb{C}^d\text{)}
+\;:\;
+\mathbf{E},
+\nabla\times\mathbf{E}
+\in (L^2(\Omega))^d
+\right\},\\
+H(\mathrm{div},\Omega)
+&amp;=
+\left\{
+\boldsymbol{\sigma}
+:
+\Omega \rightarrow \mathbb{R}^d
+\text{ (or } \mathbb{C}^d\text{)}
+\;:\;
+\boldsymbol{\sigma}
+\in (L^2(\Omega))^d,
+\;
+\nabla\cdot\boldsymbol{\sigma}
+\in L^2(\Omega)
+\right\},\\
+L^2(\Omega)
+&amp;=
+\left\{
+q :
+\Omega \rightarrow \mathbb{R}
+\text{ (or } \mathbb{C}\text{)}
+\;:\;
+\|q\|_{L^2(\Omega)} &lt; \infty
+\right\}.
+\end{aligned}\end{split}\]</div>
+</div>
+</section>
+<section id="broken-spaces">
+<h3>Broken spaces<a class="headerlink" href="#broken-spaces" title="Link to this heading">#</a></h3>
+<p>The current implementation supports three-dimensional problems only.
+Accordingly, the broken spaces are defined over the mesh
+<span class="math notranslate nohighlight">\(\Omega_h\)</span> as</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+H^1(\Omega_h)
+&amp;=
+\prod_{K\in\Omega_h}H^1(K),\\
+H(\mathrm{curl},\Omega_h)
+&amp;=
+\prod_{K\in\Omega_h}
+H(\mathrm{curl},K),\\
+H(\mathrm{div},\Omega_h)
+&amp;=
+\prod_{K\in\Omega_h}
+H(\mathrm{div},K).
+\end{aligned}\end{split}\]</div>
+</div>
+<p>The product <span class="math notranslate nohighlight">\(\prod_{K\in\Omega_h}\)</span> denotes the Cartesian product over all mesh elements, while <span class="math notranslate nohighlight">\(u|_K\)</span> denotes the restriction of a function to a single element. Unlike the previous spaces,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[L^2(\Omega_h)
+\equiv
+L^2(\Omega),\]</div>
+</div>
+<p>since <span class="math notranslate nohighlight">\(L^2\)</span> functions do not require continuity between neighboring
+elements.</p>
+</section>
+<section id="trace-operators">
+<h3>Trace operators<a class="headerlink" href="#trace-operators" title="Link to this heading">#</a></h3>
+<p>The trace spaces are defined using the standard trace operators acting on the
+mesh skeleton <span class="math notranslate nohighlight">\(\partial\Omega_h\)</span>.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\mathrm{tr}_{\mathrm{grad}}
+&amp;: H^1(\Omega_h)
+\rightarrow
+\prod_{K\in\Omega_h} H^{1/2}(\partial K),
+&amp;
+\mathrm{tr}_{\mathrm{grad}}^K(u)
+&amp;= u|_{\partial K},
+\\[0.8em]
+\mathrm{tr}_{\mathrm{curl},\top}
+&amp;: H(\mathrm{curl},\Omega_h)
+\rightarrow
+\prod_{K\in\Omega_h}
+H^{-1/2}(\mathrm{curl},\partial K),
+&amp;
+\mathrm{tr}_{\mathrm{curl},\top}^K(\mathbf{E})
+&amp;= ((\mathbf{n}\times\mathbf{E})\times\mathbf{n})|_{\partial K},
+\\[0.8em]
+\mathrm{tr}_{\mathrm{curl},\dashv}
+&amp;: H(\mathrm{curl},\Omega_h)
+\rightarrow
+\prod_{K\in\Omega_h}
+H^{-1/2}(\mathrm{div},\partial K),
+&amp;
+\mathrm{tr}_{\mathrm{curl},\dashv}^K(\mathbf{E})
+&amp;= (\mathbf{n}\times\mathbf{E})|_{\partial K},
+\\[0.8em]
+\mathrm{tr}_{\mathrm{div}}
+&amp;: H(\mathrm{div},\Omega_h)
+\rightarrow
+\prod_{K\in\Omega_h}
+H^{-1/2}(\partial K),
+&amp;
+\mathrm{tr}_{\mathrm{div}}^K(\boldsymbol{\sigma})
+&amp;= (\mathbf{n}\cdot\boldsymbol{\sigma})|_{\partial K}.
+\end{aligned}\end{split}\]</div>
+</div>
+<p>Here, <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> denotes the outward unit normal vector on the boundary
+of each mesh element.</p>
+</section>
+<section id="trace-spaces">
+<h3>Trace spaces<a class="headerlink" href="#trace-spaces" title="Link to this heading">#</a></h3>
+<p>The trace operators define the interface spaces used by the DPG formulation,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+H^{1/2}(\partial\Omega_h)
+&amp;=
+\mathrm{tr}_{\mathrm{grad}}
+\left(
+H^1(\Omega)
+\right),\\
+H^{-1/2}(\mathrm{curl},\partial\Omega_h)
+&amp;=
+\mathrm{tr}_{\mathrm{curl},\top}
+\left(
+H(\mathrm{curl},\Omega)
+\right),\\
+H^{-1/2}(\mathrm{div},\partial\Omega_h)
+&amp;=
+\mathrm{tr}_{\mathrm{curl},\dashv}
+\left(
+H(\mathrm{curl},\Omega)
+\right),\\
+H^{-1/2}(\partial\Omega_h)
+&amp;=
+\mathrm{tr}_{\mathrm{div}}
+\left(
+H(\mathrm{div},\Omega)
+\right).
+\end{aligned}\end{split}\]</div>
+</div>
+<p>These interface spaces provide the mathematical foundation for the trace
+unknowns introduced by the practical DPG formulation.</p>
+</section>
+</section>
 </section>
 
         </article>
@@ -496,8 +1019,41 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">DPG formulation for time-harmonic Maxwell problems</a><ul>
+<li><a class="reference internal" href="#a-brief-introduction-to-dpg">A Brief Introduction to DPG</a></li>
+<li><a class="reference internal" href="#numerical-implementation-and-discretization">Numerical implementation and discretization</a><ul>
+<li><a class="reference internal" href="#discrete-spaces">Discrete spaces</a></li>
+<li><a class="reference internal" href="#discrete-linear-system">Discrete linear system</a></li>
+<li><a class="reference internal" href="#static-condensation">Static condensation</a></li>
+<li><a class="reference internal" href="#recovery-of-local-fields">Recovery of local fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#polynomial-spaces">Polynomial spaces</a><ul>
+<li><a class="reference internal" href="#sobolev-spaces">Sobolev spaces</a></li>
+<li><a class="reference internal" href="#broken-spaces">Broken spaces</a></li>
+<li><a class="reference internal" href="#trace-operators">Trace operators</a></li>
+<li><a class="reference internal" href="#trace-spaces">Trace spaces</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -508,5 +1064,6 @@
     <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

@@ -58,6 +58,7 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
 .. warning::
     The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
 
+
 .. note::
     The index in ``subsection bc ..`` must be coherent with the ``number`` of boundary conditions set: if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist. 
 
@@ -223,3 +224,199 @@ For Cahn-Hilliard boundary conditions, the available ``types`` are ``none`` (def
     * ``angle_of_contact``: Imposes a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact, in degrees (°).
     * ``free_angle``: Leaves the angle as a free variable to be solved.
     * ``periodic``: Imposes periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``.
+
+Time-Harmonic Maxwell
+^^^^^^^^^^^^^^^^^^^^^
+
+For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`` (perfect electric conductor), ``pmc`` (perfect magnetic conductor), ``silver muller``, ``electric field``, ``magnetic field``, ``impedance boundary`` and ``waveguide port``. The default parameters are shown below.
+
+.. code-block:: text
+
+  subsection boundary conditions time harmonic maxwell
+    set number         = 1
+    set time dependent = false
+    subsection bc 0
+      set id   = 0
+      set type = silver muller
+    end
+  end
+
+* ``number``: This is the number of boundary conditions of the problem.
+
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This improves the computational efficiency for transient cases in which the boundary conditions do not change.
+
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
+
+* ``type``: This is the type of boundary condition being imposed. At the moment, the choices are:
+    * ``pec`` for a perfect electric conductor boundary. The tangential electric field is forced to vanish on the boundary,
+
+      .. math::
+        \mathbf{n} \times \mathbf{E} = 0
+
+      Example:
+
+      .. code-block:: text
+
+        subsection bc 0
+          set id   = 0
+          set type = pec
+        end
+
+    * ``pmc`` for a perfect magnetic conductor boundary. The tangential magnetic field is forced to vanish on the boundary,
+
+      .. math::
+        \mathbf{n} \times \mathbf{H} = 0
+
+      Example:
+
+      .. code-block:: text
+
+        subsection bc 0
+          set id   = 0
+          set type = pmc
+        end
+
+    * ``silver muller`` for a Silver-Müller absorbing boundary condition. In its standard form, the boundary relation is written as
+
+      .. math::
+        \mathbf{n} \times \mathbf{H} + \sqrt{\frac{\varepsilon_{r,\mathrm{eff}}}{\mu_r}} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = 0
+
+      Example:
+
+      .. code-block:: text
+
+        subsection bc 0
+          set id   = 0
+          set type = silver muller
+        end
+
+    * ``electric field`` to impose a prescribed electric field. The boundary values are taken from the parsed functions in the ``E x/y/z real part`` and ``E x/y/z imag part`` subsections,
+
+      .. math::
+        \mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}^{\mathrm{inc}}
+
+      Example:
+
+      .. code-block:: text
+
+        subsection bc 0
+          set id   = 0
+          set type = electric field
+          subsection E x real part
+            set Function expression = 1
+          end
+          subsection E x imag part
+            set Function expression = 1
+          end
+          subsection E y real part
+            set Function expression = 0
+          end
+          subsection E y imag part
+            set Function expression = 0
+          end
+          subsection E z real part
+            set Function expression = 0
+          end
+          subsection E z imag part
+            set Function expression = 0
+          end
+        end
+
+    * ``magnetic field`` to impose a prescribed magnetic field. The boundary values are taken from the parsed functions in the ``H x/y/z real part`` and ``H x/y/z imag part`` subsections,
+
+      .. math::
+        \mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}^{\mathrm{inc}} - \mathbf{J}_\mathrm{s}
+
+    where :math:`\mathbf{J}_\mathrm{s}` is the surface current density. 
+
+      Example:
+
+      .. code-block:: text
+
+        subsection bc 0
+          set id   = 0
+          set type = magnetic field
+          subsection H x real part
+            set Function expression = 1
+          end
+          subsection H x imag part
+            set Function expression = 1
+          end
+          subsection H y real part
+            set Function expression = 0
+          end
+          subsection H y imag part
+            set Function expression = 0
+          end
+          subsection H z real part
+            set Function expression = 0
+          end
+          subsection H z imag part
+            set Function expression = 0
+          end
+        end
+
+    * ``impedance boundary`` to impose an impedance boundary condition. The boundary is governed by the surface admittance :math:`Y_s` supplied through the ``surface admittance real part`` and ``surface admittance imag part`` subsections and the electromagnetic excitation :math:`\mathbf{g}` supplied through the ``excitation x/y/z real part`` and ``excitation x/y/z imag part`` subsections,
+
+      .. math::
+        \mathbf{n} \times \mathbf{H} + Y_s \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{g}
+
+      Example:
+
+      .. code-block:: text
+
+        subsection bc 0
+          set id   = 0
+          set type = impedance boundary
+          subsection surface admittance real part
+            set Function expression = 0.1
+          end
+          subsection surface admittance imag part
+            set Function expression = 0
+          end
+          subsection excitation x real part
+            set Function expression = 0
+          end
+          subsection excitation x imag part
+            set Function expression = 0
+          end
+          subsection excitation y real part
+            set Function expression = 0
+          end
+          subsection excitation y imag part
+            set Function expression = 0
+          end
+          subsection excitation z real part
+            set Function expression = 0
+          end
+          subsection excitation z imag part
+            set Function expression = 0
+          end
+        end
+
+    * ``waveguide port`` to impose a waveguide port boundary condition. The parameters for this boundary conditions are defined in the Time-Harmonic Maxwell section of the input file. In the following, :math:`k_l` is the wave number in the longitudinal direction of the waveguide.
+
+      For TE modes, the boundary condition is expressed as:
+
+      .. math::
+        \mathbf{n} \times \mathbf{H} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{n} \times \mathbf{H}_{\mathrm{mode}} + \frac{k_{l}}{\omega \mu_r} \mathbf{n} \times ( \mathbf{E}_{\mathrm{mode}} \times \mathbf{n} )
+
+      For TM modes, the boundary condition is expressed as:
+      
+      .. math::
+        \mathbf{n} \times \mathbf{H} + \frac{\omega \varepsilon_{r,\mathrm{eff}}}{k_{l}} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{n} \times \mathbf{H}_{\mathrm{mode}} + \frac{\omega \varepsilon_{r,\mathrm{eff}}}{k_{l}} \mathbf{n} \times ( \mathbf{E}_{\mathrm{mode}} \times \mathbf{n} )
+
+      Example:
+
+      .. code-block:: text
+
+        subsection bc 0
+          set id   = 0
+          set type = waveguide port
+        end
+
+      .. Seealso::
+
+        For more information on how to specify the waveguide port, see the :doc:`./time_harmonic_maxwell` section.
+
+
