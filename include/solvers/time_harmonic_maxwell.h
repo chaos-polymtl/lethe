@@ -419,7 +419,7 @@ public:
   should_solve_auxiliary_physics() override;
 
   /**
-   * @brief Updates the containers that stores the properties from which the material properties of the time-harmonic Maxwell equations can depend on.
+   * @brief Updates the containers that store the properties from which the material properties of the time-harmonic Maxwell equations can depend on.
    */
   void
   update_material_properties_dependencies();
@@ -683,31 +683,31 @@ private:
                             GlobalVectorType      &solution);
 
   /**
-   * @brief Pointer to the multiphysics interface that manages the coupling
+   * Pointer to the multiphysics interface that manages the coupling
    * between the different physics solvers.
    */
   MultiphysicsInterface<dim> *multiphysics;
 
   /**
-   * @brief Store information related to the computing time such as CPU times or
+   * Store information related to the computing time such as CPU times or
    * wall time.
    */
   TimerOutput computing_timer;
 
   /**
-   * @brief Contain the simulation parameter file information.
+   * Contain the simulation parameter file information.
    */
   const SimulationParameters<dim> &simulation_parameters;
 
 
   /**
-   * @brief Collection of cells that cover the domain on which one wants to
+   * Collection of cells that cover the domain on which one wants to
    * solve a partial differential equation.
    */
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
 
   /**
-   * @brief Responsible for the control of steady-state and transient
+   * Responsible for the control of steady-state and transient
    * simulations. Contains all the information related to time stepping and the
    * stopping criteria. See simulation_control abstract class for more
    * information.
@@ -715,7 +715,7 @@ private:
   std::shared_ptr<SimulationControl> simulation_control;
 
   /**
-   * @brief Given a triangulation and a description of a finite element, this
+   * Given a triangulation and a description of a finite element, this
    * class enumerates degrees of freedom on all vertices, edges, faces, and
    * cells of the triangulation of the trial space for the interior dofs. NB:
    * Since it is based on DG elements, there are no dofs on vertices, edges or
@@ -724,7 +724,7 @@ private:
   std::shared_ptr<DoFHandler<dim>> dof_handler_trial_interior;
 
   /**
-   * @brief Given a triangulation and a description of a finite element, this
+   * Given a triangulation and a description of a finite element, this
    * class enumerates degrees of freedom on all vertices, edges, faces, and
    * cells of the triangulation of the trial space for the skeleton dofs. NB:
    * This DoFHandler is based on global FE spaces with frozen interior dofs, so
@@ -733,7 +733,7 @@ private:
   std::shared_ptr<DoFHandler<dim>> dof_handler_trial_skeleton;
 
   /**
-   * @brief Given a triangulation and a description of a finite element, this
+   * Given a triangulation and a description of a finite element, this
    * class enumerates degrees of freedom on all vertices, edges, faces, and
    * cells of the triangulation of the test space dofs. NB: in DPG, the
    * test space is not split into interior and skeleton dofs in opposition to
@@ -743,112 +743,121 @@ private:
   std::shared_ptr<DoFHandler<dim>> dof_handler_test;
 
   /**
-   * @brief The base class for finite elements. This class will manage everything related to the shape functions of the trial interior space.
+   * The base class for finite elements. This class will manage everything
+   * related to the shape functions of the trial interior space.
    */
   std::shared_ptr<FiniteElement<dim>> fe_trial_interior;
 
   /**
-   * @brief The base class for finite elements. This class will manage everything related to the shape functions of the trial skeleton space.
+   * The base class for finite elements. This class will manage everything
+   * related to the shape functions of the trial skeleton space.
    */
   std::shared_ptr<FiniteElement<dim>> fe_trial_skeleton;
 
   /**
-   * @brief The base class for finite elements. This class will manage everything related to the shape functions of the test space.
+   * The base class for finite elements. This class will manage everything
+   * related to the shape functions of the test space.
    */
   std::shared_ptr<FiniteElement<dim>> fe_test;
 
   /**
-   * @brief Preconditioner for the linear solver. At the present moment, this is an identity preconditioner.
+   * Preconditioner for the linear solver. At the present moment, this is an
+   * identity preconditioner.
    */
   std::shared_ptr<TrilinosWrappers::PreconditionIdentity> preconditioner;
 
   /**
-   * @brief Store some convergence data, such as residuals of the cg-method,
+   * Store some convergence data, such as residuals of the cg-method,
    * or some evaluated <i>L<sup>2</sup></i>-errors of discrete solutions.
    * Evaluate convergence rates or orders.
    */
   ConvergenceTable error_table;
 
   /**
-   * @brief Transformation which maps point in the reference cell to
+   * Transformation which maps point in the reference cell to
    * points in the actual grid cell.
    */
   std::shared_ptr<Mapping<dim>> mapping;
 
   /**
-   * @brief Approximate an integral over a cell by evaluating the integrand at specific
+   * Approximate an integral over a cell by evaluating the integrand at specific
    * points and summing the point values with specific weights.
    */
   std::shared_ptr<Quadrature<dim>> cell_quadrature;
 
   /**
-   * @brief Approximate an integral over a cell's face by evaluating the integrand at specific
-   * points and summing the point values with specific weights.
+   * Approximate an integral over a cell's face by evaluating the integrand at
+   * specific points and summing the point values with specific weights.
    */
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
   /**
-   * @brief IndexSet of the owned degrees of freedom for the interior trial space.
+   * IndexSet of the owned degrees of freedom for the interior trial space.
    */
   IndexSet locally_owned_dofs_trial_interior;
 
   /**
-   * @brief IndexSet of the relevant degrees of freedom for the interior trial space.
+   * IndexSet of the relevant degrees of freedom for the interior trial space.
    */
   IndexSet locally_relevant_dofs_trial_interior;
 
   /**
-   * @brief IndexSet of the owned degrees of freedom for the skeleton trial space.
+   * IndexSet of the owned degrees of freedom for the skeleton trial space.
    */
   IndexSet locally_owned_dofs_trial_skeleton;
 
   /**
-   * @brief IndexSet of the relevant degrees of freedom for the skeleton trial space.
+   * IndexSet of the relevant degrees of freedom for the skeleton trial space.
    */
   IndexSet locally_relevant_dofs_trial_skeleton;
 
   /**
-   * @brief IndexSet of the owned degrees of freedom for the test space.
+   * IndexSet of the owned degrees of freedom for the test space.
    */
   IndexSet locally_owned_dofs_test;
 
   /**
-   * @brief IndexSet of the relevant degrees of freedom for the test space.
+   * IndexSet of the relevant degrees of freedom for the test space.
    */
   IndexSet locally_relevant_dofs_test;
 
   /**
-   * @brief The system matrix.
+   * The system matrix.
    */
   TrilinosWrappers::SparseMatrix system_matrix;
 
   /**
-   * @brief A vector containing all the values of the solution in the interior trial space.
+   * A vector containing all the values of the solution in the interior trial
+   * space.
    */
   std::shared_ptr<GlobalVectorType> present_solution;
 
   /**
-   * @brief A vector containing all the values of the solution on the skeleton for the trial space.
+   * A vector containing all the values of the solution on the skeleton for the
+   * trial space.
    */
   std::shared_ptr<GlobalVectorType> present_solution_skeleton;
 
   /*
-   * @brief A vector containing all the values of the DPG built-in a-posteriori error indicator.
+   * A vector containing all the values of the DPG built-in a-posteriori error
+   * indicator.
    */
   std::shared_ptr<GlobalVectorType> present_DPG_error_indicator;
 
   /**
-   * @brief A vector containing the values of the dpg error estimator for each cell of the triangulation. This is used for mesh adaptation based on the DPG error estimator.
+   * A vector containing the values of the dpg error estimator for each cell of
+   * the triangulation. This is used for mesh adaptation based on the DPG error
+   * estimator.
    */
   Vector<float> local_estimated_error_per_cell;
 
   /**
-   * @brief The right hand side vector.
+   * The right hand side vector.
    */
   GlobalVectorType system_rhs;
 
   /**
-   * @brief Store the nonzero constraints that arise from several sources such
+   * Store the nonzero constraints that arise from several sources such
    * as boundary conditions and hanging nodes in the mesh. See the deal.II
    * documentation on constraints on degrees of freedom for more information.
    * The zero constraints are not used in this solver as it solve a linear
@@ -857,7 +866,7 @@ private:
   AffineConstraints<double> nonzero_constraints;
 
   /**
-   * @brief SolutionTransfer<dim, GlobalVectorType>> is
+   * SolutionTransfer<dim, GlobalVectorType>> is
    * used to implement the transfer of a discrete FE function
    * (e.g. a solution vector) from one mesh to another. This Deal.ii class is
    * used for mesh_refinement and simulation restarts. This transfer the
@@ -866,50 +875,67 @@ private:
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 
   /**
-   * @brief Extractor for the real part of the electric field vector.
+   * Extractor for the real part of the electric field vector.
    */
   const FEValuesExtractors::Vector extractor_E_real;
 
   /**
-   * @brief Extractor for the imaginary part of the electric field vector.
+   * Extractor for the imaginary part of the electric field vector.
    */
   const FEValuesExtractors::Vector extractor_E_imag;
 
   /**
-   * @brief Extractor for the real part of the magnetic field vector.
+   * Extractor for the real part of the magnetic field vector.
    */
   const FEValuesExtractors::Vector extractor_H_real;
 
   /**
-   * @brief Extractor for the imaginary part of the magnetic field vector.
+   * Extractor for the imaginary part of the magnetic field vector.
    */
   const FEValuesExtractors::Vector extractor_H_imag;
 
   /**
-   * @brief The time-harmonic Maxwell DPG system of equation is solved in dimensionless form. However, to be able to recover the physical solution, the physical amplitude of the electromagnetic fields needs to be calculated from the input power provided and the associated scaling factor is the maximum of those field amplitudes across all the inlets in the problem. This way, the electromagnetic fields remain with an amplitude of order 1 (for the inlet with the highest input power) or less (for the other inlets) in the dimensionless system.
+   * The time-harmonic Maxwell DPG system of equation is solved in dimensionless
+   * form. However, to be able to recover the physical solution, the physical
+   * amplitude of the electromagnetic fields needs to be calculated from the
+   * input power provided and the associated scaling factor is the maximum of
+   * those field amplitudes across all the inlets in the problem. This way, the
+   * electromagnetic fields remain with an amplitude of order 1 (for the inlet
+   * with the highest input power) or less (for the other inlets) in the
+   * dimensionless system.
    *
    */
   double electromagnetic_scaling;
 
   /**
-   * @brief A vector containing the electric amplitudes of all the waveguide ports. It is define as the : \f$ \sqrt{P_input/P_port} \f$, where \f$P_input\f$ is the input power provided by the user for a given waveguide port and \f$P_port\f$ is the power computed from integrating the Poynting vector of the electromagnetic fields at the inlet associated with the waveguide port condition.
+   * A vector containing the electric amplitudes of all the waveguide ports. It
+   * is define as the : \f$ \sqrt{P_\mathrm{input}/P_\mathrm{port}} \f$, where
+   * \f$P_\mathrm{input}\f$ is the input power provided by the user for a given
+   * waveguide port and \f$P_\mathrm{port}\f$ is the power computed from
+   * integrating the Poynting vector of the electromagnetic fields at the inlet
+   * associated with the waveguide port condition.
    */
   std::vector<double> waveguide_ports_electric_amplitudes;
 
 
   /**
-   * @brief A boolean variable that indicates whether the time-harmonic Maxwell solver needs to define temperature-dependent variables and store the temperature solution from the last solve.
+   * A boolean variable that indicates whether the time-harmonic Maxwell solver
+   * needs to define temperature-dependent variables and store the temperature
+   * solution from the last solve.
    */
   bool needs_temperature;
 
   /**
-   * @brief A vector containing all the values of the temperature solution when the last solve of the time-harmonic Maxwell system was performed. This is used to determine the physical properties of the materials in the domain when they are temperature-dependent.
+   * A vector containing all the values of the temperature solution when the
+   * last solve of the time-harmonic Maxwell system was performed. This is used
+   * to determine the physical properties of the materials in the domain when
+   * they are temperature-dependent.
    */
   GlobalVectorType temperature_last_solved_solution;
 
 
   /**
-   * @brief SolutionTransfer<dim, GlobalVectorType>> is
+   * SolutionTransfer<dim, GlobalVectorType>> is
    * used to implement the transfer of a discrete FE function
    * (e.g. a solution vector) from one mesh to another. This Deal.ii class is
    * used for mesh_refinement and simulation restarts. The temperature field

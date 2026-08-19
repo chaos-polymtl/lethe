@@ -144,7 +144,7 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
             std::ranges::find(active_physics_ids, PhysicsID::heat_transfer) !=
               active_physics_ids.end(),
             ExcMessage(
-              "User defined temperature-dependent electromagnetic properties. Make sure the heat transfer physics is enabled."));
+              "User defined temperature-dependent electromagnetic properties requested without heat transfer physics. Enable heat transfer in the multiphysics subsection."));
           break;
         }
     }
@@ -858,9 +858,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                       face->boundary_id()));
 
                   // We update the material properties for the current face
-                  // quadrature points. If no temperature field is needed,
-                  // the temperature_face_values vector is filled with zeros
-                  // and will not affect the material properties.
+                  // quadrature points.
                   field_values_vector[field::temperature] =
                     temperature_face_values;
 
@@ -1608,7 +1606,7 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
     }
 
   // Reduce the flag across all MPI ranks so that processes that don't own
-  // any cells don't falsely trigger the assertion.
+  // any cells don't falsely triggers the assertion.
   const bool is_global_dpg_error_computed =
     Utilities::MPI::max(static_cast<unsigned int>(dpg_error_computed),
                         mpi_communicator) != 0;
@@ -1679,7 +1677,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   // because the dynamic sparsity pattern is more expensive in terms of
   // memory consumption than the static sparsity pattern.
   TrilinosWrappers::SparsityPattern
-    sparsity_pattern; // This needs to be defined outside the if statement
+    sparsity_pattern; // This needs to be defined outside the following block
                       // because it is used in extra_verbose to report the
                       // memory consumption of the sparsity pattern.
 
@@ -2286,7 +2284,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
 
                           for (unsigned int q = 0; q < n_q_points; ++q)
                             {
-                              // Here we check if the magnitude of the complexe
+                              // Here we check if the magnitude of the complex
                               // property difference normalized by the magnitude
                               // of the last solved property is greater than the
                               // threshold. We start by computing only the
@@ -2820,10 +2818,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                 }
             }
 
-          // We update the material properties for the current face
-          // quadrature points. If no temperature field is needed, the
-          // temperature_face_values vector is filled with zeros and will
-          // not affect the material properties.
+          // We update the material properties for the current cell
+          // quadrature points.
           field_values_vector[field::temperature] = temperature_values;
 
           update_material_properties(physical_properties_manager,
@@ -3911,10 +3907,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                 }
             }
 
-          // We update the material properties for the current face
-          // quadrature points. If no temperature field is needed, the
-          // temperature_face_values vector is filled with zeros and will
-          // not affect the material properties.
+          // We update the material properties for the current cell
+          // quadrature points.
           field_values_vector[field::temperature] = temperature_values;
 
           update_material_properties(physical_properties_manager,
