@@ -87,11 +87,14 @@ DeclException4(ListsSizeMismatch,
 namespace Parameters
 {
   SizeOfSubsections
-  get_size_of_subsections(const std::string &file_name)
+  get_size_of_subsections(const std::string &file_name,
+                          const bool         require_subsection_size)
   {
     SizeOfSubsections sizes;
-    sizes.boundary_conditions = get_max_subsection_size(file_name);
-    sizes.manifolds           = get_max_subsection_size(file_name);
+    sizes.boundary_conditions =
+      get_max_subsection_size(file_name, require_subsection_size);
+    sizes.manifolds =
+      get_max_subsection_size(file_name, require_subsection_size);
     return sizes;
   }
 

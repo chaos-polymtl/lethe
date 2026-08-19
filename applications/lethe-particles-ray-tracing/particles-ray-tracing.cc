@@ -56,8 +56,12 @@ main(int argc, char *argv[])
           RayTracingSolverParameters<3> parameters;
           DEMSolverParameters<3>        dem_parameters;
 
+          // The DEM solvers do not require any variable size subsection. Their
+          // boundary conditions are declared in the "DEM boundary conditions"
+          // subsection, and a file that declares no manifold leads to
+          // subsections of size zero.
           const Parameters::SizeOfSubsections size_of_subsections =
-            Parameters::get_size_of_subsections(file_name);
+            Parameters::get_size_of_subsections(file_name, false);
 
           parameters.declare(prm, size_of_subsections);
           dem_parameters.declare(prm, size_of_subsections);
