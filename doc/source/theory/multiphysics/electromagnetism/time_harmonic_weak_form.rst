@@ -154,9 +154,9 @@ with :math:`\mathbf{v}` and :math:`\mathbf{u}` being arbitrary complex-valued ve
 
    \begin{align}
      \mathbf{E},\mathbf{H} &\in \mathcal{X}_{\mathrm{em}},
-       & \mathcal{X}_{\mathrm{em}} &:= (L^2(\Omega_h))^3, \\
+       & \mathcal{X}_{\mathrm{em}} &:= (L^2(\Omega))^3, \\
      \hat{\mathbf{E}},\hat{\mathbf{H}} &\in \hat{\mathcal{X}}_{\mathrm{em}},
-       & \hat{\mathcal{X}}_{\mathrm{em}} &:= \bigl\{ \hat{\mathbf{x}} \in H^{-1/2}(\mathrm{curl},\Omega_h) : \mathbf{n}\times \hat{\mathbf{x}} = \mathbf{n}\times \mathbf{x}_\mathrm{D} \text{ on } \Gamma_D \bigr\}, \\
+       & \hat{\mathcal{X}}_{\mathrm{em}} &:= \bigl\{ \hat{\mathbf{x}} \in H^{-1/2}(\mathrm{curl},\partial\Omega_h) : \mathbf{n}\times \hat{\mathbf{x}} = \mathbf{n}\times \mathbf{x}_\mathrm{D} \text{ on } \Gamma_D \bigr\}, \\
      \mathbf{F},\mathbf{I} &\in \mathcal{Y}_{\mathrm{em}},
        & \mathcal{Y}_{\mathrm{em}} &:= \bigl\{ \mathbf{y} \in H(\mathrm{curl},\Omega_h) \bigr\}.
    \end{align}
