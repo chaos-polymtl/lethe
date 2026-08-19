@@ -208,7 +208,7 @@ Physical Properties
 * The ``magnetic permeability imag part polynomial coefficients`` parameter is used by the polynomial model to specify the coefficients of the polynomial used to calculate the imaginary part of the magnetic permeability. It follows the same rules as the ``electric conductivity polynomial coefficients`` parameter.
 
 .. warning::
-  When using the polynomial model for the electric permittivity or magnetic permeability, the ``heat transfer`` physics must be enabled in the :doc:`./multiphysics` section of the input file. This is because the polynomial model is a function of the temperature, which is only available when the heat transfer physics is enabled. Additionally, since the time-harmonic Maxwell solver is solved before the heat transfer solver, the temperature field  shoudlbe initialized to a realistic guess value in the :doc:`./initial_conditions` section of the input file. 
+  When using the polynomial model for the electric permittivity or magnetic permeability, the ``heat transfer`` physics must be enabled in the :doc:`./multiphysics` section of the input file. This is because the polynomial model is a function of the temperature, which is only available when the heat transfer physics is enabled. Additionally, since the time-harmonic Maxwell solver is solved before the heat transfer solver, the temperature field  should be initialized to a realistic guess value in the :doc:`./initial_conditions` section of the input file. 
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 

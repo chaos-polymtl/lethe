@@ -58,8 +58,6 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
 .. warning::
     The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
 
-.. warning::
-    The time dependent boundary conditions are not yet implemented for the time-harmonic Maxwell's equations. 
 
 .. note::
     The index in ``subsection bc ..`` must be coherent with the ``number`` of boundary conditions set: if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist. 
@@ -243,7 +241,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
     end
   end
 
-* ``number``: This is the number of boundary conditions of the problem. Periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
+* ``number``: This is the number of boundary conditions of the problem.
 
 * ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This improves the computational efficiency for transient cases in which the boundary conditions do not change.
 

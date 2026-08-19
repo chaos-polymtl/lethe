@@ -34,7 +34,7 @@ three main categories:
 - Robin boundary conditions: :math:`\mathbf{n} \times (\mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E}) + i \omega Z_{\mathrm{s}}^{-1} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n}) = \mathbf{E}_\mathrm{R}`,
 
 In the expressions above, :math:`\mathbf{n}` is the outward unit normal and
-:math:`Z_\mathrm{s}` is the boundary surface impedance. The Robin condition
+:math:`Y_\mathrm{s}` is the boundary surface admittance. The Robin condition
 generalizes Dirichlet and Neumann conditions, and can represent impedance,
 absorbing, and related boundary models.
 
@@ -129,7 +129,7 @@ respectively, and integrated by parts over the mesh :math:`\Omega_h`:
         &= 0 , \\
       (\nabla \times \mathbf{F},\mathbf{H})_{\Omega_h} + (\mathbf{F}, i \omega \varepsilon_{r,\text{eff}} \mathbf{E})_{\Omega_h}
       + \langle \mathbf{F} , \mathbf{n}\times \hat{\mathbf{H}}\rangle_{\partial \Omega_h \backslash \Gamma_R }
-      - \langle \mathbf{F} ,Z_\mathrm{s}^{-1} \mathbf{E}\rangle_{ \Gamma_R }
+      - \langle \mathbf{F} ,Y_\mathrm{s} \mathbf{E}\rangle_{ \Gamma_R }
         &=(\mathbf{F},\mathbf{J})_{\Omega_h} -  \langle \mathbf{F} , \mathbf{E_\mathrm{R}} \rangle_{ \Gamma_R },
    \end{align}
 
@@ -173,7 +173,7 @@ of the system:
    \begin{align}
    \|(\mathbf{F}, \mathbf{I})\|^2_V &= \|  \nabla \times \mathbf{F} - i \omega \mu_r \mathbf{I} \|^2_{\Omega_h} + \| \nabla \times \mathbf{I} + i \omega \varepsilon_{r,\mathrm{eff}} \mathbf{F} \|^2_{\Omega_h} \\
      &\quad + \alpha\left(\|\mathbf{F}\|^2_{\Omega_h} + \|\mathbf{I}\|^2_{\Omega_h}\right)
-      + \| \mathbf{n} \times \mathbf{I} + Z_\mathrm{s}^{-1} \mathbf{n} \times (\mathbf{F} \times \mathbf{n}) \|^2_{\Gamma_R},
+      + \| \mathbf{n} \times \mathbf{I} + Y_\mathrm{s} \mathbf{n} \times (\mathbf{F} \times \mathbf{n}) \|^2_{\Gamma_R},
    \end{align}
 
 where :math:`\alpha \sim 1` is a strictly positive constant (:math:`\alpha=1`
@@ -193,14 +193,14 @@ present.
     :math:`\mathbf{E}_\parallel = \mathbf{n} \times (\mathbf{E} \times \mathbf{n})`
     for the tangential component of a field (and similarly
     :math:`\mathbf{H}_\parallel`), the list below is not exhaustive but covers the
-    conditions commonly used in practice.
+    conditions commonly used in practice. 
 
     * **Perfect electric conductor (PEC)**: :math:`\mathbf{n} \times \mathbf{E} = 0`.
     * **Perfect magnetic conductor (PMC)**: :math:`\mathbf{n} \times \mathbf{H} = 0`.
     * **Prescribed electric field (Dirichlet)**: :math:`\mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}_D`.
     * **Prescribed magnetic field (Neumann)**: :math:`\mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}_N - \mathbf{J}_{\mathrm{s}}`, with :math:`\mathbf{J}_{\mathrm{s}}` a prescribed surface current density.
-    * **Impedance condition (Robin)**: :math:`\mathbf{n} \times \mathbf{H} + Z_\mathrm{s}^{-1} \mathbf{E}_\parallel = \mathbf{E_\mathrm{R}}`, with :math:`Z_\mathrm{s}` the surface impedance of the boundary.
-    * **Absorbing / radiation condition (Silver–Müller)**: :math:`\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_{r,\mathrm{eff}}/\mu_r}\, \mathbf{E}_\parallel = 0`. This is the impedance condition above with :math:`Z_\mathrm{s} = \sqrt{\mu_r/\varepsilon_{r,\mathrm{eff}}}` (the impedance of the exterior medium) and no source term.
+    * **Impedance condition (Robin)**: :math:`\mathbf{n} \times \mathbf{H} + Y_\mathrm{s} \mathbf{E}_\parallel = \mathbf{E_\mathrm{R}}`, with :math:`Y_\mathrm{s}` the surface admittance of the boundary.
+    * **Absorbing / radiation condition (Silver–Müller)**: :math:`\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_{r,\mathrm{eff}}/\mu_r}\, \mathbf{E}_\parallel = 0`. This is the impedance condition above with :math:`Y_\mathrm{s} = \sqrt{\varepsilon_{r,\mathrm{eff}}/\mu_r}` (the admittance of the exterior medium) and no source term.
     * **Lossy / imperfect conductor**: :math:`\mathbf{n} \times \mathbf{H} + \sqrt{\varepsilon_{r,\mathrm{eff},2}/\mu_{r,2}}\, \mathbf{E}_\parallel = 0`, the same form as the radiation condition above, using the (possibly complex) effective properties :math:`\varepsilon_{r,\mathrm{eff},2}`, :math:`\mu_{r,2}` of the adjacent conducting medium.
     * **Waveguide inlet port, TE**\ :math:`_{mn}` **mode**: :math:`\mathbf{n} \times \mathbf{H} + \dfrac{\mathbf{k} \cdot \mathbf{n}}{\omega \mu_r} \mathbf{E}_\parallel = \mathbf{n} \times \mathbf{H}_{inc} + \dfrac{\mathbf{k} \cdot \mathbf{n}}{\omega \mu_r} \mathbf{E}_{inc,\parallel}`.
     * **Waveguide inlet port, TM**\ :math:`_{mn}` **mode**: :math:`\mathbf{n} \times \mathbf{H} + \dfrac{\omega \varepsilon_{r,\mathrm{eff}}}{\mathbf{k} \cdot \mathbf{n}} \mathbf{E}_\parallel = \mathbf{n} \times \mathbf{H}_{inc} + \dfrac{\omega \varepsilon_{r,\mathrm{eff}}}{\mathbf{k} \cdot \mathbf{n}} \mathbf{E}_{inc,\parallel}`.
@@ -209,3 +209,5 @@ present.
     :math:`\mathbf{E}_{inc,\parallel}` denote the incident field of the excited
     mode, and :math:`k = \omega \sqrt{\varepsilon_{r,\mathrm{eff}} \mu_r}` its wavevector amplitude.
 
+.. note::
+    When solving time-harmonic problems numerically, the mesh resolution should be chosen to ensure that the dimensionless wavenumber :math:`k h / (2 \pi)` is sufficiently small, where :math:`h` is the characteristic mesh size. A common rule of thumb is to have at least 10 degree 1 elements per wavelength, i.e., :math:`k h / (2 \pi) \leq 0.1`.
