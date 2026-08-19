@@ -1130,7 +1130,8 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::update_boundary_conditions()
 {
-  if (!this->simulation_parameters.boundary_conditions.time_dependent)
+  if (!this->simulation_parameters
+         .boundary_conditions_time_harmonic_electromagnetics.time_dependent)
     return;
 
   AssertThrow(

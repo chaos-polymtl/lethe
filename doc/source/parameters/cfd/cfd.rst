@@ -35,5 +35,6 @@ General, CFD and Multiphysics
    source_term
    stabilization
    timer
+   time_harmonic_maxwell
    tracer_drift_velocity
    velocity_source

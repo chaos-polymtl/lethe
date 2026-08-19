@@ -28,6 +28,10 @@ This subsection specifies the characteristics of the finite element method used 
     set phase cahn hilliard degree     = 1
     set potential cahn hilliard degree = 1
 
+    # interpolation degree electromagnetics
+    set electromagnetics trial degree = 1
+    set electromagnetics test degree  = 2
+
     # bubble enrichment function
     set enable bubble function velocity = false
     set enable bubble function pressure = false
@@ -51,6 +55,12 @@ This subsection specifies the characteristics of the finite element method used 
 * ``CLS degree`` specifies the polynomial degree for the CLS phase indicator. It is not recommended to use higher polynomial degrees for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.
 
 * ``phase cahn hilliard degree`` and ``potential cahn hilliard degree`` specify the polynomial degree for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The degrees chosen should be equal. They are left as two separate parameters for debugging purposes.
+
+* ``electromagnetics trial degree`` and ``electromagnetics test degree`` specify the polynomial degree for the trial and test functions in the time-harmonic Maxwell equations. The trial function is the degree that will determine the accuracy of the solution, while the test function is used by the DPG method to solve the system.
+
+.. important:: 
+  
+  The test function degree needs to be at least one degree higher than the trial space for the linear system to be well-posed. It can be set to a higher value than the minimum required, but this will increase the computational cost, and no significant improvement in accuracy has been observed in our experience. 
 
 * ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  `Franca and Farhat 1995 <https://www.sciencedirect.com/science/article/abs/pii/004578259400721X>`_ and `Brezzi et al 1992 <https://www.sciencedirect.com/science/article/abs/pii/004578259290102P>`_ for more detail.
 
