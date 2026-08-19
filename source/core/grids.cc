@@ -345,7 +345,7 @@ read_mesh_and_manifolds(
       // Gather all the manifold ids within a set
       std::set<int> manifold_ids;
       for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
-        manifold_ids.insert(manifolds_parameters.id[i]);
+        manifold_ids.insert(manifolds_parameters.boundary_id[i]);
 
       // Reset all the manifolds manually and force them to zero
       triangulation.reset_all_manifolds();
@@ -545,7 +545,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       // Gather all the manifold ids within a set
       std::set<int> manifold_ids;
       for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
-        manifold_ids.insert(manifolds_parameters.id[i]);
+        manifold_ids.insert(manifolds_parameters.boundary_id[i]);
 
       // Reset all the manifolds manually and force them to zero
       triangulation.reset_all_manifolds();
