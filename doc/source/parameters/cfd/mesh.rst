@@ -120,6 +120,9 @@ This subsection provides information of the simulation geometry and its mesh. Th
   .. warning::
       When scale, translation and rotation are used together, the scaling is applied first, then the rotation, then the translation.
 
+  .. warning::
+      ``dealii`` and ``lethe`` grids may carry curved manifolds. Scaling moves the vertices of the mesh, but not the manifolds attached to it, which can distort the geometry when the mesh is refined. Lethe prints a warning when a scaling factor is applied to such a grid. In that case, the geometry should preferably be dimensioned through the ``grid arguments`` instead.
+
 
 Lethe Grid Generators
 ---------------------
