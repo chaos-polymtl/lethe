@@ -34,7 +34,7 @@ three main categories:
 
 - First-type (Dirichlet) boundary conditions: :math:`\mathbf{n} \times \mathbf{E} = \mathbf{E}_{\mathrm{D}}`;
 - Second-type (Neumann) boundary conditions: :math:`\mu_{\mathrm{em}}^{-1} \mathbf{n} \times (\nabla \times \mathbf{E})  = i \omega \mathbf{J}_{\mathrm{ext,N}}`;
-- Robin boundary conditions: :math:`\mathbf{n} \times (\mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E}) + i \omega Y_\mathrm{s} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n}) = \mathbf{E}_\mathrm{R}`,
+- Robin boundary conditions: :math:`\mathbf{n} \times (\mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E}) + Y_\mathrm{s} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n}) = \mathbf{E}_\mathrm{R}`,
 
 In the expressions above, :math:`\mathbf{n}` is the outward unit normal and
 :math:`Y_\mathrm{s}` is the boundary surface admittance. The Robin condition
@@ -132,7 +132,7 @@ respectively, and integrated by parts over the mesh :math:`\Omega_h`:
         &= 0 , \\
       (\nabla \times \mathbf{F},\mathbf{H})_{\Omega_h} + (\mathbf{F}, i \omega \varepsilon_{r,\text{eff}} \mathbf{E})_{\Omega_h}
       + \langle \mathbf{F} , \mathbf{n}\times \hat{\mathbf{H}}\rangle_{\partial \Omega_h \backslash \Gamma_R }
-      - \langle \mathbf{F} ,Y_\mathrm{s} \mathbf{E}\rangle_{ \Gamma_R }
+      - \langle \mathbf{F} ,Y_\mathrm{s} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n})\rangle_{ \Gamma_R }
         &=(\mathbf{F},\mathbf{J})_{\Omega_h} -  \langle \mathbf{F} , \mathbf{E_\mathrm{R}} \rangle_{ \Gamma_R },
    \end{align}
 
