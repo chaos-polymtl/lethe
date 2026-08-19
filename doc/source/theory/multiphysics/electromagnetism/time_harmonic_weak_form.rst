@@ -9,6 +9,9 @@ formulation), then the ultraweak formulation used by Lethe's DPG solver.
 .. seealso::
     For additional details on the DPG setting, see :doc:`DPG formulation of time-harmonic Maxwell problems <./dpg_time_harmonic_maxwell>`.
 
+.. note::
+    When solving time-harmonic problems numerically, the mesh resolution should be chosen to ensure that the dimensionless wavenumber :math:`k h / (2 \pi)` is sufficiently small, where :math:`h` is the characteristic mesh size. A common rule of thumb is to have at least 10 degree 1 elements per wavelength, i.e., :math:`k h / (2 \pi) \leq 0.1`.
+
 Primal Formulation
 ------------------
 
@@ -208,6 +211,3 @@ present.
     In each waveguide, :math:`\mathbf{H}_{inc}` and
     :math:`\mathbf{E}_{inc,\parallel}` denote the incident field of the excited
     mode, and :math:`k = \omega \sqrt{\varepsilon_{r,\mathrm{eff}} \mu_r}` its wavevector amplitude.
-
-.. note::
-    When solving time-harmonic problems numerically, the mesh resolution should be chosen to ensure that the dimensionless wavenumber :math:`k h / (2 \pi)` is sufficiently small, where :math:`h` is the characteristic mesh size. A common rule of thumb is to have at least 10 degree 1 elements per wavelength, i.e., :math:`k h / (2 \pi) \leq 0.1`.
