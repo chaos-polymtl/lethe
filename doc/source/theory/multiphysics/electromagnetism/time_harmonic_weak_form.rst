@@ -34,7 +34,7 @@ three main categories:
 
 - First-type (Dirichlet) boundary conditions: :math:`\mathbf{n} \times \mathbf{E} = \mathbf{E}_{\mathrm{D}}`;
 - Second-type (Neumann) boundary conditions: :math:`\mu_{\mathrm{em}}^{-1} \mathbf{n} \times (\nabla \times \mathbf{E})  = i \omega \mathbf{J}_{\mathrm{ext,N}}`;
-- Robin boundary conditions: :math:`\mathbf{n} \times (\mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E}) + i \omega Z_{\mathrm{s}}^{-1} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n}) = \mathbf{E}_\mathrm{R}`,
+- Robin boundary conditions: :math:`\mathbf{n} \times (\mu_{\mathrm{em}}^{-1} \nabla \times \mathbf{E}) + i \omega Y_\mathrm{s} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n}) = \mathbf{E}_\mathrm{R}`,
 
 In the expressions above, :math:`\mathbf{n}` is the outward unit normal and
 :math:`Y_\mathrm{s}` is the boundary surface admittance. The Robin condition
