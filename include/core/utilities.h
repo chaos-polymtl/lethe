@@ -637,10 +637,17 @@ get_dimension(const std::string &file_name);
 conditions
  * is read
  *
+ * @param[in] require_subsection_size If true, the file must contain at least
+ * one "number" entry and an exception is raised otherwise. Solvers for which no
+ * variable size subsection is mandatory, such as the DEM solvers whose boundary
+ * conditions are declared with a "number of boundary conditions" entry, set
+ * this to false. A file without any "number" entry then yields a size of zero.
+ *
  * @return The maximum number of boundary conditions or manifolds.
  */
 int
-get_max_subsection_size(const std::string &file_name);
+get_max_subsection_size(const std::string &file_name,
+                        const bool         require_subsection_size = true);
 
 /**
  * @brief Return the tensor corresponding to the @p value_string. If the

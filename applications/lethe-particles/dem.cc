@@ -40,8 +40,12 @@ main(int argc, char *argv[])
 
       const unsigned int dim = get_dimension(file_name);
 
+      // The DEM solvers do not require any variable size subsection. Their
+      // boundary conditions are declared in the "DEM boundary conditions"
+      // subsection, and a file that declares no manifold leads to
+      // subsections of size zero.
       const Parameters::SizeOfSubsections size_of_subsections =
-        Parameters::get_size_of_subsections(file_name);
+        Parameters::get_size_of_subsections(file_name, false);
 
       if (dim == 2)
         {
