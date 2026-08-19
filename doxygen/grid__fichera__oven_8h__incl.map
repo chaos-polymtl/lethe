@@ -1,5 +1,5 @@
-<map id="/home/runner/work/lethe/lethe/include/core/fichera_oven_grid.h" name="/home/runner/work/lethe/lethe/include/core/fichera_oven_grid.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="182,5,373,60"/>
+<map id="/home/runner/work/lethe/lethe/include/core/grid_fichera_oven.h" name="/home/runner/work/lethe/lethe/include/core/grid_fichera_oven.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="186,5,369,60"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="5,108,168,133"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,63,126,105,124,100,218,58"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="192,108,363,133"/>
