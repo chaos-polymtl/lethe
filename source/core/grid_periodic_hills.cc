@@ -13,14 +13,8 @@ GridPeriodicHills<dim, spacedim>::GridPeriodicHills(
   this->grid_arguments = grid_arguments;
 
   // Separate arguments of the string
-  std::vector<std::string> arguments;
-  std::stringstream        s_stream(grid_arguments);
-  while (s_stream.good())
-    {
-      std::string substr;
-      getline(s_stream, substr, ';');
-      arguments.push_back(substr);
-    }
+  std::vector<std::string> arguments =
+    Utilities::split_string_list(grid_arguments, ':');
 
   std::vector<double> arguments_double =
     dealii::Utilities::string_to_double(arguments);

@@ -89,10 +89,10 @@ The mesh subsection specifies the computational grid:
     subsection mesh
       set type               = periodic_hills
       set initial refinement = 5
-      set grid arguments     = 1;1;4;2;1
+      set grid arguments     = 1 : 1 : 4 : 2 : 1
     end
 
-The standard geometry is included in the Lethe code with 6 polynomials designing the curve of the hill. Therefore the ``type`` parameter is set to ``periodic_hills``. It consists of a static, uniformly refined mesh with isoparametric elements. The ``initial refinement`` parameter does a uniform refinement in the triangulation. The ``grid argument`` parameter requires five values that correspond to ``spacing y lines; alpha; repetitions x; repetitions y; repetitions z``. A brief explanation of each of them is given here:
+The standard geometry is included in the Lethe code with 6 polynomials designing the curve of the hill. Therefore the ``type`` parameter is set to ``periodic_hills``. It consists of a static, uniformly refined mesh with isoparametric elements. The ``initial refinement`` parameter does a uniform refinement in the triangulation. The ``grid argument`` parameter requires five values that correspond to ``spacing y lines : alpha : repetitions x : repetitions y : repetitions z``. A brief explanation of each of them is given here:
 
 * ``spacing y lines``: the periodic hill grid is generated with equally spaced horizontal lines or with gradually spaced lines which means more lines near upper and lower walls. This parameter may be set in the range from 0 to 1, with 0 meaning equally spaced lines and 1 the maximum of shifting lines.
 

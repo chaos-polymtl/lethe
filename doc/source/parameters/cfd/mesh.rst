@@ -136,9 +136,9 @@ Periodic Hills
     set type            = lethe
     set grid type       = periodic_hills
     # Grid arguments for 2D case
-    set grid arguments  = spacing_y ; alpha ; repetitions_x ; repetitions_y
+    set grid arguments  = spacing_y : alpha : repetitions_x : repetitions_y
     # Grid arguments for 3D case
-    set grid arguments  = spacing_y ; alpha ; repetitions_x ; repetitions_y ; repetitions_z
+    set grid arguments  = spacing_y : alpha : repetitions_x : repetitions_y : repetitions_z
 
 If this grid type is chosen, a mesh for the periodic hills CFD benchmark is created. For more details on this type of mesh and its grid arguments, refer to :doc:`../../examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills`.
 

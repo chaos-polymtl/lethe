@@ -8,10 +8,10 @@ add_library(lethe-core
   electric_conductivity_model.cc
   electric_permittivity_model.cc
   evaporation_model.cc
-  fichera_oven_grid.cc
   grid_birmingham_fluidized_bed.cc
   grid_cube_merged.cc
   grid_cylinder.cc
+  grid_fichera_oven.cc
   grid_impinging_jet_mixer.cc
   grid_periodic_hills.cc
   grid_uniform_channel_with_meshed_cylinder.cc
@@ -62,10 +62,10 @@ add_library(lethe-core
   ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
-  ../../include/core/fichera_oven_grid.h
   ../../include/core/grid_birmingham_fluidized_bed.h
   ../../include/core/grid_cube_merged.h
   ../../include/core/grid_cylinder.h
+  ../../include/core/grid_fichera_oven.h
   ../../include/core/grid_impinging_jet_mixer.h
   ../../include/core/grid_periodic_hills.h
   ../../include/core/grid_uniform_channel_with_meshed_cylinder.h

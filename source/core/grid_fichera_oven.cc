@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/fichera_oven_grid.h>
+#include <core/grid_fichera_oven.h>
 
 #include <deal.II/grid/grid_generator.h>
 
 template <int dim, int spacedim>
-FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
+GridFicheraOven<dim, spacedim>::GridFicheraOven(
   const std::string &grid_arguments)
 {
   if constexpr (dim != 3 || spacedim != 3)
@@ -66,7 +66,7 @@ FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
 
 template <>
 void
-FicheraOvenGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
+GridFicheraOven<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 {
   // Create the initial 2x2x3 subdivided rectangle to be carved
   Triangulation<3>          bulk_tria;
@@ -136,16 +136,16 @@ FicheraOvenGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 // specialized above.
 template <int dim, int spacedim>
 void
-FicheraOvenGrid<dim, spacedim>::make_grid(
+GridFicheraOven<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> & /*triangulation*/)
 {
   AssertThrow(
     false,
     ExcMessage(
-      "FicheraOvenGrid is only supported for dim = 3 ,spacedim = 3 specializations."));
+      "GridFicheraOven is only supported for dim = 3 ,spacedim = 3 specializations."));
 }
 
 // Explicit template instantiations
-template class FicheraOvenGrid<2, 2>;
-template class FicheraOvenGrid<2, 3>;
-template class FicheraOvenGrid<3, 3>;
+template class GridFicheraOven<2, 2>;
+template class GridFicheraOven<2, 3>;
+template class GridFicheraOven<3, 3>;

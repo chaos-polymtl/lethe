@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/boundary_conditions.h>
-#include <core/fichera_oven_grid.h>
 #include <core/grid_birmingham_fluidized_bed.h>
 #include <core/grid_cube_merged.h>
 #include <core/grid_cylinder.h>
+#include <core/grid_fichera_oven.h>
 #include <core/grid_impinging_jet_mixer.h>
 #include <core/grid_periodic_hills.h>
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
@@ -213,7 +213,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - Fichera oven mesh with simplex is not supported"));
 
-          FicheraOvenGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
+          GridFicheraOven<dim, spacedim> grid(mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
           GridTools::scale(mesh_parameters.scale, triangulation);
