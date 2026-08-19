@@ -8,7 +8,6 @@ add_library(lethe-core
   electric_conductivity_model.cc
   electric_permittivity_model.cc
   evaporation_model.cc
-  grids.cc
   grid_birmingham_fluidized_bed.cc
   grid_cube_merged.cc
   grid_cylinder.cc
@@ -63,7 +62,6 @@ add_library(lethe-core
   ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
-  ../../include/core/grids.h
   ../../include/core/grid_birmingham_fluidized_bed.h
   ../../include/core/grid_cube_merged.h
   ../../include/core/grid_cylinder.h
