@@ -104,8 +104,8 @@ Inheritance diagram for ConstantElectricConductivity:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a14c49d2be62b16e2cbeecb9b589a81bb" id="r_a14c49d2be62b16e2cbeecb9b589a81bb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricConductivity.html#a14c49d2be62b16e2cbeecb9b589a81bb">ConstantElectricConductivity</a> (const double p_electric_conductivity)</td></tr>
 <tr class="separator:a14c49d2be62b16e2cbeecb9b589a81bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a862975a3c779a5f4ea6392ff90114567" id="r_a862975a3c779a5f4ea6392ff90114567"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricConductivity.html#a862975a3c779a5f4ea6392ff90114567">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;fields_value) override</td></tr>
-<tr class="separator:a862975a3c779a5f4ea6392ff90114567"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4638cb0372c6e6ea38bd53dae00884c" id="r_ab4638cb0372c6e6ea38bd53dae00884c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricConductivity.html#ab4638cb0372c6e6ea38bd53dae00884c">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;field_values) override</td></tr>
+<tr class="separator:ab4638cb0372c6e6ea38bd53dae00884c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58f965754a83b60a72d9f31162f75503" id="r_a58f965754a83b60a72d9f31162f75503"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricConductivity.html#a58f965754a83b60a72d9f31162f75503">vector_value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</td></tr>
 <tr class="separator:a58f965754a83b60a72d9f31162f75503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afea86ab7f6765cedeb954d2446afe1e5" id="r_afea86ab7f6765cedeb954d2446afe1e5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricConductivity.html#afea86ab7f6765cedeb954d2446afe1e5">jacobian</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>) override</td></tr>
@@ -213,24 +213,24 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>jacobian Calculates the jacobian (the partial derivative) of the electric conductivity with respect to a field </p>
+<p>Calculates the jacobian (the partial derivative) of the electric conductivity with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_values</td><td>Value of the various fields on which the property may depend. </td></tr>
-    <tr><td class="paramname">id</td><td>Indicator of the field with respect to which the jacobian should be calculated </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Value of the various fields on which the property may depend. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier of the field with respect to which the jacobian should be calculated </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>value of the partial derivative of the electric conductivity with respect to the field. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of the partial derivative of the electric conductivity with respect to the field. </dd></dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a3fc51243a48832ed3c6e3b4ee797c6b2">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00074">74</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00077">77</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
 
 </div>
 </div>
-<a id="a862975a3c779a5f4ea6392ff90114567" name="a862975a3c779a5f4ea6392ff90114567"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a862975a3c779a5f4ea6392ff90114567">&#9670;&#160;</a></span>value()</h2>
+<a id="ab4638cb0372c6e6ea38bd53dae00884c" name="ab4638cb0372c6e6ea38bd53dae00884c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4638cb0372c6e6ea38bd53dae00884c">&#9670;&#160;</a></span>value()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -242,7 +242,7 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">double ConstantElectricConductivity::value </td>
           <td>(</td>
           <td class="paramtype">const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>fields_value</em></td><td>)</td>
+          <td class="paramname"><em>field_values</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -253,20 +253,20 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>value Calculates the value the electric conductivity </p>
+<p>Calculates the value of the electric conductivity. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fields_value</td><td>Value of the various field on which the electric conductivity depends. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Values of the various fields on which the electric conductivity depends. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>value of the electric conductivity calculated with the fields_value. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of the electric conductivity calculated with the <code>field_values</code>. </dd></dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00047">47</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00048">48</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="electric__conductivity__model_8h_source.html#l00097">electric_conductivity</a>.</p>
+<p class="reference">References <a class="el" href="electric__conductivity__model_8h_source.html#l00103">electric_conductivity</a>.</p>
 
 </div>
 </div>
@@ -310,19 +310,19 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>vector_jacobian Calculate the derivative of the electric conductivity with respect to a field </p>
+<p>Calculates the derivatives of the electric conductivity with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Vector for the values of the fields used to evaluate the property </td></tr>
-    <tr><td class="paramname">id</td><td>Identifier of the field with respect to which a derivative should be calculated </td></tr>
-    <tr><td class="paramname">jacobian</td><td>Vector of the value of the derivative of the electric conductivity with respect to the field id </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Vector for the values of the fields used to evaluate the property </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier of the field with respect to which a derivative should be calculated </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">jacobian_vector</td><td>Vector of the values of the derivatives of the electric conductivity with respect to the specified field </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a522b52d0f3353ebb4eecb353f5130adc">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00088">88</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00094">94</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
 
 </div>
 </div>
@@ -360,20 +360,20 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>vector_value Calculates the vector value of electric conductivities </p>
+<p>Calculates, in a vector, values of of electric conductivities. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Vector of properties on which the electric conductivities depend </td></tr>
-    <tr><td class="paramname">property_vector</td><td>Values of the electric conductivities </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Vector of fields on which the electric conductivities depend </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">property_vector</td><td>Values of the electric conductivities </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#abd11737cff6dd346fc7bd238e59ceac6">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00058">58</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00060">60</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="electric__conductivity__model_8h_source.html#l00097">electric_conductivity</a>.</p>
+<p class="reference">References <a class="el" href="electric__conductivity__model_8h_source.html#l00103">electric_conductivity</a>.</p>
 
 </div>
 </div>
@@ -398,7 +398,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00097">97</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__conductivity__model_8h_source.html#l00103">103</a> of file <a class="el" href="electric__conductivity__model_8h_source.html">electric_conductivity_model.h</a>.</p>
 
 </div>
 </div>

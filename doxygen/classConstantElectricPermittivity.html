@@ -104,8 +104,8 @@ Inheritance diagram for ConstantElectricPermittivity:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3e842b6234eaaa61505c41a7d3985367" id="r_a3e842b6234eaaa61505c41a7d3985367"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricPermittivity.html#a3e842b6234eaaa61505c41a7d3985367">ConstantElectricPermittivity</a> (const double p_electric_permittivity)</td></tr>
 <tr class="separator:a3e842b6234eaaa61505c41a7d3985367"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa6155e51be3add9cb43f035ec7660cb" id="r_aaa6155e51be3add9cb43f035ec7660cb"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricPermittivity.html#aaa6155e51be3add9cb43f035ec7660cb">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;fields_value) override</td></tr>
-<tr class="separator:aaa6155e51be3add9cb43f035ec7660cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceca1b87cd70379eb8167ac0f57f8224" id="r_aceca1b87cd70379eb8167ac0f57f8224"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricPermittivity.html#aceca1b87cd70379eb8167ac0f57f8224">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;field_values) override</td></tr>
+<tr class="separator:aceca1b87cd70379eb8167ac0f57f8224"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3a0af989fd938452121f20b327c1d3e" id="r_aa3a0af989fd938452121f20b327c1d3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricPermittivity.html#aa3a0af989fd938452121f20b327c1d3e">vector_value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</td></tr>
 <tr class="separator:aa3a0af989fd938452121f20b327c1d3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7633f0d95a4b960851e23c5df287f035" id="r_a7633f0d95a4b960851e23c5df287f035"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantElectricPermittivity.html#a7633f0d95a4b960851e23c5df287f035">jacobian</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>) override</td></tr>
@@ -215,24 +215,24 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>jacobian Calculates the jacobian (the partial derivative) of the electric permittivity with respect to a field </p>
+<p>Calculates the jacobian (the partial derivative) of the electric permittivity with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_values</td><td>Value of the various fields on which the property may depend. </td></tr>
-    <tr><td class="paramname">id</td><td>Indicator of the field with respect to which the jacobian should be calculated </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Value of the various fields on which the property may depend. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier of the field with respect to which the jacobian should be calculated </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>value of the partial derivative of the electric permittivity with respect to the field. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of the partial derivative of the electric permittivity with respect to the specified field. </dd></dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a3fc51243a48832ed3c6e3b4ee797c6b2">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00083">83</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00086">86</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
 
 </div>
 </div>
-<a id="aaa6155e51be3add9cb43f035ec7660cb" name="aaa6155e51be3add9cb43f035ec7660cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa6155e51be3add9cb43f035ec7660cb">&#9670;&#160;</a></span>value()</h2>
+<a id="aceca1b87cd70379eb8167ac0f57f8224" name="aceca1b87cd70379eb8167ac0f57f8224"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aceca1b87cd70379eb8167ac0f57f8224">&#9670;&#160;</a></span>value()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -244,7 +244,7 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">double ConstantElectricPermittivity::value </td>
           <td>(</td>
           <td class="paramtype">const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>fields_value</em></td><td>)</td>
+          <td class="paramname"><em>field_values</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -255,20 +255,20 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>value Calculates the value the electric permittivity </p>
+<p>Calculates the value of the electric permittivity. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fields_value</td><td>Value of the various field on which the electric permittivity depends. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Value of the various fields on which the electric permittivity depends. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>value of the electric permittivity calculated with the fields_value. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of the electric permittivity calculated with the <code>field_values</code>. </dd></dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00056">56</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00057">57</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="electric__permittivity__model_8h_source.html#l00106">electric_permittivity</a>.</p>
+<p class="reference">References <a class="el" href="electric__permittivity__model_8h_source.html#l00112">electric_permittivity</a>.</p>
 
 </div>
 </div>
@@ -312,19 +312,19 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>vector_jacobian Calculate the derivative of the electric permittivity with respect to a field </p>
+<p>Calculates, in a vector, the derivatives of the electric permittivity with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Vector for the values of the fields used to evaluate the property </td></tr>
-    <tr><td class="paramname">id</td><td>Identifier of the field with respect to which a derivative should be calculated </td></tr>
-    <tr><td class="paramname">jacobian</td><td>Vector of the value of the derivative of the electric permittivity with respect to the field id </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Vector for the values of the fields used to evaluate the property </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier of the field with respect to which a derivative should be calculated </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">jacobian_vector</td><td>Vector of values of the derivatives of the electric permittivity with respect to the specified field </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a522b52d0f3353ebb4eecb353f5130adc">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00097">97</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00103">103</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
 
 </div>
 </div>
@@ -362,20 +362,20 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>vector_value Calculates the vector value of electric permittivities </p>
+<p>Calculates, in a vector, values of electric permittivities. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Vector of properties on which the electric permittivities depend </td></tr>
-    <tr><td class="paramname">property_vector</td><td>Values of the electric permittivities </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Vector of properties on which the electric permittivities depend </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">property_vector</td><td>Values of the electric permittivities </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#abd11737cff6dd346fc7bd238e59ceac6">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00067">67</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00069">69</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="electric__permittivity__model_8h_source.html#l00106">electric_permittivity</a>.</p>
+<p class="reference">References <a class="el" href="electric__permittivity__model_8h_source.html#l00112">electric_permittivity</a>.</p>
 
 </div>
 </div>
@@ -400,7 +400,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00106">106</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="electric__permittivity__model_8h_source.html#l00112">112</a> of file <a class="el" href="electric__permittivity__model_8h_source.html">electric_permittivity_model.h</a>.</p>
 
 </div>
 </div>

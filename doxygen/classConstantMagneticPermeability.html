@@ -104,8 +104,8 @@ Inheritance diagram for ConstantMagneticPermeability:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1940f36691617c34fe37db20a9d8e5ec" id="r_a1940f36691617c34fe37db20a9d8e5ec"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantMagneticPermeability.html#a1940f36691617c34fe37db20a9d8e5ec">ConstantMagneticPermeability</a> (const double p_magnetic_permeability)</td></tr>
 <tr class="separator:a1940f36691617c34fe37db20a9d8e5ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33d8f9901bc7d96b802be85297179406" id="r_a33d8f9901bc7d96b802be85297179406"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantMagneticPermeability.html#a33d8f9901bc7d96b802be85297179406">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;fields_value) override</td></tr>
-<tr class="separator:a33d8f9901bc7d96b802be85297179406"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7255690e1321da0e2807a23a7213ed2d" id="r_a7255690e1321da0e2807a23a7213ed2d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantMagneticPermeability.html#a7255690e1321da0e2807a23a7213ed2d">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;field_values) override</td></tr>
+<tr class="separator:a7255690e1321da0e2807a23a7213ed2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c5fe533319d68128f82b54d9b64fef3" id="r_a3c5fe533319d68128f82b54d9b64fef3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantMagneticPermeability.html#a3c5fe533319d68128f82b54d9b64fef3">vector_value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</td></tr>
 <tr class="separator:a3c5fe533319d68128f82b54d9b64fef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8698d21293413ddf16a515071802406b" id="r_a8698d21293413ddf16a515071802406b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantMagneticPermeability.html#a8698d21293413ddf16a515071802406b">jacobian</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>) override</td></tr>
@@ -215,24 +215,24 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>jacobian Calculates the jacobian (the partial derivative) of the magnetic permeability with respect to a field </p>
+<p>Calculates the jacobian (the partial derivative) of the magnetic permeability with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_values</td><td>Value of the various fields on which the property may depend. </td></tr>
-    <tr><td class="paramname">id</td><td>Indicator of the field with respect to which the jacobian should be calculated </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Value of the various fields on which the property may depend. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier of the field with respect to which the jacobian should be calculated </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>value of the partial derivative of the magnetic permeability with respect to the field. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of the partial derivative of the magnetic permeability with respect to the specified field. </dd></dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a3fc51243a48832ed3c6e3b4ee797c6b2">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00083">83</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00086">86</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
 
 </div>
 </div>
-<a id="a33d8f9901bc7d96b802be85297179406" name="a33d8f9901bc7d96b802be85297179406"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33d8f9901bc7d96b802be85297179406">&#9670;&#160;</a></span>value()</h2>
+<a id="a7255690e1321da0e2807a23a7213ed2d" name="a7255690e1321da0e2807a23a7213ed2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7255690e1321da0e2807a23a7213ed2d">&#9670;&#160;</a></span>value()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -244,7 +244,7 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">double ConstantMagneticPermeability::value </td>
           <td>(</td>
           <td class="paramtype">const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>fields_value</em></td><td>)</td>
+          <td class="paramname"><em>field_values</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -255,20 +255,20 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>value Calculates the value the magnetic permeability </p>
+<p>Calculates the value of the magnetic permeability. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fields_value</td><td>Value of the various field on which the magnetic permeability depends. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Values of the various fields on which the magnetic permeability depends. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>value of the magnetic permeability calculated with the fields_value. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of the magnetic permeability calculated with the <code>field_values</code>. </dd></dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00056">56</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00057">57</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="magnetic__permeability__model_8h_source.html#l00106">magnetic_permeability</a>.</p>
+<p class="reference">References <a class="el" href="magnetic__permeability__model_8h_source.html#l00112">magnetic_permeability</a>.</p>
 
 </div>
 </div>
@@ -312,19 +312,19 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>vector_jacobian Calculate the derivative of the magnetic permeability with respect to a field </p>
+<p>Calculates, in a vector, the derivatives of the magnetic permeability with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Vector for the values of the fields used to evaluate the property </td></tr>
-    <tr><td class="paramname">id</td><td>Identifier of the field with respect to which a derivative should be calculated </td></tr>
-    <tr><td class="paramname">jacobian</td><td>Vector of the value of the derivative of the magnetic permeability with respect to the field id </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Vector for the values of the fields used to evaluate the property </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier of the field with respect to which a derivative should be calculated </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">jacobian_vector</td><td>Vector of values of the derivatives of the magnetic permeability with respect to the specified field </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a522b52d0f3353ebb4eecb353f5130adc">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00097">97</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00103">103</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
 
 </div>
 </div>
@@ -362,20 +362,20 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>vector_value Calculates the vector value of magnetic conductivities </p>
+<p>Calculates, in a vector, values of magnetic permeabilities. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Vector of properties on which the magnetic conductivities depend </td></tr>
-    <tr><td class="paramname">property_vector</td><td>Values of the magnetic conductivities </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Vector of properties on which the magnetic permeabilities depend </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">property_vector</td><td>Values of the magnetic permeabilities </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#abd11737cff6dd346fc7bd238e59ceac6">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00067">67</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00069">69</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="magnetic__permeability__model_8h_source.html#l00106">magnetic_permeability</a>.</p>
+<p class="reference">References <a class="el" href="magnetic__permeability__model_8h_source.html#l00112">magnetic_permeability</a>.</p>
 
 </div>
 </div>
@@ -400,7 +400,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00106">106</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="magnetic__permeability__model_8h_source.html#l00112">112</a> of file <a class="el" href="magnetic__permeability__model_8h_source.html">magnetic_permeability_model.h</a>.</p>
 
 </div>
 </div>
