@@ -660,9 +660,9 @@ void
 TimeHarmonicMaxwell<dim>::update_material_properties(
   const PhysicalPropertiesManager            &physical_properties_manager,
   const std::map<field, std::vector<double>> &field_values_vectors,
-  const unsigned int material_id
-    std::vector<std::complex<double>> &effective_electric_permittivities,
-  std::vector<std::complex<double>>   &effective_magnetic_permeabilities)
+  const unsigned int                          material_id,
+  std::vector<std::complex<double>>          &effective_electric_permittivities,
+  std::vector<std::complex<double>>          &effective_magnetic_permeabilities)
 {
   const unsigned int n_q_points =
     field_values_vectors.at(field::temperature).size();
