@@ -606,22 +606,22 @@ private:
    * @param[in] field_values A map containing the values of the fields at the
    * current position. This is used to compute the material properties that
    * depend on the fields.
+   *  @param[in] material_id The material id of the current position, used to
+   * determine the appropriate material properties from the input parameters.
    *  @param[out] effective_electric_permittivity Effective electric
    * permittivity at the current position. This value is updated in place by the
    * function.
    *  @param[out] effective_magnetic_permeability Effective magnetic
    * permeability at the current position. This value is updated in place by the
    * function.
-   *  @param[in] material_id The material id of the current position, used to
-   * determine the appropriate material properties from the input parameters.
    */
   void
   update_material_properties(
     const PhysicalPropertiesManager &physical_properties_manager,
     const std::map<field, double>   &field_values,
+    const unsigned int               material_id,
     std::complex<double>            &effective_electric_permittivity,
-    std::complex<double>            &effective_magnetic_permeability,
-    const unsigned int               material_id);
+    std::complex<double>            &effective_magnetic_permeability);
 
   /**
    * @brief Updates the material properties during the assembly of the system matrix in a vectorized manner. This is an overloaded version of the update_material_properties a single point version.
@@ -637,22 +637,22 @@ private:
    * @param[in] field_values_vector A map containing the vector values of the
    * fields at the current position. This is used to compute the material
    * properties that depend on the fields.
+   *  @param[in] material_id The material id of the current position, used to
+   * determine the appropriate material properties from the input parameters.
    *  @param[out] effective_electric_permittivities Effective electric
    * permittivity at the vectorized current positions. This value is updated in
    * place by the function.
    *  @param[out] effective_magnetic_permeabilities Effective magnetic
    * permeability at the vectorized current positions. This value is updated in
    * place by the function.
-   *  @param[in] material_id The material id of the current position, used to
-   * determine the appropriate material properties from the input parameters.
    */
   void
   update_material_properties(
     const PhysicalPropertiesManager            &physical_properties_manager,
     const std::map<field, std::vector<double>> &field_values_vector,
+    const unsigned int                          material_id,
     std::vector<std::complex<double>> &effective_electric_permittivities,
-    std::vector<std::complex<double>> &effective_magnetic_permeabilities,
-    const unsigned int                 material_id);
+    std::vector<std::complex<double>> &effective_magnetic_permeabilities);
 
   /**
    * @brief Compute the electromagnetic scaling factor used to non-dimensionalize the time-harmonic Maxwell system from the type of scaling required from the user. This is factor will be based on the electric field and obtained :

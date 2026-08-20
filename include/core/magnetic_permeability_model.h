@@ -51,10 +51,10 @@ public:
    * @brief Calculates the value of the magnetic permeability
    * @param[in] field_values Values of the various fields on which the magnetic
    * permeability depends.
-   * @return Value of the magnetic permeability calculated with the field_values.
+   * @return Value of the magnetic permeability calculated with the `field_values`.
    */
   double
-  value([[maybe_unused]] const std::map<field, double> &fields_value) override
+  value([[maybe_unused]] const std::map<field, double> &field_values) override
   {
     return magnetic_permeability;
   };
@@ -95,8 +95,8 @@ public:
    * evaluate the property
    * @param[in] id Identifier of the field with respect to which a derivative
    * should be calculated
-   * @param[in,out] jacobian Vector of values of the derivatives of the magnetic
-   * permeability with respect to the specified field
+   * @param[in,out] jacobian_vector Vector of values of the derivatives of the
+   * magnetic permeability with respect to the specified field
    */
 
   void
@@ -133,7 +133,7 @@ public:
    * @brief Calculates the value of the magnetic permeability
    * @param[in] field_values Values of the various fields on which the magnetic
    * permeability depends.
-   * @return Value of the magnetic permeability calculated with the field_values.
+   * @return Value of the magnetic permeability calculated with the `field_values`.
    */
   double
   value(const std::map<field, double> &field_values) override
@@ -237,8 +237,8 @@ public:
    * evaluate the property
    * @param[in] id Identifier of the field with respect to which a derivative
    * should be calculated
-   * @param[in,out] jacobian Vector of values of the derivatives of the magnetic
-   * permeability with respect to the specified field
+   * @param[in,out] jacobian_vector Vector of values of the derivatives of the
+   * magnetic permeability with respect to the specified field
    *
    * @remark The vector_jacobian is only implemented with respect to the
    * temperature.

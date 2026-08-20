@@ -15,7 +15,7 @@ class ElectricConductivityModel : public PhysicalPropertyModel
 {
 public:
   /**
-   * @brief Instantiates and returns a pointer to a ElectricConductivityModel
+   * @brief Instantiates and returns a pointer to an ElectricConductivityModel
    * object by casting it to the proper child class
    *
    * @param[in] material_properties Parameters for a material
@@ -40,12 +40,12 @@ public:
 
   /**
    * @brief Calculates the value of the electric conductivity
-   * @param[in] fields_value Values of the various fields on which the electric
+   * @param[in] field_values Values of the various fields on which the electric
    * conductivity depends.
-   * @return Value of the electric conductivity calculated with the fields_value.
+   * @return Value of the electric conductivity calculated with the `field_values`.
    */
   double
-  value([[maybe_unused]] const std::map<field, double> &fields_value) override
+  value([[maybe_unused]] const std::map<field, double> &field_values) override
   {
     return electric_conductivity;
   };
@@ -68,7 +68,7 @@ public:
    * @brief Calculates the jacobian (the partial derivative) of the electric conductivity with respect to a field
    * @param[in] field_values Value of the various fields on which the property
    * may depend.
-   * @param[in] id Indentifier of the field with respect to which the jacobian
+   * @param[in] id Identifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the electric conductivity with respect to the field.
    */
@@ -122,9 +122,9 @@ public:
 
   /**
    * @brief Calculates the value of the electric conductivity
-   * @param[in] fields_value Values of the various fields on which the electric
+   * @param[in] field_values Values of the various fields on which the electric
    * conductivity depends.
-   * @return Value of the electric conductivity calculated with the fields_value.
+   * @return Value of the electric conductivity calculated with the `field_values`.
    */
   double
   value(const std::map<field, double> &field_values) override
@@ -183,7 +183,7 @@ public:
    * @brief Calculates the jacobian (the partial derivative) of the electric conductivity with respect to a field
    * @param[in] field_values Value of the various fields on which the property
    * may depend.
-   * @param[in] id Indentifier of the field with respect to which the jacobian
+   * @param[in] id Identifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the electric conductivity with respect to the field.
    *

@@ -49,12 +49,12 @@ public:
 
   /**
    * @brief Calculates the value of the electric permittivity
-   * @param[in] fields_values Value of the various fields on which the electric
+   * @param[in] field_values Value of the various fields on which the electric
    * permittivity depends.
-   * @return Value of the electric permittivity calculated with the fields_value.
+   * @return Value of the electric permittivity calculated with the `field_values`.
    */
   double
-  value([[maybe_unused]] const std::map<field, double> &fields_value) override
+  value([[maybe_unused]] const std::map<field, double> &field_values) override
   {
     return electric_permittivity;
   };
@@ -77,7 +77,7 @@ public:
    * @brief Calculates the jacobian (the partial derivative) of the electric permittivity with respect to a field
    * @param[in] field_values Value of the various fields on which the property
    * may depend.
-   * @param[in] id Indentifier of the field with respect to which the jacobian
+   * @param[in] id Identifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the electric permittivity with respect to the specified field.
    */
@@ -131,9 +131,9 @@ public:
 
   /**
    * @brief Calculates the value of the electric permittivity
-   * @param[in] fields_values Value of the various fields on which the electric
+   * @param[in] field_values Value of the various fields on which the electric
    * permittivity depends.
-   * @return Value of the electric permittivity calculated with the fields_value.
+   * @return Value of the electric permittivity calculated with the `field_values`.
    */
   double
   value(const std::map<field, double> &field_values) override
@@ -192,7 +192,7 @@ public:
    * @brief Calculates the jacobian (the partial derivative) of the electric permittivity with respect to a field
    * @param[in] field_values Value of the various fields on which the property
    * may depend.
-   * @param[in] id Indentifier of the field with respect to which the jacobian
+   * @param[in] id Identifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the electric permittivity with respect to the specified field.
    *

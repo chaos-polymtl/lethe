@@ -144,7 +144,7 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
             std::ranges::find(active_physics_ids, PhysicsID::heat_transfer) !=
               active_physics_ids.end(),
             ExcMessage(
-              "User defined temperature-dependent electromagnetic properties requested without heat transfer physics. Enable heat transfer in the multiphysics subsection."));
+              "User-defined temperature-dependent electromagnetic properties requested without heat transfer physics. Enable heat transfer in the multiphysics subsection."));
           break;
         }
     }
@@ -636,9 +636,9 @@ void
 TimeHarmonicMaxwell<dim>::update_material_properties(
   const PhysicalPropertiesManager &physical_properties_manager,
   const std::map<field, double>   &field_values,
+  const unsigned int               material_id,
   std::complex<double>            &effective_electric_permittivity,
-  std::complex<double>            &effective_magnetic_permeability,
-  const unsigned int               material_id)
+  std::complex<double>            &effective_magnetic_permeability)
 {
   effective_electric_permittivity = {
     physical_properties_manager.get_electric_permittivity_real(0, material_id)
@@ -660,9 +660,9 @@ void
 TimeHarmonicMaxwell<dim>::update_material_properties(
   const PhysicalPropertiesManager            &physical_properties_manager,
   const std::map<field, std::vector<double>> &field_values_vectors,
-  std::vector<std::complex<double>>          &effective_electric_permittivities,
-  std::vector<std::complex<double>>          &effective_magnetic_permeabilities,
-  const unsigned int                          material_id)
+  const unsigned int material_id
+    std::vector<std::complex<double>> &effective_electric_permittivities,
+  std::vector<std::complex<double>>   &effective_magnetic_permeabilities)
 {
   const unsigned int n_q_points =
     field_values_vectors.at(field::temperature).size();
@@ -864,9 +864,9 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
 
                   update_material_properties(physical_properties_manager,
                                              field_values_vector,
+                                             material_id,
                                              effective_electric_permittivities,
-                                             effective_magnetic_permeabilities,
-                                             material_id);
+                                             effective_magnetic_permeabilities);
 
                   // Loop over all face quadrature points
                   for (unsigned int q_point = 0; q_point < n_face_q_points;
@@ -2271,16 +2271,16 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
                           update_material_properties(
                             physical_properties_manager,
                             field_values_vector_last_solved,
+                            material_id,
                             effective_electric_permittivities_last_solved,
-                            effective_magnetic_permeabilities_last_solved,
-                            material_id);
+                            effective_magnetic_permeabilities_last_solved);
 
                           update_material_properties(
                             physical_properties_manager,
                             field_values_vector_current,
+                            material_id,
                             effective_electric_permittivities_current,
-                            effective_magnetic_permeabilities_current,
-                            material_id);
+                            effective_magnetic_permeabilities_current);
 
                           for (unsigned int q = 0; q < n_q_points; ++q)
                             {
@@ -2824,9 +2824,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
 
           update_material_properties(physical_properties_manager,
                                      field_values_vector,
+                                     material_id,
                                      effective_electric_permittivities,
-                                     effective_magnetic_permeabilities,
-                                     material_id);
+                                     effective_magnetic_permeabilities);
 
           // Now we loop over all quadrature points of the cell
           for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
@@ -3129,9 +3129,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
               field_values_vector[field::temperature] = temperature_face_values;
               update_material_properties(physical_properties_manager,
                                          field_values_vector,
+                                         material_id,
                                          effective_electric_permittivities,
-                                         effective_magnetic_permeabilities,
-                                         material_id);
+                                         effective_magnetic_permeabilities);
 
               // Loop over all face quadrature points
               for (unsigned int q_point = 0; q_point < n_face_q_points;
@@ -3913,9 +3913,9 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 
           update_material_properties(physical_properties_manager,
                                      field_values_vector,
+                                     material_id,
                                      effective_electric_permittivities,
-                                     effective_magnetic_permeabilities,
-                                     material_id);
+                                     effective_magnetic_permeabilities);
 
           // Now we loop over all quadrature points of the cell
           for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
@@ -4219,9 +4219,9 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 
               update_material_properties(physical_properties_manager,
                                          field_values_vector,
+                                         material_id,
                                          effective_electric_permittivities,
-                                         effective_magnetic_permeabilities,
-                                         material_id);
+                                         effective_magnetic_permeabilities);
 
               // Loop over all face quadrature points
               for (unsigned int q_point = 0; q_point < n_face_q_points;

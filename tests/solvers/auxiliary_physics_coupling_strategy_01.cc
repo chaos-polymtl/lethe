@@ -9,7 +9,7 @@
  *   - none: never solve after step 0
  *   - iteration: solve every N iterations
  *   - time: solve when crossing a time multiple
- *   - threshold: solve when physical properties change by more than threshold
+ *   - threshold: solve when physical properties changes exceed the threshold
  */
 
 // Deal.II includes
