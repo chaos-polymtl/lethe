@@ -277,7 +277,8 @@ namespace InterfaceTools
    * @param[in] velocity_vector Velocity solution vector
 
    * @return The position and the velocity of the barycenter of the region enclosed
-   * by the zero-level of the level-set field. The position is the first entry and
+   * by the zero-level of the level-set field. The position is the first entry
+   and
    * the velocity the second.
    */
   template <int dim, typename VectorType>
@@ -313,7 +314,8 @@ namespace InterfaceTools
  * region of interest
 
  * @return The position and the velocity of the barycenter of the region enclosed
- * by the specified level of the level-set field. The position is the first entry 
+ * by the specified level of the level-set field. The position is the first
+ entry
  * and the velocity the second.
  */
   template <int dim, typename VectorType>
