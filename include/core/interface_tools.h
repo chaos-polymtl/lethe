@@ -274,11 +274,10 @@ namespace InterfaceTools
    * @param[in] dof_handler_velocity DofHandler associated to the triangulation
    * on which the velocity is described
    * @param[in] fe Finite element describing the velocity
-   * @param[in] velocity_vector Velocity vector
+   * @param[in] velocity_vector Velocity solution vector
 
    * @return The position and the velocity of the barycenter of the region enclosed
-   * by the zero-level of the level-set field. The position is the first entry
-   and
+   * by the zero-level of the level-set field. The position is the first entry and
    * the velocity the second.
    */
   template <int dim, typename VectorType>
@@ -304,19 +303,18 @@ namespace InterfaceTools
  * @param[in] dof_handler DofHandler associated to the triangulation on which
  * the level-set is described
  * @param[in] fe Finite element describing the level-set
- * @param[in] level_set_vector_relevant_copy Level-set vector
+ * @param[in] level_set_vector Level-set vector
  * @param[in] mapping_velocity Mapping associated to the velocity field
  * @param[in] dof_handler_velocity DofHandler associated to the triangulation
  * on which the velocity is described
  * @param[in] fe Finite element describing the velocity
- * @param[in] velocity_vector Velocity vector
+ * @param[in] velocity_vector Velocity solution vector
  * @param[in] iso_level Given level of the level-set field enclosing the
  * region of interest
 
  * @return The position and the velocity of the barycenter of the region enclosed
- * by the specified level of the level-set field. The position is the first
- entry and
- * the velocity the second.
+ * by the specified level of the level-set field. The position is the first entry 
+ * and the velocity the second.
  */
   template <int dim, typename VectorType>
   std::pair<Point<dim>, Tensor<1, dim>>
