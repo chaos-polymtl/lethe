@@ -190,6 +190,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // multiphysics interface
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
                                       this->dof_handler);
+  this->multiphysics->set_mapping(PhysicsID::fluid_dynamics, this->mapping);
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    this->present_solution);
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,

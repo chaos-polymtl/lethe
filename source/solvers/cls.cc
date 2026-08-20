@@ -1746,11 +1746,14 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
               const DoFHandler<dim> &dof_handler_fd =
                 multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
+              const Mapping<dim> &mapping_fd =
+                multiphysics->get_mapping(PhysicsID::fluid_dynamics);
+
               position_and_velocity_geo = InterfaceTools::integrate_barycenter(
                 *this->dof_handler,
                 *this->fe,
                 *this->present_solution,
-                *this->mapping,
+                mapping_fd,
                 dof_handler_fd,
                 dof_handler_fd.get_fe(),
                 multiphysics->get_solution(PhysicsID::fluid_dynamics),
@@ -2780,6 +2783,7 @@ ConservativeLevelSet<dim>::setup_dofs()
   // Provide the CLS dof_handler and solution pointers to the
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::CLS, this->dof_handler);
+  multiphysics->set_mapping(PhysicsID::CLS, this->mapping);
   multiphysics->set_solution(PhysicsID::CLS, this->present_solution);
   multiphysics->set_filtered_solution(PhysicsID::CLS, this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::CLS,

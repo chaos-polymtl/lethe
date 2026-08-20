@@ -458,6 +458,24 @@ public:
   }
 
   /**
+   * @brief Request a mapping for a given physics ID
+   *
+   * @param physics_id The physics of the mapping being requested
+   *
+   * @return Reference to the mapping of the requested physics
+   */
+  const Mapping<dim> &
+  get_mapping(const PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+
+    return *physics_mapping[physics_id];
+  }
+
+  /**
    * @brief Request the reference to the present solution of a given physics
    *
    * @param physics_id The physics ID of the solution being requested
@@ -657,6 +675,26 @@ public:
                 ExcInternalError());
     physics_dof_handler[physics_id] = dof_handler;
   }
+
+  /**
+   * @brief Sets the shared pointer to the Mapping of the physics in the
+   * multiphysics interface
+   *
+   * @param[in] physics_id The physics of the mapping being requested
+   *
+   * @param[in] mapping Shared pointer to the mapping for which the
+   * reference is stored
+   */
+  void
+  set_mapping(const PhysicsID physics_id, std::shared_ptr<Mapping<dim>> mapping)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    physics_mapping[physics_id] = mapping;
+  }
+
 
   /**
    * @brief Sets the shared pointer to the vector of the SolidBase object. This
@@ -906,6 +944,9 @@ private:
 
   /// Map of physics and shared pointers to their respective DoFHandler
   std::map<PhysicsID, std::shared_ptr<DoFHandler<dim>>> physics_dof_handler;
+
+  /// Map of physics and shared pointers to their respective Mapping
+  std::map<PhysicsID, std::shared_ptr<Mapping<dim>>> physics_mapping;
 
   /// Shared pointer to the vector containing shared pointers to solid objects
   std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>> solids;
