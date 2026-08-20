@@ -256,7 +256,7 @@ if has_pro:
       output_dir_pro = base_output_dir_pro.format(f=f)
       filename_barycenter_pro = output_dir_pro + "/barycenter_information.dat"
       pro_mass_geo_data[i] = output_dir_pro + "/mass_conservation_information.dat"
-      t_pro, x_pro, y_pro, z_pro, vx_pro, vy_pro, vz_pro, x_dum, y_dum, z_dum, vx_dum, vy_dum, vz_dum = np.loadtxt(filename_barycenter_pro, skiprows=1, unpack=True)
+      t_pro, x_pro, y_pro, z_pro, vx_pro, vy_pro, vz_pro = np.loadtxt(filename_barycenter_pro, skiprows=1, unpack=True, usecols=0,1,2,3,4,5,6)
 
       # Store in dictionary
       pro_barycenter_data[i] = {
@@ -273,7 +273,7 @@ if has_pro:
     output_dir_pro = args.pro
     filename_barycenter_pro = output_dir_pro + "/barycenter_information.dat"
     filename_mass_pro = output_dir_pro + "/mass_conservation_information.dat"
-    t_pro, x_pro, y_pro,z_pro, vx_pro, vy_pro , vz_pro, x_dum, y_dum, z_dum, vx_dum, vy_dum, vz_dum = np.loadtxt(filename_barycenter_pro, skiprows=1, unpack=True)
+    t_pro, x_pro, y_pro,z_pro, vx_pro, vy_pro , vz_pro = np.loadtxt(filename_barycenter_pro, skiprows=1, unpack=True, usecols=0,1,2,3,4,5,6)
     n += 1
 if has_geo:
   if (args.frequency_sweep):
@@ -281,7 +281,7 @@ if has_geo:
       output_dir_geo = base_output_dir_geo.format(f=f)
       filename_barycenter_geo = output_dir_geo + "/barycenter_information.dat"
       geo_mass_geo_data[i] = output_dir_geo + "/mass_conservation_information.dat"
-      t_geo, x_geo, y_geo, z_geo, vx_geo, vy_geo, vz_geo, x_dum, y_dum, z_dum, vx_dum, vy_dum, vz_dum = np.loadtxt(filename_barycenter_geo, skiprows=1, unpack=True)
+      t_geo, x_geo, y_geo, z_geo, vx_geo, vy_geo, vz_geo = np.loadtxt(filename_barycenter_geo, skiprows=1, unpack=True, usecols=0,1,2,3,4,5,6)
 
       # Store in dictionary
       geo_barycenter_data[i] = {
@@ -298,7 +298,7 @@ if has_geo:
     output_dir_geo = args.geo
     filename_barycenter_geo = output_dir_geo + "/barycenter_information.dat"
     filename_mass_geo = output_dir_geo + "/mass_conservation_information.dat"
-    t_geo, x_geo, y_geo, z_geo, vx_geo, vy_geo, vz_geo, x_dum, y_dum, z_dum, vx_dum, vy_dum, vz_dum = np.loadtxt(filename_barycenter_geo, skiprows=1, unpack=True)
+    t_geo, x_geo, y_geo, z_geo, vx_geo, vy_geo, vz_geo = np.loadtxt(filename_barycenter_geo, skiprows=1, unpack=True, usecols=0,1,2,3,4,5,6)
     n += 1
 
 if has_pde:
@@ -307,7 +307,7 @@ if has_pde:
       output_dir_pde = base_output_dir_pde.format(f=f)
       filename_barycenter_pde = output_dir_pde + "/barycenter_information.dat"
       pde_mass_geo_data[i] = output_dir_pde + "/mass_conservation_information.dat"
-      t_pde, x_pde, y_pde, z_pde, vx_pde, vy_pde, vz_pde, x_dum, y_dum, z_dum, vx_dum, vy_dum, vz_dum = np.loadtxt(filename_barycenter_pde, skiprows=1, unpack=True)
+      t_pde, x_pde, y_pde, z_pde, vx_pde, vy_pde, vz_pde = np.loadtxt(filename_barycenter_pde, skiprows=1, unpack=True, usecols=0,1,2,3,4,5,6)
 
       # Store in dictionary
       pde_barycenter_data[i] = {
@@ -324,7 +324,7 @@ if has_pde:
     output_dir_pde = args.pde
     filename_barycenter_pde = output_dir_pde + "/barycenter_information.dat"
     filename_mass_pde = output_dir_pde + "/mass_conservation_information.dat"
-    t_pde, x_pde, y_pde,  z_pde, vx_pde, vy_pde, vz_pde, x_dum, y_dum, z_dum, vx_dum, vy_dum, vz_dum = np.loadtxt(filename_barycenter_pde, skiprows=1, unpack=True)
+    t_pde, x_pde, y_pde,  z_pde, vx_pde, vy_pde, vz_pde = np.loadtxt(filename_barycenter_pde, skiprows=1, unpack=True, usecols=0,1,2,3,4,5,6)
     n += 1
 
 """

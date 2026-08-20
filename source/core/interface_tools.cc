@@ -269,12 +269,13 @@ InterfaceTools::integrate_barycenter(
                 {
                   volume += inside_fe_values->JxW(q);
 
+                  auto velocity_value = fe_point_evaluation.get_value(q);
+
                   for (int i = 0; i < dim; i++)
                     {
                       barycenter[i] +=
                         quadrature_points[q][i] * inside_fe_values->JxW(q);
 
-                      auto velocity_value = fe_point_evaluation.get_value(q);
                       barycenter_velocity[i] +=
                         velocity_value[i] * inside_fe_values->JxW(q);
                     }
