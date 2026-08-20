@@ -20,13 +20,9 @@ The mesh subsection of DEM simulations is almost identical to the `CFD <https://
     :width: 400
 
 
-* ``expand particle-wall contact search`` enables adding the neighboring cells of boundary cells to the particle-wall contact search list. This feature should only be activated in geometries with convex boundaries (for example, particles flowing inside a cylinder or sphere). The following image shows the boundary neighbor cells (colored in teal) of the red boundary cell. In concave geometries, enabling this feature leads to unphysical contacts between particles and the imaginary (unreal) extension of the boundary faces from neighboring cells.
+* ``expand particle-wall contact search`` enables adding the boundary faces of cells neighboring the boundary cell containing the particle, to the particle-wall contact search list. Only neighboring boundary faces that form a convex boundary with the current cell are added; boundary faces forming a non-convex boundary are excluded. The following figure illustrates this concept. When a particle is located in a boundary cell (shown in red), the boundary faces of neighboring cells that form a convex boundary with the current cell (neighboring cells shown in green) are also considered during the particle-wall contact search. This is necessary because a particle whose centroid lies within the red cell can simultaneously contact both the boundary face of the current cell and the boundary face of a neighboring cell when the two faces form a convex boundary. In contrast, boundary faces of neighboring cells that form a concave boundary (neighboring cells shown in orange) are not considered during the particle-wall contact search.
 
 .. image:: images/expand_particle_wall.png
     :alt: Schematic
     :align: center
     :width: 400
-
-
-.. warning:: 
-     In geometries with convex boundaries, this feature MUST NOT be activated.
