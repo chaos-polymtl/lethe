@@ -240,8 +240,14 @@ InterfaceTools::integrate_barycenter(
 
           if (inside_fe_values)
             {
-              auto quadrature_points =
+              std::vector<Point<dim>> quadrature_points =
                 inside_fe_values->get_quadrature_points();
+
+              std::vector<Point<dim>> quadrature_points_ref(
+                inside_fe_values->n_quadrature_points);
+
+              mapping_velocity.transform_points_real_to_unit_cell(
+                cell, quadrature_points, quadrature_points_ref);
 
               typename DoFHandler<dim>::active_cell_iterator cell_fd(
                 &(dof_handler_velocity.get_triangulation()),
@@ -249,7 +255,7 @@ InterfaceTools::integrate_barycenter(
                 cell->index(),
                 &dof_handler_velocity);
 
-              fe_point_evaluation.reinit(cell, quadrature_points);
+              fe_point_evaluation.reinit(cell, quadrature_points_ref);
 
               cell_fd->get_dof_values(velocity_vector,
                                       cell_dof_values.begin(),
@@ -263,7 +269,7 @@ InterfaceTools::integrate_barycenter(
                 {
                   volume += inside_fe_values->JxW(q);
 
-                  for (unsigned int i = 0; i < dim; i++)
+                  for (int i = 0; i < dim; i++)
                     {
                       barycenter[i] +=
                         quadrature_points[q][i] * inside_fe_values->JxW(q);
@@ -278,12 +284,13 @@ InterfaceTools::integrate_barycenter(
     }
 
   volume = Utilities::MPI::sum(volume, mpi_communicator);
-  for (unsigned int i = 0; i < dim; i++)
+  for (int i = 0; i < dim; i++)
     {
       barycenter[i] =
-        Utilities::MPI::sum(barycenter[i], mpi_communicator) / volume;
+        Utilities::MPI::sum(barycenter[i], mpi_communicator) / (volume + 1e-16);
       barycenter_velocity[i] =
-        Utilities::MPI::sum(barycenter_velocity[i], mpi_communicator) / volume;
+        Utilities::MPI::sum(barycenter_velocity[i], mpi_communicator) /
+        (volume + 1e-16);
     }
 
   return {barycenter, barycenter_velocity};
