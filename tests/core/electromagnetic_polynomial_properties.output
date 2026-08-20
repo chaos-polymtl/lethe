@@ -1,0 +1,26 @@
+
+DEAL::Begin test
+DEAL::Testing electric conductivity
+DEAL::Testing Electric conductivity
+DEAL::  T = 0.00000 -> value = -5.00000, jacobian = 0.00000
+DEAL::  T = 1.00000 -> value = -2.00000, jacobian = 6.00000
+DEAL::  T = -2.00000 -> value = 7.00000, jacobian = -12.0000
+DEAL::Testing electric permittivity
+DEAL::Testing Electric permittivity real
+DEAL::  T = 0.00000 -> value = -5.00000, jacobian = 0.00000
+DEAL::  T = 1.00000 -> value = -2.00000, jacobian = 6.00000
+DEAL::  T = -2.00000 -> value = 7.00000, jacobian = -12.0000
+DEAL::Testing Electric permittivity imaginary
+DEAL::  T = 0.00000 -> value = 1.00000, jacobian = 1.00000
+DEAL::  T = 1.00000 -> value = 7.00000, jacobian = 12.0000
+DEAL::  T = -2.00000 -> value = 7.00000, jacobian = -3.00000
+DEAL::Testing magnetic permeability
+DEAL::Testing Magnetic permeability real
+DEAL::  T = 0.00000 -> value = 2.00000, jacobian = 0.00000
+DEAL::  T = 1.00000 -> value = 2.00000, jacobian = 0.00000
+DEAL::  T = 2.00000 -> value = 2.00000, jacobian = 0.00000
+DEAL::Testing Magnetic permeability imaginary
+DEAL::  T = 0.00000 -> value = 3.00000, jacobian = -4.00000
+DEAL::  T = 1.00000 -> value = 1.00000, jacobian = 6.00000
+DEAL::  T = 2.00000 -> value = 59.0000, jacobian = 156.000
+DEAL::OK

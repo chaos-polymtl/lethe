@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/electric_permittivity_model.h>
@@ -11,11 +11,15 @@ ElectricPermittivityModel::model_cast_real(
       Parameters::Material::ElectricPermittivityModel::constant)
     return std::make_shared<ConstantElectricPermittivity>(
       material_properties.electric_permittivity_real);
+  else if (material_properties.electric_permittivity_model ==
+           Parameters::Material::ElectricPermittivityModel::polynomial)
+    return std::make_shared<PolynomialElectricPermittivity>(
+      material_properties.electric_permittivity_real_polynomial_coefficients);
   else
     AssertThrow(
       false,
       ExcMessage(
-        "Invalid electric permittivity model. The choices are <constant>"));
+        "Invalid electric permittivity model. The choices are <constant|polynomial>"));
 }
 
 std::shared_ptr<ElectricPermittivityModel>
@@ -26,9 +30,13 @@ ElectricPermittivityModel::model_cast_imag(
       Parameters::Material::ElectricPermittivityModel::constant)
     return std::make_shared<ConstantElectricPermittivity>(
       material_properties.electric_permittivity_imag);
+  else if (material_properties.electric_permittivity_model ==
+           Parameters::Material::ElectricPermittivityModel::polynomial)
+    return std::make_shared<PolynomialElectricPermittivity>(
+      material_properties.electric_permittivity_imag_polynomial_coefficients);
   else
     AssertThrow(
       false,
       ExcMessage(
-        "Invalid electric permittivity model. The choices are <constant>"));
+        "Invalid electric permittivity model. The choices are <constant|polynomial>"));
 }

@@ -155,7 +155,7 @@ namespace Parameters
    * - threshold: the time-harmonic Maxwell solver will be solved when the
    * maximum change in the material properties of the problem change beyond a
    * certain threshold, where the threshold value is given by the user input
-   * parameter "coupling threshold". **This is not implemented yet.**
+   * parameter "coupling threshold".
    */
   enum class TimeHarmonicMaxwellCouplingStrategy : std::int8_t
   {
