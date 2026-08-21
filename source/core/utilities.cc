@@ -882,11 +882,16 @@ evaluate_values_at_points(
   std::vector<double>                        &evaluated_scalar_values,
   const unsigned int                          first_selected_component)
 {
-  // Check if solution vector is relevant
-  assert_vector_has_ghost_elements<VectorType>(
-    solution_field,
-    dof_handler.get_mpi_communicator(),
-    "evaluate_values_at_points");
+  // Check if solution vector is relevant when running on multiple processes
+  if (Utilities::MPI::n_mpi_processes(dof_handler.get_mpi_communicator()) > 1)
+    AssertThrow(solution_field.has_ghost_elements(),
+                GhostElementsRequired("evaluate_values_at_points"));
+
+  // Reinitialize remote point evaluator if needed
+  if (!remote_point_evaluator.is_ready())
+    remote_point_evaluator.reinit(evaluation_points,
+                                  dof_handler.get_triangulation(),
+                                  mapping);
 
   // Evaluate scalar values at points using RemotePointEvaluation if they are
   // found within the domain
@@ -974,11 +979,16 @@ evaluate_values_at_points(
   std::vector<Tensor<1, dim, double>>        &evaluated_vector_values,
   const unsigned int                          first_selected_component)
 {
-  // Check if solution vector is relevant
-  assert_vector_has_ghost_elements<VectorType>(
-    solution_field,
-    dof_handler.get_mpi_communicator(),
-    "evaluate_values_at_points");
+  // Check if solution vector is relevant when running on multiple processes
+  if (Utilities::MPI::n_mpi_processes(dof_handler.get_mpi_communicator()) > 1)
+    AssertThrow(solution_field.has_ghost_elements(),
+                GhostElementsRequired("evaluate_values_at_points"));
+
+  // Reinitialize remote point evaluator if needed
+  if (!remote_point_evaluator.is_ready())
+    remote_point_evaluator.reinit(evaluation_points,
+                                  dof_handler.get_triangulation(),
+                                  mapping);
 
   // Evaluate scalar values at points using RemotePointEvaluation
   if (points_are_in_domain<dim>(evaluation_points, remote_point_evaluator))
