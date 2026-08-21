@@ -3,8 +3,8 @@
 
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
-# This test checks the effect the angle of incidence factor on the laser heat
-# source term when the angle of incidence of the laser is not null.
+# This test checks the effect of disabling the angle of incidence factor on the
+# laser heat source term when the angle of incidence of the laser is not null.
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -220,16 +220,17 @@ end
 #---------------------------------------------------
 
 subsection laser parameters
-  set enable               = true
-  set type                 = gaussian_heat_flux_cls_interface
-  set concentration factor = 2
-  set power                = 156e6
-  set absorptivity         = 0.35
-  set penetration depth    = 0.0
-  set beam radius          = 0.07
-  set start time           = 0
-  set end time             = 0.002
-  set beam orientation     = y-
+  set enable                               = true
+  set type                                 = gaussian_heat_flux_cls_interface
+  set enable angle of incidence dependence = false
+  set concentration factor                 = 2
+  set power                                = 156e6
+  set absorptivity                         = 0.35
+  set penetration depth                    = 0.0
+  set beam radius                          = 0.07
+  set start time                           = 0
+  set end time                             = 0.002
+  set beam orientation                     = y-
   subsection path
     set Function expression = 0.3; 0.43; 0.0
   end
