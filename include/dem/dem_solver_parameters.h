@@ -4,6 +4,7 @@
 #ifndef lethe_dem_solver_parameters_h
 #define lethe_dem_solver_parameters_h
 
+#include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
 #include <core/solid_objects_parameters.h>
@@ -15,11 +16,13 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh              mesh;
-  Parameters::Testing           test;
-  Parameters::Restart           restart;
-  Parameters::Timer             timer;
-  Parameters::SimulationControl simulation_control;
+  Parameters::Mesh                               mesh;
+  Parameters::Manifolds                          manifolds_parameters;
+  std::shared_ptr<Parameters::MeshBoxRefinement> mesh_box_refinement;
+  Parameters::Testing                            test;
+  Parameters::Restart                            restart;
+  Parameters::Timer                              timer;
+  Parameters::SimulationControl                  simulation_control;
   Parameters::Lagrangian::LagrangianPhysicalProperties
                                                  lagrangian_physical_properties;
   Parameters::Lagrangian::InsertionInfo<dim>     insertion_info;
@@ -32,8 +35,18 @@ public:
   Parameters::Lagrangian::LagrangianPostProcessing  post_processing;
   std::shared_ptr<Parameters::DEMSolidObjects<dim>> solid_objects;
 
+  /**
+   * @brief Declare all the parameters of a DEM simulation.
+   *
+   * @param[in,out] prm The parameter handler.
+   *
+   * @param[in] size_of_subsections The maximum size of the variable-size
+   * subsections of the parameter file, as returned by
+   * Parameters::get_size_of_subsections.
+   */
   void
-  declare(ParameterHandler &prm)
+  declare(ParameterHandler                   &prm,
+          const Parameters::SizeOfSubsections size_of_subsections)
   {
     prm.declare_entry("dimension",
                       "0",
@@ -54,6 +67,9 @@ public:
 
     simulation_control.declare_parameters(prm);
     mesh.declare_parameters(prm);
+    manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);
+    mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
+    mesh_box_refinement->declare_parameters(prm);
     restart.declare_parameters(prm);
     timer.declare_parameters(prm);
     test.declare_parameters(prm);
@@ -70,10 +86,17 @@ public:
     solid_objects->declare_parameters(prm);
   }
 
+  /**
+   * @brief Parse all the parameters of a DEM simulation.
+   *
+   * @param[in,out] prm The parameter handler.
+   */
   void
   parse(ParameterHandler &prm)
   {
     mesh.parse_parameters(prm);
+    manifolds_parameters.parse_parameters(prm);
+    mesh_box_refinement->parse_parameters(prm);
     test.parse_parameters(prm);
     restart.parse_parameters(prm);
     timer.parse_parameters(prm);

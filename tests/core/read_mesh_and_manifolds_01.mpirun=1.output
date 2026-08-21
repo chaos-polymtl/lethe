@@ -1,0 +1,14 @@
+
+DEAL::--- Initial refinement ---
+DEAL::initial refinement, no restart : 16 cells
+DEAL::initial refinement, restart : 1 cells
+DEAL::--- Refinement until target size ---
+DEAL::target size, no restart : 64 cells
+DEAL::target size, restart : 1 cells
+DEAL::--- Refinement at boundaries ---
+DEAL::one boundary refined once : 28 cells
+DEAL::two boundaries refined twice : 88 cells
+DEAL::two boundaries refined twice, restart : 1 cells
+DEAL::--- Manifold attachment ---
+DEAL::Manifold id 1 midpoint norm : 1.00000
+DEAL::Manifold id 1 attached without a manifolds subsection : false

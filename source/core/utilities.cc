@@ -696,13 +696,14 @@ get_dimension(const std::string &file_name)
 
 
 int
-get_max_subsection_size(const std::string &file_name)
+get_max_subsection_size(const std::string &file_name,
+                        const bool         require_subsection_size)
 {
   int max_number_of_boundary_conditions =
     get_max_value_of_parameter(file_name, "number");
 
   AssertThrow(
-    max_number_of_boundary_conditions >= 0,
+    !require_subsection_size || max_number_of_boundary_conditions >= 0,
     dealii::ExcMessage(
       "Your parameter file does not contain any indication for the number of boundary conditions for any physics supported by Lethe. Since November 2023, Lethe requires that a \"boundary conditions\" subsection is present with at least \"number=0\" "));
 

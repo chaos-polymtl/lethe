@@ -1,8 +1,19 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ====
 Mesh
 ====
 
-The mesh subsection of DEM simulations is almost identical to the `CFD <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ in Lethe. There are two additional parameters mainly used in DEM and CFD-DEM simulations. These parameters are ``check diamond cells`` and ``expand particle-wall contact search``.
+DEM and CFD simulations read their triangulation through the same routine, so the ``mesh`` subsection of a DEM simulation is the `CFD one <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_. Every mesh type (``gmsh``, ``dealii`` and the ``lethe`` built-in grids), the mesh transformations (``scale``, ``initial translation``, ``initial rotation axis`` and ``initial rotation angle``), the initial refinement and the refinement in the vicinity of boundaries are all available in ``lethe-particles``.
+
+The :doc:`manifolds <../cfd/manifolds>` and :doc:`box refinement <../cfd/box_refinement>` subsections are also read by ``lethe-particles``, and behave exactly as they do in the CFD solvers.
+
+.. warning::
+  Simplex meshes are **not** supported by DEM simulations. Setting ``simplex = true`` in the ``mesh`` subsection raises an error, since the particle-wall contact search, the load balancing and the checkpointing all require a ``parallel::distributed::Triangulation``.
+
+Two parameters of the ``mesh`` subsection are only used by DEM and CFD-DEM simulations.
 
 .. code-block:: text
 
@@ -28,5 +39,5 @@ The mesh subsection of DEM simulations is almost identical to the `CFD <https://
     :width: 400
 
 
-.. warning:: 
+.. warning::
      In geometries with convex boundaries, this feature MUST NOT be activated.

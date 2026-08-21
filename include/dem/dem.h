@@ -104,6 +104,19 @@ private:
   set_integrator_type();
 
   /**
+   * @brief Refine the triangulation within the user-specified refinement boxes.
+   *
+   * Each box is described by its own mesh; every cell of the background
+   * triangulation that lies within a box is refined the number of times
+   * requested for that box. Nothing is done when restarting, since the
+   * triangulation stored in the checkpoint already carries its refinement.
+   *
+   * @param[in] restart Flag indicating whether this is a restart.
+   */
+  void
+  box_refine_mesh(const bool restart);
+
+  /**
    * @brief Set up the triangulation dependent parameters after the reading of
    * the mesh and/or the simulation restart.
    */

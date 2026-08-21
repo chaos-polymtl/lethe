@@ -54,18 +54,24 @@ main(int argc, char *argv[])
         }
       else if (solver_family == "lethe-particles")
         {
+          // The DEM solvers do not require any variable size subsection. Their
+          // boundary conditions are declared in the "DEM boundary conditions"
+          // subsection, and a file that declares no manifold leads to
+          // subsections of size zero.
+          const Parameters::SizeOfSubsections size_of_subsections =
+            Parameters::get_size_of_subsections(argv[1], false);
           if (dim == 2)
             {
               ParameterHandler       prm;
               DEMSolverParameters<2> parameters;
-              parameters.declare(prm);
+              parameters.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
             }
           if (dim == 3)
             {
               ParameterHandler       prm;
               DEMSolverParameters<3> parameters;
-              parameters.declare(prm);
+              parameters.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
             }
         }

@@ -1989,3 +1989,39 @@ LetheGridTools::find_cells_around_cell<3>(
            std::set<typename Triangulation<3>::active_cell_iterator>>
                                                         &vertices_cell_map,
   const typename Triangulation<3>::active_cell_iterator &cell);
+
+template <int dim>
+void
+LetheGridTools::flag_cells_in_refinement_box(
+  const DoFHandler<dim>    &dof_handler,
+  const Triangulation<dim> &box_triangulation)
+{
+  // A local DoFHandler on the box mesh is needed to iterate over its cells with
+  // the iterator type expected by LetheGridTools::find_cells_in_cells. No dofs
+  // need to be distributed on it, since the search is purely geometric.
+  const DoFHandler<dim> box_dof_handler(box_triangulation);
+
+  // Find all the cells of the principal mesh that are partially contained
+  // inside the box mesh and flag them for refinement.
+  for (const auto &box_cell : box_dof_handler.active_cell_iterators())
+    {
+      const std::vector<typename DoFHandler<dim>::active_cell_iterator>
+        cells_to_refine =
+          LetheGridTools::find_cells_in_cells(dof_handler, box_cell);
+
+      for (const auto &cell_to_refine : cells_to_refine)
+        {
+          if (cell_to_refine->is_locally_owned())
+            cell_to_refine->set_refine_flag();
+        }
+    }
+}
+
+template void
+LetheGridTools::flag_cells_in_refinement_box(
+  const DoFHandler<2>    &dof_handler,
+  const Triangulation<2> &box_triangulation);
+template void
+LetheGridTools::flag_cells_in_refinement_box(
+  const DoFHandler<3>    &dof_handler,
+  const Triangulation<3> &box_triangulation);
