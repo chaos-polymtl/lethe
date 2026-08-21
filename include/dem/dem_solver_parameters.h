@@ -16,7 +16,7 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh                               mesh;
+  Parameters::Mesh<dim>                          mesh;
   Parameters::Manifolds                          manifolds_parameters;
   std::shared_ptr<Parameters::MeshBoxRefinement> mesh_box_refinement;
   Parameters::Testing                            test;

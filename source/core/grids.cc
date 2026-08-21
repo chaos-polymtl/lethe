@@ -53,11 +53,11 @@
 template <int dim, int spacedim>
 static void
 warn_if_scaling_curved_manifolds(
-  const Parameters::Mesh             &mesh_parameters,
+  const Parameters::Mesh<dim, spacedim>             &mesh_parameters,
   const Triangulation<dim, spacedim> &triangulation)
 {
   if (mesh_parameters.scale == 1.0 ||
-      mesh_parameters.type == Parameters::Mesh::Type::gmsh)
+      mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::gmsh)
     return;
 
   const std::vector<types::manifold_id> &manifold_ids =
@@ -79,7 +79,7 @@ warn_if_scaling_curved_manifolds(
   pcout
     << "WARNING: a mesh 'scale' factor of " << mesh_parameters.scale
     << " is being applied to a '"
-    << (mesh_parameters.type == Parameters::Mesh::Type::dealii ? "dealii" :
+    << (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::dealii ? "dealii" :
                                                                  "lethe")
     << "' grid. \nScaling moves the mesh vertices but not the curved "
        "manifolds attached to the triangulation, which can distort the "
@@ -91,11 +91,11 @@ warn_if_scaling_curved_manifolds(
 template <int dim, int spacedim>
 void
 attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
-                             const Parameters::Mesh       &mesh_parameters)
+                             const Parameters::Mesh<dim, spacedim>       &mesh_parameters)
 
 {
   // GMSH input
-  if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
+  if (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::gmsh)
     {
       if (mesh_parameters.simplex)
         {
@@ -148,7 +148,8 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
         }
     }
   // Dealii grids
-  else if (mesh_parameters.type == Parameters::Mesh::Type::dealii)
+  else if (mesh_parameters.type ==
+           Parameters::Mesh<dim, spacedim>::Type::dealii)
     {
       if (mesh_parameters.simplex)
         {
@@ -214,7 +215,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
         cell->set_material_id(0);
     }
 
-  else if (mesh_parameters.type == Parameters::Mesh::Type::lethe)
+  else if (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::lethe)
     {
       std::string grid_type = mesh_parameters.grid_type;
 
@@ -419,7 +420,7 @@ template <int dim, int spacedim>
 void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Mesh<dim, spacedim>                 &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                             restart,
   const Parameters::PeriodicBoundaries                  &periodic_boundaries)
@@ -433,7 +434,7 @@ read_mesh_and_manifolds(
   // ID, otherwise, we will be unable to use external manifold.
   // This is done manually by looping through all faces and giving them a
   // manifold id if there is a manifold associated with this number.
-  if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
+  if (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::gmsh)
     {
       // Gather all the manifold ids within a set
       std::set<int> manifold_ids;
@@ -473,7 +474,7 @@ template <int dim, int spacedim>
 void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Mesh<dim, spacedim>                 &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                             restart,
   const Parameters::PeriodicBoundaries                  &periodic_boundaries,
@@ -514,7 +515,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   for (const auto &cell : stator_temp_tria.active_cell_iterators())
     cell->set_material_id(0);
 
-  if (mesh_parameters.type == Parameters::Mesh::Type::dealii)
+  if (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::dealii)
     {
       // Get stator manifold ids without flat id
       unsigned int stator_ids_no_flat = 0;
@@ -605,7 +606,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
           n++;
         }
     }
-  else if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
+  else if (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::gmsh)
     {
       // Merge triangulations
       GridGenerator::merge_triangulations(
@@ -698,8 +699,9 @@ build_refinement_box_triangulation(
 
 template <int dim, int spacedim>
 void
-apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
-                          Triangulation<dim, spacedim> &triangulation)
+apply_mesh_transformation(
+  const Parameters::Mesh<dim, spacedim> &mesh_parameters,
+  Triangulation<dim, spacedim>          &triangulation)
 {
   // Mesh scaling
   GridTools::scale(mesh_parameters.scale, triangulation);
@@ -721,6 +723,9 @@ apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
                         mesh_parameters.rotation_angle,
                         triangulation);
 
+      // Tensor<1, 3> translation_vector;
+      // translation_vector[0] = mesh_parameters.translation[0];
+      // translation_vector[1] = mesh_parameters.translation[1];
       // Box mesh translation
       GridTools::shift(mesh_parameters.translation, triangulation);
     }
@@ -738,14 +743,14 @@ apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
 
 
 template void
-attach_grid_to_triangulation(Triangulation<2>       &triangulation,
-                             const Parameters::Mesh &mesh_parameters);
+attach_grid_to_triangulation(Triangulation<2>          &triangulation,
+                             const Parameters::Mesh<2> &mesh_parameters);
 template void
-attach_grid_to_triangulation(Triangulation<3>       &triangulation,
-                             const Parameters::Mesh &mesh_parameters);
+attach_grid_to_triangulation(Triangulation<3>          &triangulation,
+                             const Parameters::Mesh<3> &mesh_parameters);
 template void
-attach_grid_to_triangulation(Triangulation<2, 3>    &triangulation,
-                             const Parameters::Mesh &mesh_parameters);
+attach_grid_to_triangulation(Triangulation<2, 3>          &triangulation,
+                             const Parameters::Mesh<2, 3> &mesh_parameters);
 
 
 template void
@@ -764,21 +769,21 @@ setup_periodic_boundary_conditions(
 template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<2> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters,
+  const Parameters::Mesh<2>                 &mesh_parameters,
   const Parameters::Manifolds               &manifolds_parameters,
   const bool                                 restart,
   const Parameters::PeriodicBoundaries      &periodic_boundaries);
 template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<3> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters,
+  const Parameters::Mesh<3>                 &mesh_parameters,
   const Parameters::Manifolds               &manifolds_parameters,
   const bool                                 restart,
   const Parameters::PeriodicBoundaries      &periodic_boundaries);
 template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<2, 3> &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
+  const Parameters::Mesh<2, 3>                 &mesh_parameters,
   const Parameters::Manifolds                  &manifolds_parameters,
   const bool                                    restart,
   const Parameters::PeriodicBoundaries         &periodic_boundaries);
@@ -786,7 +791,7 @@ read_mesh_and_manifolds(
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<2> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters,
+  const Parameters::Mesh<2>                 &mesh_parameters,
   const Parameters::Manifolds               &manifolds_parameters,
   const bool                                 restart,
   const Parameters::PeriodicBoundaries      &periodic_boundaries,
@@ -794,28 +799,28 @@ read_mesh_and_manifolds_for_stator_and_rotor(
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<3> &triangulation,
-  const Parameters::Mesh                    &mesh_parameters,
+  const Parameters::Mesh<3>                 &mesh_parameters,
   const Parameters::Manifolds               &manifolds_parameters,
   const bool                                 restart,
   const Parameters::PeriodicBoundaries      &periodic_boundaries,
   const Parameters::Mortar<3>               &mortar_parameters);
 
 template void
-build_refinement_box_triangulation(const Parameters::Mesh &box_mesh_parameters,
+build_refinement_box_triangulation(const Parameters::Mesh<2> &box_mesh_parameters,
                                    Triangulation<2, 2>    &box_triangulation);
 template void
-build_refinement_box_triangulation(const Parameters::Mesh &box_mesh_parameters,
+build_refinement_box_triangulation(const Parameters::Mesh<2, 3> &box_mesh_parameters,
                                    Triangulation<2, 3>    &box_triangulation);
 template void
-build_refinement_box_triangulation(const Parameters::Mesh &box_mesh_parameters,
+build_refinement_box_triangulation(const Parameters::Mesh<3> &box_mesh_parameters,
                                    Triangulation<3, 3>    &box_triangulation);
 
 template void
-apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
-                          Triangulation<2, 2>    &triangulation);
+apply_mesh_transformation(const Parameters::Mesh<2> &mesh_parameters,
+                          Triangulation<2, 2>       &triangulation);
 template void
-apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
-                          Triangulation<2, 3>    &triangulation);
+apply_mesh_transformation(const Parameters::Mesh<2, 3> &mesh_parameters,
+                          Triangulation<2, 3>          &triangulation);
 template void
-apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
-                          Triangulation<3, 3>    &triangulation);
+apply_mesh_transformation(const Parameters::Mesh<3> &mesh_parameters,
+                          Triangulation<3, 3>       &triangulation);

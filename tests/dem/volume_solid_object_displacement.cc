@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -26,19 +26,19 @@ void
 test()
 {
   // RigidSolidObject
-  auto param = std::make_shared<Parameters::RigidSolidObject<spacedim>>();
+  auto param = std::make_shared<Parameters::RigidSolidObject<dim, spacedim>>();
 
   // Mesh of the solid
-  param->solid_mesh.type               = Parameters::Mesh::Type::dealii;
-  param->output_bool                   = false;
-  param->solid_mesh.grid_type          = "hyper_cube";
+  param->solid_mesh.type      = Parameters::Mesh<dim, spacedim>::Type::dealii;
+  param->output_bool          = false;
+  param->solid_mesh.grid_type = "hyper_cube";
   param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
   param->solid_mesh.initial_refinement = 0;
   param->solid_mesh.simplex            = false;
-  param->solid_mesh.translation        = Tensor<1, 3>({0.5, 0.5, 0.5});
-  param->solid_mesh.rotation_axis      = Tensor<1, 3>({1., 0., 0.});
+  param->solid_mesh.translation        = Tensor<1, spacedim>({0.5, 0.5, 0.5});
+  param->solid_mesh.rotation_axis      = Tensor<1, spacedim>({1., 0., 0.});
   param->solid_mesh.rotation_angle     = 0;
-  param->center_of_rotation            = Point<3>({0., -0.5, 0.25});
+  param->center_of_rotation            = Point<spacedim>({0., -0.5, 0.25});
 
   param->output_bool = false;
 

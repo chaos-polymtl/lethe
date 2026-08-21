@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_solid_base_h
@@ -179,7 +179,7 @@ public:
    *
    */
   void
-  rotate_grid(const double angle, const Tensor<1, 3> &axis);
+  rotate_grid(const double angle, const Tensor<1, spacedim> &axis);
 
   /**
    * @brief Translate the grid. In spacedim=2, the third component is ignore
@@ -187,7 +187,7 @@ public:
    * @param translate The vector with which the solid is translated.
    */
   void
-  translate_grid(const Tensor<1, 3> &translate);
+  translate_grid(const Tensor<1, spacedim> &translate);
 
   /**
    * @brief Updates the time in the function used to describe the solid temperature

@@ -3124,8 +3124,10 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
+
+  template <int dim, int spacedim>
   void
-  Mesh::declare_parameters(ParameterHandler &prm)
+  Mesh<dim, spacedim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("mesh");
     {
@@ -3193,12 +3195,14 @@ namespace Parameters
       prm.declare_entry("grid type", "hyper_cube");
       prm.declare_entry("grid arguments", "-1 : 1 : false");
 
+      std::string default_translation =
+        (spacedim == 2) ? "0., 0." : "0., 0., 0.";
       prm.declare_entry(
         "initial translation",
         "0, 0, 0",
+        // default_translation,
         Patterns::List(Patterns::Double()),
-        "Component of the desired translation of the mesh at initialization. \n"
-        "In 2D, the third value (z-component) is ignored.");
+        "Component of the desired translation of the mesh at initialization.");
 
       prm.declare_entry(
         "initial rotation axis",
@@ -3222,8 +3226,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim, int spacedim>
   void
-  Mesh::parse_parameters(ParameterHandler &prm)
+  Mesh<dim, spacedim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("mesh");
     {
@@ -3268,11 +3273,12 @@ namespace Parameters
       target_size = prm.get_double("target size");
 
       // Initial translation
-      translation = value_string_to_tensor<3>(prm.get("initial translation"));
+      translation =
+        value_string_to_tensor<spacedim>(prm.get("initial translation"));
 
       // Initial rotation axis and angle
       rotation_axis =
-        value_string_to_tensor<3>(prm.get("initial rotation axis"));
+        value_string_to_tensor<spacedim>(prm.get("initial rotation axis"));
       rotation_angle = prm.get_double("initial rotation angle");
 
       // Scaling factor
@@ -3281,8 +3287,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim, int spacedim>
   void
-  MeshBoxRefinement::declare_parameters(ParameterHandler &prm)
+  MeshBoxRefinement<dim, spacedim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("box refinement");
     {
@@ -3311,8 +3318,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim, int spacedim>
   void
-  MeshBoxRefinement::parse_parameters(ParameterHandler &prm)
+  MeshBoxRefinement<dim, spacedim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("box refinement");
     {
@@ -5188,7 +5196,7 @@ namespace Parameters
                         Patterns::Selection("circular|linear"),
                         "Type of mortar interface"
                         "Choices are <circular|linear>.");
-      rotor_mesh = std::make_shared<Mesh>();
+      rotor_mesh = std::make_shared<Mesh<dim>>();
       rotor_mesh->declare_parameters(prm);
       prm.declare_entry("rotor boundary id",
                         "1",
@@ -5306,6 +5314,13 @@ namespace Parameters
   template class PostProcessing<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
+  template struct Mesh<1>;
+  template struct Mesh<1, 2>;
+  template struct Mesh<2>;
+  template struct Mesh<2, 3>;
+  template struct Mesh<3>;
+  template struct MeshBoxRefinement<2>;
+  template struct MeshBoxRefinement<3>;
   template struct ConstrainSolidDomain<2>;
   template struct ConstrainSolidDomain<3>;
   template struct Mortar<2>;

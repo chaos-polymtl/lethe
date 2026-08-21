@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /*
@@ -42,8 +42,8 @@ test()
   // Generate the serial solid
 
   // Parameters for the Serial solid object
-  auto param             = std::make_shared<Parameters::RigidSolidObject<3>>();
-  param->solid_mesh.type = Parameters::Mesh::Type::dealii;
+  auto param = std::make_shared<Parameters::RigidSolidObject<2, 3>>();
+  param->solid_mesh.type               = Parameters::Mesh<2, 3>::Type::dealii;
   param->solid_mesh.grid_type          = "hyper_rectangle";
   param->solid_mesh.grid_arguments     = "-2, -1 : 2, 1 : false";
   param->solid_mesh.initial_refinement = 3;
