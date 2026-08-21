@@ -14,6 +14,7 @@
 #ifndef lethe_multiphysics_h
 #define lethe_multiphysics_h
 
+#include <algorithm>
 #include <string>
 
 /**

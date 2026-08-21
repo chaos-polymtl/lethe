@@ -17,7 +17,26 @@ PostprocessingProbes<dim>::PostprocessingProbes(
   , verbosity(verbosity)
   , probe_tables(probing_points_parameters.number_of_probing_points)
 {
-  prepare_probe_tables();
+  // Initialize time column for all tables
+  for (auto &current_table : probe_tables)
+    {
+      current_table.declare_column("time");
+      current_table.set_precision("time", table_precision);
+      current_table.set_scientific("time", true);
+    }
+
+  // Get all variable with probes
+  auto keys_range =
+    std::views::keys(probing_points_parameters.probing_points_per_variable);
+
+  // Loop over all variables with probes to declare table columns and format
+  // them. Also, add remote point evaluator to map.
+  for (auto variable_it = keys_range.begin(); variable_it != keys_range.end();
+       ++variable_it)
+    {
+      prepare_probe_tables(*variable_it);
+      remote_point_evaluators.try_emplace(*variable_it);
+    }
 };
 
 template <int dim>
@@ -40,10 +59,6 @@ PostprocessingProbes<dim>::postprocess_probes(
     (variable == Variable::pressure)                         ? dim :
     (variable == Variable::chemical_potential_cahn_hilliard) ? 1 :
                                                                0;
-
-  setup_and_reinitialize_remote_point_evaluator(dof_handler.get_triangulation(),
-                                                mapping,
-                                                variable);
   evaluate_values_at_points(mapping,
                             dof_handler,
                             present_solution,
@@ -170,9 +185,6 @@ PostprocessingProbes<dim>::postprocess_probes(
 
   const unsigned int first_selected_component = 0;
 
-  setup_and_reinitialize_remote_point_evaluator(dof_handler.get_triangulation(),
-                                                mapping,
-                                                variable);
   evaluate_values_at_points<dim>(mapping,
                                  dof_handler,
                                  present_solution,
@@ -296,6 +308,7 @@ PostprocessingProbes<dim>::gather_tables()
   for (unsigned int i = 0; i < probe_tables.size(); ++i)
     {
       const auto &filename =
+        "probe_" + Utilities::int_to_string(i, 2) + "_" +
         probing_points_parameters.probing_points_output_names[i];
 
       table_output_structs.emplace_back(probe_tables[i],

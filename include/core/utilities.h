@@ -1197,7 +1197,7 @@ struct cut_cell_comparison
  * @param[in] evaluation_points Vector of points where the values of the
  * solution field are to be evaluated.
  * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation
- * object used to evaluate values  of the variable of interest at a given points
+ * object used to evaluate values of the variable of interest at given points
  * of the domain.
  * @param[in,out] evaluated_scalar_values Vector of evaluated scalar values.
  * @param[in] first_selected_component First component of the solution to select
@@ -1233,7 +1233,7 @@ evaluate_values_at_points(
  * @param[in] evaluation_points Vector of points where the values of the
  * solution field are to be evaluated.
  * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation
- * object used to evaluate values  of the variable of interest at a given points
+ * object used to evaluate values of the variable of interest at given points
  * of the domain.
  * @param[in,out] evaluated_vector_values Vector of evaluated vector values.
  * @param[in] first_selected_component First component of the solution to

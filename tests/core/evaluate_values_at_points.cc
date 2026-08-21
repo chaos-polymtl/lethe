@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
+#include <core/vector.h>
 
 #include <deal.II/base/function_lib.h>
 
@@ -26,7 +27,7 @@ using namespace dealii;
 
 /**
  * DESCRIPTION:
- * Tests the evaluate_values_at_points() function located in utilities.h
+ * Tests the evaluate_values_at_points() functions located in utilities.h
  * using a linear and a cosine solution field. Both a scalar and vector
  * fields (for \f$dim \in \{2, 3\} \f$) are tested here.
  *
@@ -240,9 +241,9 @@ test(const MPI_Comm      &mpi_communicator,
   dof_handler_vector.distribute_dofs(fe_vector);
 
   // Initialize, fill solution fields with functions and update ghost values
-  TrilinosWrappers::MPI::Vector solution_field_scalar_owned(
-    dof_handler.locally_owned_dofs(), mpi_communicator);
-  TrilinosWrappers::MPI::Vector solution_field_scalar_relevant(
+  GlobalVectorType solution_field_scalar_owned(dof_handler.locally_owned_dofs(),
+                                               mpi_communicator);
+  GlobalVectorType solution_field_scalar_relevant(
     dof_handler.locally_owned_dofs(),
     DoFTools::extract_locally_relevant_dofs(dof_handler),
     mpi_communicator);
@@ -253,9 +254,9 @@ test(const MPI_Comm      &mpi_communicator,
   solution_field_scalar_relevant = solution_field_scalar_owned;
 
 
-  TrilinosWrappers::MPI::Vector solution_field_vector_owned(
+  GlobalVectorType solution_field_vector_owned(
     dof_handler_vector.locally_owned_dofs(), mpi_communicator);
-  TrilinosWrappers::MPI::Vector solution_field_vector_relevant(
+  GlobalVectorType solution_field_vector_relevant(
     dof_handler_vector.locally_owned_dofs(),
     DoFTools::extract_locally_relevant_dofs(dof_handler_vector),
     mpi_communicator);
@@ -314,8 +315,8 @@ main(int argc, char *argv[])
 {
   try
     {
-      mpi_initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+      mpi_initlog();
 
       const MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
