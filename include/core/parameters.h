@@ -962,6 +962,13 @@ namespace Parameters
       uniform_heat_flux_cls_interface
     } laser_type;
 
+    /** Activates the angle of incidence dependence. The heat flux
+     * term is multiplied by a factor \f$ \boldsymbol{n_\Gamma} \cdot
+     * \boldsymbol{d_\mathrm{laser}}\f$ where \f$ \boldsymbol{n_\Gamma}\f$ is
+     * the surface unit normal vector and \f$\boldsymbol{d_\mathrm{laser}}\f$ is
+     * the unit direction vector of the laser.*/
+    bool enable_angle_of_incidence_dependence;
+
     // Laser concentration factor indicates the definition of the beam radius.
     // In almost all the articles, it is assumed equal to 2.0
     double concentration_factor;
