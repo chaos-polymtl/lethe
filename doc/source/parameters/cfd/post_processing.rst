@@ -459,7 +459,7 @@ This feature can be used to evaluate heights, depths, or lengths when quantities
 Probing points
 ~~~~~~~~~~~~~~
 
-The ``probing points`` subsection defines probes that can evaluate ``variable`` (e.g., velocity) values at remote locations of the domain throughout the simulation. Each probe has its own subsection ``probe x``, where ``x`` is the ID of the probe ranging from ``0`` to  ``number of probing points - 1``. The monitored time-evolving values are saved in a ``.dat`` file (``probing point filename``). Each probe has its own ``location``, list of variables and output file. A given probe can evaluate multiple variables as specified below. All variable values of a same probe are saved in the same output file. Each scalar field represents a column and the same goes for components of vector fields.
+The ``probing points`` subsection defines probes that can evaluate ``variable`` (e.g., velocity) values at remote locations of the domain throughout the simulation. Each probe has its own subsection ``probe x``, where ``x`` is the ID of the probe ranging from ``0`` to  ``number of probing points - 1``. The monitored time-evolving values are saved in a ``.dat`` file (``probing point filename``). Each probe has its own ``location``, list of variables and output file. A given probe can evaluate multiple variables as specified below. All variable values of a same probe are saved in the same output file. Each scalar field represents a column and the same goes for each component of vector fields.
 
 * ``number of probing points``: number of probes defined.
 
