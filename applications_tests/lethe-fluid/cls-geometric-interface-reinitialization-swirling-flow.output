@@ -13,8 +13,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls    
-0.000000e+00 5.000000e-01 7.499037e-01 8.028086e-01 3.883298e-16 
+    time        x_cls        y_cls        vx_cls       vy_cls     x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+0.000000e+00 5.000000e-01 7.499037e-01 8.028086e-01 3.883298e-16 5.000000e-01 7.500000e-01 8.426543e-01 -1.543916e-16 
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.0024   Time step: 0.0024   CFL: 0.339811
@@ -36,8 +36,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-2.400000e-03 5.019266e-01 7.498892e-01 8.027275e-01 -6.047087e-03 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+2.400000e-03 5.019266e-01 7.498892e-01 8.027275e-01 -6.047087e-03 5.020075e-01 7.499948e-01 8.426203e-01 -6.304939e-03 
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.006    Time step: 0.0036   CFL: 0.135923
@@ -52,7 +52,7 @@ Newton iteration: 0  - Residual:  4.197311e-02
 Newton iteration: 1  - Residual:  1.506213e-11
   -Tolerance of iterative solver is : 1.000000e-12
   -Iterative solver took : 1 steps to reach a residual norm of 3.404793e-14
-	alpha =      1	res = 3.404860e-14	  ||dphi||_L2 = 6.390853e-10	  ||dphi||_Linfty = 2.082280e-10
+	alpha =      1	res = 3.404641e-14	  ||dphi||_L2 = 6.390852e-10	  ||dphi||_Linfty = 2.082279e-10
 
 ----------------------
 CLS Mass Conservation
@@ -63,8 +63,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-6.000000e-03 5.048159e-01 7.498470e-01 8.024786e-01 -1.511612e-02 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+6.000000e-03 5.048159e-01 7.498470e-01 8.024786e-01 -1.511612e-02 5.050294e-01 7.499570e-01 8.423860e-01 -1.579252e-02 
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.012    Time step: 0.006    CFL: 0.203877
@@ -74,8 +74,8 @@ CLS
 ----
 Newton iteration: 0  - Residual:  4.269426e-02
   -Tolerance of iterative solver is : 4.269426e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.508170e-13
-	alpha =      1	res = 1.508166e-13	  ||dphi||_L2 = 6.559796e-01	  ||dphi||_Linfty = 6.764669e-02
+  -Iterative solver took : 4 steps to reach a residual norm of 1.508167e-13
+	alpha =      1	res = 1.508169e-13	  ||dphi||_L2 = 6.559796e-01	  ||dphi||_Linfty = 6.764669e-02
 
 ----------------------
 CLS Mass Conservation
@@ -86,8 +86,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-1.200000e-02 5.096284e-01 7.497084e-01 8.016524e-01 -3.022120e-02 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+1.200000e-02 5.096284e-01 7.497084e-01 8.016524e-01 -3.022120e-02 5.100868e-01 7.498175e-01 8.415211e-01 -3.165102e-02 
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.018    Time step: 0.006    CFL: 0.339751
@@ -97,8 +97,8 @@ CLS
 ----
 Newton iteration: 0  - Residual:  3.936106e-02
   -Tolerance of iterative solver is : 3.936106e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.522611e-13
-	alpha =      1	res = 1.522608e-13	  ||dphi||_L2 = 6.548757e-01	  ||dphi||_Linfty = 6.720043e-02
+  -Iterative solver took : 4 steps to reach a residual norm of 1.522608e-13
+	alpha =      1	res = 1.522618e-13	  ||dphi||_L2 = 6.548757e-01	  ||dphi||_Linfty = 6.720043e-02
 
 ----------------------
 CLS Mass Conservation
@@ -109,8 +109,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-1.800000e-02 5.144344e-01 7.494809e-01 8.002955e-01 -4.530473e-02 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+1.800000e-02 5.144344e-01 7.494809e-01 8.002955e-01 -4.530473e-02 5.150979e-01 7.495855e-01 8.400816e-01 -4.737060e-02 
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.024    Time step: 0.006    CFL: 0.339675
@@ -120,8 +120,8 @@ CLS
 ----
 Newton iteration: 0  - Residual:  3.932554e-02
   -Tolerance of iterative solver is : 3.932554e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.559496e-13
-	alpha =      1	res = 1.559496e-13	  ||dphi||_L2 = 6.542699e-01	  ||dphi||_Linfty = 6.681857e-02
+  -Iterative solver took : 4 steps to reach a residual norm of 1.559503e-13
+	alpha =      1	res = 1.559498e-13	  ||dphi||_L2 = 6.542699e-01	  ||dphi||_Linfty = 6.681857e-02
 
 ----------------------
 CLS Mass Conservation
@@ -132,8 +132,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-2.400000e-02 5.192311e-01 7.491636e-01 7.984044e-01 -6.035618e-02 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+2.400000e-02 5.192311e-01 7.491636e-01 7.984044e-01 -6.035618e-02 5.200789e-01 7.492620e-01 8.380814e-01 -6.300055e-02 
 
 *******************************************************************************
 Transient iteration: 6        Time: 0.03     Time step: 0.006    CFL: 0.339569
@@ -143,8 +143,8 @@ CLS
 ----
 Newton iteration: 0  - Residual:  3.929790e-02
   -Tolerance of iterative solver is : 3.929790e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.597285e-13
-	alpha =      1	res = 1.597281e-13	  ||dphi||_L2 = 6.538165e-01	  ||dphi||_Linfty = 6.684365e-02
+  -Iterative solver took : 4 steps to reach a residual norm of 1.597282e-13
+	alpha =      1	res = 1.597288e-13	  ||dphi||_L2 = 6.538165e-01	  ||dphi||_Linfty = 6.684365e-02
 
 ----------------------
 CLS Mass Conservation
@@ -155,8 +155,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-3.000000e-02 5.240151e-01 7.487562e-01 7.959804e-01 -7.536466e-02 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+3.000000e-02 5.240151e-01 7.487562e-01 7.959804e-01 -7.536466e-02 5.250777e-01 7.488430e-01 8.355040e-01 -7.867232e-02 
 
 *******************************************************************************
 Transient iteration: 7        Time: 0.036    Time step: 0.006    CFL: 0.339434
@@ -167,7 +167,7 @@ CLS
 Newton iteration: 0  - Residual:  3.927060e-02
   -Tolerance of iterative solver is : 3.927060e-11
   -Iterative solver took : 4 steps to reach a residual norm of 1.637173e-13
-	alpha =      1	res = 1.637174e-13	  ||dphi||_L2 = 6.533828e-01	  ||dphi||_Linfty = 6.649119e-02
+	alpha =      1	res = 1.637152e-13	  ||dphi||_L2 = 6.533828e-01	  ||dphi||_Linfty = 6.649119e-02
 
 ----------------------
 CLS Mass Conservation
@@ -178,8 +178,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-3.600000e-02 5.287835e-01 7.482590e-01 7.930274e-01 -9.031918e-02 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+3.600000e-02 5.287835e-01 7.482590e-01 7.930274e-01 -9.031918e-02 5.300592e-01 7.483294e-01 8.323531e-01 -9.429085e-02 
 
 *******************************************************************************
 Transient iteration: 8        Time: 0.042    Time step: 0.006    CFL: 0.339268
@@ -189,8 +189,8 @@ CLS
 ----
 Newton iteration: 0  - Residual:  3.924091e-02
   -Tolerance of iterative solver is : 3.924091e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.678022e-13
-	alpha =      1	res = 1.678017e-13	  ||dphi||_L2 = 6.529215e-01	  ||dphi||_Linfty = 6.669830e-02
+  -Iterative solver took : 4 steps to reach a residual norm of 1.678025e-13
+	alpha =      1	res = 1.678014e-13	  ||dphi||_L2 = 6.529215e-01	  ||dphi||_Linfty = 6.669830e-02
 
 ----------------------
 CLS Mass Conservation
@@ -201,8 +201,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-4.200000e-02 5.335330e-01 7.476722e-01 7.895504e-01 -1.052087e-01 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+4.200000e-02 5.335330e-01 7.476722e-01 7.895504e-01 -1.052087e-01 5.349957e-01 7.477212e-01 8.286534e-01 -1.097815e-01 
 
 *******************************************************************************
 Transient iteration: 9        Time: 0.048    Time step: 0.006    CFL: 0.339072
@@ -212,8 +212,8 @@ CLS
 ----
 Newton iteration: 0  - Residual:  3.920791e-02
   -Tolerance of iterative solver is : 3.920791e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.715233e-13
-	alpha =      1	res = 1.715202e-13	  ||dphi||_L2 = 6.524163e-01	  ||dphi||_Linfty = 6.620640e-02
+  -Iterative solver took : 4 steps to reach a residual norm of 1.715238e-13
+	alpha =      1	res = 1.715234e-13	  ||dphi||_L2 = 6.524163e-01	  ||dphi||_Linfty = 6.620640e-02
 
 ----------------------
 CLS Mass Conservation
@@ -224,8 +224,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-4.800000e-02 5.382604e-01 7.469961e-01 7.855558e-01 -1.200221e-01 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+4.800000e-02 5.382604e-01 7.469961e-01 7.855558e-01 -1.200221e-01 5.399209e-01 7.470167e-01 8.243981e-01 -1.252351e-01 
 
 *******************************************************************************
 Transient iteration: 10       Time: 0.054    Time step: 0.006    CFL: 0.338845
@@ -235,8 +235,8 @@ CLS
 ----
 Newton iteration: 0  - Residual:  3.917128e-02
   -Tolerance of iterative solver is : 3.917128e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.742207e-13
-	alpha =      1	res = 1.742244e-13	  ||dphi||_L2 = 6.518619e-01	  ||dphi||_Linfty = 6.609107e-02
+  -Iterative solver took : 4 steps to reach a residual norm of 1.742216e-13
+	alpha =      1	res = 1.742239e-13	  ||dphi||_L2 = 6.518619e-01	  ||dphi||_Linfty = 6.609107e-02
 -----------------------------------------
 CLS geometric interface reinitialization
 -----------------------------------------
@@ -245,7 +245,7 @@ In redistanciation of the previous solution ...
 Signed Distance Solver
 -----------------------
 Initial volume Volume after redistanciation Remaining error on the volume 
-    7.0538e-02                   7.0538e-02                   -1.1102e-16 
+    7.0538e-02                   7.0538e-02                   -8.3267e-17 
 Solving signed distance of layer 0
 Solving signed distance of layer 1
 Solving signed distance of layer 2
@@ -265,7 +265,7 @@ In redistanciation of the present solution ...
 Signed Distance Solver
 -----------------------
 Initial volume Volume after redistanciation Remaining error on the volume 
-    7.0544e-02                   7.0544e-02                   -1.2490e-16 
+    7.0544e-02                   7.0544e-02                   -1.1102e-16 
 Solving signed distance of layer 0
 Solving signed distance of layer 1
 Solving signed distance of layer 2
@@ -290,8 +290,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-5.400000e-02 5.448024e-01 7.459677e-01 7.804575e-01 -1.371210e-01 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+5.400000e-02 5.448024e-01 7.459677e-01 7.804575e-01 -1.371210e-01 5.448391e-01 7.462171e-01 8.195653e-01 -1.406625e-01 
 
 *******************************************************************************
 Transient iteration: 11       Time: 0.06     Time step: 0.006    CFL: 0.338589
@@ -301,8 +301,8 @@ CLS
 ----
 Newton iteration: 0  - Residual:  3.927584e-02
   -Tolerance of iterative solver is : 3.927584e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.720396e-13
-	alpha =      1	res = 1.720404e-13	  ||dphi||_L2 = 6.534556e-01	  ||dphi||_Linfty = 7.026556e-02
+  -Iterative solver took : 4 steps to reach a residual norm of 1.720391e-13
+	alpha =      1	res = 1.720372e-13	  ||dphi||_L2 = 6.534556e-01	  ||dphi||_Linfty = 7.026556e-02
 
 ----------------------
 CLS Mass Conservation
@@ -313,5 +313,5 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls        y_cls        vx_cls       vy_cls     
-6.000000e-02 5.495419e-01 7.450920e-01 7.753729e-01 -1.518313e-01 
+    time        x_cls        y_cls        vx_cls       vy_cls      x_cls_geo    y_cls_geo    vx_cls_geo   vy_cls_geo   
+6.000000e-02 5.495419e-01 7.450920e-01 7.753729e-01 -1.518313e-01 5.497051e-01 7.453436e-01 8.142356e-01 -1.559128e-01 

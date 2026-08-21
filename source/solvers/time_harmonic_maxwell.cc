@@ -1717,12 +1717,13 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     << "   Number of interior degrees of freedom for Time-Harmonic Maxwell: "
     << this->dof_handler_trial_interior->n_dofs() << std::endl;
 
-  // Update the multiphysics interface with the TimeHarmonicMaxwell dof_handler
-  // and solution. Note that we provide the interior dof_handler and interior
-  // solution as it is the one useful for the other physics (we do not provide
-  // the skeleton dof_handler and skeleton solution).
+  // Update the multiphysics interface with the TimeHarmonicMaxwell dof_handler,
+  // mapping, and solution. Note that we provide the interior dof_handler and
+  // interior solution as it is the one useful for the other physics (we do not
+  // provide the skeleton dof_handler and skeleton solution).
   multiphysics->set_dof_handler(PhysicsID::electromagnetics,
                                 this->dof_handler_trial_interior);
+  multiphysics->set_mapping(PhysicsID::electromagnetics, this->mapping);
   multiphysics->set_solution(PhysicsID::electromagnetics,
                              this->present_solution);
 }

@@ -257,6 +257,79 @@ namespace InterfaceTools
                                const double              iso_level);
 
   /**
+   * @brief Integrate the barycenter position and velocity of the volume
+   * enclosed by the zero-level of a level set field. The region of interest
+   * correspond to the sub-domain where the level-set value is smaller or
+   * equal to 0.
+   *
+   * @tparam dim An integer that denotes the dimension of the space in which
+   * the problem is solved.
+   * @tparam VectorType The vector type of the solution vector.
+   *
+   * @param[in] dof_handler DofHandler associated to the triangulation on which
+   * the level-set is described
+   * @param[in] fe Finite element describing the level-set
+   * @param[in] level_set_vector_relevant_copy Level-set vector
+   * @param[in] mapping_velocity Mapping associated to the velocity field
+   * @param[in] dof_handler_velocity DofHandler associated to the triangulation
+   * on which the velocity is described
+   * @param[in] fe Finite element describing the velocity
+   * @param[in] velocity_vector Velocity solution vector
+
+   * @return The position and the velocity of the barycenter of the region enclosed
+   * by the zero-level of the level-set field. The position is the first entry
+   and
+   * the velocity the second.
+   */
+  template <int dim, typename VectorType>
+  std::pair<Point<dim>, Tensor<1, dim>>
+  integrate_barycenter(const DoFHandler<dim>    &dof_handler,
+                       const FiniteElement<dim> &fe,
+                       const VectorType         &level_set_vector_relevant_copy,
+                       const Mapping<dim>       &mapping_velocity,
+                       const DoFHandler<dim>    &dof_handler_velocity,
+                       const FiniteElement<dim> &fe_velocity,
+                       const VectorType         &velocity_vector);
+
+  /**
+ * @brief Integrate the barycenter position and velocity of the region
+ * enclosed by a given level of a level-set field. The region of interest
+ * correspond to the sub-domain where the level-set value is greater or
+ * equal to the specified level.
+ *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the problem is solved.
+ * @tparam VectorType The vector type of the solution vector.
+ *
+ * @param[in] dof_handler DofHandler associated to the triangulation on which
+ * the level-set is described
+ * @param[in] fe Finite element describing the level-set
+ * @param[in] level_set_vector Level-set vector
+ * @param[in] mapping_velocity Mapping associated to the velocity field
+ * @param[in] dof_handler_velocity DofHandler associated to the triangulation
+ * on which the velocity is described
+ * @param[in] fe Finite element describing the velocity
+ * @param[in] velocity_vector Velocity solution vector
+ * @param[in] iso_level Given level of the level-set field enclosing the
+ * region of interest
+
+ * @return The position and the velocity of the barycenter of the region enclosed
+ * by the specified level of the level-set field. The position is the first
+ entry
+ * and the velocity the second.
+ */
+  template <int dim, typename VectorType>
+  std::pair<Point<dim>, Tensor<1, dim>>
+  integrate_barycenter(const DoFHandler<dim>    &dof_handler,
+                       const FiniteElement<dim> &fe,
+                       const VectorType         &level_set_vector,
+                       const Mapping<dim>       &mapping_velocity,
+                       const DoFHandler<dim>    &dof_handler_velocity,
+                       const FiniteElement<dim> &fe_velocity,
+                       const VectorType         &velocity_vector,
+                       const double              iso_level);
+
+  /**
    * @brief
    * Reconstruct the interface defined by a given level of a level set field
    * in the domain.

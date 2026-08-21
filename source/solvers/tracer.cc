@@ -1357,6 +1357,7 @@ Tracer<dim>::setup_dofs()
   // Provide the tracer dof_handler and present solution pointers to the
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::tracer, this->dof_handler);
+  multiphysics->set_mapping(PhysicsID::tracer, this->mapping);
   multiphysics->set_solution(PhysicsID::tracer, this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::tracer,
                                        this->previous_solutions);

@@ -3653,6 +3653,8 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   // Provide the fluid dynamics dof_handler to the multiphysics interface
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
                                       this->dof_handler);
+  // Provide the fluid dynamics mapping to the multiphysics interface
+  this->multiphysics->set_mapping(PhysicsID::fluid_dynamics, this->mapping);
 
   // Convert the present solution to multiphysics vector type and provide it
   // to the multiphysics interface

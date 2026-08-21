@@ -13,8 +13,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time         x_cls         y_cls        vx_cls       vy_cls    
-0.000000e+00 -1.181863e-13 -1.247898e-13 2.500000e-02 0.000000e+00 
+    time         x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+0.000000e+00 -1.181851e-13 -1.247818e-13 2.500000e-02 0.000000e+00 7.622015e-17 -1.513234e-09 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.4      Time step: 0.4      CFL: 0.770874
@@ -29,8 +29,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-4.000000e-01 1.007491e-02 -1.870330e-11 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+4.000000e-01 1.007491e-02 -1.870331e-11 2.500000e-02 0.000000e+00 9.812777e-03 -1.253115e-11 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 2        Time: 1        Time step: 0.6      CFL: 0.30835 
@@ -45,8 +45,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-1.000000e+00 2.518573e-02 -4.701691e-11 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+1.000000e+00 2.518573e-02 -4.701690e-11 2.500000e-02 0.000000e+00 2.506151e-02 -3.807205e-11 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 3        Time: 2        Time step: 1        CFL: 0.462525
@@ -61,8 +61,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-2.000000e+00 5.036641e-02 -1.233415e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+2.000000e+00 5.036641e-02 -1.233414e-10 2.500000e-02 0.000000e+00 5.066399e-02 -8.650536e-11 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 4        Time: 3        Time step: 1        CFL: 0.770874
@@ -77,8 +77,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls
-3.000000e+00 7.515057e-02 -2.108257e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+3.000000e+00 7.515057e-02 -2.108257e-10 2.500000e-02 0.000000e+00 7.504768e-02 -2.121487e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 5        Time: 4        Time step: 1        CFL: 0.770874
@@ -93,8 +93,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls
-4.000000e+00 1.003756e-01 -2.444964e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+4.000000e+00 1.003756e-01 -2.444964e-10 2.500000e-02 0.000000e+00 1.005415e-01 -2.463934e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 6        Time: 5        Time step: 1        CFL: 0.770874
@@ -109,8 +109,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-5.000000e+00 1.256450e-01 -2.557279e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+5.000000e+00 1.256450e-01 -2.557279e-10 2.500000e-02 0.000000e+00 1.263018e-01 -2.577464e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 7        Time: 6        Time step: 1        CFL: 0.770874
@@ -125,8 +125,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-6.000000e+00 1.509178e-01 -2.593199e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+6.000000e+00 1.509178e-01 -2.593200e-10 2.500000e-02 0.000000e+00 1.518398e-01 -2.624183e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 8        Time: 7        Time step: 1        CFL: 0.770874
@@ -141,8 +141,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-7.000000e+00 1.754888e-01 -2.497272e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+7.000000e+00 1.754888e-01 -2.497271e-10 2.500000e-02 0.000000e+00 1.755561e-01 -2.505824e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 9        Time: 8        Time step: 1        CFL: 0.770874
@@ -157,8 +157,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-8.000000e+00 2.007249e-01 -2.506407e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+8.000000e+00 2.007249e-01 -2.506407e-10 2.500000e-02 0.000000e+00 2.008223e-01 -2.490305e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 10       Time: 9        Time step: 1        CFL: 0.770874
@@ -173,8 +173,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-9.000000e+00 2.259981e-01 -2.509102e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+9.000000e+00 2.259981e-01 -2.509103e-10 2.500000e-02 0.000000e+00 2.265805e-01 -2.488276e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 11       Time: 10       Time step: 1        CFL: 0.770874
@@ -189,8 +189,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-1.000000e+01 2.512721e-01 -2.507836e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+1.000000e+01 2.512721e-01 -2.507836e-10 2.500000e-02 0.000000e+00 2.521892e-01 -2.495915e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 12       Time: 11       Time step: 1        CFL: 0.770874
@@ -205,8 +205,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-1.100000e+01 2.758303e-01 -2.373648e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+1.100000e+01 2.758303e-01 -2.373648e-10 2.500000e-02 0.000000e+00 2.757719e-01 -2.377789e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 13       Time: 12       Time step: 1        CFL: 0.770874
@@ -221,8 +221,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-1.200000e+01 3.010666e-01 -2.376621e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+1.200000e+01 3.010666e-01 -2.376622e-10 2.500000e-02 0.000000e+00 3.012427e-01 -2.357350e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 14       Time: 13       Time step: 1        CFL: 0.770874
@@ -237,8 +237,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-1.300000e+01 3.263398e-01 -2.377540e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+1.300000e+01 3.263398e-01 -2.377541e-10 2.500000e-02 0.000000e+00 3.269436e-01 -2.350839e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 15       Time: 14       Time step: 1        CFL: 0.770874
@@ -253,8 +253,8 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-1.400000e+01 3.516138e-01 -2.375763e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+1.400000e+01 3.516138e-01 -2.375764e-10 2.500000e-02 0.000000e+00 3.524640e-01 -2.358700e-10 2.500000e-02 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 16       Time: 15       Time step: 1        CFL: 0.770874
@@ -269,5 +269,5 @@ CLS Mass Conservation
 ---------------
 CLS Barycenter
 ---------------
-    time        x_cls         y_cls        vx_cls       vy_cls    
-1.500000e+01 3.761717e-01 -2.135522e-10 2.500000e-02 0.000000e+00 
+    time        x_cls         y_cls        vx_cls       vy_cls     x_cls_geo     y_cls_geo    vx_cls_geo   vy_cls_geo  
+1.500000e+01 3.761717e-01 -2.135522e-10 2.500000e-02 0.000000e+00 3.760985e-01 -2.132271e-10 2.500000e-02 0.000000e+00 

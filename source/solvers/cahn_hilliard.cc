@@ -1198,6 +1198,7 @@ CahnHilliard<dim>::setup_dofs()
   // Provide the cahn_hilliard dof_handler and present solution pointers to the
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::cahn_hilliard, this->dof_handler);
+  multiphysics->set_mapping(PhysicsID::cahn_hilliard, this->mapping);
   multiphysics->set_solution(PhysicsID::cahn_hilliard, this->present_solution);
   multiphysics->set_filtered_solution(PhysicsID::cahn_hilliard,
                                       this->filtered_solution);
