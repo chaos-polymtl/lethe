@@ -22,6 +22,10 @@ using GlobalBlockVectorType =
   dealii::LinearAlgebra::distributed::BlockVector<double>;
 #endif
 
+DeclException1(
+  GhostElementsRequired,
+  std::string,
+  << arg1 << "() requires a solution vector with up-to-date ghost values.");
 
 /**
  * @brief Helper function that allows to convert deal.II vectors to Trilinos vectors.

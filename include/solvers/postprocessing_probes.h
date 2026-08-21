@@ -1,0 +1,281 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+#ifndef lethe_postprocessing_probes_h
+#define lethe_postprocessing_probes_h
+
+#include <core/parameters.h>
+#include <core/simulation_control.h>
+#include <core/utilities.h>
+#include <core/vector.h>
+
+#include <ranges>
+
+template <int dim>
+class PostprocessingProbes
+{
+public:
+  /**
+   * @brief Object that evaluates variables (e.g., velocity) at specified points
+   * in the domain.
+   *
+   * Within every physics postprocessing attribute (either
+   * NavierStokesBase::postprocess_fd() or AuxiliaryPhysics::postprocess())
+   * the evaluation can made by calling the postprocess_probes() attribute of
+   * this object through the MultiphysicsInterface object.
+   * All evaluated values of variables of a same probe are stored within a same
+   * table. All tables are grouped in the PostprocessingProbes::probe_tables
+   * vector. Within the vector, the tables are ordered in increasing order of
+   * probe IDs.
+   *
+   * @param[in] simulation_control SimulationControl object which is used to
+   * obtain the current time and current iteration number.
+   * @param[in] probing_points_parameters Set of parameters describing the
+   * specified probing point and variables of interest.
+   * @param[in] output_frequency Output iteration frequency for postprocessing.
+   * @param[in] verbosity Verbosity level for console output.
+   *
+   * @remark At the moment, probing for only the velocity, pressure, phase, and
+   * temperature variables are implemented. Implementation for other variables
+   * will follow.
+   */
+  PostprocessingProbes(std::shared_ptr<SimulationControl> &simulation_control,
+                       const Parameters::PostProcessing<dim>::ProbingPoints
+                                                   &probing_points_parameters,
+                       const unsigned int           output_frequency,
+                       const Parameters::Verbosity &verbosity);
+
+
+
+  /**
+   * @brief Evaluates scalar variables (e.g., pressure) at specified points
+   * in the domain using evaluate_values_at_points and fills appropriate probe
+   * tables.
+   *
+   * @tparam VectorType Type of vector of the solution vector.
+   *
+   * @param[in] mapping Mapping of the domain.
+   * @param[in] dof_handler DoF handler associated to the solution field.
+   * @param[in] present_solution Vector containing the scalar solution field.
+   * @param[in] variable Variable of interest.
+   * @param[in] pcout Parallel console output stream.
+   * @param[out] evaluated_scalar_values Vector of evaluated scalar values.
+   */
+  template <typename VectorType>
+  void
+  postprocess_probes(const Mapping<dim>       &mapping,
+                     const DoFHandler<dim>    &dof_handler,
+                     const VectorType         &present_solution,
+                     const Variable            variable,
+                     const ConditionalOStream &pcout,
+                     std::vector<double>      &evaluated_scalar_values);
+
+  /**
+   * @brief Evaluates vector variables (e.g., velocity) at specified points
+   * in the domain using evaluate_values_at_points() and fills appropriate probe
+   * tables.
+   *
+   * @tparam VectorType Type of vector of the solution vector.
+   *
+   * @param[in] mapping Mapping of the domain.
+   * @param[in] dof_handler DoF handler associated to the solution field.
+   * @param[in] present_solution Vector containing the vector solution field.
+   * For distributed meshes, ghost elements must be updated.
+   * @param[in] variable Variable of interest.
+   * @param[in] pcout Parallel console output stream.
+   * @param[out] evaluated_vector_values Vector of evaluated vector values.
+   *
+   * @remark At the moment, only the velocity variable is implemented.
+   */
+  template <typename VectorType>
+  void
+  postprocess_probes(
+    const Mapping<dim>                  &mapping,
+    const DoFHandler<dim>               &dof_handler,
+    const VectorType                    &present_solution,
+    const Variable                       variable,
+    const ConditionalOStream            &pcout,
+    std::vector<Tensor<1, dim, double>> &evaluated_vector_values);
+
+  /**
+   * @brief Writes the probe tables into output `.dat` file.
+   */
+  inline void
+  write_probing_points_tables()
+  {
+    if (simulation_control->get_iteration_number() % output_frequency == 0 ||
+        simulation_control->is_at_end())
+      if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+        {
+          for (unsigned int i = 0; i < probe_tables.size(); ++i)
+            {
+              std::string file_path =
+                output_folder + "probe_" + Utilities::int_to_string(i, 2) +
+                "_" + probing_points_parameters.probing_points_output_names[i] +
+                ".dat";
+              std::ofstream output(file_path.c_str());
+
+              probe_tables[i].write_text(output);
+            }
+        }
+  }
+
+  /**
+   * @brief Clears the content of the set indicating if the current time has
+   * been added to a probe table. This is reset at every postprocessing time
+   * step.
+   */
+  inline void
+  reset_current_time_set()
+  {
+    probe_tables_with_current_time.clear();
+  };
+
+  /**
+   * @brief Returns a vector of references to TableHandler objects that needs to
+   * be serialized/deserialized for the postprocessed probes.
+   *
+   * @return Structure containing a vector of references to TableHandler objects
+   * that needs to be serialized/deserialized for the postprocessed probes, and
+   * their corresponding filenames.
+   */
+  std::vector<OutputStructTableHandler>
+  gather_tables();
+
+  /**
+   * @brief Serializes all probe tables.
+   */
+  inline void
+  write_checkpoint()
+  {
+    const std::vector<OutputStructTableHandler> &table_output_structs =
+      this->gather_tables();
+    serialize_tables_vector(table_output_structs, MPI_COMM_WORLD);
+  }
+
+  /**
+   * @brief Deserializes all probe tables.
+   */
+  inline void
+  read_checkpoint()
+  {
+    std::vector<OutputStructTableHandler> table_output_structs =
+      this->gather_tables();
+    deserialize_tables_vector(table_output_structs, MPI_COMM_WORLD);
+  }
+
+  /// Set of valid scalar variables
+  const std::set<Variable> implemented_scalar_variables =
+    {Variable::pressure, Variable::phase, Variable::temperature};
+
+  /// Set of valid vector variables
+  const std::set<Variable> implemented_vector_variables = {Variable::velocity};
+
+private:
+  /**
+   * @brief Prepares probe tables by setting the entry formats and precisions
+   * for all probes of the specified `variable`.
+   *
+   * @param[in] variable Variable of interest.
+   *
+   */
+  inline void
+  prepare_probe_tables(const Variable &variable)
+  {
+    const auto &probing_points_of_variable =
+      probing_points_parameters.probing_points_per_variable.at(variable);
+
+    // Go through tables of the variable and prepare them by declaring and
+    // formating the column(s) of the variable
+    for (const unsigned int &id : probing_points_of_variable.ids)
+      {
+        TableHandler     &current_table = probe_tables[id];
+        const std::string column_name =
+          get_variable_string_with_underscores(variable);
+
+        if (implemented_scalar_variables.contains(variable))
+          {
+            current_table.declare_column(column_name);
+            current_table.set_precision(column_name, table_precision);
+            current_table.set_scientific(column_name, true);
+          }
+        else if (implemented_vector_variables.contains(variable))
+          {
+            // Only velocity is implemented at the moment
+            current_table.declare_column(column_name + "_x");
+            current_table.set_precision(column_name + "_x", table_precision);
+            current_table.set_scientific(column_name + "_x", true);
+            current_table.declare_column(column_name + "_y");
+            current_table.set_precision(column_name + "_y", table_precision);
+            current_table.set_scientific(column_name + "_y", true);
+            if constexpr (dim == 3)
+              {
+                current_table.declare_column(column_name + "_z");
+                current_table.set_precision(column_name + "_z",
+                                            table_precision);
+                current_table.set_scientific(column_name + "_z", true);
+              }
+          }
+      }
+  }
+
+  /**
+   * @brief Checks if the table of a specified probing point (@p probe_id)
+   * already has a row entry for the current time step.
+   *
+   * @param[in] probe_id Identifier of the probing point investigated.
+   *
+   * @return
+   *  - @p true if there already is an entry for the current time step.
+   *  - @p false if there is no row for the current time step.
+   */
+  inline bool
+  check_if_table_contains_current_time(const unsigned int &probe_id)
+  {
+    if (probe_tables_with_current_time.contains(probe_id))
+      return true;
+    else // No entry yet for the current time step
+      {
+        // Add the ID of the probing point to the set
+        probe_tables_with_current_time.insert(probe_id);
+        return false;
+      }
+  };
+
+  /// Simulation control for current time and current iteration number.
+  std::shared_ptr<SimulationControl> simulation_control;
+
+  /** Set of parameters describing the specified probing point and variables of
+   * interest */
+  const Parameters::PostProcessing<dim>::ProbingPoints
+    probing_points_parameters;
+
+  /// Postprocessing output frequency
+  const unsigned int output_frequency;
+
+  /// Path to the output folder where all .dat are saved
+  const std::string output_folder;
+
+  /// Postprocessing verbosity
+  const Parameters::Verbosity verbosity;
+
+  /** Contains IDs of probe for which the current time has been added to the
+   * table to avoid duplication of time entries when a probing point contains
+   * multiple variables */
+  std::set<unsigned int> probe_tables_with_current_time;
+
+  /** Tables of probe measures (1 table per probe). The table index in the
+   * vector corresponds to the probe ID. */
+  std::vector<TableHandler> probe_tables;
+
+  /// Remote point evaluators (1 evaluator per variable)
+  std::map<Variable, Utilities::MPI::RemotePointEvaluation<dim>>
+    remote_point_evaluators;
+
+  /// Precision of table entries
+  const unsigned int table_precision =
+    6; // TODO change the value with user-input parameter when issue #2039 is
+       // being resolved
+};
+
+#endif

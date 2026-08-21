@@ -56,10 +56,10 @@ public:
    */
   void
   calculate_average_velocities(
-    const VectorType                 &local_evaluation_point,
-    const Parameters::PostProcessing &post_processing,
-    const double                     &current_time,
-    const double                     &time_step);
+    const VectorType                      &local_evaluation_point,
+    const Parameters::PostProcessing<dim> &post_processing,
+    const double                          &current_time,
+    const double                          &time_step);
 
 
   void

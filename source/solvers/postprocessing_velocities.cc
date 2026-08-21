@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/vector.h>
@@ -23,10 +23,10 @@ AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
-  const VectorType                 &local_evaluation_point,
-  const Parameters::PostProcessing &post_processing,
-  const double                     &current_time,
-  const double                     &time_step)
+  const VectorType                      &local_evaluation_point,
+  const Parameters::PostProcessing<dim> &post_processing,
+  const double                          &current_time,
+  const double                          &time_step)
 {
   const double epsilon = 1e-6;
   const double initial_time =
