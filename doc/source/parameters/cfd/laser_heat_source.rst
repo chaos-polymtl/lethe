@@ -7,18 +7,19 @@ If a laser heat source is present in a simulation, it can be added in this secti
 .. code-block:: text
 
   subsection laser parameters
-    set enable               = false
-    set type                 = gaussian_heat_flux_cls_interface
-    set concentration factor = 2.0
-    set power                = 0.0
-    set absorptivity         = 0.5
-    set penetration depth    = 1.0
-    set beam radius          = 0.0
-    set start time           = 0.0
-    set end time             = 1.0
-    set beam orientation     = z-
-    set beam rotation angle  = 0.0
-    set beam rotation axis   = 0.0, 0.0, 1.0
+    set enable                               = false
+    set type                                 = gaussian_heat_flux_cls_interface
+    set enable angle of incidence dependence = true
+    set concentration factor                 = 2.0
+    set power                                = 0.0
+    set absorptivity                         = 0.5
+    set penetration depth                    = 1.0
+    set beam radius                          = 0.0
+    set start time                           = 0.0
+    set end time                             = 1.0
+    set beam orientation                     = z-
+    set beam rotation angle                  = 0.0
+    set beam rotation axis                   = 0.0, 0.0, 1.0
 
     subsection path
       set Function expression = 0.0; 0.0
@@ -36,6 +37,17 @@ If a laser heat source is present in a simulation, it can be added in this secti
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
 * The ``type`` parameter is set to ``gaussian_heat_flux_cls_interface`` (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the ``type`` can be set at ``uniform_heat_flux_cls_interface``. In both cases, the laser model must be used in conjunction with the :doc:`CLS auxiliary physic <./conservative_level_set>`. The third available laser model is the  ``exponential_decay`` and considers that the laser behaves as a volumetric source. The different models are detailed :ref:`below <LaserTypes>`.
+
+* When ``enable angle of incidence dependence`` is set to ``true`` (by default), the laser heat source is dampened following a factor :math:`\cos(\theta)` when the angle of incidence of the laser with respect to the heated surface :math:`(\theta)` is greater than :math:`0` degrees (i.e. the laser source is not perpendicular to the surface).
+
+  .. figure:: images/angle_of_incidence.svg
+    :alt: Schematic of the angle of incidence
+    :align: center
+    :width: 45%
+
+  .. note::
+
+    The angle of incidence dependence is only implemented for 2 laser types: ``gaussian_heat_flux_cls_interface`` and ``uniform_heat_flux_cls_interface`` (see :ref:`laser types <LaserTypes>`).
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
@@ -66,6 +78,10 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * In the ``path`` subsection, the laser scanning path is defined using a ``Function expression``.
 
+----------------------
+Free Surface Radiation
+----------------------
+
 * ``subsection free surface radiation``: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the :doc:`conservative_level_set` solver, the ``free surface radiation`` subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation:
 
   .. math::
@@ -80,22 +96,27 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 .. _LaserTypes:
 
+-----------
 Laser types
-^^^^^^^^^^^^^
+-----------
 
 * When the ``type`` is set to ``gaussian_heat_flux_cls_interface`` or ``uniform_heat_flux_cls_interface``, it **must be used in conjunction with the** :doc:`CLS auxiliary physic <./conservative_level_set>`.
 
-  * The ``gaussian_heat_flux_cls_interface`` model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:
+  * The ``gaussian_heat_flux_cls_interface`` model is used to apply a gaussian heat flux only at the interface.
+
+    In 3D, this heat flux is given by:
   
     .. math::
       
         q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)
         
-    where :math:`r` is the radial distance from the laser's axis, :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase indicator gradient, :math:`\vec{n}_\Gamma` is the surface unit normal, and :math:`\vec{d}_\mathrm{laser}` is the unit direction vector of the laser. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius :math:`R` in 3D to a line segment of length :math:`2R` in 2D): 
+    where :math:`r` is the radial distance from the laser's axis, :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase indicator gradient, :math:`\vec{n}_\Gamma` is the surface unit normal, and :math:`\vec{d}_\mathrm{laser}` is the unit direction vector of the laser.
+
+    In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius :math:`R` in 3D to a line segment of length :math:`2R` in 2D):
     
     .. math::
 
-        q(x,y,z) = \frac{2|\nabla \psi| \sqrt{\eta\;} \alpha P}{\sqrt{\pi^3} R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+        q(x,y) = \frac{2|\nabla \psi| \sqrt{\eta\;} \alpha P}{\sqrt{\pi^3} R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)
         
     
   * The ``uniform_heat_flux_cls_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
@@ -104,6 +125,10 @@ Laser types
       
         q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)
 
+
+  .. caution::
+
+    The factor :math:`\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right) = \cos(\theta)` (with :math:`\theta` the angle of incidence of the laser) is replaced by the value of :math:`1.0` when ``enable angle of incidence dependence`` is set to ``false``.
 
 * When the ``type`` parameter is set to ``exponential_decay``, the exponential model from Liu *et al.* [#liu2018]_ is used to simulate the laser heat source:
 
