@@ -324,7 +324,6 @@ Multiphysics Post-processing
 Multiphase Post-processing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. Two definitions are used for CLS simulation: the algebraic definition where the barycenter :math:`\mathbf{x_b}` and its velocity :math:`\mathbf{v_b}` are 
 * ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations.
 
   Two definitions are used for CLS simulation:
