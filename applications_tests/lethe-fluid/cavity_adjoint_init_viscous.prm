@@ -1,0 +1,130 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method                         = steady_bdf
+  set time step                      = 0.1
+  set adapt time step to respect CFL = true
+  set max cfl                        = 1000
+  set stop tolerance                 = 1e-5
+  set adaptative time step scaling   = 1.2
+  set number mesh adapt              = 0
+  set output frequency               = 0
+  set output name                    = cavity-init-viscous-output
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type                = viscous
+  set kinematic viscosity = 0.1
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 0.002
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : true
+  set initial refinement = 6
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set id   = 0, 1, 2
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 3
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-3
+    set max iterations = 10
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-11
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = quiet
+  end
+end
