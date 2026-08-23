@@ -1,6 +1,15 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#-------------------------------------------------------------------------------
+# Description:
+# This test checks that a viscous initial condition can be combined with the
+# steady_bdf method. The viscous initial condition temporarily assembles a
+# steady problem to obtain a good starting point. It must restore the assembly
+# method afterwards, otherwise the first pseudo steady-state iteration requests
+# the BDF coefficients of a steady method and the simulation aborts.
+#-------------------------------------------------------------------------------
+
 # Listing of Parameters
 #----------------------
 
