@@ -1659,6 +1659,8 @@ HeatTransfer<dim>::setup_dofs()
   // Provide the heat transfer dof_handler and present solution pointers to the
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::heat_transfer, this->dof_handler);
+  multiphysics->set_mapping(PhysicsID::heat_transfer,
+                            this->temperature_mapping);
   multiphysics->set_solution(PhysicsID::heat_transfer, this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::heat_transfer,
                                        this->previous_solutions);
