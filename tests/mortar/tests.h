@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <deal.II/base/enable_observer_pointer.h>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
@@ -460,7 +462,7 @@ template <int dim,
           int n_components,
           typename Number,
           typename VectorizedArrayType = VectorizedArray<Number>>
-class OperatorBase : public Subscriptor
+class OperatorBase : public EnableObserverPointer
 {
 public:
   using FECellIntegrator =
@@ -814,7 +816,7 @@ private:
 template <int dim,
           typename Number,
           typename VectorizedArrayType = VectorizedArray<Number>>
-class GeneralStokesOperator : public Subscriptor
+class GeneralStokesOperator : public EnableObserverPointer
 {
 public:
   using FECellIntegratorU =
@@ -1224,7 +1226,7 @@ template <int dim,
           int n_components,
           typename Number,
           typename VectorizedArrayType = VectorizedArray<Number>>
-class PoissonOperatorDG : public Subscriptor
+class PoissonOperatorDG : public EnableObserverPointer
 {
 public:
   using FECellIntegrator =
@@ -1643,7 +1645,7 @@ protected:
 template <int dim,
           typename Number,
           typename VectorizedArrayType = VectorizedArray<Number>>
-class GeneralStokesOperatorDG : public Subscriptor
+class GeneralStokesOperatorDG : public EnableObserverPointer
 {
 public:
   using FECellIntegratorU =

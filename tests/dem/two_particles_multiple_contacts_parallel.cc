@@ -89,7 +89,7 @@ test()
     nonlinear_force_object(dem_parameters);
   VelocityVerletIntegrator<dim, PropertiesIndex> integrator_object;
 
-  MPI_Comm communicator     = triangulation.get_communicator();
+  MPI_Comm communicator     = triangulation.get_mpi_communicator();
   auto     this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
 
   // Inserting two particles in contact

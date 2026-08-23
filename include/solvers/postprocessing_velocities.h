@@ -6,7 +6,7 @@
 
 #include <core/parameters.h>
 
-#include <deal.II/distributed/solution_transfer.h>
+#include <deal.II/numerics/solution_transfer.h>
 
 using namespace dealii;
 
