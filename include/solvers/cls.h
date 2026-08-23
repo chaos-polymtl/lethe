@@ -22,7 +22,6 @@
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/timer.h>
 
-#include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/grid/grid_tools.h>
@@ -30,6 +29,8 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <deal.II/numerics/solution_transfer.h>
 
 
 DeclException1(

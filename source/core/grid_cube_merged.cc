@@ -8,6 +8,8 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
 
+#include <numbers>
+
 template <int dim, int spacedim>
 GridCubeMerged<dim, spacedim>::GridCubeMerged(const std::string &grid_arguments)
 {

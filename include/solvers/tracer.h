@@ -18,7 +18,6 @@
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/timer.h>
 
-#include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -31,6 +30,8 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <deal.II/numerics/solution_transfer.h>
 
 #include <map>
 

@@ -19,7 +19,6 @@
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/timer.h>
 
-#include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -35,6 +34,8 @@
 
 #include <deal.II/non_matching/fe_values.h>
 #include <deal.II/non_matching/mesh_classifier.h>
+
+#include <deal.II/numerics/solution_transfer.h>
 
 DeclException1(
   HeatTransferBoundaryConditionMissing,
