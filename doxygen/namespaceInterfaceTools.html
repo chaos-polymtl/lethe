@@ -129,6 +129,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a62c2e8a7decf737adebdd7e014f4344d" id="r_a62c2e8a7decf737adebdd7e014f4344d"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:a62c2e8a7decf737adebdd7e014f4344d"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#a62c2e8a7decf737adebdd7e014f4344d">integrate_volume_and_surface</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const FiniteElement&lt; dim &gt; &amp;fe, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;level_set_vector, const double iso_level)</td></tr>
 <tr class="separator:a62c2e8a7decf737adebdd7e014f4344d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba8f4035b3763f3fa873194421b084a0" id="r_aba8f4035b3763f3fa873194421b084a0"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:aba8f4035b3763f3fa873194421b084a0"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; Point&lt; dim &gt;, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#aba8f4035b3763f3fa873194421b084a0">integrate_barycenter</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const FiniteElement&lt; dim &gt; &amp;fe, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;level_set_vector_relevant_copy, const Mapping&lt; dim &gt; &amp;mapping_velocity, const DoFHandler&lt; dim &gt; &amp;dof_handler_velocity, const FiniteElement&lt; dim &gt; &amp;fe_velocity, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;velocity_vector)</td></tr>
+<tr class="separator:aba8f4035b3763f3fa873194421b084a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc5dd9eac0631ccccd408e9d22971448" id="r_afc5dd9eac0631ccccd408e9d22971448"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:afc5dd9eac0631ccccd408e9d22971448"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; Point&lt; dim &gt;, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#afc5dd9eac0631ccccd408e9d22971448">integrate_barycenter</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const FiniteElement&lt; dim &gt; &amp;fe, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;level_set_vector, const Mapping&lt; dim &gt; &amp;mapping_velocity, const DoFHandler&lt; dim &gt; &amp;dof_handler_velocity, const FiniteElement&lt; dim &gt; &amp;fe_velocity, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;velocity_vector, const double iso_level)</td></tr>
+<tr class="separator:afc5dd9eac0631ccccd408e9d22971448"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b8f20a8d1cc30650de3b1a02ffe59b7" id="r_a7b8f20a8d1cc30650de3b1a02ffe59b7"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:a7b8f20a8d1cc30650de3b1a02ffe59b7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#a7b8f20a8d1cc30650de3b1a02ffe59b7">reconstruct_interface</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const FiniteElement&lt; dim &gt; &amp;fe, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;level_set_vector, const double iso_level, std::map&lt; types::global_cell_index, std::vector&lt; Point&lt; dim &gt; &gt; &gt; &amp;interface_reconstruction_vertices, std::map&lt; types::global_cell_index, std::vector&lt; CellData&lt; dim - 1 &gt; &gt; &gt; &amp;interface_reconstruction_cells, std::set&lt; types::global_dof_index &gt; &amp;intersected_dofs)</td></tr>
 <tr class="separator:a7b8f20a8d1cc30650de3b1a02ffe59b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -171,7 +177,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l01089">1089</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l01162">1162</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -298,6 +304,183 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Struct with the bounding isocontour's bounding values. </dd></dl>
+
+</div>
+</div>
+<a id="afc5dd9eac0631ccccd408e9d22971448" name="afc5dd9eac0631ccccd408e9d22971448"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc5dd9eac0631ccccd408e9d22971448">&#9670;&#160;</a></span>integrate_barycenter() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt; Point&lt; dim &gt;, Tensor&lt; 1, dim &gt; &gt; InterfaceTools::integrate_barycenter </td>
+          <td>(</td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FiniteElement&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>fe</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>level_set_vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping_velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler_velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FiniteElement&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>fe_velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>velocity_vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>iso_level</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Integrate the barycenter position and velocity of the region enclosed by a given level of a level-set field. The region of interest correspond to the sub-domain where the level-set value is greater or equal to the specified level. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the dimension of the space in which the problem is solved. </td></tr>
+    <tr><td class="paramname">VectorType</td><td>The vector type of the solution vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DofHandler associated to the triangulation on which the level-set is described </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fe</td><td>Finite element describing the level-set </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">level_set_vector</td><td>Level-set vector </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping_velocity</td><td>Mapping associated to the velocity field </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler_velocity</td><td>DofHandler associated to the triangulation on which the velocity is described </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fe</td><td>Finite element describing the velocity </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">velocity_vector</td><td>Velocity solution vector </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">iso_level</td><td>Given level of the level-set field enclosing the region of interest</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The position and the velocity of the barycenter of the region enclosed by the specified level of the level-set field. The position is the first entry and the velocity the second. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00323">323</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="interface__tools_8cc_source.html#l00189">integrate_barycenter()</a>.</p>
+
+</div>
+</div>
+<a id="aba8f4035b3763f3fa873194421b084a0" name="aba8f4035b3763f3fa873194421b084a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba8f4035b3763f3fa873194421b084a0">&#9670;&#160;</a></span>integrate_barycenter() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt; Point&lt; dim &gt;, Tensor&lt; 1, dim &gt; &gt; InterfaceTools::integrate_barycenter </td>
+          <td>(</td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FiniteElement&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>fe</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>level_set_vector_relevant_copy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping_velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler_velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FiniteElement&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>fe_velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>velocity_vector</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Integrate the barycenter position and velocity of the volume enclosed by the zero-level of a level set field. The region of interest correspond to the sub-domain where the level-set value is smaller or equal to 0. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the dimension of the space in which the problem is solved. </td></tr>
+    <tr><td class="paramname">VectorType</td><td>The vector type of the solution vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DofHandler associated to the triangulation on which the level-set is described </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fe</td><td>Finite element describing the level-set </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">level_set_vector_relevant_copy</td><td>Level-set vector </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping_velocity</td><td>Mapping associated to the velocity field </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler_velocity</td><td>DofHandler associated to the triangulation on which the velocity is described </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fe</td><td>Finite element describing the velocity </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">velocity_vector</td><td>Velocity solution vector</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The position and the velocity of the barycenter of the region enclosed by the zero-level of the level-set field. The position is the first entry and the velocity the second. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00189">189</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -508,9 +691,9 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01572">1572</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01764">1764</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l01112">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::bounding_coordinates_names</a>, <a class="el" href="interface__tools_8h_source.html#l01109">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::bounding_values</a>, <a class="el" href="namespaceInterfaceTools.html#a836c237c577aeed1bbe85816f01172c5">compute_isocontour_bounding_values()</a>, <a class="el" href="interface__tools_8h_source.html#l01121">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::isocontour_exists</a>, <a class="el" href="parameters_8h_source.html#l01083">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour::isovalue</a>, <a class="el" href="parameters_8h_source.html#l01086">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour::output_name</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l01185">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::bounding_coordinates_names</a>, <a class="el" href="interface__tools_8h_source.html#l01182">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::bounding_values</a>, <a class="el" href="namespaceInterfaceTools.html#a836c237c577aeed1bbe85816f01172c5">compute_isocontour_bounding_values()</a>, <a class="el" href="interface__tools_8h_source.html#l01194">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::isocontour_exists</a>, <a class="el" href="parameters_8h_source.html#l01083">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour::isovalue</a>, <a class="el" href="parameters_8h_source.html#l01086">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour::output_name</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -600,7 +783,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00190">190</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00382">382</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -660,7 +843,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01675">1675</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01867">1867</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>

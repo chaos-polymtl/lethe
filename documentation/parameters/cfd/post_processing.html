@@ -831,7 +831,10 @@ end
 <section id="multiphase-post-processing">
 <h2>Multiphase Post-processing<a class="headerlink" href="#multiphase-post-processing" title="Link to this heading">#</a></h2>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">barycenter</span></code>: calculates the barycenter of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> and its velocity in CLS and Cahn-Hilliard simulations. The barycenter <span class="math notranslate nohighlight">\(\mathbf{x}_b\)</span> and its velocity <span class="math notranslate nohighlight">\(\mathbf{v}_b\)</span> are defined as:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">barycenter</span></code>: calculates the barycenter of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> and its velocity in CLS and Cahn-Hilliard simulations.</p>
+<p>Two definitions are used for CLS simulation:</p>
+<ul>
+<li><p>the algebraic definition where the barycenter <span class="math notranslate nohighlight">\(\mathbf{x_b}\)</span> and its velocity <span class="math notranslate nohighlight">\(\mathbf{v_b}\)</span> are</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{x_b} = \frac{\int_{\Omega} \psi \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}\]</div>
@@ -840,7 +843,20 @@ end
 <div class="math notranslate nohighlight">
 \[\mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\psi \in [0,1]\)</span> is the filtered phase indicator for CLS simulations.</p>
+<p>with <span class="math notranslate nohighlight">\(\psi \in [0,1]\)</span> corresponding to the filtered phase indicator, and</p>
+</li>
+<li><p>the geometric definition where the barycenter <span class="math notranslate nohighlight">\(\mathbf{x_{b,geo}}\)</span> and its velocity <span class="math notranslate nohighlight">\(\mathbf{v_{b,geo}}\)</span> are</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{x_{b,geo}} = \frac{\int_{\Omega_1} \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega_1}  \mathrm{d}\Omega}\]</div>
+</div>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{v_{b,geo}} = \frac{\int_{\Omega_1} \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega_1} \mathrm{d}\Omega}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\Omega_1 = \{\mathbf{x} \in \Omega | \phi \geq 0.5 \}\)</span>.</p>
+</li>
+</ul>
 <p>For Cahn-Hilliard the formula is slightly different since the phase order parameter <span class="math notranslate nohighlight">\(\phi\)</span> belongs to the <span class="math notranslate nohighlight">\([-1,1]\)</span> interval:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">

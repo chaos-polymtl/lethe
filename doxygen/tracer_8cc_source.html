@@ -1507,548 +1507,549 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01357" name="l01357"></a><span class="lineno"> 1357</span>  <span class="comment">// Provide the tracer dof_handler and present solution pointers to the</span></div>
 <div class="line"><a id="l01358" name="l01358"></a><span class="lineno"> 1358</span>  <span class="comment">// multiphysics interface</span></div>
 <div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span>  multiphysics-&gt;set_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, this-&gt;dof_handler);</div>
-<div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span>  multiphysics-&gt;set_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, this-&gt;present_solution);</div>
-<div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span>  multiphysics-&gt;set_previous_solutions(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>,</div>
-<div class="line"><a id="l01362" name="l01362"></a><span class="lineno"> 1362</span>                                       this-&gt;previous_solutions);</div>
-<div class="line"><a id="l01363" name="l01363"></a><span class="lineno"> 1363</span>}</div>
+<div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span>  multiphysics-&gt;set_mapping(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, this-&gt;mapping);</div>
+<div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span>  multiphysics-&gt;set_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, this-&gt;present_solution);</div>
+<div class="line"><a id="l01362" name="l01362"></a><span class="lineno"> 1362</span>  multiphysics-&gt;set_previous_solutions(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>,</div>
+<div class="line"><a id="l01363" name="l01363"></a><span class="lineno"> 1363</span>                                       this-&gt;previous_solutions);</div>
+<div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span>}</div>
 </div>
-<div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span> </div>
-<div class="line"><a id="l01365" name="l01365"></a><span class="lineno"> 1365</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01366" name="l01366"></a><span class="lineno"> 1366</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01367" data-start="{" data-end="}">
-<div class="line"><a id="l01367" name="l01367"></a><span class="lineno"><a class="line" href="classTracer.html#aa403435dbd466e2e896452662bb16ade"> 1367</a></span><a class="code hl_function" href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer&lt;dim&gt;::update_boundary_conditions</a>()</div>
-<div class="line"><a id="l01368" name="l01368"></a><span class="lineno"> 1368</span>{</div>
-<div class="line"><a id="l01369" name="l01369"></a><span class="lineno"> 1369</span>  this-&gt;update_mortar_configuration();</div>
-<div class="line"><a id="l01370" name="l01370"></a><span class="lineno"> 1370</span> </div>
-<div class="line"><a id="l01371" name="l01371"></a><span class="lineno"> 1371</span>  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.boundary_conditions_tracer.time_dependent)</div>
-<div class="line"><a id="l01372" name="l01372"></a><span class="lineno"> 1372</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l01373" name="l01373"></a><span class="lineno"> 1373</span> </div>
-<div class="line"><a id="l01374" name="l01374"></a><span class="lineno"> 1374</span>  <span class="keywordtype">double</span> time = this-&gt;simulation_control-&gt;get_current_time();</div>
-<div class="line"><a id="l01375" name="l01375"></a><span class="lineno"> 1375</span>  nonzero_constraints.clear();</div>
-<div class="line"><a id="l01376" name="l01376"></a><span class="lineno"> 1376</span>  nonzero_constraints.reinit(this-&gt;locally_owned_dofs,</div>
-<div class="line"><a id="l01377" name="l01377"></a><span class="lineno"> 1377</span>                             this-&gt;locally_relevant_dofs);</div>
-<div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span>  DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler,</div>
-<div class="line"><a id="l01379" name="l01379"></a><span class="lineno"> 1379</span>                                          nonzero_constraints);</div>
-<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span> </div>
-<div class="line"><a id="l01381" name="l01381"></a><span class="lineno"> 1381</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
-<div class="line"><a id="l01382" name="l01382"></a><span class="lineno"> 1382</span>       this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
-<div class="line"><a id="l01383" name="l01383"></a><span class="lineno"> 1383</span>    {</div>
-<div class="line"><a id="l01384" name="l01384"></a><span class="lineno"> 1384</span>      <span class="comment">// Dirichlet condition : imposed temperature at i_bc</span></div>
-<div class="line"><a id="l01385" name="l01385"></a><span class="lineno"> 1385</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
-<div class="line"><a id="l01386" name="l01386"></a><span class="lineno"> 1386</span>        {</div>
-<div class="line"><a id="l01387" name="l01387"></a><span class="lineno"> 1387</span>          this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(<span class="keywordtype">id</span>)</div>
-<div class="line"><a id="l01388" name="l01388"></a><span class="lineno"> 1388</span>            -&gt;set_time(time);</div>
-<div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span>          VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span>            *this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(</div>
-<div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span>              <span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01394" name="l01394"></a><span class="lineno"> 1394</span>            nonzero_constraints);</div>
-<div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span>        }</div>
-<div class="line"><a id="l01396" name="l01396"></a><span class="lineno"> 1396</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
-<div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span>        {</div>
-<div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>          DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span>            nonzero_constraints);</div>
-<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span>        }</div>
-<div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
-<div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span>        {</div>
-<div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span>          <span class="comment">/* Do nothing */</span></div>
-<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>        }</div>
-<div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span>    }</div>
-<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>  nonzero_constraints.close();</div>
-<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>  nonzero_constraints.distribute(this-&gt;local_evaluation_point);</div>
-<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>  *this-&gt;present_solution = this-&gt;local_evaluation_point;</div>
-<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"> 1415</span>}</div>
+<div class="line"><a id="l01365" name="l01365"></a><span class="lineno"> 1365</span> </div>
+<div class="line"><a id="l01366" name="l01366"></a><span class="lineno"> 1366</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01367" name="l01367"></a><span class="lineno"> 1367</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01368" data-start="{" data-end="}">
+<div class="line"><a id="l01368" name="l01368"></a><span class="lineno"><a class="line" href="classTracer.html#aa403435dbd466e2e896452662bb16ade"> 1368</a></span><a class="code hl_function" href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer&lt;dim&gt;::update_boundary_conditions</a>()</div>
+<div class="line"><a id="l01369" name="l01369"></a><span class="lineno"> 1369</span>{</div>
+<div class="line"><a id="l01370" name="l01370"></a><span class="lineno"> 1370</span>  this-&gt;update_mortar_configuration();</div>
+<div class="line"><a id="l01371" name="l01371"></a><span class="lineno"> 1371</span> </div>
+<div class="line"><a id="l01372" name="l01372"></a><span class="lineno"> 1372</span>  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.boundary_conditions_tracer.time_dependent)</div>
+<div class="line"><a id="l01373" name="l01373"></a><span class="lineno"> 1373</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l01374" name="l01374"></a><span class="lineno"> 1374</span> </div>
+<div class="line"><a id="l01375" name="l01375"></a><span class="lineno"> 1375</span>  <span class="keywordtype">double</span> time = this-&gt;simulation_control-&gt;get_current_time();</div>
+<div class="line"><a id="l01376" name="l01376"></a><span class="lineno"> 1376</span>  nonzero_constraints.clear();</div>
+<div class="line"><a id="l01377" name="l01377"></a><span class="lineno"> 1377</span>  nonzero_constraints.reinit(this-&gt;locally_owned_dofs,</div>
+<div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span>                             this-&gt;locally_relevant_dofs);</div>
+<div class="line"><a id="l01379" name="l01379"></a><span class="lineno"> 1379</span>  DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler,</div>
+<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span>                                          nonzero_constraints);</div>
+<div class="line"><a id="l01381" name="l01381"></a><span class="lineno"> 1381</span> </div>
+<div class="line"><a id="l01382" name="l01382"></a><span class="lineno"> 1382</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
+<div class="line"><a id="l01383" name="l01383"></a><span class="lineno"> 1383</span>       this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
+<div class="line"><a id="l01384" name="l01384"></a><span class="lineno"> 1384</span>    {</div>
+<div class="line"><a id="l01385" name="l01385"></a><span class="lineno"> 1385</span>      <span class="comment">// Dirichlet condition : imposed temperature at i_bc</span></div>
+<div class="line"><a id="l01386" name="l01386"></a><span class="lineno"> 1386</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
+<div class="line"><a id="l01387" name="l01387"></a><span class="lineno"> 1387</span>        {</div>
+<div class="line"><a id="l01388" name="l01388"></a><span class="lineno"> 1388</span>          this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(<span class="keywordtype">id</span>)</div>
+<div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span>            -&gt;set_time(time);</div>
+<div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span>          VectorTools::interpolate_boundary_values(</div>
+<div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span>            *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span>            <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span>            *this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(</div>
+<div class="line"><a id="l01394" name="l01394"></a><span class="lineno"> 1394</span>              <span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span>            nonzero_constraints);</div>
+<div class="line"><a id="l01396" name="l01396"></a><span class="lineno"> 1396</span>        }</div>
+<div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
+<div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>        {</div>
+<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>          DoFTools::make_periodicity_constraints(</div>
+<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>            *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>            <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span>            nonzero_constraints);</div>
+<div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span>        }</div>
+<div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
+<div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span>        {</div>
+<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>          <span class="comment">/* Do nothing */</span></div>
+<div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span>        }</div>
+<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>    }</div>
+<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>  nonzero_constraints.close();</div>
+<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>  nonzero_constraints.distribute(this-&gt;local_evaluation_point);</div>
+<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"> 1415</span>  *this-&gt;present_solution = this-&gt;local_evaluation_point;</div>
+<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span>}</div>
 </div>
-<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span> </div>
-<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01419" data-start="{" data-end="}">
-<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"><a class="line" href="classTracer.html#af1a53402c223f1f7a57d9af13390015e"> 1419</a></span><a class="code hl_function" href="classTracer.html#af1a53402c223f1f7a57d9af13390015e">Tracer&lt;dim&gt;::define_zero_constraints</a>()</div>
-<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>{</div>
-<div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>  zero_constraints.clear();</div>
-<div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span>  zero_constraints.reinit(this-&gt;locally_owned_dofs,</div>
-<div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>                          this-&gt;locally_relevant_dofs);</div>
-<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span>  DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler, zero_constraints);</div>
-<div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span> </div>
-<div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
-<div class="line"><a id="l01427" name="l01427"></a><span class="lineno"> 1427</span>       this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
-<div class="line"><a id="l01428" name="l01428"></a><span class="lineno"> 1428</span>    {</div>
-<div class="line"><a id="l01429" name="l01429"></a><span class="lineno"> 1429</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
-<div class="line"><a id="l01430" name="l01430"></a><span class="lineno"> 1430</span>        {</div>
-<div class="line"><a id="l01431" name="l01431"></a><span class="lineno"> 1431</span>          VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a id="l01432" name="l01432"></a><span class="lineno"> 1432</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01433" name="l01433"></a><span class="lineno"> 1433</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span>            Functions::ZeroFunction&lt;dim&gt;(),</div>
-<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"> 1435</span>            zero_constraints);</div>
-<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span>        }</div>
-<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
-<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>        {</div>
-<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span>          DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>            zero_constraints);</div>
-<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>        }</div>
-<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
-<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>        {</div>
-<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>          <span class="comment">/* Do nothing */</span></div>
-<div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span>        }</div>
-<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>    }</div>
-<div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span>  zero_constraints.close();</div>
-<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>}</div>
+<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span> </div>
+<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01420" data-start="{" data-end="}">
+<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"><a class="line" href="classTracer.html#af1a53402c223f1f7a57d9af13390015e"> 1420</a></span><a class="code hl_function" href="classTracer.html#af1a53402c223f1f7a57d9af13390015e">Tracer&lt;dim&gt;::define_zero_constraints</a>()</div>
+<div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>{</div>
+<div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span>  zero_constraints.clear();</div>
+<div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>  zero_constraints.reinit(this-&gt;locally_owned_dofs,</div>
+<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span>                          this-&gt;locally_relevant_dofs);</div>
+<div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span>  DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler, zero_constraints);</div>
+<div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span> </div>
+<div class="line"><a id="l01427" name="l01427"></a><span class="lineno"> 1427</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
+<div class="line"><a id="l01428" name="l01428"></a><span class="lineno"> 1428</span>       this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
+<div class="line"><a id="l01429" name="l01429"></a><span class="lineno"> 1429</span>    {</div>
+<div class="line"><a id="l01430" name="l01430"></a><span class="lineno"> 1430</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
+<div class="line"><a id="l01431" name="l01431"></a><span class="lineno"> 1431</span>        {</div>
+<div class="line"><a id="l01432" name="l01432"></a><span class="lineno"> 1432</span>          VectorTools::interpolate_boundary_values(</div>
+<div class="line"><a id="l01433" name="l01433"></a><span class="lineno"> 1433</span>            *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span>            <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"> 1435</span>            Functions::ZeroFunction&lt;dim&gt;(),</div>
+<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span>            zero_constraints);</div>
+<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span>        }</div>
+<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
+<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span>        {</div>
+<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>          DoFTools::make_periodicity_constraints(</div>
+<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>            *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>            <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>            zero_constraints);</div>
+<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>        }</div>
+<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
+<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>        {</div>
+<div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span>          <span class="comment">/* Do nothing */</span></div>
+<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>        }</div>
+<div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span>    }</div>
+<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>  zero_constraints.close();</div>
+<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span>}</div>
 </div>
-<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span> </div>
-<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01458" data-start="{" data-end="}">
-<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"><a class="line" href="classTracer.html#a427e7f8f625553d7581cfc10f4185e10"> 1458</a></span><a class="code hl_function" href="classTracer.html#a427e7f8f625553d7581cfc10f4185e10">Tracer&lt;dim&gt;::define_non_zero_constraints</a>()</div>
-<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span>{</div>
-<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span>  nonzero_constraints.clear();</div>
-<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span>  nonzero_constraints.reinit(locally_owned_dofs, this-&gt;locally_relevant_dofs);</div>
-<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>  DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler,</div>
-<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>                                          nonzero_constraints);</div>
-<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span> </div>
-<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
-<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span>       this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
-<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span>    {</div>
-<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>      <span class="comment">// Dirichlet condition : imposed temperature at i_bc</span></div>
-<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
-<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>        {</div>
-<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>          VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>            *this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(</div>
-<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>              <span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>            nonzero_constraints);</div>
-<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span>        }</div>
-<div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
-<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>        {</div>
-<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>          DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>            nonzero_constraints);</div>
-<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>        }</div>
-<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
-<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>        {</div>
-<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span>          <span class="comment">/* Do nothing */</span></div>
-<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>        }</div>
-<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span>    }</div>
-<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span>  nonzero_constraints.close();</div>
-<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span>}</div>
+<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span> </div>
+<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01459" data-start="{" data-end="}">
+<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"><a class="line" href="classTracer.html#a427e7f8f625553d7581cfc10f4185e10"> 1459</a></span><a class="code hl_function" href="classTracer.html#a427e7f8f625553d7581cfc10f4185e10">Tracer&lt;dim&gt;::define_non_zero_constraints</a>()</div>
+<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span>{</div>
+<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span>  nonzero_constraints.clear();</div>
+<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>  nonzero_constraints.reinit(locally_owned_dofs, this-&gt;locally_relevant_dofs);</div>
+<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>  DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler,</div>
+<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span>                                          nonzero_constraints);</div>
+<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span> </div>
+<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
+<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span>       this-&gt;simulation_parameters.boundary_conditions_tracer.type)</div>
+<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>    {</div>
+<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span>      <span class="comment">// Dirichlet condition : imposed temperature at i_bc</span></div>
+<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
+<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>        {</div>
+<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span>          VectorTools::interpolate_boundary_values(</div>
+<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>            *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>            <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>            *this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(</div>
+<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>              <span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span>            nonzero_constraints);</div>
+<div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span>        }</div>
+<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
+<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>        {</div>
+<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>          DoFTools::make_periodicity_constraints(</div>
+<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>            *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>            <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
+<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>            nonzero_constraints);</div>
+<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>        }</div>
+<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
+<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span>        {</div>
+<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>          <span class="comment">/* Do nothing */</span></div>
+<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span>        }</div>
+<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span>    }</div>
+<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span>  nonzero_constraints.close();</div>
+<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span>}</div>
 </div>
-<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span> </div>
-<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01499" data-start="{" data-end="}">
-<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"><a class="line" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0"> 1499</a></span><a class="code hl_function" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer&lt;dim&gt;::set_initial_conditions</a>()</div>
-<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span>{</div>
-<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span>  VectorTools::interpolate(*this-&gt;get_mapping(),</div>
-<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span>                           *dof_handler,</div>
-<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span>                           simulation_parameters.initial_condition-&gt;tracer,</div>
-<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span>                           newton_update);</div>
-<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span>  nonzero_constraints.distribute(newton_update);</div>
-<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>  *present_solution = newton_update;</div>
-<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>  percolate_time_vectors();</div>
-<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>}</div>
+<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span> </div>
+<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"> 1499</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01500" data-start="{" data-end="}">
+<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"><a class="line" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0"> 1500</a></span><a class="code hl_function" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer&lt;dim&gt;::set_initial_conditions</a>()</div>
+<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span>{</div>
+<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span>  VectorTools::interpolate(*this-&gt;get_mapping(),</div>
+<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span>                           *dof_handler,</div>
+<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span>                           simulation_parameters.initial_condition-&gt;tracer,</div>
+<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span>                           newton_update);</div>
+<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>  nonzero_constraints.distribute(newton_update);</div>
+<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>  *present_solution = newton_update;</div>
+<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>  percolate_time_vectors();</div>
+<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>}</div>
 </div>
-<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span> </div>
-<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01512" data-start="{" data-end="}">
-<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"><a class="line" href="classTracer.html#ac43b71a2da0101fa9e796e9715bfc384"> 1512</a></span><a class="code hl_function" href="classTracer.html#ac43b71a2da0101fa9e796e9715bfc384">Tracer&lt;dim&gt;::compute_error_estimate</a>(</div>
-<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span>  <span class="keyword">const</span> std::pair&lt;const Variable, Parameters::MultipleAdaptationParameters&gt;</div>
-<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>                        &amp;ivar,</div>
-<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>  dealii::Vector&lt;float&gt; &amp;estimated_error_per_cell)</div>
-<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>{</div>
-<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span>  <span class="keywordflow">if</span> (ivar.first == <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">Variable::tracer</a>)</div>
-<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>    {</div>
-<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>      AssertThrow(</div>
-<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span>        ivar.second.error_estimator ==</div>
-<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span>          <a class="code hl_enumvalue" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly</a>,</div>
-<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>        ExcMessage(</div>
-<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span>          <span class="stringliteral">&quot;Only the Kelly error estimator is currently implemented for the &quot;</span></div>
-<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span>          <span class="stringliteral">&quot;&lt;tracer&gt; field.&quot;</span>));</div>
-<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span> </div>
+<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span> </div>
+<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01513" data-start="{" data-end="}">
+<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"><a class="line" href="classTracer.html#ac43b71a2da0101fa9e796e9715bfc384"> 1513</a></span><a class="code hl_function" href="classTracer.html#ac43b71a2da0101fa9e796e9715bfc384">Tracer&lt;dim&gt;::compute_error_estimate</a>(</div>
+<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>  <span class="keyword">const</span> std::pair&lt;const Variable, Parameters::MultipleAdaptationParameters&gt;</div>
+<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>                        &amp;ivar,</div>
+<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>  dealii::Vector&lt;float&gt; &amp;estimated_error_per_cell)</div>
+<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span>{</div>
+<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>  <span class="keywordflow">if</span> (ivar.first == <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">Variable::tracer</a>)</div>
+<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>    {</div>
+<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span>      AssertThrow(</div>
+<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span>        ivar.second.error_estimator ==</div>
+<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>          <a class="code hl_enumvalue" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly</a>,</div>
+<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span>        ExcMessage(</div>
+<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span>          <span class="stringliteral">&quot;Only the Kelly error estimator is currently implemented for the &quot;</span></div>
+<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span>          <span class="stringliteral">&quot;&lt;tracer&gt; field.&quot;</span>));</div>
 <div class="line"><a id="l01526" name="l01526"></a><span class="lineno"> 1526</span> </div>
-<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span>      ComponentMask tracer_mask =</div>
-<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span>        fe-&gt;component_mask(FEValuesExtractors::Scalar(0));</div>
-<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span>      compute_kelly(estimated_error_per_cell, tracer_mask);</div>
-<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span>    }</div>
-<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span>}</div>
+<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span> </div>
+<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span>      ComponentMask tracer_mask =</div>
+<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span>        fe-&gt;component_mask(FEValuesExtractors::Scalar(0));</div>
+<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span>      compute_kelly(estimated_error_per_cell, tracer_mask);</div>
+<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span>    }</div>
+<div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span>}</div>
 </div>
-<div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span> </div>
-<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"> 1534</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01535" data-start="{" data-end="}">
-<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"><a class="line" href="classTracer.html#a36c79997594bd97da510831b6ad94e0e"> 1535</a></span><a class="code hl_function" href="classTracer.html#a36c79997594bd97da510831b6ad94e0e">Tracer&lt;dim&gt;::compute_kelly</a>(dealii::Vector&lt;float&gt; &amp;estimated_error_per_cell,</div>
-<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"> 1536</span>                           <span class="keyword">const</span> ComponentMask   &amp;component_mask)</div>
-<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span>{</div>
-<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span>  KellyErrorEstimator&lt;dim&gt;::estimate(</div>
-<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span>    *this-&gt;get_mapping(),</div>
-<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span>    *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01541" name="l01541"></a><span class="lineno"> 1541</span>    *this-&gt;face_quadrature,</div>
-<div class="line"><a id="l01542" name="l01542"></a><span class="lineno"> 1542</span>    <span class="keyword">typename</span> std::map&lt;types::boundary_id, <span class="keyword">const</span> Function&lt;dim, double&gt; *&gt;(),</div>
-<div class="line"><a id="l01543" name="l01543"></a><span class="lineno"> 1543</span>    *this-&gt;present_solution,</div>
-<div class="line"><a id="l01544" name="l01544"></a><span class="lineno"> 1544</span>    estimated_error_per_cell,</div>
-<div class="line"><a id="l01545" name="l01545"></a><span class="lineno"> 1545</span>    component_mask);</div>
-<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span>}</div>
+<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span> </div>
+<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"> 1534</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"> 1535</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01536" data-start="{" data-end="}">
+<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"><a class="line" href="classTracer.html#a36c79997594bd97da510831b6ad94e0e"> 1536</a></span><a class="code hl_function" href="classTracer.html#a36c79997594bd97da510831b6ad94e0e">Tracer&lt;dim&gt;::compute_kelly</a>(dealii::Vector&lt;float&gt; &amp;estimated_error_per_cell,</div>
+<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span>                           <span class="keyword">const</span> ComponentMask   &amp;component_mask)</div>
+<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span>{</div>
+<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span>  KellyErrorEstimator&lt;dim&gt;::estimate(</div>
+<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span>    *this-&gt;get_mapping(),</div>
+<div class="line"><a id="l01541" name="l01541"></a><span class="lineno"> 1541</span>    *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01542" name="l01542"></a><span class="lineno"> 1542</span>    *this-&gt;face_quadrature,</div>
+<div class="line"><a id="l01543" name="l01543"></a><span class="lineno"> 1543</span>    <span class="keyword">typename</span> std::map&lt;types::boundary_id, <span class="keyword">const</span> Function&lt;dim, double&gt; *&gt;(),</div>
+<div class="line"><a id="l01544" name="l01544"></a><span class="lineno"> 1544</span>    *this-&gt;present_solution,</div>
+<div class="line"><a id="l01545" name="l01545"></a><span class="lineno"> 1545</span>    estimated_error_per_cell,</div>
+<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span>    component_mask);</div>
+<div class="line"><a id="l01547" name="l01547"></a><span class="lineno"> 1547</span>}</div>
 </div>
-<div class="line"><a id="l01547" name="l01547"></a><span class="lineno"> 1547</span> </div>
-<div class="line"><a id="l01548" name="l01548"></a><span class="lineno"> 1548</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01549" name="l01549"></a><span class="lineno"> 1549</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01550" data-start="{" data-end="}">
-<div class="line"><a id="l01550" name="l01550"></a><span class="lineno"><a class="line" href="classTracer.html#adfd00a053f4c64c2fb72b24f1afeec77"> 1550</a></span><a class="code hl_function" href="classTracer.html#adfd00a053f4c64c2fb72b24f1afeec77">Tracer&lt;dim&gt;::setup_ilu</a>()</div>
-<div class="line"><a id="l01551" name="l01551"></a><span class="lineno"> 1551</span>{</div>
-<div class="line"><a id="l01552" name="l01552"></a><span class="lineno"> 1552</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Setup ILU&quot;</span>);</div>
-<div class="line"><a id="l01553" name="l01553"></a><span class="lineno"> 1553</span> </div>
-<div class="line"><a id="l01554" name="l01554"></a><span class="lineno"> 1554</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ilu_fill =</div>
-<div class="line"><a id="l01555" name="l01555"></a><span class="lineno"> 1555</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_fill;</div>
-<div class="line"><a id="l01556" name="l01556"></a><span class="lineno"> 1556</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
-<div class="line"><a id="l01557" name="l01557"></a><span class="lineno"> 1557</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_atol;</div>
-<div class="line"><a id="l01558" name="l01558"></a><span class="lineno"> 1558</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
-<div class="line"><a id="l01559" name="l01559"></a><span class="lineno"> 1559</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_rtol;</div>
-<div class="line"><a id="l01560" name="l01560"></a><span class="lineno"> 1560</span>  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(</div>
-<div class="line"><a id="l01561" name="l01561"></a><span class="lineno"> 1561</span>    ilu_fill, ilu_atol, ilu_rtol, 0);</div>
-<div class="line"><a id="l01562" name="l01562"></a><span class="lineno"> 1562</span> </div>
-<div class="line"><a id="l01563" name="l01563"></a><span class="lineno"> 1563</span>  ilu_preconditioner = std::make_shared&lt;TrilinosWrappers::PreconditionILU&gt;();</div>
-<div class="line"><a id="l01564" name="l01564"></a><span class="lineno"> 1564</span> </div>
-<div class="line"><a id="l01565" name="l01565"></a><span class="lineno"> 1565</span>  ilu_preconditioner-&gt;initialize(system_matrix, preconditionerOptions);</div>
-<div class="line"><a id="l01566" name="l01566"></a><span class="lineno"> 1566</span>}</div>
+<div class="line"><a id="l01548" name="l01548"></a><span class="lineno"> 1548</span> </div>
+<div class="line"><a id="l01549" name="l01549"></a><span class="lineno"> 1549</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01550" name="l01550"></a><span class="lineno"> 1550</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01551" data-start="{" data-end="}">
+<div class="line"><a id="l01551" name="l01551"></a><span class="lineno"><a class="line" href="classTracer.html#adfd00a053f4c64c2fb72b24f1afeec77"> 1551</a></span><a class="code hl_function" href="classTracer.html#adfd00a053f4c64c2fb72b24f1afeec77">Tracer&lt;dim&gt;::setup_ilu</a>()</div>
+<div class="line"><a id="l01552" name="l01552"></a><span class="lineno"> 1552</span>{</div>
+<div class="line"><a id="l01553" name="l01553"></a><span class="lineno"> 1553</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Setup ILU&quot;</span>);</div>
+<div class="line"><a id="l01554" name="l01554"></a><span class="lineno"> 1554</span> </div>
+<div class="line"><a id="l01555" name="l01555"></a><span class="lineno"> 1555</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ilu_fill =</div>
+<div class="line"><a id="l01556" name="l01556"></a><span class="lineno"> 1556</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_fill;</div>
+<div class="line"><a id="l01557" name="l01557"></a><span class="lineno"> 1557</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
+<div class="line"><a id="l01558" name="l01558"></a><span class="lineno"> 1558</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_atol;</div>
+<div class="line"><a id="l01559" name="l01559"></a><span class="lineno"> 1559</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
+<div class="line"><a id="l01560" name="l01560"></a><span class="lineno"> 1560</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_rtol;</div>
+<div class="line"><a id="l01561" name="l01561"></a><span class="lineno"> 1561</span>  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(</div>
+<div class="line"><a id="l01562" name="l01562"></a><span class="lineno"> 1562</span>    ilu_fill, ilu_atol, ilu_rtol, 0);</div>
+<div class="line"><a id="l01563" name="l01563"></a><span class="lineno"> 1563</span> </div>
+<div class="line"><a id="l01564" name="l01564"></a><span class="lineno"> 1564</span>  ilu_preconditioner = std::make_shared&lt;TrilinosWrappers::PreconditionILU&gt;();</div>
+<div class="line"><a id="l01565" name="l01565"></a><span class="lineno"> 1565</span> </div>
+<div class="line"><a id="l01566" name="l01566"></a><span class="lineno"> 1566</span>  ilu_preconditioner-&gt;initialize(system_matrix, preconditionerOptions);</div>
+<div class="line"><a id="l01567" name="l01567"></a><span class="lineno"> 1567</span>}</div>
 </div>
-<div class="line"><a id="l01567" name="l01567"></a><span class="lineno"> 1567</span> </div>
-<div class="line"><a id="l01568" name="l01568"></a><span class="lineno"> 1568</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01569" name="l01569"></a><span class="lineno"> 1569</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01570" data-start="{" data-end="}">
-<div class="line"><a id="l01570" name="l01570"></a><span class="lineno"><a class="line" href="classTracer.html#af2d10f4719c1fe42a9883441aacc4eae"> 1570</a></span><a class="code hl_function" href="classTracer.html#af2d10f4719c1fe42a9883441aacc4eae">Tracer&lt;dim&gt;::setup_amg</a>()</div>
-<div class="line"><a id="l01571" name="l01571"></a><span class="lineno"> 1571</span>{</div>
-<div class="line"><a id="l01572" name="l01572"></a><span class="lineno"> 1572</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Setup AMG&quot;</span>);</div>
-<div class="line"><a id="l01573" name="l01573"></a><span class="lineno"> 1573</span> </div>
-<div class="line"><a id="l01574" name="l01574"></a><span class="lineno"> 1574</span>  <span class="comment">// Constant modes for the tracer scalar field</span></div>
-<div class="line"><a id="l01575" name="l01575"></a><span class="lineno"> 1575</span>  std::vector&lt;std::vector&lt;bool&gt;&gt; constant_modes;</div>
-<div class="line"><a id="l01576" name="l01576"></a><span class="lineno"> 1576</span> </div>
-<div class="line"><a id="l01577" name="l01577"></a><span class="lineno"> 1577</span>  ComponentMask components(1, <span class="keyword">true</span>);</div>
-<div class="line"><a id="l01578" name="l01578"></a><span class="lineno"> 1578</span>  constant_modes =</div>
-<div class="line"><a id="l01579" name="l01579"></a><span class="lineno"> 1579</span>    DoFTools::extract_constant_modes(*this-&gt;dof_handler, components);</div>
-<div class="line"><a id="l01580" name="l01580"></a><span class="lineno"> 1580</span> </div>
-<div class="line"><a id="l01581" name="l01581"></a><span class="lineno"> 1581</span>  <span class="comment">// The tracer operator is non-symmetric since the tracer is advected by the</span></div>
-<div class="line"><a id="l01582" name="l01582"></a><span class="lineno"> 1582</span>  <span class="comment">// fluid velocity</span></div>
-<div class="line"><a id="l01583" name="l01583"></a><span class="lineno"> 1583</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> elliptic              = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01584" name="l01584"></a><span class="lineno"> 1584</span>  <span class="keywordtype">bool</span>       higher_order_elements = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01585" name="l01585"></a><span class="lineno"> 1585</span>  <span class="keywordflow">if</span> (this-&gt;fe-&gt;degree &gt; 1)</div>
-<div class="line"><a id="l01586" name="l01586"></a><span class="lineno"> 1586</span>    higher_order_elements = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l01587" name="l01587"></a><span class="lineno"> 1587</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_cycles =</div>
-<div class="line"><a id="l01588" name="l01588"></a><span class="lineno"> 1588</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).amg_n_cycles;</div>
-<div class="line"><a id="l01589" name="l01589"></a><span class="lineno"> 1589</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> w_cycle =</div>
-<div class="line"><a id="l01590" name="l01590"></a><span class="lineno"> 1590</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).amg_w_cycles;</div>
-<div class="line"><a id="l01591" name="l01591"></a><span class="lineno"> 1591</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> aggregation_threshold =</div>
-<div class="line"><a id="l01592" name="l01592"></a><span class="lineno"> 1592</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01593" name="l01593"></a><span class="lineno"> 1593</span>      .amg_aggregation_threshold;</div>
-<div class="line"><a id="l01594" name="l01594"></a><span class="lineno"> 1594</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> smoother_sweeps =</div>
-<div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span>      .amg_smoother_sweeps;</div>
-<div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> smoother_overlap =</div>
-<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>      .amg_smoother_overlap;</div>
-<div class="line"><a id="l01600" name="l01600"></a><span class="lineno"> 1600</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                                        output_details = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01601" name="l01601"></a><span class="lineno"> 1601</span>  <span class="keyword">const</span> <span class="keywordtype">char</span>                                       *smoother_type  = <span class="stringliteral">&quot;ILU&quot;</span>;</div>
-<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span>  <span class="keyword">const</span> <span class="keywordtype">char</span>                                       *coarse_type    = <span class="stringliteral">&quot;ILU&quot;</span>;</div>
-<div class="line"><a id="l01603" name="l01603"></a><span class="lineno"> 1603</span>  TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(</div>
-<div class="line"><a id="l01604" name="l01604"></a><span class="lineno"> 1604</span>    elliptic,</div>
-<div class="line"><a id="l01605" name="l01605"></a><span class="lineno"> 1605</span>    higher_order_elements,</div>
-<div class="line"><a id="l01606" name="l01606"></a><span class="lineno"> 1606</span>    n_cycles,</div>
-<div class="line"><a id="l01607" name="l01607"></a><span class="lineno"> 1607</span>    w_cycle,</div>
-<div class="line"><a id="l01608" name="l01608"></a><span class="lineno"> 1608</span>    aggregation_threshold,</div>
-<div class="line"><a id="l01609" name="l01609"></a><span class="lineno"> 1609</span>    constant_modes,</div>
-<div class="line"><a id="l01610" name="l01610"></a><span class="lineno"> 1610</span>    smoother_sweeps,</div>
-<div class="line"><a id="l01611" name="l01611"></a><span class="lineno"> 1611</span>    smoother_overlap,</div>
-<div class="line"><a id="l01612" name="l01612"></a><span class="lineno"> 1612</span>    output_details,</div>
-<div class="line"><a id="l01613" name="l01613"></a><span class="lineno"> 1613</span>    smoother_type,</div>
-<div class="line"><a id="l01614" name="l01614"></a><span class="lineno"> 1614</span>    coarse_type);</div>
-<div class="line"><a id="l01615" name="l01615"></a><span class="lineno"> 1615</span> </div>
-<div class="line"><a id="l01616" name="l01616"></a><span class="lineno"> 1616</span>  Teuchos::ParameterList              parameter_ml;</div>
-<div class="line"><a id="l01617" name="l01617"></a><span class="lineno"> 1617</span>  std::unique_ptr&lt;Epetra_MultiVector&gt; distributed_constant_modes;</div>
-<div class="line"><a id="l01618" name="l01618"></a><span class="lineno"> 1618</span>  preconditionerOptions.set_parameters(parameter_ml,</div>
-<div class="line"><a id="l01619" name="l01619"></a><span class="lineno"> 1619</span>                                       distributed_constant_modes,</div>
-<div class="line"><a id="l01620" name="l01620"></a><span class="lineno"> 1620</span>                                       system_matrix);</div>
-<div class="line"><a id="l01621" name="l01621"></a><span class="lineno"> 1621</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_fill =</div>
-<div class="line"><a id="l01622" name="l01622"></a><span class="lineno"> 1622</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01623" name="l01623"></a><span class="lineno"> 1623</span>      .amg_precond_ilu_fill;</div>
-<div class="line"><a id="l01624" name="l01624"></a><span class="lineno"> 1624</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
-<div class="line"><a id="l01625" name="l01625"></a><span class="lineno"> 1625</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01626" name="l01626"></a><span class="lineno"> 1626</span>      .amg_precond_ilu_atol;</div>
-<div class="line"><a id="l01627" name="l01627"></a><span class="lineno"> 1627</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
-<div class="line"><a id="l01628" name="l01628"></a><span class="lineno"> 1628</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01629" name="l01629"></a><span class="lineno"> 1629</span>      .amg_precond_ilu_rtol;</div>
-<div class="line"><a id="l01630" name="l01630"></a><span class="lineno"> 1630</span>  parameter_ml.set(<span class="stringliteral">&quot;smoother: ifpack level-of-fill&quot;</span>, ilu_fill);</div>
-<div class="line"><a id="l01631" name="l01631"></a><span class="lineno"> 1631</span>  parameter_ml.set(<span class="stringliteral">&quot;smoother: ifpack absolute threshold&quot;</span>, ilu_atol);</div>
-<div class="line"><a id="l01632" name="l01632"></a><span class="lineno"> 1632</span>  parameter_ml.set(<span class="stringliteral">&quot;smoother: ifpack relative threshold&quot;</span>, ilu_rtol);</div>
-<div class="line"><a id="l01633" name="l01633"></a><span class="lineno"> 1633</span> </div>
-<div class="line"><a id="l01634" name="l01634"></a><span class="lineno"> 1634</span>  parameter_ml.set(<span class="stringliteral">&quot;coarse: ifpack level-of-fill&quot;</span>, ilu_fill);</div>
-<div class="line"><a id="l01635" name="l01635"></a><span class="lineno"> 1635</span>  parameter_ml.set(<span class="stringliteral">&quot;coarse: ifpack absolute threshold&quot;</span>, ilu_atol);</div>
-<div class="line"><a id="l01636" name="l01636"></a><span class="lineno"> 1636</span>  parameter_ml.set(<span class="stringliteral">&quot;coarse: ifpack relative threshold&quot;</span>, ilu_rtol);</div>
-<div class="line"><a id="l01637" name="l01637"></a><span class="lineno"> 1637</span> </div>
-<div class="line"><a id="l01638" name="l01638"></a><span class="lineno"> 1638</span>  amg_preconditioner = std::make_shared&lt;TrilinosWrappers::PreconditionAMG&gt;();</div>
-<div class="line"><a id="l01639" name="l01639"></a><span class="lineno"> 1639</span>  amg_preconditioner-&gt;initialize(system_matrix, parameter_ml);</div>
-<div class="line"><a id="l01640" name="l01640"></a><span class="lineno"> 1640</span>}</div>
+<div class="line"><a id="l01568" name="l01568"></a><span class="lineno"> 1568</span> </div>
+<div class="line"><a id="l01569" name="l01569"></a><span class="lineno"> 1569</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01570" name="l01570"></a><span class="lineno"> 1570</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01571" data-start="{" data-end="}">
+<div class="line"><a id="l01571" name="l01571"></a><span class="lineno"><a class="line" href="classTracer.html#af2d10f4719c1fe42a9883441aacc4eae"> 1571</a></span><a class="code hl_function" href="classTracer.html#af2d10f4719c1fe42a9883441aacc4eae">Tracer&lt;dim&gt;::setup_amg</a>()</div>
+<div class="line"><a id="l01572" name="l01572"></a><span class="lineno"> 1572</span>{</div>
+<div class="line"><a id="l01573" name="l01573"></a><span class="lineno"> 1573</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Setup AMG&quot;</span>);</div>
+<div class="line"><a id="l01574" name="l01574"></a><span class="lineno"> 1574</span> </div>
+<div class="line"><a id="l01575" name="l01575"></a><span class="lineno"> 1575</span>  <span class="comment">// Constant modes for the tracer scalar field</span></div>
+<div class="line"><a id="l01576" name="l01576"></a><span class="lineno"> 1576</span>  std::vector&lt;std::vector&lt;bool&gt;&gt; constant_modes;</div>
+<div class="line"><a id="l01577" name="l01577"></a><span class="lineno"> 1577</span> </div>
+<div class="line"><a id="l01578" name="l01578"></a><span class="lineno"> 1578</span>  ComponentMask components(1, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l01579" name="l01579"></a><span class="lineno"> 1579</span>  constant_modes =</div>
+<div class="line"><a id="l01580" name="l01580"></a><span class="lineno"> 1580</span>    DoFTools::extract_constant_modes(*this-&gt;dof_handler, components);</div>
+<div class="line"><a id="l01581" name="l01581"></a><span class="lineno"> 1581</span> </div>
+<div class="line"><a id="l01582" name="l01582"></a><span class="lineno"> 1582</span>  <span class="comment">// The tracer operator is non-symmetric since the tracer is advected by the</span></div>
+<div class="line"><a id="l01583" name="l01583"></a><span class="lineno"> 1583</span>  <span class="comment">// fluid velocity</span></div>
+<div class="line"><a id="l01584" name="l01584"></a><span class="lineno"> 1584</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> elliptic              = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01585" name="l01585"></a><span class="lineno"> 1585</span>  <span class="keywordtype">bool</span>       higher_order_elements = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01586" name="l01586"></a><span class="lineno"> 1586</span>  <span class="keywordflow">if</span> (this-&gt;fe-&gt;degree &gt; 1)</div>
+<div class="line"><a id="l01587" name="l01587"></a><span class="lineno"> 1587</span>    higher_order_elements = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01588" name="l01588"></a><span class="lineno"> 1588</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_cycles =</div>
+<div class="line"><a id="l01589" name="l01589"></a><span class="lineno"> 1589</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).amg_n_cycles;</div>
+<div class="line"><a id="l01590" name="l01590"></a><span class="lineno"> 1590</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> w_cycle =</div>
+<div class="line"><a id="l01591" name="l01591"></a><span class="lineno"> 1591</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).amg_w_cycles;</div>
+<div class="line"><a id="l01592" name="l01592"></a><span class="lineno"> 1592</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> aggregation_threshold =</div>
+<div class="line"><a id="l01593" name="l01593"></a><span class="lineno"> 1593</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01594" name="l01594"></a><span class="lineno"> 1594</span>      .amg_aggregation_threshold;</div>
+<div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> smoother_sweeps =</div>
+<div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>      .amg_smoother_sweeps;</div>
+<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> smoother_overlap =</div>
+<div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01600" name="l01600"></a><span class="lineno"> 1600</span>      .amg_smoother_overlap;</div>
+<div class="line"><a id="l01601" name="l01601"></a><span class="lineno"> 1601</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                                        output_details = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span>  <span class="keyword">const</span> <span class="keywordtype">char</span>                                       *smoother_type  = <span class="stringliteral">&quot;ILU&quot;</span>;</div>
+<div class="line"><a id="l01603" name="l01603"></a><span class="lineno"> 1603</span>  <span class="keyword">const</span> <span class="keywordtype">char</span>                                       *coarse_type    = <span class="stringliteral">&quot;ILU&quot;</span>;</div>
+<div class="line"><a id="l01604" name="l01604"></a><span class="lineno"> 1604</span>  TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(</div>
+<div class="line"><a id="l01605" name="l01605"></a><span class="lineno"> 1605</span>    elliptic,</div>
+<div class="line"><a id="l01606" name="l01606"></a><span class="lineno"> 1606</span>    higher_order_elements,</div>
+<div class="line"><a id="l01607" name="l01607"></a><span class="lineno"> 1607</span>    n_cycles,</div>
+<div class="line"><a id="l01608" name="l01608"></a><span class="lineno"> 1608</span>    w_cycle,</div>
+<div class="line"><a id="l01609" name="l01609"></a><span class="lineno"> 1609</span>    aggregation_threshold,</div>
+<div class="line"><a id="l01610" name="l01610"></a><span class="lineno"> 1610</span>    constant_modes,</div>
+<div class="line"><a id="l01611" name="l01611"></a><span class="lineno"> 1611</span>    smoother_sweeps,</div>
+<div class="line"><a id="l01612" name="l01612"></a><span class="lineno"> 1612</span>    smoother_overlap,</div>
+<div class="line"><a id="l01613" name="l01613"></a><span class="lineno"> 1613</span>    output_details,</div>
+<div class="line"><a id="l01614" name="l01614"></a><span class="lineno"> 1614</span>    smoother_type,</div>
+<div class="line"><a id="l01615" name="l01615"></a><span class="lineno"> 1615</span>    coarse_type);</div>
+<div class="line"><a id="l01616" name="l01616"></a><span class="lineno"> 1616</span> </div>
+<div class="line"><a id="l01617" name="l01617"></a><span class="lineno"> 1617</span>  Teuchos::ParameterList              parameter_ml;</div>
+<div class="line"><a id="l01618" name="l01618"></a><span class="lineno"> 1618</span>  std::unique_ptr&lt;Epetra_MultiVector&gt; distributed_constant_modes;</div>
+<div class="line"><a id="l01619" name="l01619"></a><span class="lineno"> 1619</span>  preconditionerOptions.set_parameters(parameter_ml,</div>
+<div class="line"><a id="l01620" name="l01620"></a><span class="lineno"> 1620</span>                                       distributed_constant_modes,</div>
+<div class="line"><a id="l01621" name="l01621"></a><span class="lineno"> 1621</span>                                       system_matrix);</div>
+<div class="line"><a id="l01622" name="l01622"></a><span class="lineno"> 1622</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_fill =</div>
+<div class="line"><a id="l01623" name="l01623"></a><span class="lineno"> 1623</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01624" name="l01624"></a><span class="lineno"> 1624</span>      .amg_precond_ilu_fill;</div>
+<div class="line"><a id="l01625" name="l01625"></a><span class="lineno"> 1625</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
+<div class="line"><a id="l01626" name="l01626"></a><span class="lineno"> 1626</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01627" name="l01627"></a><span class="lineno"> 1627</span>      .amg_precond_ilu_atol;</div>
+<div class="line"><a id="l01628" name="l01628"></a><span class="lineno"> 1628</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
+<div class="line"><a id="l01629" name="l01629"></a><span class="lineno"> 1629</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01630" name="l01630"></a><span class="lineno"> 1630</span>      .amg_precond_ilu_rtol;</div>
+<div class="line"><a id="l01631" name="l01631"></a><span class="lineno"> 1631</span>  parameter_ml.set(<span class="stringliteral">&quot;smoother: ifpack level-of-fill&quot;</span>, ilu_fill);</div>
+<div class="line"><a id="l01632" name="l01632"></a><span class="lineno"> 1632</span>  parameter_ml.set(<span class="stringliteral">&quot;smoother: ifpack absolute threshold&quot;</span>, ilu_atol);</div>
+<div class="line"><a id="l01633" name="l01633"></a><span class="lineno"> 1633</span>  parameter_ml.set(<span class="stringliteral">&quot;smoother: ifpack relative threshold&quot;</span>, ilu_rtol);</div>
+<div class="line"><a id="l01634" name="l01634"></a><span class="lineno"> 1634</span> </div>
+<div class="line"><a id="l01635" name="l01635"></a><span class="lineno"> 1635</span>  parameter_ml.set(<span class="stringliteral">&quot;coarse: ifpack level-of-fill&quot;</span>, ilu_fill);</div>
+<div class="line"><a id="l01636" name="l01636"></a><span class="lineno"> 1636</span>  parameter_ml.set(<span class="stringliteral">&quot;coarse: ifpack absolute threshold&quot;</span>, ilu_atol);</div>
+<div class="line"><a id="l01637" name="l01637"></a><span class="lineno"> 1637</span>  parameter_ml.set(<span class="stringliteral">&quot;coarse: ifpack relative threshold&quot;</span>, ilu_rtol);</div>
+<div class="line"><a id="l01638" name="l01638"></a><span class="lineno"> 1638</span> </div>
+<div class="line"><a id="l01639" name="l01639"></a><span class="lineno"> 1639</span>  amg_preconditioner = std::make_shared&lt;TrilinosWrappers::PreconditionAMG&gt;();</div>
+<div class="line"><a id="l01640" name="l01640"></a><span class="lineno"> 1640</span>  amg_preconditioner-&gt;initialize(system_matrix, parameter_ml);</div>
+<div class="line"><a id="l01641" name="l01641"></a><span class="lineno"> 1641</span>}</div>
 </div>
-<div class="line"><a id="l01641" name="l01641"></a><span class="lineno"> 1641</span> </div>
-<div class="line"><a id="l01642" name="l01642"></a><span class="lineno"> 1642</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01643" name="l01643"></a><span class="lineno"> 1643</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01644" data-start="{" data-end="}">
-<div class="line"><a id="l01644" name="l01644"></a><span class="lineno"><a class="line" href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0"> 1644</a></span><a class="code hl_function" href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0">Tracer&lt;dim&gt;::solve_linear_system</a>()</div>
-<div class="line"><a id="l01645" name="l01645"></a><span class="lineno"> 1645</span>{</div>
-<div class="line"><a id="l01646" name="l01646"></a><span class="lineno"> 1646</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Solve linear system&quot;</span>);</div>
-<div class="line"><a id="l01647" name="l01647"></a><span class="lineno"> 1647</span> </div>
-<div class="line"><a id="l01648" name="l01648"></a><span class="lineno"> 1648</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_mpi_communicator();</div>
-<div class="line"><a id="l01649" name="l01649"></a><span class="lineno"> 1649</span> </div>
-<div class="line"><a id="l01650" name="l01650"></a><span class="lineno"> 1650</span>  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used = this-&gt;zero_constraints;</div>
-<div class="line"><a id="l01651" name="l01651"></a><span class="lineno"> 1651</span> </div>
-<div class="line"><a id="l01652" name="l01652"></a><span class="lineno"> 1652</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> absolute_residual =</div>
-<div class="line"><a id="l01653" name="l01653"></a><span class="lineno"> 1653</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).minimum_residual;</div>
-<div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> relative_residual =</div>
-<div class="line"><a id="l01655" name="l01655"></a><span class="lineno"> 1655</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).relative_residual;</div>
-<div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span> </div>
-<div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rescale_metric   = this-&gt;get_residual_rescale_metric();</div>
-<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> current_residual = system_rhs.l2_norm() / rescale_metric;</div>
-<div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
-<div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>    std::max(relative_residual * current_residual, absolute_residual);</div>
-<div class="line"><a id="l01661" name="l01661"></a><span class="lineno"> 1661</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01662" name="l01662"></a><span class="lineno"> 1662</span>        .verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a id="l01663" name="l01663"></a><span class="lineno"> 1663</span>    {</div>
-<div class="line"><a id="l01664" name="l01664"></a><span class="lineno"> 1664</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Tolerance of iterative solver is : &quot;</span></div>
-<div class="line"><a id="l01665" name="l01665"></a><span class="lineno"> 1665</span>                  &lt;&lt; linear_solver_tolerance &lt;&lt; std::endl;</div>
-<div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>    }</div>
-<div class="line"><a id="l01667" name="l01667"></a><span class="lineno"> 1667</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> non_rescaled_linear_solver_tolerance =</div>
-<div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>    linear_solver_tolerance * rescale_metric;</div>
-<div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span> </div>
-<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> completely_distributed_solution(locally_owned_dofs,</div>
-<div class="line"><a id="l01671" name="l01671"></a><span class="lineno"> 1671</span>                                                   mpi_communicator);</div>
-<div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span> </div>
-<div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span>  SolverControl solver_control(</div>
-<div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).max_iterations,</div>
-<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>    non_rescaled_linear_solver_tolerance,</div>
-<div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span>    <span class="keyword">true</span>,</div>
-<div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span>    <span class="keyword">true</span>);</div>
-<div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span> </div>
-<div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span>  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(</div>
-<div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span>    <span class="keyword">false</span>,</div>
-<div class="line"><a id="l01681" name="l01681"></a><span class="lineno"> 1681</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01682" name="l01682"></a><span class="lineno"> 1682</span>      .max_krylov_vectors);</div>
-<div class="line"><a id="l01683" name="l01683"></a><span class="lineno"> 1683</span> </div>
+<div class="line"><a id="l01642" name="l01642"></a><span class="lineno"> 1642</span> </div>
+<div class="line"><a id="l01643" name="l01643"></a><span class="lineno"> 1643</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01644" name="l01644"></a><span class="lineno"> 1644</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01645" data-start="{" data-end="}">
+<div class="line"><a id="l01645" name="l01645"></a><span class="lineno"><a class="line" href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0"> 1645</a></span><a class="code hl_function" href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0">Tracer&lt;dim&gt;::solve_linear_system</a>()</div>
+<div class="line"><a id="l01646" name="l01646"></a><span class="lineno"> 1646</span>{</div>
+<div class="line"><a id="l01647" name="l01647"></a><span class="lineno"> 1647</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Solve linear system&quot;</span>);</div>
+<div class="line"><a id="l01648" name="l01648"></a><span class="lineno"> 1648</span> </div>
+<div class="line"><a id="l01649" name="l01649"></a><span class="lineno"> 1649</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_mpi_communicator();</div>
+<div class="line"><a id="l01650" name="l01650"></a><span class="lineno"> 1650</span> </div>
+<div class="line"><a id="l01651" name="l01651"></a><span class="lineno"> 1651</span>  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used = this-&gt;zero_constraints;</div>
+<div class="line"><a id="l01652" name="l01652"></a><span class="lineno"> 1652</span> </div>
+<div class="line"><a id="l01653" name="l01653"></a><span class="lineno"> 1653</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> absolute_residual =</div>
+<div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).minimum_residual;</div>
+<div class="line"><a id="l01655" name="l01655"></a><span class="lineno"> 1655</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> relative_residual =</div>
+<div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).relative_residual;</div>
+<div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span> </div>
+<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rescale_metric   = this-&gt;get_residual_rescale_metric();</div>
+<div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> current_residual = system_rhs.l2_norm() / rescale_metric;</div>
+<div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
+<div class="line"><a id="l01661" name="l01661"></a><span class="lineno"> 1661</span>    std::max(relative_residual * current_residual, absolute_residual);</div>
+<div class="line"><a id="l01662" name="l01662"></a><span class="lineno"> 1662</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01663" name="l01663"></a><span class="lineno"> 1663</span>        .verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a id="l01664" name="l01664"></a><span class="lineno"> 1664</span>    {</div>
+<div class="line"><a id="l01665" name="l01665"></a><span class="lineno"> 1665</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Tolerance of iterative solver is : &quot;</span></div>
+<div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>                  &lt;&lt; linear_solver_tolerance &lt;&lt; std::endl;</div>
+<div class="line"><a id="l01667" name="l01667"></a><span class="lineno"> 1667</span>    }</div>
+<div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> non_rescaled_linear_solver_tolerance =</div>
+<div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span>    linear_solver_tolerance * rescale_metric;</div>
+<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span> </div>
+<div class="line"><a id="l01671" name="l01671"></a><span class="lineno"> 1671</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> completely_distributed_solution(locally_owned_dofs,</div>
+<div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span>                                                   mpi_communicator);</div>
+<div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span> </div>
+<div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>  SolverControl solver_control(</div>
+<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).max_iterations,</div>
+<div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span>    non_rescaled_linear_solver_tolerance,</div>
+<div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span>    <span class="keyword">true</span>,</div>
+<div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span>    <span class="keyword">true</span>);</div>
+<div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span> </div>
+<div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span>  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(</div>
+<div class="line"><a id="l01681" name="l01681"></a><span class="lineno"> 1681</span>    <span class="keyword">false</span>,</div>
+<div class="line"><a id="l01682" name="l01682"></a><span class="lineno"> 1682</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01683" name="l01683"></a><span class="lineno"> 1683</span>      .max_krylov_vectors);</div>
 <div class="line"><a id="l01684" name="l01684"></a><span class="lineno"> 1684</span> </div>
-<div class="line"><a id="l01685" name="l01685"></a><span class="lineno"> 1685</span>  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);</div>
-<div class="line"><a id="l01686" name="l01686"></a><span class="lineno"> 1686</span> </div>
-<div class="line"><a id="l01687" name="l01687"></a><span class="lineno"> 1687</span>  <span class="keyword">const</span> <span class="keyword">auto</span> preconditioner_type =</div>
-<div class="line"><a id="l01688" name="l01688"></a><span class="lineno"> 1688</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).preconditioner;</div>
-<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span> </div>
-<div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span>  <span class="keywordflow">if</span> (preconditioner_type == <a class="code hl_enumvalue" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab">Parameters::LinearSolver::PreconditionerType::ilu</a>)</div>
-<div class="line"><a id="l01691" name="l01691"></a><span class="lineno"> 1691</span>    {</div>
-<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>      setup_ilu();</div>
-<div class="line"><a id="l01693" name="l01693"></a><span class="lineno"> 1693</span>      solver.solve(system_matrix,</div>
-<div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>                   completely_distributed_solution,</div>
-<div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>                   system_rhs,</div>
-<div class="line"><a id="l01696" name="l01696"></a><span class="lineno"> 1696</span>                   *ilu_preconditioner);</div>
-<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>    }</div>
-<div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (preconditioner_type ==</div>
-<div class="line"><a id="l01699" name="l01699"></a><span class="lineno"> 1699</span>           <a class="code hl_enumvalue" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::PreconditionerType::amg</a>)</div>
-<div class="line"><a id="l01700" name="l01700"></a><span class="lineno"> 1700</span>    {</div>
-<div class="line"><a id="l01701" name="l01701"></a><span class="lineno"> 1701</span>      setup_amg();</div>
-<div class="line"><a id="l01702" name="l01702"></a><span class="lineno"> 1702</span>      solver.solve(system_matrix,</div>
-<div class="line"><a id="l01703" name="l01703"></a><span class="lineno"> 1703</span>                   completely_distributed_solution,</div>
-<div class="line"><a id="l01704" name="l01704"></a><span class="lineno"> 1704</span>                   system_rhs,</div>
-<div class="line"><a id="l01705" name="l01705"></a><span class="lineno"> 1705</span>                   *amg_preconditioner);</div>
-<div class="line"><a id="l01706" name="l01706"></a><span class="lineno"> 1706</span>    }</div>
-<div class="line"><a id="l01707" name="l01707"></a><span class="lineno"> 1707</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01708" name="l01708"></a><span class="lineno"> 1708</span>    AssertThrow(</div>
-<div class="line"><a id="l01709" name="l01709"></a><span class="lineno"> 1709</span>      <span class="keyword">false</span>,</div>
-<div class="line"><a id="l01710" name="l01710"></a><span class="lineno"> 1710</span>      ExcMessage(</div>
-<div class="line"><a id="l01711" name="l01711"></a><span class="lineno"> 1711</span>        <span class="stringliteral">&quot;This linear solver does not support this preconditioner. Only &lt;ilu&gt; and &lt;amg&gt; preconditioners are supported.&quot;</span>));</div>
-<div class="line"><a id="l01712" name="l01712"></a><span class="lineno"> 1712</span> </div>
-<div class="line"><a id="l01713" name="l01713"></a><span class="lineno"> 1713</span>  <span class="keywordflow">if</span> (simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).verbosity !=</div>
-<div class="line"><a id="l01714" name="l01714"></a><span class="lineno"> 1714</span>      <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a id="l01715" name="l01715"></a><span class="lineno"> 1715</span>    {</div>
-<div class="line"><a id="l01716" name="l01716"></a><span class="lineno"> 1716</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver took : &quot;</span> &lt;&lt; solver_control.last_step()</div>
-<div class="line"><a id="l01717" name="l01717"></a><span class="lineno"> 1717</span>                  &lt;&lt; <span class="stringliteral">&quot; steps to reach a residual norm of &quot;</span></div>
-<div class="line"><a id="l01718" name="l01718"></a><span class="lineno"> 1718</span>                  &lt;&lt; solver_control.last_value() / rescale_metric &lt;&lt; std::endl;</div>
-<div class="line"><a id="l01719" name="l01719"></a><span class="lineno"> 1719</span>    }</div>
-<div class="line"><a id="l01720" name="l01720"></a><span class="lineno"> 1720</span> </div>
-<div class="line"><a id="l01721" name="l01721"></a><span class="lineno"> 1721</span>  constraints_used.distribute(completely_distributed_solution);</div>
-<div class="line"><a id="l01722" name="l01722"></a><span class="lineno"> 1722</span>  newton_update = completely_distributed_solution;</div>
-<div class="line"><a id="l01723" name="l01723"></a><span class="lineno"> 1723</span>}</div>
+<div class="line"><a id="l01685" name="l01685"></a><span class="lineno"> 1685</span> </div>
+<div class="line"><a id="l01686" name="l01686"></a><span class="lineno"> 1686</span>  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);</div>
+<div class="line"><a id="l01687" name="l01687"></a><span class="lineno"> 1687</span> </div>
+<div class="line"><a id="l01688" name="l01688"></a><span class="lineno"> 1688</span>  <span class="keyword">const</span> <span class="keyword">auto</span> preconditioner_type =</div>
+<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).preconditioner;</div>
+<div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span> </div>
+<div class="line"><a id="l01691" name="l01691"></a><span class="lineno"> 1691</span>  <span class="keywordflow">if</span> (preconditioner_type == <a class="code hl_enumvalue" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab">Parameters::LinearSolver::PreconditionerType::ilu</a>)</div>
+<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>    {</div>
+<div class="line"><a id="l01693" name="l01693"></a><span class="lineno"> 1693</span>      setup_ilu();</div>
+<div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>      solver.solve(system_matrix,</div>
+<div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>                   completely_distributed_solution,</div>
+<div class="line"><a id="l01696" name="l01696"></a><span class="lineno"> 1696</span>                   system_rhs,</div>
+<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>                   *ilu_preconditioner);</div>
+<div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span>    }</div>
+<div class="line"><a id="l01699" name="l01699"></a><span class="lineno"> 1699</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (preconditioner_type ==</div>
+<div class="line"><a id="l01700" name="l01700"></a><span class="lineno"> 1700</span>           <a class="code hl_enumvalue" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::PreconditionerType::amg</a>)</div>
+<div class="line"><a id="l01701" name="l01701"></a><span class="lineno"> 1701</span>    {</div>
+<div class="line"><a id="l01702" name="l01702"></a><span class="lineno"> 1702</span>      setup_amg();</div>
+<div class="line"><a id="l01703" name="l01703"></a><span class="lineno"> 1703</span>      solver.solve(system_matrix,</div>
+<div class="line"><a id="l01704" name="l01704"></a><span class="lineno"> 1704</span>                   completely_distributed_solution,</div>
+<div class="line"><a id="l01705" name="l01705"></a><span class="lineno"> 1705</span>                   system_rhs,</div>
+<div class="line"><a id="l01706" name="l01706"></a><span class="lineno"> 1706</span>                   *amg_preconditioner);</div>
+<div class="line"><a id="l01707" name="l01707"></a><span class="lineno"> 1707</span>    }</div>
+<div class="line"><a id="l01708" name="l01708"></a><span class="lineno"> 1708</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01709" name="l01709"></a><span class="lineno"> 1709</span>    AssertThrow(</div>
+<div class="line"><a id="l01710" name="l01710"></a><span class="lineno"> 1710</span>      <span class="keyword">false</span>,</div>
+<div class="line"><a id="l01711" name="l01711"></a><span class="lineno"> 1711</span>      ExcMessage(</div>
+<div class="line"><a id="l01712" name="l01712"></a><span class="lineno"> 1712</span>        <span class="stringliteral">&quot;This linear solver does not support this preconditioner. Only &lt;ilu&gt; and &lt;amg&gt; preconditioners are supported.&quot;</span>));</div>
+<div class="line"><a id="l01713" name="l01713"></a><span class="lineno"> 1713</span> </div>
+<div class="line"><a id="l01714" name="l01714"></a><span class="lineno"> 1714</span>  <span class="keywordflow">if</span> (simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).verbosity !=</div>
+<div class="line"><a id="l01715" name="l01715"></a><span class="lineno"> 1715</span>      <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a id="l01716" name="l01716"></a><span class="lineno"> 1716</span>    {</div>
+<div class="line"><a id="l01717" name="l01717"></a><span class="lineno"> 1717</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver took : &quot;</span> &lt;&lt; solver_control.last_step()</div>
+<div class="line"><a id="l01718" name="l01718"></a><span class="lineno"> 1718</span>                  &lt;&lt; <span class="stringliteral">&quot; steps to reach a residual norm of &quot;</span></div>
+<div class="line"><a id="l01719" name="l01719"></a><span class="lineno"> 1719</span>                  &lt;&lt; solver_control.last_value() / rescale_metric &lt;&lt; std::endl;</div>
+<div class="line"><a id="l01720" name="l01720"></a><span class="lineno"> 1720</span>    }</div>
+<div class="line"><a id="l01721" name="l01721"></a><span class="lineno"> 1721</span> </div>
+<div class="line"><a id="l01722" name="l01722"></a><span class="lineno"> 1722</span>  constraints_used.distribute(completely_distributed_solution);</div>
+<div class="line"><a id="l01723" name="l01723"></a><span class="lineno"> 1723</span>  newton_update = completely_distributed_solution;</div>
+<div class="line"><a id="l01724" name="l01724"></a><span class="lineno"> 1724</span>}</div>
 </div>
-<div class="line"><a id="l01724" name="l01724"></a><span class="lineno"> 1724</span> </div>
-<div class="line"><a id="l01725" name="l01725"></a><span class="lineno"> 1725</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01726" name="l01726"></a><span class="lineno"> 1726</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01727" data-start="{" data-end="}">
-<div class="line"><a id="l01727" name="l01727"></a><span class="lineno"><a class="line" href="classTracer.html#aa87532222bb62eb857392b15bb08fe06"> 1727</a></span><a class="code hl_function" href="classTracer.html#aa87532222bb62eb857392b15bb08fe06">Tracer&lt;dim&gt;::reinit_mortar_operators</a>()</div>
-<div class="line"><a id="l01728" name="l01728"></a><span class="lineno"> 1728</span>{</div>
-<div class="line"><a id="l01729" name="l01729"></a><span class="lineno"> 1729</span>  <span class="keywordflow">if</span> (!simulation_parameters.mortar_parameters.enable)</div>
-<div class="line"><a id="l01730" name="l01730"></a><span class="lineno"> 1730</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l01731" name="l01731"></a><span class="lineno"> 1731</span> </div>
-<div class="line"><a id="l01732" name="l01732"></a><span class="lineno"> 1732</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Reinit mortar operators&quot;</span>);</div>
-<div class="line"><a id="l01733" name="l01733"></a><span class="lineno"> 1733</span> </div>
-<div class="line"><a id="l01734" name="l01734"></a><span class="lineno"> 1734</span>  <span class="comment">// Create mortar manager</span></div>
-<div class="line"><a id="l01735" name="l01735"></a><span class="lineno"> 1735</span>  <span class="keywordflow">if</span> (simulation_parameters.mortar_parameters.interface_type ==</div>
-<div class="line"><a id="l01736" name="l01736"></a><span class="lineno"> 1736</span>      <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;::InterfaceType::circular</a>)</div>
-<div class="line"><a id="l01737" name="l01737"></a><span class="lineno"> 1737</span>    this-&gt;mortar_manager = std::make_shared&lt;MortarManagerCircle&lt;dim&gt;&gt;(</div>
-<div class="line"><a id="l01738" name="l01738"></a><span class="lineno"> 1738</span>      *this-&gt;cell_quadrature,</div>
-<div class="line"><a id="l01739" name="l01739"></a><span class="lineno"> 1739</span>      *this-&gt;get_mapping(),</div>
-<div class="line"><a id="l01740" name="l01740"></a><span class="lineno"> 1740</span>      *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01741" name="l01741"></a><span class="lineno"> 1741</span>      simulation_parameters.mortar_parameters);</div>
-<div class="line"><a id="l01742" name="l01742"></a><span class="lineno"> 1742</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (simulation_parameters.mortar_parameters.interface_type ==</div>
-<div class="line"><a id="l01743" name="l01743"></a><span class="lineno"> 1743</span>           <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;::InterfaceType::linear</a>)</div>
-<div class="line"><a id="l01744" name="l01744"></a><span class="lineno"> 1744</span>    this-&gt;mortar_manager = std::make_shared&lt;MortarManagerLinear&lt;dim&gt;&gt;(</div>
-<div class="line"><a id="l01745" name="l01745"></a><span class="lineno"> 1745</span>      *this-&gt;cell_quadrature,</div>
-<div class="line"><a id="l01746" name="l01746"></a><span class="lineno"> 1746</span>      *this-&gt;get_mapping(),</div>
-<div class="line"><a id="l01747" name="l01747"></a><span class="lineno"> 1747</span>      *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01748" name="l01748"></a><span class="lineno"> 1748</span>      simulation_parameters.mortar_parameters);</div>
-<div class="line"><a id="l01749" name="l01749"></a><span class="lineno"> 1749</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01750" name="l01750"></a><span class="lineno"> 1750</span>    AssertThrow(<span class="keyword">false</span>, ExcMessage(<span class="stringliteral">&quot;Invalid mortar interface type.&quot;</span>));</div>
-<div class="line"><a id="l01751" name="l01751"></a><span class="lineno"> 1751</span> </div>
+<div class="line"><a id="l01725" name="l01725"></a><span class="lineno"> 1725</span> </div>
+<div class="line"><a id="l01726" name="l01726"></a><span class="lineno"> 1726</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01727" name="l01727"></a><span class="lineno"> 1727</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01728" data-start="{" data-end="}">
+<div class="line"><a id="l01728" name="l01728"></a><span class="lineno"><a class="line" href="classTracer.html#aa87532222bb62eb857392b15bb08fe06"> 1728</a></span><a class="code hl_function" href="classTracer.html#aa87532222bb62eb857392b15bb08fe06">Tracer&lt;dim&gt;::reinit_mortar_operators</a>()</div>
+<div class="line"><a id="l01729" name="l01729"></a><span class="lineno"> 1729</span>{</div>
+<div class="line"><a id="l01730" name="l01730"></a><span class="lineno"> 1730</span>  <span class="keywordflow">if</span> (!simulation_parameters.mortar_parameters.enable)</div>
+<div class="line"><a id="l01731" name="l01731"></a><span class="lineno"> 1731</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l01732" name="l01732"></a><span class="lineno"> 1732</span> </div>
+<div class="line"><a id="l01733" name="l01733"></a><span class="lineno"> 1733</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Reinit mortar operators&quot;</span>);</div>
+<div class="line"><a id="l01734" name="l01734"></a><span class="lineno"> 1734</span> </div>
+<div class="line"><a id="l01735" name="l01735"></a><span class="lineno"> 1735</span>  <span class="comment">// Create mortar manager</span></div>
+<div class="line"><a id="l01736" name="l01736"></a><span class="lineno"> 1736</span>  <span class="keywordflow">if</span> (simulation_parameters.mortar_parameters.interface_type ==</div>
+<div class="line"><a id="l01737" name="l01737"></a><span class="lineno"> 1737</span>      <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;::InterfaceType::circular</a>)</div>
+<div class="line"><a id="l01738" name="l01738"></a><span class="lineno"> 1738</span>    this-&gt;mortar_manager = std::make_shared&lt;MortarManagerCircle&lt;dim&gt;&gt;(</div>
+<div class="line"><a id="l01739" name="l01739"></a><span class="lineno"> 1739</span>      *this-&gt;cell_quadrature,</div>
+<div class="line"><a id="l01740" name="l01740"></a><span class="lineno"> 1740</span>      *this-&gt;get_mapping(),</div>
+<div class="line"><a id="l01741" name="l01741"></a><span class="lineno"> 1741</span>      *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01742" name="l01742"></a><span class="lineno"> 1742</span>      simulation_parameters.mortar_parameters);</div>
+<div class="line"><a id="l01743" name="l01743"></a><span class="lineno"> 1743</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (simulation_parameters.mortar_parameters.interface_type ==</div>
+<div class="line"><a id="l01744" name="l01744"></a><span class="lineno"> 1744</span>           <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;::InterfaceType::linear</a>)</div>
+<div class="line"><a id="l01745" name="l01745"></a><span class="lineno"> 1745</span>    this-&gt;mortar_manager = std::make_shared&lt;MortarManagerLinear&lt;dim&gt;&gt;(</div>
+<div class="line"><a id="l01746" name="l01746"></a><span class="lineno"> 1746</span>      *this-&gt;cell_quadrature,</div>
+<div class="line"><a id="l01747" name="l01747"></a><span class="lineno"> 1747</span>      *this-&gt;get_mapping(),</div>
+<div class="line"><a id="l01748" name="l01748"></a><span class="lineno"> 1748</span>      *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01749" name="l01749"></a><span class="lineno"> 1749</span>      simulation_parameters.mortar_parameters);</div>
+<div class="line"><a id="l01750" name="l01750"></a><span class="lineno"> 1750</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01751" name="l01751"></a><span class="lineno"> 1751</span>    AssertThrow(<span class="keyword">false</span>, ExcMessage(<span class="stringliteral">&quot;Invalid mortar interface type.&quot;</span>));</div>
 <div class="line"><a id="l01752" name="l01752"></a><span class="lineno"> 1752</span> </div>
-<div class="line"><a id="l01753" name="l01753"></a><span class="lineno"> 1753</span>  <span class="comment">// Create mortar coupling evaluator</span></div>
-<div class="line"><a id="l01754" name="l01754"></a><span class="lineno"> 1754</span>  this-&gt;mortar_coupling_evaluator =</div>
-<div class="line"><a id="l01755" name="l01755"></a><span class="lineno"> 1755</span>    std::make_shared&lt;ScalarCouplingEvaluationSIPG&lt;dim, 1, double&gt;&gt;(</div>
-<div class="line"><a id="l01756" name="l01756"></a><span class="lineno"> 1756</span>      *this-&gt;get_mapping(), *this-&gt;dof_handler);</div>
-<div class="line"><a id="l01757" name="l01757"></a><span class="lineno"> 1757</span> </div>
-<div class="line"><a id="l01758" name="l01758"></a><span class="lineno"> 1758</span>  this-&gt;mortar_coupling_operator =</div>
-<div class="line"><a id="l01759" name="l01759"></a><span class="lineno"> 1759</span>    std::make_shared&lt;CouplingOperator&lt;dim, double&gt;&gt;(</div>
-<div class="line"><a id="l01760" name="l01760"></a><span class="lineno"> 1760</span>      *this-&gt;get_mapping(),</div>
-<div class="line"><a id="l01761" name="l01761"></a><span class="lineno"> 1761</span>      *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01762" name="l01762"></a><span class="lineno"> 1762</span>      this-&gt;zero_constraints,</div>
-<div class="line"><a id="l01763" name="l01763"></a><span class="lineno"> 1763</span>      this-&gt;mortar_coupling_evaluator,</div>
-<div class="line"><a id="l01764" name="l01764"></a><span class="lineno"> 1764</span>      this-&gt;mortar_manager,</div>
-<div class="line"><a id="l01765" name="l01765"></a><span class="lineno"> 1765</span>      simulation_parameters.mortar_parameters.rotor_boundary_id,</div>
-<div class="line"><a id="l01766" name="l01766"></a><span class="lineno"> 1766</span>      simulation_parameters.mortar_parameters.stator_boundary_id,</div>
-<div class="line"><a id="l01767" name="l01767"></a><span class="lineno"> 1767</span>      simulation_parameters.mortar_parameters.sip_factor);</div>
-<div class="line"><a id="l01768" name="l01768"></a><span class="lineno"> 1768</span>}</div>
+<div class="line"><a id="l01753" name="l01753"></a><span class="lineno"> 1753</span> </div>
+<div class="line"><a id="l01754" name="l01754"></a><span class="lineno"> 1754</span>  <span class="comment">// Create mortar coupling evaluator</span></div>
+<div class="line"><a id="l01755" name="l01755"></a><span class="lineno"> 1755</span>  this-&gt;mortar_coupling_evaluator =</div>
+<div class="line"><a id="l01756" name="l01756"></a><span class="lineno"> 1756</span>    std::make_shared&lt;ScalarCouplingEvaluationSIPG&lt;dim, 1, double&gt;&gt;(</div>
+<div class="line"><a id="l01757" name="l01757"></a><span class="lineno"> 1757</span>      *this-&gt;get_mapping(), *this-&gt;dof_handler);</div>
+<div class="line"><a id="l01758" name="l01758"></a><span class="lineno"> 1758</span> </div>
+<div class="line"><a id="l01759" name="l01759"></a><span class="lineno"> 1759</span>  this-&gt;mortar_coupling_operator =</div>
+<div class="line"><a id="l01760" name="l01760"></a><span class="lineno"> 1760</span>    std::make_shared&lt;CouplingOperator&lt;dim, double&gt;&gt;(</div>
+<div class="line"><a id="l01761" name="l01761"></a><span class="lineno"> 1761</span>      *this-&gt;get_mapping(),</div>
+<div class="line"><a id="l01762" name="l01762"></a><span class="lineno"> 1762</span>      *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01763" name="l01763"></a><span class="lineno"> 1763</span>      this-&gt;zero_constraints,</div>
+<div class="line"><a id="l01764" name="l01764"></a><span class="lineno"> 1764</span>      this-&gt;mortar_coupling_evaluator,</div>
+<div class="line"><a id="l01765" name="l01765"></a><span class="lineno"> 1765</span>      this-&gt;mortar_manager,</div>
+<div class="line"><a id="l01766" name="l01766"></a><span class="lineno"> 1766</span>      simulation_parameters.mortar_parameters.rotor_boundary_id,</div>
+<div class="line"><a id="l01767" name="l01767"></a><span class="lineno"> 1767</span>      simulation_parameters.mortar_parameters.stator_boundary_id,</div>
+<div class="line"><a id="l01768" name="l01768"></a><span class="lineno"> 1768</span>      simulation_parameters.mortar_parameters.sip_factor);</div>
+<div class="line"><a id="l01769" name="l01769"></a><span class="lineno"> 1769</span>}</div>
 </div>
-<div class="line"><a id="l01769" name="l01769"></a><span class="lineno"> 1769</span> </div>
-<div class="line"><a id="l01770" name="l01770"></a><span class="lineno"> 1770</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01771" name="l01771"></a><span class="lineno"> 1771</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01772" data-start="{" data-end="}">
-<div class="line"><a id="l01772" name="l01772"></a><span class="lineno"><a class="line" href="classTracer.html#a615256a1ba25049e22a78e59176739a5"> 1772</a></span><a class="code hl_function" href="classTracer.html#a615256a1ba25049e22a78e59176739a5">Tracer&lt;dim&gt;::rotate_rotor_mapping</a>()</div>
-<div class="line"><a id="l01773" name="l01773"></a><span class="lineno"> 1773</span>{</div>
-<div class="line"><a id="l01774" name="l01774"></a><span class="lineno"> 1774</span>  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.mortar_parameters.enable)</div>
-<div class="line"><a id="l01775" name="l01775"></a><span class="lineno"> 1775</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l01776" name="l01776"></a><span class="lineno"> 1776</span> </div>
-<div class="line"><a id="l01777" name="l01777"></a><span class="lineno"> 1777</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Rotate rotor mapping&quot;</span>);</div>
-<div class="line"><a id="l01778" name="l01778"></a><span class="lineno"> 1778</span> </div>
-<div class="line"><a id="l01779" name="l01779"></a><span class="lineno"> 1779</span>  <span class="comment">// Get updated rotation angle (radians)</span></div>
-<div class="line"><a id="l01780" name="l01780"></a><span class="lineno"> 1780</span>  simulation_parameters.mortar_parameters.rotor_rotation_angle-&gt;set_time(</div>
-<div class="line"><a id="l01781" name="l01781"></a><span class="lineno"> 1781</span>    this-&gt;simulation_control-&gt;get_current_time());</div>
-<div class="line"><a id="l01782" name="l01782"></a><span class="lineno"> 1782</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rotation_angle =</div>
-<div class="line"><a id="l01783" name="l01783"></a><span class="lineno"> 1783</span>    simulation_parameters.mortar_parameters.rotor_rotation_angle-&gt;value(</div>
-<div class="line"><a id="l01784" name="l01784"></a><span class="lineno"> 1784</span>      Point&lt;dim&gt;());</div>
-<div class="line"><a id="l01785" name="l01785"></a><span class="lineno"> 1785</span> </div>
-<div class="line"><a id="l01786" name="l01786"></a><span class="lineno"> 1786</span>  <span class="comment">// Rotate mapping only in the case of a circular mortar interface</span></div>
-<div class="line"><a id="l01787" name="l01787"></a><span class="lineno"> 1787</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar_parameters.interface_type ==</div>
-<div class="line"><a id="l01788" name="l01788"></a><span class="lineno"> 1788</span>      <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;::InterfaceType::circular</a>)</div>
-<div class="line"><a id="l01789" name="l01789"></a><span class="lineno"> 1789</span>    <a class="code hl_function" href="namespaceLetheGridTools.html#a5402267568d84eaf49f2abc6717f999e">LetheGridTools::rotate_mapping</a>(</div>
-<div class="line"><a id="l01790" name="l01790"></a><span class="lineno"> 1790</span>      *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01791" name="l01791"></a><span class="lineno"> 1791</span>      *this-&gt;mapping_cache,</div>
-<div class="line"><a id="l01792" name="l01792"></a><span class="lineno"> 1792</span>      *this-&gt;mapping,</div>
-<div class="line"><a id="l01793" name="l01793"></a><span class="lineno"> 1793</span>      rotation_angle,</div>
-<div class="line"><a id="l01794" name="l01794"></a><span class="lineno"> 1794</span>      this-&gt;simulation_parameters.mortar_parameters.center_of_rotation,</div>
-<div class="line"><a id="l01795" name="l01795"></a><span class="lineno"> 1795</span>      this-&gt;simulation_parameters.mortar_parameters.rotation_axis_direction);</div>
-<div class="line"><a id="l01796" name="l01796"></a><span class="lineno"> 1796</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar_parameters.interface_type ==</div>
-<div class="line"><a id="l01797" name="l01797"></a><span class="lineno"> 1797</span>           <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;::InterfaceType::linear</a>)</div>
-<div class="line"><a id="l01798" name="l01798"></a><span class="lineno"> 1798</span>    this-&gt;mapping_cache-&gt;initialize(*this-&gt;mapping,</div>
-<div class="line"><a id="l01799" name="l01799"></a><span class="lineno"> 1799</span>                                    this-&gt;dof_handler-&gt;get_triangulation());</div>
-<div class="line"><a id="l01800" name="l01800"></a><span class="lineno"> 1800</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01801" name="l01801"></a><span class="lineno"> 1801</span>    AssertThrow(<span class="keyword">false</span>, ExcMessage(<span class="stringliteral">&quot;Invalid mortar interface type.&quot;</span>));</div>
-<div class="line"><a id="l01802" name="l01802"></a><span class="lineno"> 1802</span>}</div>
+<div class="line"><a id="l01770" name="l01770"></a><span class="lineno"> 1770</span> </div>
+<div class="line"><a id="l01771" name="l01771"></a><span class="lineno"> 1771</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01772" name="l01772"></a><span class="lineno"> 1772</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01773" data-start="{" data-end="}">
+<div class="line"><a id="l01773" name="l01773"></a><span class="lineno"><a class="line" href="classTracer.html#a615256a1ba25049e22a78e59176739a5"> 1773</a></span><a class="code hl_function" href="classTracer.html#a615256a1ba25049e22a78e59176739a5">Tracer&lt;dim&gt;::rotate_rotor_mapping</a>()</div>
+<div class="line"><a id="l01774" name="l01774"></a><span class="lineno"> 1774</span>{</div>
+<div class="line"><a id="l01775" name="l01775"></a><span class="lineno"> 1775</span>  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.mortar_parameters.enable)</div>
+<div class="line"><a id="l01776" name="l01776"></a><span class="lineno"> 1776</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l01777" name="l01777"></a><span class="lineno"> 1777</span> </div>
+<div class="line"><a id="l01778" name="l01778"></a><span class="lineno"> 1778</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Rotate rotor mapping&quot;</span>);</div>
+<div class="line"><a id="l01779" name="l01779"></a><span class="lineno"> 1779</span> </div>
+<div class="line"><a id="l01780" name="l01780"></a><span class="lineno"> 1780</span>  <span class="comment">// Get updated rotation angle (radians)</span></div>
+<div class="line"><a id="l01781" name="l01781"></a><span class="lineno"> 1781</span>  simulation_parameters.mortar_parameters.rotor_rotation_angle-&gt;set_time(</div>
+<div class="line"><a id="l01782" name="l01782"></a><span class="lineno"> 1782</span>    this-&gt;simulation_control-&gt;get_current_time());</div>
+<div class="line"><a id="l01783" name="l01783"></a><span class="lineno"> 1783</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rotation_angle =</div>
+<div class="line"><a id="l01784" name="l01784"></a><span class="lineno"> 1784</span>    simulation_parameters.mortar_parameters.rotor_rotation_angle-&gt;value(</div>
+<div class="line"><a id="l01785" name="l01785"></a><span class="lineno"> 1785</span>      Point&lt;dim&gt;());</div>
+<div class="line"><a id="l01786" name="l01786"></a><span class="lineno"> 1786</span> </div>
+<div class="line"><a id="l01787" name="l01787"></a><span class="lineno"> 1787</span>  <span class="comment">// Rotate mapping only in the case of a circular mortar interface</span></div>
+<div class="line"><a id="l01788" name="l01788"></a><span class="lineno"> 1788</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar_parameters.interface_type ==</div>
+<div class="line"><a id="l01789" name="l01789"></a><span class="lineno"> 1789</span>      <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;::InterfaceType::circular</a>)</div>
+<div class="line"><a id="l01790" name="l01790"></a><span class="lineno"> 1790</span>    <a class="code hl_function" href="namespaceLetheGridTools.html#a5402267568d84eaf49f2abc6717f999e">LetheGridTools::rotate_mapping</a>(</div>
+<div class="line"><a id="l01791" name="l01791"></a><span class="lineno"> 1791</span>      *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01792" name="l01792"></a><span class="lineno"> 1792</span>      *this-&gt;mapping_cache,</div>
+<div class="line"><a id="l01793" name="l01793"></a><span class="lineno"> 1793</span>      *this-&gt;mapping,</div>
+<div class="line"><a id="l01794" name="l01794"></a><span class="lineno"> 1794</span>      rotation_angle,</div>
+<div class="line"><a id="l01795" name="l01795"></a><span class="lineno"> 1795</span>      this-&gt;simulation_parameters.mortar_parameters.center_of_rotation,</div>
+<div class="line"><a id="l01796" name="l01796"></a><span class="lineno"> 1796</span>      this-&gt;simulation_parameters.mortar_parameters.rotation_axis_direction);</div>
+<div class="line"><a id="l01797" name="l01797"></a><span class="lineno"> 1797</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar_parameters.interface_type ==</div>
+<div class="line"><a id="l01798" name="l01798"></a><span class="lineno"> 1798</span>           <a class="code hl_struct" href="structParameters_1_1Mortar.html">Parameters::Mortar&lt;dim&gt;::InterfaceType::linear</a>)</div>
+<div class="line"><a id="l01799" name="l01799"></a><span class="lineno"> 1799</span>    this-&gt;mapping_cache-&gt;initialize(*this-&gt;mapping,</div>
+<div class="line"><a id="l01800" name="l01800"></a><span class="lineno"> 1800</span>                                    this-&gt;dof_handler-&gt;get_triangulation());</div>
+<div class="line"><a id="l01801" name="l01801"></a><span class="lineno"> 1801</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01802" name="l01802"></a><span class="lineno"> 1802</span>    AssertThrow(<span class="keyword">false</span>, ExcMessage(<span class="stringliteral">&quot;Invalid mortar interface type.&quot;</span>));</div>
+<div class="line"><a id="l01803" name="l01803"></a><span class="lineno"> 1803</span>}</div>
 </div>
-<div class="line"><a id="l01803" name="l01803"></a><span class="lineno"> 1803</span> </div>
-<div class="line"><a id="l01804" name="l01804"></a><span class="lineno"> 1804</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01805" name="l01805"></a><span class="lineno"> 1805</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01806" data-start="{" data-end="}">
-<div class="line"><a id="l01806" name="l01806"></a><span class="lineno"><a class="line" href="classTracer.html#a0dea3d3523aba26cc94a04f77167a2d5"> 1806</a></span><a class="code hl_function" href="classTracer.html#a0dea3d3523aba26cc94a04f77167a2d5">Tracer&lt;dim&gt;::update_mortar_configuration</a>()</div>
-<div class="line"><a id="l01807" name="l01807"></a><span class="lineno"> 1807</span>{</div>
-<div class="line"><a id="l01808" name="l01808"></a><span class="lineno"> 1808</span>  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.mortar_parameters.enable)</div>
-<div class="line"><a id="l01809" name="l01809"></a><span class="lineno"> 1809</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l01810" name="l01810"></a><span class="lineno"> 1810</span> </div>
-<div class="line"><a id="l01811" name="l01811"></a><span class="lineno"> 1811</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Update mortar configuration&quot;</span>);</div>
-<div class="line"><a id="l01812" name="l01812"></a><span class="lineno"> 1812</span> </div>
-<div class="line"><a id="l01813" name="l01813"></a><span class="lineno"> 1813</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_mpi_communicator();</div>
-<div class="line"><a id="l01814" name="l01814"></a><span class="lineno"> 1814</span> </div>
-<div class="line"><a id="l01815" name="l01815"></a><span class="lineno"> 1815</span>  <span class="comment">// We need to update the mortar operator/evaluator, as well as the sparsity</span></div>
-<div class="line"><a id="l01816" name="l01816"></a><span class="lineno"> 1816</span>  <span class="comment">// pattern, at every iteration. Since this is already done within</span></div>
-<div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span>  <span class="comment">// setup_dofs(), which is called in refine_mesh(), here we make sure that,</span></div>
-<div class="line"><a id="l01818" name="l01818"></a><span class="lineno"> 1818</span>  <span class="comment">// when there is no mesh refinement, the mortar information is still updated</span></div>
-<div class="line"><a id="l01819" name="l01819"></a><span class="lineno"> 1819</span>  <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;is_at_start() ||</div>
-<div class="line"><a id="l01820" name="l01820"></a><span class="lineno"> 1820</span>      !this-&gt;simulation_control-&gt;is_refinement_step(</div>
-<div class="line"><a id="l01821" name="l01821"></a><span class="lineno"> 1821</span>        this-&gt;simulation_parameters.mesh_adaptation) ||</div>
-<div class="line"><a id="l01822" name="l01822"></a><span class="lineno"> 1822</span>      this-&gt;simulation_parameters.mesh_adaptation.type ==</div>
-<div class="line"><a id="l01823" name="l01823"></a><span class="lineno"> 1823</span>        <a class="code hl_enumvalue" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::MeshAdaptation::Type::none</a>)</div>
-<div class="line"><a id="l01824" name="l01824"></a><span class="lineno"> 1824</span>    {</div>
-<div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>      <span class="comment">// Now reset system matrix</span></div>
-<div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>      this-&gt;system_matrix.clear();</div>
-<div class="line"><a id="l01827" name="l01827"></a><span class="lineno"> 1827</span> </div>
-<div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span>      <span class="comment">// Rotate mapping</span></div>
-<div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span>      this-&gt;rotate_rotor_mapping();</div>
-<div class="line"><a id="l01830" name="l01830"></a><span class="lineno"> 1830</span> </div>
-<div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span>      define_non_zero_constraints();</div>
-<div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span> </div>
-<div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span>      <span class="comment">// Boundary conditions for Newton correction</span></div>
-<div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span>      define_zero_constraints();</div>
-<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span> </div>
-<div class="line"><a id="l01836" name="l01836"></a><span class="lineno"> 1836</span>      <span class="comment">// Create mortar manager, operator, and evaluator</span></div>
-<div class="line"><a id="l01837" name="l01837"></a><span class="lineno"> 1837</span>      this-&gt;reinit_mortar_operators();</div>
-<div class="line"><a id="l01838" name="l01838"></a><span class="lineno"> 1838</span> </div>
-<div class="line"><a id="l01839" name="l01839"></a><span class="lineno"> 1839</span>      <span class="comment">// Sparse matrices initialization</span></div>
-<div class="line"><a id="l01840" name="l01840"></a><span class="lineno"> 1840</span>      DynamicSparsityPattern dsp(locally_relevant_dofs);</div>
-<div class="line"><a id="l01841" name="l01841"></a><span class="lineno"> 1841</span> </div>
+<div class="line"><a id="l01804" name="l01804"></a><span class="lineno"> 1804</span> </div>
+<div class="line"><a id="l01805" name="l01805"></a><span class="lineno"> 1805</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01806" name="l01806"></a><span class="lineno"> 1806</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01807" data-start="{" data-end="}">
+<div class="line"><a id="l01807" name="l01807"></a><span class="lineno"><a class="line" href="classTracer.html#a0dea3d3523aba26cc94a04f77167a2d5"> 1807</a></span><a class="code hl_function" href="classTracer.html#a0dea3d3523aba26cc94a04f77167a2d5">Tracer&lt;dim&gt;::update_mortar_configuration</a>()</div>
+<div class="line"><a id="l01808" name="l01808"></a><span class="lineno"> 1808</span>{</div>
+<div class="line"><a id="l01809" name="l01809"></a><span class="lineno"> 1809</span>  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.mortar_parameters.enable)</div>
+<div class="line"><a id="l01810" name="l01810"></a><span class="lineno"> 1810</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l01811" name="l01811"></a><span class="lineno"> 1811</span> </div>
+<div class="line"><a id="l01812" name="l01812"></a><span class="lineno"> 1812</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Update mortar configuration&quot;</span>);</div>
+<div class="line"><a id="l01813" name="l01813"></a><span class="lineno"> 1813</span> </div>
+<div class="line"><a id="l01814" name="l01814"></a><span class="lineno"> 1814</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_mpi_communicator();</div>
+<div class="line"><a id="l01815" name="l01815"></a><span class="lineno"> 1815</span> </div>
+<div class="line"><a id="l01816" name="l01816"></a><span class="lineno"> 1816</span>  <span class="comment">// We need to update the mortar operator/evaluator, as well as the sparsity</span></div>
+<div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span>  <span class="comment">// pattern, at every iteration. Since this is already done within</span></div>
+<div class="line"><a id="l01818" name="l01818"></a><span class="lineno"> 1818</span>  <span class="comment">// setup_dofs(), which is called in refine_mesh(), here we make sure that,</span></div>
+<div class="line"><a id="l01819" name="l01819"></a><span class="lineno"> 1819</span>  <span class="comment">// when there is no mesh refinement, the mortar information is still updated</span></div>
+<div class="line"><a id="l01820" name="l01820"></a><span class="lineno"> 1820</span>  <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;is_at_start() ||</div>
+<div class="line"><a id="l01821" name="l01821"></a><span class="lineno"> 1821</span>      !this-&gt;simulation_control-&gt;is_refinement_step(</div>
+<div class="line"><a id="l01822" name="l01822"></a><span class="lineno"> 1822</span>        this-&gt;simulation_parameters.mesh_adaptation) ||</div>
+<div class="line"><a id="l01823" name="l01823"></a><span class="lineno"> 1823</span>      this-&gt;simulation_parameters.mesh_adaptation.type ==</div>
+<div class="line"><a id="l01824" name="l01824"></a><span class="lineno"> 1824</span>        <a class="code hl_enumvalue" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::MeshAdaptation::Type::none</a>)</div>
+<div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>    {</div>
+<div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>      <span class="comment">// Now reset system matrix</span></div>
+<div class="line"><a id="l01827" name="l01827"></a><span class="lineno"> 1827</span>      this-&gt;system_matrix.clear();</div>
+<div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span> </div>
+<div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span>      <span class="comment">// Rotate mapping</span></div>
+<div class="line"><a id="l01830" name="l01830"></a><span class="lineno"> 1830</span>      this-&gt;rotate_rotor_mapping();</div>
+<div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span> </div>
+<div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span>      define_non_zero_constraints();</div>
+<div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span> </div>
+<div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span>      <span class="comment">// Boundary conditions for Newton correction</span></div>
+<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span>      define_zero_constraints();</div>
+<div class="line"><a id="l01836" name="l01836"></a><span class="lineno"> 1836</span> </div>
+<div class="line"><a id="l01837" name="l01837"></a><span class="lineno"> 1837</span>      <span class="comment">// Create mortar manager, operator, and evaluator</span></div>
+<div class="line"><a id="l01838" name="l01838"></a><span class="lineno"> 1838</span>      this-&gt;reinit_mortar_operators();</div>
+<div class="line"><a id="l01839" name="l01839"></a><span class="lineno"> 1839</span> </div>
+<div class="line"><a id="l01840" name="l01840"></a><span class="lineno"> 1840</span>      <span class="comment">// Sparse matrices initialization</span></div>
+<div class="line"><a id="l01841" name="l01841"></a><span class="lineno"> 1841</span>      DynamicSparsityPattern dsp(locally_relevant_dofs);</div>
 <div class="line"><a id="l01842" name="l01842"></a><span class="lineno"> 1842</span> </div>
-<div class="line"><a id="l01843" name="l01843"></a><span class="lineno"> 1843</span>      <span class="keywordflow">if</span> (simulation_parameters.fem_parameters.tracer_uses_dg)</div>
-<div class="line"><a id="l01844" name="l01844"></a><span class="lineno"> 1844</span>        {</div>
-<div class="line"><a id="l01845" name="l01845"></a><span class="lineno"> 1845</span>          DoFTools::make_flux_sparsity_pattern(</div>
-<div class="line"><a id="l01846" name="l01846"></a><span class="lineno"> 1846</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01847" name="l01847"></a><span class="lineno"> 1847</span>            dsp,</div>
-<div class="line"><a id="l01848" name="l01848"></a><span class="lineno"> 1848</span>            nonzero_constraints,</div>
-<div class="line"><a id="l01849" name="l01849"></a><span class="lineno"> 1849</span>            <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
-<div class="line"><a id="l01850" name="l01850"></a><span class="lineno"> 1850</span>        }</div>
-<div class="line"><a id="l01851" name="l01851"></a><span class="lineno"> 1851</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01852" name="l01852"></a><span class="lineno"> 1852</span>        {</div>
-<div class="line"><a id="l01853" name="l01853"></a><span class="lineno"> 1853</span>          DoFTools::make_sparsity_pattern(*this-&gt;dof_handler,</div>
-<div class="line"><a id="l01854" name="l01854"></a><span class="lineno"> 1854</span>                                          dsp,</div>
-<div class="line"><a id="l01855" name="l01855"></a><span class="lineno"> 1855</span>                                          nonzero_constraints,</div>
-<div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span>                                          <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
-<div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span>        }</div>
-<div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span> </div>
+<div class="line"><a id="l01843" name="l01843"></a><span class="lineno"> 1843</span> </div>
+<div class="line"><a id="l01844" name="l01844"></a><span class="lineno"> 1844</span>      <span class="keywordflow">if</span> (simulation_parameters.fem_parameters.tracer_uses_dg)</div>
+<div class="line"><a id="l01845" name="l01845"></a><span class="lineno"> 1845</span>        {</div>
+<div class="line"><a id="l01846" name="l01846"></a><span class="lineno"> 1846</span>          DoFTools::make_flux_sparsity_pattern(</div>
+<div class="line"><a id="l01847" name="l01847"></a><span class="lineno"> 1847</span>            *this-&gt;dof_handler,</div>
+<div class="line"><a id="l01848" name="l01848"></a><span class="lineno"> 1848</span>            dsp,</div>
+<div class="line"><a id="l01849" name="l01849"></a><span class="lineno"> 1849</span>            nonzero_constraints,</div>
+<div class="line"><a id="l01850" name="l01850"></a><span class="lineno"> 1850</span>            <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
+<div class="line"><a id="l01851" name="l01851"></a><span class="lineno"> 1851</span>        }</div>
+<div class="line"><a id="l01852" name="l01852"></a><span class="lineno"> 1852</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01853" name="l01853"></a><span class="lineno"> 1853</span>        {</div>
+<div class="line"><a id="l01854" name="l01854"></a><span class="lineno"> 1854</span>          DoFTools::make_sparsity_pattern(*this-&gt;dof_handler,</div>
+<div class="line"><a id="l01855" name="l01855"></a><span class="lineno"> 1855</span>                                          dsp,</div>
+<div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span>                                          nonzero_constraints,</div>
+<div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span>                                          <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
+<div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span>        }</div>
 <div class="line"><a id="l01859" name="l01859"></a><span class="lineno"> 1859</span> </div>
-<div class="line"><a id="l01860" name="l01860"></a><span class="lineno"> 1860</span>      <span class="comment">// Add sparsity pattern entries</span></div>
-<div class="line"><a id="l01861" name="l01861"></a><span class="lineno"> 1861</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar_parameters.enable)</div>
-<div class="line"><a id="l01862" name="l01862"></a><span class="lineno"> 1862</span>        this-&gt;mortar_coupling_operator-&gt;add_sparsity_pattern_entries(dsp);</div>
-<div class="line"><a id="l01863" name="l01863"></a><span class="lineno"> 1863</span> </div>
-<div class="line"><a id="l01864" name="l01864"></a><span class="lineno"> 1864</span>      SparsityTools::distribute_sparsity_pattern(dsp,</div>
-<div class="line"><a id="l01865" name="l01865"></a><span class="lineno"> 1865</span>                                                 locally_owned_dofs,</div>
-<div class="line"><a id="l01866" name="l01866"></a><span class="lineno"> 1866</span>                                                 mpi_communicator,</div>
-<div class="line"><a id="l01867" name="l01867"></a><span class="lineno"> 1867</span>                                                 locally_relevant_dofs);</div>
-<div class="line"><a id="l01868" name="l01868"></a><span class="lineno"> 1868</span>      system_matrix.reinit(locally_owned_dofs,</div>
-<div class="line"><a id="l01869" name="l01869"></a><span class="lineno"> 1869</span>                           locally_owned_dofs,</div>
-<div class="line"><a id="l01870" name="l01870"></a><span class="lineno"> 1870</span>                           dsp,</div>
-<div class="line"><a id="l01871" name="l01871"></a><span class="lineno"> 1871</span>                           mpi_communicator);</div>
-<div class="line"><a id="l01872" name="l01872"></a><span class="lineno"> 1872</span>    }</div>
-<div class="line"><a id="l01873" name="l01873"></a><span class="lineno"> 1873</span>}</div>
+<div class="line"><a id="l01860" name="l01860"></a><span class="lineno"> 1860</span> </div>
+<div class="line"><a id="l01861" name="l01861"></a><span class="lineno"> 1861</span>      <span class="comment">// Add sparsity pattern entries</span></div>
+<div class="line"><a id="l01862" name="l01862"></a><span class="lineno"> 1862</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar_parameters.enable)</div>
+<div class="line"><a id="l01863" name="l01863"></a><span class="lineno"> 1863</span>        this-&gt;mortar_coupling_operator-&gt;add_sparsity_pattern_entries(dsp);</div>
+<div class="line"><a id="l01864" name="l01864"></a><span class="lineno"> 1864</span> </div>
+<div class="line"><a id="l01865" name="l01865"></a><span class="lineno"> 1865</span>      SparsityTools::distribute_sparsity_pattern(dsp,</div>
+<div class="line"><a id="l01866" name="l01866"></a><span class="lineno"> 1866</span>                                                 locally_owned_dofs,</div>
+<div class="line"><a id="l01867" name="l01867"></a><span class="lineno"> 1867</span>                                                 mpi_communicator,</div>
+<div class="line"><a id="l01868" name="l01868"></a><span class="lineno"> 1868</span>                                                 locally_relevant_dofs);</div>
+<div class="line"><a id="l01869" name="l01869"></a><span class="lineno"> 1869</span>      system_matrix.reinit(locally_owned_dofs,</div>
+<div class="line"><a id="l01870" name="l01870"></a><span class="lineno"> 1870</span>                           locally_owned_dofs,</div>
+<div class="line"><a id="l01871" name="l01871"></a><span class="lineno"> 1871</span>                           dsp,</div>
+<div class="line"><a id="l01872" name="l01872"></a><span class="lineno"> 1872</span>                           mpi_communicator);</div>
+<div class="line"><a id="l01873" name="l01873"></a><span class="lineno"> 1873</span>    }</div>
+<div class="line"><a id="l01874" name="l01874"></a><span class="lineno"> 1874</span>}</div>
 </div>
-<div class="line"><a id="l01874" name="l01874"></a><span class="lineno"> 1874</span> </div>
-<div class="line"><a id="l01875" name="l01875"></a><span class="lineno"> 1875</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;2&gt;</a>;</div>
-<div class="line"><a id="l01876" name="l01876"></a><span class="lineno"> 1876</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;3&gt;</a>;</div>
+<div class="line"><a id="l01875" name="l01875"></a><span class="lineno"> 1875</span> </div>
+<div class="line"><a id="l01876" name="l01876"></a><span class="lineno"> 1876</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;2&gt;</a>;</div>
+<div class="line"><a id="l01877" name="l01877"></a><span class="lineno"> 1877</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="aclassStabilizedDGMethodsCopyData_html"><div class="ttname"><a href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a></div><div class="ttdoc">Responsible for storing the information calculated using the discontinuous galerkin (DG) assembly of ...</div><div class="ttdef"><b>Definition</b> <a href="copy__data_8h_source.html#l00125">copy_data.h:126</a></div></div>
 <div class="ttc" id="aclassStabilizedDGMethodsCopyData_html_a640d8d13ddb024540d51a17c8677ac8c"><div class="ttname"><a href="classStabilizedDGMethodsCopyData.html#a640d8d13ddb024540d51a17c8677ac8c">StabilizedDGMethodsCopyData::face_data</a></div><div class="ttdeci">std::vector&lt; CopyDataFace &gt; face_data</div><div class="ttdef"><b>Definition</b> <a href="copy__data_8h_source.html#l00148">copy_data.h:148</a></div></div>
@@ -2069,42 +2070,42 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassTracerScratchData_html_aad1d29284d5e890a1f49f547911434bf"><div class="ttname"><a href="classTracerScratchData.html#aad1d29284d5e890a1f49f547911434bf">TracerScratchData::reinit_mortar</a></div><div class="ttdeci">void reinit_mortar(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const Parameters::Mortar&lt; dim &gt; &amp;mortar_parameters, const double &amp;time)</div><div class="ttdoc">Renitialize the content of the scratch data for mortar.</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00502">tracer_scratch_data.h:502</a></div></div>
 <div class="ttc" id="aclassTracerScratchData_html_afd65777a054d80408e8bfffc25dc9fd0"><div class="ttname"><a href="classTracerScratchData.html#afd65777a054d80408e8bfffc25dc9fd0">TracerScratchData::reinit</a></div><div class="ttdeci">void reinit(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions, const Function&lt; dim &gt; *source_function)</div><div class="ttdoc">Reinitializes the content of the scratch.</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00144">tracer_scratch_data.h:144</a></div></div>
 <div class="ttc" id="aclassTracer_html"><div class="ttname"><a href="classTracer.html">Tracer</a></div><div class="ttdef"><b>Definition</b> <a href="tracer_8h_source.html#l00052">tracer.h:53</a></div></div>
-<div class="ttc" id="aclassTracer_html_a0028e0bd8742d8e98488ed428fe9e2b0"><div class="ttname"><a href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0">Tracer::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system() override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01644">tracer.cc:1644</a></div></div>
+<div class="ttc" id="aclassTracer_html_a0028e0bd8742d8e98488ed428fe9e2b0"><div class="ttname"><a href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0">Tracer::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system() override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01645">tracer.cc:1645</a></div></div>
 <div class="ttc" id="aclassTracer_html_a03a741348bdd0c0b661d6c8ff1ec489d"><div class="ttname"><a href="classTracer.html#a03a741348bdd0c0b661d6c8ff1ec489d">Tracer::assemble_system_rhs_cg</a></div><div class="ttdeci">void assemble_system_rhs_cg()</div><div class="ttdoc">Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream p...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00411">tracer.cc:411</a></div></div>
 <div class="ttc" id="aclassTracer_html_a0a252bcc7b27a68eece263ff2623b3b1"><div class="ttname"><a href="classTracer.html#a0a252bcc7b27a68eece263ff2623b3b1">Tracer::gather_tables</a></div><div class="ttdeci">std::vector&lt; OutputStructTableHandler &gt; gather_tables() override</div><div class="ttdoc">Returns a vector of references to TableHandler objects that needs to be serialized/deserialized for t...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01185">tracer.cc:1185</a></div></div>
-<div class="ttc" id="aclassTracer_html_a0dea3d3523aba26cc94a04f77167a2d5"><div class="ttname"><a href="classTracer.html#a0dea3d3523aba26cc94a04f77167a2d5">Tracer::update_mortar_configuration</a></div><div class="ttdeci">void update_mortar_configuration()</div><div class="ttdoc">Update mortar configuration.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01806">tracer.cc:1806</a></div></div>
+<div class="ttc" id="aclassTracer_html_a0dea3d3523aba26cc94a04f77167a2d5"><div class="ttname"><a href="classTracer.html#a0dea3d3523aba26cc94a04f77167a2d5">Tracer::update_mortar_configuration</a></div><div class="ttdeci">void update_mortar_configuration()</div><div class="ttdoc">Update mortar configuration.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01807">tracer.cc:1807</a></div></div>
 <div class="ttc" id="aclassTracer_html_a12866b1322b64054e5dfff2571df661f"><div class="ttname"><a href="classTracer.html#a12866b1322b64054e5dfff2571df661f">Tracer::assemble_system_matrix_dg</a></div><div class="ttdeci">void assemble_system_matrix_dg()</div><div class="ttdoc">Assembles the matrix associated with the solver when DG elements are used. This uses the MeshWorker p...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00141">tracer.cc:141</a></div></div>
 <div class="ttc" id="aclassTracer_html_a18399604e964cdbaecf39baef51c4d61"><div class="ttname"><a href="classTracer.html#a18399604e964cdbaecf39baef51c4d61">Tracer::write_checkpoint</a></div><div class="ttdeci">void write_checkpoint() override</div><div class="ttdoc">Prepares Tracer physics to write checkpoint.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01218">tracer.cc:1218</a></div></div>
 <div class="ttc" id="aclassTracer_html_a2c7643f181f0e0eb7638d89471b4ac83"><div class="ttname"><a href="classTracer.html#a2c7643f181f0e0eb7638d89471b4ac83">Tracer::write_tracer_flow_rates</a></div><div class="ttdeci">void write_tracer_flow_rates(const std::map&lt; types::boundary_id, double &gt; &amp;tracer_flow_rate_vector)</div><div class="ttdoc">Writes the tracer flow rates to an output file.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01083">tracer.cc:1083</a></div></div>
-<div class="ttc" id="aclassTracer_html_a36c79997594bd97da510831b6ad94e0e"><div class="ttname"><a href="classTracer.html#a36c79997594bd97da510831b6ad94e0e">Tracer::compute_kelly</a></div><div class="ttdeci">void compute_kelly(dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell, const ComponentMask &amp;component_mask)</div><div class="ttdoc">Compute the Kelly error estimator on the tracer variable for mesh refinement. See : https://www....</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01535">tracer.cc:1535</a></div></div>
+<div class="ttc" id="aclassTracer_html_a36c79997594bd97da510831b6ad94e0e"><div class="ttname"><a href="classTracer.html#a36c79997594bd97da510831b6ad94e0e">Tracer::compute_kelly</a></div><div class="ttdeci">void compute_kelly(dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell, const ComponentMask &amp;component_mask)</div><div class="ttdoc">Compute the Kelly error estimator on the tracer variable for mesh refinement. See : https://www....</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01536">tracer.cc:1536</a></div></div>
 <div class="ttc" id="aclassTracer_html_a3e0c10786164903ae8148de471c5fb99"><div class="ttname"><a href="classTracer.html#a3e0c10786164903ae8148de471c5fb99">Tracer::assemble_system_rhs_dg</a></div><div class="ttdeci">void assemble_system_rhs_dg()</div><div class="ttdoc">Assembles the rhs associated with the solver when DG elements are used. This uses the MeshWorker para...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00453">tracer.cc:453</a></div></div>
-<div class="ttc" id="aclassTracer_html_a427e7f8f625553d7581cfc10f4185e10"><div class="ttname"><a href="classTracer.html#a427e7f8f625553d7581cfc10f4185e10">Tracer::define_non_zero_constraints</a></div><div class="ttdeci">void define_non_zero_constraints()</div><div class="ttdoc">Define the non-zero constraints used to solve the problem.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01458">tracer.cc:1458</a></div></div>
+<div class="ttc" id="aclassTracer_html_a427e7f8f625553d7581cfc10f4185e10"><div class="ttname"><a href="classTracer.html#a427e7f8f625553d7581cfc10f4185e10">Tracer::define_non_zero_constraints</a></div><div class="ttdeci">void define_non_zero_constraints()</div><div class="ttdoc">Define the non-zero constraints used to solve the problem.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01459">tracer.cc:1459</a></div></div>
 <div class="ttc" id="aclassTracer_html_a43f8facd06187b6f2e2f219883e2a698"><div class="ttname"><a href="classTracer.html#a43f8facd06187b6f2e2f219883e2a698">Tracer::copy_local_rhs_to_global_rhs</a></div><div class="ttdeci">virtual void copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Copy local cell rhs information to global rhs.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00682">tracer.cc:682</a></div></div>
 <div class="ttc" id="aclassTracer_html_a491e4202d0eae76c48c4c1f6cf6abe0f"><div class="ttname"><a href="classTracer.html#a491e4202d0eae76c48c4c1f6cf6abe0f">Tracer::assemble_local_system_matrix</a></div><div class="ttdeci">virtual void assemble_local_system_matrix(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, TracerScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Assemble the local matrix for a given cell.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00276">tracer.cc:276</a></div></div>
 <div class="ttc" id="aclassTracer_html_a4e0ff8ba911c592a91286beeda7955c6"><div class="ttname"><a href="classTracer.html#a4e0ff8ba911c592a91286beeda7955c6">Tracer::calculate_L2_error</a></div><div class="ttdeci">double calculate_L2_error()</div><div class="ttdoc">Calculates the L2 error of the solution.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00714">tracer.cc:714</a></div></div>
 <div class="ttc" id="aclassTracer_html_a57a99174155bd6cfdfa9f944cf1c05d1"><div class="ttname"><a href="classTracer.html#a57a99174155bd6cfdfa9f944cf1c05d1">Tracer::assemble_system_matrix_cg</a></div><div class="ttdeci">void assemble_system_matrix_cg()</div><div class="ttdoc">Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream p...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00104">tracer.cc:104</a></div></div>
 <div class="ttc" id="aclassTracer_html_a5c2e4178c68808459672f3607e0b80b1"><div class="ttname"><a href="classTracer.html#a5c2e4178c68808459672f3607e0b80b1">Tracer::pre_mesh_adaptation</a></div><div class="ttdeci">void pre_mesh_adaptation() override</div><div class="ttdoc">pre_mesh_adaption Prepares the auxiliary physics variables for a mesh refinement/coarsening</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01143">tracer.cc:1143</a></div></div>
-<div class="ttc" id="aclassTracer_html_a615256a1ba25049e22a78e59176739a5"><div class="ttname"><a href="classTracer.html#a615256a1ba25049e22a78e59176739a5">Tracer::rotate_rotor_mapping</a></div><div class="ttdeci">void rotate_rotor_mapping()</div><div class="ttdoc">Rotate rotor mapping in mortar method.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01772">tracer.cc:1772</a></div></div>
+<div class="ttc" id="aclassTracer_html_a615256a1ba25049e22a78e59176739a5"><div class="ttname"><a href="classTracer.html#a615256a1ba25049e22a78e59176739a5">Tracer::rotate_rotor_mapping</a></div><div class="ttdeci">void rotate_rotor_mapping()</div><div class="ttdoc">Rotate rotor mapping in mortar method.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01773">tracer.cc:1773</a></div></div>
 <div class="ttc" id="aclassTracer_html_a6c10ff5606b5cf3ba53ab44bd1e8a076"><div class="ttname"><a href="classTracer.html#a6c10ff5606b5cf3ba53ab44bd1e8a076">Tracer::assemble_system_matrix</a></div><div class="ttdeci">void assemble_system_matrix() override</div><div class="ttdoc">Assembles the matrix associated with the solver.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00085">tracer.cc:85</a></div></div>
 <div class="ttc" id="aclassTracer_html_a795a508e06b9df7eff9187203b4be415"><div class="ttname"><a href="classTracer.html#a795a508e06b9df7eff9187203b4be415">Tracer::post_mesh_adaptation</a></div><div class="ttdeci">void post_mesh_adaptation() override</div><div class="ttdoc">post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01156">tracer.cc:1156</a></div></div>
 <div class="ttc" id="aclassTracer_html_a96d3194cc9e920c50b639a13be7ceb65"><div class="ttname"><a href="classTracer.html#a96d3194cc9e920c50b639a13be7ceb65">Tracer::assemble_local_system_rhs</a></div><div class="ttdeci">virtual void assemble_local_system_rhs(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, TracerScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Assemble the local rhs for a given cell.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00582">tracer.cc:582</a></div></div>
 <div class="ttc" id="aclassTracer_html_a9965b466837ae2879ee0763ec928ec8e"><div class="ttname"><a href="classTracer.html#a9965b466837ae2879ee0763ec928ec8e">Tracer::write_tracer_statistics</a></div><div class="ttdeci">void write_tracer_statistics()</div><div class="ttdoc">Writes the tracer statistics to an output file.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01125">tracer.cc:1125</a></div></div>
 <div class="ttc" id="aclassTracer_html_aa2505b526801876bb0e18dd02d6e7c73"><div class="ttname"><a href="classTracer.html#aa2505b526801876bb0e18dd02d6e7c73">Tracer::setup_assemblers</a></div><div class="ttdeci">virtual void setup_assemblers()</div><div class="ttdoc">sets up the vector of assembler functions</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00036">tracer.cc:36</a></div></div>
-<div class="ttc" id="aclassTracer_html_aa403435dbd466e2e896452662bb16ade"><div class="ttname"><a href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions() override</div><div class="ttdoc">Update non zero constraints if the boundary is time-dependent.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01367">tracer.cc:1367</a></div></div>
-<div class="ttc" id="aclassTracer_html_aa87532222bb62eb857392b15bb08fe06"><div class="ttname"><a href="classTracer.html#aa87532222bb62eb857392b15bb08fe06">Tracer::reinit_mortar_operators</a></div><div class="ttdeci">void reinit_mortar_operators()</div><div class="ttdoc">Initialize mortar coupling manager, operator, and evaluator.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01727">tracer.cc:1727</a></div></div>
-<div class="ttc" id="aclassTracer_html_ab09781c62a32bbf7bfcc87e501deb8a0"><div class="ttname"><a href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer::set_initial_conditions</a></div><div class="ttdeci">void set_initial_conditions() override</div><div class="ttdoc">Sets-up the initial conditions associated with the physics. Generally, physics only support imposing ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01499">tracer.cc:1499</a></div></div>
+<div class="ttc" id="aclassTracer_html_aa403435dbd466e2e896452662bb16ade"><div class="ttname"><a href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions() override</div><div class="ttdoc">Update non zero constraints if the boundary is time-dependent.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01368">tracer.cc:1368</a></div></div>
+<div class="ttc" id="aclassTracer_html_aa87532222bb62eb857392b15bb08fe06"><div class="ttname"><a href="classTracer.html#aa87532222bb62eb857392b15bb08fe06">Tracer::reinit_mortar_operators</a></div><div class="ttdeci">void reinit_mortar_operators()</div><div class="ttdoc">Initialize mortar coupling manager, operator, and evaluator.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01728">tracer.cc:1728</a></div></div>
+<div class="ttc" id="aclassTracer_html_ab09781c62a32bbf7bfcc87e501deb8a0"><div class="ttname"><a href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer::set_initial_conditions</a></div><div class="ttdeci">void set_initial_conditions() override</div><div class="ttdoc">Sets-up the initial conditions associated with the physics. Generally, physics only support imposing ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01500">tracer.cc:1500</a></div></div>
 <div class="ttc" id="aclassTracer_html_ac03b008aba02e9b4a43562d3b2857039"><div class="ttname"><a href="classTracer.html#ac03b008aba02e9b4a43562d3b2857039">Tracer::percolate_time_vectors</a></div><div class="ttdeci">void percolate_time_vectors() override</div><div class="ttdoc">Rearrange vector solution correctly for transient simulations.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00794">tracer.cc:794</a></div></div>
-<div class="ttc" id="aclassTracer_html_ac43b71a2da0101fa9e796e9715bfc384"><div class="ttname"><a href="classTracer.html#ac43b71a2da0101fa9e796e9715bfc384">Tracer::compute_error_estimate</a></div><div class="ttdeci">void compute_error_estimate(const std::pair&lt; const Variable, Parameters::MultipleAdaptationParameters &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</div><div class="ttdoc">Compute the error estimator for mesh refinement.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01512">tracer.cc:1512</a></div></div>
+<div class="ttc" id="aclassTracer_html_ac43b71a2da0101fa9e796e9715bfc384"><div class="ttname"><a href="classTracer.html#ac43b71a2da0101fa9e796e9715bfc384">Tracer::compute_error_estimate</a></div><div class="ttdeci">void compute_error_estimate(const std::pair&lt; const Variable, Parameters::MultipleAdaptationParameters &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</div><div class="ttdoc">Compute the error estimator for mesh refinement.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01513">tracer.cc:1513</a></div></div>
 <div class="ttc" id="aclassTracer_html_ac4b7c30629b580945490919c0427db12"><div class="ttname"><a href="classTracer.html#ac4b7c30629b580945490919c0427db12">Tracer::postprocess</a></div><div class="ttdeci">void postprocess(bool first_iteration) override</div><div class="ttdoc">Postprocess the auxiliary physics results. Post-processing this case implies the calculation of all d...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00805">tracer.cc:805</a></div></div>
 <div class="ttc" id="aclassTracer_html_acde0311373b63944d1201d3ebce09aa2"><div class="ttname"><a href="classTracer.html#acde0311373b63944d1201d3ebce09aa2">Tracer::copy_local_matrix_to_global_matrix</a></div><div class="ttdeci">virtual void copy_local_matrix_to_global_matrix(const StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Copy local cell information to global matrix.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00374">tracer.cc:374</a></div></div>
 <div class="ttc" id="aclassTracer_html_ad8ca9f8d848ec5159227bd766471f5c6"><div class="ttname"><a href="classTracer.html#ad8ca9f8d848ec5159227bd766471f5c6">Tracer::assemble_system_rhs</a></div><div class="ttdeci">void assemble_system_rhs() override</div><div class="ttdoc">Assemble the rhs associated with the solver.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00388">tracer.cc:388</a></div></div>
 <div class="ttc" id="aclassTracer_html_adcc81d835a1e2e9b71ea0c897d16dcf9"><div class="ttname"><a href="classTracer.html#adcc81d835a1e2e9b71ea0c897d16dcf9">Tracer::calculate_tracer_statistics</a></div><div class="ttdeci">void calculate_tracer_statistics()</div><div class="ttdoc">Calculate tracer statistics : Max, min, average and standard-deviation.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00870">tracer.cc:870</a></div></div>
-<div class="ttc" id="aclassTracer_html_adfd00a053f4c64c2fb72b24f1afeec77"><div class="ttname"><a href="classTracer.html#adfd00a053f4c64c2fb72b24f1afeec77">Tracer::setup_ilu</a></div><div class="ttdeci">void setup_ilu()</div><div class="ttdoc">Set up the ILU preconditioner stored in ilu_preconditioner.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01550">tracer.cc:1550</a></div></div>
+<div class="ttc" id="aclassTracer_html_adfd00a053f4c64c2fb72b24f1afeec77"><div class="ttname"><a href="classTracer.html#adfd00a053f4c64c2fb72b24f1afeec77">Tracer::setup_ilu</a></div><div class="ttdeci">void setup_ilu()</div><div class="ttdoc">Set up the ILU preconditioner stored in ilu_preconditioner.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01551">tracer.cc:1551</a></div></div>
 <div class="ttc" id="aclassTracer_html_ae9356d51b14f4d8db3505e21e179d82c"><div class="ttname"><a href="classTracer.html#ae9356d51b14f4d8db3505e21e179d82c">Tracer::finish_simulation</a></div><div class="ttdeci">void finish_simulation() override</div><div class="ttdoc">Carry out the operations required to finish a simulation correctly.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00759">tracer.cc:759</a></div></div>
 <div class="ttc" id="aclassTracer_html_aeb8ac98be79872fb1ea9d30414e8cc5a"><div class="ttname"><a href="classTracer.html#aeb8ac98be79872fb1ea9d30414e8cc5a">Tracer::read_checkpoint</a></div><div class="ttdeci">void read_checkpoint() override</div><div class="ttdoc">Allows tracer physics to set up solution vector from checkpoint file;.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01242">tracer.cc:1242</a></div></div>
 <div class="ttc" id="aclassTracer_html_aed23220122e490c3ebda3336276adf3a"><div class="ttname"><a href="classTracer.html#aed23220122e490c3ebda3336276adf3a">Tracer::gather_output_hook</a></div><div class="ttdeci">virtual std::vector&lt; OutputStruct&lt; dim, GlobalVectorType &gt; &gt; gather_output_hook() override</div><div class="ttdoc">Gather and return vector of output structs that are particular to some applications.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00696">tracer.cc:696</a></div></div>
-<div class="ttc" id="aclassTracer_html_af1a53402c223f1f7a57d9af13390015e"><div class="ttname"><a href="classTracer.html#af1a53402c223f1f7a57d9af13390015e">Tracer::define_zero_constraints</a></div><div class="ttdeci">void define_zero_constraints()</div><div class="ttdoc">Define the zero constraints used to solve the problem.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01419">tracer.cc:1419</a></div></div>
-<div class="ttc" id="aclassTracer_html_af2d10f4719c1fe42a9883441aacc4eae"><div class="ttname"><a href="classTracer.html#af2d10f4719c1fe42a9883441aacc4eae">Tracer::setup_amg</a></div><div class="ttdeci">void setup_amg()</div><div class="ttdoc">Set up the AMG preconditioner stored in amg_preconditioner.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01570">tracer.cc:1570</a></div></div>
+<div class="ttc" id="aclassTracer_html_af1a53402c223f1f7a57d9af13390015e"><div class="ttname"><a href="classTracer.html#af1a53402c223f1f7a57d9af13390015e">Tracer::define_zero_constraints</a></div><div class="ttdeci">void define_zero_constraints()</div><div class="ttdoc">Define the zero constraints used to solve the problem.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01420">tracer.cc:1420</a></div></div>
+<div class="ttc" id="aclassTracer_html_af2d10f4719c1fe42a9883441aacc4eae"><div class="ttname"><a href="classTracer.html#af2d10f4719c1fe42a9883441aacc4eae">Tracer::setup_amg</a></div><div class="ttdeci">void setup_amg()</div><div class="ttdoc">Set up the AMG preconditioner stored in amg_preconditioner.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01571">tracer.cc:1571</a></div></div>
 <div class="ttc" id="aclassTracer_html_af8dfb40376adc77b7bc9236fa7de3689"><div class="ttname"><a href="classTracer.html#af8dfb40376adc77b7bc9236fa7de3689">Tracer::setup_dofs</a></div><div class="ttdeci">void setup_dofs() override</div><div class="ttdoc">Sets-up the DofHandler and the degree of freedom associated with the physics.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01279">tracer.cc:1279</a></div></div>
 <div class="ttc" id="aclassTracer_html_af90f22587fcaa2edc164be3b7af9b6df"><div class="ttname"><a href="classTracer.html#af90f22587fcaa2edc164be3b7af9b6df">Tracer::postprocess_tracer_flow_rate</a></div><div class="ttdeci">std::map&lt; types::boundary_id, double &gt; postprocess_tracer_flow_rate(const GlobalVectorType &amp;current_solution_fd)</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00965">tracer.cc:965</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html"><div class="ttname"><a href="core_2utilities_8h.html">utilities.h</a></div></div>
