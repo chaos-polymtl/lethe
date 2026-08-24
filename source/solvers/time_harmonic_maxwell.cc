@@ -2057,8 +2057,6 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
     ExcMessage(
       "The time harmonic electromagnetism physics does not support a preconditioner. Please set: subsection linear solver -> subsection electromagnetics -> set preconditioner = none."));
 
-  auto mpi_communicator = this->triangulation->get_mpi_communicator();
-
   // Define the linear solver tolerance
   const double absolute_residual =
     simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
