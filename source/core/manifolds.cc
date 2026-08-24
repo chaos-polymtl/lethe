@@ -22,7 +22,7 @@ namespace Parameters
                       "Choices are <none|spherical|cylindrical|iges>.");
 
     prm.declare_entry(
-      "boundary id",
+      "id",
       Utilities::int_to_string(i_bc, 2),
       Patterns::List(Patterns::Integer()),
       "IDs of boundaries to which the manifold will be applied");
@@ -47,7 +47,7 @@ namespace Parameters
   {
     // Parse the list of boundary IDs for the current manifold type
     std::vector<unsigned int> ids_current =
-      convert_string_to_vector<unsigned int>(prm, "boundary id");
+      convert_string_to_vector<unsigned int>(prm, "id");
 
     for (unsigned int i = 0; i < ids_current.size(); ++i)
       {
@@ -77,8 +77,7 @@ namespace Parameters
       prm.declare_entry("number",
                         "0",
                         Patterns::Integer(),
-                        "Number of boundary conditions");
-      types.resize(subsection_max_size);
+                        "Number of manifolds");
       for (unsigned int i = 0; i < subsection_max_size; i++)
         {
           prm.enter_subsection("manifold " + Utilities::int_to_string(i));
@@ -94,8 +93,7 @@ namespace Parameters
   {
     prm.enter_subsection("manifolds");
     {
-      number_of_manifolds = prm.get_integer("number");
-      types.resize(number_of_manifolds);
+      this->number_of_manifolds = prm.get_integer("number");
 
       for (unsigned int i = 0; i < this->number_of_manifolds; i++)
         {

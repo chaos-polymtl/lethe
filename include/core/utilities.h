@@ -632,13 +632,12 @@ get_dimension(const std::string &file_name);
  * and the number of manifolds from the file. This value is linked to the
  * "number" string defined in the simulation parameter file.
  * It provides an estimate for the amount of parameters or manifolds and is
-* used to determine the size of the vectors that will store boundary conditions
-* and manifold data. This feature will need to be monitored extensively in the
-* future.
-*
+ * used to determine the size of the vectors that will store boundary conditions
+ * and manifold data. This feature will need to be monitored extensively in the
+ * future.
+ *
  * @param[in] file_name The file name from which the number of boundary
-conditions
- * is read
+ * conditions is read
  *
  * @return The maximum number of boundary conditions or manifolds.
  */
