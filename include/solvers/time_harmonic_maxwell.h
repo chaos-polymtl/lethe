@@ -838,7 +838,7 @@ private:
    */
   std::shared_ptr<GlobalVectorType> present_solution_skeleton;
 
-  /*
+  /**
    * A vector containing all the values of the DPG built-in a-posteriori error
    * indicator.
    */
@@ -855,6 +855,12 @@ private:
    * The right hand side vector.
    */
   GlobalVectorType system_rhs;
+
+  /**
+   * A vector containing the initial guess `x_0` for the iterative solver when
+   * solving for \f$ Ax = b \f$.
+   */
+  GlobalVectorType initial_guess_iterative_solver;
 
   /**
    * Store the nonzero constraints that arise from several sources such

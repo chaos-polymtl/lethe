@@ -1668,6 +1668,10 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   this->system_rhs.reinit(this->locally_owned_dofs_trial_skeleton,
                           mpi_communicator);
 
+  // We reinitialize the initial guess vector
+  this->initial_guess_iterative_solver.reinit(
+    this->locally_owned_dofs_trial_skeleton, mpi_communicator);
+
   // Define constraints
   define_constraints();
 
@@ -2080,12 +2084,10 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
                                linear_solver_tolerance);
 
   // Solve
-  GlobalVectorType completely_distributed_solution(
-    this->locally_owned_dofs_trial_skeleton, mpi_communicator);
   TrilinosWrappers::SolverCG solver(solver_control);
 
   solver.solve(this->system_matrix,
-               completely_distributed_solution,
+               this->initial_guess_iterative_solver,
                this->system_rhs,
                *this->preconditioner);
 
@@ -2098,9 +2100,14 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
                   << solver_control.last_value() / rescale_metric << std::endl;
     }
 
-  // Update the solution vector for the skeleton
-  nonzero_constraints.distribute(completely_distributed_solution);
-  *this->present_solution_skeleton = completely_distributed_solution;
+  // Update the solution vector for the skeleton. We keep the solution in the
+  // initial_guess_iterative_solver vector as it is used for the next iteration
+  // of the solver and the present_solution_skeleton vector is used for
+  // everything else (output, multiphysics coupling, etc.). The major difference
+  // is that the present_solution_skeleton vector may be renormalized which
+  // would break the iterative solver if it was used for the next iteration.
+  nonzero_constraints.distribute(this->initial_guess_iterative_solver);
+  *this->present_solution_skeleton = this->initial_guess_iterative_solver;
 
   // Reconstruct the interior solution from the skeleton solution
   reconstruct_interior_solution();
