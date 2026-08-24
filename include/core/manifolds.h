@@ -32,7 +32,7 @@ namespace Parameters
       iges
     };
 
-    // ID of boundaries to which the manifold will be applied. Each manifold
+    // IDs of boundaries to which the manifold will be applied. Each manifold
     // will be stored with its corresponding boundary ID
     std::vector<unsigned int> ids;
 
@@ -47,7 +47,7 @@ namespace Parameters
     // File names for cad manifolds
     std::vector<std::string> cad_files;
 
-    // Number of manifold types
+    // Number of manifolds
     unsigned int number_of_manifolds;
 
     void
@@ -55,6 +55,7 @@ namespace Parameters
 
     static void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
+
     void
     declare_parameters(ParameterHandler &prm, unsigned int subsection_max_size);
 
