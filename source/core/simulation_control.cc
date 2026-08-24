@@ -209,6 +209,9 @@ SimulationControl::save(const std::string &prefix)
   std::string   filename = prefix + ".simulationcontrol";
   std::ofstream output(filename.c_str());
   output << "Simulation control" << std::endl;
+
+  output << std::fixed << std::setprecision(17);
+
   for (unsigned int i = 0; i < time_step_vector.size(); ++i)
     output << "dt_" << i << " " << time_step_vector[i] << std::endl;
   output << "CFL  " << CFL << std::endl;
