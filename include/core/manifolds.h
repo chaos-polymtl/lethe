@@ -32,8 +32,9 @@ namespace Parameters
       iges
     };
 
-    // ID of boundaries to which the manifold will be applied
-    std::vector<unsigned int> boundary_ids;
+    // ID of boundaries to which the manifold will be applied. Each manifold
+    // will be stored with its corresponding boundary ID
+    std::vector<unsigned int> ids;
 
     // List of boundary type for each number
     std::vector<ManifoldType> types;
@@ -48,7 +49,6 @@ namespace Parameters
 
     // Number of manifold types
     unsigned int number_of_manifolds;
-    unsigned int max_size;
 
     void
     parse_boundary(const ParameterHandler &prm);
