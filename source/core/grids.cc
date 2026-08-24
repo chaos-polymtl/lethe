@@ -344,8 +344,8 @@ read_mesh_and_manifolds(
     {
       // Gather all the manifold ids within a set
       std::set<int> manifold_ids;
-      for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
-        manifold_ids.insert(manifolds_parameters.boundary_id[i]);
+      for (unsigned int i = 0; i < manifolds_parameters.number_of_manifolds; ++i)
+        manifold_ids.insert(manifolds_parameters.boundary_ids[i]);
 
       // Reset all the manifolds manually and force them to zero
       triangulation.reset_all_manifolds();
@@ -357,7 +357,7 @@ read_mesh_and_manifolds(
       // this face manually to be that of the boundary id. In the past, this
       // was done by default for every face, but since 2023-12 this throws
       // (rightfully) an error in deal.II
-      if (manifolds_parameters.size > 0)
+      if (manifolds_parameters.number_of_manifolds > 0)
         {
           for (const auto &face : triangulation.active_face_iterators())
             {
@@ -544,14 +544,14 @@ read_mesh_and_manifolds_for_stator_and_rotor(
 
       // Gather all the manifold ids within a set
       std::set<int> manifold_ids;
-      for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
-        manifold_ids.insert(manifolds_parameters.boundary_id[i]);
+      for (unsigned int i = 0; i < manifolds_parameters.number_of_manifolds; ++i)
+        manifold_ids.insert(manifolds_parameters.boundary_ids[i]);
 
       // Reset all the manifolds manually and force them to zero
       triangulation.reset_all_manifolds();
 
       // Set manifolds
-      if (manifolds_parameters.size > 0)
+      if (manifolds_parameters.number_of_manifolds > 0)
         {
           for (const auto &face : triangulation.active_face_iterators())
             {

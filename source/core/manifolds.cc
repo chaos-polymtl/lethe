@@ -24,7 +24,7 @@ namespace Parameters
     prm.declare_entry("boundary id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::List(Patterns::Integer()),
-                      "ID of boundary to which the manifold will be applied");
+                      "IDs of boundaries to which the manifold will be applied");
 
     prm.declare_entry("cad file",
                       "none",
@@ -42,7 +42,7 @@ namespace Parameters
   }
 
   void
-  Manifolds::parse_boundary(const ParameterHandler &prm, const unsigned int manifold_id)
+  Manifolds::parse_boundary(const ParameterHandler &prm)
   {
     // Parse the list of boundary IDs
     std::vector<unsigned int> boundary_ids =
@@ -54,17 +54,17 @@ namespace Parameters
 
       const std::string op = prm.get("type");
       if (op == "none")
-        types[manifold_id] = ManifoldType::none;
+        types[boundary_id] = ManifoldType::none;
       else if (op == "spherical")
-        types[manifold_id] = ManifoldType::spherical;
+        types[boundary_id] = ManifoldType::spherical;
       else if (op == "cylindrical")
-        types[manifold_id] = ManifoldType::cylindrical;
+        types[boundary_id] = ManifoldType::cylindrical;
       else if (op == "iges")
-        types[manifold_id] = ManifoldType::iges;
+        types[boundary_id] = ManifoldType::iges;
 
-      manifold_point[manifold_id]     = prm.get("point coordinates");
-      manifold_direction[manifold_id] = prm.get("direction vector");
-      cad_files[manifold_id]          = prm.get("cad file");
+      manifold_point[boundary_id]     = prm.get("point coordinates");
+      manifold_direction[boundary_id] = prm.get("direction vector");
+      cad_files[boundary_id]          = prm.get("cad file");
     }
     
   }
@@ -83,7 +83,6 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
-      manifold_id.resize(subsection_max_size);
       types.resize(subsection_max_size);
       for (unsigned int i = 0; i < subsection_max_size; i++)
         {
@@ -100,19 +99,13 @@ namespace Parameters
   {
     prm.enter_subsection("manifolds");
     {
-      size = prm.get_integer("number");
-      types.resize(size);
-      manifold_ids.resize(size);
-      std::cout << "Manifold IDs: ";
-      for (unsigned int k = 0; k < manifold_ids.size(); ++k)
-        std::cout << manifold_ids[k] << "  ";
+      number_of_manifolds = prm.get_integer("number");
+      types.resize(number_of_manifolds);
 
-      std::cout << std::endl;  
-      for (unsigned int i = 0; i < size; i++)
+      for (unsigned int i = 0; i < number_of_manifolds; i++)
         {
-          manifold_ids[i] = i;
           prm.enter_subsection("manifold " + Utilities::int_to_string(i));
-          parse_boundary(prm, i);
+          parse_boundary(prm);
           prm.leave_subsection();
         }
     }
@@ -135,7 +128,7 @@ attach_manifolds_to_triangulation(
             value_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
           SphericalManifold<dim, spacedim> manifold_description(circle_center);
-          triangulation.set_manifold(manifolds.boundary_id[i], manifold_description);
+          triangulation.set_manifold(manifolds.boundary_ids[i], manifold_description);
         }
       else if (manifolds.types[i] ==
                Parameters::Manifolds::ManifoldType::cylindrical)
@@ -154,7 +147,7 @@ attach_manifolds_to_triangulation(
 
               CylindricalManifold<dim, spacedim> manifold_description(
                 cylinder_axis, point_on_axis);
-              triangulation.set_manifold(manifolds.boundary_id[i], manifold_description);
+              triangulation.set_manifold(manifolds.boundary_ids[i], manifold_description);
             }
           else
             throw std::runtime_error(
@@ -164,7 +157,7 @@ attach_manifolds_to_triangulation(
         {
           attach_cad_to_manifold(triangulation,
                                  manifolds.cad_files[i],
-                                 manifolds.boundary_id[i]);
+                                 manifolds.boundary_ids[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
         {
