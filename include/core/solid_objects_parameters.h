@@ -115,9 +115,6 @@ namespace Parameters
     /// Enable calculation of torques on the solid.
     bool calculate_torque_on_solid;
 
-    /// Center of rotation used for torque calculation.
-    Point<spacedim> cor;
-
     /// File name prefix for the force output.
     std::string force_output_name;
 
