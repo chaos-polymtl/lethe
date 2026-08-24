@@ -210,6 +210,8 @@ SimulationControl::save(const std::string &prefix)
   std::ofstream output(filename.c_str());
   output << "Simulation control" << std::endl;
 
+  // We se the precision to 17. If the time-step is significantly smaller then
+  // the end time of the simulation, round off errors can become problematic.
   output << std::fixed << std::setprecision(17);
 
   for (unsigned int i = 0; i < time_step_vector.size(); ++i)
