@@ -32,7 +32,7 @@ subsection mesh adaptation
   set variable            = electromagnetic fields
   set error estimator     = dpg
   set fraction refinement = 0.2
-  set fraction coarsening = 0.03
+  set fraction coarsening = 0.05
 end
 
 #---------------------------------------------------
