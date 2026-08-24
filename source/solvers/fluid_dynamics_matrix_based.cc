@@ -1232,11 +1232,19 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->simulation_parameters.physical_properties_manager.set_rheology(
         temporary_rheology);
 
+      // Temporarily solve a steady problem. The assembly method is restored
+      // afterwards, otherwise the time-stepping scheme of the simulation would
+      // remain steady for the rest of the simulation.
+      const auto original_assembly_method =
+        this->simulation_control->get_assembly_method();
 
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<GlobalVectorType>::solve_governing_system();
       this->finish_time_step();
+
+      // Reset the assembly method to the one of the simulation
+      this->simulation_control->set_assembly_method(original_assembly_method);
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
         original_viscosity_model);
@@ -1251,6 +1259,13 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       Timer timer(this->mpi_communicator);
 
       this->set_nodal_values();
+
+      // The ramp solves a sequence of steady problems. The assembly method is
+      // stored here and restored at the end of the ramp, otherwise the
+      // time-stepping scheme of the simulation would remain steady for the rest
+      // of the simulation.
+      const auto original_assembly_method =
+        this->simulation_control->get_assembly_method();
 
       // Create a pointer to the current viscosity model
       std::shared_ptr<RheologicalModel> viscosity_model =
@@ -1325,6 +1340,9 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
       // Reset kinematic viscosity to simulation parameters
       viscosity_model->set_kinematic_viscosity(viscosity_end);
+
+      // Reset the assembly method to the one of the simulation
+      this->simulation_control->set_assembly_method(original_assembly_method);
 
       timer.stop();
 
