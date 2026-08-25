@@ -49,7 +49,7 @@ namespace Parameters
     std::vector<unsigned int> ids_current =
       convert_string_to_vector<unsigned int>(prm, "id");
 
-    for (unsigned int i = 0; i < ids_current.size(); ++i)
+    for (const unsigned int id : ids_current)
       {
         const std::string op = prm.get("type");
         if (op == "none")
@@ -61,7 +61,7 @@ namespace Parameters
         else if (op == "iges")
           this->types.emplace_back(ManifoldType::iges);
 
-        this->ids.emplace_back(ids_current[i]);
+        this->ids.emplace_back(id);
         this->manifold_point.emplace_back(prm.get("point coordinates"));
         this->manifold_direction.emplace_back(prm.get("direction vector"));
         this->cad_files.emplace_back(prm.get("cad file"));
