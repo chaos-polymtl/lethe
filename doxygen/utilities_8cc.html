@@ -96,7 +96,9 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;core/revision.h&gt;</code><br />
 <code>#include &lt;<a class="el" href="core_2utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="vector_8h_source.html">core/vector.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/revision.h&gt;</code><br />
+<code>#include &lt;deal.II/numerics/vector_tools.h&gt;</code><br />
 <code>#include &lt;boost/algorithm/string/replace.hpp&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;regex&gt;</code><br />
@@ -104,7 +106,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for utilities.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="utilities_8cc__incl.svg" width="2351" height="315"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="utilities_8cc__incl.svg" width="3815" height="315"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="utilities_8cc_source.html">Go to the source code of this file.</a></p>
@@ -196,6 +198,36 @@ Functions</h2></td></tr>
 <tr class="separator:ae2e85bc56c84564999daa889908507c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bff1c25176117effa0161cb4ebfc520" id="r_a6bff1c25176117effa0161cb4ebfc520"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a> (const std::string &amp;output_path)</td></tr>
 <tr class="separator:a6bff1c25176117effa0161cb4ebfc520"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f2122405c82e55ced88280d54e6d56b" id="r_a6f2122405c82e55ced88280d54e6d56b"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a6f2122405c82e55ced88280d54e6d56b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a6f2122405c82e55ced88280d54e6d56b">evaluate_values_at_points</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:a6f2122405c82e55ced88280d54e6d56b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5158b2cc68e111f73665aa2f0753b64" id="r_ad5158b2cc68e111f73665aa2f0753b64"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#ad5158b2cc68e111f73665aa2f0753b64">evaluate_values_at_points&lt; 2, GlobalVectorType &gt;</a> (const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:ad5158b2cc68e111f73665aa2f0753b64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a101432bd9f59e6bcb277e9be4d1801fe" id="r_a101432bd9f59e6bcb277e9be4d1801fe"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a101432bd9f59e6bcb277e9be4d1801fe">evaluate_values_at_points&lt; 3, GlobalVectorType &gt;</a> (const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:a101432bd9f59e6bcb277e9be4d1801fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2479d28ea6925c4b836b5004fc2c691" id="r_ad2479d28ea6925c4b836b5004fc2c691"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#ad2479d28ea6925c4b836b5004fc2c691">evaluate_values_at_points&lt; 2, GlobalBlockVectorType &gt;</a> (const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:ad2479d28ea6925c4b836b5004fc2c691"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacab2ae1eacacf43dc9272eaa79d40f2" id="r_aacab2ae1eacacf43dc9272eaa79d40f2"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#aacab2ae1eacacf43dc9272eaa79d40f2">evaluate_values_at_points&lt; 3, GlobalBlockVectorType &gt;</a> (const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:aacab2ae1eacacf43dc9272eaa79d40f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfc39764d1211f31fac743b6f5fa6215" id="r_acfc39764d1211f31fac743b6f5fa6215"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#acfc39764d1211f31fac743b6f5fa6215">evaluate_values_at_points&lt; 2, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:acfc39764d1211f31fac743b6f5fa6215"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a437d743ff119e4d98fbc29ed57f60487" id="r_a437d743ff119e4d98fbc29ed57f60487"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a437d743ff119e4d98fbc29ed57f60487">evaluate_values_at_points&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:a437d743ff119e4d98fbc29ed57f60487"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1759b3fa43173eb14c1f4615b4fb408" id="r_aa1759b3fa43173eb14c1f4615b4fb408"><td class="memTemplParams" colspan="2">template&lt;int n_component, int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:aa1759b3fa43173eb14c1f4615b4fb408"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#aa1759b3fa43173eb14c1f4615b4fb408">evaluate_values_at_points</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, dim, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:aa1759b3fa43173eb14c1f4615b4fb408"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3dd9e366ca9bfc576c1b89ea5cb15e09" id="r_a3dd9e366ca9bfc576c1b89ea5cb15e09"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a3dd9e366ca9bfc576c1b89ea5cb15e09">evaluate_values_at_points&lt; 2, 2, GlobalVectorType &gt;</a> (const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 2, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:a3dd9e366ca9bfc576c1b89ea5cb15e09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cd5cb2678eb57aff8d2d890a9131f25" id="r_a2cd5cb2678eb57aff8d2d890a9131f25"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a2cd5cb2678eb57aff8d2d890a9131f25">evaluate_values_at_points&lt; 3, 3, GlobalVectorType &gt;</a> (const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 3, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:a2cd5cb2678eb57aff8d2d890a9131f25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac16af7a8766889a7247be69d3a94e392" id="r_ac16af7a8766889a7247be69d3a94e392"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#ac16af7a8766889a7247be69d3a94e392">evaluate_values_at_points&lt; 2, 2, GlobalBlockVectorType &gt;</a> (const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 2, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:ac16af7a8766889a7247be69d3a94e392"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc349a199ce6af0371f81d2887e4e83a" id="r_abc349a199ce6af0371f81d2887e4e83a"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#abc349a199ce6af0371f81d2887e4e83a">evaluate_values_at_points&lt; 3, 3, GlobalBlockVectorType &gt;</a> (const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 3, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:abc349a199ce6af0371f81d2887e4e83a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0fa14e5dd5c630b426649390795ed70" id="r_aa0fa14e5dd5c630b426649390795ed70"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#aa0fa14e5dd5c630b426649390795ed70">evaluate_values_at_points&lt; 2, 2, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 2, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:aa0fa14e5dd5c630b426649390795ed70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea16e624eea2399b133e3f98ac17c886" id="r_aea16e624eea2399b133e3f98ac17c886"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#aea16e624eea2399b133e3f98ac17c886">evaluate_values_at_points&lt; 3, 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 3, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</td></tr>
+<tr class="separator:aea16e624eea2399b133e3f98ac17c886"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="aa2b435317e26c5fbf3f8f86b77c7fe4c" name="aa2b435317e26c5fbf3f8f86b77c7fe4c"></a>
@@ -224,7 +256,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Concatenate words which are passed from the command line to a main function into a single string in which the words are seperated by space. </p>
+<p>Concatenate words which are passed from the command line to a main function into a single string in which the words are separated by space. </p>
+<p>Concatenate words which are passed from the command line to a main function into a single string in which the words are seperated by space.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">argc</td><td>number of arguments in C style. </td></tr>
@@ -233,7 +266,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00721">721</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00723">723</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -261,7 +294,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00366">366</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00369">369</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -289,7 +322,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00372">372</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00375">375</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -311,7 +344,872 @@ Functions</h2></td></tr>
 
 <p>Delete vtu and pvd files. </p>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00861">861</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00863">863</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+
+</div>
+</div>
+<a id="a6f2122405c82e55ced88280d54e6d56b" name="a6f2122405c82e55ced88280d54e6d56b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f2122405c82e55ced88280d54e6d56b">&#9670;&#160;</a></span>evaluate_values_at_points() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void evaluate_values_at_points </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_scalar_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evaluates the values of a scalar field at remote points of the domain from the mapping, the DoF handler and the solution field. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">VectorType</td><td>Vector type of the solution vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Mapping of the domain. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DoF handler associated to the solution field. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solution_field</td><td>Vector containing the solution field. For distributed meshes, ghost elements must be updated. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">evaluation_points</td><td>Vector of points where the values of the solution field are to be evaluated. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">remote_point_evaluator</td><td>Utilities::MPI::RemotePointEvaluation object used to evaluate values of the variable of interest at given points of the domain. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">evaluated_scalar_values</td><td>Vector of evaluated scalar values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">first_selected_component</td><td>First component of the solution to select if the solution field is a vector field. This is used to extract the correct field when the solution vector contains multiple fields (e.g., velocity and pressure are stored in a same solution vector).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section remark"><dt>Remarks</dt><dd>If a given evaluation point is not within the simulated domain, an exception is thrown. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00876">876</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+
+</div>
+</div>
+<a id="aa1759b3fa43173eb14c1f4615b4fb408" name="aa1759b3fa43173eb14c1f4615b4fb408"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1759b3fa43173eb14c1f4615b4fb408">&#9670;&#160;</a></span>evaluate_values_at_points() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int n_component, int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void evaluate_values_at_points </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, dim, double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_vector_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evaluates the values of a vector field at remote points of the domain from the mapping, the DoF handler and the solution field. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">n_component</td><td>Number of components of the evaluated vector solution. </td></tr>
+    <tr><td class="paramname">dim</td><td>Denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">VectorType</td><td>Vector type of the solution vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Mapping of the domain. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DoF handler associated to the solution field. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solution_field</td><td>Vector containing the vector solution field. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">evaluation_points</td><td>Vector of points where the values of the solution field are to be evaluated. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">remote_point_evaluator</td><td>Utilities::MPI::RemotePointEvaluation object used to evaluate values of the variable of interest at given points of the domain. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">evaluated_vector_values</td><td>Vector of evaluated vector values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">first_selected_component</td><td>First component of the solution to select. This is used to extract the correct fields when the solution vector contains multiple fields (e.g., velocity and pressure are stored in a same solution vector).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section remark"><dt>Remarks</dt><dd>If a given evaluation point is not within the simulated domain, an exception is thrown. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00973">973</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+
+</div>
+</div>
+<a id="ac16af7a8766889a7247be69d3a94e392" name="ac16af7a8766889a7247be69d3a94e392"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac16af7a8766889a7247be69d3a94e392">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 2, 2, GlobalBlockVectorType &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 2, 2, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 2, double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_vector_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3dd9e366ca9bfc576c1b89ea5cb15e09" name="a3dd9e366ca9bfc576c1b89ea5cb15e09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dd9e366ca9bfc576c1b89ea5cb15e09">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 2, 2, GlobalVectorType &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 2, 2, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 2, double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_vector_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa0fa14e5dd5c630b426649390795ed70" name="aa0fa14e5dd5c630b426649390795ed70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0fa14e5dd5c630b426649390795ed70">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 2, 2, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 2, 2, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 2, double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_vector_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad2479d28ea6925c4b836b5004fc2c691" name="ad2479d28ea6925c4b836b5004fc2c691"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2479d28ea6925c4b836b5004fc2c691">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 2, GlobalBlockVectorType &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 2, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_scalar_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad5158b2cc68e111f73665aa2f0753b64" name="ad5158b2cc68e111f73665aa2f0753b64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5158b2cc68e111f73665aa2f0753b64">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 2, GlobalVectorType &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 2, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_scalar_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acfc39764d1211f31fac743b6f5fa6215" name="acfc39764d1211f31fac743b6f5fa6215"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfc39764d1211f31fac743b6f5fa6215">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 2, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 2, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_scalar_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abc349a199ce6af0371f81d2887e4e83a" name="abc349a199ce6af0371f81d2887e4e83a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc349a199ce6af0371f81d2887e4e83a">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 3, 3, GlobalBlockVectorType &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 3, 3, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3, double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_vector_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2cd5cb2678eb57aff8d2d890a9131f25" name="a2cd5cb2678eb57aff8d2d890a9131f25"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cd5cb2678eb57aff8d2d890a9131f25">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 3, 3, GlobalVectorType &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 3, 3, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3, double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_vector_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aea16e624eea2399b133e3f98ac17c886" name="aea16e624eea2399b133e3f98ac17c886"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea16e624eea2399b133e3f98ac17c886">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 3, 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 3, 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, 3, double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_vector_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aacab2ae1eacacf43dc9272eaa79d40f2" name="aacab2ae1eacacf43dc9272eaa79d40f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacab2ae1eacacf43dc9272eaa79d40f2">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 3, GlobalBlockVectorType &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 3, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_scalar_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a101432bd9f59e6bcb277e9be4d1801fe" name="a101432bd9f59e6bcb277e9be4d1801fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a101432bd9f59e6bcb277e9be4d1801fe">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 3, GlobalVectorType &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 3, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_scalar_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a437d743ff119e4d98fbc29ed57f60487" name="a437d743ff119e4d98fbc29ed57f60487"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a437d743ff119e4d98fbc29ed57f60487">&#9670;&#160;</a></span>evaluate_values_at_points&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_scalar_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -357,7 +1255,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00317">317</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00320">320</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -404,7 +1302,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00218">218</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00221">221</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -450,7 +1348,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00264">264</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00267">267</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -478,9 +1376,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00633">633</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00636">636</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00550">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00553">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -520,7 +1418,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::string Value of the parameter, or an empty string if not found. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00550">550</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00553">553</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -549,9 +1447,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The maximum number of boundary conditions or manifolds. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00699">699</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00702">702</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00589">get_max_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00592">get_max_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -581,7 +1479,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00589">589</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00592">592</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -616,7 +1514,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00836">836</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00838">838</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1109,7 +2007,7 @@ template&lt;int dim, typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00091">91</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00094">94</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1186,7 +2084,7 @@ template&lt;int dim, typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00052">52</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00055">55</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1574,7 +2472,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00017">17</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00020">20</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1806,7 +2704,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variables values followed by the dependent variable values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00182">182</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00185">185</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1986,7 +2884,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variables values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00140">140</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00143">143</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -2026,7 +2924,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Tuple containing a map with the command line flags and a boolean set to 1 for the specific flag; and a vector of strings with the rest of the arguments that are not flags; in Lethe, this corresponds to the parameter file given to the application. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00763">763</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00765">765</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -2065,9 +2963,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00846">846</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00848">848</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00836">interpret_escape_sequences()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00838">interpret_escape_sequences()</a>.</p>
 
 </div>
 </div>
@@ -2112,9 +3010,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00809">809</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00811">811</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00550">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00553">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -2142,7 +3040,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00738">738</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00740">740</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>

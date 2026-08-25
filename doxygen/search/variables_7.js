@@ -21,7 +21,7 @@ var searchData=
   ['has_5fstarted_5faveraging_18',['has_started_averaging',['../classAverageScalar.html#a65e578b1cf269a2f2159d0c9f3caa0e8',1,'AverageScalar::has_started_averaging'],['../classAverageVelocities.html#ada12c7d48e732898dfa7596e7a505cc1',1,'AverageVelocities::has_started_averaging']]],
   ['has_5fthermal_5fproperties_19',['has_thermal_properties',['../namespaceDEM.html#a3a7808dc58cf90a67c0d294d8a7893d9',1,'DEM']]],
   ['heat_5fflux_5fbc_20',['heat_flux_bc',['../classBoundaryConditions_1_1HTBoundaryConditions.html#ab0030837268db2e8bae0e71930aa6e4e',1,'BoundaryConditions::HTBoundaryConditions']]],
-  ['heat_5fflux_5foutput_5fname_21',['heat_flux_output_name',['../structParameters_1_1PostProcessing.html#afa39e6fc402bb8a5cf3ba094aeb776ba',1,'Parameters::PostProcessing']]],
+  ['heat_5fflux_5foutput_5fname_21',['heat_flux_output_name',['../structParameters_1_1PostProcessing.html#ae920dc269ecd5c73bf5028b930d2c3ca',1,'Parameters::PostProcessing']]],
   ['heat_5fflux_5fpostprocessors_22',['heat_flux_postprocessors',['../classHeatTransfer.html#a449aa4e2e8a50d80a63cb52cad754a8a',1,'HeatTransfer']]],
   ['heat_5fflux_5ftable_23',['heat_flux_table',['../classHeatTransfer.html#a244afcf9527d44633437387de636fbd2',1,'HeatTransfer']]],
   ['heat_5ftransfer_24',['heat_transfer',['../structParameters_1_1Multiphysics.html#a68730f400a7c86086e874b17fd24e0b7',1,'Parameters::Multiphysics']]],

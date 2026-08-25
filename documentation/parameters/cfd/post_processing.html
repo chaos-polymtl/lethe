@@ -560,6 +560,18 @@
     set bounding box filename               = isocontour_bounding_box
   end
 
+  #---------------------------------------------------
+  # Probing points
+  #---------------------------------------------------
+  subsection probing points
+    set number of probing points = 0
+    subsection probe 0
+      set location               = 0, 0     # 0, 0, 0 (in 3D)
+      set variable               = velocity
+      set probing point filename = probe_00
+    end
+  end
+
 end
 </pre></div>
 </div>
@@ -942,6 +954,26 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">bounding</span> <span class="pre">box</span> <span class="pre">filename</span></code>: filename(s) for outputted isocontour(s). When multiple isocontours are defined, the different filenames must be separated by commas (e.g., <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">bounding</span> <span class="pre">box</span> <span class="pre">filename</span> <span class="pre">=</span> <span class="pre">interface_bounding_box,</span> <span class="pre">solidus_bounding_box,</span> <span class="pre">liquidus_bounding_box</span></code>) and follow the same order as <code class="docutils literal notranslate"><span class="pre">variable</span></code> and <code class="docutils literal notranslate"><span class="pre">isovalue</span></code>.</p></li>
 </ul>
 </section>
+<section id="probing-points">
+<h2>Probing points<a class="headerlink" href="#probing-points" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">probing</span> <span class="pre">points</span></code> subsection defines probes that can evaluate <code class="docutils literal notranslate"><span class="pre">variable</span></code> (e.g., velocity) values at remote locations of the domain throughout the simulation. Each probe has its own subsection <code class="docutils literal notranslate"><span class="pre">probe</span> <span class="pre">x</span></code>, where <code class="docutils literal notranslate"><span class="pre">x</span></code> is the ID of the probe ranging from <code class="docutils literal notranslate"><span class="pre">0</span></code> to  <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">probing</span> <span class="pre">points</span> <span class="pre">-</span> <span class="pre">1</span></code>. The monitored time-evolving values are saved in a <code class="docutils literal notranslate"><span class="pre">.dat</span></code> file (<code class="docutils literal notranslate"><span class="pre">probing</span> <span class="pre">point</span> <span class="pre">filename</span></code>). Each probe has its own <code class="docutils literal notranslate"><span class="pre">location</span></code>, list of variables and output file. A given probe can evaluate multiple variables as specified below. All variable values of a same probe are saved in the same output file. Each scalar field represents a column and the same goes for each component of vector fields.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">probing</span> <span class="pre">points</span></code>: number of probes defined.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>A maximum of 25 probes can be defined.</p>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">location</span></code>: location of the probing point. Separate components of the points with commas.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variable</span></code>: variable or list of variables (separated by commas) to evaluate at the probing location.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The current implementation only allows for probing the <code class="docutils literal notranslate"><span class="pre">velocity</span></code>, the <code class="docutils literal notranslate"><span class="pre">pressure</span></code>, the CLS <code class="docutils literal notranslate"><span class="pre">phase</span></code> indicator, and the <code class="docutils literal notranslate"><span class="pre">temperature</span></code>. Other variables will follow in a subsequent implementation.</p>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">probing</span> <span class="pre">point</span> <span class="pre">filename</span></code>: filename for the output file of the probe.</p></li>
+</ul>
+</section>
 </section>
 
         </article>
@@ -1006,6 +1038,7 @@ end
 <li><a class="reference internal" href="#multiphysics-post-processing">Multiphysics Post-processing</a></li>
 <li><a class="reference internal" href="#multiphase-post-processing">Multiphase Post-processing</a></li>
 <li><a class="reference internal" href="#isocontour-bounding-box">Isocontour Bounding Box</a></li>
+<li><a class="reference internal" href="#probing-points">Probing points</a></li>
 </ul>
 </li>
 </ul>

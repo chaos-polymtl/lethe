@@ -99,8 +99,8 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aaa4af605c91ba0fb4b1ef6eec76db15b" id="r_aaa4af605c91ba0fb4b1ef6eec76db15b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageScalar.html#aaa4af605c91ba0fb4b1ef6eec76db15b">AverageScalar</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler)</td></tr>
 <tr class="separator:aaa4af605c91ba0fb4b1ef6eec76db15b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a218609747c2827feed61f9498751d3fc" id="r_a218609747c2827feed61f9498751d3fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageScalar.html#a218609747c2827feed61f9498751d3fc">calculate_average_scalar</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;local_evaluation_point, const <a class="el" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a> &amp;post_processing, const double current_time, const double time_step)</td></tr>
-<tr class="separator:a218609747c2827feed61f9498751d3fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa556a2ffc3a84ea292aa906a65dcb7fb" id="r_aa556a2ffc3a84ea292aa906a65dcb7fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageScalar.html#aa556a2ffc3a84ea292aa906a65dcb7fb">calculate_average_scalar</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;local_evaluation_point, const <a class="el" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a>&lt; dim &gt; &amp;post_processing, const double current_time, const double time_step)</td></tr>
+<tr class="separator:aa556a2ffc3a84ea292aa906a65dcb7fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae4d0f6711714d977190ebe8133304b5" id="r_aae4d0f6711714d977190ebe8133304b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageScalar.html#aae4d0f6711714d977190ebe8133304b5">initialize_vectors</a> (const IndexSet &amp;locally_owned_dofs, const IndexSet &amp;locally_relevant_dofs, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="separator:aae4d0f6711714d977190ebe8133304b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12aba86b41e53a0ad2d42e4334dcc8be" id="r_a12aba86b41e53a0ad2d42e4334dcc8be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAverageScalar.html#a12aba86b41e53a0ad2d42e4334dcc8be">get_average_scalar</a> ()</td></tr>
@@ -192,8 +192,8 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a218609747c2827feed61f9498751d3fc" name="a218609747c2827feed61f9498751d3fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a218609747c2827feed61f9498751d3fc">&#9670;&#160;</a></span>calculate_average_scalar()</h2>
+<a id="aa556a2ffc3a84ea292aa906a65dcb7fb" name="aa556a2ffc3a84ea292aa906a65dcb7fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa556a2ffc3a84ea292aa906a65dcb7fb">&#9670;&#160;</a></span>calculate_average_scalar()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -209,7 +209,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>post_processing</em>, </td>
         </tr>
         <tr>
@@ -245,7 +245,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8cc_source.html#l00019">19</a> of file <a class="el" href="postprocessing__scalar_8cc_source.html">postprocessing_scalar.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01161">Parameters::PostProcessing::initial_time_for_average_temp_and_hf</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01264">Parameters::PostProcessing&lt; dim &gt;::initial_time_for_average_temp_and_hf</a>.</p>
 
 </div>
 </div>
@@ -276,9 +276,9 @@ template&lt;int dim&gt; </div>
 
 <p>Getter for the average scalar. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00080">80</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00081">81</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__scalar_8h_source.html#l00171">AverageScalar&lt; dim &gt;::average_scalar</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__scalar_8h_source.html#l00172">AverageScalar&lt; dim &gt;::average_scalar</a>.</p>
 
 </div>
 </div>
@@ -434,9 +434,9 @@ template&lt;int dim&gt; </div>
 
 <p>Sanitize the average scalar object after a checkpoint has been read by resetting all of the locally_owned vectors using the locally_relevant vectors. This is necessary because only the locally_relevant_vectors are saved, but the calculation routines expect that the content of the locally_owned vectors match that of the locally_relevant vectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00132">132</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00133">133</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__scalar_8h_source.html#l00154">AverageScalar&lt; dim &gt;::sum_scalar_dt</a>, and <a class="el" href="postprocessing__scalar_8h_source.html#l00160">AverageScalar&lt; dim &gt;::sum_scalar_dt_with_ghost_cells</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__scalar_8h_source.html#l00155">AverageScalar&lt; dim &gt;::sum_scalar_dt</a>, and <a class="el" href="postprocessing__scalar_8h_source.html#l00161">AverageScalar&lt; dim &gt;::sum_scalar_dt_with_ghost_cells</a>.</p>
 
 </div>
 </div>
@@ -542,7 +542,7 @@ template&lt;int dim&gt; </div>
 
 <p>Time averaged scalar. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00171">171</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00172">172</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -570,7 +570,7 @@ template&lt;int dim&gt; </div>
 
 <p>Time averaged scalar containing the locally owned and locally relevant dofs for all processes. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00176">176</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00177">177</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -598,7 +598,7 @@ template&lt;int dim&gt; </div>
 
 <p>Time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00193">193</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00194">194</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -626,7 +626,7 @@ template&lt;int dim&gt; </div>
 
 <p>First time step is stored in dt_0 and added to total_time_for_average to ensure the first average calculation does not result in a division by zero. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00199">199</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00200">200</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -654,7 +654,7 @@ template&lt;int dim&gt; </div>
 
 <p>Track whether we are within the averaging time period. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00211">211</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00212">212</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -682,7 +682,7 @@ template&lt;int dim&gt; </div>
 
 <p>Inverse of the total time for averaging. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00205">205</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00206">206</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -710,7 +710,7 @@ template&lt;int dim&gt; </div>
 
 <p>Difference between the simulation starting time and the initial averaging time. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00181">181</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00182">182</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -738,7 +738,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector to store the scalar field multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00148">148</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00149">149</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -766,7 +766,7 @@ template&lt;int dim&gt; </div>
 
 <p>Object to transfer the averaged scalar in case of mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00166">166</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00167">167</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -794,7 +794,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector to store the sum of all the scalar multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00154">154</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00155">155</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -822,7 +822,7 @@ template&lt;int dim&gt; </div>
 
 <p>Ghosted vector to store the sum of all the scalar multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00160">160</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00161">161</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -850,7 +850,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector to store the sum of all the scalar field multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00187">187</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00188">188</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>

@@ -60,12 +60,15 @@ var searchData=
   ['polynomialelectricpermittivity_57',['PolynomialElectricPermittivity',['../classPolynomialElectricPermittivity.html',1,'']]],
   ['polynomialmagneticpermeability_58',['PolynomialMagneticPermeability',['../classPolynomialMagneticPermeability.html',1,'']]],
   ['postprocessing_59',['PostProcessing',['../structParameters_1_1PostProcessing.html',1,'Parameters']]],
-  ['powerlaw_60',['PowerLaw',['../classPowerLaw.html',1,'']]],
-  ['powerlawparameters_61',['PowerLawParameters',['../structParameters_1_1PowerLawParameters.html',1,'Parameters']]],
-  ['preconditionadapter_62',['PreconditionAdapter',['../classPreconditionAdapter.html',1,'']]],
-  ['preconditionasm_63',['PreconditionASM',['../classPreconditionASM.html',1,'']]],
-  ['preconditionbase_64',['PreconditionBase',['../classPreconditionBase.html',1,'']]],
-  ['pressureboundarycondition_65',['PressureBoundaryCondition',['../classPressureBoundaryCondition.html',1,'']]],
-  ['pspgsupgnavierstokesassemblercore_66',['PSPGSUPGNavierStokesAssemblerCore',['../classPSPGSUPGNavierStokesAssemblerCore.html',1,'']]],
-  ['pvdhandler_67',['PVDHandler',['../classPVDHandler.html',1,'']]]
+  ['postprocessingprobes_60',['PostprocessingProbes',['../classPostprocessingProbes.html',1,'']]],
+  ['powerlaw_61',['PowerLaw',['../classPowerLaw.html',1,'']]],
+  ['powerlawparameters_62',['PowerLawParameters',['../structParameters_1_1PowerLawParameters.html',1,'Parameters']]],
+  ['preconditionadapter_63',['PreconditionAdapter',['../classPreconditionAdapter.html',1,'']]],
+  ['preconditionasm_64',['PreconditionASM',['../classPreconditionASM.html',1,'']]],
+  ['preconditionbase_65',['PreconditionBase',['../classPreconditionBase.html',1,'']]],
+  ['pressureboundarycondition_66',['PressureBoundaryCondition',['../classPressureBoundaryCondition.html',1,'']]],
+  ['probingpoints_67',['ProbingPoints',['../structParameters_1_1PostProcessing_1_1ProbingPoints.html',1,'Parameters::PostProcessing']]],
+  ['probingpointspervariable_68',['ProbingPointsPerVariable',['../structParameters_1_1PostProcessing_1_1ProbingPoints_1_1ProbingPointsPerVariable.html',1,'Parameters::PostProcessing::ProbingPoints']]],
+  ['pspgsupgnavierstokesassemblercore_69',['PSPGSUPGNavierStokesAssemblerCore',['../classPSPGSUPGNavierStokesAssemblerCore.html',1,'']]],
+  ['pvdhandler_70',['PVDHandler',['../classPVDHandler.html',1,'']]]
 ];

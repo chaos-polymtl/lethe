@@ -97,12 +97,14 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="output__struct_8h_source.html">core/output_struct.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/conditional_ostream.h&gt;</code><br />
+<code>#include &lt;deal.II/base/mpi_remote_point_evaluation.h&gt;</code><br />
 <code>#include &lt;deal.II/base/parameter_handler.h&gt;</code><br />
 <code>#include &lt;deal.II/base/point.h&gt;</code><br />
 <code>#include &lt;deal.II/base/table_handler.h&gt;</code><br />
 <code>#include &lt;deal.II/base/tensor.h&gt;</code><br />
 <code>#include &lt;deal.II/dofs/dof_handler.h&gt;</code><br />
 <code>#include &lt;deal.II/fe/fe_values.h&gt;</code><br />
+<code>#include &lt;deal.II/numerics/vector_tools.h&gt;</code><br />
 <code>#include &lt;deal.II/particles/particle_iterator.h&gt;</code><br />
 <code>#include &lt;boost/archive/text_iarchive.hpp&gt;</code><br />
 <code>#include &lt;boost/archive/text_oarchive.hpp&gt;</code><br />
@@ -114,12 +116,12 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for utilities.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="core_2utilities_8h__incl.svg" width="2351" height="227"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="core_2utilities_8h__incl.svg" width="2751" height="227"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="core_2utilities_8h__dep__incl.svg" width="7352" height="491"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="core_2utilities_8h__dep__incl.svg" width="7479" height="388"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="core_2utilities_8h_source.html">Go to the source code of this file.</a></p>
@@ -239,6 +241,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a642bc9ef98dbdbc0a480ea1a3b840b7a" id="r_a642bc9ef98dbdbc0a480ea1a3b840b7a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a642bc9ef98dbdbc0a480ea1a3b840b7a"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="core_2utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a">convert_string_to_vector</a> (const ParameterHandler &amp;prm, const std::string &amp;entry_string)</td></tr>
 <tr class="separator:a642bc9ef98dbdbc0a480ea1a3b840b7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ebdfb061bfb4288cd6993cb1d6de661" id="r_a4ebdfb061bfb4288cd6993cb1d6de661"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a4ebdfb061bfb4288cd6993cb1d6de661"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component=0)</td></tr>
+<tr class="separator:a4ebdfb061bfb4288cd6993cb1d6de661"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cae98c0b0f1048d719ce726b3feb168" id="r_a8cae98c0b0f1048d719ce726b3feb168"><td class="memTemplParams" colspan="2">template&lt;int n_component, int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a8cae98c0b0f1048d719ce726b3feb168"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="core_2utilities_8h.html#a8cae98c0b0f1048d719ce726b3feb168">evaluate_values_at_points</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;solution_field, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, dim, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component=0)</td></tr>
+<tr class="separator:a8cae98c0b0f1048d719ce726b3feb168"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c59fdbd976bc70491d23f9870eda5ea" id="r_a6c59fdbd976bc70491d23f9870eda5ea"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a6c59fdbd976bc70491d23f9870eda5ea"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="core_2utilities_8h.html#a6c59fdbd976bc70491d23f9870eda5ea">points_are_in_domain</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, const Utilities::MPI::RemotePointEvaluation&lt; dim, dim &gt; &amp;remote_point_evaluator)</td></tr>
+<tr class="separator:a6c59fdbd976bc70491d23f9870eda5ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="aa7402e768126a85108ec67b651924bbe" name="aa7402e768126a85108ec67b651924bbe"></a>
@@ -292,9 +303,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00085">85</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00088">88</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00069">statistics::average</a>, <a class="el" href="core_2utilities_8h_source.html#l00063">statistics::max</a>, <a class="el" href="core_2utilities_8h_source.html#l00060">statistics::min</a>, and <a class="el" href="core_2utilities_8h_source.html#l00066">statistics::total</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00072">statistics::average</a>, <a class="el" href="core_2utilities_8h_source.html#l00066">statistics::max</a>, <a class="el" href="core_2utilities_8h_source.html#l00063">statistics::min</a>, and <a class="el" href="core_2utilities_8h_source.html#l00069">statistics::total</a>.</p>
 
 </div>
 </div>
@@ -352,7 +363,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00466">466</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00469">469</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -414,7 +425,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section remark"><dt>Remarks</dt><dd>The overload of the function with <code>banner_size</code> is used for cases where the <code>expression</code> string is multiple lines long. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00491">491</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00494">494</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -468,7 +479,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00295">295</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00298">298</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
 
@@ -526,9 +537,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>double Equivalent property for the given phase. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00368">368</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00371">371</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, and <a class="el" href="core_2utilities_8h_source.html#l00332">sgn()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, and <a class="el" href="core_2utilities_8h_source.html#l00335">sgn()</a>.</p>
 
 </div>
 </div>
@@ -583,7 +594,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Clipped variable that is not below the lower limit and not above the upper limit </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00349">349</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00352">352</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -639,7 +650,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Cell diameter value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00751">751</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00754">754</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -682,7 +693,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Area (2D) volume (3D) of the cell. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00779">779</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00782">782</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -716,12 +727,20 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">argc</td><td>number of arguments in C style. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">argv</td><td>arguments themselves in C style.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Concatenate words which are passed from the command line to a main function into a single string in which the words are seperated by space.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">argc</td><td>number of arguments in C style. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">argv</td><td>arguments themselves in C style. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00721">721</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00723">723</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -769,7 +788,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A std::vector&lt;double&gt; corresponding to the entry_string in the prm file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01090">1090</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01093">1093</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -797,7 +816,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00366">366</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00369">369</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -858,7 +877,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01062">1062</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01065">1065</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -886,7 +905,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00372">372</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00375">375</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -908,7 +927,7 @@ template&lt;typename T &gt; </div>
 
 <p>Delete vtu and pvd files. </p>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00861">861</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00863">863</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -970,7 +989,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00542">542</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00545">545</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1017,9 +1036,178 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00590">590</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00593">593</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00542">deserialize_table()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00545">deserialize_table()</a>.</p>
+
+</div>
+</div>
+<a id="a4ebdfb061bfb4288cd6993cb1d6de661" name="a4ebdfb061bfb4288cd6993cb1d6de661"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ebdfb061bfb4288cd6993cb1d6de661">&#9670;&#160;</a></span>evaluate_values_at_points() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void evaluate_values_at_points </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_scalar_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evaluates the values of a scalar field at remote points of the domain from the mapping, the DoF handler and the solution field. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">VectorType</td><td>Vector type of the solution vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Mapping of the domain. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DoF handler associated to the solution field. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solution_field</td><td>Vector containing the solution field. For distributed meshes, ghost elements must be updated. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">evaluation_points</td><td>Vector of points where the values of the solution field are to be evaluated. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">remote_point_evaluator</td><td>Utilities::MPI::RemotePointEvaluation object used to evaluate values of the variable of interest at given points of the domain. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">evaluated_scalar_values</td><td>Vector of evaluated scalar values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">first_selected_component</td><td>First component of the solution to select if the solution field is a vector field. This is used to extract the correct field when the solution vector contains multiple fields (e.g., velocity and pressure are stored in a same solution vector).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section remark"><dt>Remarks</dt><dd>If a given evaluation point is not within the simulated domain, an exception is thrown. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00876">876</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+
+</div>
+</div>
+<a id="a8cae98c0b0f1048d719ce726b3feb168" name="a8cae98c0b0f1048d719ce726b3feb168"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cae98c0b0f1048d719ce726b3feb168">&#9670;&#160;</a></span>evaluate_values_at_points() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int n_component, int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void evaluate_values_at_points </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>solution_field</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Tensor&lt; 1, dim, double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluated_vector_values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>first_selected_component</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evaluates the values of a vector field at remote points of the domain from the mapping, the DoF handler and the solution field. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">n_component</td><td>Number of components of the evaluated vector solution. </td></tr>
+    <tr><td class="paramname">dim</td><td>Denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">VectorType</td><td>Vector type of the solution vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Mapping of the domain. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DoF handler associated to the solution field. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solution_field</td><td>Vector containing the vector solution field. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">evaluation_points</td><td>Vector of points where the values of the solution field are to be evaluated. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">remote_point_evaluator</td><td>Utilities::MPI::RemotePointEvaluation object used to evaluate values of the variable of interest at given points of the domain. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">evaluated_vector_values</td><td>Vector of evaluated vector values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">first_selected_component</td><td>First component of the solution to select. This is used to extract the correct fields when the solution vector contains multiple fields (e.g., velocity and pressure are stored in a same solution vector).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section remark"><dt>Remarks</dt><dd>If a given evaluation point is not within the simulated domain, an exception is thrown. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00973">973</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1057,7 +1245,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>keys Vector of keys from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00880">880</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00883">883</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1095,7 +1283,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>values Vector of values from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00899">899</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00902">902</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1141,7 +1329,7 @@ template&lt;typename key , typename val &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00317">317</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00320">320</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1188,7 +1376,7 @@ template&lt;typename key , typename val &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00218">218</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00221">221</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1234,7 +1422,7 @@ template&lt;typename key , typename val &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00264">264</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00267">267</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1262,9 +1450,9 @@ template&lt;typename key , typename val &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00633">633</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00636">636</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00550">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00553">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -1304,7 +1492,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::string Value of the parameter, or an empty string if not found. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00550">550</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00553">553</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1333,9 +1521,9 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The maximum number of boundary conditions or manifolds. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00699">699</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00702">702</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00589">get_max_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00592">get_max_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -1390,7 +1578,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00861">861</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00864">864</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1460,9 +1648,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Smallest cell size value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00806">806</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00809">809</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00779">compute_cell_measure_with_JxW()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00782">compute_cell_measure_with_JxW()</a>.</p>
 
 </div>
 </div>
@@ -1497,7 +1685,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00836">836</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00838">838</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1574,7 +1762,7 @@ template&lt;int dim, typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00091">91</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00094">94</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1651,7 +1839,7 @@ template&lt;int dim, typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00052">52</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00055">55</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1727,7 +1915,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00017">17</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00020">20</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1803,7 +1991,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variables values followed by the dependent variable values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00182">182</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00185">185</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1879,7 +2067,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variables values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00140">140</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00143">143</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1919,7 +2107,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Tuple containing a map with the command line flags and a boolean set to 1 for the specific flag; and a vector of strings with the rest of the arguments that are not flags; in Lethe, this corresponds to the parameter file given to the application. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00763">763</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00765">765</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1976,7 +2164,63 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Angle in the plane perpendicular to the rotation axis </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00994">994</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00997">997</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+
+</div>
+</div>
+<a id="a6c59fdbd976bc70491d23f9870eda5ea" name="a6c59fdbd976bc70491d23f9870eda5ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c59fdbd976bc70491d23f9870eda5ea">&#9670;&#160;</a></span>points_are_in_domain()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool points_are_in_domain </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; Point&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>evaluation_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Utilities::MPI::RemotePointEvaluation&lt; dim, dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>remote_point_evaluator</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks that the evaluation points are within the simulated domain and returns <code>true</code> if all points are within the domain. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Denotes the number of spatial dimensions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">evaluation_points</td><td>Vector of points where the values of the solution field are to be evaluated. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">remote_point_evaluator</td><td>RemotePointEvaluation object used to evaluate values.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if all points are within the simulated domain. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01273">1273</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2015,9 +2259,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00846">846</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00848">848</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00836">interpret_escape_sequences()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00838">interpret_escape_sequences()</a>.</p>
 
 </div>
 </div>
@@ -2065,9 +2309,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00809">809</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00811">811</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00550">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00553">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -2095,7 +2339,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00738">738</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00740">740</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -2159,7 +2403,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>point Point in cartesian coordinates </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01026">1026</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01029">1029</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2221,7 +2465,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00513">513</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00516">516</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2268,9 +2512,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00568">568</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00571">571</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00513">serialize_table()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00516">serialize_table()</a>.</p>
 
 </div>
 </div>
@@ -2323,7 +2567,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00332">332</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00335">335</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2369,7 +2613,7 @@ template&lt;int spacedim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the <code>value_string</code> in the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00663">663</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00666">666</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2433,7 +2677,7 @@ template&lt;int spacedim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the input parameters in the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00705">705</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00708">708</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>

@@ -17,7 +17,7 @@ var searchData=
   ['kinematic_5fviscosity_5fscale_5f0_14',['kinematic_viscosity_scale_0',['../classNavierStokesScratchData.html#a217da6b0183d1fb370e0d0c362888252',1,'NavierStokesScratchData']]],
   ['kinematic_5fviscosity_5fscale_5f1_15',['kinematic_viscosity_scale_1',['../classNavierStokesScratchData.html#affb3f96369a5da5dcd9a246baa18e734',1,'NavierStokesScratchData']]],
   ['kinematic_5fviscosity_5fvector_16',['kinematic_viscosity_vector',['../classNavierStokesOperatorBase.html#ae4cf079cb974ce0ad18a839e14da5bcf',1,'NavierStokesOperatorBase']]],
-  ['kinetic_5fenergy_5foutput_5fname_17',['kinetic_energy_output_name',['../structParameters_1_1PostProcessing.html#a9bc91c5ebc9e3ecb9bd89aa1431ac6b1',1,'Parameters::PostProcessing']]],
+  ['kinetic_5fenergy_5foutput_5fname_17',['kinetic_energy_output_name',['../structParameters_1_1PostProcessing.html#a2c0bb902fdfa734b4dac5653ffd21ff7',1,'Parameters::PostProcessing']]],
   ['kinetic_5fenergy_5ftable_18',['kinetic_energy_table',['../classNavierStokesBase.html#a89c0eac806edbe8aa8698a5cd7ef3899',1,'NavierStokesBase']]],
   ['kinsol_5fstrategy_19',['kinsol_strategy',['../structParameters_1_1NonLinearSolver.html#a6bc685ae85be73e914c14dda0e3272f6',1,'Parameters::NonLinearSolver']]]
 ];

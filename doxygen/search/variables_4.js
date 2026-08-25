@@ -77,7 +77,7 @@ var searchData=
   ['end_5fiteration_74',['end_iteration',['../classSimulationControl.html#aec805fc116d68e6a35323f01781f016a',1,'SimulationControl']]],
   ['end_5flog_75',['end_log',['../structcollision__event.html#ad12e25c95c6be22a8af73f4d84dbf278',1,'collision_event']]],
   ['end_5ftime_76',['end_time',['../classParameters_1_1Laser.html#a198957c1e1fc9ae5eb3b2686894c45fc',1,'Parameters::Laser::end_time'],['../classSimulationControl.html#ac2218ca6050ced4d713076cfc65af65d',1,'SimulationControl::end_time']]],
-  ['enstrophy_5foutput_5fname_77',['enstrophy_output_name',['../structParameters_1_1PostProcessing.html#a722c889ae44dd8d66a22477282e77bea',1,'Parameters::PostProcessing']]],
+  ['enstrophy_5foutput_5fname_77',['enstrophy_output_name',['../structParameters_1_1PostProcessing.html#ab7bb8375721831e837101c8cd5c0a793',1,'Parameters::PostProcessing']]],
   ['enstrophy_5ftable_78',['enstrophy_table',['../classNavierStokesBase.html#ae01fbee428575d65138349d35c4dcf7f',1,'NavierStokesBase']]],
   ['enthalpy_5fscaling_79',['enthalpy_scaling',['../classParameters_1_1Dimensionality.html#af449c6f9313fdcee05bc1d36fff71b86',1,'Parameters::Dimensionality']]],
   ['epsilon_80',['epsilon',['../classCahnHilliardAssemblerAngleOfContact.html#afb73db20fecb4360b03ca5311df9e576',1,'CahnHilliardAssemblerAngleOfContact::epsilon'],['../classCahnHilliardAssemblerFreeAngle.html#a5b9c6657b1b58508355d6bb3e7157d5c',1,'CahnHilliardAssemblerFreeAngle::epsilon'],['../classCahnHilliardAssemblerCore.html#a0b0a44f7b6fc48927d0d482cf737d17a',1,'CahnHilliardAssemblerCore::epsilon'],['../classSuperquadric.html#a116e1b0ead558a22964ba4a9cb39a98d',1,'Superquadric::epsilon'],['../structParameters_1_1CahnHilliard.html#a7571d0b4561b5cf166b0e31be037f11d',1,'Parameters::CahnHilliard::epsilon']]],

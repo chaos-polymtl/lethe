@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
+  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
   ['b_5fi_1',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_2',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
   ['background_5fdh_3',['background_dh',['../classRayTracingSolver.html#a9a62c44febba6fc0e9f3ab22bd943487',1,'RayTracingSolver::background_dh'],['../classDEMSolver.html#a3f17096d0118455699306606ec86e66a',1,'DEMSolver::background_dh']]],
-  ['barycenter_5foutput_5fname_4',['barycenter_output_name',['../structParameters_1_1PostProcessing.html#a280e7dcfdb6cf0b285e401aa3c52acd4',1,'Parameters::PostProcessing']]],
+  ['barycenter_5foutput_5fname_4',['barycenter_output_name',['../structParameters_1_1PostProcessing.html#a1198b435e8dbfc17e11aaf9ccb9db274',1,'Parameters::PostProcessing']]],
   ['barycenter_5ftable_5',['barycenter_table',['../classCahnHilliard.html#a22290e925b93fbad53f233929a8c49a8',1,'CahnHilliard']]],
   ['base_5fradius_6',['base_radius',['../classCone.html#a7f71b74ecd0e8a7f26c65242ebb1cd86',1,'Cone']]],
   ['basis_5ffunctions_7',['basis_functions',['../classRBFShape.html#a07b1ce75644d570cb5b319c54586b93e',1,'RBFShape']]],

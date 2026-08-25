@@ -141,11 +141,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a836c237c577aeed1bbe85816f01172c5" id="r_a836c237c577aeed1bbe85816f01172c5"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:a836c237c577aeed1bbe85816f01172c5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structInterfaceTools_1_1IsocontourBoundingValues.html">IsocontourBoundingValues</a>&lt; dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#a836c237c577aeed1bbe85816f01172c5">compute_isocontour_bounding_values</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;solution_vector, const double isovalue)</td></tr>
 <tr class="separator:a836c237c577aeed1bbe85816f01172c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed292a96e9deb7fc2af92b7e93ffc1ad" id="r_aed292a96e9deb7fc2af92b7e93ffc1ad"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
-<tr class="memitem:aed292a96e9deb7fc2af92b7e93ffc1ad"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#aed292a96e9deb7fc2af92b7e93ffc1ad">postprocess_isocontour_bounding_values</a> (const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a> &amp;variable, const std::multimap&lt; <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, std::pair&lt; unsigned int, <a class="el" href="structParameters_1_1PostProcessing_1_1IsocontourBoundingBoxes_1_1Isocontour.html">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour</a> &gt; &gt; &amp;ids_and_isocontours_per_variable, const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;solution_vector, const double current_time, const <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Parameters::Verbosity</a> &amp;verbosity, const ConditionalOStream &amp;pcout, std::vector&lt; TableHandler &gt; &amp;isocontour_bounding_values_tables)</td></tr>
-<tr class="separator:aed292a96e9deb7fc2af92b7e93ffc1ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb649e15fa76f5f91a9b9378f000e9a4" id="r_afb649e15fa76f5f91a9b9378f000e9a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#afb649e15fa76f5f91a9b9378f000e9a4">write_isocontour_bounding_values_tables</a> (const MPI_Comm &amp;mpi_communicator, const std::string &amp;output_folder, const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a> &amp;variable, const std::multimap&lt; <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, std::pair&lt; unsigned int, <a class="el" href="structParameters_1_1PostProcessing_1_1IsocontourBoundingBoxes_1_1Isocontour.html">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour</a> &gt; &gt; &amp;ids_and_isocontours_per_variable, const std::vector&lt; TableHandler &gt; &amp;isocontour_bounding_values_tables)</td></tr>
-<tr class="separator:afb649e15fa76f5f91a9b9378f000e9a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b878895c17b66b6189c17b374264f61" id="r_a7b878895c17b66b6189c17b374264f61"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a7b878895c17b66b6189c17b374264f61"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#a7b878895c17b66b6189c17b374264f61">postprocess_isocontour_bounding_values</a> (const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a> &amp;variable, const std::multimap&lt; <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, std::pair&lt; unsigned int, typename <a class="el" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a>&lt; dim &gt;::IsocontourBoundingBoxes::Isocontour &gt; &gt; &amp;ids_and_isocontours_per_variable, const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;solution_vector, const double current_time, const <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Parameters::Verbosity</a> &amp;verbosity, const ConditionalOStream &amp;pcout, std::vector&lt; TableHandler &gt; &amp;isocontour_bounding_values_tables)</td></tr>
+<tr class="separator:a7b878895c17b66b6189c17b374264f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95f932499d035481927f9391cab1de24" id="r_a95f932499d035481927f9391cab1de24"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a95f932499d035481927f9391cab1de24"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceInterfaceTools.html#a95f932499d035481927f9391cab1de24">write_isocontour_bounding_values_tables</a> (const MPI_Comm &amp;mpi_communicator, const std::string &amp;output_folder, const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a> &amp;variable, const std::multimap&lt; <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, std::pair&lt; unsigned int, typename <a class="el" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a>&lt; dim &gt;::IsocontourBoundingBoxes::Isocontour &gt; &gt; &amp;ids_and_isocontours_per_variable, const std::vector&lt; TableHandler &gt; &amp;isocontour_bounding_values_tables)</td></tr>
+<tr class="separator:a95f932499d035481927f9391cab1de24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ab48aaf0140e2b6b18c4d1c7c6dfae13e" name="ab48aaf0140e2b6b18c4d1c7c6dfae13e"></a>
@@ -605,8 +606,8 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 </div>
 </div>
-<a id="aed292a96e9deb7fc2af92b7e93ffc1ad" name="aed292a96e9deb7fc2af92b7e93ffc1ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed292a96e9deb7fc2af92b7e93ffc1ad">&#9670;&#160;</a></span>postprocess_isocontour_bounding_values()</h2>
+<a id="a7b878895c17b66b6189c17b374264f61" name="a7b878895c17b66b6189c17b374264f61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b878895c17b66b6189c17b374264f61">&#9670;&#160;</a></span>postprocess_isocontour_bounding_values()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -622,7 +623,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::multimap&lt; <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, std::pair&lt; unsigned int, <a class="el" href="structParameters_1_1PostProcessing_1_1IsocontourBoundingBoxes_1_1Isocontour.html">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour</a> &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::multimap&lt; <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, std::pair&lt; unsigned int, typename <a class="el" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a>&lt; dim &gt;::IsocontourBoundingBoxes::Isocontour &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>ids_and_isocontours_per_variable</em>, </td>
         </tr>
         <tr>
@@ -693,7 +694,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01764">1764</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l01185">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::bounding_coordinates_names</a>, <a class="el" href="interface__tools_8h_source.html#l01182">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::bounding_values</a>, <a class="el" href="namespaceInterfaceTools.html#a836c237c577aeed1bbe85816f01172c5">compute_isocontour_bounding_values()</a>, <a class="el" href="interface__tools_8h_source.html#l01194">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::isocontour_exists</a>, <a class="el" href="parameters_8h_source.html#l01083">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour::isovalue</a>, <a class="el" href="parameters_8h_source.html#l01086">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour::output_name</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l01185">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::bounding_coordinates_names</a>, <a class="el" href="interface__tools_8h_source.html#l01182">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::bounding_values</a>, <a class="el" href="namespaceInterfaceTools.html#a836c237c577aeed1bbe85816f01172c5">compute_isocontour_bounding_values()</a>, <a class="el" href="interface__tools_8h_source.html#l01194">InterfaceTools::IsocontourBoundingValues&lt; dim &gt;::isocontour_exists</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -787,11 +788,13 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 </div>
 </div>
-<a id="afb649e15fa76f5f91a9b9378f000e9a4" name="afb649e15fa76f5f91a9b9378f000e9a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb649e15fa76f5f91a9b9378f000e9a4">&#9670;&#160;</a></span>write_isocontour_bounding_values_tables()</h2>
+<a id="a95f932499d035481927f9391cab1de24" name="a95f932499d035481927f9391cab1de24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95f932499d035481927f9391cab1de24">&#9670;&#160;</a></span>write_isocontour_bounding_values_tables()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void InterfaceTools::write_isocontour_bounding_values_tables </td>
@@ -814,7 +817,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::multimap&lt; <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, std::pair&lt; unsigned int, <a class="el" href="structParameters_1_1PostProcessing_1_1IsocontourBoundingBoxes_1_1Isocontour.html">Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour</a> &gt; &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::multimap&lt; <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, std::pair&lt; unsigned int, typename <a class="el" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a>&lt; dim &gt;::IsocontourBoundingBoxes::Isocontour &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>ids_and_isocontours_per_variable</em>, </td>
         </tr>
         <tr>
@@ -843,7 +846,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01867">1867</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01868">1868</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>
