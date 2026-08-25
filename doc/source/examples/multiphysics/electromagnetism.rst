@@ -8,4 +8,4 @@ Electromagnetism
     :titlesonly:
 
     waveguide/waveguide
-    fichera_oven/fichera_oven
+    fichera-oven/fichera-oven

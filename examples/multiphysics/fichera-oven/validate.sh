@@ -21,14 +21,14 @@ n_proc=16
 parse_command_line "$@"
 
 folder="$output_root/fichera-oven"
-action_fichera="mpirun -np $n_proc lethe-fluid fichera_oven.prm" 
+action_fichera="mpirun -np $n_proc lethe-fluid fichera-oven.prm" 
 
 recreate_folder "$folder"
 
 { time $action_fichera ; } &> "$folder/log-fichera"
 
 # Process the simulation
-python3 ./fichera_oven.py --validate
+python3 ./fichera-oven.py --validate
 
 # Copy the information to the log folder
 cp $plots $folder

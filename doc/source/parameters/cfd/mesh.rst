@@ -154,12 +154,11 @@ Fichera Oven
     set grid type       = fichera_oven
     set grid arguments  = bottom_left : top_right : colorize
 
-If this grid type is chosen, a mesh for the Fichera oven time-harmonic Maxwell benchmark is created. 
+If this grid type is chosen, a mesh for the Fichera oven time-harmonic Maxwell benchmark is created. For more details on this type of mesh, refer to :doc:`../../examples/multiphysics/fichera-oven/fichera-oven`.
 
-.. admonition:: Upcoming update
-  
-  More details on this type of mesh and its grid arguments will be provided in a future example.
-
+The ``grid arguments`` accepts up to three colon-separated values as listed above.
+* The first two fields are required, where ``bottom_left`` and ``top_right`` are ``x,y,z`` coordinates defining the bounding box of the mesh.
+* The last field is optional, where ``colorize`` is a boolean that applies the following boundary ID convention: 0 for all the oven walls, 1 for the waveguide inlet which is the furthest face from the `bottom_left` corner with the normal pointing in the positive z direction.
 
 .. _channel-cylinder:
 
