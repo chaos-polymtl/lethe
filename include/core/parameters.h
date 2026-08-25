@@ -1054,7 +1054,10 @@ namespace Parameters
    * implies the calculation of quantities derived from the principal
    * variables. For example, the integral kinetic energy or the integral
    * enstrophy.
+   *
+   * @tparam dim Denotes the number of spatial dimensions.
    */
+  template <int dim>
   struct PostProcessing
   {
     /**
@@ -1111,8 +1114,108 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
+    /**
+     * @brief Probing points parameters. This is used to monitor the evolution
+     * of variables (e.g., temperature) at specified points in the domain.
+     *
+     * The probing points are grouped according the evaluated variables in the
+     * map ProbingPoints::probing_points_per_variable for easier access when
+     * postprocessing in the different physics. The names (output filenames) of
+     * the probes are stored in the vector
+     * ProbingPoints::probing_points_output_names. The indices of the vector
+     * correspond to the probe IDs.
+     *
+     * @remark The points defined must be part of the domain.
+     */
+    struct ProbingPoints
+    {
+      /**
+       * @brief IDs and locations associated with probe points of a given
+       * variable.
+       */
+      struct ProbingPointsPerVariable
+      {
+        /** Identifiers of the probe points. This is required since multiple
+         * variable can be evaluated a same probing location, but all fields of
+         * a same probe are written in the same file. */
+        std::vector<unsigned int> ids;
+
+        /// Point locations where we want to evaluate values
+        std::vector<Point<dim>> points;
+      };
+
+      /// Number of probing points
+      unsigned int number_of_probing_points;
+
+      /// Maximum number of probing points
+      unsigned int max_number_of_probing_points = 25;
+
+      /// Probing point output names ordered by ID
+      std::vector<std::string> probing_points_output_names;
+
+      /**
+       * Map that regroups all probing points information (ID and coordinates)
+       * of a same variable under the same variable key. This map is used within
+       * the physics to quickly identify the probes that request an evaluation
+       * of one of its variables.
+       *
+       * @remark This is the only place where the probing points are stored.
+       * They are directly parsed in this map from the parameter file.
+       */
+      std::map<Variable, ProbingPointsPerVariable> probing_points_per_variable;
+
+      /**
+       * @brief Declares the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
+      void
+      declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parses the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
+      void
+      parse_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Adds an entry to probing_points_per_variable.
+       *
+       * @param[in] variable Variable of the monitored quantity.
+       * @param[in] id Identifier of the probe.
+       * @param[in] point Location of the probe.
+       */
+      void inline add_probing_point(const Variable     &variable,
+                                    const unsigned int &id,
+                                    const Point<dim>   &point)
+      {
+        // Initialize new variable entry if there is none and get probes of the
+        // variable
+        ProbingPointsPerVariable &probes_of_variable =
+          probing_points_per_variable.try_emplace(variable).first->second;
+
+        auto &ids = probes_of_variable.ids;
+
+        AssertThrow(std::find(ids.begin(), ids.end(), id) == ids.end(),
+                    ExcMessage(
+                      "For the probing point " + Utilities::int_to_string(id) +
+                      ", you are specifying multiple times the variable '" +
+                      get_variable_string(variable) +
+                      "'. Please only specify it once."));
+
+        // Emplace back id and point coordinates if entry is not duplicated
+        ids.emplace_back(id);
+        probes_of_variable.points.emplace_back(point);
+      }
+    };
+
     /// Contains all isocontour bounding boxes
     IsocontourBoundingBoxes isocontour_bounding_boxes;
+
+    /// Contains all probing points
+    ProbingPoints probing_points;
 
     /// Verbosity level of the post-processed quantities
     Verbosity verbosity;

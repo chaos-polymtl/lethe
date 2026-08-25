@@ -35,8 +35,9 @@ add_library(lethe-solvers
   navier_stokes_cls_assemblers.cc
   physical_properties_manager.cc
   postprocessing_cfd.cc
-  postprocessing_velocities.cc
+  postprocessing_probes.cc
   postprocessing_scalar.cc
+  postprocessing_velocities.cc
   signed_distance_transformation.cc
   simulation_parameters.cc
   solid_constraints.cc
@@ -50,7 +51,6 @@ add_library(lethe-solvers
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
-  ../../include/solvers/postprocessing_scalar.h
   ../../include/solvers/cahn_hilliard.h
   ../../include/solvers/cahn_hilliard_assemblers.h
   ../../include/solvers/cahn_hilliard_filter.h
@@ -89,6 +89,8 @@ add_library(lethe-solvers
   ../../include/solvers/physics_scratch_data.h
   ../../include/solvers/physics_subequations_solver.h
   ../../include/solvers/postprocessing_cfd.h
+  ../../include/solvers/postprocessing_probes.h
+  ../../include/solvers/postprocessing_scalar.h
   ../../include/solvers/postprocessing_velocities.h
   ../../include/solvers/postprocessors.h
   ../../include/solvers/signed_distance_transformation.h

@@ -3,8 +3,11 @@
 
 #include <core/revision.h>
 #include <core/utilities.h>
+#include <core/vector.h>
 
 #include <deal.II/base/revision.h>
+
+#include <deal.II/numerics/vector_tools.h>
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -711,12 +714,11 @@ get_max_subsection_size(const std::string &file_name)
 
 /**
  * @brief Concatenate words which are passed from the command line to a main function
- * into a single string in which the words are seperated by space.
+ * into a single string in which the words are separated by space.
  *
  * @param[in] argc number of arguments in C style.
  * @param[in] argv arguments themselves in C style.
  */
-
 std::string
 concatenate_strings(const int argc, char **argv)
 {
@@ -868,3 +870,196 @@ delete_vtu_and_pvd_files(const std::string &output_path)
         std::filesystem::remove(filename.path());
     }
 }
+
+template <int dim, typename VectorType>
+void
+evaluate_values_at_points(
+  const Mapping<dim>                         &mapping,
+  const DoFHandler<dim>                      &dof_handler,
+  const VectorType                           &solution_field,
+  const std::vector<Point<dim>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<dim> &remote_point_evaluator,
+  std::vector<double>                        &evaluated_scalar_values,
+  const unsigned int                          first_selected_component)
+{
+  // Check if solution vector is relevant when running on multiple processes
+  if (Utilities::MPI::n_mpi_processes(dof_handler.get_mpi_communicator()) > 1)
+    AssertThrow(solution_field.has_ghost_elements(),
+                GhostElementsRequired("evaluate_values_at_points"));
+
+  // Reinitialize remote point evaluator if needed
+  if (!remote_point_evaluator.is_ready())
+    remote_point_evaluator.reinit(evaluation_points,
+                                  dof_handler.get_triangulation(),
+                                  mapping);
+
+  // Evaluate scalar values at points using RemotePointEvaluation if they are
+  // found within the domain
+  if (points_are_in_domain<dim>(evaluation_points, remote_point_evaluator))
+    evaluated_scalar_values = VectorTools::point_values<1>(
+      mapping,
+      dof_handler,
+      solution_field,
+      evaluation_points,
+      remote_point_evaluator,
+      VectorTools::EvaluationFlags::EvaluationFlags::avg,
+      first_selected_component);
+}
+
+template void
+evaluate_values_at_points<2, GlobalVectorType>(
+  const Mapping<2>                         &mapping,
+  const DoFHandler<2>                      &dof_handler,
+  const GlobalVectorType                   &solution_field,
+  const std::vector<Point<2>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<2> &remote_point_evaluator,
+  std::vector<double>                      &evaluated_scalar_values,
+  const unsigned int                        first_selected_component);
+
+template void
+evaluate_values_at_points<3, GlobalVectorType>(
+  const Mapping<3>                         &mapping,
+  const DoFHandler<3>                      &dof_handler,
+  const GlobalVectorType                   &solution_field,
+  const std::vector<Point<3>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<3> &remote_point_evaluator,
+  std::vector<double>                      &evaluated_scalar_values,
+  const unsigned int                        first_selected_component);
+
+template void
+evaluate_values_at_points<2, GlobalBlockVectorType>(
+  const Mapping<2>                         &mapping,
+  const DoFHandler<2>                      &dof_handler,
+  const GlobalBlockVectorType              &solution_field,
+  const std::vector<Point<2>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<2> &remote_point_evaluator,
+  std::vector<double>                      &evaluated_scalar_values,
+  const unsigned int                        first_selected_component);
+
+template void
+evaluate_values_at_points<3, GlobalBlockVectorType>(
+  const Mapping<3>                         &mapping,
+  const DoFHandler<3>                      &dof_handler,
+  const GlobalBlockVectorType              &solution_field,
+  const std::vector<Point<3>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<3> &remote_point_evaluator,
+  std::vector<double>                      &evaluated_scalar_values,
+  const unsigned int                        first_selected_component);
+
+#ifndef LETHE_USE_LDV
+template void
+evaluate_values_at_points<2, LinearAlgebra::distributed::Vector<double>>(
+  const Mapping<2>                                 &mapping,
+  const DoFHandler<2>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &solution_field,
+  const std::vector<Point<2>>                      &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<2>         &remote_point_evaluator,
+  std::vector<double>                              &evaluated_scalar_values,
+  const unsigned int                                first_selected_component);
+
+template void
+evaluate_values_at_points<3, LinearAlgebra::distributed::Vector<double>>(
+  const Mapping<3>                                 &mapping,
+  const DoFHandler<3>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &solution_field,
+  const std::vector<Point<3>>                      &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<3>         &remote_point_evaluator,
+  std::vector<double>                              &evaluated_scalar_values,
+  const unsigned int                                first_selected_component);
+#endif
+
+template <int n_component, int dim, typename VectorType>
+void
+evaluate_values_at_points(
+  const Mapping<dim>                         &mapping,
+  const DoFHandler<dim>                      &dof_handler,
+  const VectorType                           &solution_field,
+  const std::vector<Point<dim>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<dim> &remote_point_evaluator,
+  std::vector<Tensor<1, dim, double>>        &evaluated_vector_values,
+  const unsigned int                          first_selected_component)
+{
+  // Check if solution vector is relevant when running on multiple processes
+  if (Utilities::MPI::n_mpi_processes(dof_handler.get_mpi_communicator()) > 1)
+    AssertThrow(solution_field.has_ghost_elements(),
+                GhostElementsRequired("evaluate_values_at_points"));
+
+  // Reinitialize remote point evaluator if needed
+  if (!remote_point_evaluator.is_ready())
+    remote_point_evaluator.reinit(evaluation_points,
+                                  dof_handler.get_triangulation(),
+                                  mapping);
+
+  // Evaluate scalar values at points using RemotePointEvaluation
+  if (points_are_in_domain<dim>(evaluation_points, remote_point_evaluator))
+    evaluated_vector_values = VectorTools::point_values<n_component>(
+      mapping,
+      dof_handler,
+      solution_field,
+      evaluation_points,
+      remote_point_evaluator,
+      VectorTools::EvaluationFlags::EvaluationFlags::avg,
+      first_selected_component);
+}
+
+template void
+evaluate_values_at_points<2, 2, GlobalVectorType>(
+  const Mapping<2>                         &mapping,
+  const DoFHandler<2>                      &dof_handler,
+  const GlobalVectorType                   &solution_field,
+  const std::vector<Point<2>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<2> &remote_point_evaluator,
+  std::vector<Tensor<1, 2, double>>        &evaluated_vector_values,
+  const unsigned int                        first_selected_component);
+
+template void
+evaluate_values_at_points<3, 3, GlobalVectorType>(
+  const Mapping<3>                         &mapping,
+  const DoFHandler<3>                      &dof_handler,
+  const GlobalVectorType                   &solution_field,
+  const std::vector<Point<3>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<3> &remote_point_evaluator,
+  std::vector<Tensor<1, 3, double>>        &evaluated_vector_values,
+  const unsigned int                        first_selected_component);
+
+template void
+evaluate_values_at_points<2, 2, GlobalBlockVectorType>(
+  const Mapping<2>                         &mapping,
+  const DoFHandler<2>                      &dof_handler,
+  const GlobalBlockVectorType              &solution_field,
+  const std::vector<Point<2>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<2> &remote_point_evaluator,
+  std::vector<Tensor<1, 2, double>>        &evaluated_vector_values,
+  const unsigned int                        first_selected_component);
+
+template void
+evaluate_values_at_points<3, 3, GlobalBlockVectorType>(
+  const Mapping<3>                         &mapping,
+  const DoFHandler<3>                      &dof_handler,
+  const GlobalBlockVectorType              &solution_field,
+  const std::vector<Point<3>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<3> &remote_point_evaluator,
+  std::vector<Tensor<1, 3, double>>        &evaluated_vector_values,
+  const unsigned int                        first_selected_component);
+
+#ifndef LETHE_USE_LDV
+template void
+evaluate_values_at_points<2, 2, LinearAlgebra::distributed::Vector<double>>(
+  const Mapping<2>                                 &mapping,
+  const DoFHandler<2>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &solution_field,
+  const std::vector<Point<2>>                      &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<2>         &remote_point_evaluator,
+  std::vector<Tensor<1, 2, double>>                &evaluated_vector_values,
+  const unsigned int                                first_selected_component);
+
+template void
+evaluate_values_at_points<3, 3, LinearAlgebra::distributed::Vector<double>>(
+  const Mapping<3>                                 &mapping,
+  const DoFHandler<3>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &solution_field,
+  const std::vector<Point<3>>                      &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<3>         &remote_point_evaluator,
+  std::vector<Tensor<1, 3, double>>                &evaluated_vector_values,
+  const unsigned int                                first_selected_component);
+#endif

@@ -7,6 +7,7 @@
 #include <core/output_struct.h>
 
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/mpi_remote_point_evaluation.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/table_handler.h>
@@ -15,6 +16,8 @@
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/fe_values.h>
+
+#include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_iterator.h>
 
@@ -1179,5 +1182,113 @@ struct cut_cell_comparison
            cell_2->global_active_cell_index();
   }
 };
+
+/**
+ * @brief Evaluates the values of a scalar field at remote points of the domain
+ * from the mapping, the DoF handler and the solution field.
+ *
+ * @tparam dim Denotes the number of spatial dimensions.
+ * @tparam VectorType Vector type of the solution vector.
+ *
+ * @param[in] mapping Mapping of the domain.
+ * @param[in] dof_handler DoF handler associated to the solution field.
+ * @param[in] solution_field Vector containing the solution field. For
+ * distributed meshes, ghost elements must be updated.
+ * @param[in] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
+ * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation
+ * object used to evaluate values of the variable of interest at given points
+ * of the domain.
+ * @param[in,out] evaluated_scalar_values Vector of evaluated scalar values.
+ * @param[in] first_selected_component First component of the solution to select
+ * if the solution field is a vector field. This is used to extract the correct
+ * field when the solution vector contains multiple fields (e.g., velocity and
+ * pressure are stored in a same solution vector).
+ *
+ * @remark If a given evaluation point is not within the simulated domain, an
+ * exception is thrown.
+ */
+template <int dim, typename VectorType>
+void
+evaluate_values_at_points(
+  const Mapping<dim>                         &mapping,
+  const DoFHandler<dim>                      &dof_handler,
+  const VectorType                           &solution_field,
+  const std::vector<Point<dim>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<dim> &remote_point_evaluator,
+  std::vector<double>                        &evaluated_scalar_values,
+  const unsigned int                          first_selected_component = 0);
+
+/**
+ * @brief Evaluates the values of a vector field at remote points of the domain
+ * from the mapping, the DoF handler and the solution field.
+ *
+ * @tparam n_component Number of components of the evaluated vector solution.
+ * @tparam dim Denotes the number of spatial dimensions.
+ * @tparam VectorType Vector type of the solution vector.
+ *
+ * @param[in] mapping Mapping of the domain.
+ * @param[in] dof_handler DoF handler associated to the solution field.
+ * @param[in] solution_field Vector containing the vector solution field.
+ * @param[in] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
+ * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation
+ * object used to evaluate values of the variable of interest at given points
+ * of the domain.
+ * @param[in,out] evaluated_vector_values Vector of evaluated vector values.
+ * @param[in] first_selected_component First component of the solution to
+ * select. This is used to extract the correct fields when the solution vector
+ * contains multiple fields (e.g., velocity and pressure are stored in a same
+ * solution vector).
+ *
+ * @remark If a given evaluation point is not within the simulated domain, an
+ * exception is thrown.
+ */
+template <int n_component, int dim, typename VectorType>
+void
+evaluate_values_at_points(
+  const Mapping<dim>                         &mapping,
+  const DoFHandler<dim>                      &dof_handler,
+  const VectorType                           &solution_field,
+  const std::vector<Point<dim>>              &evaluation_points,
+  Utilities::MPI::RemotePointEvaluation<dim> &remote_point_evaluator,
+  std::vector<Tensor<1, dim, double>>        &evaluated_vector_values,
+  const unsigned int                          first_selected_component = 0);
+
+/**
+ * @brief Checks that the evaluation points are within the simulated domain and
+ * returns @p true if all points are within the domain.
+ *
+ * @tparam dim Denotes the number of spatial dimensions.
+ *
+ * @param[in] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
+ * @param[in] remote_point_evaluator RemotePointEvaluation object used to
+ * evaluate values.
+ *
+ * @return @p true if all points are within the simulated domain.
+ */
+template <int dim>
+inline bool
+points_are_in_domain(
+  const std::vector<Point<dim>>                         &evaluation_points,
+  const Utilities::MPI::RemotePointEvaluation<dim, dim> &remote_point_evaluator)
+{
+  if (!remote_point_evaluator.all_points_found())
+    {
+      for (unsigned int i = 0; i < evaluation_points.size(); ++i)
+        {
+          AssertThrow(remote_point_evaluator.point_found(i),
+                      ExcMessage(
+                        "The point (" +
+                        Patterns::Tools::Convert<Point<dim>>::to_string(
+                          evaluation_points[i]) +
+                        ") is not defined within the simulated domain."));
+        }
+    }
+
+  return true;
+}
+
 
 #endif
