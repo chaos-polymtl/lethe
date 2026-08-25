@@ -260,7 +260,22 @@ public:
   define_constraints();
 
   /**
-   * @brief Call for the solution of the linear system of equation using CG solver.
+   * @brief Solve the linear system using the CG solver.
+   *
+   * The CG solver is initialized with the solution from the previous linear
+   * system solve, stored in the `initial_guess_iterative_solver` vector. The
+   * initial guess is set to zero for the first solve of a simulation, after
+   * restarting from a checkpoint, and after mesh adaptation.
+   *
+   * The `present_solution_skeleton` vector cannot be used directly as an
+   * initial guess because it is rescaled according to the user-defined
+   * parameters. Consequently, its rescaled values generally provide a poor
+   * initial guess for the CG solver. Storing the initial guess separately
+   * avoids the need to perform an inverse scaling of
+   * `present_solution_skeleton`. It also ensures that the interior and skeleton
+   * solutions remain synchronized in the same scaling. The
+   * `initial_guess_iterative_solver` vector is updated after each linear system
+   * solve.
    */
   void
   solve_linear_system() override;
