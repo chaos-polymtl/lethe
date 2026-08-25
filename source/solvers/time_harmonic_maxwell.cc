@@ -2043,6 +2043,10 @@ TimeHarmonicMaxwell<dim>::define_constraints()
         }
     }
   this->nonzero_constraints.close();
+  this->nonzero_constraints.make_consistent_in_parallel(
+    this->locally_owned_dofs_trial_skeleton,
+    this->locally_relevant_dofs_trial_skeleton,
+    this->triangulation->get_mpi_communicator());
 }
 
 template <int dim>
