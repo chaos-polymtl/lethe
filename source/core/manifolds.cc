@@ -93,9 +93,9 @@ namespace Parameters
   {
     prm.enter_subsection("manifolds");
     {
-      this->number_of_manifolds = prm.get_integer("number");
+      this->number_of_manifolds_subsections = prm.get_integer("number");
 
-      for (unsigned int i = 0; i < this->number_of_manifolds; i++)
+      for (unsigned int i = 0; i < this->number_of_manifolds_subsections; i++)
         {
           prm.enter_subsection("manifold " + Utilities::int_to_string(i));
           parse_boundary(prm);

@@ -47,8 +47,12 @@ namespace Parameters
     // File names for cad manifolds
     std::vector<std::string> cad_files;
 
-    // Number of manifolds
-    unsigned int number_of_manifolds;
+    // Number of manifolds subsections. Each manifold description (i.e., type
+    // and geometric characteristics) can be associated to more than one
+    // boundary ID. Hence, the total number of individual manifolds should be
+    // accessed through the size of the manifold description vectors (e.g.,
+    // `ids`).
+    unsigned int number_of_manifolds_subsections;
 
     void
     parse_boundary(const ParameterHandler &prm);
