@@ -42,7 +42,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``type`` parameter is set to ``gaussian_heat_flux_cls_interface`` (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the ``type`` can be set at ``uniform_heat_flux_cls_interface``. In both cases, the laser model must be used in conjunction with the :doc:`CLS auxiliary physic <./conservative_level_set>`. The third available laser model is the  ``exponential_decay`` and considers that the laser behaves as a volumetric source. The different models are detailed :ref:`below <LaserTypes>`.
 
-* When ``enable angle of incidence dependence`` is set to ``true`` (by default), the laser heat source is dampened following a factor :math:`\cos(\theta)` when the angle of incidence of the laser with respect to the heated surface :math:`(\theta)` is greater than :math:`0` degrees (i.e. the laser source is not perpendicular to the surface).
+* When ``enable angle of incidence dependence`` is set to ``true`` (by default), the laser heat source is dampened following a factor :math:`\cos(\beta)` when the angle of incidence of the laser with respect to the heated surface :math:`(\beta)` is greater than :math:`0` degrees (i.e. the laser source is not perpendicular to the surface).
 
   .. figure:: images/angle_of_incidence.svg
     :alt: Schematic of the angle of incidence
@@ -132,7 +132,7 @@ Laser types
 
   .. caution::
 
-    The factor :math:`\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right) = \cos(\theta)` (with :math:`\theta` the angle of incidence of the laser) is replaced by the value of :math:`1.0` when ``enable angle of incidence dependence`` is set to ``false``.
+    The factor :math:`\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right) = \cos(\beta)` (with :math:`\beta` the angle of incidence of the laser) is replaced by the value of :math:`1.0` when ``enable angle of incidence dependence`` is set to ``false``.
 
 * When the ``type`` parameter is set to ``exponential_decay``, the exponential model from Liu *et al.* [#liu2018]_ is used to simulate the laser heat source:
 
