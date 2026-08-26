@@ -708,10 +708,10 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   const std::map<int, boundary_cells_info_struct<dim>>
     &global_boundary_cells_information)
 {
-  // Store imaginary boundary-face entries here and add them to 
-  // boundary_cells_information after the loop to avoid modifying the map while 
+  // Store imaginary boundary-face entries here and add them to
+  // boundary_cells_information after the loop to avoid modifying the map while
   // iterating over it. The original map uses the global face id as the key.
-  // Since the new entries correspond to existing boundary faces but associated 
+  // Since the new entries correspond to existing boundary faces but associated
   // with a different cell, we need to generate unique imaginary keys for them.
 
   std::map<int, boundary_cells_info_struct<dim>> imaginary_boundary_faces;
@@ -730,7 +730,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
       // face and find the neighboring cells
       TriaIterator<TriaAccessor<dim - 1, dim, dim>> main_face_iterator;
       bool                                          found_face = false;
-      // Loop over the faces of the boundary cell to get the face iterator of 
+      // Loop over the faces of the boundary cell to get the face iterator of
       // the current boundary face
       for (const unsigned int f : boundary_cells_info.cell->face_indices())
         {
@@ -794,7 +794,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                               common_vertices++;
                             }
                       // This part assumes a mesh with a uniform refinement
-                      // level. In 2D, two boundary faces share an edge if 
+                      // level. In 2D, two boundary faces share an edge if
                       // they have one common vertex. In 3D, the boundary faces
                       // share an edge if they have two common vertices.
                       if constexpr (dim == 2)
