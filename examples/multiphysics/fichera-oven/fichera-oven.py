@@ -49,14 +49,14 @@ N_FIELDS = 4
 
 # Interior (volumetric) DG space: degree-3 DG -> 64 shape functions per
 # cell, each field has 3 vector components in 3D.
-N_DOFS_PER_CELL_PER_FIELD = 64
+N_DOFS_PER_CELL_PER_FIELD = 27
 N_COMPONENTS_3D = 3
-N_DOFS_INTERIOR_PER_CELL = N_DOFS_PER_CELL_PER_FIELD * N_COMPONENTS_3D  # = 192
+N_DOFS_INTERIOR_PER_CELL = N_DOFS_PER_CELL_PER_FIELD * N_COMPONENTS_3D  # = 81
 
 # Skeleton (trace) space: degree-4 Nedelec face element -> 24 DoFs
 # associated with the interior of a face, plus 4 DoFs per edge.
-N_DOFS_PER_FACE = 24
-N_DOFS_PER_EDGE = 4
+N_DOFS_PER_FACE = 12
+N_DOFS_PER_EDGE = 3
 
 #############################################################################
 # Reference data
@@ -67,15 +67,15 @@ N_DOFS_PER_EDGE = 4
 #############################################################################
 
 N_DOFS_REF = np.array([
-    2076, 9070, 37956, 89400, 184874, 324918, 469785, 616082,
-    1071094, 2338390, 3344512, 4482201, 4941714, 5942106, 9169030
+    2028, 8942, 37802, 88782, 183840, 321810, 469604, 612680,
+    1072494, 2348662, 3332700, 4471528, 4931841, 5916114, 9003416
 ])
 RESIDUALS_REF = np.array([
-    0.2912234144941983, 0.2596028668687208, 0.20471425561217332,
-    0.1769783464666799, 0.14063276723208087, 0.10755088210362346,
-    0.08288371676687098, 0.07056440607367706, 0.05479850606955148,
-    0.04095555466309438, 0.033815680884222044, 0.029010979756341898,
-    0.027495896657863637, 0.02451043853017416, 0.020083001420030503
+    0.2929607385716628, 0.26155250662763546, 0.2064311160765089,
+    0.17630014791054022, 0.14191694747369588, 0.10874331535504288,
+    0.08332414729113355, 0.07046374783289007, 0.05561372856114809,
+    0.04096563585421059, 0.03430298439717367, 0.029296073857166302,
+    0.027342035013820435, 0.02477446488053953, 0.020340010731841072
 ])
 
 
@@ -156,8 +156,8 @@ def count_faces_and_edges(mesh):
         Number of faces shared between two cells (interior faces).
     n_edge_boundary : int
         Number of edges lying on the domain boundary surface.
-    n_edge_all : int
-        Total number of distinct edges in the mesh.
+    n_edge_interior : int
+        Number of edges shared between four cells (interior edges).
     """
     # Extracting the outer surface once and reusing it avoids recomputing
     # the same boundary extraction twice (once for faces, once for edges).
@@ -172,12 +172,20 @@ def count_faces_and_edges(mesh):
     #   6 * n_cells = n_face_boundary + 2 * n_face_interior
     # Solving for the number of interior faces:
     n_face_interior = (6 * n_cells - n_face_boundary) / 2
-    n_edge_all = cleaned.extract_all_edges().n_lines
+    n_edge_boundary = boundary_surface.extract_all_edges().n_lines
+    n_edge_interior = cleaned.extract_all_edges().n_lines - n_edge_boundary
 
-    return n_face_boundary, n_face_interior, n_edge_all
+    print(f"n_cells={n_cells}, n_face_boundary={n_face_boundary}, "
+          f"n_face_interior={n_face_interior}, n_edge_boundary={n_edge_boundary}, "
+          f"n_edge_interior={n_edge_interior}")
+
+    return n_face_boundary, n_face_interior, n_edge_boundary, n_edge_interior
 
 
-def compute_dof_counts(n_cells, n_faces, n_edge_all):
+
+
+
+def compute_dof_counts(n_cells, n_face_boundary, n_faces_interior, n_edge_boundary, n_edge_interior):
     """Compute interior and skeleton (trace) DoF counts for one iteration.
 
     Assumes a degree-4 Nedelec face element for the skeleton space (24
@@ -192,10 +200,18 @@ def compute_dof_counts(n_cells, n_faces, n_edge_all):
     n_dofs_skeleton : int
         Total skeleton/trace-space DoFs (all fields).
     """
+    n_faces = n_face_boundary + n_faces_interior
+    n_edge_all = n_edge_boundary + n_edge_interior
     n_dofs_skeleton = N_FIELDS * (
         n_faces * N_DOFS_PER_FACE + n_edge_all * N_DOFS_PER_EDGE
     )
+    #Only the boundary dofs of E_r are constrained, so we need to subtract them from the total dofs to get the number of free dofs
+    n_dofs_skeleton_constrained = n_face_boundary * N_DOFS_PER_FACE + n_edge_boundary * N_DOFS_PER_EDGE
+    n_dofs_skeleton -= n_dofs_skeleton_constrained 
+
     n_dofs_interior = n_cells * N_FIELDS * N_DOFS_INTERIOR_PER_CELL
+
+    print(f"n_dofs_interior={n_dofs_interior}, n_dofs_skeleton={n_dofs_skeleton}")
 
     return n_dofs_interior, n_dofs_skeleton
 
@@ -270,13 +286,12 @@ def read_convergence_data(pvd_file):
         if dpg_error.max() == 0.0:
             continue
 
-        n_face_boundary, n_face_interior, n_edges = \
+        n_face_boundary, n_face_interior, n_edge_boundary, n_edge_interior = \
             count_faces_and_edges(data)
 
-        n_faces = n_face_boundary + n_face_interior
-
         n_dofs_interior, n_dofs_skeleton = compute_dof_counts(
-            n_cells, n_faces, n_edges)
+            n_cells, n_face_boundary, n_face_interior, n_edge_boundary, n_edge_interior
+        )
 
         l2_error, max_error = compute_error_norms(data, dpg_error)
 
@@ -303,10 +318,10 @@ def plot_convergence_vs_cells(results, colors, show):
     """Plot DPG L2 and max error norms as a function of the number of cells."""
     fig, ax = plt.subplots()
 
-    ax.semilogy(results['n_cells'], results['l2_error'],
+    ax.loglog(results['n_cells'], results['l2_error'],
                 's-', color=colors[0], markerfacecolor='none',
                 label=r'$\| e \|_{L^2(\Omega)}$')
-    ax.semilogy(results['n_cells'], results['max_error'],
+    ax.loglog(results['n_cells'], results['max_error'],
                 'o-', color=colors[1], markerfacecolor='none',
                 label=r'$\| e \|_{L^\infty(\Omega)}$')
 
@@ -329,14 +344,14 @@ def plot_convergence_vs_dofs(results, show):
     fig, ax = plt.subplots()
 
     ax.loglog(N_DOFS_REF, RESIDUALS_REF,
-              linestyle='-', color="#0e26b1", linewidth=4, label=r'\texttt{hp3d}')
+              linestyle='-', color="#0e26b1", linewidth=4, label=r'\texttt{hp3d}',zorder=3)
     ax.scatter(N_DOFS_REF, RESIDUALS_REF,
-               facecolor='k', color='none', zorder=5, s=75, linewidths=2)
+               facecolor='k', color='none', zorder=4, s=75, linewidths=2)
 
     ax.loglog(results['n_dofs_skeleton'], results['l2_error'],
-              linestyle='-', color='#1b9e77', linewidth=4, label=r'\texttt{lethe}')
+              linestyle='-', color='#1b9e77', linewidth=4, label=r'\texttt{lethe}',zorder=5)
     ax.scatter(results['n_dofs_skeleton'], results['l2_error'],
-               facecolor='k', color='none', zorder=5, s=75, linewidths=2)
+               facecolor='k', color='none', zorder=6, s=75, linewidths=2)
 
     ax.grid(True, which="major", ls="-", lw=0.4, alpha=0.35)
     ax.grid(True, which="minor", ls=":", lw=0.3, alpha=0.25)

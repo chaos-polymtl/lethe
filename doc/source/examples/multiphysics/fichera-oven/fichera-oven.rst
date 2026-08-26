@@ -100,6 +100,7 @@ This is the core subsection of this example:
         set error estimator     = dpg
         set fraction refinement = 0.2
         set fraction coarsening = 0.05
+        set fraction type       = number
     end
 
 - ``set type = adaptive`` requests :math:`h`-adaptive refinement, as opposed to a ``uniform`` refinement of every cell.
@@ -114,11 +115,11 @@ FEM
 .. code-block:: text
 
     subsection FEM
-        set electromagnetics trial degree = 3
-        set electromagnetics test degree  = 4
+        set electromagnetics trial degree = 2
+        set electromagnetics test degree  = 3
     end
 
-The interior fields are approximated with degree-3 discontinuous elements, while the DPG test space is enriched to degree 4. The choice of polynomial degree is arbitrary, but in the paper of Petrides and Demkowicz [#Petrides2021]_, the reference results were obtained with degree-3 trial spaces, so we use the same degree here to facilitate comparison.
+The interior fields are approximated with degree-2 discontinuous elements, while the DPG test space is enriched to degree 3. The choice of polynomial degree is arbitrary, but in the paper of Petrides and Demkowicz [#Petrides2021]_, the reference results were obtained with degree-2 trial spaces, so we use the same degree here to facilitate comparison.
 
 .. caution::
     As in the waveguide example, the time-harmonic Maxwell solver requires the test space degree to always be strictly greater than the trial space degree.
