@@ -708,11 +708,15 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   const std::map<int, boundary_cells_info_struct<dim>>
     &global_boundary_cells_information)
 {
-  // Store imaginary faces here and add them to boundary_cells_information after
-  // the loop to avoid modifying the map while iterating over it
+  // Store imaginary boundary-face entries here and add them to 
+  // boundary_cells_information after the loop to avoid modifying the map while 
+  // iterating over it. The original map uses the global face id as the key.
+  // Since the new entries correspond to existing boundary faces but associated 
+  // with a different cell, we need to generate unique imaginary keys for them.
+
   std::map<int, boundary_cells_info_struct<dim>> imaginary_boundary_faces;
 
-  // Create a vector of a set of adjacent cells of all the vertices
+  // Create a vector of sets containing the adjacent cells of all the vertices
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     v_to_c = GridTools::vertex_to_cell_map(triangulation);
 
@@ -722,11 +726,17 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
       // The boundary_cells_info is local to each processor by construction
       // Each entry in boundary_cells_info corresponds to a boundary face
       // We start by getting the face iterator of the boundary face in the
-      // boundary cell
+      // boundary cell. This is needed to access the vertices of the boundary
+      // face and find the neighboring cells
       TriaIterator<TriaAccessor<dim - 1, dim, dim>> main_face_iterator;
       bool                                          found_face = false;
+      // Loop over the faces of the boundary cell to get the face iterator of 
+      // the current boundary face
       for (const unsigned int f : boundary_cells_info.cell->face_indices())
         {
+          // Check if the global index of this face in the boundary cell matches
+          // the global index of the boundary face we are currently at in
+          // the loop over boundary_cells_info. If so, get the face iterator
           if (boundary_cells_info.cell->face_index(f) ==
               boundary_cells_info.global_face_id)
             {
@@ -739,13 +749,14 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
       Assert(found_face,
              ExcMessage("Boundary face not found in boundary cell."));
 
+      // Loop over the vertices of the boundary face in the main boundary cell
       for (auto vertex_id : main_face_iterator->vertex_indices())
         {
-          // Iterate over the neighbors of each boundary cell having vertex_id
+          // Iterate over the neighboring cells linked to this vertex
           for (const auto &neighbor :
                v_to_c[main_face_iterator->vertex_index(vertex_id)])
             {
-              // Iterate over the faces of the neighbor cell
+              // Iterate over the faces of the current neighboring cell
               for (const auto &face : neighbor->face_iterators())
                 {
                   // Check if the face of the neighbor is located at boundary
@@ -783,7 +794,9 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                               common_vertices++;
                             }
                       // This part assumes a mesh with a uniform refinement
-                      // level
+                      // level. In 2D, two boundary faces share an edge if 
+                      // they have one common vertex. In 3D, the boundary faces
+                      // share an edge if they have two common vertices.
                       if constexpr (dim == 2)
 
                         share_edge = (common_vertices == 1);
