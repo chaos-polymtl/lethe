@@ -454,18 +454,19 @@
 <h1>Laser Heat Source<a class="headerlink" href="#laser-heat-source" title="Link to this heading">#</a></h1>
 <p>If a laser heat source is present in a simulation, it can be added in this section. The default parameters are:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection laser parameters
-  set enable               = false
-  set type                 = gaussian_heat_flux_cls_interface
-  set concentration factor = 2.0
-  set power                = 0.0
-  set absorptivity         = 0.5
-  set penetration depth    = 1.0
-  set beam radius          = 0.0
-  set start time           = 0.0
-  set end time             = 1.0
-  set beam orientation     = z-
-  set beam rotation angle  = 0.0
-  set beam rotation axis   = 0.0, 0.0, 1.0
+  set enable                               = false
+  set type                                 = gaussian_heat_flux_cls_interface
+  set enable angle of incidence dependence = true
+  set concentration factor                 = 2.0
+  set power                                = 0.0
+  set absorptivity                         = 0.5
+  set penetration depth                    = 1.0
+  set beam radius                          = 0.0
+  set start time                           = 0.0
+  set end time                             = 1.0
+  set beam orientation                     = z-
+  set beam rotation angle                  = 0.0
+  set beam rotation axis                   = 0.0, 0.0, 1.0
 
   subsection path
     set Function expression = 0.0; 0.0
@@ -483,6 +484,15 @@ end
 <ul>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> if the problem has a laser heat source term and enables its calculation.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the <code class="docutils literal notranslate"><span class="pre">type</span></code> can be set at <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_cls_interface</span></code>. In both cases, the laser model must be used in conjunction with the <a class="reference internal" href="conservative_level_set.html"><span class="doc">CLS auxiliary physic</span></a>. The third available laser model is the  <code class="docutils literal notranslate"><span class="pre">exponential_decay</span></code> and considers that the laser behaves as a volumetric source. The different models are detailed <a class="reference internal" href="#lasertypes"><span class="std std-ref">below</span></a>.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">angle</span> <span class="pre">of</span> <span class="pre">incidence</span> <span class="pre">dependence</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> (by default), the laser heat source is dampened following a factor <span class="math notranslate nohighlight">\(\cos(\beta)\)</span> when the angle of incidence of the laser with respect to the heated surface <span class="math notranslate nohighlight">\((\beta)\)</span> is greater than <span class="math notranslate nohighlight">\(0\)</span> degrees (i.e. the laser source is not perpendicular to the surface).</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../../_images/angle_of_incidence.svg"><img alt="Schematic of the angle of incidence" src="../../_images/angle_of_incidence.svg" width="45%" /></a>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The angle of incidence dependence is only implemented for 2 laser types: <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> and <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_cls_interface</span></code> (see <a class="reference internal" href="#lasertypes"><span class="std std-ref">laser types</span></a>).</p>
+</div>
+</li>
 <li><p>Laser <code class="docutils literal notranslate"><span class="pre">concentration</span> <span class="pre">factor</span></code> parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to <span class="math notranslate nohighlight">\(2.0\)</span>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">power</span></code> parameter sets the power of the laser <span class="math notranslate nohighlight">\([ML^2T^{-3}]\)</span>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">absorptivity</span></code> parameter is defined as the fraction of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of <span class="math notranslate nohighlight">\(0.3\)</span>-<span class="math notranslate nohighlight">\(0.8\)</span> (for welding processes with titanium) is used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface <a class="footnote-reference brackets" href="#zhang2019" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></li>
@@ -508,6 +518,10 @@ end
 <p>where <span class="math notranslate nohighlight">\(\vec{t}_\text{laser}\)</span> is the initial beam tangent vector, given by the <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">orientation</span></code> parameter, and <span class="math notranslate nohighlight">\(\vec{t}_\text{laser}\)</span> is the rotated one.</p>
 </li>
 <li><p>In the <code class="docutils literal notranslate"><span class="pre">path</span></code> subsection, the laser scanning path is defined using a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code>.</p></li>
+</ul>
+<section id="free-surface-radiation">
+<h2>Free Surface Radiation<a class="headerlink" href="#free-surface-radiation" title="Link to this heading">#</a></h2>
+<ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">free</span> <span class="pre">surface</span> <span class="pre">radiation</span></code>: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the <a class="reference internal" href="conservative_level_set.html"><span class="doc">Conservative Level-Set (Multiphase Flow)</span></a> solver, the <code class="docutils literal notranslate"><span class="pre">free</span> <span class="pre">surface</span> <span class="pre">radiation</span></code> subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -524,20 +538,23 @@ end
 </ul>
 </li>
 </ul>
+</section>
 <section id="laser-types">
 <span id="lasertypes"></span><h2>Laser types<a class="headerlink" href="#laser-types" title="Link to this heading">#</a></h2>
 <ul>
 <li><p>When the <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> or <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_cls_interface</span></code>, it <strong>must be used in conjunction with the</strong> <a class="reference internal" href="conservative_level_set.html"><span class="doc">CLS auxiliary physic</span></a>.</p>
 <ul>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> model is used to apply a gaussian heat flux only at the interface.</p>
+<p>In 3D, this heat flux is given by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(r\)</span> is the radial distance from the laser’s axis, <span class="math notranslate nohighlight">\(|\nabla \psi|\)</span> is the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the filtered phase indicator gradient, <span class="math notranslate nohighlight">\(\vec{n}_\Gamma\)</span> is the surface unit normal, and <span class="math notranslate nohighlight">\(\vec{d}_\mathrm{laser}\)</span> is the unit direction vector of the laser. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius <span class="math notranslate nohighlight">\(R\)</span> in 3D to a line segment of length <span class="math notranslate nohighlight">\(2R\)</span> in 2D):</p>
+<p>where <span class="math notranslate nohighlight">\(r\)</span> is the radial distance from the laser’s axis, <span class="math notranslate nohighlight">\(|\nabla \psi|\)</span> is the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the filtered phase indicator gradient, <span class="math notranslate nohighlight">\(\vec{n}_\Gamma\)</span> is the surface unit normal, and <span class="math notranslate nohighlight">\(\vec{d}_\mathrm{laser}\)</span> is the unit direction vector of the laser.</p>
+<p>In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius <span class="math notranslate nohighlight">\(R\)</span> in 3D to a line segment of length <span class="math notranslate nohighlight">\(2R\)</span> in 2D):</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[q(x,y,z) = \frac{2|\nabla \psi| \sqrt{\eta\;} \alpha P}{\sqrt{\pi^3} R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}\]</div>
+\[q(x,y) = \frac{2|\nabla \psi| \sqrt{\eta\;} \alpha P}{\sqrt{\pi^3} R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)\]</div>
 </div>
 </li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_cls_interface</span></code> model is used to apply a uniform heat flux, given by the expression below, only at the interface.</p>
@@ -547,6 +564,10 @@ end
 </div>
 </li>
 </ul>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>The factor <span class="math notranslate nohighlight">\(\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right) = \cos(\beta)\)</span> (with <span class="math notranslate nohighlight">\(\beta\)</span> the angle of incidence of the laser) is replaced by the value of <span class="math notranslate nohighlight">\(1.0\)</span> when <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">angle</span> <span class="pre">of</span> <span class="pre">incidence</span> <span class="pre">dependence</span></code> is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</div>
 </li>
 <li><p>When the <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">exponential_decay</span></code>, the exponential model from Liu <em>et al.</em> <a class="footnote-reference brackets" href="#liu2018" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> is used to simulate the laser heat source:</p>
 <div class="math-wrapper docutils container">
@@ -566,8 +587,9 @@ end
 </div>
 </li>
 </ul>
+</section>
 <section id="references">
-<h3>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h3>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="zhang2019" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
@@ -578,7 +600,6 @@ end
 <p>S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” <em>Mater. Des.</em>, vol. 142, pp. 319–328, Mar. 2018, doi: <a class="reference external" href="https://doi.org/10.1016/j.matdes.2018.01.022">10.1016/j.matdes.2018.01.022</a>.</p>
 </aside>
 </aside>
-</section>
 </section>
 </section>
 
@@ -638,10 +659,9 @@ end
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Laser Heat Source</a><ul>
-<li><a class="reference internal" href="#laser-types">Laser types</a><ul>
+<li><a class="reference internal" href="#free-surface-radiation">Free Surface Radiation</a></li>
+<li><a class="reference internal" href="#laser-types">Laser types</a></li>
 <li><a class="reference internal" href="#references">References</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
