@@ -78,7 +78,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
 
   // Temp storage to calculate offsets only once per ID
   std::map<types::boundary_id, bool> offset_calculated;
-  for (const auto &primary_mesh_id : directions | std::views::keys)
+  for (const auto &primary_mesh_id : periodic_boundaries | std::views::keys)
     offset_calculated[primary_mesh_id] = false;
 
   // Iterating over the active cells in the triangulation
@@ -95,11 +95,12 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                     face->boundary_id();
 
                   // Check if the face matches any of the principal PB IDs
-                  auto it = directions.find(face_boundary_id);
-                  if (it != directions.end())
+                  auto it = periodic_boundaries.find(face_boundary_id);
+                  if (it != periodic_boundaries.end())
                     {
                       // Get direction corresponding to this periodic boundary
-                      const unsigned int current_direction = it->second;
+                      const unsigned int current_direction =
+                        it->second.direction;
 
                       periodic_boundaries_cells_info_struct<dim>
                                    boundaries_information;

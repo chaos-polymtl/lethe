@@ -4,9 +4,9 @@
 #ifndef lethe_grids_h
 #define lethe_grids_h
 
-#include <core/boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
+#include <core/periodic_boundary.h>
 
 #include <deal.II/distributed/tria_base.h>
 
@@ -33,15 +33,15 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
  *
  * @param[in,out] triangulation The triangulation to which a grid is attached
  *
- * @param[in] periodic_boundary_information The periodic boundary pairs and
- * their direction of periodicity. This is used to set up the periodicity of the
+ * @param[in] periodic_boundaries The periodic boundary pairs and their
+ * direction of periodicity. This is used to set up the periodicity of the
  * domain
  */
 template <int dim, int spacedim = dim>
 void
 setup_periodic_boundary_conditions(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
+  const Parameters::PeriodicBoundaries                  &periodic_boundaries);
 
 /**
  * @brief Completely sets up a mesh and its manifolds.
@@ -60,8 +60,8 @@ setup_periodic_boundary_conditions(
  * to boundaries.
  * @param[in]     restart              Flag indicating whether this is a
  * restart.
- * @param[in]     periodic_boundary_information The periodic boundary pairs and
- * their direction of periodicity, used to set up the periodicity of the domain.
+ * @param[in]     periodic_boundaries  The periodic boundary pairs and their
+ * direction of periodicity, used to set up the periodicity of the domain.
  */
 template <int dim, int spacedim = dim>
 void
@@ -70,7 +70,7 @@ read_mesh_and_manifolds(
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   bool                                                   restart,
-  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information);
+  const Parameters::PeriodicBoundaries                  &periodic_boundaries);
 
 /**
  * @brief Completely sets up a mesh and its manifolds for rotor-stator domains.
@@ -89,8 +89,8 @@ read_mesh_and_manifolds(
  * to boundaries.
  * @param[in]     restart              Flag indicating whether this is a
  * restart.
- * @param[in]     periodic_boundary_information The periodic boundary pairs and
- * their direction of periodicity, used to set up the periodicity of the domain.
+ * @param[in]     periodic_boundaries  The periodic boundary pairs and their
+ * direction of periodicity, used to set up the periodicity of the domain.
  * @param[in]     mortar_parameters    Parameters controlling the mortar method,
  * including rotor mesh info.
  */
@@ -101,8 +101,8 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   bool                                                   restart,
-  const Parameters::PeriodicBoundaryInformation &periodic_boundary_information,
-  const Parameters::Mortar<dim>                 &mortar_parameters);
+  const Parameters::PeriodicBoundaries                  &periodic_boundaries,
+  const Parameters::Mortar<dim>                         &mortar_parameters);
 
 /**
  * @brief Refine a mesh around specific boundary ids

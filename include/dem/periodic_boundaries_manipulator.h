@@ -4,6 +4,8 @@
 #ifndef lethe_periodic_boundaries_manipulator_h
 #define lethe_periodic_boundaries_manipulator_h
 
+#include <core/periodic_boundary.h>
+
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
 #include <dem/dem_action_manager.h>
@@ -39,16 +41,15 @@ public:
   /**
    * @brief Sets the periodic boundaries parameters.
    *
-   * @param[in] periodic_directions Map of perpendicular axes of each PB pair,
-   * keyed by the principal periodic boundary id (periodic id 0). The keys are
-   * the principal periodic boundary ids.
+   * @param[in] periodic_boundaries Periodic boundary pairs of the simulation,
+   * keyed by the principal periodic boundary id (periodic id 0).
    */
   void
   set_periodic_boundaries_information(
-    const std::map<types::boundary_id, unsigned int> &periodic_directions)
+    const Parameters::PeriodicBoundaries &periodic_boundaries)
   {
     // If this function is reached and the map is not empty
-    if (periodic_directions.empty())
+    if (periodic_boundaries.empty())
       return;
 
     periodic_boundaries_enabled = true;
@@ -56,7 +57,7 @@ public:
     // Communicate to the action manager that there are periodic boundaries
     DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
 
-    this->directions = periodic_directions;
+    this->periodic_boundaries = periodic_boundaries;
 
     // Initialize offset map
     this->periodic_offsets.clear();
@@ -119,16 +120,16 @@ public:
   }
 
   /**
-   * @brief Return the directions of the periodic boundary pairs, keyed by the
-   * principal periodic boundary id (periodic id 0). The keys are the principal
-   * periodic boundary ids.
+   * @brief Return the periodic boundary pairs, keyed by the principal periodic
+   * boundary id (periodic id 0).
    *
-   * @return Map of periodic directions keyed by principal periodic boundary id.
+   * @return Map of periodic boundary pairs keyed by principal periodic
+   * boundary id.
    */
-  inline const std::map<types::boundary_id, unsigned int> &
-  get_periodic_directions() const
+  inline const Parameters::PeriodicBoundaries &
+  get_periodic_boundaries() const
   {
-    return directions;
+    return periodic_boundaries;
   }
 
   /**
@@ -194,11 +195,12 @@ private:
   bool periodic_boundaries_enabled;
 
   /**
-   * @brief Direction of the periodic boundaries, it is the perpendicular axis
-   * of the periodic boundaries. Keys of this map are the principal periodic
-   * boundary ids (periodic id 0).
+   * @brief Periodic boundary pairs of the simulation. Each entry carries the
+   * neighbor boundary id of the pair and the direction of periodicity, which
+   * is the perpendicular axis of the periodic boundaries. Keys of this map are
+   * the principal periodic boundary ids (periodic id 0).
    */
-  std::map<types::boundary_id, unsigned int> directions;
+  Parameters::PeriodicBoundaries periodic_boundaries;
 
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by

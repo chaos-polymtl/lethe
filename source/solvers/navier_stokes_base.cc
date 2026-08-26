@@ -1873,14 +1873,14 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
         }
       else if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
-            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
-              .at(id),
-            this->simulation_parameters.boundary_conditions.periodic_direction
-              .at(id),
-            nonzero_constraints);
+          const auto &periodic_boundary =
+            this->simulation_parameters.boundary_conditions.periodic_boundaries
+              .at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 nonzero_constraints);
         }
     }
 
@@ -1958,14 +1958,14 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
         }
       else if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
-            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
-              .at(id),
-            this->simulation_parameters.boundary_conditions.periodic_direction
-              .at(id),
-            this->zero_constraints);
+          const auto &periodic_boundary =
+            this->simulation_parameters.boundary_conditions.periodic_boundaries
+              .at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 this->zero_constraints);
         }
       else if (type == BoundaryConditions::BoundaryType::pressure)
         {

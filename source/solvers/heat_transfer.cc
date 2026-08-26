@@ -1589,13 +1589,14 @@ HeatTransfer<dim>::setup_dofs()
           }
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
+            const auto &periodic_boundary =
+              this->simulation_parameters.boundary_conditions_ht
+                .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,
               id,
-              this->simulation_parameters.boundary_conditions_ht
-                .periodic_neighbor_id.at(id),
-              this->simulation_parameters.boundary_conditions_ht
-                .periodic_direction.at(id),
+              periodic_boundary.neighbor_id,
+              periodic_boundary.direction,
               nonzero_constraints);
           }
       }
@@ -1633,13 +1634,14 @@ HeatTransfer<dim>::setup_dofs()
           }
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
+            const auto &periodic_boundary =
+              this->simulation_parameters.boundary_conditions_ht
+                .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,
               id,
-              this->simulation_parameters.boundary_conditions_ht
-                .periodic_neighbor_id.at(id),
-              this->simulation_parameters.boundary_conditions_ht
-                .periodic_direction.at(id),
+              periodic_boundary.neighbor_id,
+              periodic_boundary.direction,
               zero_constraints);
           }
       }
@@ -1722,14 +1724,14 @@ HeatTransfer<dim>::update_boundary_conditions()
         }
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
+          const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions_ht
-              .periodic_neighbor_id.at(id),
-            this->simulation_parameters.boundary_conditions_ht
-              .periodic_direction.at(id),
-            nonzero_constraints);
+              .periodic_boundaries.at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 nonzero_constraints);
         }
     }
   nonzero_constraints.close();

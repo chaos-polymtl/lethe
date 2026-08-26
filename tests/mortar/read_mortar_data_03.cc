@@ -23,9 +23,9 @@
 #include <deal.II/numerics/vector_tools.h>
 
 // Lethe
-#include <core/boundary_conditions.h>
 #include <core/grids.h>
 #include <core/parameters.h>
+#include <core/periodic_boundary.h>
 
 // Tests (with common definitions)
 #include <deal.II/base/conditional_ostream.h>
@@ -43,11 +43,11 @@ test()
 
   const unsigned int dim = 3;
 
-  Parameters::Mesh                       mesh_parameters;
-  Parameters::Mortar<dim>                mortar_parameters;
-  Parameters::Manifolds                  manifolds_parameters;
-  BoundaryConditions::BoundaryConditions boundary_conditions;
-  boundary_conditions.type[0] = BoundaryConditions::BoundaryType::none;
+  Parameters::Mesh        mesh_parameters;
+  Parameters::Mortar<dim> mortar_parameters;
+  Parameters::Manifolds   manifolds_parameters;
+  // No periodic boundary is set up in this test
+  const Parameters::PeriodicBoundaries periodic_boundaries;
 
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
@@ -88,7 +88,7 @@ test()
                                                mesh_parameters,
                                                manifolds_parameters,
                                                false,
-                                               boundary_conditions,
+                                               periodic_boundaries,
                                                mortar_parameters);
 
   // Print information

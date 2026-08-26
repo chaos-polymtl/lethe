@@ -4,7 +4,7 @@
 #ifndef lethe_boundary_conditions_h
 #define lethe_boundary_conditions_h
 
-#include <core/periodic_boundary_information.h>
+#include <core/periodic_boundary.h>
 #include <core/utilities.h>
 
 #include <deal.II/base/function.h>
@@ -102,12 +102,9 @@ namespace BoundaryConditions
    * the general information that all boundary condition share.
    * In Lethe, boundary conditions are identified with an id, a type and, in the
    * special case of periodic boundary condition, a periodic matching id
-   * (periodic_id) and a periodic direction (0, 1 or 2). The latter two are
-   * inherited from Parameters::PeriodicBoundaryInformation, which is shared
-   * with the DEM boundary conditions so that the periodicity of the
-   * triangulation is set up by a single routine for both solvers.
+   * (periodic_id) and a periodic direction (0, 1 or 2).
    */
-  class BoundaryConditions : public Parameters::PeriodicBoundaryInformation
+  class BoundaryConditions
   {
   public:
     /// Map containing the boundary id and the boundary type
@@ -127,6 +124,9 @@ namespace BoundaryConditions
 
     /// indicator for transient BCs
     bool time_dependent;
+
+    /// Periodic boundary pairs, keyed by the principal periodic boundary id
+    Parameters::PeriodicBoundaries periodic_boundaries;
   };
 
 
@@ -482,9 +482,9 @@ namespace BoundaryConditions
             this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
-            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-            this->periodic_direction[boundary_id] =
-              prm.get_integer("periodic direction");
+            this->periodic_boundaries[boundary_id] = {
+              periodic_boundary_id,
+              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
 
             // Allocate the navier_stokes_functions object for the periodic
             // neighbor condition to ensure that they have a defined function
@@ -834,9 +834,9 @@ namespace BoundaryConditions
             this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
-            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-            this->periodic_direction[boundary_id] =
-              prm.get_integer("periodic direction");
+            this->periodic_boundaries[boundary_id] = {
+              periodic_boundary_id,
+              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
           }
         else
           {
@@ -1077,9 +1077,9 @@ namespace BoundaryConditions
             this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
-            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-            this->periodic_direction[boundary_id] =
-              prm.get_integer("periodic direction");
+            this->periodic_boundaries[boundary_id] = {
+              periodic_boundary_id,
+              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
           }
         else if (op == "none")
           {
@@ -1314,9 +1314,9 @@ namespace BoundaryConditions
             this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
-            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-            this->periodic_direction[boundary_id] =
-              prm.get_integer("periodic direction");
+            this->periodic_boundaries[boundary_id] = {
+              periodic_boundary_id,
+              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
           }
         else
           {
@@ -1518,9 +1518,9 @@ namespace BoundaryConditions
             this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
-            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-            this->periodic_direction[boundary_id] =
-              prm.get_integer("periodic direction");
+            this->periodic_boundaries[boundary_id] = {
+              periodic_boundary_id,
+              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
           }
       }
   }
