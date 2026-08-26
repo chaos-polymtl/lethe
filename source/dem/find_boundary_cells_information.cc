@@ -720,159 +720,157 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     v_to_c = GridTools::vertex_to_cell_map(triangulation);
 
-  for (auto &&boundary_cells_info :
+  for (auto &&boundary_cell_info :
        boundary_cells_information | boost::adaptors::map_values)
     {
-      // The boundary_cells_info is local to each processor by construction
-      // Each entry in boundary_cells_info corresponds to a boundary face
-      // We start by getting the face iterator of the boundary face in the
-      // boundary cell. This is needed to access the vertices of the boundary
-      // face and find the neighboring cells
+      // Each entry in boundary_cells_information corresponds to a boundary face
+      // We start by getting the face iterator of the boundary face in the main
+      // boundary cell. This is needed to access the vertices of that face and
+      // find the neighboring cells
       TriaIterator<TriaAccessor<dim - 1, dim, dim>> main_face_iterator;
-      bool                                          found_face = false;
-      // Loop over the faces of the boundary cell to get the face iterator of
-      // the current boundary face
-      for (const unsigned int f : boundary_cells_info.cell->face_indices())
+      bool                                          has_boundary_face = false;
+      // Loop over the local face ids of the main cell
+      for (const unsigned int face_id : boundary_cell_info.cell->face_indices())
         {
-          // Check if the global index of this face in the boundary cell matches
-          // the global index of the boundary face we are currently at in
-          // the loop over boundary_cells_info. If so, get the face iterator
-          if (boundary_cells_info.cell->face_index(f) ==
-              boundary_cells_info.global_face_id)
+          // Check if the global index of this face is the same as the one
+          // stored in boundary_cell_info. If so, we get the face iterator. This
+          // face iterator is associated with the "main face".
+          if (boundary_cell_info.cell->face_index(face_id) ==
+              boundary_cell_info.global_face_id)
             {
-              main_face_iterator = boundary_cells_info.cell->face(f);
-              found_face         = true;
+              main_face_iterator = boundary_cell_info.cell->face(face_id);
+              has_boundary_face  = true;
               break;
             }
         }
 
-      Assert(found_face,
+      Assert(has_boundary_face,
              ExcMessage("Boundary face not found in boundary cell."));
 
-      // Loop over the vertices of the boundary face in the main boundary cell
+      // Loop over the vertices of the main face
       for (auto vertex_id : main_face_iterator->vertex_indices())
         {
           // Iterate over the neighboring cells linked to this vertex
-          for (const auto &neighbor :
+          for (const auto &neighboring_cell :
                v_to_c[main_face_iterator->vertex_index(vertex_id)])
             {
               // Iterate over the faces of the current neighboring cell
-              for (const auto &face : neighbor->face_iterators())
+              for (const auto &neighboring_face :
+                   neighboring_cell->face_iterators())
                 {
-                  // Check if the face of the neighbor is located at boundary
-                  if (face->at_boundary())
-                    {
-                      // Check if face is on a wall boundary (not outlet nor
-                      // periodic)
-                      unsigned int face_id =
-                        neighbor->face_iterator_to_index(face);
-                      bool face_is_wall =
-                        (!outlet_boundaries.contains(face->boundary_id()) &&
-                         !neighbor->has_periodic_neighbor(face_id));
+                  // Check if the neighboring face is located at boundary
+                  if (!neighboring_face->at_boundary())
+                    continue;
 
-                      if (!face_is_wall)
-                        continue;
+                  // Check if the neighboring face is a wall (not outlet nor
+                  // periodic)
+                  const unsigned int face_id =
+                    neighboring_cell->face_iterator_to_index(neighboring_face);
 
-                      // Get the boundary face in neighbor cell info
-                      const boundary_cells_info_struct<dim>
-                        &boundary_neighbor_information =
-                          global_boundary_cells_information.at(
-                            neighbor->face_index(face_id));
+                  const bool face_is_wall =
+                    (!outlet_boundaries.contains(
+                       neighboring_face->boundary_id()) &&
+                     !neighboring_cell->has_periodic_neighbor(face_id));
 
-                      // Check if boundary face in neighbor cell shares an
-                      // edge with the boundary face in the main cell.
-                      bool         share_edge      = false;
-                      unsigned int common_vertices = 0;
+                  if (!face_is_wall)
+                    continue;
 
-                      for (auto main_vertex_id :
-                           main_face_iterator->vertex_indices())
-                        for (auto neighbor_vertex_id : face->vertex_indices())
-                          if (main_face_iterator->vertex_index(
-                                main_vertex_id) ==
-                              face->vertex_index(neighbor_vertex_id))
-                            {
-                              common_vertices++;
-                            }
-                      // This part assumes a mesh with a uniform refinement
-                      // level. In 2D, two boundary faces share an edge if
-                      // they have one common vertex. In 3D, the boundary faces
-                      // share an edge if they have two common vertices.
-                      if constexpr (dim == 2)
+                  // At this point, we know that the neighboring face is at the
+                  // boundary and is a wall
 
-                        share_edge = (common_vertices == 1);
+                  // Get the information of the neighboring face
+                  const boundary_cells_info_struct<dim>
+                    &boundary_neighbor_info =
+                      global_boundary_cells_information.at(
+                        neighboring_cell->face_index(face_id));
 
-                      else if constexpr (dim == 3)
+                  // Check if the neighboring face shares an edge with the main
+                  // face
+                  bool         share_edge      = false;
+                  unsigned int common_vertices = 0;
 
-                        share_edge = (common_vertices == 2);
+                  // Count the number of shared vertices between the main and
+                  // neighboring faces
+                  for (auto main_vertex_id :
+                       main_face_iterator->vertex_indices())
+                    for (auto neighbor_vertex_id :
+                         neighboring_face->vertex_indices())
+                      if (main_face_iterator->vertex_index(main_vertex_id) ==
+                          neighboring_face->vertex_index(neighbor_vertex_id))
+                        common_vertices++;
 
-                      // Exit the loop if the boundary faces of the main
-                      // cell and the neighbor cell do not share an edge
-                      if (!share_edge)
-                        continue;
+                  // This part assumes a mesh with a uniform refinement
+                  // level. In 2D, two boundary faces share an "edge" if
+                  // they have one common vertex. In 3D, the boundary faces
+                  // share an edge if they have two common vertices.
+                  if constexpr (dim == 2)
+                    share_edge = (common_vertices == 1);
+                  else if constexpr (dim == 3)
+                    share_edge = (common_vertices == 2);
 
-                      // Check if the boundary faces of the main cell and the
-                      // neighbor cell form a convex surface. This is needed in
-                      // geometries with both concave and convex parts of the
-                      // boundaries.
+                  // Exit the loop if the main and neighboring faces do not
+                  // share an edge
+                  if (!share_edge)
+                    continue;
 
-                      // Get the normal to the face of the main boundary cell,
-                      // pointing outwards from the cell
-                      const auto normal_1 = -boundary_cells_info.normal_vector;
-                      // Get the point on the face of the main boundary cell
-                      const auto &point_1 = boundary_cells_info.point_on_face;
-                      // Get the point on the face of the neighbor boundary cell
-                      const auto &point_2 =
-                        boundary_neighbor_information.point_on_face;
-                      // Create a vector from point_1 to point_2
-                      Tensor<1, dim> vector_main_to_neighbor =
-                        point_2 - point_1;
-                      vector_main_to_neighbor /= vector_main_to_neighbor.norm();
-                      const double tolerance = 1e-12;
-                      bool         is_convex =
-                        (normal_1 * vector_main_to_neighbor) < -tolerance;
+                  // Get the normal to the main face, pointing outwards from the
+                  // cell
+                  const auto normal_1 = -boundary_cell_info.normal_vector;
 
-                      // Exit the loop if the boundary faces of the main cell
-                      // and the neighbor cell do not form a convex surface
-                      if (!is_convex)
-                        continue;
+                  // Get the point on the two faces
+                  const auto &point_1 = boundary_cell_info.point_on_face;
+                  const auto &point_2 = boundary_neighbor_info.point_on_face;
 
-                      // Add the main boundary cell with the information (point
-                      // and normal vector) of the neighbor boundary cell to the
-                      // boundary_cells_information container. Note that since
-                      // we may already have an element with the key of face_id
-                      // (key of the boundary_cells_information map) in the
-                      // boundary_cells_information, we add the new element with
-                      // a unique key to create a unique id in the map. This
-                      // unique key is generated using Cantor pairing function:
-                      // unique_key = 0.5 * (a + b) * (a + b + 1) + b where a
-                      // and b are global boundary face ids of the main boundary
-                      // cell and the neighbor boundary cell.
-                      int imaginary_face_id =
-                        static_cast<int>(
-                          -0.5 *
-                          (boundary_cells_info.global_face_id +
-                           boundary_neighbor_information.global_face_id) *
-                          (boundary_cells_info.global_face_id +
-                           boundary_neighbor_information.global_face_id + 1)) +
-                        boundary_neighbor_information.global_face_id;
+                  // Create a vector from point_1 to point_2
+                  Tensor<1, dim> vector_main_to_neighbor = point_2 - point_1;
+                  vector_main_to_neighbor /= vector_main_to_neighbor.norm();
+                  const double tolerance = 1e-12;
 
-                      // Create a cell info object which is a copy of all the
-                      // boundary neighbor information applied to the boundary
-                      // cell & store in map with imaginary key.
-                      boundary_cells_info_struct<dim> boundary_information =
-                        boundary_neighbor_information;
-                      boundary_information.cell = boundary_cells_info.cell;
+                  // Check if the main and neighboring faces form a convex
+                  // surface. This is needed in geometries with both concave and
+                  // convex regions
+                  const bool is_convex =
+                    (normal_1 * vector_main_to_neighbor) < -tolerance;
 
-                      imaginary_boundary_faces.insert(
-                        {imaginary_face_id, boundary_information});
-                    }
+                  // Exit the loop if the boundary faces do not form a convex
+                  // surface
+                  if (!is_convex)
+                    continue;
+
+                  // Add the main boundary cell with the information (point and
+                  // normal vector) of the neighbor boundary face to the
+                  // boundary_cells_information container. Note that since we
+                  // may already have an element with the key of face_id (key of
+                  // the boundary_cells_information map) in the
+                  // boundary_cells_information, we add the new element with a
+                  // unique key to create a unique id in the map. This unique
+                  // key is generated using Cantor pairing function: unique_key
+                  // = 0.5 * (a + b) * (a + b + 1) + b where a and b are global
+                  // main and neighboring boundary face ids
+                  int imaginary_face_id =
+                    static_cast<int>(-0.5 *
+                                     (boundary_cell_info.global_face_id +
+                                      boundary_neighbor_info.global_face_id) *
+                                     (boundary_cell_info.global_face_id +
+                                      boundary_neighbor_info.global_face_id +
+                                      1)) +
+                    boundary_neighbor_info.global_face_id;
+
+                  // Create a cell info structure which is contains all the
+                  // neighboring cell information applied to the main boundary
+                  // cell & store in map with imaginary key.
+                  boundary_cells_info_struct<dim> boundary_information =
+                    boundary_neighbor_info;
+                  boundary_information.cell = boundary_cell_info.cell;
+
+                  imaginary_boundary_faces.insert(
+                    {imaginary_face_id, boundary_information});
                 }
             }
         }
     }
 
-  // Add the imaginary boundary faces to the boundary_cells_information map
-  // after the loop is finished
+  // Add the imaginary entries to the boundary_cells_information map
   boundary_cells_information.merge(imaginary_boundary_faces);
 }
 
