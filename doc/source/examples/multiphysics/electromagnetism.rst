@@ -8,3 +8,4 @@ Electromagnetism
     :titlesonly:
 
     waveguide/waveguide
+    microwave-heating/microwave-heating

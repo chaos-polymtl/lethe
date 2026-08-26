@@ -78,6 +78,8 @@ Multiphysics
 
       multiphysics_5_1 [label="Waveguide", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/waveguide/waveguide.html"];
 
+      multiphysics_5_3 [label="Microwave Heating", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/microwave-heating/microwave-heating.html"];
+
 
       multiphysics -> multiphysics_1:w;
       multiphysics -> multiphysics_2:w;
@@ -111,5 +113,6 @@ Multiphysics
       multiphysics_4 -> multiphysics_4_2:w;
 
       multiphysics_5 -> multiphysics_5_1:w;
+      multiphysics_5 -> multiphysics_5_3:w;
     }
 

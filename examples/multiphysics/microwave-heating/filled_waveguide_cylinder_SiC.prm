@@ -1,0 +1,358 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method                         = bdf1
+  set time step                      = 0.00005
+  set adapt time step to respect CFL = true
+  set adaptative time step scaling   = 1.005
+  set output control                 = time
+  set time end                       = 60
+  set output time frequency          = 0.05
+  set output path                    = ./output_cylinder/
+  set subdivision                    = 3
+  set max cfl = 1
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                 = none
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics    = true
+  set microwave heating = true
+  set electromagnetics = true
+  set heat transfer = true
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = lethe
+  set grid type          = uniform_channel_with_meshed_cylinder
+  set grid arguments     = 0., 0. : 40, 10.92 : 10, 5.56 : 2 : 4 : 1 : 1 : 2 : 8 : 5.46 : 3 : false : true : true
+  set initial refinement          = 2
+  set initial boundary refinement = 1
+  set boundaries refined          = 2,3,4,5
+end
+
+#---------------------------------------------------
+# Box Refinement (around the cylinder)
+#---------------------------------------------------
+
+subsection box refinement
+  set number of refinement boxes = 1
+  subsection box 0
+    subsection mesh
+      set type                = dealii
+      set grid type           = cylinder_shell
+      set grid arguments      = 5.46: 2: 2.3: 20:20:false
+      set initial translation = 10, 5.56, 0
+    end
+    set additional refinement = 2
+  end
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+
+  set type = nodal
+
+  subsection uvwp
+     set Function constants  = c_width = 10.92, c_height = 5.46, Re = 400, scaling=  1.782122724170977, percent = 0.1
+     set Function expression = Re*scaling*abs((if(y < percent*c_width/2, y*(y-percent*c_width), if(y < c_width-(percent*c_width/2), (percent*c_width * percent*c_width)/4 , (y-c_width)*(y-c_width+ percent*c_width)))) * (if(z < percent*c_height/2, z*(z-percent*c_height), if(z < c_height-(percent*c_height/2), (percent*c_height * percent*c_height)/4, (z-c_height)*(z-c_height+percent*c_height)))));0;0;0
+  end
+
+  subsection temperature
+    set Function expression = 0
+  end
+end
+
+#---------------------------------------------------
+# Time Harmonic Maxwell
+#---------------------------------------------------
+
+subsection time harmonic maxwell
+  set electromagnetic frequency    = 2.45e9
+  set number of waveguide inlets   = 1
+  set electromagnetic scaling type = power
+
+  subsection time coupling strategy
+    set type               = none
+  end
+
+  subsection waveguide inlet 0
+    set port boundary id = 0
+
+    set waveguide power = 50
+
+    set corner 0 = 0,0,0
+    set corner 1 = 0.,10.92,0
+    set corner 2 = 0., 0., 5.46
+    set corner 3 = 0., 10.92, 5.46
+
+    subsection waveguide mode
+      set mode type    = TE
+      set mode order m = 1
+      set mode order n = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id   = 2, 3, 4, 5
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 0
+    set type = function
+    subsection u
+       set Function constants  = c_width = 10.92, c_height = 5.46, Re = 400, scaling=  1.782122724170977, percent = 0.1
+       set Function expression = Re*scaling*abs((if(y < percent*c_width/2, y*(y-percent*c_width), if(y < c_width-(percent*c_width/2), (percent*c_width * percent*c_width)/4 , (y-c_width)*(y-c_width+ percent*c_width)))) * (if(z < percent*c_height/2, z*(z-percent*c_height), if(z < c_height-(percent*c_height/2), (percent*c_height * percent*c_height)/4, (z-c_height)*(z-c_height+percent*c_height)))))
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set id   = 1
+    set type = outlet
+  end
+end
+
+subsection boundary conditions time harmonic maxwell
+  set number = 3
+  subsection bc 0
+    set id   = 2, 3, 4, 5
+    set type = pec
+  end
+  subsection bc 1
+    set id   = 0
+    set type = waveguide port
+  end
+  subsection bc 2
+    set id   = 1
+    set type = impedance boundary
+    subsection excitation x real part
+      set Function expression = 0
+    end
+    subsection excitation x imag part
+      set Function expression = 0
+    end
+    subsection excitation y real part
+      set Function expression = 0
+    end
+    subsection excitation y imag part
+      set Function expression = 0
+    end
+    subsection excitation z real part
+      set Function expression = 0
+    end
+    subsection excitation z imag part
+      set Function expression = 0
+    end
+    subsection surface admittance real part
+      set Function expression = 0.8283060148591038
+    end
+    subsection surface admittance imag part
+      set Function expression = 0.
+    end
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 2
+  subsection bc 0
+    set id   = 1, 2, 3, 4, 5
+    set type = noflux
+  end
+  subsection bc 1
+    set id   = 0
+    set type = temperature
+    subsection value
+      set Function expression = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set pressure degree               = 3
+  set velocity degree               = 3
+  set temperature degree            = 3
+  set electromagnetics trial degree = 2
+  set electromagnetics test degree  = 3
+end
+
+#---------------------------------------------------
+# Physical properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  set number of solids = 1
+  subsection fluid 0
+    set electric conductivity model = constant
+    set electric conductivity       = 0.
+
+    set electric permittivity model     = constant
+    set electric permittivity real part = 1.
+    set electric permittivity imag part = 0.
+
+    set magnetic permeability model     = constant
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.
+
+    set kinematic viscosity  = 1.48e-5
+    set specific heat        = 1006
+    set density              = 1.225
+    set thermal conductivity = 2.6e-2
+  end
+
+  subsection solid 0
+    set electric conductivity model = constant
+    set electric conductivity       = 0.
+
+    set electric permittivity model     = constant
+    set electric permittivity real part = 9.72
+    set electric permittivity imag part = 2.01
+
+    set magnetic permeability model     = constant
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.
+
+    set thermal conductivity = 120.92
+    set specific heat        = 27.13
+    set density              = 3210
+  end
+end
+
+#---------------------------------------------------
+# Dimensionality
+#---------------------------------------------------
+
+subsection dimensionality
+  set length           = 0.01  #meter
+  set mass             = 1 #kilogramm
+  set time             = 1     #second
+  set temperature      = 1     #kelvin
+  set electric current = 0.01     #ampere
+end
+
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = verbose
+    set tolerance      = 1e-5
+    set max iterations = 10
+  end
+  subsection heat transfer
+    set verbosity      = verbose
+    set tolerance      = 1e-4
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method             = gmres
+    set max iters          = 1000
+    set relative residual  = 1e-4
+    set minimum residual   = 1e-8
+    set preconditioner     = gcmg
+    set verbosity          = verbose
+    set max krylov vectors = 500
+
+    # MG parameters
+    set mg verbosity                   = quiet
+    set mg enable hessians in jacobian = false
+    set mg coarsening type             = ph
+    set mg p coarsening type           = decrease by one
+
+    # Smoother
+    set mg smoother iterations          = 3
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = inverse diagonal
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 20
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = quiet
+
+    #coarse-grid solver
+    set mg coarse grid solver = direct
+  end
+  subsection heat transfer
+    set max iters          = 1000
+    set relative residual  = 1e-4
+    set minimum residual   = 1e-8
+    set max krylov vectors = 1000
+  end
+  subsection electromagnetics
+    set verbosity         = verbose
+    set relative residual = 1e-4
+    set minimum residual  = 1e-8
+    set preconditioner = none
+  end
+end
+
+# --------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 200
+  set filename   = restart
+  set restart    = false
+end
