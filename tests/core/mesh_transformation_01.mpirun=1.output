@@ -1,0 +1,4 @@
+
+DEAL::quad mesh : 4 cells, bounding box [-1.00000,1.00000]x[0.00000,2.00000]
+DEAL::simplex mesh : 32 cells, bounding box [-1.00000,1.00000]x[0.00000,2.00000]
+DEAL::refinement box : 4 cells, bounding box [-1.00000,1.00000]x[0.00000,2.00000]

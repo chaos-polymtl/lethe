@@ -669,11 +669,12 @@ RayTracingSolver<dim>::solve()
   // Reading mesh
   pcout << "Reading triangulation" << std::endl;
 
-  read_mesh_and_manifolds(triangulation,
-                          parameters.mesh,
-                          parameters.manifolds_parameters,
-                          action_manager->check_restart_simulation(),
-                          dem_parameters.boundary_conditions);
+  read_mesh_and_manifolds(
+    triangulation,
+    parameters.mesh,
+    parameters.manifolds_parameters,
+    action_manager->check_restart_simulation(),
+    dem_parameters.boundary_conditions.periodic_boundaries);
 
   pcout << std::endl << "Finished reading triangulation" << std::endl;
 

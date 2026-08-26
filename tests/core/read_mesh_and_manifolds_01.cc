@@ -73,13 +73,13 @@ report_number_of_cells(
     MPI_COMM_WORLD, Triangulation<2>::limit_level_difference_at_vertices);
 
   // No periodic boundary is set up in this test
-  const Parameters::PeriodicBoundaryInformation periodic_boundary_information;
+  const Parameters::PeriodicBoundaries periodic_boundaries;
 
   read_mesh_and_manifolds(triangulation,
                           mesh_parameters,
                           manifolds_parameters,
                           restart,
-                          periodic_boundary_information);
+                          periodic_boundaries);
 
   deallog << case_name << " : " << triangulation.n_global_active_cells()
           << " cells" << std::endl;
@@ -173,13 +173,13 @@ test_manifold_attachment()
   parallel::distributed::Triangulation<2> triangulation(
     MPI_COMM_WORLD, Triangulation<2>::limit_level_difference_at_vertices);
 
-  const Parameters::PeriodicBoundaryInformation periodic_boundary_information;
+  const Parameters::PeriodicBoundaries periodic_boundaries;
 
   read_mesh_and_manifolds(triangulation,
                           mesh_parameters,
                           manifolds_parameters,
                           false,
-                          periodic_boundary_information);
+                          periodic_boundaries);
 
   // Probe the manifold attached to id 1 by asking for the point halfway between
   // two points lying on the unit circle. A spherical manifold places it back on
@@ -204,7 +204,7 @@ test_manifold_attachment()
                           mesh_parameters,
                           Parameters::Manifolds(),
                           false,
-                          periodic_boundary_information);
+                          periodic_boundaries);
 
   const std::vector<types::manifold_id> bare_manifold_ids =
     bare_triangulation.get_manifold_ids();

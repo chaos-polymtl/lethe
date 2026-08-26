@@ -132,9 +132,9 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
 
   // Check whether periodic boundaries are present. If at least one periodic
   // boundary is found, initialize the information for all periodic boundaries.
-  if (!parameters.boundary_conditions.periodic_direction.empty())
+  if (!parameters.boundary_conditions.periodic_boundaries.empty())
     periodic_boundaries_object.set_periodic_boundaries_information(
-      parameters.boundary_conditions.periodic_direction);
+      parameters.boundary_conditions.periodic_boundaries);
 
   // Assign gravity
   g = parameters.lagrangian_physical_properties.g;
@@ -380,7 +380,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
   for (const auto &pb_id :
-       periodic_boundaries_object.get_periodic_directions() | std::views::keys)
+       periodic_boundaries_object.get_periodic_boundaries() | std::views::keys)
     {
       particle_particle_contact_force_object->set_periodic_offset(
         periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
@@ -415,19 +415,20 @@ DEMSolver<dim, PropertiesIndex>::setup_background_dofs()
 
       // Loop over the periodic boundary conditions, keyed by the principal
       // periodic boundary id (id0).
-      for (auto const &[id0, id1] :
-           parameters.boundary_conditions.periodic_neighbor_id)
+      for (auto const &[id0, periodic_boundary] :
+           parameters.boundary_conditions.periodic_boundaries)
         {
-          const unsigned int direction =
-            parameters.boundary_conditions.periodic_direction.at(id0);
-
           // Default boundaries contain information for periodic boundary
           // conditions that indicate id0 and id1 are 0 as default value To
           // ensure these default values are not parsed, only make the
           // periodicity constraints if id0 and id1 are distinct
-          if (id0 != id1)
+          if (id0 != periodic_boundary.neighbor_id)
             DoFTools::make_periodicity_constraints(
-              background_dh, id0, id1, direction, background_constraints);
+              background_dh,
+              id0,
+              periodic_boundary.neighbor_id,
+              periodic_boundary.direction,
+              background_constraints);
         }
 
       background_constraints.close();
@@ -1131,7 +1132,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
                           parameters.mesh,
                           parameters.manifolds_parameters,
                           action_manager->check_restart_simulation(),
-                          parameters.boundary_conditions);
+                          parameters.boundary_conditions.periodic_boundaries);
 
   pcout << std::endl << "Finished reading triangulation" << std::endl;
 

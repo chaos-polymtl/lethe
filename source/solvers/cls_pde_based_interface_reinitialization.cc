@@ -101,14 +101,14 @@ CLSPDEBasedInterfaceReinitialization<dim>::define_zero_constraints()
     {
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
-            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
-              .at(id),
-            this->simulation_parameters.boundary_conditions.periodic_direction
-              .at(id),
-            this->zero_constraints);
+          const auto &periodic_boundary =
+            this->simulation_parameters.boundary_conditions.periodic_boundaries
+              .at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 this->zero_constraints);
         }
     }
   for (auto const &[id, type] :
@@ -143,14 +143,14 @@ CLSPDEBasedInterfaceReinitialization<dim>::define_non_zero_constraints()
     {
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
-            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
-              .at(id),
-            this->simulation_parameters.boundary_conditions.periodic_direction
-              .at(id),
-            this->nonzero_constraints);
+          const auto &periodic_boundary =
+            this->simulation_parameters.boundary_conditions.periodic_boundaries
+              .at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 this->nonzero_constraints);
         }
     }
   for (auto const &[id, type] :

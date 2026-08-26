@@ -1728,10 +1728,9 @@ namespace Parameters
           // boundary id (periodic id 0) rather than the "boundary id" field.
           const types::boundary_id periodic_id_0 =
             prm.get_integer("periodic id 0");
-          this->periodic_neighbor_id[periodic_id_0] =
-            prm.get_integer("periodic id 1");
-          this->periodic_direction[periodic_id_0] =
-            prm.get_integer("periodic direction");
+          this->periodic_boundaries[periodic_id_0] = {
+            static_cast<types::boundary_id>(prm.get_integer("periodic id 1")),
+            static_cast<unsigned int>(prm.get_integer("periodic direction"))};
         }
       else
         {
