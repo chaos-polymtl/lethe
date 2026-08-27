@@ -20,7 +20,7 @@ subsection simulation control
   set method            = steady
   set output path       = ./output/
   set output frequency  = 1
-  set number mesh adapt = 10
+  set number mesh adapt = 5
 end
 
 #---------------------------------------------------
@@ -31,8 +31,8 @@ subsection mesh adaptation
   set type                = adaptive
   set variable            = electromagnetic fields
   set error estimator     = dpg
-  set fraction refinement = 0.2
-  set fraction coarsening = 0.1
+  set fraction refinement = 0.3
+  set fraction coarsening = 0.05
   set fraction type       = fraction
 end
 
