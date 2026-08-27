@@ -483,8 +483,9 @@ namespace BoundaryConditions
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {
-              periodic_boundary_id,
-              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
+              .neighbor_id = periodic_boundary_id,
+              .direction   = static_cast<unsigned int>(
+                prm.get_integer("periodic direction"))};
 
             // Allocate the navier_stokes_functions object for the periodic
             // neighbor condition to ensure that they have a defined function
@@ -835,8 +836,9 @@ namespace BoundaryConditions
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {
-              periodic_boundary_id,
-              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
+              .neighbor_id = periodic_boundary_id,
+              .direction   = static_cast<unsigned int>(
+                prm.get_integer("periodic direction"))};
           }
         else
           {
@@ -1078,8 +1080,9 @@ namespace BoundaryConditions
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {
-              periodic_boundary_id,
-              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
+              .neighbor_id = periodic_boundary_id,
+              .direction   = static_cast<unsigned int>(
+                prm.get_integer("periodic direction"))};
           }
         else if (op == "none")
           {
@@ -1315,8 +1318,9 @@ namespace BoundaryConditions
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {
-              periodic_boundary_id,
-              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
+              .neighbor_id = periodic_boundary_id,
+              .direction   = static_cast<unsigned int>(
+                prm.get_integer("periodic direction"))};
           }
         else
           {
@@ -1519,8 +1523,9 @@ namespace BoundaryConditions
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {
-              periodic_boundary_id,
-              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
+              .neighbor_id = periodic_boundary_id,
+              .direction   = static_cast<unsigned int>(
+                prm.get_integer("periodic direction"))};
           }
       }
   }
