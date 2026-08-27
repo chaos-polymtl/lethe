@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/manifolds.h>
@@ -21,10 +21,11 @@ namespace Parameters
                       "Type of manifold description"
                       "Choices are <none|spherical|cylindrical|iges>.");
 
-    prm.declare_entry("id",
-                      Utilities::int_to_string(i_bc, 2),
-                      Patterns::Integer(),
-                      "Mesh id for boundary conditions");
+    prm.declare_entry(
+      "id",
+      Utilities::int_to_string(i_bc, 2),
+      Patterns::List(Patterns::Integer()),
+      "IDs of boundaries to which the manifold will be applied");
 
     prm.declare_entry("cad file",
                       "none",
@@ -42,41 +43,41 @@ namespace Parameters
   }
 
   void
-  Manifolds::parse_boundary(const ParameterHandler &prm,
-                            const unsigned int      i_bc)
+  Manifolds::parse_boundary(const ParameterHandler &prm)
   {
-    const std::string op = prm.get("type");
-    if (op == "none")
-      types[i_bc] = ManifoldType::none;
-    else if (op == "spherical")
-      types[i_bc] = ManifoldType::spherical;
-    else if (op == "cylindrical")
-      types[i_bc] = ManifoldType::cylindrical;
-    else if (op == "iges")
-      types[i_bc] = ManifoldType::iges;
+    // Parse the list of boundary IDs for the current manifold type
+    std::vector<unsigned int> ids_current =
+      convert_string_to_vector<unsigned int>(prm, "id");
 
-    id[i_bc]                 = prm.get_integer("id");
-    manifold_point[i_bc]     = prm.get("point coordinates");
-    manifold_direction[i_bc] = prm.get("direction vector");
-    cad_files[i_bc]          = prm.get("cad file");
+    for (const unsigned int id : ids_current)
+      {
+        const std::string op = prm.get("type");
+        if (op == "none")
+          this->types.emplace_back(ManifoldType::none);
+        else if (op == "spherical")
+          this->types.emplace_back(ManifoldType::spherical);
+        else if (op == "cylindrical")
+          this->types.emplace_back(ManifoldType::cylindrical);
+        else if (op == "iges")
+          this->types.emplace_back(ManifoldType::iges);
+
+        this->ids.emplace_back(id);
+        this->manifold_point.emplace_back(prm.get("point coordinates"));
+        this->manifold_direction.emplace_back(prm.get("direction vector"));
+        this->cad_files.emplace_back(prm.get("cad file"));
+      }
   }
 
   void
   Manifolds::declare_parameters(ParameterHandler &prm,
                                 unsigned int      subsection_max_size)
   {
-    manifold_point.resize(subsection_max_size);
-    manifold_direction.resize(subsection_max_size);
-    cad_files.resize(subsection_max_size);
-
     prm.enter_subsection("manifolds");
     {
       prm.declare_entry("number",
                         "0",
                         Patterns::Integer(),
-                        "Number of boundary conditions");
-      id.resize(subsection_max_size);
-      types.resize(subsection_max_size);
+                        "Number of manifolds");
       for (unsigned int i = 0; i < subsection_max_size; i++)
         {
           prm.enter_subsection("manifold " + Utilities::int_to_string(i));
@@ -92,13 +93,12 @@ namespace Parameters
   {
     prm.enter_subsection("manifolds");
     {
-      size = prm.get_integer("number");
-      types.resize(size);
-      id.resize(size);
-      for (unsigned int i = 0; i < size; i++)
+      this->number_of_manifolds_subsections = prm.get_integer("number");
+
+      for (unsigned int i = 0; i < this->number_of_manifolds_subsections; i++)
         {
           prm.enter_subsection("manifold " + Utilities::int_to_string(i));
-          parse_boundary(prm, i);
+          parse_boundary(prm);
           prm.leave_subsection();
         }
     }
@@ -121,7 +121,7 @@ attach_manifolds_to_triangulation(
             value_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
           SphericalManifold<dim, spacedim> manifold_description(circle_center);
-          triangulation.set_manifold(manifolds.id[i], manifold_description);
+          triangulation.set_manifold(manifolds.ids[i], manifold_description);
         }
       else if (manifolds.types[i] ==
                Parameters::Manifolds::ManifoldType::cylindrical)
@@ -140,7 +140,8 @@ attach_manifolds_to_triangulation(
 
               CylindricalManifold<dim, spacedim> manifold_description(
                 cylinder_axis, point_on_axis);
-              triangulation.set_manifold(manifolds.id[i], manifold_description);
+              triangulation.set_manifold(manifolds.ids[i],
+                                         manifold_description);
             }
           else
             throw std::runtime_error(
@@ -150,7 +151,7 @@ attach_manifolds_to_triangulation(
         {
           attach_cad_to_manifold(triangulation,
                                  manifolds.cad_files[i],
-                                 manifolds.id[i]);
+                                 manifolds.ids[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
         {

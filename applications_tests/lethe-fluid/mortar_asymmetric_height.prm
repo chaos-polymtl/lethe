@@ -43,15 +43,9 @@ end
 #---------------------------------------------------
 
 subsection manifolds
-  set number = 2
+  set number = 1
   subsection manifold 0
-    set id                = 4
-    set type              = cylindrical
-    set point coordinates = 0, 0, 0
-    set direction vector  = 0, 0, 1
-  end
-  subsection manifold 1
-    set id                = 7
+    set id                = 4, 7
     set type              = cylindrical
     set point coordinates = 0, 0, 0
     set direction vector  = 0, 0, 1

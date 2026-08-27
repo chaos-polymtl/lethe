@@ -100,14 +100,9 @@ end
 #---------------------------------------------------
 
 subsection manifolds
-  set number = 2
+  set number = 1
   subsection manifold 0
-    set id                = 0
-    set type              = spherical
-    set point coordinates = 0,0
-  end
-  subsection manifold 1
-    set id                = 1
+    set id                = 0, 1
     set type              = spherical
     set point coordinates = 0,0
   end

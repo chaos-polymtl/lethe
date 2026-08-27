@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_manifolds_h
@@ -32,8 +32,9 @@ namespace Parameters
       iges
     };
 
-    // ID of boundary condition
-    std::vector<unsigned int> id;
+    // IDs of boundaries to which the manifold will be applied. Each manifold
+    // will be stored with its corresponding boundary ID
+    std::vector<unsigned int> ids;
 
     // List of boundary type for each number
     std::vector<ManifoldType> types;
@@ -46,15 +47,19 @@ namespace Parameters
     // File names for cad manifolds
     std::vector<std::string> cad_files;
 
-    // Number of boundary conditions
-    unsigned int size;
-    unsigned int max_size;
+    // Number of manifolds subsections. Each manifold description (i.e., type
+    // and geometric characteristics) can be associated to more than one
+    // boundary ID. Hence, the total number of individual manifolds should be
+    // accessed through the size of the manifold description vectors (e.g.,
+    // `ids`).
+    unsigned int number_of_manifolds_subsections;
 
     void
-    parse_boundary(const ParameterHandler &prm, unsigned int i_bc);
+    parse_boundary(const ParameterHandler &prm);
 
     static void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
+
     void
     declare_parameters(ParameterHandler &prm, unsigned int subsection_max_size);
 
