@@ -478,6 +478,11 @@ end
 </pre></div>
 </div>
 <p>First the number of manifolds is specified by the <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">number</span></code> command. Then a subsection for each of the manifolds is created starting with the <code class="docutils literal notranslate"><span class="pre">manifold</span> <span class="pre">0</span></code>. The boundary <code class="docutils literal notranslate"><span class="pre">id</span></code> is in this case set to <code class="docutils literal notranslate"><span class="pre">0</span></code> corresponding to the mesh boundary to which the manifold will be applied. Then the <code class="docutils literal notranslate"><span class="pre">type</span></code> of the manifold is specified.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The manifold id will always be the same as the prescribed boundary <code class="docutils literal notranslate"><span class="pre">id</span></code>. Similar to <a class="reference internal" href="boundary_conditions_cfd.html"><span class="doc">Boundary Conditions - CFD</span></a>, The parameter <code class="docutils literal notranslate"><span class="pre">id</span></code> can also take a list of boundary ids.
+Hence, <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">number</span></code> refers to the number of <code class="docutils literal notranslate"><span class="pre">manifold</span></code> subsections, and not the total number of manifolds in the mesh.</p>
+</div>
 <ul>
 <li><p>Lethe supports three types of manifolds:</p>
 <ul>

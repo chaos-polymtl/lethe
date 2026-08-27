@@ -30,6 +30,11 @@ Linking parts of the mesh to manifolds is an interesting way to factor the real 
 
 First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` corresponding to the mesh boundary to which the manifold will be applied. Then the ``type`` of the manifold is specified.
 
+
+.. warning::
+    The manifold id will always be the same as the prescribed boundary ``id``. Similar to :doc:`../cfd/boundary_conditions_cfd`, The parameter ``id`` can also take a list of boundary ids.
+    Hence, ``set number`` refers to the number of ``manifold`` subsections, and not the total number of manifolds in the mesh.
+
 * Lethe supports three types of manifolds:
 
   * ``spherical`` manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires the center of the geometry to set the manifold.
