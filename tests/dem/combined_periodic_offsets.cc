@@ -64,8 +64,9 @@ test()
   // collected above.
   Parameters::PeriodicBoundaries periodic_boundaries;
   for (int d = 0; d < dim; ++d)
-    periodic_boundaries[2 * d] = {static_cast<types::boundary_id>(2 * d + 1),
-                                  static_cast<unsigned int>(d)};
+    periodic_boundaries[2 * d] = {.neighbor_id =
+                                    static_cast<types::boundary_id>(2 * d + 1),
+                                  .direction = static_cast<unsigned int>(d)};
 
   PeriodicBoundariesManipulator<dim> manipulator;
   manipulator.set_periodic_boundaries_information(periodic_boundaries);
