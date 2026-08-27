@@ -475,8 +475,8 @@ The ``probing points`` subsection defines probes that can evaluate ``variable`` 
 
 * ``probing point filename``: base name for the output file of the probe. The file written by the solver is ``probe_<id>_<probing point filename>.dat``, where ``<id>`` is the two-digit ID of the probe. For instance, ``set probing point filename = wake_center`` in ``subsection probe 3`` yields ``probe_03_wake_center.dat``. The file is written in the ``output path`` specified in the :doc:`simulation_control` subsection.
 
-.. note::
-  The first column of the output file is the ``time``. It is followed by one column per probed scalar variable (``pressure``, ``phase`` or ``temperature``) and by one column per component for vector variables (``velocity_x``, ``velocity_y`` and, in 3D, ``velocity_z``).
+  .. note::
+    The first column of the output file is the ``time``. It is followed by one column per probed scalar variable (``pressure``, ``phase`` or ``temperature``) and by one column per component for vector variables (``velocity_x``, ``velocity_y`` and, in 3D, ``velocity_z``).
 
 .. tip::
   The probes are evaluated at every ``calculation frequency`` iteration and the output files are (re)written at every ``output frequency`` iteration. Setting ``calculation frequency = 1`` and a larger ``output frequency`` is convenient to monitor a signal at every time step without writing to the disk too often. The values accumulated by the probes are stored in the checkpoint files, so they are recovered when a simulation is restarted.
