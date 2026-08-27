@@ -2486,6 +2486,24 @@ HeatTransfer<dim>::write_geometric_melt_volume()
 }
 
 template <int dim>
+void
+HeatTransfer<dim>::postprocess_algebraic_evaporated_mass()
+{
+  const unsigned int n_q_points   = this->cell_quadrature->size();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+
+  // Local variable to check if it is a CLS simulation
+  const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
+
+  AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
+                                   .monitored_fluid_with_phase_change ==
+                                 Parameters::FluidIndicator::fluid1),
+              ExcMessage(
+                "For single-fluid flows only 'fluid 0' can be monitored."));
+
+}
+
+template <int dim>
 template <typename VectorType>
 void
 HeatTransfer<dim>::postprocess_heat_flux_on_bc(
