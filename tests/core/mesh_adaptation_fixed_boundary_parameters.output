@@ -1,0 +1,17 @@
+
+DEAL::Beginning fixed boundary refinement parameter tests
+DEAL::--- Scenario 1: feature disabled, no boundary listed ---
+DEAL::  parsing succeeded
+DEAL::  is boundary refinement fixed : 0
+DEAL::  number of fixed boundaries   : 0
+DEAL::--- Scenario 2: feature enabled, boundaries listed ---
+DEAL::  parsing succeeded
+DEAL::  is boundary refinement fixed : 1
+DEAL::  number of fixed boundaries   : 4
+DEAL::  fixed boundary id            : 0
+DEAL::  fixed boundary id            : 1
+DEAL::  fixed boundary id            : 2
+DEAL::  fixed boundary id            : 3
+DEAL::--- Scenario 3: feature enabled, no boundary listed ---
+DEAL::  parsing threw an exception
+DEAL::OK

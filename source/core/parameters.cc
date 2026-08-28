@@ -4025,6 +4025,16 @@ namespace Parameters
       is_boundary_refinement_fixed = prm.get_bool("fix boundary refinement");
       boundaries_to_fix =
         convert_string_to_vector<int>(prm, "boundaries fixed");
+
+      // Fixing the boundary refinement is a no-op when no boundary id is
+      // given, since no cell would ever be matched. Warn the user instead of
+      // silently ignoring the request.
+      AssertThrow(
+        !is_boundary_refinement_fixed || !boundaries_to_fix.empty(),
+        ExcMessage(
+          "The parameter 'fix boundary refinement' is enabled, but the "
+          "parameter 'boundaries fixed' is empty. No boundary would be fixed. "
+          "Specify the boundary ids to fix using 'boundaries fixed'."));
     }
     prm.leave_subsection();
   }
