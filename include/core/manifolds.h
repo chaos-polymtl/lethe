@@ -52,7 +52,7 @@ namespace Parameters
     // boundary ID. Hence, the total number of individual manifolds should be
     // accessed through the size of the manifold description vectors (e.g.,
     // `ids`).
-    unsigned int number_of_manifolds_subsections;
+    unsigned int number_of_manifolds_subsections = 0;
 
     void
     parse_boundary(const ParameterHandler &prm);
