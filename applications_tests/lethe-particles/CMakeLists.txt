@@ -44,6 +44,8 @@ file(COPY solid_surfaces_mesh/90deg_triangles.msh DESTINATION "${CMAKE_CURRENT_B
 file(COPY solid_surfaces_mesh/90deg_triangles.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_solid_surface_NPES_double_face_contact.${_build_type}")
 file(COPY solid_surfaces_mesh/flat_triangles.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_solid_surface_CPES_double_edge_contact.${_build_type}")
 file(COPY solid_surfaces_mesh/two_triangles.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_solid_surface_edge_vertex_contact.${_build_type}")
+file(COPY expand_particle_wall_files/particle_slope_concave.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/expand_particle_wall_concave.${_build_type}")
+file(COPY expand_particle_wall_files/particle_slope_convex.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/expand_particle_wall_convex.${_build_type}")
 
 file(COPY restart_moving_receptacle_files/restart.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}/mpirun=1/")
 file(COPY restart_moving_receptacle_files/restart_1.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}/mpirun=1/")
