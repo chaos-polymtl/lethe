@@ -163,8 +163,8 @@ test_manifold_attachment()
   // Declare a spherical manifold centered at the origin and attach it to
   // manifold id 1
   Parameters::Manifolds manifolds_parameters;
-  manifolds_parameters.size  = 1;
-  manifolds_parameters.id    = {1};
+  manifolds_parameters.number_of_manifolds_subsections = 1;
+  manifolds_parameters.ids                             = {1};
   manifolds_parameters.types = {Parameters::Manifolds::ManifoldType::spherical};
   manifolds_parameters.manifold_point     = {"0,0,0"};
   manifolds_parameters.manifold_direction = {"0,1,0"};
