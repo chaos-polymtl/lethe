@@ -4034,7 +4034,7 @@ namespace Parameters
         ExcMessage(
           "The parameter 'fix boundary refinement' is enabled, but the "
           "parameter 'boundaries fixed' is empty. No boundary would be fixed. "
-          "Specify the boundary ids to fix using 'boundaries fixed'."));
+          "Specify the boundary IDs to fix using 'boundaries fixed'."));
     }
     prm.leave_subsection();
   }

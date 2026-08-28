@@ -7,7 +7,7 @@
  *
  * Enabling 'fix boundary refinement' without populating 'boundaries fixed'
  * used to be silently ignored: the loop that clears the refinement and
- * coarsening flags of the boundary cells never matches any boundary id, so the
+ * coarsening flags of the boundary cells never matches any boundary ID, so the
  * boundary refinement was progressively coarsened away by the error estimator.
  * The parsing must now throw in that case.
  *
@@ -87,7 +87,7 @@ check(const std::string &label,
         parse_mesh_adaptation(fix_boundary_refinement, boundaries_fixed);
 
       deallog << "  parsing succeeded" << std::endl;
-      deallog << "  is boundary refinement fixed : "
+      deallog << "  is boundary refinement fixed : " << std::boolalpha
               << mesh_adaptation.is_boundary_refinement_fixed << std::endl;
       deallog << "  number of fixed boundaries   : "
               << mesh_adaptation.boundaries_to_fix.size() << std::endl;
