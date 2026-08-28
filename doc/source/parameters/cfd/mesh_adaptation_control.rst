@@ -117,4 +117,12 @@ This subsection controls the mesh adaptation method, with default values given b
 
 * The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a CLS simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
 
-* The ``fix boundary refinement`` parameter is used to fix the boundary mesh size at the defined initial refinement level. ``boundaries fixed`` can be used to specify which boundary ids will not be refined or coarsened when the kelly mesh adaptation is used. Cells on the boundary will still be refined when global refinement is active or when neighbouring cells force the refinement of a boundary mesh cell. The ``boundaries fixed`` parameter must list at least one boundary id when ``fix boundary refinement`` is set to ``true``, otherwise an error is thrown. Note that ``boundaries fixed`` is independent from the ``boundaries refined`` parameter of the :doc:`mesh` subsection: refining a boundary with ``initial boundary refinement`` does not prevent that boundary from being coarsened afterwards, its id must also be listed in ``boundaries fixed``.
+* The ``fix boundary refinement`` parameter, when enabled, indicates that the boundary mesh size of specified boundaries (with ``boundaries fixed``) should be fixed at the defined initial refinement level.
+
+  .. warning::
+   This only works during adaptive mesh refinement and coarsening with the ``kelly`` error estimator. Cells on the boundary will still be refined when global refinement is active or when neighbouring cells force the refinement of a boundary mesh cell.
+
+* As mentioned above, ``boundaries fixed`` is used when ``fix boundary refinement`` is enabled to specify which boundary IDs will not be refined or coarsened when the kelly mesh adaptation is used.  The ``boundaries fixed`` parameter must list at least one boundary ID when ``fix boundary refinement`` is set to ``true``, otherwise an error is thrown.
+
+  .. attention::
+    ``boundaries fixed`` is independent from the ``boundaries refined`` parameter of the :doc:`mesh` subsection: refining a boundary with ``initial boundary refinement`` does not prevent that boundary from being coarsened afterwards, its ID must also be listed in ``boundaries fixed``.
