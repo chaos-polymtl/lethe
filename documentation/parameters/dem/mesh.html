@@ -465,13 +465,9 @@ end
 </ul>
 <a class="reference internal image-reference" href="../../_images/diamond_cell.png"><img alt="Schematic" class="align-center" src="../../_images/diamond_cell.png" style="width: 400px;" /></a>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">expand</span> <span class="pre">particle-wall</span> <span class="pre">contact</span> <span class="pre">search</span></code> enables adding the neighboring cells of boundary cells to the particle-wall contact search list. This feature should only be activated in geometries with convex boundaries (for example, particles flowing inside a cylinder or sphere). The following image shows the boundary neighbor cells (colored in teal) of the red boundary cell. In concave geometries, enabling this feature leads to unphysical contacts between particles and the imaginary (unreal) extension of the boundary faces from neighboring cells.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expand</span> <span class="pre">particle-wall</span> <span class="pre">contact</span> <span class="pre">search</span></code> extends the boundary walls in a cell by appending the boundary walls of the neighboring cells to the particle-wall contact list. This adds the boundary faces of the neighboring cells and allow particles to collide with boundary walls that are not faces of the cell in which they reside. Only neighboring boundary faces that form a convex boundary with the current cell are added; boundary faces forming a non-convex boundary are excluded. The following figure illustrates this concept. When a particle is located in a boundary cell (shown in red), the boundary faces of neighboring cells that form a convex boundary with the current cell (neighboring cells shown in green) are also considered during the particle-wall contact search. This is necessary because a particle whose centroid lies within the red cell can simultaneously contact both the boundary face of the current cell and the boundary face of a neighboring cell when the two faces form a convex boundary. In contrast, boundary faces of neighboring cells that form a concave boundary (neighboring cells shown in orange) are not considered during the particle-wall contact search.</p></li>
 </ul>
 <a class="reference internal image-reference" href="../../_images/expand_particle_wall.png"><img alt="Schematic" class="align-center" src="../../_images/expand_particle_wall.png" style="width: 400px;" /></a>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>In geometries with convex boundaries, this feature MUST NOT be activated.</p>
-</div>
 </section>
 
         </article>
