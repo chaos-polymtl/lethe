@@ -9,6 +9,7 @@
 [![Examples](https://github.com/chaos-polymtl/lethe/actions/workflows/examples-parameter-files.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/examples-parameter-files.yml)
 [![Documentation](https://github.com/chaos-polymtl/lethe/actions/workflows/doc-github-pages.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/doc-github-pages.yml)
 [![Docker Image](https://github.com/chaos-polymtl/lethe/actions/workflows/docker.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/docker.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0%20OR%20LGPL--2.1-blue.svg)](LICENSE-APACHE)
 
 Lethe (pronounced /ˈliːθiː/) is an open-source computational fluid dynamics
 (CFD), discrete element method (DEM) and coupled CFD-DEM
