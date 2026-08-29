@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Description:
 # Checks the box refinement of the background mesh of a DEM simulation, which
 # became available to lethe-particles when the DEM and CFD mesh reading paths
 # were unified.

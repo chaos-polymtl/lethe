@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Description:
 # Checks that the "boundaries refined" and "initial boundary refinement"
 # parameters of the mesh subsection are applied in DEM simulations. They are
 # declared in the shared Parameters::Mesh struct, but until the DEM and CFD mesh
