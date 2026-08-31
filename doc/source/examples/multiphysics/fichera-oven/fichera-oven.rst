@@ -5,7 +5,11 @@
 Fichera Oven
 ============
 
-This example verifies the implementation of the built-in `discontinuous Petrov-Galerkin (DPG) <https://pdxscholar.library.pdx.edu/mth_fac/426/>`_ residual error estimator and the associated :math:`h`-adaptive mesh refinement for the time-harmonic Maxwell solver. The domain is a "staircase" cavity with reentrant-corner, and is fed by a small excitation port at its top, much like the cavity of a microwave oven -- hence the name *Fichera oven*. The reentrant edges of the cavity is believed to generate electromagnetic field singularities, and therefore this benchmark has been used as a stress test for adaptive mesh refinement using the DPG error estimator [#Cartensen2016]_ [#Petrides2021]_. Indeed, near each of these edges, the electromagnetic field develops a corner singularity: its regularity is limited regardless of the polynomial degree used, so that uniform mesh refinement converges at a rate dictated by the regularity of the singularity rather than by the polynomial degree of the finite element space. Resolving these singularities efficiently therefore requires concentrating the mesh refinement near the reentrant edges while leaving the rest of the cavity coarse. It follows, that the DPG error estimator should naturally identify the reentrant edges as the regions responsible for the largest contribution to the discretization error, and therefore mark them for refinement adequately even when the mesh is still coarse and the Nyquist criterion is not satisfied. This benchmark example goal is to verify that this is what happens in practice.
+This example verifies the implementation of the built-in `discontinuous Petrov-Galerkin (DPG) <https://pdxscholar.library.pdx.edu/mth_fac/426/>`_ residual error estimator and the associated :math:`h`-adaptive mesh refinement for the time-harmonic Maxwell solver. The domain is a "staircase" cavity with re-entrant corner, and is fed by a small excitation port at its top, much like the cavity of a microwave oven -- hence the name *Fichera oven*. 
+
+The re-entrant edges of the cavity generates electromagnetic field singularities, and therefore this benchmark has been used as a stress test for adaptive mesh refinement using the DPG error estimator [#Cartensen2016]_ [#Petrides2021]_. Indeed, near each of these edges, the electromagnetic field develops a corner singularity: its regularity is limited regardless of the polynomial degree used. Hence, the spatial convergence rate is dictated by the regularity of the singularity rather than by the polynomial degree of the finite element space. 
+
+Resolving these singularities efficiently therefore requires increasing the mesh refinement near the re-entrant edges while leaving the rest of the cavity coarse. It follows that the DPG error estimator should naturally identify the re-entrant edges as the regions responsible for the largest contribution to the discretization error, and therefore mark them for refinement adequately even when the mesh is still coarse and the `Nyquist criterion <https://en.wikipedia.org/wiki/Nyquist_frequency>`_ is not satisfied. The goal of this benchmark example is to verify that this is what happens in practice.
 
 Features
 --------
@@ -27,10 +31,12 @@ Both files below are located in the example's folder (``examples/multiphysics/fi
 Description of the Case
 -----------------------
 
+.. _geometry_section:
+
 Geometry
 ~~~~~~~~
 
-The domain is generated with Lethe's built-in ``fichera_oven`` grid generator. Starting from a :math:`2\times2\times3` array of unit cubes, four cubes are removed from the top two levels to create a staircase-like cavity with reentrant edges. The three levels of the staircase are defined as follows:
+The domain is generated with Lethe's built-in ``fichera_oven`` grid generator. Starting from a :math:`2\times2\times3` array of unit cubes, four cubes are removed from the top two levels to create a staircase-like cavity with re-entrant edges. The three levels of the staircase are defined as follows:
 
 - bottom level (:math:`z\in[0,1]`): the full :math:`2\times2` array of cubes is kept;
 - middle level (:math:`z\in[1,2]`): one of the four cubes is removed, leaving an L-shaped cross-section;
@@ -44,6 +50,7 @@ This produces the eight-cube "staircase" tower shown below. When ``colorize`` is
     :name: geometry
     :width: 200
 
+The dashed region illustrates the semi-infinite waveguide associated with the inlet excitation port boundary condition. Although the boundary condition assumes that the waveguide extends to infinity, only the staircase cavity is included in the numerical domain.
 
 Physical Problem
 ~~~~~~~~~~~~~~~~
@@ -59,9 +66,9 @@ Physical Problem
 
     See the :doc:`DPG formulation for time-harmonic Maxwell problems <../../../theory/multiphysics/electromagnetism/time_harmonic_weak_form>` theory guide for the full derivation and the DPG variational formulation used by the solver.
 
-The cavity is filled with vacuum (:math:`\varepsilon_\mathrm{r}=\mu_\mathrm{r}=1`) and its walls are perfectly-conducting (``pec``), except for the small top face, on which a Dirichlet ``electric field`` condition of the form :math:`E_x = \sin(\pi y)` is imposed. The excitation frequency is set to :math:`f=\mathrm{238.567258\,MHz}`, corresponding to a dimensionless angular frequency of :math:`\omega = 5`.
+The cavity is filled with vacuum (:math:`\varepsilon_\mathrm{r,eff}=\mu_\mathrm{r}=1`) and its walls are perfectly-conducting (``pec``), except for the small top face, on which a Dirichlet ``electric field`` condition of the form :math:`E_x = \sin(\pi y)` is imposed. The excitation frequency is set to :math:`f=\mathrm{238.567258\,MHz}`, corresponding to a dimensionless angular frequency of :math:`\omega = 5`.
 
-Since the cavity has no known analytical solution, this example does not rely on a manufactured or analytical solution to assess convergence, as is done, for instance, in the :doc:`waveguide example <../waveguide/waveguide>`. Instead, it relies on:
+Since the cavity has no known analytical solution, this example does not rely on an analytical solution to assess convergence, as is done, for instance, in the :doc:`waveguide example <../waveguide/waveguide>`. Instead, it relies on:
 
 - the DPG method's built-in residual error estimator :math:`\|\Psi\|_{V_r} = \sqrt{\Psi^\dagger G \Psi}` computed on each cell and then integrated in a :math:`L^2` way to obtain the full error on the solution denoted:  
     .. math::
@@ -82,11 +89,10 @@ Simulation Control
     subsection simulation control
         set method            = steady
         set output path       = ./output/
-        set output frequency  = 1
         set number mesh adapt = 5
     end
 
-The steady-state problem is solved on the initial mesh, then the mesh is adapted and the problem solved again, and so on for ``number mesh adapt = 5`` refinement cycles, for a total of six solves. Each of these solves is written to the ``./output/`` folder as a separate time step of a PVD/VTU time series, with the "time" of each step corresponding to its refinement iteration number (from ``0`` to ``6``, with the first step being the initial condition before any computation).
+The steady-state problem is solved on the initial mesh, then the mesh is adapted and the problem solved again, and so on for ``number mesh adapt = 5`` refinement cycles, for a total of six solves. Each of these solves is written to the ``./output/`` folder as a separate time step of a PVD/VTU time series, with the *time* of each step corresponding to its refinement iteration number (from ``0`` to ``6``, with the first step being the initial condition before any computation).
 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
@@ -105,8 +111,8 @@ This is the core subsection of this example:
     end
 
 - ``set type = adaptive`` requests :math:`h`-adaptive refinement, as opposed to a ``uniform`` refinement of every cell.
-- ``set error estimator = dpg`` selects the DPG built-in residual error estimator, which is the only error estimator available for the ``electromagnetic fields`` variable. Unlike the more generic ``kelly`` estimator (a jump-based indicator applicable to every physics), the ``dpg`` estimator is intrinsic to the DPG variational formulation: it is computed from the norm, in the test space, of the local residual representation function of each cell. It is available at essentially no extra cost once the DPG system has been solved on that cell. 
-- ``set fraction refinement = 0.3`` and ``set fraction coarsening = 0.05`` respectively mark, at every adaptation cycle, the highest error cells that represent :math:`30\%` of the total error indicator are marked for refinement and the lowest error cells that represent :math:`5\%` of the total error indicator are marked for coarsening (using the deal.II ``refine_and_coarsen_fixed_fraction`` strategy).
+- ``set error estimator = dpg`` selects the DPG built-in residual error estimator, which is the only error estimator available for the ``electromagnetic fields`` variable. Unlike the more generic ``kelly`` estimator (a jump-based indicator applicable to every physics), the ``dpg`` estimator is intrinsic to the DPG variational formulation. This error estimator is computed from the norm, in the test space, of the local residual representation function on each cell (the residual is represented by an error representation function through the Riesz map, for more details see :doc:`DPG formulation for time-harmonic Maxwell problems <../../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell>`). It is available at essentially no extra cost once the DPG system has been solved on that cell. 
+- ``set fraction refinement = 0.3`` and ``set fraction coarsening = 0.05`` respectively mark the highest error cells that represent :math:`30\%` of the total error indicator for refinement and the lowest error cells that represent :math:`5\%` of the total error indicator for coarsening (using the deal.II ``refine_and_coarsen_fixed_fraction`` strategy). This is done at every adaptation cycle.
 
 FEM
 ~~~
@@ -144,12 +150,12 @@ Physical Properties
         end
     end
 
-The cavity is filled with vacuum: relative permittivity and permeability of 1, with no losses (zero conductivity and zero imaginary parts).
+The cavity is filled with vacuum: the `relative permittivity real part` and `magnetic permeability real part` are `constant` and set to 1, with no losses (zero `electric conductivity` and zero `imag part`).
 
 Mesh
 ~~~~
 
-See the Geometry section above for the description of the ``fichera_oven`` grid generator and its arguments:
+See the `Geometry <geometry_section_>`_ section above for the description of the ``fichera_oven`` grid generator and its arguments:
 
 .. code-block:: text
 
@@ -234,8 +240,8 @@ The electromagnetic boundary conditions are specified in the ``boundary conditio
         end
     end
 
-- ``bc 0`` (id ``0``) covers every wall of the staircase except the top port and imposes a ``pec`` (perfect electric conductor) condition, :math:`\mathbf{n}\times\mathbf{E}=0`.
-- ``bc 1`` (id ``1``) covers the small top face and imposes a Dirichlet ``electric field`` condition. Only the real part of :math:`E_x` is non-zero, and is set to :math:`\sin(\pi y)`.
+- ``bc 0`` (``id = 0``) covers every wall of the staircase except the top port and imposes a ``pec`` (perfect electric conductor) condition, :math:`\mathbf{n}\times\mathbf{E}=0`.
+- ``bc 1`` (``id = 1``) covers the small top face and imposes a Dirichlet ``electric field`` condition. Only the real part of :math:`E_x` is non-zero, and is set to :math:`\sin(\pi y)`.
 
 Linear Solver Control
 ~~~~~~~~~~~~~~~~~~~~~
@@ -264,7 +270,7 @@ Call ``lethe-fluid`` by invoking:
 to run the simulation using eight CPU cores.
 
 .. warning::
-    Make sure to compile Lethe in ``Release`` mode. Also, if the results presented below needs to be reproduced, the number of mesh adaptations (``number mesh adapt``) in the parameter file needs to be changed to thirteen. This simulation will require more memory than what is available on a typical desktop computer. On a machine with 1TB of RAM and 128 CPU cores, the simulation takes about 8 hours to complete. The simulation can be run on a smaller machine by reducing  but this will reduce the number of data points available for convergence analysis.
+    Make sure to compile Lethe in ``Release`` mode. Also, if the results presented below needs to be reproduced, the number of mesh adaptations (``number mesh adapt``) in the parameter file needs to be changed to thirteen. This simulation will require more memory than what is available on a typical desktop computer. On a machine with 1TB of RAM and 128 CPU cores, the simulation takes about 8 hours to complete. It can be run on a smaller machine by reducing  but this will reduce the number of data points available for convergence analysis.
 
 Once the simulation is complete, run the postprocessing script from the same folder:
 
@@ -276,10 +282,10 @@ Once the simulation is complete, run the postprocessing script from the same fol
 The script reads the ``out.pvd`` time series produced in the ``output`` folder using `PyVista <https://pyvista.org/>`_, and for each iteration:
 
 - retrieves the number of cells and faces in the mesh;
-- computes the number of degrees of freedom of the interior and skeleton DPG trial spaces from these counts assuming a `electromagnetics trial degree = 2` and removing the degrees of freedom associated with the Dirichlet boundary conditions on the real part of the electric field;
+- computes the number of degrees of freedom of the interior and skeleton DPG trial spaces. The counting is done assuming a `electromagnetics trial degree = 2` and removing the degrees of freedom associated with the Dirichlet boundary conditions since they are not part of the linear system solved by the solver;
 - computes the :math:`L^2`- and :math:`L^\infty`-like norms of the DPG error indicator, ``dpg_error_norm`` (:math:`\|\Psi\|_{V_r}`), outputed by the solver on each cell.
 
-It then produces two convergence plots -- error versus number of cells, and error versus number of degrees of freedom compared against the reference ``hp3d`` results -- as well as, when run with the ``--validate`` flag, a ``solution-fichera-oven.dat`` file used for automated testing. To run the program with validation, use the following command:
+It then produces two convergence plots -- error versus number of cells, and error versus number of degrees of freedom compared against the reference ``hp3d`` results. When the post-processing script is run with the ``--validate`` flag, a ``solution-fichera-oven.dat`` file is generated for automated testing. To run the program with validation, use the following command:
 
 .. code-block:: text
     :class: copy-button
@@ -287,7 +293,7 @@ It then produces two convergence plots -- error versus number of cells, and erro
     python3 fichera_oven.py --validate -f /path/to/output/folder
 
 .. tip::
-    The ``-f`` (or ``--folder``) argument lets you point the script to an output folder other than the default ``./output``, which is convenient when postprocessing results generated in a different directory.
+    The ``-f`` (or ``--folder``) argument lets you input an output folder other than the default ``./output``, which is convenient when post-processing results are generated in a different directory.
 
 Results and Discussion
 ----------------------
@@ -308,7 +314,7 @@ The following figure shows the same DPG error norm as a function of the number o
     :name: convergence-cells
     :width: 500
 
-Finally, the following figure shows the solution of the electromagnetic field on the most refined mesh:
+Finally, the following figure shows the solution of the electromagnetic field on the most refined mesh for the different level of the geometry:
 
 .. image:: images/fichera_oven.png
     :alt: solution on the most refined mesh
@@ -316,13 +322,13 @@ Finally, the following figure shows the solution of the electromagnetic field on
     :name: mesh-adaptation
     :width: 800
 
-As expected from the discussion of the geometry above, refinement concentrates near the reentrant edges of the staircase rather than spreading uniformly across the cavity, confirming that the DPG error estimator correctly identifies the regions responsible for the largest contribution to the discretization error.
+As expected from the discussion of the geometry above, the adaptive refinement concentrates near the re-entrant edges of the staircase rather than spreading uniformly across the cavity, confirming that the DPG error estimator correctly identifies the regions responsible for the largest contribution to the discretization error.
 
 Possibilities for Extension
 ---------------------------
 
-- **Compare against uniform refinement:** Set ``mesh adaptation / type = uniform`` and rerun the case. Comparing the resulting convergence curve (error versus number of degrees of freedom) with the adaptive one obtained above directly illustrates the benefit of adaptive refinement for problems with corner singularities.
-- **Use the Kelly error estimator:** Set ``mesh adaptation / variable = electric field, magnetic field`` and ``error estimator = kelly, kelly`` to compare the mesh refinement pattern, and the resulting convergence, obtained with a generic jump-based estimator against those obtained with the method-intrinsic DPG estimator.
+- **Compare against uniform refinement:** Set ``mesh adaptation type = uniform`` and re-run the case. Comparing the resulting convergence curve (error versus number of degrees of freedom) with the adaptive one obtained above would illustrate the benefit of adaptive refinement for problems with corner singularities.
+- **Use the Kelly error estimator:** Set ``mesh adaptation variable = electric field, magnetic field`` and ``error estimator = kelly, kelly`` to compare the mesh refinement pattern, and the resulting convergence, obtained with a generic jump-based estimator against those obtained with the method-intrinsic DPG estimator.
 - **Change the excitation:** Modify the frequency or the profile of the ``electric field`` boundary condition on the port to excite different resonant modes of the cavity and observe how the refinement pattern adapts to the new field distribution.
 - **Change the polynomial degree:** Change ``electromagnetics trial degree`` (and correspondingly ``electromagnetics test degree``) to study how the polynomial degree affects the convergence rate.
 

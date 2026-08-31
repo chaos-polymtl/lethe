@@ -19,7 +19,6 @@ set dimension = 3
 subsection simulation control
   set method            = steady
   set output path       = ./output/
-  set output frequency  = 1
   set number mesh adapt = 5
 end
 

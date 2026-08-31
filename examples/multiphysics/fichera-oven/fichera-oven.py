@@ -32,6 +32,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pyvista as pv
 from cycler import cycler
+from matplotlib.lines import Line2D 
 
 #############################################################################
 # Physical / discretization constants
@@ -78,7 +79,6 @@ RESIDUALS_REF = np.array([
     0.027342035013820435, 0.02477446488053953, 0.020340010731841072
 ])
 
-
 #############################################################################
 # Helper functions
 #############################################################################
@@ -98,6 +98,7 @@ def parse_args():
              "is the folder that contains the results of the simulation "
              "(.vtu, .pvtu, .dat and .pvd files). Defaults to './output'.")
     args, _leftovers = parser.parse_known_args()
+    
     return args
 
 
@@ -177,9 +178,6 @@ def count_faces_and_edges(mesh):
 
 
     return n_face_boundary, n_face_interior, n_edge_boundary, n_edge_interior
-
-
-
 
 
 def compute_dof_counts(n_cells, n_face_boundary, n_faces_interior, n_edge_boundary, n_edge_interior):
@@ -317,10 +315,10 @@ def plot_convergence_vs_cells(results, colors, show):
 
     ax.loglog(results['n_cells'], results['l2_error'],
                 's-', color=colors[0], markerfacecolor='none',
-                label=r'$\| e \|_{L^2(\Omega)}$')
+                label=r'$\|u_h-u\|_E$')
     ax.loglog(results['n_cells'], results['max_error'],
                 'o-', color=colors[1], markerfacecolor='none',
-                label=r'$\| e \|_{L^\infty(\Omega)}$')
+                label=r'max$(\|\Psi\|_{V_r})$')
 
     ax.set_xlabel(r'Number of cells')
     ax.set_ylabel(r'DPG error norm')
@@ -343,17 +341,41 @@ def plot_convergence_vs_dofs(results, show):
     ax.loglog(N_DOFS_REF, RESIDUALS_REF,
               linestyle='-', color="#0e26b1", linewidth=4, label=r'\texttt{hp3d}',zorder=3)
     ax.scatter(N_DOFS_REF, RESIDUALS_REF,
-               facecolor='k', color='none', zorder=4, s=75, linewidths=2)
+               marker='o', facecolor='k', color='none', zorder=4, s=75, linewidths=2)
 
     ax.loglog(results['n_dofs_skeleton'], results['l2_error'],
               linestyle='-', color='#1b9e77', linewidth=4, label=r'\texttt{lethe}',zorder=5)
-    ax.scatter(results['n_dofs_skeleton'], results['l2_error'],
+    ax.scatter(results['n_dofs_skeleton'], results['l2_error'], marker='s',
                facecolor='k', color='none', zorder=6, s=75, linewidths=2)
 
     ax.grid(True, which="major", ls="-", lw=0.4, alpha=0.35)
     ax.grid(True, which="minor", ls=":", lw=0.3, alpha=0.25)
     ax.minorticks_on()
-    ax.legend(loc='upper right', frameon=True, fontsize=14)
+    legend_handles = [
+        Line2D(
+            [0], [0],
+            color="#0e26b1",
+            linewidth=4,
+            marker='o',
+            markerfacecolor='none',
+            markeredgecolor='k',
+            markeredgewidth=2,
+            markersize=8,
+            label=r'$\texttt{hp3d}$'
+        ),
+        Line2D(
+            [0], [0],
+            color="#1b9e77",
+            linewidth=4,
+            marker='s',
+            markerfacecolor='none',
+            markeredgecolor='k',
+            markeredgewidth=2,
+            markersize=8,
+            label=r'$\texttt{lethe}$'
+        )
+    ]
+    ax.legend(handles=legend_handles, loc='upper right', frameon=True, fontsize=14)
     ax.set_ylim(1e-2, 1)
     ax.set_xlabel(r'Number of degrees of freedom')
     ax.set_ylabel(r'$\|u_h-u\|_E$')
