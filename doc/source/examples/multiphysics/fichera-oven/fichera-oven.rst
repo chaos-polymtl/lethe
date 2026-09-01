@@ -5,7 +5,7 @@
 Fichera Oven
 ============
 
-This example verifies the implementation of the built-in `discontinuous Petrov-Galerkin (DPG) <https://pdxscholar.library.pdx.edu/mth_fac/426/>`_ residual error estimator and the associated :math:`h`-adaptive mesh refinement for the time-harmonic Maxwell solver. The domain is a "staircase" cavity with re-entrant corner, and is fed by a small excitation port at its top, much like the cavity of a microwave oven -- hence the name *Fichera oven*. 
+This example verifies the implementation of the built-in `discontinuous Petrov-Galerkin (DPG) <https://pdxscholar.library.pdx.edu/mth_fac/426/>`_ residual error estimator and the associated :math:`h`-adaptive mesh refinement for the time-harmonic Maxwell solver. The domain is a "staircase" cavity with a re-entrant corner, and is fed by a small excitation port at its top, much like the cavity of a microwave oven -- hence the name *Fichera oven*. 
 
 The re-entrant edges of the cavity generates electromagnetic field singularities, and therefore this benchmark has been used as a stress test for adaptive mesh refinement using the DPG error estimator [#Cartensen2016]_ [#Petrides2021]_. Indeed, near each of these edges, the electromagnetic field develops a corner singularity: its regularity is limited regardless of the polynomial degree used. Hence, the spatial convergence rate is dictated by the regularity of the singularity rather than by the polynomial degree of the finite element space. 
 
