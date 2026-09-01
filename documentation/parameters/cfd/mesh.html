@@ -286,6 +286,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/waveguide/waveguide.html">Waveguide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/fichera-oven/fichera-oven.html">Fichera Oven</a></li>
 </ul>
 </li>
 </ul>
@@ -542,7 +543,7 @@ end
 <td><img alt="../../_images/mesh_uniform_channel_with_meshed_square_prism.png" class="align-center" src="../../_images/mesh_uniform_channel_with_meshed_square_prism.png" />
 </td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#birmingham-fluidized-bed"><span class="std std-ref">Bimingham Fluidized Bed</span></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#birmingham-fluidized-bed"><span class="std std-ref">Birmingham Fluidized Bed</span></a></p></td>
 <td><img alt="../../_images/mesh_birmingham_fluidized_bed.png" class="align-center" src="../../_images/mesh_birmingham_fluidized_bed.png" />
 </td>
 </tr>
@@ -609,11 +610,12 @@ end
   set grid arguments  = bottom_left : top_right : colorize
 </pre></div>
 </div>
-<p>If this grid type is chosen, a mesh for the Fichera oven time-harmonic Maxwell benchmark is created.</p>
-<div class="admonition-upcoming-update admonition">
-<p class="admonition-title">Upcoming update</p>
-<p>More details on this type of mesh and its grid arguments will be provided in a future example.</p>
-</div>
+<p>If this grid type is chosen, a mesh for the Fichera oven time-harmonic Maxwell benchmark is created. For more details on this type of mesh, refer to <a class="reference internal" href="../../examples/multiphysics/fichera-oven/fichera-oven.html"><span class="doc">Fichera Oven</span></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code> accepts up to three colon-separated values as listed above.</p>
+<ul class="simple">
+<li><p>The first two fields are required, where <code class="docutils literal notranslate"><span class="pre">bottom_left</span></code> and <code class="docutils literal notranslate"><span class="pre">top_right</span></code> are <code class="docutils literal notranslate"><span class="pre">x,y,z</span></code> coordinates defining the bounding box of the mesh. They follow deal.II’s convention for a hyper rectangle, where the bottom left corner is the point with the smallest coordinates in each direction, and the top right corner is the point with the largest coordinates in each direction.</p></li>
+<li><p>The last field is optional, where <code class="docutils literal notranslate"><span class="pre">colorize</span></code> is a boolean that applies the following boundary ID convention: 0 for all the oven walls, 1 for the waveguide inlet which is the furthest face from the <cite>bottom_left</cite> corner with the normal pointing in the positive z direction.</p></li>
+</ul>
 </section>
 <section id="uniform-channel-with-meshed-cylinder">
 <span id="channel-cylinder"></span><h3>Uniform Channel with Meshed Cylinder<a class="headerlink" href="#uniform-channel-with-meshed-cylinder" title="Link to this heading">#</a></h3>
