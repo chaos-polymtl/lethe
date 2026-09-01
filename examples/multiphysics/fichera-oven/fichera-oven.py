@@ -176,7 +176,6 @@ def count_faces_and_edges(mesh):
     n_edge_boundary = boundary_surface.extract_all_edges().n_lines
     n_edge_interior = cleaned.extract_all_edges().n_lines - n_edge_boundary
 
-
     return n_face_boundary, n_face_interior, n_edge_boundary, n_edge_interior
 
 

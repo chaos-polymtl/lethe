@@ -158,7 +158,7 @@ If this grid type is chosen, a mesh for the Fichera oven time-harmonic Maxwell b
 
 The ``grid arguments`` accepts up to three colon-separated values as listed above.
 
-* The first two fields are required, where ``bottom_left`` and ``top_right`` are ``x,y,z`` coordinates defining the bounding box of the mesh. They follow deal.II's convention for a hyper rectangle, where the bottom left corner is the point with the smallest coordinates in each direction, and the top right corner is the point with the largest coordinates in each direction. The inlet is always the face furthest from the ``bottom_left`` corner with the normal pointing in the positive z direction.
+* The first two fields are required, where ``bottom_left`` and ``top_right`` are ``x,y,z`` coordinates defining the bounding box of the mesh. They follow deal.II's convention for a hyper rectangle, where the bottom left corner is the point with the smallest coordinates in each direction, and the top right corner is the point with the largest coordinates in each direction. 
 * The last field is optional, where ``colorize`` is a boolean that applies the following boundary ID convention: 0 for all the oven walls, 1 for the waveguide inlet which is the furthest face from the `bottom_left` corner with the normal pointing in the positive z direction.
 
 .. _channel-cylinder:
