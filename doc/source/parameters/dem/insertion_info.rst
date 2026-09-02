@@ -2,7 +2,7 @@
 Insertion Info
 ==============
 
-In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file`` are defined.
+In this subsection, the insertion methods ``volume``, ``plane``, ``list`` and ``file`` are defined.
 
 .. note::
     Insertion in Lethe starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.
@@ -63,12 +63,12 @@ In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file
     set removal box points coordinates                 = 0., 0., 0.: 1., 1., 1.
   end
 
-The ``insertion method`` parameter defines insertion type, where choices are: ``volume``, ``plane``, ``list``, ``file`` and ``packed``. Different insertion methods can share the same parameter. In order to simplify the explanation on those parameters, they are introduced in each method with their specificities.
+The ``insertion method`` parameter defines insertion type, where choices are: ``volume``, ``plane``, ``list``, ``file`` and ``packed``. Different insertion methods can share the same parameter. In order to simplify the explanation on such parameters, they are introduced in each method with their specificities.
 
 -------
 Volume
 -------
-The ``volume`` insertion method uses an insertion box where particles will be inserted. The box can inserts particles in a structured manner or in a random manner according to the  ``insertion maximum offset`` and ``insertion prn seed`` settings.
+The ``volume`` insertion method uses an insertion box where particles will be inserted. The box can insert particles in a structured manner or in a random manner according to the  ``insertion maximum offset`` and ``insertion prn seed`` settings.
 
 * ``insertion frequency`` defines the frequency of the insertion of particles in the box. For example, if the ``insertion frequency`` is set to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps. The frequency should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles.
 
@@ -89,7 +89,7 @@ The ``volume`` insertion method uses an insertion box where particles will be in
     .. math::
         (x_1, y_1, z_1) > (x_{min}, y_{min}, z_{min}) + \left(\frac{1-\epsilon}{2} + \psi\right) d^{max}_p
 
-* ``insertion direction sequence`` defines the sequence of directions of insertion in the box. For example, if the parameter is equal to ``0, 1, 2``, the particles are inserted in priority in the x, in y, and then in z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
+* ``insertion direction sequence`` defines the sequence of directions of insertion in the box. For example, if the parameter is equal to ``0, 1, 2``, the particles are inserted in priority in the x, y, then z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
 
 * ``insertion distance threshold`` determines the initial distance between the particles in the insertion box. It must be larger than 1 to avoid any initial collision between the inserted particles.
   The distance between the inserted particles is equal to:
@@ -101,15 +101,15 @@ The ``volume`` insertion method uses an insertion box where particles will be in
     ``insertion distance threshold`` should also be compatible with the ``insertion maximum offset``. Inserted particles will not overlap if:
     :math:`\epsilon < \psi + 1` See note on the ``insertion box points coordinates`` parameter.
 
-    Generally, we recommend users to use a threshold in the range of 1.3-2.0, depending on the value of offset.
+    Generally, we recommend users to use a threshold in the range of 1.3-2.0, depending on the value of the offset.
 
-* ``insertion acceptance function`` subsection is used to define a function used to accept or reject insertion points in the insertion box based on their positions. This parameter allows to create an insertion box of a arbitrary shape, which is useful when inserting in curved geometries, like a cylinder. A insertion point is accepted if the function returns a value greater than ``0.``, before applying the offset defined by the ``insertion maximum offset`` parameter. The default value of the function is ``1``  and leads to every point being accepted..
+* ``insertion acceptance function`` subsection is used to define a function used to accept or reject insertion points in the insertion box based on their positions. This parameter allows to create an insertion box of an arbitrary shape, which is useful when inserting in curved geometries such as cylinders. An insertion point is accepted if the function returns a value greater than ``0.``, before applying the offset defined by the ``insertion maximum offset`` parameter. The default value of the function is ``1``  and leads to every point being accepted.
 
-* ``initial velocity`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
+* ``initial velocity`` determines the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
 
-* ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
+* ``initial angular velocity`` determines the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
 
-* ``insertion maximum offset`` defines the maximum value of the offset in relation to the structured discrete positions in the box. If the offset is equal to 0.0, the particles will perfectly aligns along the x, y and z directions. Otherwise, the particle insertion locations are randomly selected within the offset of this positions.
+* ``insertion maximum offset`` defines the maximum value of the offset in relation to the structured discrete positions in the box. If the offset is equal to 0.0, the particles will perfectly align along the x, y and z directions. Otherwise, the particle insertion locations are randomly selected within the offset of this positions.
 
 * ``insertion prn seed`` seeds the pseudo-random number (PRN) generator. It defines the starting value from which the offset values are generated.
 
@@ -121,19 +121,19 @@ The ``volume`` insertion method uses an insertion box where particles will be in
 --------------------
 Plane
 --------------------
-The ``plane`` insertion method inserts particles at the centroid of insertion cells. These cells are defined as intersected by a mathematical plane. This plane is defined by an ``insertion plane point`` and an ``insertion plane normal vector``. A cell is considered as intersected by the plane if at least one of its vertex is on each side of the plane or if at least one of its vertex is directly on the plane (the normal distance between the vertex and the plane is zero). At each insertion step, a particle will be inserted in a insertion cell if that cell is empty (no particle is present inside it). This guarantee the absence of big overlap with the particles already inserted. This method of inserting is useful when dealing with a domain dense with particles.
+The ``plane`` insertion method inserts particles at the centroid of insertion cells. These cells are defined as intersected by a mathematical plane. This plane is defined by an ``insertion plane point`` and an ``insertion plane normal vector``. A cell is considered as intersected by the plane if at least one of its vertices is on each side of the plane or if at least one of its vertices is directly on the plane (the normal distance between the vertex and the plane is zero). At each insertion step, a particle will be inserted in an insertion cell if that cell is empty (no particle is present inside it). This guarantees the absence of large overlaps with the already inserted particles. This method of inserting is useful when dealing with a domain dense with particles.
 
-* ``insertion frequency`` defines the frequency of the check for particle insertion. The insertion method will check if the cell in empty, and will only insert a particle if so. The frequency should be small so that particles are being inserted as soon as a cell is empty.
+* ``insertion frequency`` defines the frequency of the check for particle insertion. The insertion method will check if the cell is empty, and will only insert a particle if so. The frequency should be small so that particles are being inserted as soon as a cell is empty.
 
-* ``insert plane point`` defines the point coordinates for the plane. Each component of this parameter represent the x, y and z directions, respectively.
+* ``insert plane point`` defines the point coordinates for the plane. The components of this parameter represent the x, y and z directions, respectively.
 
-* ``insertion plane normal vector`` defines the normal vector component for the plane. Each component of the parameter represent the x, y and z directions, respectively.
+* ``insertion plane normal vector`` defines the normal vector component for the plane. The components of the parameter represent the x, y and z directions, respectively.
 
 * ``insertion plane threshold distance`` defines the threshold distance for the plane insertion.
 
-* ``initial velocity`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
+* ``initial velocity`` determines the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
 
-* ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
+* ``initial angular velocity`` determines the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
 
 * ``insertion maximum offset`` defines the maximum value of the offset in relation to centroid of the cell. The insertion locations of particles are randomly selected if the offset is not equal to zero, otherwise, the particles will be inserted at the centroid.
 
@@ -148,7 +148,7 @@ The ``list`` insertion method inserts particles at precise coordinates with spec
 
 * ``insertion frequency`` defines the frequency of the insertion of particles based on the list. If the list contains 3 coordinates, 3 new particles will be inserted at the same positions at each insertion step.
 
-* ``list x``, ``list y``, and ``list z``: define the coordinates of every particles in the x, y and z directions, respectively. For example, if you want to insert particles at two locations, ``(0.,0.,0.) and (1.,2.,3.)`` , the list parameters should look like this :
+* ``list x``, ``list y``, and ``list z`` define the coordinates of every particles in the x, y and z directions, respectively. For example, if you want to insert particles at two locations, ``(0.,0.,0.) and (1.,2.,3.)`` , the list parameters should look like this :
 
 .. code-block:: text
 
@@ -156,13 +156,13 @@ The ``list`` insertion method inserts particles at precise coordinates with spec
     set list y = 0., 2.
     set list z = 0., 3.
 
-* ``list velocity x``, ``list velocity y``, and ``list velocity z`` define the initial translational velocities of each particles respectively following the same logic as the insertion coordinates.
+* ``list velocity x``, ``list velocity y``, and ``list velocity z`` define the initial translational velocities of each particle following the same logic as the insertion coordinates.
 
-* ``list omega x``, ``list omega y``, and ``list omega z`` define the initial angular velocities of each particles respectively following the same logic as the insertion coordinates.
+* ``list omega x``, ``list omega y``, and ``list omega z`` define the initial angular velocities of each particle following the same logic as the insertion coordinates.
 
-* ``list diameters`` defines the diameters of each particles respectively following the same logic as the insertion coordinates.
+* ``list diameters`` defines the diameters of each particle following the same logic as the insertion coordinates.
 
-* ``list temperatures`` defines the temperatures of each particles respectively following the same logic as the insertion coordinates.
+* ``list temperatures`` defines the temperature of each particle following the same logic as the insertion coordinates.
 
 ---------------------
 File
@@ -175,7 +175,7 @@ The ``file`` insertion method inserts particles in a similar way to the ``list``
     0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;
     1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;
 
-For multiphysic DEM simulations, the structure should be:
+For multiphysics DEM simulations, the structure should be:
 
 .. code-block:: text
 
@@ -183,17 +183,17 @@ For multiphysic DEM simulations, the structure should be:
     0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2; 0.0;
     1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2; 0.0;
 
-Each line is associated with a particle and its properties. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with any script. An other option is to use the python code ``extract-particles-properties-from-vtu.py`` in ``lethe/contrib/postprocessing/extract-from-vtu`` directory. This code extracts particle properties from the last vtu file from a given previously run simulation. The code should be run from the case directory containing the .prm file, and the name of the .prm file should be given as an argument. The generated insertion file will be saved in the same directory.
+Each line is associated with a particle and its properties. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with a script. Another option is to use the python code ``extract-particles-properties-from-vtu.py`` in ``lethe/contrib/postprocessing/extract-from-vtu`` directory. This code extracts particle properties from the last vtu file from a given previously run simulation. The code should be run from the case directory containing the .prm file, and the name of the .prm file should be given as an argument. The generated insertion file will be saved in the same directory.
 
 * ``insertion frequency`` defines the frequency of the insertion of particles based on the list in the file(s)
 
 * ``list of input files`` defines the list of files to be used for the insertion. The default value is ``particles.input``.
 
 .. note::
-    The ``file`` insertion combined with the ``extract-particles-properties-from-vtu.py`` python code can be a useful tool. The loading of particles and the rest of the simulation can be performed in two different triangulations, witch is not the case of the restart feature. This means that the loading triangulation can have smaller cells and a bigger domain to allow for the use of larger insertion boxes. Particles properties can then be extracted and the remainder of the simulation can be performed in the appropriate triangulation.
+    The ``file`` insertion combined with the ``extract-particles-properties-from-vtu.py`` python code can be a useful tool. The loading of particles and the rest of the simulation can be performed in two different triangulations, witch is not the case of the restart feature. This means that the loading triangulation can have smaller cells and a bigger domain to allow for the use of larger insertion boxes. Particle properties can then be extracted and the remainder of the simulation can be performed in the appropriate triangulation.
 
 .. warning::
-    The critical Rayleigh time step is computed from the parameters in the ``particle type`` subsections, not the ``insertion info`` subsection. It is the user's responsibility to fill the ``particle type`` subsections correctly according to the diameter values stored in the insertion input file, otherwise Rayleigh time percentage displayed at the start of every DEM simulation may not be accurate.
+    The critical Rayleigh time step is computed from the parameters in the ``particle type`` subsections, not the ``insertion info`` subsection. It is the user's responsibility to fill the ``particle type`` subsections correctly according to the diameter values stored in the insertion input file, otherwise the Rayleigh time percentage displayed at the start of every DEM simulation may not be accurate.
 
 --------------------
 Packed

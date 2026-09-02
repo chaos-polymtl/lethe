@@ -20,27 +20,27 @@ Particles
 Applying Newton's second law and Euler's law of angular motion on the particle :math:`i` surrounded by fluid :math:`f`, we find:
 
 .. math::
-    m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \mathbf{F}_{f\mathrm{p},i} + \mathbf{F}_{\mathbf{g},i} + \sum_{j} \left( \mathbf{F}_{\mathrm{c},ij} + \mathbf{F}_{\mathrm{nc},ij} \right) \\
-    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{f\mathrm{p},i} + \sum_{j}\left ( \mathbf{M}_{\mathrm{c},ij} + \mathbf{M}_{\mathrm{r},ij} \right ) 
+    m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \mathbf{F}_{\mathrm{fp},i} + \mathbf{F}_{\mathbf{g},i} + \sum_{j} \left( \mathbf{F}_{\mathrm{c},ij} + \mathbf{F}_{\mathrm{nc},ij} \right) \\
+    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i} + \sum_{j}\left ( \mathbf{M}_{\mathrm{c},ij} + \mathbf{M}_{\mathrm{r},ij} \right ) 
 
 where:
 
 * :math:`m_i` is the mass of the particle :math:`i`;
 * :math:`\mathbf{v}_i` is the velocity of the particle :math:`i`;
-* :math:`\mathbf{F}_{f\mathrm{p},i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here, the subscript :math:`f\mathrm{p}` indicates the force exerted by the fluid on the particles;
+* :math:`\mathbf{F}_{\mathrm{fp},i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here, the subscript :math:`\mathrm{fp}` indicates the force exerted by the fluid on the particles;
 * :math:`\mathbf{F}_{\mathbf{g},i}` is the gravitational force;
 * :math:`\mathbf{F}_{\mathrm{c},ij}` are the contact forces (normal and tangential) between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
 * :math:`\mathbf{F}_{\mathrm{nc},ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as cohesive and lubrication forces [#nitsche1994]_;
 * :math:`I_i` is the moment of inertia;
 * :math:`\mathbf{\omega}_i` is the angular velocity;
-* :math:`\mathbf{M}_{f\mathrm{p},i}` is the torque exerted by the surrounding fluid over the particle :math:`i`.
+* :math:`\mathbf{M}_{\mathrm{fp},i}` is the torque exerted by the surrounding fluid over the particle :math:`i`.
 * :math:`\mathbf{M}_{\mathrm{c},ij}` is the contact torque between particles :math:`i` and :math:`j`. Since only spherical particles are currently supported the unresolved CFD-DEM implementation of Lethe, this torque is only due to tangential forces;
 * :math:`\mathbf{M}_{\mathrm{r},ij}` is the rolling friction between particles :math:`i` and :math:`j`;
 
-The momentum transfer between phases, :math:`\mathbf{F}_{f\mathrm{p},i}`, can be written as:
+The momentum transfer between phases, :math:`\mathbf{F}_{\mathrm{fp},i}`, can be written as:
 
 .. math::
-    \mathbf{F}_{f\mathrm{p},i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}_{\mathrm{M},i} + \mathbf{F}''_{i}
+    \mathbf{F}_{\mathrm{fp},i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}_{\mathrm{M},i} + \mathbf{F}''_{i}
 
 where:
 
@@ -53,7 +53,7 @@ where:
 * :math:`\mathbf{F}''_{i}` are the remaining forces, such as virtual mass, Basset, etc., which are not currently implemented in Lethe.
 
 .. note::
-    Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{\mathrm{Ar},i}` in :math:`\mathbf{f}_{f\mathrm{p},i}`.  
+    Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{\mathrm{Ar},i}` in :math:`\mathbf{f}_{\mathrm{fp},i}`.  
 
 In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <../../../parameters/unresolved-cfd-dem/cfd-dem>`_.
 
@@ -91,19 +91,19 @@ Models A and B differ from each other in the way the momentum equation is calcul
 Model A:
 
 .. math:: 
-    \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right )  = \frac{1}{\rho_f} \left (-\varepsilon_f \nabla p^* + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{p}f,\mathrm{A}} \right )
+    \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right )  = \frac{1}{\rho_f} \left (-\varepsilon_f \nabla p^* + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{pf},\mathrm{A}} \right )
 
 Model B:
 
 .. math:: 
-    \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) = \frac{1}{\rho_f} \left (-\nabla p^* + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{p}f,\mathrm{B}}\right )
+    \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) = \frac{1}{\rho_f} \left (-\nabla p^* + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{pf},\mathrm{B}}\right )
 
 where:
 
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
 * :math:`\tau` is the deviatoric stress tensor;
-* :math:`\mathbf{f}_{\mathrm{p}f,\mathrm{A}}` and :math:`\mathbf{f}_{\mathrm{p}f,\mathrm{B}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. 
+* :math:`\mathbf{f}_{\mathrm{pf},\mathrm{A}}` and :math:`\mathbf{f}_{\mathrm{pf},\mathrm{B}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. 
 
 It is worth noting that the VANS solver in Lethe solves a kinematic pressure variable defined as:
 
@@ -119,12 +119,12 @@ The full physical pressure can be recovered as:
 
 where :math:`\mathbf{g}` is the gravitational acceleration vector and :math:`\mathbf{x}` is the position vector.
 
-The term :math:`\mathbf{f}_{\mathrm{p}f}`, which has units of a volumetric force, is obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
+The term :math:`\mathbf{f}_{\mathrm{pf}}`, which has units of a volumetric force, is obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
 
 
 .. math::
-     \mathbf{f}_{\mathrm{p}f,\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{f\mathrm{p},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
-     \mathbf{f}_{\mathrm{p}f,\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{f\mathrm{p},i}} \right)            
+     \mathbf{f}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
+     \mathbf{f}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)            
 
 Different choices of the weighting function :math:`k_r(\lVert \mathbf{x} \rVert)` are possible, and Lethe provides two options. When the Particle-in-Cell (PIC) method is used for particle–fluid coupling, particle properties are regularized over the mesh cells by averaging them within each cell. This procedure is equivalent to using a cell-based top-hat weighting function over the cell containing the point :math:`\mathbf{x}`. However, this approach is not ideal, as it leads to force definitions that depend on the mesh resolution.
 
@@ -190,8 +190,8 @@ where :math:`\mathbf{1}_{\{\mathbf{x}_i \in \Omega_e\}}` is the indicator functi
 .. math::
 
     \begin{align}
-        \int_{\Omega} \mathbf{f}_{\mathrm{p}f,\mathrm{A}} d\mathbf{x} &= \sum_{i} -\left(\mathbf{F}_{f\mathrm{p},i}- \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i}\right)\\
-        \int_{\Omega} \mathbf{f}_{\mathrm{p}f,\mathrm{B}} d\mathbf{x} &= \sum_{i} \left(-\mathbf{F}_{f\mathrm{p},i}\right)
+        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{A}} d\mathbf{x} &= \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i}- \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i}\right)\\
+        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{B}} d\mathbf{x} &= \sum_{i} \left(-\mathbf{F}_{\mathrm{fp},i}\right)
     \end{align}
 
 The Satellite Point Method
@@ -226,7 +226,7 @@ The void fraction at the quadrature point using QCM is calculated as:
 The weighting function is also used to compute the fluid–particle momentum exchange term. Integrating this term over the computational domain demonstrates that the formulation also satisfies Newton’s third law for both kernels (the corresponding expression is shown for Model B without loss of generality):
 
 .. math:: 
-      \int_{\Omega} \mathbf{f}_{\mathrm{p}f}  d\mathbf{x} = \sum_{q} \sum_{i}{\left(-\mathbf{F}_{{f\mathrm{p},i}} \right) k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )} \times w_q|J| = \sum_{i} \left(-\mathbf{F}_{{f\mathrm{p},i}} \right)
+      \int_{\Omega} \mathbf{f}_{\mathrm{pf}}  d\mathbf{x} = \sum_{q} \sum_{i}{\left(-\mathbf{F}_{{\mathrm{fp},i}} \right) k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )} \times w_q|J| = \sum_{i} \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
 
 where :math:`w_q|J|` is the weight at the quadrature point located at :math:`\mathbf{x}_q`, multiplied by the volume of the cell containing the quadrature point. 
 
