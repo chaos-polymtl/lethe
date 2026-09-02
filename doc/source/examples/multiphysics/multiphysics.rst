@@ -77,6 +77,7 @@ Multiphysics
       multiphysics_5 [label="Electromagnetism", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/electromagnetism.html"];
 
       multiphysics_5_1 [label="Waveguide", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/waveguide/waveguide.html"];
+      multiphysics_5_2 [label="Fichera Oven", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/fichera-oven/fichera-oven.html"];
 
 
       multiphysics -> multiphysics_1:w;
@@ -111,5 +112,6 @@ Multiphysics
       multiphysics_4 -> multiphysics_4_2:w;
 
       multiphysics_5 -> multiphysics_5_1:w;
+      multiphysics_5 -> multiphysics_5_2:w;
     }
 

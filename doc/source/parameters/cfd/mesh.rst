@@ -82,7 +82,7 @@ This subsection provides information of the simulation geometry and its mesh. Th
    * - :ref:`Uniform Channel with Meshed Square Prism <channel-prism>`
      - .. image:: images/mesh_uniform_channel_with_meshed_square_prism.png
           :align: center
-   * - :ref:`Bimingham Fluidized Bed <birmingham-fluidized-bed>`
+   * - :ref:`Birmingham Fluidized Bed <birmingham-fluidized-bed>`
      - .. image:: images/mesh_birmingham_fluidized_bed.png
           :align: center
    * - :ref:`Impinging Jet Mixer <impinging-mixer>`
@@ -154,12 +154,12 @@ Fichera Oven
     set grid type       = fichera_oven
     set grid arguments  = bottom_left : top_right : colorize
 
-If this grid type is chosen, a mesh for the Fichera oven time-harmonic Maxwell benchmark is created. 
+If this grid type is chosen, a mesh for the Fichera oven time-harmonic Maxwell benchmark is created. For more details on this type of mesh, refer to :doc:`../../examples/multiphysics/fichera-oven/fichera-oven`.
 
-.. admonition:: Upcoming update
-  
-  More details on this type of mesh and its grid arguments will be provided in a future example.
+The ``grid arguments`` accepts up to three colon-separated values as listed above.
 
+* The first two fields are required, where ``bottom_left`` and ``top_right`` are ``x,y,z`` coordinates defining the bounding box of the mesh. They follow deal.II's convention for a hyper rectangle, where the bottom left corner is the point with the smallest coordinates in each direction, and the top right corner is the point with the largest coordinates in each direction. 
+* The last field is optional, where ``colorize`` is a boolean that applies the following boundary ID convention: 0 for all the oven walls, 1 for the waveguide inlet which is the furthest face from the `bottom_left` corner with the normal pointing in the positive z direction.
 
 .. _channel-cylinder:
 
