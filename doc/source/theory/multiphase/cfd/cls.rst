@@ -109,7 +109,7 @@ To avoid a non-linear finite element formulation, the phase gradient of the prev
 Interface Diffusion and Reinitialization
 ----------------------------------------
 
-The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharply defined, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
+The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of sharp, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
 Thus, we use reinitialization methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: projection-based interface sharpening, PDE-based interface reinitialization and interface filtration.
 
