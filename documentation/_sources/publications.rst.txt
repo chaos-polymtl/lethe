@@ -11,12 +11,16 @@ This section regroups preprints of journal articles already submitted, but which
 
 * `H. Papillon-Laroche, A. Alphonius, M. Schreter-Fleischhacker, J.-P. Harvey, and B. Blais, "Geometric Reinitialization for Capillary Flows: a Comparative Study with State-of-the-Art Conservative Level-Set Methods," arXiv preprint arXiv:2602.00275, 2026. <https://doi.org/10.48550/arXiv.2602.00275>`_.
 
-* `O. Guévremont, O. Gazil, F. Galli, N. Virgilio, and B. Blais, "Surface-access limitation in catalytic porous monoliths: Performance diagnosis using pore-resolved CFD," arXiv preprint arXiv:2604.03514, 2026. <https://doi.org/10.48550/arXiv.2604.03514>`_.
-
 * `O. Gaboriault, A. Succar, C. Delêtre, A. Timercan, R. Pelletier, D. Melancon and B. Blais, "From Angle of Repose to Heap Morphology: Full-Field Calibration of DEM for Granular Powders,"  arXiv preprint arXiv:2605.09371, 2026. <https://doi.org/10.48550/arXiv.2605.09371>`_.
+
+* `B. Campos, P. Munch, V. Oliveira Ferreira, D. C. Boffito, X. Banquy, and B. Blais, "High-order stabilized matrix-free simulation of rotating mixing devices using the Mortar Element Method," arXiv preprint arXiv:2608.27423, 2026. <https://doi.org/10.48550/arXiv.2608.27423>`_.
+
+* `O. Marquis, M. Maier, and B. Blais, "A discontinuous Petrov-Galerkin finite-element framework for the simulation of microwave-heated flows," arXiv preprint arXiv:2609.03155, 2026. <https://doi.org/10.48550/arXiv.2609.03155>`_.
 
 2026
 ----
+
+* `O. Guévremont, O. Gazil, F. Galli, N. Virgilio, and B. Blais, "Surface-access limitation in catalytic porous monoliths: Performance diagnosis using pore-resolved CFD", Chemical Engineering Journal, pp. 180249, 2026 <https://doi.org/10.1016/j.cej.2026.180249>`_.
 
 * `O. Gaboriault, A. Timercan, R. Pelletier, L.-P. Lefebvre, D. Melancon, B. Blais, "Increase in packing density during multi-layer powder spreading: An experimental and numerical study", Powder Technology, pp. 122460, 2026 <https://doi.org/10.1016/j.powtec.2026.122460>`_.
 
