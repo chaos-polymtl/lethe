@@ -172,7 +172,7 @@ With an adequate choice of definition of velocity [#abels2011]_, the velocity fi
 .. math::
   \nabla \cdot \mathbf{u} = 0
   
-However, the continuity equation is slightly different than the usual single-phase version:
+However, the continuity equation is slightly different than the usual single-phase formulation:
 
 .. math::
   \frac{\partial\rho}{\partial t} + \nabla \cdot (\rho\mathbf{u} +\mathbf{\tilde{J}}) = 0
