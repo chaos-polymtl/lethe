@@ -2,9 +2,9 @@
 Unresolved CFD-DEM 
 ===========================
 
-Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred-tanks, and flocculation processes. In this approach, we apply Newton's second law of motion to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the fluid is represented at a meso-scale by a mesh of cells, to which we apply the Volume Average Navier-Stokes (VANS) equations.
+Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred-tanks, and flocculation processes. In this approach, we apply Newton's second law of motion to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the fluid is represented at a meso-scale by a mesh of cells, to which we apply the Volume-Averaged Navier-Stokes (VANS) equations.
 
-The micro-meso scale approach allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases needs to be modeled, i.e., it is not obtained straightforwardly from the application of a no-slip boundary condition at the interface between the fluid and the particles. The following image represents the micro-meso scale approach applied in unresolved CFD-DEM simulations, where the rectangles represent mesh of the geometry and the gray spots represent the particles.
+The micro-meso scale approach allows for particle-fluid simulations involving large numbers of particles, with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases needs to be modeled, i.e., it is not obtained straightforwardly from the application of a no-slip boundary condition at the interface between the fluid and the particles. The following image represents the micro-meso scale approach applied in unresolved CFD-DEM simulations, where the rectangles represent the mesh of the geometry and the gray spots represent the particles.
 
 .. image:: images/schematic_unresolve_cfd-dem.png
     :alt: Schematic represantion of micro-meso scale approach in unresolved CFD-DEM
@@ -17,7 +17,7 @@ In this guide, we summarize the theory behind Unresolved CFD-DEM. For further de
 Particles
 ----------
 
-Applying Newton's second law and Euler's law of angular motion on the particle :math:`i` surrounded by fluid a :math:`f`, we find:
+Applying Newton's second law and Euler's law of angular motion on the particle :math:`i` surrounded by fluid :math:`f`, we find:
 
 .. math::
     m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \mathbf{F}_{\mathrm{fp},i} + \mathbf{F}_{\mathbf{g},i} + \sum_{j} \left( \mathbf{F}_{\mathrm{c},ij} + \mathbf{F}_{\mathrm{nc},ij} \right) \\
@@ -27,7 +27,7 @@ where:
 
 * :math:`m_i` is the mass of the particle :math:`i`;
 * :math:`\mathbf{v}_i` is the velocity of the particle :math:`i`;
-* :math:`\mathbf{F}_{\mathrm{fp},i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here, the subscript :math:`fp` indicates the force exerted by the fluid on the particles;
+* :math:`\mathbf{F}_{\mathrm{fp},i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here, the subscript :math:`\mathrm{fp}` indicates the force exerted by the fluid on the particles;
 * :math:`\mathbf{F}_{\mathbf{g},i}` is the gravitational force;
 * :math:`\mathbf{F}_{\mathrm{c},ij}` are the contact forces (normal and tangential) between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
 * :math:`\mathbf{F}_{\mathrm{nc},ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as cohesive and lubrication forces [#nitsche1994]_;
@@ -40,7 +40,7 @@ where:
 The momentum transfer between phases, :math:`\mathbf{F}_{\mathrm{fp},i}`, can be written as:
 
 .. math::
-    \mathbf{F}_{fp,i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}_{\mathrm{M},i} + \mathbf{F}''_{i}
+    \mathbf{F}_{\mathrm{fp},i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}_{\mathrm{M},i} + \mathbf{F}''_{i}
 
 where:
 
@@ -50,10 +50,10 @@ where:
 * :math:`\mathbf{F}_{\mathrm{Ar},i}` is the buoyancy (Archimedes) force;
 * :math:`\mathbf{F}_{\mathrm{S},i}` is the Saffman lift force;
 * :math:`\mathbf{F}_{\mathrm{M},i}` is the Magnus lift force;
-* :math:`\mathbf{F}''_{i}` are the remaining forces, including virtual mass, Basset which are currently not implemented in Lethe.
+* :math:`\mathbf{F}''_{i}` are the remaining forces, such as virtual mass, Basset, etc., which are not currently implemented in Lethe.
 
 .. note::
-    Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.  
+    Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{\mathrm{Ar},i}` in :math:`\mathbf{f}_{\mathrm{fp},i}`.  
 
 In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <../../../parameters/unresolved-cfd-dem/cfd-dem>`_.
 
@@ -103,7 +103,7 @@ where:
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
 * :math:`\tau` is the deviatoric stress tensor;
-* :math:`\mathbf{f}_\mathrm{A}^{\mathrm{pf}}` and :math:`\mathbf{f}_\mathrm{B}^{\mathrm{pf}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. 
+* :math:`\mathbf{f}_{\mathrm{pf},\mathrm{A}}` and :math:`\mathbf{f}_{\mathrm{pf},\mathrm{B}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. 
 
 It is worth noting that the VANS solver in Lethe solves a kinematic pressure variable defined as:
 
@@ -207,12 +207,12 @@ The void fraction in a cell using SPM can be written as:
 .. math:: 
        \epsilon_f = 1 - \frac{\sum_{i}^{n_\mathrm{p}}\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}
 
-where :math:`n_{\mathrm{sp}}` is the number of pseudo-particles j belonging to particle i and with a centroid inside the cell :math:`\Omega_e` with volume :math:`V_{\Omega_e}`, and :math:`V_{\mathrm{sp}}` is the volume of the satellite point.  The corresponding weighting function is thus:
+where :math:`n_{\mathrm{sp}}` is the number of pseudo-particles :math:`j` belonging to particle :math:`i` and with a centroid inside the cell :math:`\Omega_e` with volume :math:`V_{\Omega_e}`, and :math:`V_{\mathrm{sp}}` is the volume of the satellite point.  The corresponding weighting function is thus:
 
 .. math::
     k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) = \frac{\sum_{i}^{n_\mathrm{p}}(1/V_{\mathrm{p},i})\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}
 
-This function is similar to the weighting function used in the Particle-in-Cell (PCM) method, but it varies gradually (albeit discontinuously) at the cell boundaries. Hence, it suffers from the same limitations as the PCM method. However, it also conserves mass. Lethe only supports the SPM for the calculation of the void fraction. For the calculation of the force with SPM, Lethe uses PCM.
+This function is similar to the weighting function used in the Particle-in-Cell (PCM) method, but it varies gradually (albeit discontinuously) at the cell boundaries. Hence, it suffers from the same limitations as the PCM method. However, it also conserves mass. Currently, when using the SPM void fraction scheme, Lethe only supports the calculation of the void fraction :math:`\epsilon_f` with SPM. For the calculation of the force in this scheme, Lethe uses PCM.
 
 The Quadrature Centered Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

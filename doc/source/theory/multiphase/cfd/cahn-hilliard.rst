@@ -2,9 +2,9 @@
 Cahn-Hilliard Method
 ================================
 
-The Cahn-Hilliard system of equations [#cahn1958]_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system try to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.
+The Cahn-Hilliard system of equations [#cahn1958]_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system tries to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` the boundaries of the system. Like in :doc:`cls`, we define a scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluids :math:`0` and :math:`1`, with :math:`\Gamma` the boundaries of the system. Like in :doc:`cls`, we define a scalar function :math:`\phi` as a phase indicator, such that
 
 .. math::
   \phi =
@@ -27,12 +27,12 @@ Let us introduce the free energy functional :math:`\mathcal{F}`:
 .. math::
   \mathcal{F} = \int_{\Omega} \Psi \mathrm{d}\Omega
   
-:math:`\Psi` corresponds to the free energy density. Its expression is as follows:
+where :math:`\Psi` corresponds to the free energy density. Its expression is as follows:
 
 .. math::
   \Psi = \lambda\left(F(\phi) + \frac{1}{2}|\nabla \phi|^2\right)
   
-It is decomposed in a bulk free energy :math:`F(\phi)` and an interface energy :math:`\frac{1}{2}|\nabla \phi|^2`. :math:`\lambda` is called the mixing energy though not dimensionally consistent to an energy. It can be understood as a scaling factor for the energy of the system and it is proportionnal to the surface tension coefficient. The bulk free energy has a double-well form, its expression is:
+It is decomposed in a bulk free energy :math:`F(\phi)` and an interface energy :math:`\frac{1}{2}|\nabla \phi|^2`. :math:`\lambda` is called the mixing energy, although it is not dimensionally consistent with an energy. It can be understood as a scaling factor for the energy of the system and it is proportionnal to the surface tension coefficient. The bulk free energy has a double-well form:
 
 .. math::
   F(\phi) = \frac{(1-\phi^2)^2}{4\varepsilon^2}
@@ -105,9 +105,9 @@ After using the integration by part and Green-Ostrogradski's theorem:
   
   \int_\Omega \beta\lambda\left(\frac{\phi(1-\phi^2)}{\varepsilon^2}\right)\mathrm{d}\Omega - \int_\Omega \nabla \beta \cdot \lambda\nabla\phi\mathrm{d}\Omega + \cancelto{\mathrm{no-flux}}{\int_{\Gamma} \alpha \lambda\nabla \phi \cdot \mathbf{n} \mathrm{d}\Gamma} = 0
   
-Using Petrov-Galerkin method, the finite element formulation reads:
+Using the Petrov-Galerkin method, the finite element formulation reads:
 
-Find :math:`(\phi^h,\eta^h) \in \psi^h` such that:
+Find :math:`(\phi^h,\eta^h) \in \psi^h` such that
   
 .. math::  
   \begin{array}{rl}
@@ -119,7 +119,7 @@ Find :math:`(\phi^h,\eta^h) \in \psi^h` such that:
 Stabilization
 ---------------------------
    
-While developing the code, it turned useful to add a numerical diffusion term to the chemical potential equation. The new equation is:
+While developing the code, it became useful to add a numerical diffusion term to the chemical potential equation, in order to facilitate the numerical solution of the system. The new equation is:
 
 .. math::
   \eta = \lambda\left(-\frac{\phi(1-\phi^2)}{\varepsilon^2} + \nabla^2\phi\right) - \xi h^2 \nabla^2 \eta = 0
@@ -172,7 +172,7 @@ With an adequate choice of definition of velocity [#abels2011]_, the velocity fi
 .. math::
   \nabla \cdot \mathbf{u} = 0
   
-However, the continuity equation is slightly different than the usual single-phase one:
+However, the continuity equation is slightly different than the usual single-phase formulation:
 
 .. math::
   \frac{\partial\rho}{\partial t} + \nabla \cdot (\rho\mathbf{u} +\mathbf{\tilde{J}}) = 0
