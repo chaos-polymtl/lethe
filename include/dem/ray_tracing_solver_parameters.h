@@ -4,6 +4,7 @@
 #ifndef lethe_ray_tracing_solver_parameters_h
 #define lethe_ray_tracing_solver_parameters_h
 
+#include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
 #include <core/simulation_control.h>
@@ -16,6 +17,7 @@ class RayTracingSolverParameters
 {
 public:
   Parameters::Mesh                                mesh;
+  Parameters::Manifolds                           manifolds_parameters;
   Parameters::Testing                             test;
   Parameters::Timer                               timer;
   Parameters::SimulationControl                   simulation_control;
@@ -24,10 +26,17 @@ public:
   Parameters::Lagrangian::ModelParameters<dim>    model_parameters;
 
   /**
-   * @brief Handles all the parameters declared in the parameter handler file.
+   * @brief Declare all the parameters of a ray tracing simulation.
+   *
+   * @param[in,out] prm The parameter handler.
+   *
+   * @param[in] size_of_subsections The maximum size of the variable-size
+   * subsections of the parameter file, as returned by
+   * Parameters::get_size_of_subsections.
    */
   void
-  declare(ParameterHandler &prm)
+  declare(ParameterHandler                   &prm,
+          const Parameters::SizeOfSubsections size_of_subsections)
   {
     prm.declare_entry("dimension",
                       "0",
@@ -47,6 +56,7 @@ public:
       "Print a comment at the beginning of the console output.");
 
     Parameters::Mesh::declare_parameters(prm);
+    manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);
     Parameters::Testing::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
@@ -57,11 +67,14 @@ public:
 
   /**
    * @brief Handles the parsing of all the parameters in the parameter handler file.
+   *
+   * @param[in,out] prm The parameter handler.
    */
   void
   parse(ParameterHandler &prm)
   {
     mesh.parse_parameters(prm);
+    manifolds_parameters.parse_parameters(prm);
     test.parse_parameters(prm);
     timer.parse_parameters(prm);
     simulation_control.parse_parameters(prm);

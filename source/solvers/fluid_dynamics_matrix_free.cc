@@ -1603,13 +1603,14 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 }
               else if (type == BoundaryConditions::BoundaryType::periodic)
                 {
+                  const auto &periodic_boundary =
+                    this->simulation_parameters.boundary_conditions
+                      .periodic_boundaries.at(id);
                   DoFTools::make_periodicity_constraints(
                     level_dof_handler,
                     id,
-                    this->simulation_parameters.boundary_conditions
-                      .periodic_neighbor_id.at(id),
-                    this->simulation_parameters.boundary_conditions
-                      .periodic_direction.at(id),
+                    periodic_boundary.neighbor_id,
+                    periodic_boundary.direction,
                     level_constraint);
                 }
               else if (type ==
@@ -2921,7 +2922,7 @@ FluidDynamicsMatrixFree<dim>::solve()
         this->simulation_parameters.mesh,
         this->simulation_parameters.manifolds_parameters,
         this->simulation_parameters.restart_parameters.restart,
-        this->simulation_parameters.boundary_conditions,
+        this->simulation_parameters.boundary_conditions.periodic_boundaries,
         this->simulation_parameters.mortar_parameters);
       // Create and initialize mapping cache
       this->mapping_cache =
@@ -2934,7 +2935,7 @@ FluidDynamicsMatrixFree<dim>::solve()
       this->simulation_parameters.mesh,
       this->simulation_parameters.manifolds_parameters,
       this->simulation_parameters.restart_parameters.restart,
-      this->simulation_parameters.boundary_conditions);
+      this->simulation_parameters.boundary_conditions.periodic_boundaries);
 
   this->computing_timer.leave_subsection("Read mesh and manifolds");
 

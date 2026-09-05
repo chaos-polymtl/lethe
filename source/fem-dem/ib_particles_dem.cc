@@ -41,12 +41,13 @@ IBParticlesDEM<dim>::is_boundary_excluded(
     return true;
 
   // A boundary is periodic if it is a principal periodic boundary (a key of
-  // periodic_neighbor_id) or a neighbor periodic boundary (one of its values).
-  const auto &periodic_neighbor_id =
-    boundary_conditions_parameters->periodic_neighbor_id;
-  if (periodic_neighbor_id.contains(boundary_id) ||
-      std::ranges::any_of(periodic_neighbor_id, [boundary_id](const auto &p) {
-        return p.second == boundary_id;
+  // periodic_boundaries) or a neighbor periodic boundary (the neighbor id of
+  // one of its entries).
+  const auto &periodic_boundaries =
+    boundary_conditions_parameters->periodic_boundaries;
+  if (periodic_boundaries.contains(boundary_id) ||
+      std::ranges::any_of(periodic_boundaries, [boundary_id](const auto &p) {
+        return p.second.neighbor_id == boundary_id;
       }))
     return true;
 

@@ -127,12 +127,12 @@ CFDDEMSolver<dim, PropertiesIndex>::dem_setup_parameters()
   report_rayleigh_time_ratio();
 
   // Check if there are periodic boundaries
-  if (!dem_parameters.boundary_conditions.periodic_direction.empty())
+  if (!dem_parameters.boundary_conditions.periodic_boundaries.empty())
     {
       dem_action_manager->set_periodic_boundaries_enabled();
 
       periodic_boundaries_object.set_periodic_boundaries_information(
-        dem_parameters.boundary_conditions.periodic_direction);
+        dem_parameters.boundary_conditions.periodic_boundaries);
     }
 
   insertion_object =
@@ -231,7 +231,7 @@ CFDDEMSolver<dim, PropertiesIndex>::initialize_dem_parameters()
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
   for (const auto &pb_id :
-       periodic_boundaries_object.get_periodic_directions() | std::views::keys)
+       periodic_boundaries_object.get_periodic_boundaries() | std::views::keys)
     {
       particle_particle_contact_force_object->set_periodic_offset(
         periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
@@ -1617,7 +1617,8 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
     this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
     true,
-    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
+      .periodic_boundaries);
 
   dem_setup_parameters();
 

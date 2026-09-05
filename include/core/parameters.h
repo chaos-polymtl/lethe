@@ -29,18 +29,30 @@ namespace Parameters
 {
   struct SizeOfSubsections
   {
-    int boundary_conditions;
-    int manifolds;
+    int boundary_conditions = 0;
+    int manifolds           = 0;
   };
 
 
   /**
    * @brief Extract the maximum number of all variable size sections within the parameter file
    *
-   * @param file_name Name of the parameter file from which the size are parsed
+   * @param[in] file_name Name of the parameter file from which the size are
+   * parsed
+   *
+   * @param[in] require_subsection_size If true, the parameter file must
+   * indicate the size of at least one variable size subsection, which is the
+   * case for every solver for which a "boundary conditions" subsection is
+   * mandatory. The DEM solvers, whose boundary conditions are declared in a
+   * "DEM boundary conditions" subsection with a "number of boundary
+   * conditions" entry, set this to false and consequently obtain a size of
+   * zero for parameter files that do not declare any manifold.
+   *
+   * @return The size of the variable size subsections of the parameter file.
    */
   SizeOfSubsections
-  get_size_of_subsections(const std::string &file_name);
+  get_size_of_subsections(const std::string &file_name,
+                          const bool         require_subsection_size = true);
 
   enum class Verbosity : std::uint8_t
   {

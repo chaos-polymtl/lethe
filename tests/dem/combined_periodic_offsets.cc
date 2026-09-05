@@ -59,14 +59,17 @@ test()
   // neighbours to trigger the offset computation in map_periodic_cells.
   triangulation.refine_global(2);
 
-  // Configure the manipulator with one periodic pair per direction. The
-  // direction map is keyed by the principal periodic boundary id (2*d).
-  std::map<types::boundary_id, unsigned int> periodic_directions;
+  // Configure the manipulator with one periodic pair per direction. The map is
+  // keyed by the principal periodic boundary id (2*d) and matches the pairs
+  // collected above.
+  Parameters::PeriodicBoundaries periodic_boundaries;
   for (int d = 0; d < dim; ++d)
-    periodic_directions[2 * d] = d;
+    periodic_boundaries[2 * d] = {.neighbor_id =
+                                    static_cast<types::boundary_id>(2 * d + 1),
+                                  .direction = static_cast<unsigned int>(d)};
 
   PeriodicBoundariesManipulator<dim> manipulator;
-  manipulator.set_periodic_boundaries_information(periodic_directions);
+  manipulator.set_periodic_boundaries_information(periodic_boundaries);
 
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     cells_info;

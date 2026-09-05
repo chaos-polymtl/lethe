@@ -207,13 +207,14 @@ ParticleProjector<dim, PropertiesIndex>::setup_constraints(
     {
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          cfd_periodic_directions[id] =
-            boundary_conditions.periodic_direction.at(id);
+          const auto &periodic_boundary =
+            boundary_conditions.periodic_boundaries.at(id);
+          cfd_periodic_directions[id] = periodic_boundary.direction;
           DoFTools::make_periodicity_constraints(
             this->dof_handler,
             id,
-            boundary_conditions.periodic_neighbor_id.at(id),
-            cfd_periodic_directions.at(id),
+            periodic_boundary.neighbor_id,
+            periodic_boundary.direction,
             this->void_fraction_constraints);
 
           has_periodic_boundaries = true;

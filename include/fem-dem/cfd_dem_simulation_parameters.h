@@ -29,7 +29,7 @@ public:
           Parameters::SizeOfSubsections size_of_subsections)
   {
     cfd_parameters.declare(prm, size_of_subsections);
-    dem_parameters.declare(prm);
+    dem_parameters.declare(prm, size_of_subsections);
 
     void_fraction = std::make_shared<Parameters::VoidFractionParameters<dim>>();
     void_fraction->declare_parameters(prm);

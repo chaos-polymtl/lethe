@@ -16,6 +16,7 @@ main()
       // Declare dummy size of subsections to declare a single of each entity
       Parameters::SizeOfSubsections size_of_subsections;
       size_of_subsections.boundary_conditions = 1;
+      size_of_subsections.manifolds           = 1;
 
       {
         ParameterHandler        prm;

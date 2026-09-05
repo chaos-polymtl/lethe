@@ -5125,7 +5125,7 @@ FluidDynamicsSharp<dim>::solve()
     this->simulation_parameters.mesh,
     this->simulation_parameters.manifolds_parameters,
     this->simulation_parameters.restart_parameters.restart,
-    this->simulation_parameters.boundary_conditions);
+    this->simulation_parameters.boundary_conditions.periodic_boundaries);
 
   define_particles();
   this->setup_dofs();
