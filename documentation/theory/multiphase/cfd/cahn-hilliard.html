@@ -453,8 +453,8 @@
         <article role="main">
           <section id="cahn-hilliard-method">
 <h1>Cahn-Hilliard Method<a class="headerlink" href="#cahn-hilliard-method" title="Link to this heading">#</a></h1>
-<p>The Cahn-Hilliard system of equations <a class="footnote-reference brackets" href="#cahn1958" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system try to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.</p>
-<p>Let <span class="math notranslate nohighlight">\(\Omega = \Omega_0 \cup \Omega_1\)</span> be the domain formed by two fluids, namely fluid <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>, with <span class="math notranslate nohighlight">\(\Gamma\)</span> the boundaries of the system. Like in <a class="reference internal" href="cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a>, we define a scalar function <span class="math notranslate nohighlight">\(\phi\)</span> as a phase indicator such that:</p>
+<p>The Cahn-Hilliard system of equations <a class="footnote-reference brackets" href="#cahn1958" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system tries to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.</p>
+<p>Let <span class="math notranslate nohighlight">\(\Omega = \Omega_0 \cup \Omega_1\)</span> be the domain formed by two fluids, namely fluids <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>, with <span class="math notranslate nohighlight">\(\Gamma\)</span> the boundaries of the system. Like in <a class="reference internal" href="cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a>, we define a scalar function <span class="math notranslate nohighlight">\(\phi\)</span> as a phase indicator, such that</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\phi =
@@ -471,12 +471,12 @@
 <div class="math notranslate nohighlight">
 \[\mathcal{F} = \int_{\Omega} \Psi \mathrm{d}\Omega\]</div>
 </div>
-<p><span class="math notranslate nohighlight">\(\Psi\)</span> corresponds to the free energy density. Its expression is as follows:</p>
+<p>where <span class="math notranslate nohighlight">\(\Psi\)</span> corresponds to the free energy density. Its expression is as follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\Psi = \lambda\left(F(\phi) + \frac{1}{2}|\nabla \phi|^2\right)\]</div>
 </div>
-<p>It is decomposed in a bulk free energy <span class="math notranslate nohighlight">\(F(\phi)\)</span> and an interface energy <span class="math notranslate nohighlight">\(\frac{1}{2}|\nabla \phi|^2\)</span>. <span class="math notranslate nohighlight">\(\lambda\)</span> is called the mixing energy though not dimensionally consistent to an energy. It can be understood as a scaling factor for the energy of the system and it is proportionnal to the surface tension coefficient. The bulk free energy has a double-well form, its expression is:</p>
+<p>It is decomposed in a bulk free energy <span class="math notranslate nohighlight">\(F(\phi)\)</span> and an interface energy <span class="math notranslate nohighlight">\(\frac{1}{2}|\nabla \phi|^2\)</span>. <span class="math notranslate nohighlight">\(\lambda\)</span> is called the mixing energy, although it is not dimensionally consistent with an energy. It can be understood as a scaling factor for the energy of the system and it is proportionnal to the surface tension coefficient. The bulk free energy has a double-well form:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[F(\phi) = \frac{(1-\phi^2)^2}{4\varepsilon^2}\]</div>
@@ -537,8 +537,8 @@
 <div class="math notranslate nohighlight">
 \[ \begin{align}\begin{aligned}\int_\Omega \alpha\left(\frac{\partial \phi}{\partial t} + \mathbf{a}\cdot \nabla \phi\right)\mathrm{d}\Omega -\int_\Omega M(\phi) \nabla\alpha \cdot\nabla\eta \mathrm{d}\Omega + \cancelto{\mathrm{no-flux}}{\int_{\Gamma} M(\phi)\alpha \nabla \eta \cdot \mathbf{n} \mathrm{d}\Gamma} = 0\\\int_\Omega \beta\lambda\left(\frac{\phi(1-\phi^2)}{\varepsilon^2}\right)\mathrm{d}\Omega - \int_\Omega \nabla \beta \cdot \lambda\nabla\phi\mathrm{d}\Omega + \cancelto{\mathrm{no-flux}}{\int_{\Gamma} \alpha \lambda\nabla \phi \cdot \mathbf{n} \mathrm{d}\Gamma} = 0\end{aligned}\end{align} \]</div>
 </div>
-<p>Using Petrov-Galerkin method, the finite element formulation reads:</p>
-<p>Find <span class="math notranslate nohighlight">\((\phi^h,\eta^h) \in \psi^h\)</span> such that:</p>
+<p>Using the Petrov-Galerkin method, the finite element formulation reads:</p>
+<p>Find <span class="math notranslate nohighlight">\((\phi^h,\eta^h) \in \psi^h\)</span> such that</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{array}{rl}
@@ -550,7 +550,7 @@
 </section>
 <section id="stabilization">
 <h2>Stabilization<a class="headerlink" href="#stabilization" title="Link to this heading">#</a></h2>
-<p>While developing the code, it turned useful to add a numerical diffusion term to the chemical potential equation. The new equation is:</p>
+<p>While developing the code, it became useful to add a numerical diffusion term to the chemical potential equation, in order to facilitate the numerical solution of the system. The new equation is:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\eta = \lambda\left(-\frac{\phi(1-\phi^2)}{\varepsilon^2} + \nabla^2\phi\right) - \xi h^2 \nabla^2 \eta = 0\]</div>
@@ -603,7 +603,7 @@ First, the surface tension forces will deform the interface to minimize the inte
 <div class="math notranslate nohighlight">
 \[\nabla \cdot \mathbf{u} = 0\]</div>
 </div>
-<p>However, the continuity equation is slightly different than the usual single-phase one:</p>
+<p>However, the continuity equation is slightly different than the usual single-phase formulation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\frac{\partial\rho}{\partial t} + \nabla \cdot (\rho\mathbf{u} +\mathbf{\tilde{J}}) = 0\]</div>

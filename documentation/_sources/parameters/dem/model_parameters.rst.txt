@@ -104,7 +104,7 @@ Contact and Integration Methods
 All contact force models are described in the :doc:`../../theory/multiphase/dem/dem` section of the theory guide.
 
 
-* ``integration`` controls the integration method  used. Lethe supports ``euler`` (1st order) and ``velocity-verlet`` (2nd order) time-integrators . ``velocity-verlet`` is the recommended integrator for most applications. The velocity Verlet scheme is staggered: it stores the velocities half a time step ahead of the positions. It therefore carries out an opening half velocity step at the first time step and a closing half velocity step, which synchronizes the velocities with the positions, at the end of the simulation (in pure DEM) or at the end of the DEM sub-iterations of every CFD time step (in CFD-DEM). Completing :math:`n` time steps consequently requires :math:`n+1` integration operations. Since the velocities are staggered in between, the velocities written to the visualization files during the simulation lag the positions by half a time step.
+* ``integration method`` controls the integration method  used. Lethe supports ``euler`` (1st order) and ``velocity-verlet`` (2nd order) time-integrators . ``velocity-verlet`` is the recommended integrator for most applications. The velocity Verlet scheme is staggered: it stores the velocities half a time step ahead of the positions. It therefore carries out an opening half velocity step at the first time step and a closing half velocity step, which synchronizes the velocities with the positions, at the end of the simulation (in pure DEM) or at the end of the DEM sub-iterations of every CFD time step (in CFD-DEM). Completing :math:`n` time steps consequently requires :math:`n+1` integration operations. Since the velocities are staggered in between, the velocities written to the visualization files during the simulation lag the positions by half a time step.
 
 * ``particle particle contact force method`` controls the particle-particle contact force model. The following models are available in Lethe: ``hertz_mindlin_limit_overlap``, ``hertz_mindlin_limit_force``, ``hertz``, ``hertz_JKR``, ``DMT`` and ``linear``.
   
@@ -130,7 +130,7 @@ The total weight of each cell with particles in load-balancing is defined as:
 .. math::
     W=W_pn_p + W_c
 
-where :math:`{W_p}` is the ``particle weight``, :math:`{n_p}` is the number of particles in the cell and :math:`{W_c}` the cell of a the cell. The subsection ``cell weight function`` defines the weight every cell according to the position of their barycenter. By default, 1000 is the default weight assigned to one cell.
+where :math:`{W_p}` is the ``particle weight``, :math:`{n_p}` is the number of particles in the cell and :math:`{W_c}` the weight of the cell. The subsection ``cell weight function`` defines the weight of every cell according to the position of their barycenter. By default, the weight assigned to a cell is 1000.
 
 * ``particle weight`` must be defined for every ``load balance method``.
 
@@ -151,7 +151,7 @@ Load balancing will be done at a given frequency
 Load balancing will be done when the computational load amongst core is too uneven. If 
 
 .. math::
-    L_{max}-L_{min}>{\beta}\bar{L}
+    L_{max}-L_{min}>{\beta}\bar{L},
 
 load balancing will be executed. :math:`{L}` and :math:`{\beta}` denote computational load on a process and ``threshold``, respectively.
 
@@ -174,23 +174,23 @@ See how the mechanism works with mobility status in the figure below:
 
 * ``enable adaptive sparse contacts`` enables the feature.
 
-* ``enable particle advection`` enables the advection of particles from an average source term derived from the average velocity of particles in cell. This is highly recommended for CFD-DEM simulations because of the hydrodynamic forces.
+* ``enable particle advection`` enables the advection of particles from an average source term derived from the average velocity of the particles in the cell. This is highly recommended for CFD-DEM simulations because of the hydrodynamic forces.
 * ``granular temperature threshold`` is the threshold of the granular temperature below which the contacts are disabled.
 * ``solid fraction threshold`` is the minimum solid fraction of the cell in which the contacts may be disabled.
 
 Some parameters in the load balance section may be used to improve the performance of the dynamic disabling contacts feature using the dynamic load balancing.
 
 .. note::
-    The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1.
+    The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There are factors only for active and inactive statuses, the mobile factor is always 1.
 
 -----------
 Solver Type
 -----------
-The ``solver type`` parameter controls the type of physic being solved for the particles. It should be left to ``dem``, which is the default value, when the particles only carry their kinematic properties. The ``dem_mp`` solver type is used for multiphysic DEM, which includes heat transfer.
+The ``solver type`` parameter controls the type of physics being solved for the particles. It should be left to ``dem``, which is the default value, when the particles only carry their kinematic properties. The ``dem_mp`` solver type is used for multiphysic DEM, which includes heat transfer.
 
-The ``dem_mp`` solver type is supported by ``lethe-particles`` as well as by the CFD-DEM solvers, ``lethe-fluid-particles`` and ``lethe-fluid-particles-matrix-free``. Since the parameter only indicates that the DEM has its multiphysic features enabled, the ``model parameters`` subsection of a packing simulation can be reused as-is in the CFD-DEM simulation that follows it.
+The ``dem_mp`` solver type is supported by ``lethe-particles`` as well as by the CFD-DEM solvers, ``lethe-fluid-particles`` and ``lethe-fluid-particles-matrix-free``. Since the parameter only indicates that the DEM has its multiphysics features enabled, the ``model parameters`` subsection of a packing simulation can be reused as-is in the CFD-DEM simulation that follows it.
 
 .. warning::
     In CFD-DEM, ``dem_mp`` enables the heat transfer between the particles and the integration of their temperature, but the fluid and the particles do not exchange heat with one another. A ``dem_mp`` CFD-DEM simulation which is started from the checkpoint of a DEM simulation must be started from a ``dem_mp`` one, otherwise the temperature of the particles cannot be carried over.
 
-The ``disable position integration`` is used to freeze the position of particles. It is useful in multiphysic DEM simulations involving a packed bed. This allows to set a higher time step than in the loading of particles, since the temperature can take a lot more time to vary than the position.
+The ``disable position integration`` is used to freeze the position of particles. It is useful in multiphysics DEM simulations involving a packed bed. This allows to set a higher time step than in the loading of particles, since the temperature can vary much slower than the position.

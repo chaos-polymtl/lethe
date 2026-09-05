@@ -453,13 +453,13 @@
         <article role="main">
           <section id="unresolved-cfd-dem">
 <h1>Unresolved CFD-DEM<a class="headerlink" href="#unresolved-cfd-dem" title="Link to this heading">#</a></h1>
-<p>Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred-tanks, and flocculation processes. In this approach, we apply Newton’s second law of motion to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the fluid is represented at a meso-scale by a mesh of cells, to which we apply the Volume Average Navier-Stokes (VANS) equations.</p>
-<p>The micro-meso scale approach allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases needs to be modeled, i.e., it is not obtained straightforwardly from the application of a no-slip boundary condition at the interface between the fluid and the particles. The following image represents the micro-meso scale approach applied in unresolved CFD-DEM simulations, where the rectangles represent mesh of the geometry and the gray spots represent the particles.</p>
+<p>Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred-tanks, and flocculation processes. In this approach, we apply Newton’s second law of motion to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the fluid is represented at a meso-scale by a mesh of cells, to which we apply the Volume-Averaged Navier-Stokes (VANS) equations.</p>
+<p>The micro-meso scale approach allows for particle-fluid simulations involving large numbers of particles, with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases needs to be modeled, i.e., it is not obtained straightforwardly from the application of a no-slip boundary condition at the interface between the fluid and the particles. The following image represents the micro-meso scale approach applied in unresolved CFD-DEM simulations, where the rectangles represent the mesh of the geometry and the gray spots represent the particles.</p>
 <a class="reference internal image-reference" href="../../../_images/schematic_unresolve_cfd-dem.png" id="geometry"><img alt="Schematic represantion of micro-meso scale approach in unresolved CFD-DEM" class="align-center" id="geometry" src="../../../_images/schematic_unresolve_cfd-dem.png" style="width: 512.0px; height: 288.0px;" /></a>
 <p>In this guide, we summarize the theory behind Unresolved CFD-DEM. For further details, we refer the reader to the articles by Bérard <em>et al.</em> <a class="footnote-reference brackets" href="#berard2020" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, and Zhou <em>et al.</em> <a class="footnote-reference brackets" href="#zhou2010" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <section id="particles">
 <h2>Particles<a class="headerlink" href="#particles" title="Link to this heading">#</a></h2>
-<p>Applying Newton’s second law and Euler’s law of angular motion on the particle <span class="math notranslate nohighlight">\(i\)</span> surrounded by fluid a <span class="math notranslate nohighlight">\(f\)</span>, we find:</p>
+<p>Applying Newton’s second law and Euler’s law of angular motion on the particle <span class="math notranslate nohighlight">\(i\)</span> surrounded by fluid <span class="math notranslate nohighlight">\(f\)</span>, we find:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \mathbf{F}_{\mathrm{fp},i} + \mathbf{F}_{\mathbf{g},i} + \sum_{j} \left( \mathbf{F}_{\mathrm{c},ij} + \mathbf{F}_{\mathrm{nc},ij} \right) \\
@@ -469,7 +469,7 @@ I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i}
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(m_i\)</span> is the mass of the particle <span class="math notranslate nohighlight">\(i\)</span>;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{v}_i\)</span> is the velocity of the particle <span class="math notranslate nohighlight">\(i\)</span>;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{\mathrm{fp},i}\)</span> is the force exerted by the surrounding fluid over particle <span class="math notranslate nohighlight">\(i\)</span>. Here, the subscript <span class="math notranslate nohighlight">\(fp\)</span> indicates the force exerted by the fluid on the particles;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{\mathrm{fp},i}\)</span> is the force exerted by the surrounding fluid over particle <span class="math notranslate nohighlight">\(i\)</span>. Here, the subscript <span class="math notranslate nohighlight">\(\mathrm{fp}\)</span> indicates the force exerted by the fluid on the particles;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{\mathbf{g},i}\)</span> is the gravitational force;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{\mathrm{c},ij}\)</span> are the contact forces (normal and tangential) between particles <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> (detailed in the DEM section of this guide);</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{\mathrm{nc},ij}\)</span> are the non-contact forces between particles <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span>, such as cohesive and lubrication forces <a class="footnote-reference brackets" href="#nitsche1994" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>;</p></li>
@@ -482,7 +482,7 @@ I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i}
 <p>The momentum transfer between phases, <span class="math notranslate nohighlight">\(\mathbf{F}_{\mathrm{fp},i}\)</span>, can be written as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\mathbf{F}_{fp,i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}_{\mathrm{M},i} + \mathbf{F}''_{i}\]</div>
+\[\mathbf{F}_{\mathrm{fp},i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}_{\mathrm{M},i} + \mathbf{F}''_{i}\]</div>
 </div>
 <p>where:</p>
 <ul class="simple">
@@ -492,11 +492,11 @@ I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i}
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{\mathrm{Ar},i}\)</span> is the buoyancy (Archimedes) force;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{\mathrm{S},i}\)</span> is the Saffman lift force;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{\mathrm{M},i}\)</span> is the Magnus lift force;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{F}''_{i}\)</span> are the remaining forces, including virtual mass, Basset which are currently not implemented in Lethe.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{F}''_{i}\)</span> are the remaining forces, such as virtual mass, Basset, etc., which are not currently implemented in Lethe.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see <a class="reference internal" href="../../multiphysics/fluid_dynamics/navier-stokes.html"><span class="doc">The Incompressible Navier-Stokes Equations</span></a>), we explicitly insert <span class="math notranslate nohighlight">\(\mathbf{f}_{Ar,i}\)</span> in <span class="math notranslate nohighlight">\(\mathbf{f}_{pf,i}\)</span>.</p>
+<p>Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see <a class="reference internal" href="../../multiphysics/fluid_dynamics/navier-stokes.html"><span class="doc">The Incompressible Navier-Stokes Equations</span></a>), we explicitly insert <span class="math notranslate nohighlight">\(\mathbf{f}_{\mathrm{Ar},i}\)</span> in <span class="math notranslate nohighlight">\(\mathbf{f}_{\mathrm{fp},i}\)</span>.</p>
 </div>
 <p>In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the <a class="reference external" href="../../../parameters/unresolved-cfd-dem/cfd-dem">unresolved CFD-DEM parameters guide</a>.</p>
 </section>
@@ -539,7 +539,7 @@ I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i}
 <li><p><span class="math notranslate nohighlight">\(\rho_f\)</span> is the density of the fluid;</p></li>
 <li><p><span class="math notranslate nohighlight">\(p\)</span> is the pressure;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\tau\)</span> is the deviatoric stress tensor;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{A}^{\mathrm{pf}}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{B}^{\mathrm{pf}}\)</span> denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{f}_{\mathrm{pf},\mathrm{A}}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{f}_{\mathrm{pf},\mathrm{B}}\)</span> denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively.</p></li>
 </ul>
 <p>It is worth noting that the VANS solver in Lethe solves a kinematic pressure variable defined as:</p>
 <div class="math-wrapper docutils container">
@@ -625,12 +625,12 @@ I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i}
 <div class="math notranslate nohighlight">
 \[\epsilon_f = 1 - \frac{\sum_{i}^{n_\mathrm{p}}\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(n_{\mathrm{sp}}\)</span> is the number of pseudo-particles j belonging to particle i and with a centroid inside the cell <span class="math notranslate nohighlight">\(\Omega_e\)</span> with volume <span class="math notranslate nohighlight">\(V_{\Omega_e}\)</span>, and <span class="math notranslate nohighlight">\(V_{\mathrm{sp}}\)</span> is the volume of the satellite point.  The corresponding weighting function is thus:</p>
+<p>where <span class="math notranslate nohighlight">\(n_{\mathrm{sp}}\)</span> is the number of pseudo-particles <span class="math notranslate nohighlight">\(j\)</span> belonging to particle <span class="math notranslate nohighlight">\(i\)</span> and with a centroid inside the cell <span class="math notranslate nohighlight">\(\Omega_e\)</span> with volume <span class="math notranslate nohighlight">\(V_{\Omega_e}\)</span>, and <span class="math notranslate nohighlight">\(V_{\mathrm{sp}}\)</span> is the volume of the satellite point.  The corresponding weighting function is thus:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) = \frac{\sum_{i}^{n_\mathrm{p}}(1/V_{\mathrm{p},i})\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}\]</div>
 </div>
-<p>This function is similar to the weighting function used in the Particle-in-Cell (PCM) method, but it varies gradually (albeit discontinuously) at the cell boundaries. Hence, it suffers from the same limitations as the PCM method. However, it also conserves mass. Lethe only supports the SPM for the calculation of the void fraction. For the calculation of the force with SPM, Lethe uses PCM.</p>
+<p>This function is similar to the weighting function used in the Particle-in-Cell (PCM) method, but it varies gradually (albeit discontinuously) at the cell boundaries. Hence, it suffers from the same limitations as the PCM method. However, it also conserves mass. Currently, when using the SPM void fraction scheme, Lethe only supports the calculation of the void fraction <span class="math notranslate nohighlight">\(\epsilon_f\)</span> with SPM. For the calculation of the force in this scheme, Lethe uses PCM.</p>
 </section>
 <section id="the-quadrature-centered-method">
 <h3>The Quadrature Centered Method<a class="headerlink" href="#the-quadrature-centered-method" title="Link to this heading">#</a></h3>

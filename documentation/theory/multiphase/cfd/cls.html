@@ -453,8 +453,8 @@
         <article role="main">
           <section id="the-conservative-level-set-cls-method">
 <h1>The Conservative Level-Set (CLS) Method<a class="headerlink" href="#the-conservative-level-set-cls-method" title="Link to this heading">#</a></h1>
-<p>Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.</p>
-<p>Let <span class="math notranslate nohighlight">\(\Omega = \Omega_0 \cup \Omega_1\)</span> be the domain formed by two fluids, namely fluid <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>, with <span class="math notranslate nohighlight">\(\Gamma\)</span> denoting their interface and <span class="math notranslate nohighlight">\(\partial \Omega\)</span>, the remaining boundaries, as illustrated in the figure below. In the CLS method, we define the scalar function <span class="math notranslate nohighlight">\(\phi\)</span> as a phase indicator such that:</p>
+<p>Numerous examples of flows encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.</p>
+<p>Let <span class="math notranslate nohighlight">\(\Omega = \Omega_0 \cup \Omega_1\)</span> be the domain formed by two fluids, namely fluid <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>, with <span class="math notranslate nohighlight">\(\Gamma\)</span> denoting their interface and <span class="math notranslate nohighlight">\(\partial \Omega\)</span> the remaining boundaries, as illustrated in the figure below. In the CLS method, we define the scalar function <span class="math notranslate nohighlight">\(\phi\)</span> as a phase indicator, such that</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\phi =
@@ -480,13 +480,13 @@
 <div class="math notranslate nohighlight">
 \[\partial_t \phi + \phi\partial_i u_i + u_i\partial_i\phi = 0 \quad \forall (x_i,t)\in \Omega\times[0,T]\]</div>
 </div>
-<p>Typically, the term <span class="math notranslate nohighlight">\(\phi\partial_i u_i\)</span> (or <span class="math notranslate nohighlight">\(\phi \nabla \cdot \mathbf{u}\)</span>) is zero due to mass conservation in the Navier-Stokes equations. However, previous work done in Lethe showed that while <span class="math notranslate nohighlight">\(\nabla \cdot \mathbf{u}=0\)</span> is globally respected, it is not locally respected, especially around the interface, so lets keep it for now.</p>
-<p>To complete the strong formulation of the problem, let’s impose a no flux boundary condition on <span class="math notranslate nohighlight">\(\partial \Omega\)</span>:</p>
+<p>Typically, the term <span class="math notranslate nohighlight">\(\phi\partial_i u_i\)</span> (or <span class="math notranslate nohighlight">\(\phi \nabla \cdot \mathbf{u}\)</span>) is zero due to mass conservation in the Navier-Stokes equations. However, previous work done in Lethe showed that while <span class="math notranslate nohighlight">\(\nabla \cdot \mathbf{u}=0\)</span> is globally respected, it is not locally respected, especially around the interface, so let’s keep it for now.</p>
+<p>To complete the strong formulation of the problem, we impose a no flux boundary condition on <span class="math notranslate nohighlight">\(\partial \Omega\)</span>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[(\partial_i \phi) n_i= 0 \quad \forall (x_i,t)\in \partial \Omega\times[0,T]\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(n_i\)</span> represent the outward pointing unit normal vector of <span class="math notranslate nohighlight">\(\partial \Omega\)</span>, i.e., <span class="math notranslate nohighlight">\(\mathbf{n}\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(n_i\)</span> represents the outward pointing unit normal vector of <span class="math notranslate nohighlight">\(\partial \Omega\)</span>, i.e., <span class="math notranslate nohighlight">\(\mathbf{n}\)</span>.</p>
 <section id="finite-element-formulation">
 <h2>Finite Element Formulation<a class="headerlink" href="#finite-element-formulation" title="Link to this heading">#</a></h2>
 <p>To obtain the finite element formulation, we first need the weak formulation. Therefore, let <span class="math notranslate nohighlight">\(v\)</span> be an arbitrary scalar function on <span class="math notranslate nohighlight">\(\Omega\)</span>. To obtain the weak form, we multiply the strong problem by <span class="math notranslate nohighlight">\(v\)</span> and integrate over <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
@@ -509,7 +509,7 @@
 <div class="math notranslate nohighlight">
 \[\int_\Omega v \left( \partial_t \phi + \phi\partial_i u_i + u_i\partial_i\phi\right) d \Omega = 0 \quad \forall v\in V\]</div>
 </div>
-<p>Using Petrov-Galerkin method, the finite element formulation reads:</p>
+<p>Using the Petrov-Galerkin method, the finite element formulation reads:</p>
 <p>Find <span class="math notranslate nohighlight">\(\phi^h \in \Phi^h \times [0,T]\)</span> such that</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -545,7 +545,7 @@
 </section>
 <section id="interface-diffusion-and-reinitialization">
 <h2>Interface Diffusion and Reinitialization<a class="headerlink" href="#interface-diffusion-and-reinitialization" title="Link to this heading">#</a></h2>
-<p>The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from <span class="math notranslate nohighlight">\(\phi = 0\)</span> to <span class="math notranslate nohighlight">\(1\)</span> occurs on a larger distance.</p>
+<p>The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of sharp, and the change from <span class="math notranslate nohighlight">\(\phi = 0\)</span> to <span class="math notranslate nohighlight">\(1\)</span> occurs on a larger distance.</p>
 <p>Thus, we use reinitialization methods to keep the change in <span class="math notranslate nohighlight">\(\phi\)</span> sharp at the interface. Three methods are currently available: projection-based interface sharpening, PDE-based interface reinitialization and interface filtration.</p>
 <section id="projection-based-interface-sharpening">
 <h3>Projection-Based Interface Sharpening<a class="headerlink" href="#projection-based-interface-sharpening" title="Link to this heading">#</a></h3>
@@ -612,7 +612,7 @@ a phase indicator threshold (generally <span class="math notranslate nohighlight
 </section>
 <section id="pde-based-interface-reinitialization">
 <h3>PDE-based Interface Reinitialization<a class="headerlink" href="#pde-based-interface-reinitialization" title="Link to this heading">#</a></h3>
-<p>The PDE-based interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) <a class="footnote-reference brackets" href="#olsson2007" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>:</p>
+<p>The PDE-based interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson <em>et al.</em> (2007) <a class="footnote-reference brackets" href="#olsson2007" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\underbrace{\frac{\partial\phi_\text{reinit}}{\partial \tau}}_\text{transient}
@@ -658,7 +658,7 @@ a phase indicator threshold (generally <span class="math notranslate nohighlight
 \end{split}\end{split}\]</div>
 </div>
 <p>where, <span class="math notranslate nohighlight">\(\phi_\text{reinit}^{n}\)</span> is the reinitialized phase indicator value of the previous Newton iteration.</p>
-<p>Considering,</p>
+<p>Considering</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\delta \phi_\text{reinit} = \sum_{j=1}^N \delta \phi_{\text{reinit},j} \, \xi_j\]</div>

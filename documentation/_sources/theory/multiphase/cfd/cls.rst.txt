@@ -2,9 +2,9 @@
 The Conservative Level-Set (CLS) Method
 =======================================
 
-Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.
+Numerous examples of flows encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the CLS method, we define the scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega` the remaining boundaries, as illustrated in the figure below. In the CLS method, we define the scalar function :math:`\phi` as a phase indicator, such that
 
 .. math::
   \phi =
@@ -35,14 +35,14 @@ Developing the second term gives:
 .. math::
   \partial_t \phi + \phi\partial_i u_i + u_i\partial_i\phi = 0 \quad \forall (x_i,t)\in \Omega\times[0,T]
 
-Typically, the term :math:`\phi\partial_i u_i` (or :math:`\phi \nabla \cdot \mathbf{u}`) is zero due to mass conservation in the Navier-Stokes equations. However, previous work done in Lethe showed that while :math:`\nabla \cdot \mathbf{u}=0` is globally respected, it is not locally respected, especially around the interface, so lets keep it for now.
+Typically, the term :math:`\phi\partial_i u_i` (or :math:`\phi \nabla \cdot \mathbf{u}`) is zero due to mass conservation in the Navier-Stokes equations. However, previous work done in Lethe showed that while :math:`\nabla \cdot \mathbf{u}=0` is globally respected, it is not locally respected, especially around the interface, so let's keep it for now.
 
-To complete the strong formulation of the problem, let's impose a no flux boundary condition on :math:`\partial \Omega`:
+To complete the strong formulation of the problem, we impose a no flux boundary condition on :math:`\partial \Omega`:
 
 .. math::
   (\partial_i \phi) n_i= 0 \quad \forall (x_i,t)\in \partial \Omega\times[0,T]
 
-where :math:`n_i` represent the outward pointing unit normal vector of :math:`\partial \Omega`, i.e., :math:`\mathbf{n}`.
+where :math:`n_i` represents the outward pointing unit normal vector of :math:`\partial \Omega`, i.e., :math:`\mathbf{n}`.
 
 Finite Element Formulation
 ---------------------------
@@ -67,7 +67,7 @@ Find :math:`\phi \in \Phi(\Omega) \times [0,T]` such that
 .. math::
   \int_\Omega v \left( \partial_t \phi + \phi\partial_i u_i + u_i\partial_i\phi\right) d \Omega = 0 \quad \forall v\in V
 
-Using Petrov-Galerkin method, the finite element formulation reads:
+Using the Petrov-Galerkin method, the finite element formulation reads:
 
 Find :math:`\phi^h \in \Phi^h \times [0,T]` such that
 
@@ -109,7 +109,7 @@ To avoid a non-linear finite element formulation, the phase gradient of the prev
 Interface Diffusion and Reinitialization
 ----------------------------------------
 
-The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
+The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of sharp, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
 Thus, we use reinitialization methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: projection-based interface sharpening, PDE-based interface reinitialization and interface filtration.
 
@@ -188,7 +188,7 @@ In Lethe, two functions are available to achieve that: a hyperbolic tangent func
 PDE-based Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The PDE-based interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
+The PDE-based interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson *et al.* (2007) [#olsson2007]_:
 
 .. math::
 
@@ -242,7 +242,7 @@ As the equation is non-linear, we use the `Newton-Raphson method <https://en.wik
 
 where, :math:`\phi_\text{reinit}^{n}` is the reinitialized phase indicator value of the previous Newton iteration.
 
-Considering,
+Considering
 
 .. math::
 
