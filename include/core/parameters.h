@@ -48,6 +48,8 @@ namespace Parameters
    * conditions" entry, set this to false and consequently obtain a size of
    * zero for parameter files that do not declare any manifold.
    *
+   * //TODO make the size of the DEM boundary conditions parsed instead.
+   *
    * @return The size of the variable size subsections of the parameter file.
    */
   SizeOfSubsections
