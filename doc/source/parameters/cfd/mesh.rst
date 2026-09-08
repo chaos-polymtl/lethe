@@ -88,6 +88,9 @@ This subsection provides information of the simulation geometry and its mesh. Th
    * - :ref:`Impinging Jet Mixer <impinging-mixer>`
      - .. image:: images/mesh_impinging_jet_mixer.png
           :align: center
+   * - :ref:`Rushton Mixer <rushton-mixer>`
+     - .. image:: images/mesh_rushton_mixer.png
+          :align: center
    * - :ref:`Cylinder <cylinder>`
      - .. image:: images/mesh_cylinder.png
           :align: center
@@ -266,6 +269,57 @@ The ``grid arguments`` accepts either an empty string (which uses the default di
 
 The default dimensions are ``0.05 : 0.02 : 0.025 : 0.16 : 0.06 : 0.05 : 0.08 : 0.08``. The mesh discretisation is not exposed and is fixed internally. 
 Boundary IDs are: 0 for the :math:`+x` inlet, 1 for the :math:`-x` inlet, 2 for the outlet, and 3 for all walls.
+
+.. _rushton-mixer:
+
+Rushton Mixer
+^^^^^^^^^^^^^
+
+.. code-block:: text
+
+  subsection mesh
+    set type            = lethe
+    # Rushton mixer half. Choices are <rushton_rotor | rushton_stator>
+    set grid type       = rushton_rotor
+    set grid arguments  = tank_diameter : liquid_height : impeller_diameter : disc_diameter : disc_thickness : blade_height : shaft_diameter : impeller_clearance : baffle_width : interface_diameter : n_blades : n_baffles : n_theta : n_blade_cells : n_baffle_cells : target_cell_size
+
+If one of these grid types is chosen, a 3D mesh of one half of a baffled stirred tank agitated by a Rushton turbine is created.
+The two halves are separated by a cylindrical mortar interface coaxial with the tank, and are meant to be used together with the :doc:`../cfd/mortar` method:
+
+* ``rushton_rotor`` meshes the fluid inside that interface, that is the annular region between the shaft and the interface, from which the disc and the blades are carved out;
+* ``rushton_stator`` meshes the fluid outside it, that is the annular region between the interface and the tank wall, from which the baffles are carved out.
+
+The tank axis is the :math:`z` axis, its floor lies at :math:`z = 0` and its free surface at :math:`z = H`.
+
+.. important::
+  The rotor and the stator must be given **exactly the same** ``grid arguments``, and differ only by their ``grid type``. This is what guarantees that the two sides of the interface carry the same number of faces and discretize the height identically, as required by the mortar implementation, which reads the number of circumferential cells from the rotor side of the interface and the axial levels from the stator side.
+
+The ``grid arguments`` accepts either an empty string (which uses the default dimensions) or exactly sixteen colon-separated values, in the order listed above:
+
+* ``tank_diameter`` is the inner diameter of the vessel, :math:`T`
+* ``liquid_height`` is the height of the liquid, :math:`H`
+* ``impeller_diameter`` is the impeller diameter :math:`D`, so that the blade tips lie at :math:`D/2`
+* ``blade_root_diameter`` is the diameter at which the blades start. On a real Rushton turbine it is smaller than the disc diameter, so that the blades reach further inwards than the disc and protrude immediately above and below it; it may also be placed on the disc rim or outside it
+* ``disc_diameter`` and ``disc_thickness`` are the diameter and the axial thickness of the Rushton disc
+* ``blade_height`` is the axial height of a blade
+* ``shaft_diameter`` is the diameter of the agitation shaft
+* ``impeller_clearance`` is the height of the disc mid-plane above the floor
+* ``baffle_width`` is the radial width of a baffle
+* ``interface_diameter`` is the diameter of the mortar interface
+* ``n_blades`` and ``n_baffles`` are the numbers of blades and of baffles
+* ``n_theta`` is the number of angular cells over the full circle, and must be a multiple of both ``n_blades`` and ``n_baffles``
+* ``n_blade_cells`` and ``n_baffle_cells`` are the numbers of angular cells occupied by one blade and by one baffle
+* ``target_cell_size`` is the cell size used to subdivide the radial and axial segments; a value of :math:`0` derives it from the circumferential size of an interface cell, which yields a near-isotropic mesh
+
+The default dimensions are ``1 : 1 : 0.3333333333333333 : 0.16666666666666666 : 0.25 : 0.02 : 0.06666666666666667 : 0.1 : 0.3333333333333333 : 0.1 : 0.5 : 6 : 4 : 48 : 1 : 1 : 0``, which is the standard Rushton configuration normalized by the tank diameter: :math:`H = T`, :math:`D = T/3`, a disc of diameter :math:`0.75 D`, six blades spanning radially from :math:`D/4` to :math:`D/2` and of height :math:`D/5`, an off-bottom clearance of :math:`T/3` and four baffles of width :math:`T/10`.
+
+The radii of the geometric features must be strictly increasing, from the shaft to the disc rim, the blade tips, the mortar interface, the baffle roots and finally the tank wall; the blade root must lie between the shaft and the blade tips, and the blades must lie strictly between the floor and the free surface.
+
+Boundary IDs are, for the rotor: 0 for the shaft, 1 for the disc, 2 for the blades, 3 for the floor, 4 for the free surface and 5 for the mortar interface; and for the stator: 0 for the mortar interface, 1 for the tank wall, 2 for the baffles, 3 for the floor and 4 for the free surface.
+Since the stator carries five distinct boundary IDs, the rotor IDs are shifted by five when the two halves are merged, so that the solver sees: 0 stator interface, 1 tank wall, 2 baffles, 3 stator floor, 4 stator free surface, 5 shaft, 6 disc, 7 blades, 8 rotor floor, 9 rotor free surface and 10 rotor interface.
+
+.. note::
+  The mesh is structured in cylindrical coordinates, and the blades and the baffles occupy whole cells of that grid. They are therefore bounded by surfaces of constant angle and taper slightly from root to tip, instead of being parallel-sided plates. In exchange every cell is a polar-extruded hexahedron, for which the cylindrical manifold attached to the mesh is exact, so the geometry is preserved under refinement.
 
 .. _cylinder:
 

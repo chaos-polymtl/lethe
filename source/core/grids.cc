@@ -8,6 +8,7 @@
 #include <core/grid_fichera_oven.h>
 #include <core/grid_impinging_jet_mixer.h>
 #include <core/grid_periodic_hills.h>
+#include <core/grid_rushton_mixer.h>
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
 #include <core/grids.h>
@@ -244,6 +245,19 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
 
           GridTools::scale(mesh_parameters.scale, triangulation);
         }
+      else if (grid_type.starts_with("rushton_"))
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - Rushton mixer mesh with simplex is not supported"));
+
+          GridRushtonMixer<dim, spacedim> grid(grid_type,
+                                               mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
       else if (grid_type == "uniform_channel_with_meshed_cylinder")
         {
           AssertThrow(
@@ -445,7 +459,11 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   for (const auto &cell : stator_temp_tria.active_cell_iterators())
     cell->set_material_id(0);
 
-  if (mesh_parameters.type == Parameters::Mesh::Type::dealii)
+  // Lethe grids are handled like deal.II ones: in both cases the generator has
+  // already attached the manifolds to the triangulation, so the boundary and
+  // manifold ids only need to be shifted before the two halves are merged.
+  if (mesh_parameters.type == Parameters::Mesh::Type::dealii ||
+      mesh_parameters.type == Parameters::Mesh::Type::lethe)
     {
       // Get stator manifold ids without flat id
       unsigned int stator_ids_no_flat = 0;

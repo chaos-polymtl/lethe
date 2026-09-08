@@ -14,6 +14,7 @@ add_library(lethe-core
   grid_fichera_oven.cc
   grid_impinging_jet_mixer.cc
   grid_periodic_hills.cc
+  grid_rushton_mixer.cc
   grid_uniform_channel_with_meshed_cylinder.cc
   grid_uniform_channel_with_meshed_square_prism.cc
   grids.cc
@@ -68,6 +69,7 @@ add_library(lethe-core
   ../../include/core/grid_fichera_oven.h
   ../../include/core/grid_impinging_jet_mixer.h
   ../../include/core/grid_periodic_hills.h
+  ../../include/core/grid_rushton_mixer.h
   ../../include/core/grid_uniform_channel_with_meshed_cylinder.h
   ../../include/core/grid_uniform_channel_with_meshed_square_prism.h
   ../../include/core/grids.h

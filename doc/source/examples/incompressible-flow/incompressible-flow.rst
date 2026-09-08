@@ -25,6 +25,7 @@ Incompressible Flow
     3d-turbulent-flow-around-cylinder/3d-turbulent-flow-around-cylinder
     3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame
     3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller
+    3d-rushton-mixer-mortar/3d-rushton-mixer-mortar
 
 .. graphviz:: 
 
@@ -88,6 +89,8 @@ Incompressible Flow
 
       incompressible_2_7 [label="Mixer with Pitched-Blade Turbine Impeller \nUsing Nitsche Immersed Boundary", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html", tooltip="Mixer with pitched-blade turbine impeller using Nitsche immersed boundary"];
 
+      incompressible_2_8 [label="Rushton Mixer Using \nthe Mortar Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-rushton-mixer-mortar/3d-rushton-mixer-mortar.html", tooltip="Rushton mixer using the mortar method"];
+
       incompressible_flow:e -> incompressible_1:w;
       incompressible_flow:e -> incompressible_2:w;
 
@@ -109,4 +112,5 @@ Incompressible Flow
       incompressible_2 -> incompressible_2_5:w;
       incompressible_2 -> incompressible_2_6:w;
       incompressible_2 -> incompressible_2_7:w;
+      incompressible_2 -> incompressible_2_8:w;
     }

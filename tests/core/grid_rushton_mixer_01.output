@@ -1,0 +1,78 @@
+DEAL::==================================================
+DEAL::Case: default
+DEAL::Grid arguments: ""
+DEAL::  rushton_rotor
+DEAL::    Number of active cells : 8802
+DEAL::    Number of vertices     : 10752
+DEAL::    Mesh volume            : 0.187194
+DEAL::    Boundary id 0 face count : 1440
+DEAL::    Boundary id 1 face count : 222
+DEAL::    Boundary id 2 face count : 114
+DEAL::    Boundary id 3 face count : 288
+DEAL::    Boundary id 4 face count : 288
+DEAL::    Boundary id 5 face count : 1488
+DEAL::  rushton_stator
+DEAL::    Number of active cells : 11532
+DEAL::    Number of vertices     : 13824
+DEAL::    Mesh volume            : 0.565486
+DEAL::    Boundary id 0 face count : 1488
+DEAL::    Boundary id 1 face count : 1364
+DEAL::    Boundary id 2 face count : 868
+DEAL::    Boundary id 3 face count : 372
+DEAL::    Boundary id 4 face count : 372
+DEAL::  Mortar interface faces, rotor  : 1488
+DEAL::  Mortar interface faces, stator : 1488
+DEAL::  Interface face counts match    : true
+DEAL::  Interface heights match        : true
+DEAL::==================================================
+DEAL::Case: coarse
+DEAL::Grid arguments: "1 : 1 : 0.3333333333333333 : 0.16666666666666666 : 0.25 : 0.02 : 0.06666666666666667 : 0.1 : 0.3333333333333333 : 0.1 : 0.5 : 6 : 4 : 24 : 1 : 1 : 0.15"
+DEAL::  rushton_rotor
+DEAL::    Number of active cells : 786
+DEAL::    Number of vertices     : 1200
+DEAL::    Mesh volume            : 0.186715
+DEAL::    Boundary id 0 face count : 192
+DEAL::    Boundary id 1 face count : 102
+DEAL::    Boundary id 2 face count : 114
+DEAL::    Boundary id 3 face count : 96
+DEAL::    Boundary id 4 face count : 96
+DEAL::    Boundary id 5 face count : 216
+DEAL::  rushton_stator
+DEAL::    Number of active cells : 396
+DEAL::    Number of vertices     : 720
+DEAL::    Mesh volume            : 0.541919
+DEAL::    Boundary id 0 face count : 216
+DEAL::    Boundary id 1 face count : 180
+DEAL::    Boundary id 2 face count : 108
+DEAL::    Boundary id 3 face count : 44
+DEAL::    Boundary id 4 face count : 44
+DEAL::  Mortar interface faces, rotor  : 216
+DEAL::  Mortar interface faces, stator : 216
+DEAL::  Interface face counts match    : true
+DEAL::  Interface heights match        : true
+DEAL::==================================================
+DEAL::Case: thick_disc
+DEAL::Grid arguments: "1 : 1 : 0.3333333333333333 : 0.16666666666666666 : 0.25 : 0.06666666666666667 : 0.06666666666666667 : 0.1 : 0.3333333333333333 : 0.1 : 0.5 : 6 : 4 : 24 : 1 : 1 : 0.15"
+DEAL::  rushton_rotor
+DEAL::    Number of active cells : 618
+DEAL::    Number of vertices     : 960
+DEAL::    Mesh volume            : 0.185109
+DEAL::    Boundary id 0 face count : 144
+DEAL::    Boundary id 1 face count : 114
+DEAL::    Boundary id 2 face count : 30
+DEAL::    Boundary id 3 face count : 96
+DEAL::    Boundary id 4 face count : 96
+DEAL::    Boundary id 5 face count : 168
+DEAL::  rushton_stator
+DEAL::    Number of active cells : 308
+DEAL::    Number of vertices     : 576
+DEAL::    Mesh volume            : 0.541919
+DEAL::    Boundary id 0 face count : 168
+DEAL::    Boundary id 1 face count : 140
+DEAL::    Boundary id 2 face count : 84
+DEAL::    Boundary id 3 face count : 44
+DEAL::    Boundary id 4 face count : 44
+DEAL::  Mortar interface faces, rotor  : 168
+DEAL::  Mortar interface faces, stator : 168
+DEAL::  Interface face counts match    : true
+DEAL::  Interface heights match        : true

@@ -37,7 +37,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 .. warning::
   The ``linear`` interface type supports only two-dimensional problems. It assumes that the domain is rectangular, and that the mortar interface is parallel to the y axis.
 
-* The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
+* The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`. The rotor and the stator meshes must be of the same ``type``, which may be ``dealii``, ``gmsh`` or ``lethe``. The :ref:`Rushton Mixer <rushton-mixer>` grid is the built-in ``lethe`` grid designed for this purpose: it generates the rotor and the stator halves of a stirred tank from a single set of dimensions.
 
 .. note::
   The initial number of cells at the rotor-stator interface has to be the same; the simulation will be aborted if that is not respected. This restriction will be automatically constrained throughout the simulation if the mesh is refined.

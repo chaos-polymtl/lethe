@@ -1,0 +1,236 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+# Matrix-free counterpart of rushton-mixer-mortar.prm, to be run with
+# lethe-fluid-matrix-free. The geometry, the mesh and the operating point are
+# identical, so that the two solvers can be compared directly on the same case;
+# only the discretization and the linear solver differ.
+#
+# Two changes are imposed by the matrix-free solver:
+#   - the velocity and the pressure must share the same polynomial degree, and
+#     the bubble enrichment used in the matrix-based file is not available, so
+#     the discretization is an equal-order Q2-Q2 stabilized by PSPG/SUPG;
+#   - the preconditioner is a global-coarsening multigrid rather than AMG.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method                         = bdf1
+  set time step                      = 0.002
+  set time end                       = 5
+  set output frequency               = 1
+  set output path                     = ./output-matrix-free/
+  set output name                    = rushton-mixer
+  set adapt time step to respect CFL = true
+  set max cfl                        = 1
+  set output boundaries              = true
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+# The matrix-free solver builds an FE_Q system of equal order for the velocity
+# and the pressure, and asserts that the two degrees match. It does not support
+# the bubble enrichment, so the equal-order pair is stabilized instead.
+
+subsection FEM
+  set velocity degree = 2
+  set pressure degree = 2
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    # nu = N D^2 / Re with N = 1, D = 1/3 and Re = 100
+    set kinematic viscosity = 0.1 #1.1111111111111112e-3
+  end
+end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
+# The torque on the shaft, the disc and the blades (boundary ids 5, 6 and 7)
+# gives the power drawn by the impeller, hence its power number.
+
+subsection forces
+  set verbosity        = verbose
+  set calculate torque = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+# Identical to the matrix-based file. The grid arguments are, in order: tank
+# diameter : liquid height : impeller diameter : blade root diameter : disc
+# diameter : disc thickness : blade height : shaft diameter : impeller
+# clearance : baffle width : interface diameter : number of blades : number of
+# baffles : number of angular cells : angular cells per blade : angular cells
+# per baffle : target cell size.
+
+subsection mesh
+  set type               = lethe
+  set grid type          = rushton_stator
+  set grid arguments     = 1 : 1 : 0.3333333333333333 : 0.16666666666666666 : 0.25 : 0.02 : 0.06666666666666667 : 0.1 : 0.3333333333333333 : 0.1 : 0.5 : 6 : 4 : 48 : 1 : 1 : 0
+  set initial refinement = 0
+  set initial boundary refinement = 1
+  set boundaries refined          = 5,6,7
+end
+
+#---------------------------------------------------
+# Mortar
+#---------------------------------------------------
+
+subsection mortar
+  set enable = true
+  subsection mesh
+    set type           = lethe
+    set grid type      = rushton_rotor
+    set grid arguments = 1 : 1 : 0.3333333333333333 : 0.16666666666666666 : 0.25 : 0.02 : 0.06666666666666667 : 0.1 : 0.3333333333333333 : 0.1 : 0.5 : 6 : 4 : 48 : 1 : 1 : 0
+  end
+  set rotor boundary id       = 10
+  set stator boundary id      = 0
+  set center of rotation      = 0, 0, 0
+  set rotation axis direction = 2
+  subsection rotor rotation angle
+    set Function constants  = omega=6.283185307179586
+    set Function expression = omega*t
+  end
+  subsection rotor angular velocity
+    set Function constants  = omega=6.283185307179586
+    set Function expression = omega
+  end
+  set penalty factor = 1
+  set verbosity      = verbose
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+# The stator carries five boundary ids, so the rotor ids are shifted by five
+# when the two halves are merged:
+#   0 stator side of the mortar interface   5 shaft
+#   1 tank wall                             6 disc
+#   2 baffles                               7 blades
+#   3 stator floor                          8 rotor floor
+#   4 stator free surface                   9 rotor free surface
+#                                          10 rotor side of the mortar interface
+
+subsection boundary conditions
+  set number = 6
+
+  # The vessel is closed: no boundary sets the pressure level, so it is pinned
+  # in a single node of the coarse grid solver.
+  set fix pressure constant = true
+  subsection bc 0
+    set type = none
+    set id   = 0, 10
+  end
+  subsection bc 1
+    set type = noslip
+    set id   = 1, 2, 3
+  end
+  subsection bc 2
+    set type = slip
+    set id   = 4
+  end
+  subsection bc 3
+    set type = function
+    set id   = 5, 6, 7
+    subsection u
+      set Function constants  = omega=6.283185307179586
+      set Function expression = -omega*y
+    end
+    subsection v
+      set Function constants  = omega=6.283185307179586
+      set Function expression = omega*x
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 4
+    set type = noslip
+    set id   = 8
+  end
+  subsection bc 5
+    set type = slip
+    set id   = 9
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = verbose
+    set tolerance      = 1e-5
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+# The mesh is not refined, so there is a single geometric level and the
+# multigrid hierarchy is built by coarsening the polynomial degree instead:
+# with hp coarsening the levels are Q1 then Q2 on the same mesh. Plain h
+# coarsening would leave a single level here and is only useful once
+# `initial refinement` is raised. The coarse level carries roughly 90k degrees
+# of freedom, which is too large for the default direct coarse solver, so it is
+# solved with AMG.
+
+subsection linear solver
+  subsection fluid dynamics
+    set method             = gmres
+    set max iters          = 200
+    set max krylov vectors = 200
+    set relative residual  = 1e-3
+    set minimum residual   = 1e-6
+    set preconditioner     = gcmg
+    set verbosity          = extra verbose
+
+    # MG parameters
+    set mg verbosity                   = extra verbose
+    set mg coarsening type             = hp
+    set mg enable hessians in jacobian = true
+
+    # Smoother
+    set mg smoother iterations          = 5
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = inverse diagonal
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 5
+    set eig estimation verbosity       = verbose
+
+    # Coarse-grid solver
+    set mg coarse grid solver = amg
+  end
+end
