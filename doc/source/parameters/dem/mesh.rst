@@ -6,7 +6,7 @@
 Mesh
 ====
 
-DEM and CFD simulations read their triangulation through the same routine, so the ``mesh`` subsection of a DEM simulation is the `CFD one <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_. Every mesh type (``gmsh``, ``dealii`` and the ``lethe`` built-in grids), the mesh transformations (``scale``, ``initial translation``, ``initial rotation axis`` and ``initial rotation angle``), the initial refinement and the refinement in the vicinity of boundaries are all available in ``lethe-particles``.
+DEM and CFD simulations read their triangulation through the same routine, so the ``mesh`` subsection of a DEM simulation is the same as the `CFD one <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_. The mesh type (``gmsh``, ``dealii`` and the ``lethe`` built-in grids), the mesh transformations (``scale``, ``initial translation``, ``initial rotation axis`` and ``initial rotation angle``), the initial refinement and the refinement in the vicinity of boundaries are all available in ``lethe-particles``.
 
 The :doc:`manifolds <../cfd/manifolds>` and :doc:`box refinement <../cfd/box_refinement>` subsections are also read by ``lethe-particles``, and behave exactly as they do in the CFD solvers.
 

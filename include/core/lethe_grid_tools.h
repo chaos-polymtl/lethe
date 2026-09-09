@@ -143,7 +143,7 @@ namespace LetheGridTools
     Point<dim>                                           &point_2);
 
   /**
-   * @brief Flag for refinement all the cells of a triangulation which lie within
+   * @brief Flag for refinement of all the cells of a triangulation which lie within
    * a refinement box
    *
    * @param[in] dof_handler The DoFHandler of the triangulation whose cells must

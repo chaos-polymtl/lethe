@@ -37,7 +37,7 @@ namespace Parameters
   /**
    * @brief Extract the maximum number of all variable size sections within the parameter file
    *
-   * @param[in] file_name Name of the parameter file from which the size are
+   * @param[in] file_name Name of the parameter file from which the sizes are
    * parsed
    *
    * @param[in] require_subsection_size If true, the parameter file must
