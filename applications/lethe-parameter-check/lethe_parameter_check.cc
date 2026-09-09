@@ -54,7 +54,7 @@ main(int argc, char *argv[])
         }
       else if (solver_family == "lethe-particles")
         {
-          // The DEM solvers do not require any variable size subsection. Their
+          // The DEM solver does not require any variable size subsection. Its
           // boundary conditions are declared in the "DEM boundary conditions"
           // subsection, and a file that declares no manifold leads to
           // subsections of size zero.
