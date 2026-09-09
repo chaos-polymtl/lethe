@@ -1396,14 +1396,14 @@ Tracer<dim>::update_boundary_conditions()
         }
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
+          const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions_tracer
-              .periodic_neighbor_id.at(id),
-            this->simulation_parameters.boundary_conditions_tracer
-              .periodic_direction.at(id),
-            nonzero_constraints);
+              .periodic_boundaries.at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 nonzero_constraints);
         }
       if (type == BoundaryConditions::BoundaryType::none)
         {
@@ -1437,14 +1437,14 @@ Tracer<dim>::define_zero_constraints()
         }
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
+          const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions_tracer
-              .periodic_neighbor_id.at(id),
-            this->simulation_parameters.boundary_conditions_tracer
-              .periodic_direction.at(id),
-            zero_constraints);
+              .periodic_boundaries.at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 zero_constraints);
         }
       if (type == BoundaryConditions::BoundaryType::none)
         {
@@ -1478,14 +1478,14 @@ Tracer<dim>::define_non_zero_constraints()
         }
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
+          const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions_tracer
-              .periodic_neighbor_id.at(id),
-            this->simulation_parameters.boundary_conditions_tracer
-              .periodic_direction.at(id),
-            nonzero_constraints);
+              .periodic_boundaries.at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 nonzero_constraints);
         }
       if (type == BoundaryConditions::BoundaryType::none)
         {

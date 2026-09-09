@@ -1,0 +1,4 @@
+
+DEAL::CFD parameter file: 3 boundary conditions, 3 manifolds
+DEAL::DEM parameter file: 0 boundary conditions, 0 manifolds
+DEAL::Exception raised for a mandatory subsection size

@@ -41,14 +41,14 @@ CLSLinearSubequationsSolver<dim>::setup_dofs()
     {
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
+          const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions_cls
-              .periodic_neighbor_id.at(id),
-            this->simulation_parameters.boundary_conditions_cls
-              .periodic_direction.at(id),
-            this->constraints);
+              .periodic_boundaries.at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 this->constraints);
         }
     }
 

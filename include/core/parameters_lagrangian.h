@@ -15,6 +15,7 @@
 #define lethe_parameters_lagrangian_h
 
 #include <core/parameters.h>
+#include <core/periodic_boundary.h>
 
 #include <deal.II/base/parameter_handler.h>
 
@@ -791,7 +792,7 @@ namespace Parameters
       /// Boundary ids designated as outlets. A boundary's DEM boundary
       /// condition type is encoded by which container holds it: outlets here,
       /// translational/rotational boundaries in the motion maps below, and
-      /// periodic boundaries in periodic_neighbor_id. Fixed walls (the default)
+      /// periodic boundaries in periodic_boundaries. Fixed walls (the default)
       /// appear in none of these containers.
       std::set<types::boundary_id> outlet_boundaries;
 
@@ -812,14 +813,9 @@ namespace Parameters
       /// mesh boundary id. Only rotational boundaries have an entry.
       std::map<types::boundary_id, Point<3>> point_on_rotation_axis;
 
-      /// Neighbor periodic boundary id for each periodic boundary pair, keyed
-      /// by the principal periodic boundary id (periodic id 0 -> periodic id
-      /// 1).
-      std::map<types::boundary_id, types::boundary_id> periodic_neighbor_id;
-
-      /// Direction of periodicity for each periodic boundary pair, keyed by the
-      /// principal periodic boundary id (periodic id 0).
-      std::map<types::boundary_id, unsigned int> periodic_direction;
+      /// Periodic boundary pairs, keyed by the principal periodic boundary id
+      /// (periodic id 0).
+      PeriodicBoundaries periodic_boundaries;
 
       /**
        * @brief Declare the parameters in the parameter handler.

@@ -2857,14 +2857,14 @@ ConservativeLevelSet<dim>::define_zero_constraints()
         }
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          DoFTools::make_periodicity_constraints(
-            *this->dof_handler,
-            id,
+          const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions_cls
-              .periodic_neighbor_id.at(id),
-            this->simulation_parameters.boundary_conditions_cls
-              .periodic_direction.at(id),
-            this->zero_constraints);
+              .periodic_boundaries.at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 this->zero_constraints);
         }
     }
   this->zero_constraints.close();
@@ -2897,13 +2897,14 @@ ConservativeLevelSet<dim>::define_non_zero_constraints()
           }
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
+            const auto &periodic_boundary =
+              this->simulation_parameters.boundary_conditions_cls
+                .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,
               id,
-              this->simulation_parameters.boundary_conditions_cls
-                .periodic_neighbor_id.at(id),
-              this->simulation_parameters.boundary_conditions_cls
-                .periodic_direction.at(id),
+              periodic_boundary.neighbor_id,
+              periodic_boundary.direction,
               nonzero_constraints);
           }
       }
