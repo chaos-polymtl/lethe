@@ -11,14 +11,12 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method                         = bdf1
-  set time step                      = 0.0001
-  set adapt time step to respect CFL = true
-  set adaptative time step scaling   = 1.02
-  set time end                       = 60
-  set output time frequency          = 0.05
-  set output path                    = ./cylinder_resonance/
-  set subdivision       = 3
+  set method                = bdf1
+  set time step             = 0.05
+  set time end              = 60
+  set output time frequency = 0.05
+  set output path           = ./cylinder_resonance/
+  set subdivision           = 3
 end
 
 #---------------------------------------------------
@@ -36,8 +34,8 @@ end
 subsection multiphysics
   set fluid dynamics    = false
   set microwave heating = true
-  set electromagnetics = true
-  set heat transfer = true
+  set electromagnetics  = true
+  set heat transfer     = true
 end
 
 #---------------------------------------------------
@@ -215,7 +213,7 @@ subsection linear solver
     set verbosity         = verbose
     set relative residual = 1e-4
     set minimum residual  = 1e-8
-    set preconditioner = none
+    set preconditioner    = none
   end
   subsection heat transfer
     set max iters          = 1000
