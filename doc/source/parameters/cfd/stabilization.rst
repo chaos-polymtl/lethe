@@ -41,6 +41,11 @@ There are three choices of stabilization strategy:
 
 * ``cls dcdd diffusion factor`` is the diffusion coefficient applied to the DCDD stabilization term in the :doc:`CLS equation<../../theory/multiphase/cfd/cls>`.
 
-* ``pressure scaling factor`` used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver by decreasing the condition number for cases where pressure and velocity have very different scales.
+* ``pressure scaling factor`` rescales the pressure unknown the linear solver works with, from :math:`p` to :math:`p/\alpha`; the factor is applied back to the pressure degrees of freedom of the Newton correction after solving. It helps the convergence of the linear solver by decreasing the condition number for cases where pressure and velocity have very different scales, which is typically the case for heavily constricted geometries.
+
+	This is an algebraically neutral transformation: it changes neither the discretization nor the converged solution, only the variable the linear solver works with.
+
+	.. tip::
+		A good starting point is the order of magnitude of the pressure divided by the order of magnitude of the velocity. The :doc:`static mixer example<../../examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer>` uses ``1e2`` for this reason.
 
 * ``scalar limiter`` applies a scalar limiter to the solution of the tracer equation when a Discontinuous Galerkin method (DG) is used. The available option are ``none`` and  ``moe``.  The ``none`` option disables the limiter. The ``moe`` limiter applies a monotone upstream-centered scheme for conservation laws (MUSCL) type of limiter (see `Moe et al. (2015) <https://doi.org/10.48550/arXiv.1507.03024>`). This is useful to prevent oscillations in the solution of the tracer equation, especially in cases with sharp gradients and when the diffusion coefficient is very small or zero.

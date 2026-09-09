@@ -74,6 +74,103 @@ create_bool_dof_mask(const FiniteElement<dim, spacedim> &fe,
 
 
 
+namespace
+{
+  /**
+   * @brief Multiply the pressure entries of a vector by @p pressure_factor.
+   *
+   * Only the locally owned entries are modified; the ghost values have to be
+   * exchanged by the caller.
+   *
+   * @tparam VectorType Type of the vector to scale.
+   *
+   * @param[in,out] vector Vector to scale.
+   *
+   * @param[in] pressure_factor Factor applied to the pressure entries.
+   *
+   * @param[in] local_pressure_indices Local indices of the locally owned
+   * pressure degrees of freedom.
+   */
+  template <typename VectorType>
+  void
+  scale_pressure_dofs(VectorType                      &vector,
+                      const double                     pressure_factor,
+                      const std::vector<unsigned int> &local_pressure_indices)
+  {
+    using number = typename VectorType::value_type;
+
+    const number factor = static_cast<number>(pressure_factor);
+    for (const auto &index : local_pressure_indices)
+      vector.local_element(index) *= factor;
+  }
+
+  /**
+   * @brief Multiply the pressure columns of an assembled matrix by
+   * @p pressure_factor, which turns the matrix \f$M\f$ into \f$MS\f$.
+   *
+   * The matrix must be compressed, since the entries of every locally owned row
+   * are read, scaled and written back. The matrix is compressed again before
+   * returning.
+   *
+   * @param[in,out] matrix Matrix to scale.
+   *
+   * @param[in] pressure_factor Factor applied to the pressure columns.
+   *
+   * @param[in] locally_relevant_pressure_dofs Global indices of the locally
+   * relevant pressure degrees of freedom, which identify the pressure columns.
+   */
+  void
+  scale_pressure_columns(TrilinosWrappers::SparseMatrix &matrix,
+                         const double                    pressure_factor,
+                         const IndexSet &locally_relevant_pressure_dofs)
+  {
+    std::vector<types::global_dof_index> column_indices;
+    std::vector<double>                  values;
+
+    // The entries of a row are read through a constant view of the matrix and
+    // are only written back once the whole row has been gathered.
+    const TrilinosWrappers::SparseMatrix &constant_matrix = matrix;
+
+    for (const auto &row : matrix.locally_owned_range_indices())
+      {
+        column_indices.clear();
+        values.clear();
+
+        bool row_has_pressure_column = false;
+
+        for (auto entry = constant_matrix.begin(row);
+             entry != constant_matrix.end(row);
+             ++entry)
+          {
+            const types::global_dof_index column = entry->column();
+            const bool                    is_pressure_column =
+              locally_relevant_pressure_dofs.is_element(column);
+
+            row_has_pressure_column |= is_pressure_column;
+
+            column_indices.push_back(column);
+            values.push_back(is_pressure_column ?
+                               entry->value() * pressure_factor :
+                               entry->value());
+          }
+
+        // Rows which do not couple to any pressure unknown are left untouched.
+        if (!row_has_pressure_column)
+          continue;
+
+        // The whole row is written at once to avoid one lookup per entry.
+        matrix.set(row,
+                   column_indices.size(),
+                   column_indices.data(),
+                   values.data(),
+                   false);
+      }
+
+    matrix.compress(VectorOperation::insert);
+  }
+} // namespace
+
+
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
@@ -217,6 +314,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
   for (auto i : this->matrix_free.get_constrained_dofs())
     constrained_indices.push_back(i);
   constrained_values.resize(constrained_indices.size());
+
+  this->compute_pressure_dof_indices();
 
   if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
     {
@@ -498,6 +597,25 @@ void
 NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
                                              const VectorType &src) const
 {
+  if (!this->pressure_scaling_is_active)
+    {
+      this->apply_physical_operator(dst, src);
+      return;
+    }
+
+  // With the pressure scaling factor alpha, the solver works with the rescaled
+  // pressure unknown p/alpha, so the operator is dst = J (S src) with
+  // S = diag(I, alpha I). Only the unknowns are rescaled, so the destination
+  // vector is left untouched.
+  this->apply_physical_operator(dst, this->apply_pressure_scaling(src));
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::apply_physical_operator(
+  VectorType       &dst,
+  const VectorType &src) const
+{
   this->timer.enter_subsection("operator::vmult");
 
   // save values for edge constrained dofs and set them to 0 in src vector
@@ -571,6 +689,24 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   VectorType       &dst,
   VectorType const &src) const
 {
+  if (this->pressure_scaling_is_active)
+    {
+      this->vmult_interface_down_physical(dst,
+                                          this->apply_pressure_scaling(src));
+      return;
+    }
+
+  this->vmult_interface_down_physical(dst, src);
+}
+
+
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::vmult_interface_down_physical(
+  VectorType       &dst,
+  VectorType const &src) const
+{
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
@@ -594,6 +730,23 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::vmult_interface_up(
+  VectorType       &dst,
+  VectorType const &src) const
+{
+  if (this->pressure_scaling_is_active && has_edge_constrained_indices)
+    {
+      this->vmult_interface_up_physical(dst, this->apply_pressure_scaling(src));
+      return;
+    }
+
+  this->vmult_interface_up_physical(dst, src);
+}
+
+
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::vmult_interface_up_physical(
   VectorType       &dst,
   VectorType const &src) const
 {
@@ -636,6 +789,125 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
       false);
 
   this->timer.leave_subsection("operator::vmult_interface_up");
+}
+
+
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::compute_pressure_dof_indices()
+{
+  const DoFHandler<dim>    &dof_handler = this->matrix_free.get_dof_handler();
+  const FiniteElement<dim> &fe          = dof_handler.get_fe();
+  const unsigned int        mg_level    = this->matrix_free.get_mg_level();
+  const bool is_mg_level = mg_level != numbers::invalid_unsigned_int;
+
+  const IndexSet &locally_owned_dofs =
+    is_mg_level ? dof_handler.locally_owned_mg_dofs(mg_level) :
+                  dof_handler.locally_owned_dofs();
+
+  // The locally owned pressure DoFs are only needed to build the local index
+  // list below, so they are kept local to this function.
+  IndexSet owned_pressure_dofs(locally_owned_dofs.size());
+
+  this->locally_relevant_pressure_dofs.clear();
+  this->locally_relevant_pressure_dofs.set_size(locally_owned_dofs.size());
+
+  // The pressure degrees of freedom are those of the last component of the
+  // FESystem. The locally relevant ones are gathered as well, since they are
+  // the columns which can be reached from a locally owned row of the assembled
+  // system matrix.
+  const unsigned int                   dofs_per_cell = fe.n_dofs_per_cell();
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  const auto gather_pressure_dofs = [&]() {
+    for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      {
+        if (fe.system_to_component_index(i).first != dim)
+          continue;
+
+        const types::global_dof_index global_index = local_dof_indices[i];
+        this->locally_relevant_pressure_dofs.add_index(global_index);
+        if (locally_owned_dofs.is_element(global_index))
+          owned_pressure_dofs.add_index(global_index);
+      }
+  };
+
+  if (is_mg_level)
+    {
+      for (const auto &cell : dof_handler.cell_iterators_on_level(mg_level))
+        {
+          if (cell->level_subdomain_id() == numbers::artificial_subdomain_id)
+            continue;
+
+          cell->get_mg_dof_indices(local_dof_indices);
+          gather_pressure_dofs();
+        }
+    }
+  else
+    {
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          if (!cell->is_locally_owned() && !cell->is_ghost())
+            continue;
+
+          cell->get_dof_indices(local_dof_indices);
+          gather_pressure_dofs();
+        }
+    }
+
+  owned_pressure_dofs.compress();
+  this->locally_relevant_pressure_dofs.compress();
+
+  // The local indices are the ones used to scale the vectors of this level,
+  // which are addressed through local_element().
+  const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner =
+    this->get_vector_partitioner();
+
+  this->pressure_local_indices.clear();
+  this->pressure_local_indices.reserve(owned_pressure_dofs.n_elements());
+  for (const auto &dof : owned_pressure_dofs)
+    this->pressure_local_indices.push_back(partitioner->global_to_local(dof));
+}
+
+
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::set_pressure_scaling_factor(
+  const double factor)
+{
+  this->pressure_scaling_factor    = factor;
+  this->pressure_scaling_is_active = factor != 1.;
+
+  if (this->pressure_scaling_is_active && this->scaled_src.size() != this->m())
+    this->initialize_dof_vector(this->scaled_src);
+}
+
+
+
+template <int dim, typename number>
+const typename NavierStokesOperatorBase<dim, number>::VectorType &
+NavierStokesOperatorBase<dim, number>::apply_pressure_scaling(
+  const VectorType &src) const
+{
+  this->timer.enter_subsection("operator::pressure_scaling");
+
+  this->scaled_src = src;
+
+  // The copy may have marked the scratch vector as holding up-to-date ghost
+  // values. Since only the locally owned entries are scaled, the ghost values
+  // have to be invalidated, otherwise the cell loop would reuse the unscaled
+  // ones instead of exchanging the scaled ones.
+  this->scaled_src.zero_out_ghost_values();
+
+  scale_pressure_dofs(this->scaled_src,
+                      this->pressure_scaling_factor,
+                      this->pressure_local_indices);
+
+  this->timer.leave_subsection("operator::pressure_scaling");
+
+  return this->scaled_src;
 }
 
 
@@ -834,6 +1106,20 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
     }
 
   system_matrix.compress(VectorOperation::insert);
+
+  // The values are assembled from scratch on every call, so the physical matrix
+  // can be turned into the scaled matrix J S in place. Every consumer of the
+  // assembled matrix, that is the additive Schwarz smoother, the coarse-grid
+  // solvers and the fine-level ILU and direct solvers, therefore sees the same
+  // scaled system as the Krylov solver.
+  if (this->pressure_scaling_is_active)
+    {
+      this->timer.enter_subsection("operator::get_system_matrix_scaling");
+      scale_pressure_columns(this->system_matrix,
+                             this->pressure_scaling_factor,
+                             this->locally_relevant_pressure_dofs);
+      this->timer.leave_subsection("operator::get_system_matrix_scaling");
+    }
 
   this->timer.leave_subsection("operator::get_system_matrix");
 
@@ -1394,8 +1680,18 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
       this->timer.leave_subsection("operator::compute_inverse_diagonal_mortar");
     }
 
+  // Edge-constrained rows carry a diagonal entry of one, consistently with
+  // vmult() and get_system_matrix(). Marking them before the pressure scaling
+  // is applied yields the correct scaled diagonal entry.
   for (const auto &i : edge_constrained_indices)
-    diagonal.local_element(i) = 0.0;
+    diagonal.local_element(i) = 1.0;
+
+  // The diagonal of the scaled operator JS is J_ii s_i, so the physical
+  // diagonal is scaled before being inverted.
+  if (this->pressure_scaling_is_active)
+    scale_pressure_dofs(diagonal,
+                        this->pressure_scaling_factor,
+                        this->pressure_local_indices);
 
   for (auto &i : diagonal)
     i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;

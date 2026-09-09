@@ -2438,6 +2438,16 @@ MFNavierStokesPreconditionGMGBase<dim>::get_mg_operators() const
 }
 
 template <int dim>
+void
+MFNavierStokesPreconditionGMGBase<dim>::set_pressure_scaling_factor(
+  const double factor)
+{
+  for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
+    if (this->mg_operators[level])
+      this->mg_operators[level]->set_pressure_scaling_factor(factor);
+}
+
+template <int dim>
 const MGLevelObject<std::shared_ptr<PreconditionBase<
   typename MFNavierStokesPreconditionGMGBase<dim>::MGVectorType>>> &
 MFNavierStokesPreconditionGMGBase<dim>::get_mg_smoother_preconditioners() const
@@ -3114,6 +3124,13 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   this->system_operator->initialize_dof_vector(
     this->time_derivative_previous_solutions);
 
+  // The pressure scaling factor rescales the pressure unknown the linear solver
+  // works with. It is a constant of the simulation, so it is set once here; the
+  // rescaling is undone on the Newton update at the end of
+  // solve_linear_system().
+  this->system_operator->set_pressure_scaling_factor(
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
+
   // Initialize vectors of previous solutions
   for (auto &solution : *this->previous_solutions)
     {
@@ -3577,6 +3594,12 @@ FluidDynamicsMatrixFree<dim>::setup_GMG()
 
   if (!gmg_preconditioner)
     this->create_GMG();
+
+  // The pressure unknowns are rescaled the same way on every multigrid level.
+  // This must be set before initialize(), which builds the smoothers, the
+  // assembled level matrices and the coarse-grid solver.
+  this->gmg_preconditioner->set_pressure_scaling_factor(
+    this->system_operator->get_pressure_scaling_factor());
 
   this->initialize_GMG();
 }

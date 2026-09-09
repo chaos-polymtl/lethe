@@ -277,6 +277,14 @@ public:
   void
   compute_forcing_term();
 
+  /**
+   * @brief Build the index set and the local indices of the pressure degrees of
+   * freedom of this level, which are needed to apply the pressure scaling to
+   * the vectors and to the assembled system matrix.
+   */
+  void
+  compute_pressure_dof_indices();
+
 
   /**
    * @brief Precompute thermal buoyancy term for heat-transfer coupling.
@@ -344,6 +352,60 @@ public:
   vmult(VectorType &dst, const VectorType &src) const;
 
   /**
+   * @brief Perform an evaluation of the physical operator dst = J*src, ignoring
+   * the pressure scaling factor.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
+   */
+  void
+  apply_physical_operator(VectorType &dst, const VectorType &src) const;
+
+  /**
+   * @brief Set the pressure scaling factor of this operator.
+   *
+   * The factor is the `pressure scaling factor` of the stabilization
+   * subsection. It rescales the pressure unknown the linear solver works with,
+   * from \f$p\f$ to \f$p/\alpha\f$, which is undone on the Newton update by
+   * NavierStokesBase::rescale_pressure_dofs_in_newton_update(). Once it is set,
+   * vmult(), compute_inverse_diagonal() and get_system_matrix() all represent
+   * the scaled operator \f$JS\f$ instead of the physical operator \f$J\f$.
+   *
+   * The same factor must be used on every multigrid level: since the multigrid
+   * transfer operators act component by component and the factor is constant
+   * over the pressure block, they remain valid without any modification.
+   *
+   * @param[in] factor Pressure scaling factor.
+   */
+  void
+  set_pressure_scaling_factor(const double factor);
+
+  /**
+   * @brief Return the pressure scaling factor currently applied by this
+   * operator.
+   *
+   * @return Pressure scaling factor.
+   */
+  double
+  get_pressure_scaling_factor() const
+  {
+    return this->pressure_scaling_factor;
+  }
+
+  /**
+   * @brief Apply the pressure scaling to a source vector and return a reference
+   * to the scratch vector holding the result. The scratch vector is allocated
+   * once, so that no distributed vector is allocated during an operator
+   * application.
+   *
+   * @param[in] src Source vector.
+   *
+   * @return Reference to the scratch vector holding \f$S\,\mathrm{src}\f$.
+   */
+  const VectorType &
+  apply_pressure_scaling(const VectorType &src) const;
+
+  /**
    * @brief Perform the transposed operator evaluation.
    *
    * @param[in,out] dst Destination vector holding the result.
@@ -363,6 +425,15 @@ public:
   vmult_interface_down(VectorType &dst, VectorType const &src) const;
 
   /**
+   * @brief Physical (unscaled) counterpart of vmult_interface_down().
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
+   */
+  void
+  vmult_interface_down_physical(VectorType &dst, VectorType const &src) const;
+
+  /**
    * @brief Vmult operator for an interface. Required only if local smoothing
    * multigrid is used and for meshes with hanging nodes.
    *
@@ -371,6 +442,15 @@ public:
    */
   void
   vmult_interface_up(VectorType &dst, VectorType const &src) const;
+
+  /**
+   * @brief Physical (unscaled) counterpart of vmult_interface_up().
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
+   */
+  void
+  vmult_interface_up_physical(VectorType &dst, VectorType const &src) const;
 
   /**
    * @brief Return sparsity pattern used to set up the sparse matrix by
@@ -945,6 +1025,43 @@ protected:
    *
    */
   Table<2, bool> bool_dof_mask;
+
+  /**
+   * @brief Pressure scaling factor applied by this operator, as given by the
+   * `pressure scaling factor` parameter. The same factor is used on every
+   * multigrid level.
+   *
+   */
+  double pressure_scaling_factor = 1.;
+
+  /**
+   * @brief Variable to identify whether the pressure scaling factor differs from
+   * one and thus has to be applied.
+   *
+   */
+  bool pressure_scaling_is_active = false;
+
+  /**
+   * @brief Local indices of the locally owned pressure degrees of freedom, used to
+   * apply the pressure scaling to the vectors of this level.
+   *
+   */
+  std::vector<unsigned int> pressure_local_indices;
+
+  /**
+   * @brief Locally relevant pressure degrees of freedom of this level, used to
+   * identify the pressure columns of the assembled system matrix.
+   *
+   */
+  IndexSet locally_relevant_pressure_dofs;
+
+  /**
+   * @brief Scratch vector holding the scaled source vector S*src. It is allocated
+   * once so that no distributed vector is allocated during an operator
+   * application.
+   *
+   */
+  mutable VectorType scaled_src;
 
   /**
    * @brief Conditional OStream for parallel output.

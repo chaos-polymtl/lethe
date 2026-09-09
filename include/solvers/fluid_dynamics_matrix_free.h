@@ -162,6 +162,21 @@ public:
   const MGLevelObject<std::shared_ptr<OperatorType>> &
   get_mg_operators() const;
 
+  /**
+   * @brief Set the pressure scaling factor on every multigrid level operator.
+   *
+   * The same factor is used on every level. Since the multigrid transfer
+   * operators act component by component and the factor is constant over the
+   * pressure block, they remain valid without any modification. This must be
+   * called before initialize(), so that the smoothers, the assembled level
+   * matrices and the coarse-grid solver are all built from the scaled level
+   * operators.
+   *
+   * @param[in] factor Pressure scaling factor.
+   */
+  void
+  set_pressure_scaling_factor(const double factor);
+
 
   /**
    * @brief Getter function for all level smoother preconditioners.
