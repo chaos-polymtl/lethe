@@ -106,6 +106,14 @@ The parameter :math:`\alpha` in the above equations is a scaling factor so it is
    \alpha=1.78212272417098,\qquad
    p=0.1.
 
+It gives the following velocity profiles at the inlet:
+
+.. image:: images/inlet_velocity_profiles_dimensional.png
+    :alt: inlet velocity profiles
+    :align: center
+    :name: inlet_velocity_profiles
+    :width: 500
+
 Parameter Files
 ---------------
 
@@ -535,7 +543,7 @@ Dimensionality
         set electric current = 0.01  #ampere
     end
 
-For this second case, the length unit is set to :math:`0.01\ \mathrm{m}` (1 cm) rather than :math:`1\ \mathrm{m}` as in Case 1. This is because when using the matrix-free solver for the Navier-Stokes equations, the geometric multigrid preconditioner works better when the quantities involved are of order 1. 
+For this second case, the length unit is set to :math:`0.01\ \mathrm{m}` (1 cm) rather than :math:`1\ \mathrm{m}` as in Case 1. This is because when using the matrix-free solver for the Navier-Stokes equations, the geometric multigrid preconditioner works better when the quantities involved are of order 1. So here, the average velocity with our geometry and a Reynolds number of 400 is :math:`\approx 0.04\ \mathrm{cm/s}`, so the length unit is set to 1 cm to keep the velocity of order 1. The electric current unit is also set to :math:`0.01\ \mathrm{A}` so the electromagnetic electric field is is directly outputed in :math:`\mathrm{V/m}` since :math:`\mathrm{V/m} \propto m/A`.
 
 Linear Solver Control
 ^^^^^^^^^^^^^^^^^^^^^
@@ -585,7 +593,7 @@ Linear Solver Control
         end
     end
 
-The fluid dynamics equations are solved with the matrix-free solver, preconditioned by a Global Coarsening Multigrid (``gcmg``) method. Refer to the :doc:`../../../parameters/cfd/linear_solver_control` documentation for more details on the multigrid parameters.
+The fluid dynamics equations are solved with the matrix-free solver, preconditioned by a global coarsening multigrid (``gcmg``) method. Refer to the :doc:`../../../parameters/cfd/linear_solver_control` documentation for more details on the multigrid parameters. The other linear solver parameters are identical to those of Case 1.
 
 Restart
 ^^^^^^^
@@ -599,7 +607,7 @@ Restart
         set restart    = false
     end
 
-Since this second case is significantly more expensive than Case 1 (it now also solves the Navier-Stokes equations, on a locally refined mesh), checkpointing is enabled so that the simulation can be resumed if it needs to be interrupted. See the :doc:`../../../parameters/cfd/restart` documentation for details.
+Since this second case is significantly more expensive than Case 1, the simulation have been runned on the clusters of the Digital Reasearch Alliance of Canada. Consequently, checkpointing is enabled so that the simulation can be resumed if it needs to be interrupted or does not finish in the requested time. See the :doc:`../../../parameters/cfd/restart` documentation for details.
 
 Running the Simulations
 -----------------------
@@ -612,15 +620,15 @@ Running the Simulations
 .. code-block:: text
     :class: copy-button
 
-    mpirun -np 8 lethe-fluid filled_waveguide_cylinder_SiC.prm
+    mpirun -np 8 lethe-fluid-matrix-free filled_waveguide_cylinder_SiC.prm
 
 .. warning::
-    Case 2 solves a fully coupled electromagnetics/heat transfer/fluid dynamics problem on a locally refined mesh over a :math:`60\ \mathrm{s}` transient, and is therefore substantially more expensive than Case 1. Running it on a workstation with a modest number of cores may take several hours; the ``restart`` subsection described above allows the simulation to be resumed if needed.
+    Both cases are too expensive in memory to be run on a desktop computer except for really coarse meshes (where the simulation would not be converged). The first case has been run on a node with 128 cores and 1 TB of RAM, while the second case has been run on 8 nodes with 192 cores and 749 GB of RAM. The second case is also significantly more expensive in CPU time than the first one, due to the added cost of solving the fluid dynamics equations at every time step, it took approximately a day to run on the cluster. 
 
 Results and Discussion
 ----------------------
 
-The following figure shows the electromagnetic field amplitude solution in the :math:`x_1x_2`-plane at mid height and the evolution of the temperature field at two crossing lines (:math:`x_1=0.0546` and :math:`x_2=0.0273` m, denoted by the white stripes), for the heating of the alumina cylinder:
+The first figure reproduces the results of Peng *et al.* [#Peng2024]_ for the alumina cylinder, showing the electromagnetic field amplitude solution in the :math:`x_1x_2`-plane at mid height and the evolution of the temperature field at two crossing lines (:math:`x_1=0.0546` and :math:`x_2=0.0273` m, denoted by the white stripes) :
 
 .. image:: images/resonance_E.png
     :alt: temperature field in the alumina cylinder, without fluid flow
@@ -628,9 +636,9 @@ The following figure shows the electromagnetic field amplitude solution in the :
     :name: temperature-al
     :width: 500
 
-Because the cylinder's radius and permittivity place it near a resonant condition of the waveguide-cylinder system, the internal electric field, and therefore the heating rate, are strongly enhanced. The overall field distribution pattern is in agreement with the resonance-driven heating mechanism described by Peng *et al.* [#Peng2024]_.
+Because the cylinder's radius and permittivity place it near a resonant condition of the waveguide-cylinder system, the internal electric field, and therefore the heating rate, are strongly enhanced. The overall field distribution pattern is in agreement with the resonance-driven heating mechanism described by Peng *et al.* [#Peng2024]_. If the amplitude of the solution is compared, in our solution the amplitude of the electric field is lower than what they report, which is caused by a difference in the definition of the input power in the waveguide. To recover the same amplitude, one would need to scale the solution field by a factor of :math:`\sqrt{P_\mathrm{inlet}/P_\mathrm{total}} \approx 1.51`, where :math:`P_\mathrm{inlet}` is the power flowing through the waveguide inlet (the parameter `input_power`) and :math:`P_\mathrm{total}` is total power passing through the waveguide accounting for the reflected component of the electromagnetic wave (this needs to be computed numerically by integrating the Poynting vector over the waveguide cross-section).
 
-The following figure shows the corresponding temperature field for the silicon carbide cylinder of Case 2, once the flow field and the temperature field have reached a statistically steady regime:
+The second figure shows a summary of the second test case, showing the corresponding temperature field and electric field amplitude after 60 seconds of simulation for different obstacle geometries. It also shows the average change in temperature (:math:`\Delta T`) in the obstacle along the crossing plane at :math:`x_1=\SI{0.0556}{\meter}` (:math:`x_2x_3`-plane), and the crossing plane at :math:`x_3=\SI{0.1}{\meter}` (:math:`x_1x_2`-plane), and the difference in average temperature with respect to the cylinder case (:math:`\delta \overline{T}`) along those same planes. The dashed lines bound the region between the :math:`\mathrm{P}_1` and :math:`\mathrm{P}_{99}` percentiles. Note that the gray lines in (a) indicate where the profiles of (b) have been taken.
 
 .. image:: images/geometrie_temp_comparison.png
     :alt: temperature field in the SiC cylinder, cooled by an air flow
@@ -638,20 +646,19 @@ The following figure shows the corresponding temperature field for the silicon c
     :name: temperature-sic
     :width: 500
 
-Unlike Case 1, the air flow continuously removes heat from the cylinder by forced convection, which limits its temperature rise and skews the temperature field toward the downstream side of the cylinder.
+Unlike Case 1, the air flow continuously removes heat from the cylinder by forced convection, which skews the temperature field toward the downstream side of the cylinder. By looking at the figure, one can see that the different geometries lead to different heating patterns and rates. The tilted square prism shows slightly greater temperature non-uniformity, although the variations remain small compared with the overall temperature increase. Interestingly, the cylinder heats more slowly than the two square prisms, despite having a smaller volume. This demonstrates that microwave heating depends not only on the amount of material, but also how much of it can absorb electromagnetic energy. Consequently, at the end of the simulation, the square obstacles are significantly hotter than the cylinder and none has reached thermal equilibrium. Finally, we can also see the impact of the flow on the temperature distribution. Changing only the orientation of the square prism changes its heating rate and that even though the electromagnetic properties are identical and remain constant.
 
-.. Once available, the animation of the transient heating and flow fields can be embedded here, following the convention used throughout Lethe's documentation, for instance:
-.. .. raw:: html
-..
-..     <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/VIDEO_ID" title="Microwave heating of a cylinder in a filled waveguide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+On a final note, we present an animation of the transient heating and flow fields for the SiC cylinder case, showing the evolution of the temperature field and the velocity field in the :math:`x_1x_2`-plane at mid height:
+
+.. raw:: html
+
+    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/VIDEO_ID" title="Microwave heating of a cylinder in a filled waveguide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 Possibilities for Extension
 ---------------------------
 
-- **Sweep the cylinder radius:** Rerun Case 1 for a range of ``inner_radius`` values (adjusting the ``grid arguments`` accordingly) to reproduce the resonance curve reported by Peng *et al.* [#Peng2024]_, and locate the radius that maximizes the absorbed power for the alumina cylinder.
 - **Temperature-dependent properties:** Replace the ``constant`` electric permittivity and conductivity models by temperature-dependent ones, and switch the ``time coupling strategy`` from ``none`` to ``iteration`` or ``threshold`` so that the electromagnetic field is periodically recomputed as the material heats up and its properties drift.
 - **Increase the flow rate:** Increase the Reynolds number ``Re`` used in the initial and boundary conditions of Case 2 to study how stronger convective cooling affects the peak temperature reached by the cylinder.
-- **Turbulent flow:** For higher Reynolds numbers, a turbulence model may need to be added to Case 2; see the incompressible flow examples for guidance on setting up turbulent simulations in Lethe.
 
 References
 ----------
