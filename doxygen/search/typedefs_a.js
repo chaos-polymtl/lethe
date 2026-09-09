@@ -19,6 +19,7 @@ var searchData=
   ['periodic_5fadjacent_5fparticle_5fpairs_16',['periodic_adjacent_particle_pairs',['../structDEM_1_1dem__data__structures.html#a056092ee73f25467b18c2fdef638a790',1,'DEM::dem_data_structures']]],
   ['periodic_5fboundaries_5fcells_5finfo_17',['periodic_boundaries_cells_info',['../structDEM_1_1dem__data__structures.html#a30d6f5561e8db3bf8d00538251a791ef',1,'DEM::dem_data_structures']]],
   ['periodic_5fparticle_5fcontact_5finfo_18',['periodic_particle_contact_info',['../structDEM_1_1dem__data__structures.html#af8db211c9b9be852d5ab4a259d938cef',1,'DEM::dem_data_structures']]],
-  ['preconditionertypegc_19',['PreconditionerTypeGC',['../classMFNavierStokesPreconditionGMGBase.html#a36a22fea014ca1efd0c43ac656f99ef1',1,'MFNavierStokesPreconditionGMGBase']]],
-  ['preconditionertypels_20',['PreconditionerTypeLS',['../classMFNavierStokesPreconditionGMGBase.html#a2182b6449051eb85780675c00fd620b6',1,'MFNavierStokesPreconditionGMGBase']]]
+  ['periodicboundaries_19',['PeriodicBoundaries',['../namespaceParameters.html#a381317ade54e7ed0b8001db41419b5f7',1,'Parameters']]],
+  ['preconditionertypegc_20',['PreconditionerTypeGC',['../classMFNavierStokesPreconditionGMGBase.html#a36a22fea014ca1efd0c43ac656f99ef1',1,'MFNavierStokesPreconditionGMGBase']]],
+  ['preconditionertypels_21',['PreconditionerTypeLS',['../classMFNavierStokesPreconditionGMGBase.html#a2182b6449051eb85780675c00fd620b6',1,'MFNavierStokesPreconditionGMGBase']]]
 ];

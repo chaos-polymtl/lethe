@@ -97,8 +97,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad5961f5a9992a99f8b9d03957ab0e7f9" id="r_ad5961f5a9992a99f8b9d03957ab0e7f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolverParameters.html#ad5961f5a9992a99f8b9d03957ab0e7f9">declare</a> (ParameterHandler &amp;prm)</td></tr>
-<tr class="separator:ad5961f5a9992a99f8b9d03957ab0e7f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc85436f35433217315cd9869e208d3d" id="r_abc85436f35433217315cd9869e208d3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolverParameters.html#abc85436f35433217315cd9869e208d3d">declare</a> (ParameterHandler &amp;prm, const <a class="el" href="structParameters_1_1SizeOfSubsections.html">Parameters::SizeOfSubsections</a> size_of_subsections)</td></tr>
+<tr class="separator:abc85436f35433217315cd9869e208d3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b81867b7333bdcb881c5a5a2226fbba" id="r_a8b81867b7333bdcb881c5a5a2226fbba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolverParameters.html#a8b81867b7333bdcb881c5a5a2226fbba">parse</a> (ParameterHandler &amp;prm)</td></tr>
 <tr class="separator:a8b81867b7333bdcb881c5a5a2226fbba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -106,6 +106,10 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aa8b2c0ab19c9877a624630b849baa69f" id="r_aa8b2c0ab19c9877a624630b849baa69f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1Mesh.html">Parameters::Mesh</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolverParameters.html#aa8b2c0ab19c9877a624630b849baa69f">mesh</a></td></tr>
 <tr class="separator:aa8b2c0ab19c9877a624630b849baa69f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2bb8156b78bc34b6b33e91a342da1cf" id="r_ab2bb8156b78bc34b6b33e91a342da1cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParameters_1_1Manifolds.html">Parameters::Manifolds</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolverParameters.html#ab2bb8156b78bc34b6b33e91a342da1cf">manifolds_parameters</a></td></tr>
+<tr class="separator:ab2bb8156b78bc34b6b33e91a342da1cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1233123dede311c2b5d9e292cbc6425a" id="r_a1233123dede311c2b5d9e292cbc6425a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structParameters_1_1MeshBoxRefinement.html">Parameters::MeshBoxRefinement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolverParameters.html#a1233123dede311c2b5d9e292cbc6425a">mesh_box_refinement</a></td></tr>
+<tr class="separator:a1233123dede311c2b5d9e292cbc6425a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9c55862d9c19b1d7e3511a5154d2677" id="r_ab9c55862d9c19b1d7e3511a5154d2677"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1Testing.html">Parameters::Testing</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolverParameters.html#ab9c55862d9c19b1d7e3511a5154d2677">test</a></td></tr>
 <tr class="separator:ab9c55862d9c19b1d7e3511a5154d2677"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a518770fc42973abc4721c1ec7c5cac7c" id="r_a518770fc42973abc4721c1ec7c5cac7c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1Restart.html">Parameters::Restart</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMSolverParameters.html#a518770fc42973abc4721c1ec7c5cac7c">restart</a></td></tr>
@@ -139,10 +143,10 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 class DEMSolverParameters&lt; dim &gt;</div><p>Handles all the parameters declared in the parameter handler file. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00015">15</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00016">16</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad5961f5a9992a99f8b9d03957ab0e7f9" name="ad5961f5a9992a99f8b9d03957ab0e7f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5961f5a9992a99f8b9d03957ab0e7f9">&#9670;&#160;</a></span>declare()</h2>
+<a id="abc85436f35433217315cd9869e208d3d" name="abc85436f35433217315cd9869e208d3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc85436f35433217315cd9869e208d3d">&#9670;&#160;</a></span>declare()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -156,8 +160,18 @@ template&lt;int dim&gt; </div>
           <td class="memname">void <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt;::declare </td>
           <td>(</td>
           <td class="paramtype">ParameterHandler &amp;&#160;</td>
-          <td class="paramname"><em>prm</em></td><td>)</td>
+          <td class="paramname"><em>prm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1SizeOfSubsections.html">Parameters::SizeOfSubsections</a>&#160;</td>
+          <td class="paramname"><em>size_of_subsections</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -167,9 +181,18 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00036">36</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p>Declare all the parameters of a <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">size_of_subsections</td><td>The maximum size of the variable-size subsections of the parameter file, as returned by <a class="el" href="namespaceParameters.html#aadc75cfb32da341b9f4ead7b2846b351" title="Extract the maximum number of all variable size sections within the parameter file.">Parameters::get_size_of_subsections</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="parameters_8cc_source.html#l00099">Parameters::SimulationControl::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00359">Parameters::Timer::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03125">Parameters::Mesh::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04051">Parameters::Testing::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04098">Parameters::Restart::declare_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l01819">Parameters::Lagrangian::LagrangianPostProcessing::declare_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l00013">Parameters::Lagrangian::LagrangianPhysicalProperties::declare_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l01577">Parameters::Lagrangian::BCDEM::declare_parameters()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::floating_grid</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00027">DEMSolverParameters&lt; dim &gt;::floating_walls</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00030">DEMSolverParameters&lt; dim &gt;::forces_torques</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00031">DEMSolverParameters&lt; dim &gt;::grid_motion</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00024">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00018">DEMSolverParameters&lt; dim &gt;::mesh</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00026">DEMSolverParameters&lt; dim &gt;::model_parameters</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00032">DEMSolverParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00020">DEMSolverParameters&lt; dim &gt;::restart</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00022">DEMSolverParameters&lt; dim &gt;::simulation_control</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::solid_objects</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00019">DEMSolverParameters&lt; dim &gt;::test</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00021">DEMSolverParameters&lt; dim &gt;::timer</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00048">48</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+
+<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00031">DEMSolverParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="parameters_8cc_source.html#l00102">Parameters::SimulationControl::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00362">Parameters::Timer::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03128">Parameters::Mesh::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04054">Parameters::Testing::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04101">Parameters::Restart::declare_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l01820">Parameters::Lagrangian::LagrangianPostProcessing::declare_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l00013">Parameters::Lagrangian::LagrangianPhysicalProperties::declare_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l01577">Parameters::Lagrangian::BCDEM::declare_parameters()</a>, <a class="el" href="manifolds_8cc_source.html#l00072">Parameters::Manifolds::declare_parameters()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00032">DEMSolverParameters&lt; dim &gt;::floating_grid</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00030">DEMSolverParameters&lt; dim &gt;::floating_walls</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::forces_torques</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00034">DEMSolverParameters&lt; dim &gt;::grid_motion</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00027">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters_8h_source.html#l00033">Parameters::SizeOfSubsections::manifolds</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00020">DEMSolverParameters&lt; dim &gt;::manifolds_parameters</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00019">DEMSolverParameters&lt; dim &gt;::mesh</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00021">DEMSolverParameters&lt; dim &gt;::mesh_box_refinement</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::model_parameters</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00035">DEMSolverParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00023">DEMSolverParameters&lt; dim &gt;::restart</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::simulation_control</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00036">DEMSolverParameters&lt; dim &gt;::solid_objects</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00022">DEMSolverParameters&lt; dim &gt;::test</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00024">DEMSolverParameters&lt; dim &gt;::timer</a>.</p>
 
 </div>
 </div>
@@ -199,9 +222,17 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00074">74</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p>Parse all the parameters of a <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::floating_grid</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00027">DEMSolverParameters&lt; dim &gt;::floating_walls</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00030">DEMSolverParameters&lt; dim &gt;::forces_torques</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00031">DEMSolverParameters&lt; dim &gt;::grid_motion</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00024">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00018">DEMSolverParameters&lt; dim &gt;::mesh</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00026">DEMSolverParameters&lt; dim &gt;::model_parameters</a>, <a class="el" href="parameters_8cc_source.html#l00263">Parameters::SimulationControl::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00378">Parameters::Timer::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03223">Parameters::Mesh::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04074">Parameters::Testing::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04126">Parameters::Restart::parse_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l00134">Parameters::Lagrangian::LagrangianPhysicalProperties::parse_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l01602">Parameters::Lagrangian::BCDEM::parse_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l01870">Parameters::Lagrangian::LagrangianPostProcessing::parse_parameters()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00032">DEMSolverParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00020">DEMSolverParameters&lt; dim &gt;::restart</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00022">DEMSolverParameters&lt; dim &gt;::simulation_control</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::solid_objects</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00019">DEMSolverParameters&lt; dim &gt;::test</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00021">DEMSolverParameters&lt; dim &gt;::timer</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00095">95</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+
+<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00031">DEMSolverParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00032">DEMSolverParameters&lt; dim &gt;::floating_grid</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00030">DEMSolverParameters&lt; dim &gt;::floating_walls</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::forces_torques</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00034">DEMSolverParameters&lt; dim &gt;::grid_motion</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00027">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00020">DEMSolverParameters&lt; dim &gt;::manifolds_parameters</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00019">DEMSolverParameters&lt; dim &gt;::mesh</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00021">DEMSolverParameters&lt; dim &gt;::mesh_box_refinement</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::model_parameters</a>, <a class="el" href="manifolds_8cc_source.html#l00092">Parameters::Manifolds::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00266">Parameters::SimulationControl::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00381">Parameters::Timer::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03226">Parameters::Mesh::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04077">Parameters::Testing::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04129">Parameters::Restart::parse_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l00134">Parameters::Lagrangian::LagrangianPhysicalProperties::parse_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l01602">Parameters::Lagrangian::BCDEM::parse_parameters()</a>, <a class="el" href="parameters__lagrangian_8cc_source.html#l01871">Parameters::Lagrangian::LagrangianPostProcessing::parse_parameters()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00035">DEMSolverParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00023">DEMSolverParameters&lt; dim &gt;::restart</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::simulation_control</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00036">DEMSolverParameters&lt; dim &gt;::solid_objects</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00022">DEMSolverParameters&lt; dim &gt;::test</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00024">DEMSolverParameters&lt; dim &gt;::timer</a>.</p>
 
 </div>
 </div>
@@ -220,7 +251,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00028">28</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00031">31</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -238,7 +269,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00029">29</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00032">32</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -256,7 +287,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00027">27</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00030">30</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -274,7 +305,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00030">30</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00033">33</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -292,7 +323,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00031">31</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00034">34</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -310,7 +341,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00025">25</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00028">28</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -328,7 +359,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00024">24</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00027">27</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="ab2bb8156b78bc34b6b33e91a342da1cf" name="ab2bb8156b78bc34b6b33e91a342da1cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2bb8156b78bc34b6b33e91a342da1cf">&#9670;&#160;</a></span>manifolds_parameters</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classParameters_1_1Manifolds.html">Parameters::Manifolds</a> <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt;::manifolds_parameters</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00020">20</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -346,7 +395,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00018">18</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00019">19</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a1233123dede311c2b5d9e292cbc6425a" name="a1233123dede311c2b5d9e292cbc6425a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1233123dede311c2b5d9e292cbc6425a">&#9670;&#160;</a></span>mesh_box_refinement</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="structParameters_1_1MeshBoxRefinement.html">Parameters::MeshBoxRefinement</a>&gt; <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt;::mesh_box_refinement</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00021">21</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -364,7 +431,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00026">26</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00029">29</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -382,7 +449,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00032">32</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00035">35</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -400,7 +467,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00020">20</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00023">23</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -418,7 +485,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00022">22</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00025">25</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -436,7 +503,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00033">33</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00036">36</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -454,7 +521,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00019">19</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00022">22</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -472,7 +539,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00021">21</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__solver__parameters_8h_source.html#l00024">24</a> of file <a class="el" href="dem__solver__parameters_8h_source.html">dem_solver_parameters.h</a>.</p>
 
 </div>
 </div>

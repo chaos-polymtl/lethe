@@ -825,389 +825,390 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span> </div>
 <div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span><span class="keywordtype">int</span></div>
 <div class="foldopen" id="foldopen00702" data-start="{" data-end="}">
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a9be87343e816d07edaee585ada17cd4a">  702</a></span><a class="code hl_function" href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a>(<span class="keyword">const</span> std::string &amp;file_name)</div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>{</div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>  <span class="keywordtype">int</span> max_number_of_boundary_conditions =</div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>    <a class="code hl_function" href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;number&quot;</span>);</div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span> </div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>  AssertThrow(</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    max_number_of_boundary_conditions &gt;= 0,</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>    dealii::ExcMessage(</div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>      <span class="stringliteral">&quot;Your parameter file does not contain any indication for the number of boundary conditions for any physics supported by Lethe. Since November 2023, Lethe requires that a \&quot;boundary conditions\&quot; subsection is present with at least \&quot;number=0\&quot; &quot;</span>));</div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span> </div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>  <span class="keywordflow">return</span> std::max(max_number_of_boundary_conditions, 0);</div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>}</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a825eba5d27f92341a8515280f34f9d24">  702</a></span><a class="code hl_function" href="utilities_8cc.html#a7ec045358b58a8317c949de686567f35">get_max_subsection_size</a>(<span class="keyword">const</span> std::string &amp;file_name,</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>                        <span class="keyword">const</span> <span class="keywordtype">bool</span>         require_subsection_size)</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>{</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>  <span class="keywordtype">int</span> max_number_of_boundary_conditions =</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    <a class="code hl_function" href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;number&quot;</span>);</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span> </div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>  AssertThrow(</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>    !require_subsection_size || max_number_of_boundary_conditions &gt;= 0,</div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>    dealii::ExcMessage(</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>      <span class="stringliteral">&quot;Your parameter file does not contain any indication for the number of boundary conditions for any physics supported by Lethe. Since November 2023, Lethe requires that a \&quot;boundary conditions\&quot; subsection is present with at least \&quot;number=0\&quot; &quot;</span>));</div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span> </div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>  <span class="keywordflow">return</span> std::max(max_number_of_boundary_conditions, 0);</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>}</div>
 </div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span><span class="comment"></span> </div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span><span class="comment"> * @brief Concatenate words which are passed from the command line to a main function</span></div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span><span class="comment"> * into a single string in which the words are separated by space.</span></div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span><span class="comment"> * @param[in] argc number of arguments in C style.</span></div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span><span class="comment"> * @param[in] argv arguments themselves in C style.</span></div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>std::string</div>
-<div class="foldopen" id="foldopen00723" data-start="{" data-end="}">
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">  723</a></span><a class="code hl_function" href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>{</div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>  std::string result = std::string(argv[0]);</div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span> </div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i &lt; argc; ++i)</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    result = result + <span class="stringliteral">&quot; &quot;</span> + std::string(argv[i]);</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span> </div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>  <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>}</div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span><span class="comment"></span> </div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span><span class="comment"> * @brief Concatenate words which are passed from the command line to a main function</span></div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span><span class="comment"> * into a single string in which the words are separated by space.</span></div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span><span class="comment"> * @param[in] argc number of arguments in C style.</span></div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span><span class="comment"> * @param[in] argv arguments themselves in C style.</span></div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>std::string</div>
+<div class="foldopen" id="foldopen00724" data-start="{" data-end="}">
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">  724</a></span><a class="code hl_function" href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>{</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>  std::string result = std::string(argv[0]);</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span> </div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i &lt; argc; ++i)</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    result = result + <span class="stringliteral">&quot; &quot;</span> + std::string(argv[i]);</div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span> </div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>  <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>}</div>
 </div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span><span class="comment"></span> </div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span><span class="comment"> * @brief Print the information of the deal.II and Lethe branches</span></div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span><span class="comment"> * used to run an application in the &quot;git describe&quot; format.</span></div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00740" data-start="{" data-end="}">
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a8f95af8244cc326628392a04517913c7">  740</a></span><a class="code hl_function" href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout)</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>{</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>  (void)pcout;</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span> </div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>  <span class="comment">// Copy the tags to be able to delete the first v</span></div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>  std::string lethe_tag  = LETHE_GIT_FANCY_TAG;</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>  std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span> </div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>  <span class="comment">// Print tags using the right format</span></div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>  pcout &lt;&lt; <span class="stringliteral">&quot;lethe/&quot;</span> &lt;&lt; lethe_tag.erase(0, 1) &lt;&lt; <span class="stringliteral">&quot; deal.II/&quot;</span></div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>        &lt;&lt; dealii_tag.erase(0, 1) &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>  pcout &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>}</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span><span class="comment"></span> </div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span><span class="comment"> * @brief Print the information of the deal.II and Lethe branches</span></div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span><span class="comment"> * used to run an application in the &quot;git describe&quot; format.</span></div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00741" data-start="{" data-end="}">
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a8f95af8244cc326628392a04517913c7">  741</a></span><a class="code hl_function" href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout)</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>{</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>  (void)pcout;</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span> </div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>  <span class="comment">// Copy the tags to be able to delete the first v</span></div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>  std::string lethe_tag  = LETHE_GIT_FANCY_TAG;</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>  std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span> </div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>  <span class="comment">// Print tags using the right format</span></div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>  pcout &lt;&lt; <span class="stringliteral">&quot;lethe/&quot;</span> &lt;&lt; lethe_tag.erase(0, 1) &lt;&lt; <span class="stringliteral">&quot; deal.II/&quot;</span></div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>        &lt;&lt; dealii_tag.erase(0, 1) &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>  pcout &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>}</div>
 </div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span><span class="comment"></span> </div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
-<div class="foldopen" id="foldopen00765" data-start="{" data-end="}">
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">  765</a></span><a class="code hl_function" href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>{</div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>  <span class="keywordtype">int</span>                         argi = 1; <span class="comment">// skip program name</span></div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>  std::map&lt;std::string, bool&gt; options{};</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>    {</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>      std::string arg{argv[argi]};</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>      <span class="keyword">auto</span>        n{arg.length()};</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>      <span class="keywordflow">if</span> (n == 0 || arg[0] != <span class="charliteral">&#39;-&#39;</span> || n == 1)</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>        { <span class="comment">// empty arg or single hyphen</span></div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>          <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>        }</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>      <span class="keywordflow">if</span> (arg[1] != <span class="charliteral">&#39;-&#39;</span>)</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>        { <span class="comment">// short option</span></div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>          <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(n) i = 1; i &lt; n; ++i)</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>            {</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>              options[std::string{<span class="charliteral">&#39;-&#39;</span>} + std::string{arg[i]}] = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>            }</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        }</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>        { <span class="comment">// long option</span></div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>          <span class="keywordflow">if</span> (n == 2)</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>            { <span class="comment">// done options on &quot;--&quot; and skip it</span></div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>              argi++;</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>              <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>            }</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>          options[arg] = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>        }</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>    }</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>  std::vector&lt;std::string&gt; args{};</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>    {</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>      std::string arg{argv[argi]};</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>      args.push_back(arg);</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>    }</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>  <span class="keywordflow">return</span> {options, args};</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>}</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span><span class="comment"></span> </div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
+<div class="foldopen" id="foldopen00766" data-start="{" data-end="}">
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">  766</a></span><a class="code hl_function" href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>{</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>  <span class="keywordtype">int</span>                         argi = 1; <span class="comment">// skip program name</span></div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>  std::map&lt;std::string, bool&gt; options{};</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>    {</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>      std::string arg{argv[argi]};</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>      <span class="keyword">auto</span>        n{arg.length()};</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>      <span class="keywordflow">if</span> (n == 0 || arg[0] != <span class="charliteral">&#39;-&#39;</span> || n == 1)</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>        { <span class="comment">// empty arg or single hyphen</span></div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>          <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>        }</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>      <span class="keywordflow">if</span> (arg[1] != <span class="charliteral">&#39;-&#39;</span>)</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>        { <span class="comment">// short option</span></div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>          <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(n) i = 1; i &lt; n; ++i)</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>            {</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>              options[std::string{<span class="charliteral">&#39;-&#39;</span>} + std::string{arg[i]}] = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>            }</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>        }</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>        { <span class="comment">// long option</span></div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>          <span class="keywordflow">if</span> (n == 2)</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>            { <span class="comment">// done options on &quot;--&quot; and skip it</span></div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>              argi++;</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>              <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>            }</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>          options[arg] = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>        }</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    }</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>  std::vector&lt;std::string&gt; args{};</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>    {</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>      std::string arg{argv[argi]};</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>      args.push_back(arg);</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>    }</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>  <span class="keywordflow">return</span> {options, args};</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>}</div>
 </div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="comment"></span> </div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment"> * file</span></div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00811" data-start="{" data-end="}">
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">  811</a></span><a class="code hl_function" href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                                <span class="keyword">const</span> std::string        &amp;file_name)</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>{</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>  <span class="keyword">const</span> std::string print_parameters =</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>    <a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;print parameters&quot;</span>);</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span> </div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>  <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;only changed&quot;</span>)</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>    {</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>      prm.print_parameters(pcout.get_stream(),</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>                           ParameterHandler::OutputStyle::PRM |</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>                             ParameterHandler::OutputStyle::Short |</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                             ParameterHandler::KeepDeclarationOrder |</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                             ParameterHandler::KeepOnlyChanged);</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>    }</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;all&quot;</span>)</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>    {</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>      prm.print_parameters(pcout.get_stream(),</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>                           ParameterHandler::OutputStyle::PRM |</div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>                             ParameterHandler::OutputStyle::Short |</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>                             ParameterHandler::KeepDeclarationOrder);</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>    }</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>}</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="comment"></span> </div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> * file</span></div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00812" data-start="{" data-end="}">
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">  812</a></span><a class="code hl_function" href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>                                <span class="keyword">const</span> std::string        &amp;file_name)</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>{</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>  <span class="keyword">const</span> std::string print_parameters =</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>    <a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;print parameters&quot;</span>);</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span> </div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>  <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;only changed&quot;</span>)</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>    {</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>      prm.print_parameters(pcout.get_stream(),</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>                           ParameterHandler::OutputStyle::PRM |</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                             ParameterHandler::OutputStyle::Short |</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                             ParameterHandler::KeepDeclarationOrder |</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                             ParameterHandler::KeepOnlyChanged);</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    }</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;all&quot;</span>)</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    {</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>      prm.print_parameters(pcout.get_stream(),</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>                           ParameterHandler::OutputStyle::PRM |</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>                             ParameterHandler::OutputStyle::Short |</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>                             ParameterHandler::KeepDeclarationOrder);</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>    }</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>}</div>
 </div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00838" data-start="{" data-end="}">
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#ad051c09424365f2fdcc138dcee034569">  838</a></span><a class="code hl_function" href="utilities_8cc.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a>(std::string &amp;s)</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>{</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\n&quot;</span>, <span class="stringliteral">&quot;\n&quot;</span>);</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\t&quot;</span>, <span class="stringliteral">&quot;\t&quot;</span>);</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\r&quot;</span>, <span class="stringliteral">&quot;\r&quot;</span>);</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\b&quot;</span>, <span class="stringliteral">&quot;\b&quot;</span>);</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\v&quot;</span>, <span class="stringliteral">&quot;\v&quot;</span>);</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>}</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span> </div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00839" data-start="{" data-end="}">
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#ad051c09424365f2fdcc138dcee034569">  839</a></span><a class="code hl_function" href="utilities_8cc.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a>(std::string &amp;s)</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>{</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\n&quot;</span>, <span class="stringliteral">&quot;\n&quot;</span>);</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\t&quot;</span>, <span class="stringliteral">&quot;\t&quot;</span>);</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\r&quot;</span>, <span class="stringliteral">&quot;\r&quot;</span>);</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\b&quot;</span>, <span class="stringliteral">&quot;\b&quot;</span>);</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>  boost::replace_all(s, <span class="stringliteral">&quot;\\v&quot;</span>, <span class="stringliteral">&quot;\v&quot;</span>);</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>}</div>
 </div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span> </div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00848" data-start="{" data-end="}">
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#ae2e85bc56c84564999daa889908507c8">  848</a></span><a class="code hl_function" href="utilities_8cc.html#ae2e85bc56c84564999daa889908507c8">print_comment_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>                             ParameterHandler         &amp;prm)</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>{</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>  std::string comment_string = prm.get(<span class="stringliteral">&quot;comment message&quot;</span>);</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>  <a class="code hl_function" href="utilities_8cc.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a>(comment_string);</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span> </div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>  <span class="keywordflow">if</span> (!comment_string.empty())</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>    {</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>      pcout &lt;&lt; <span class="stringliteral">&quot;Comment message: &quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>      pcout &lt;&lt; comment_string &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    }</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>}</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span> </div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00849" data-start="{" data-end="}">
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#ae2e85bc56c84564999daa889908507c8">  849</a></span><a class="code hl_function" href="utilities_8cc.html#ae2e85bc56c84564999daa889908507c8">print_comment_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>                             ParameterHandler         &amp;prm)</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>{</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>  std::string comment_string = prm.get(<span class="stringliteral">&quot;comment message&quot;</span>);</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>  <a class="code hl_function" href="utilities_8cc.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a>(comment_string);</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span> </div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>  <span class="keywordflow">if</span> (!comment_string.empty())</div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    {</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>      pcout &lt;&lt; <span class="stringliteral">&quot;Comment message: &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>      pcout &lt;&lt; comment_string &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    }</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>}</div>
 </div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span> </div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00863" data-start="{" data-end="}">
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">  863</a></span><a class="code hl_function" href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path)</div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>{</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;filename : std::filesystem::directory_iterator{output_path})</div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>    {</div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>      <span class="keywordflow">if</span> (filename.path().extension() == <span class="stringliteral">&quot;.vtu&quot;</span> ||</div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvd&quot;</span> ||</div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvtu&quot;</span>)</div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>        std::filesystem::remove(filename.path());</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>    }</div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>}</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span> </div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00864" data-start="{" data-end="}">
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">  864</a></span><a class="code hl_function" href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path)</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>{</div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;filename : std::filesystem::directory_iterator{output_path})</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>    {</div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>      <span class="keywordflow">if</span> (filename.path().extension() == <span class="stringliteral">&quot;.vtu&quot;</span> ||</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvd&quot;</span> ||</div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvtu&quot;</span>)</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>        std::filesystem::remove(filename.path());</div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    }</div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>}</div>
 </div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span> </div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00876" data-start="{" data-end="}">
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">  876</a></span><a class="code hl_function" href="utilities_8cc.html#a6f2122405c82e55ced88280d54e6d56b">evaluate_values_at_points</a>(</div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                           &amp;solution_field,</div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>  Utilities::MPI::RemotePointEvaluation&lt;dim&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>  std::vector&lt;double&gt;                        &amp;evaluated_scalar_values,</div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          first_selected_component)</div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>{</div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>  <span class="comment">// Check if solution vector is relevant when running on multiple processes</span></div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>  <span class="keywordflow">if</span> (Utilities::MPI::n_mpi_processes(dof_handler.get_mpi_communicator()) &gt; 1)</div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>    AssertThrow(solution_field.has_ghost_elements(),</div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>                GhostElementsRequired(<span class="stringliteral">&quot;evaluate_values_at_points&quot;</span>));</div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span> </div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>  <span class="comment">// Reinitialize remote point evaluator if needed</span></div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>  <span class="keywordflow">if</span> (!remote_point_evaluator.is_ready())</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>    remote_point_evaluator.reinit(evaluation_points,</div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>                                  dof_handler.get_triangulation(),</div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>                                  mapping);</div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span> </div>
-<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>  <span class="comment">// Evaluate scalar values at points using RemotePointEvaluation if they are</span></div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>  <span class="comment">// found within the domain</span></div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>  <span class="keywordflow">if</span> (points_are_in_domain&lt;dim&gt;(evaluation_points, remote_point_evaluator))</div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>    evaluated_scalar_values = VectorTools::point_values&lt;1&gt;(</div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>      mapping,</div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>      dof_handler,</div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>      solution_field,</div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>      evaluation_points,</div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>      remote_point_evaluator,</div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>      VectorTools::EvaluationFlags::EvaluationFlags::avg,</div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>      first_selected_component);</div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>}</div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span> </div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00877" data-start="{" data-end="}">
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">  877</a></span><a class="code hl_function" href="utilities_8cc.html#a6f2122405c82e55ced88280d54e6d56b">evaluate_values_at_points</a>(</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                           &amp;solution_field,</div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>  Utilities::MPI::RemotePointEvaluation&lt;dim&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>  std::vector&lt;double&gt;                        &amp;evaluated_scalar_values,</div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          first_selected_component)</div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>{</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>  <span class="comment">// Check if solution vector is relevant when running on multiple processes</span></div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>  <span class="keywordflow">if</span> (Utilities::MPI::n_mpi_processes(dof_handler.get_mpi_communicator()) &gt; 1)</div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>    AssertThrow(solution_field.has_ghost_elements(),</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>                GhostElementsRequired(<span class="stringliteral">&quot;evaluate_values_at_points&quot;</span>));</div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span> </div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>  <span class="comment">// Reinitialize remote point evaluator if needed</span></div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>  <span class="keywordflow">if</span> (!remote_point_evaluator.is_ready())</div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>    remote_point_evaluator.reinit(evaluation_points,</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>                                  dof_handler.get_triangulation(),</div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>                                  mapping);</div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span> </div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>  <span class="comment">// Evaluate scalar values at points using RemotePointEvaluation if they are</span></div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>  <span class="comment">// found within the domain</span></div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>  <span class="keywordflow">if</span> (points_are_in_domain&lt;dim&gt;(evaluation_points, remote_point_evaluator))</div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>    evaluated_scalar_values = VectorTools::point_values&lt;1&gt;(</div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>      mapping,</div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>      dof_handler,</div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>      solution_field,</div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>      evaluation_points,</div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>      remote_point_evaluator,</div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>      VectorTools::EvaluationFlags::EvaluationFlags::avg,</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>      first_selected_component);</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>}</div>
 </div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span> </div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno"><a class="line" href="utilities_8cc.html#ad5158b2cc68e111f73665aa2f0753b64">  909</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span><a class="code hl_function" href="utilities_8cc.html#ad5158b2cc68e111f73665aa2f0753b64">evaluate_values_at_points&lt;2, GlobalVectorType&gt;</a>(</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                   &amp;solution_field,</div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>  std::vector&lt;double&gt;                      &amp;evaluated_scalar_values,</div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span> </div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a101432bd9f59e6bcb277e9be4d1801fe">  919</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span><a class="code hl_function" href="utilities_8cc.html#a101432bd9f59e6bcb277e9be4d1801fe">evaluate_values_at_points&lt;3, GlobalVectorType&gt;</a>(</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                   &amp;solution_field,</div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>  std::vector&lt;double&gt;                      &amp;evaluated_scalar_values,</div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
-<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span> </div>
-<div class="line"><a id="l00929" name="l00929"></a><span class="lineno"><a class="line" href="utilities_8cc.html#ad2479d28ea6925c4b836b5004fc2c691">  929</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span><a class="code hl_function" href="utilities_8cc.html#ad2479d28ea6925c4b836b5004fc2c691">evaluate_values_at_points&lt;2, GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>              &amp;solution_field,</div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>  std::vector&lt;double&gt;                      &amp;evaluated_scalar_values,</div>
-<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
-<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span> </div>
-<div class="line"><a id="l00939" name="l00939"></a><span class="lineno"><a class="line" href="utilities_8cc.html#aacab2ae1eacacf43dc9272eaa79d40f2">  939</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span><a class="code hl_function" href="utilities_8cc.html#aacab2ae1eacacf43dc9272eaa79d40f2">evaluate_values_at_points&lt;3, GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>              &amp;solution_field,</div>
-<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>  std::vector&lt;double&gt;                      &amp;evaluated_scalar_values,</div>
-<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
-<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span> </div>
-<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span><span class="preprocessor">#ifndef LETHE_USE_LDV</span></div>
-<div class="line"><a id="l00950" name="l00950"></a><span class="lineno"><a class="line" href="utilities_8cc.html#acfc39764d1211f31fac743b6f5fa6215">  950</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>evaluate_values_at_points&lt;2, LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
-<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                                 &amp;mapping,</div>
-<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                              &amp;dof_handler,</div>
-<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt; &amp;solution_field,</div>
-<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;                      &amp;evaluation_points,</div>
-<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt;         &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>  std::vector&lt;double&gt;                              &amp;evaluated_scalar_values,</div>
-<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                                first_selected_component);</div>
-<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span> </div>
-<div class="line"><a id="l00960" name="l00960"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a437d743ff119e4d98fbc29ed57f60487">  960</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span>evaluate_values_at_points&lt;3, LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
-<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                                 &amp;mapping,</div>
-<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                              &amp;dof_handler,</div>
-<div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span>  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt; &amp;solution_field,</div>
-<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                      &amp;evaluation_points,</div>
-<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt;         &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>  std::vector&lt;double&gt;                              &amp;evaluated_scalar_values,</div>
-<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                                first_selected_component);</div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span> </div>
-<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> n_component, <span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
-<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00973" data-start="{" data-end="}">
-<div class="line"><a id="l00973" name="l00973"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a8cae98c0b0f1048d719ce726b3feb168">  973</a></span><a class="code hl_function" href="utilities_8cc.html#a6f2122405c82e55ced88280d54e6d56b">evaluate_values_at_points</a>(</div>
-<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                           &amp;solution_field,</div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>  Utilities::MPI::RemotePointEvaluation&lt;dim&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>  std::vector&lt;Tensor&lt;1, dim, double&gt;&gt;        &amp;evaluated_vector_values,</div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          first_selected_component)</div>
-<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>{</div>
-<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>  <span class="comment">// Check if solution vector is relevant when running on multiple processes</span></div>
-<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>  <span class="keywordflow">if</span> (Utilities::MPI::n_mpi_processes(dof_handler.get_mpi_communicator()) &gt; 1)</div>
-<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>    AssertThrow(solution_field.has_ghost_elements(),</div>
-<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>                GhostElementsRequired(<span class="stringliteral">&quot;evaluate_values_at_points&quot;</span>));</div>
-<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span> </div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>  <span class="comment">// Reinitialize remote point evaluator if needed</span></div>
-<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>  <span class="keywordflow">if</span> (!remote_point_evaluator.is_ready())</div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>    remote_point_evaluator.reinit(evaluation_points,</div>
-<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>                                  dof_handler.get_triangulation(),</div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>                                  mapping);</div>
-<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span> </div>
-<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>  <span class="comment">// Evaluate scalar values at points using RemotePointEvaluation</span></div>
-<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>  <span class="keywordflow">if</span> (points_are_in_domain&lt;dim&gt;(evaluation_points, remote_point_evaluator))</div>
-<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>    evaluated_vector_values = VectorTools::point_values&lt;n_component&gt;(</div>
-<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>      mapping,</div>
-<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>      dof_handler,</div>
-<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>      solution_field,</div>
-<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>      evaluation_points,</div>
-<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>      remote_point_evaluator,</div>
-<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>      VectorTools::EvaluationFlags::EvaluationFlags::avg,</div>
-<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>      first_selected_component);</div>
-<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>}</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span> </div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno"><a class="line" href="utilities_8cc.html#ad5158b2cc68e111f73665aa2f0753b64">  910</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><a class="code hl_function" href="utilities_8cc.html#ad5158b2cc68e111f73665aa2f0753b64">evaluate_values_at_points&lt;2, GlobalVectorType&gt;</a>(</div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                   &amp;solution_field,</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>  std::vector&lt;double&gt;                      &amp;evaluated_scalar_values,</div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span> </div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a101432bd9f59e6bcb277e9be4d1801fe">  920</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span><a class="code hl_function" href="utilities_8cc.html#a101432bd9f59e6bcb277e9be4d1801fe">evaluate_values_at_points&lt;3, GlobalVectorType&gt;</a>(</div>
+<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                   &amp;solution_field,</div>
+<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>  std::vector&lt;double&gt;                      &amp;evaluated_scalar_values,</div>
+<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span> </div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno"><a class="line" href="utilities_8cc.html#ad2479d28ea6925c4b836b5004fc2c691">  930</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span><a class="code hl_function" href="utilities_8cc.html#ad2479d28ea6925c4b836b5004fc2c691">evaluate_values_at_points&lt;2, GlobalBlockVectorType&gt;</a>(</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>              &amp;solution_field,</div>
+<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>  std::vector&lt;double&gt;                      &amp;evaluated_scalar_values,</div>
+<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span> </div>
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno"><a class="line" href="utilities_8cc.html#aacab2ae1eacacf43dc9272eaa79d40f2">  940</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span><a class="code hl_function" href="utilities_8cc.html#aacab2ae1eacacf43dc9272eaa79d40f2">evaluate_values_at_points&lt;3, GlobalBlockVectorType&gt;</a>(</div>
+<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>              &amp;solution_field,</div>
+<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>  std::vector&lt;double&gt;                      &amp;evaluated_scalar_values,</div>
+<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
+<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span> </div>
+<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span><span class="preprocessor">#ifndef LETHE_USE_LDV</span></div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno"><a class="line" href="utilities_8cc.html#acfc39764d1211f31fac743b6f5fa6215">  951</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>evaluate_values_at_points&lt;2, LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
+<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                                 &amp;mapping,</div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                              &amp;dof_handler,</div>
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt; &amp;solution_field,</div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;                      &amp;evaluation_points,</div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt;         &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>  std::vector&lt;double&gt;                              &amp;evaluated_scalar_values,</div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                                first_selected_component);</div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span> </div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a437d743ff119e4d98fbc29ed57f60487">  961</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span>evaluate_values_at_points&lt;3, LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                                 &amp;mapping,</div>
+<div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                              &amp;dof_handler,</div>
+<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt; &amp;solution_field,</div>
+<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                      &amp;evaluation_points,</div>
+<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt;         &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>  std::vector&lt;double&gt;                              &amp;evaluated_scalar_values,</div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                                first_selected_component);</div>
+<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span> </div>
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> n_component, <span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00974" data-start="{" data-end="}">
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a8cae98c0b0f1048d719ce726b3feb168">  974</a></span><a class="code hl_function" href="utilities_8cc.html#a6f2122405c82e55ced88280d54e6d56b">evaluate_values_at_points</a>(</div>
+<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                           &amp;solution_field,</div>
+<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>  Utilities::MPI::RemotePointEvaluation&lt;dim&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>  std::vector&lt;Tensor&lt;1, dim, double&gt;&gt;        &amp;evaluated_vector_values,</div>
+<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          first_selected_component)</div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>{</div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>  <span class="comment">// Check if solution vector is relevant when running on multiple processes</span></div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>  <span class="keywordflow">if</span> (Utilities::MPI::n_mpi_processes(dof_handler.get_mpi_communicator()) &gt; 1)</div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>    AssertThrow(solution_field.has_ghost_elements(),</div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>                GhostElementsRequired(<span class="stringliteral">&quot;evaluate_values_at_points&quot;</span>));</div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span> </div>
+<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>  <span class="comment">// Reinitialize remote point evaluator if needed</span></div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>  <span class="keywordflow">if</span> (!remote_point_evaluator.is_ready())</div>
+<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>    remote_point_evaluator.reinit(evaluation_points,</div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>                                  dof_handler.get_triangulation(),</div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>                                  mapping);</div>
+<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span> </div>
+<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>  <span class="comment">// Evaluate scalar values at points using RemotePointEvaluation</span></div>
+<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>  <span class="keywordflow">if</span> (points_are_in_domain&lt;dim&gt;(evaluation_points, remote_point_evaluator))</div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>    evaluated_vector_values = VectorTools::point_values&lt;n_component&gt;(</div>
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>      mapping,</div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>      dof_handler,</div>
+<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>      solution_field,</div>
+<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>      evaluation_points,</div>
+<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>      remote_point_evaluator,</div>
+<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>      VectorTools::EvaluationFlags::EvaluationFlags::avg,</div>
+<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>      first_selected_component);</div>
+<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>}</div>
 </div>
-<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span> </div>
-<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a3dd9e366ca9bfc576c1b89ea5cb15e09"> 1005</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span><a class="code hl_function" href="utilities_8cc.html#a3dd9e366ca9bfc576c1b89ea5cb15e09">evaluate_values_at_points&lt;2, 2, GlobalVectorType&gt;</a>(</div>
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                   &amp;solution_field,</div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>  std::vector&lt;Tensor&lt;1, 2, double&gt;&gt;        &amp;evaluated_vector_values,</div>
-<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
-<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span> </div>
-<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a2cd5cb2678eb57aff8d2d890a9131f25"> 1015</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><a class="code hl_function" href="utilities_8cc.html#a2cd5cb2678eb57aff8d2d890a9131f25">evaluate_values_at_points&lt;3, 3, GlobalVectorType&gt;</a>(</div>
-<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                   &amp;solution_field,</div>
-<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>  std::vector&lt;Tensor&lt;1, 3, double&gt;&gt;        &amp;evaluated_vector_values,</div>
-<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
-<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span> </div>
-<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"><a class="line" href="utilities_8cc.html#ac16af7a8766889a7247be69d3a94e392"> 1025</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><a class="code hl_function" href="utilities_8cc.html#ac16af7a8766889a7247be69d3a94e392">evaluate_values_at_points&lt;2, 2, GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>              &amp;solution_field,</div>
-<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>  std::vector&lt;Tensor&lt;1, 2, double&gt;&gt;        &amp;evaluated_vector_values,</div>
-<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
-<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span> </div>
-<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"><a class="line" href="utilities_8cc.html#abc349a199ce6af0371f81d2887e4e83a"> 1035</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span><a class="code hl_function" href="utilities_8cc.html#abc349a199ce6af0371f81d2887e4e83a">evaluate_values_at_points&lt;3, 3, GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>              &amp;solution_field,</div>
-<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>  std::vector&lt;Tensor&lt;1, 3, double&gt;&gt;        &amp;evaluated_vector_values,</div>
-<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
-<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span> </div>
-<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span><span class="preprocessor">#ifndef LETHE_USE_LDV</span></div>
-<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"><a class="line" href="utilities_8cc.html#aa0fa14e5dd5c630b426649390795ed70"> 1046</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span>evaluate_values_at_points&lt;2, 2, LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
-<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                                 &amp;mapping,</div>
-<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                              &amp;dof_handler,</div>
-<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span>  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt; &amp;solution_field,</div>
-<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;                      &amp;evaluation_points,</div>
-<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt;         &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span>  std::vector&lt;Tensor&lt;1, 2, double&gt;&gt;                &amp;evaluated_vector_values,</div>
-<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                                first_selected_component);</div>
-<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span> </div>
-<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"><a class="line" href="utilities_8cc.html#aea16e624eea2399b133e3f98ac17c886"> 1056</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span>evaluate_values_at_points&lt;3, 3, LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
-<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                                 &amp;mapping,</div>
-<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                              &amp;dof_handler,</div>
-<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span>  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt; &amp;solution_field,</div>
-<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                      &amp;evaluation_points,</div>
-<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt;         &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span>  std::vector&lt;Tensor&lt;1, 3, double&gt;&gt;                &amp;evaluated_vector_values,</div>
-<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                                first_selected_component);</div>
-<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span> </div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a3dd9e366ca9bfc576c1b89ea5cb15e09"> 1006</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span><a class="code hl_function" href="utilities_8cc.html#a3dd9e366ca9bfc576c1b89ea5cb15e09">evaluate_values_at_points&lt;2, 2, GlobalVectorType&gt;</a>(</div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                   &amp;solution_field,</div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>  std::vector&lt;Tensor&lt;1, 2, double&gt;&gt;        &amp;evaluated_vector_values,</div>
+<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
+<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span> </div>
+<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a2cd5cb2678eb57aff8d2d890a9131f25"> 1016</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span><a class="code hl_function" href="utilities_8cc.html#a2cd5cb2678eb57aff8d2d890a9131f25">evaluate_values_at_points&lt;3, 3, GlobalVectorType&gt;</a>(</div>
+<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                   &amp;solution_field,</div>
+<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>  std::vector&lt;Tensor&lt;1, 3, double&gt;&gt;        &amp;evaluated_vector_values,</div>
+<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
+<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span> </div>
+<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"><a class="line" href="utilities_8cc.html#ac16af7a8766889a7247be69d3a94e392"> 1026</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span><a class="code hl_function" href="utilities_8cc.html#ac16af7a8766889a7247be69d3a94e392">evaluate_values_at_points&lt;2, 2, GlobalBlockVectorType&gt;</a>(</div>
+<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>              &amp;solution_field,</div>
+<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>  std::vector&lt;Tensor&lt;1, 2, double&gt;&gt;        &amp;evaluated_vector_values,</div>
+<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
+<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span> </div>
+<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"><a class="line" href="utilities_8cc.html#abc349a199ce6af0371f81d2887e4e83a"> 1036</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span><a class="code hl_function" href="utilities_8cc.html#abc349a199ce6af0371f81d2887e4e83a">evaluate_values_at_points&lt;3, 3, GlobalBlockVectorType&gt;</a>(</div>
+<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>              &amp;solution_field,</div>
+<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>  std::vector&lt;Tensor&lt;1, 3, double&gt;&gt;        &amp;evaluated_vector_values,</div>
+<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                        first_selected_component);</div>
+<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span> </div>
+<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span><span class="preprocessor">#ifndef LETHE_USE_LDV</span></div>
+<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"><a class="line" href="utilities_8cc.html#aa0fa14e5dd5c630b426649390795ed70"> 1047</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>evaluate_values_at_points&lt;2, 2, LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
+<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>  <span class="keyword">const</span> Mapping&lt;2&gt;                                 &amp;mapping,</div>
+<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span>  <span class="keyword">const</span> DoFHandler&lt;2&gt;                              &amp;dof_handler,</div>
+<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span>  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt; &amp;solution_field,</div>
+<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;2&gt;&gt;                      &amp;evaluation_points,</div>
+<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span>  Utilities::MPI::RemotePointEvaluation&lt;2&gt;         &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span>  std::vector&lt;Tensor&lt;1, 2, double&gt;&gt;                &amp;evaluated_vector_values,</div>
+<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                                first_selected_component);</div>
+<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span> </div>
+<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"><a class="line" href="utilities_8cc.html#aea16e624eea2399b133e3f98ac17c886"> 1057</a></span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span>evaluate_values_at_points&lt;3, 3, LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
+<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span>  <span class="keyword">const</span> Mapping&lt;3&gt;                                 &amp;mapping,</div>
+<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span>  <span class="keyword">const</span> DoFHandler&lt;3&gt;                              &amp;dof_handler,</div>
+<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt; &amp;solution_field,</div>
+<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt;                      &amp;evaluation_points,</div>
+<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span>  Utilities::MPI::RemotePointEvaluation&lt;3&gt;         &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>  std::vector&lt;Tensor&lt;1, 3, double&gt;&gt;                &amp;evaluated_vector_values,</div>
+<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                                first_selected_component);</div>
+<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="acore_2utilities_8h_html"><div class="ttname"><a href="core_2utilities_8h.html">utilities.h</a></div></div>
 <div class="ttc" id="atime__harmonic__maxwell_8h_html_a5114f84176ad5081553f88d2b5d2525e"><div class="ttname"><a href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a></div><div class="ttdeci">GlobalVectorType VectorType</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell_8h_source.html#l00062">time_harmonic_maxwell.h:62</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a0f8ab7bdfb51d1a2ab56c0c25a3b53a9"><div class="ttname"><a href="utilities_8cc.html#a0f8ab7bdfb51d1a2ab56c0c25a3b53a9">make_table_scalars_vectors</a></div><div class="ttdeci">TableHandler make_table_scalars_vectors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of vectors of scalars (...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00020">utilities.cc:20</a></div></div>
@@ -1216,29 +1217,29 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="autilities_8cc_html_a2cd5cb2678eb57aff8d2d890a9131f25"><div class="ttname"><a href="utilities_8cc.html#a2cd5cb2678eb57aff8d2d890a9131f25">evaluate_values_at_points&lt; 3, 3, GlobalVectorType &gt;</a></div><div class="ttdeci">template void evaluate_values_at_points&lt; 3, 3, GlobalVectorType &gt;(const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const GlobalVectorType &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 3, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</div></div>
 <div class="ttc" id="autilities_8cc_html_a2f4c4c70d98da93b973297b97e085b90"><div class="ttname"><a href="utilities_8cc.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a></div><div class="ttdeci">unsigned int get_dimension(const std::string &amp;file_name)</div><div class="ttdoc">Extract the dimension in which to run Lethe from the contents of the parameter file....</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00636">utilities.cc:636</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a34ac72c0df6c4a24f85c97b22d137520"><div class="ttname"><a href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a></div><div class="ttdeci">std::string get_last_value_of_parameter(const std::string &amp;file_name, const std::string &amp;parameter_name)</div><div class="ttdoc">Retrieves the value of a specific parameter from an input file. Returns an empty string if the parame...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00553">utilities.cc:553</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a3badf505e17c1f77892888491dd53f5f"><div class="ttname"><a href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a></div><div class="ttdeci">std::tuple&lt; std::map&lt; std::string, bool &gt;, std::vector&lt; std::string &gt; &gt; parse_args(int argc, char **argv)</div><div class="ttdoc">Parse the arguments given to the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00765">utilities.cc:765</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a3badf505e17c1f77892888491dd53f5f"><div class="ttname"><a href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a></div><div class="ttdeci">std::tuple&lt; std::map&lt; std::string, bool &gt;, std::vector&lt; std::string &gt; &gt; parse_args(int argc, char **argv)</div><div class="ttdoc">Parse the arguments given to the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00766">utilities.cc:766</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a3da00f7bc4b8457a3b104895cc393e9e"><div class="ttname"><a href="utilities_8cc.html#a3da00f7bc4b8457a3b104895cc393e9e">make_table_tensors_scalars</a></div><div class="ttdeci">TableHandler make_table_tensors_scalars(const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; double &gt; &amp;dependent_vector, const std::string &amp;dependent_column_name, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of scalars (depe...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00185">utilities.cc:185</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a3dd9e366ca9bfc576c1b89ea5cb15e09"><div class="ttname"><a href="utilities_8cc.html#a3dd9e366ca9bfc576c1b89ea5cb15e09">evaluate_values_at_points&lt; 2, 2, GlobalVectorType &gt;</a></div><div class="ttdeci">template void evaluate_values_at_points&lt; 2, 2, GlobalVectorType &gt;(const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const GlobalVectorType &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 2, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</div></div>
 <div class="ttc" id="autilities_8cc_html_a4a15c94c7b62291bc0451cfa1cb05449"><div class="ttname"><a href="utilities_8cc.html#a4a15c94c7b62291bc0451cfa1cb05449">fill_table_from_file</a></div><div class="ttdeci">void fill_table_from_file(TableHandler &amp;table, const std::string &amp;file_name, const std::string &amp;delimiter)</div><div class="ttdoc">Reads a file generated by a deal.II TableHandler and fills a TableHandler with its data.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00221">utilities.cc:221</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a4b182f49ed10ffa3d2d50a9a309cd2f0"><div class="ttname"><a href="utilities_8cc.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a></div><div class="ttdeci">void create_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Creates the simulation output folder.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00369">utilities.cc:369</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00811">utilities.cc:811</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00812">utilities.cc:812</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a6761d32800de2739011760d71ae33c09"><div class="ttname"><a href="utilities_8cc.html#a6761d32800de2739011760d71ae33c09">delete_output_folder</a></div><div class="ttdeci">void delete_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Delete the output folder and its content.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00375">utilities.cc:375</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00863">utilities.cc:863</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00864">utilities.cc:864</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a6eae881564cc80b005d6023feb6aa610"><div class="ttname"><a href="utilities_8cc.html#a6eae881564cc80b005d6023feb6aa610">fill_string_vectors_from_file</a></div><div class="ttdeci">void fill_string_vectors_from_file(std::map&lt; std::string, std::vector&lt; std::string &gt; &gt; &amp;map, const std::string &amp;file, const std::string &amp;delimiter)</div><div class="ttdoc">Function that read a file that was build from a dealii table and create a map with the key being the ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00320">utilities.cc:320</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a6f2122405c82e55ced88280d54e6d56b"><div class="ttname"><a href="utilities_8cc.html#a6f2122405c82e55ced88280d54e6d56b">evaluate_values_at_points</a></div><div class="ttdeci">void evaluate_values_at_points(const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;solution_field, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</div><div class="ttdoc">Evaluates the values of a scalar field at remote points of the domain from the mapping,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00876">utilities.cc:876</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a8f95af8244cc326628392a04517913c7"><div class="ttname"><a href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a></div><div class="ttdeci">void print_version_info(const ConditionalOStream &amp;pcout)</div><div class="ttdoc">Print the information of the deal.II and Lethe branches used to run an application in the &quot;git descri...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00740">utilities.cc:740</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a9be87343e816d07edaee585ada17cd4a"><div class="ttname"><a href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a></div><div class="ttdeci">int get_max_subsection_size(const std::string &amp;file_name)</div><div class="ttdoc">Extract the maximum value between the number of boundary conditions and the number of manifolds from ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00702">utilities.cc:702</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a6f2122405c82e55ced88280d54e6d56b"><div class="ttname"><a href="utilities_8cc.html#a6f2122405c82e55ced88280d54e6d56b">evaluate_values_at_points</a></div><div class="ttdeci">void evaluate_values_at_points(const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;solution_field, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</div><div class="ttdoc">Evaluates the values of a scalar field at remote points of the domain from the mapping,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00877">utilities.cc:877</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a7ec045358b58a8317c949de686567f35"><div class="ttname"><a href="utilities_8cc.html#a7ec045358b58a8317c949de686567f35">get_max_subsection_size</a></div><div class="ttdeci">int get_max_subsection_size(const std::string &amp;file_name, const bool require_subsection_size)</div><div class="ttdoc">Extract the maximum value between the number of boundary conditions and the number of manifolds from ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00702">utilities.cc:702</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a8f95af8244cc326628392a04517913c7"><div class="ttname"><a href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a></div><div class="ttdeci">void print_version_info(const ConditionalOStream &amp;pcout)</div><div class="ttdoc">Print the information of the deal.II and Lethe branches used to run an application in the &quot;git descri...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00741">utilities.cc:741</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a9f8ab927fc54de35560ce4d2734ea0b7"><div class="ttname"><a href="utilities_8cc.html#a9f8ab927fc54de35560ce4d2734ea0b7">fill_vectors_from_file</a></div><div class="ttdeci">void fill_vectors_from_file(std::map&lt; std::string, std::vector&lt; double &gt; &gt; &amp;map, const std::string &amp;file, const std::string &amp;delimiter)</div><div class="ttdoc">function that read a file that was build from a dealii table and fill 2 vectors. The first vector con...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00267">utilities.cc:267</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a9fc5d803036352e72efcd625b2466707"><div class="ttname"><a href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a></div><div class="ttdeci">int get_max_value_of_parameter(const std::string &amp;file_name, const std::string &amp;parameter_name)</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00592">utilities.cc:592</a></div></div>
-<div class="ttc" id="autilities_8cc_html_aa2b435317e26c5fbf3f8f86b77c7fe4c"><div class="ttname"><a href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a></div><div class="ttdeci">std::string concatenate_strings(const int argc, char **argv)</div><div class="ttdoc">Concatenate words which are passed from the command line to a main function into a single string in w...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00723">utilities.cc:723</a></div></div>
+<div class="ttc" id="autilities_8cc_html_aa2b435317e26c5fbf3f8f86b77c7fe4c"><div class="ttname"><a href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a></div><div class="ttdeci">std::string concatenate_strings(const int argc, char **argv)</div><div class="ttdoc">Concatenate words which are passed from the command line to a main function into a single string in w...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00724">utilities.cc:724</a></div></div>
 <div class="ttc" id="autilities_8cc_html_aacab2ae1eacacf43dc9272eaa79d40f2"><div class="ttname"><a href="utilities_8cc.html#aacab2ae1eacacf43dc9272eaa79d40f2">evaluate_values_at_points&lt; 3, GlobalBlockVectorType &gt;</a></div><div class="ttdeci">template void evaluate_values_at_points&lt; 3, GlobalBlockVectorType &gt;(const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const GlobalBlockVectorType &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</div></div>
 <div class="ttc" id="autilities_8cc_html_ab495e04b159f3399bb29fa081ff68d9a"><div class="ttname"><a href="utilities_8cc.html#ab495e04b159f3399bb29fa081ff68d9a">make_table_tensors_tensors</a></div><div class="ttdeci">TableHandler make_table_tensors_tensors(const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00143">utilities.cc:143</a></div></div>
 <div class="ttc" id="autilities_8cc_html_abc349a199ce6af0371f81d2887e4e83a"><div class="ttname"><a href="utilities_8cc.html#abc349a199ce6af0371f81d2887e4e83a">evaluate_values_at_points&lt; 3, 3, GlobalBlockVectorType &gt;</a></div><div class="ttdeci">template void evaluate_values_at_points&lt; 3, 3, GlobalBlockVectorType &gt;(const Mapping&lt; 3 &gt; &amp;mapping, const DoFHandler&lt; 3 &gt; &amp;dof_handler, const GlobalBlockVectorType &amp;solution_field, const std::vector&lt; Point&lt; 3 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 3 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 3, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</div></div>
 <div class="ttc" id="autilities_8cc_html_ac16af7a8766889a7247be69d3a94e392"><div class="ttname"><a href="utilities_8cc.html#ac16af7a8766889a7247be69d3a94e392">evaluate_values_at_points&lt; 2, 2, GlobalBlockVectorType &gt;</a></div><div class="ttdeci">template void evaluate_values_at_points&lt; 2, 2, GlobalBlockVectorType &gt;(const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const GlobalBlockVectorType &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; Tensor&lt; 1, 2, double &gt; &gt; &amp;evaluated_vector_values, const unsigned int first_selected_component)</div></div>
-<div class="ttc" id="autilities_8cc_html_ad051c09424365f2fdcc138dcee034569"><div class="ttname"><a href="utilities_8cc.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a></div><div class="ttdeci">void interpret_escape_sequences(std::string &amp;s)</div><div class="ttdoc">Identify escape sequences listed below and apply them to the string.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00838">utilities.cc:838</a></div></div>
+<div class="ttc" id="autilities_8cc_html_ad051c09424365f2fdcc138dcee034569"><div class="ttname"><a href="utilities_8cc.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a></div><div class="ttdeci">void interpret_escape_sequences(std::string &amp;s)</div><div class="ttdoc">Identify escape sequences listed below and apply them to the string.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00839">utilities.cc:839</a></div></div>
 <div class="ttc" id="autilities_8cc_html_ad2479d28ea6925c4b836b5004fc2c691"><div class="ttname"><a href="utilities_8cc.html#ad2479d28ea6925c4b836b5004fc2c691">evaluate_values_at_points&lt; 2, GlobalBlockVectorType &gt;</a></div><div class="ttdeci">template void evaluate_values_at_points&lt; 2, GlobalBlockVectorType &gt;(const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const GlobalBlockVectorType &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</div></div>
 <div class="ttc" id="autilities_8cc_html_ad5158b2cc68e111f73665aa2f0753b64"><div class="ttname"><a href="utilities_8cc.html#ad5158b2cc68e111f73665aa2f0753b64">evaluate_values_at_points&lt; 2, GlobalVectorType &gt;</a></div><div class="ttdeci">template void evaluate_values_at_points&lt; 2, GlobalVectorType &gt;(const Mapping&lt; 2 &gt; &amp;mapping, const DoFHandler&lt; 2 &gt; &amp;dof_handler, const GlobalVectorType &amp;solution_field, const std::vector&lt; Point&lt; 2 &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; 2 &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component)</div></div>
-<div class="ttc" id="autilities_8cc_html_ae2e85bc56c84564999daa889908507c8"><div class="ttname"><a href="utilities_8cc.html#ae2e85bc56c84564999daa889908507c8">print_comment_to_output_file</a></div><div class="ttdeci">void print_comment_to_output_file(const ConditionalOStream &amp;pcout, ParameterHandler &amp;prm)</div><div class="ttdoc">Print a user comment at the beginning of the simulation on the console output.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00848">utilities.cc:848</a></div></div>
+<div class="ttc" id="autilities_8cc_html_ae2e85bc56c84564999daa889908507c8"><div class="ttname"><a href="utilities_8cc.html#ae2e85bc56c84564999daa889908507c8">print_comment_to_output_file</a></div><div class="ttdeci">void print_comment_to_output_file(const ConditionalOStream &amp;pcout, ParameterHandler &amp;prm)</div><div class="ttdoc">Print a user comment at the beginning of the simulation on the console output.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00849">utilities.cc:849</a></div></div>
 <div class="ttc" id="avector_8h_html"><div class="ttname"><a href="vector_8h.html">vector.h</a></div></div>
 <div class="ttc" id="avector_8h_html_a4ea4005d75c88e60bee47d4e79a13a39"><div class="ttname"><a href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::Vector GlobalVectorType</div><div class="ttdef"><b>Definition</b> <a href="vector_8h_source.html#l00017">vector.h:17</a></div></div>
 <div class="ttc" id="avector_8h_html_ac71ba75c5119edae876800f9e80b59e7"><div class="ttname"><a href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::BlockVector GlobalBlockVectorType</div><div class="ttdef"><b>Definition</b> <a href="vector_8h_source.html#l00018">vector.h:18</a></div></div>

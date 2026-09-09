@@ -1548,14 +1548,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01396" name="l01396"></a><span class="lineno"> 1396</span>        }</div>
 <div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
 <div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>        {</div>
-<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>          DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span>            nonzero_constraints);</div>
+<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>          <span class="keyword">const</span> <span class="keyword">auto</span> &amp;periodic_boundary =</div>
+<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>              .periodic_boundaries.at(<span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>          DoFTools::make_periodicity_constraints(*this-&gt;dof_handler,</div>
+<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>                                                 <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>                                                 periodic_boundary.neighbor_id,</div>
+<div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span>                                                 periodic_boundary.direction,</div>
+<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span>                                                 nonzero_constraints);</div>
 <div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span>        }</div>
 <div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
 <div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span>        {</div>
@@ -1591,14 +1591,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span>        }</div>
 <div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
 <div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span>        {</div>
-<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>          DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>            zero_constraints);</div>
+<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>          <span class="keyword">const</span> <span class="keyword">auto</span> &amp;periodic_boundary =</div>
+<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>              .periodic_boundaries.at(<span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>          DoFTools::make_periodicity_constraints(*this-&gt;dof_handler,</div>
+<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>                                                 <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>                                                 periodic_boundary.neighbor_id,</div>
+<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>                                                 periodic_boundary.direction,</div>
+<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>                                                 zero_constraints);</div>
 <div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>        }</div>
 <div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
 <div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>        {</div>
@@ -1634,14 +1634,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span>        }</div>
 <div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
 <div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>        {</div>
-<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>          DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>            *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
-<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>              .periodic_direction.at(<span class="keywordtype">id</span>),</div>
-<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>            nonzero_constraints);</div>
+<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>          <span class="keyword">const</span> <span class="keyword">auto</span> &amp;periodic_boundary =</div>
+<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
+<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>              .periodic_boundaries.at(<span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>          DoFTools::make_periodicity_constraints(*this-&gt;dof_handler,</div>
+<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>                                                 <span class="keywordtype">id</span>,</div>
+<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>                                                 periodic_boundary.neighbor_id,</div>
+<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>                                                 periodic_boundary.direction,</div>
+<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>                                                 nonzero_constraints);</div>
 <div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>        }</div>
 <div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a>)</div>
 <div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span>        {</div>
@@ -2131,7 +2131,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructParameters_1_1LinearSolver_html_abcc346895a204b69b5fa4edabd810834a0b65af7f2357d3fa0ee8d8972d7e0646"><div class="ttname"><a href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::PreconditionerType::amg</a></div><div class="ttdeci">@ amg</div><div class="ttdoc">Incomplete LU Factorization.</div></div>
 <div class="ttc" id="astructParameters_1_1LinearSolver_html_abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab"><div class="ttname"><a href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab">Parameters::LinearSolver::PreconditionerType::ilu</a></div><div class="ttdeci">@ ilu</div></div>
 <div class="ttc" id="astructParameters_1_1MeshAdaptation_html_a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::MeshAdaptation::Type::none</a></div><div class="ttdeci">@ none</div></div>
-<div class="ttc" id="astructParameters_1_1Mortar_html"><div class="ttname"><a href="structParameters_1_1Mortar.html">Parameters::Mortar</a></div><div class="ttdoc">Mortar - Defines parameters used to construct mortar elements.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02185">parameters.h:2186</a></div></div>
+<div class="ttc" id="astructParameters_1_1Mortar_html"><div class="ttname"><a href="structParameters_1_1Mortar.html">Parameters::Mortar</a></div><div class="ttdoc">Mortar - Defines parameters used to construct mortar elements.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02199">parameters.h:2200</a></div></div>
 <div class="ttc" id="astructParameters_1_1MultipleAdaptationParameters_html_a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40"><div class="ttname"><a href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly</a></div><div class="ttdeci">@ kelly</div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::TimeSteppingMethod::steady</a></div><div class="ttdeci">@ steady</div></div>
 <div class="ttc" id="astructParameters_1_1Timer_html_a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99"><div class="ttname"><a href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::Type::iteration</a></div><div class="ttdeci">@ iteration</div></div>

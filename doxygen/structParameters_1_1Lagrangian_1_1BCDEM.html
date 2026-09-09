@@ -129,10 +129,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab4bd21efb765d48d511ed321d5a0acc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9503dff4c91c947079013d572b52e88" id="r_ab9503dff4c91c947079013d572b52e88"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Point&lt; 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#ab9503dff4c91c947079013d572b52e88">point_on_rotation_axis</a></td></tr>
 <tr class="separator:ab9503dff4c91c947079013d572b52e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8c9af015092a5c81e70b797f4590f33" id="r_ae8c9af015092a5c81e70b797f4590f33"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, types::boundary_id &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#ae8c9af015092a5c81e70b797f4590f33">periodic_neighbor_id</a></td></tr>
-<tr class="separator:ae8c9af015092a5c81e70b797f4590f33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee48498ae9ff11263ce5e44927e3ea06" id="r_aee48498ae9ff11263ce5e44927e3ea06"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#aee48498ae9ff11263ce5e44927e3ea06">periodic_direction</a></td></tr>
-<tr class="separator:aee48498ae9ff11263ce5e44927e3ea06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d780d57c34ccc58968da7a910273945" id="r_a6d780d57c34ccc58968da7a910273945"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceParameters.html#a381317ade54e7ed0b8001db41419b5f7">PeriodicBoundaries</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#a6d780d57c34ccc58968da7a910273945">periodic_boundaries</a></td></tr>
+<tr class="separator:a6d780d57c34ccc58968da7a910273945"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
@@ -143,7 +141,7 @@ Static Private Attributes</h2></td></tr>
 <div class="textblock"><p>Boundary conditions for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulations. </p>
 <p>This structure stores the motion parameters and periodic boundary information for each boundary of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> domain. A boundary's type is encoded by which container holds it (see outlet_boundaries below); fixed walls are the default and are not stored in any container. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00785">785</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00786">786</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a7853655667b9041229b1cc0b3ac4ca9b" name="a7853655667b9041229b1cc0b3ac4ca9b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7853655667b9041229b1cc0b3ac4ca9b">&#9670;&#160;</a></span>declare_parameters()</h2>
@@ -171,7 +169,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01577">1577</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8cc_source.html#l01624">declareDefaultEntry()</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00860">max_number_of_dem_boundary_conditions</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8cc_source.html#l01624">declareDefaultEntry()</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00856">max_number_of_dem_boundary_conditions</a>.</p>
 
 </div>
 </div>
@@ -237,7 +235,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01680">1680</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00805">boundary_rotational_speed</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00809">boundary_rotational_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00801">boundary_translational_velocity</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00796">outlet_boundaries</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00822">periodic_direction</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00818">periodic_neighbor_id</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00813">point_on_rotation_axis</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00806">boundary_rotational_speed</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00810">boundary_rotational_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00802">boundary_translational_velocity</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00797">outlet_boundaries</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00818">periodic_boundaries</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00814">point_on_rotation_axis</a>.</p>
 
 </div>
 </div>
@@ -267,7 +265,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01602">1602</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00789">number_of_dem_boundary_conditions</a>, and <a class="el" href="parameters__lagrangian_8cc_source.html#l01680">parse_boundary_conditions()</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00790">number_of_dem_boundary_conditions</a>, and <a class="el" href="parameters__lagrangian_8cc_source.html#l01680">parse_boundary_conditions()</a>.</p>
 
 </div>
 </div>
@@ -285,7 +283,7 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Rotational speed (rad/s) of each rotational boundary, keyed by the mesh boundary id. Only rotational boundaries have an entry. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00805">805</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00806">806</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -302,7 +300,7 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Rotational axis vector of each rotational boundary, keyed by the mesh boundary id. Only rotational boundaries have an entry. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00809">809</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00810">810</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -319,7 +317,7 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Translational velocity of each translational boundary, keyed by the mesh boundary id. Only translational boundaries have an entry. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00801">801</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00802">802</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +342,7 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Maximum number of boundary condition subsections declared in the parameter handler. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00860">860</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00856">856</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -362,7 +360,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Number of <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00789">789</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00790">790</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -377,41 +375,24 @@ Static Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Boundary ids designated as outlets. A boundary's <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundary condition type is encoded by which container holds it: outlets here, translational/rotational boundaries in the motion maps below, and periodic boundaries in periodic_neighbor_id. Fixed walls (the default) appear in none of these containers. </p>
+<p>Boundary ids designated as outlets. A boundary's <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundary condition type is encoded by which container holds it: outlets here, translational/rotational boundaries in the motion maps below, and periodic boundaries in periodic_boundaries. Fixed walls (the default) appear in none of these containers. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00796">796</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00797">797</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
-<a id="aee48498ae9ff11263ce5e44927e3ea06" name="aee48498ae9ff11263ce5e44927e3ea06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aee48498ae9ff11263ce5e44927e3ea06">&#9670;&#160;</a></span>periodic_direction</h2>
+<a id="a6d780d57c34ccc58968da7a910273945" name="a6d780d57c34ccc58968da7a910273945"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d780d57c34ccc58968da7a910273945">&#9670;&#160;</a></span>periodic_boundaries</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;types::boundary_id, unsigned int&gt; Parameters::Lagrangian::BCDEM::periodic_direction</td>
+          <td class="memname"><a class="el" href="namespaceParameters.html#a381317ade54e7ed0b8001db41419b5f7">PeriodicBoundaries</a> Parameters::Lagrangian::BCDEM::periodic_boundaries</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Direction of periodicity for each periodic boundary pair, keyed by the principal periodic boundary id (periodic id 0). </p>
-
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00822">822</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
-
-</div>
-</div>
-<a id="ae8c9af015092a5c81e70b797f4590f33" name="ae8c9af015092a5c81e70b797f4590f33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8c9af015092a5c81e70b797f4590f33">&#9670;&#160;</a></span>periodic_neighbor_id</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;types::boundary_id, types::boundary_id&gt; Parameters::Lagrangian::BCDEM::periodic_neighbor_id</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Neighbor periodic boundary id for each periodic boundary pair, keyed by the principal periodic boundary id (periodic id 0 -&gt; periodic id 1). </p>
+<p>Periodic boundary pairs, keyed by the principal periodic boundary id (periodic id 0). </p>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00818">818</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
@@ -430,7 +411,7 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Point on the rotational axis of each rotational boundary, keyed by the mesh boundary id. Only rotational boundaries have an entry. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00813">813</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00814">814</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>

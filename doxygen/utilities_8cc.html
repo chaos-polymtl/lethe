@@ -182,8 +182,8 @@ Functions</h2></td></tr>
 <tr class="separator:a9fc5d803036352e72efcd625b2466707"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f4c4c70d98da93b973297b97e085b90" id="r_a2f4c4c70d98da93b973297b97e085b90"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a> (const std::string &amp;file_name)</td></tr>
 <tr class="separator:a2f4c4c70d98da93b973297b97e085b90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9be87343e816d07edaee585ada17cd4a" id="r_a9be87343e816d07edaee585ada17cd4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a> (const std::string &amp;file_name)</td></tr>
-<tr class="separator:a9be87343e816d07edaee585ada17cd4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ec045358b58a8317c949de686567f35" id="r_a7ec045358b58a8317c949de686567f35"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a7ec045358b58a8317c949de686567f35">get_max_subsection_size</a> (const std::string &amp;file_name, const bool require_subsection_size)</td></tr>
+<tr class="separator:a7ec045358b58a8317c949de686567f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2b435317e26c5fbf3f8f86b77c7fe4c" id="r_aa2b435317e26c5fbf3f8f86b77c7fe4c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a> (const int argc, char **argv)</td></tr>
 <tr class="separator:aa2b435317e26c5fbf3f8f86b77c7fe4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f95af8244cc326628392a04517913c7" id="r_a8f95af8244cc326628392a04517913c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a> (const ConditionalOStream &amp;pcout)</td></tr>
@@ -266,7 +266,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00723">723</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00724">724</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -344,7 +344,7 @@ Functions</h2></td></tr>
 
 <p>Delete vtu and pvd files. </p>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00863">863</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00864">864</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -428,7 +428,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 </dl>
 <dl class="section remark"><dt>Remarks</dt><dd>If a given evaluation point is not within the simulated domain, an exception is thrown. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00876">876</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00877">877</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -513,7 +513,7 @@ template&lt;int n_component, int dim, typename <a class="el" href="time__harmoni
 </dl>
 <dl class="section remark"><dt>Remarks</dt><dd>If a given evaluation point is not within the simulated domain, an exception is thrown. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00973">973</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00974">974</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1422,8 +1422,8 @@ template&lt;int n_component, int dim, typename <a class="el" href="time__harmoni
 
 </div>
 </div>
-<a id="a9be87343e816d07edaee585ada17cd4a" name="a9be87343e816d07edaee585ada17cd4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9be87343e816d07edaee585ada17cd4a">&#9670;&#160;</a></span>get_max_subsection_size()</h2>
+<a id="a7ec045358b58a8317c949de686567f35" name="a7ec045358b58a8317c949de686567f35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ec045358b58a8317c949de686567f35">&#9670;&#160;</a></span>get_max_subsection_size()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1432,8 +1432,18 @@ template&lt;int n_component, int dim, typename <a class="el" href="time__harmoni
           <td class="memname">int get_max_subsection_size </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>file_name</em></td><td>)</td>
+          <td class="paramname"><em>file_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>require_subsection_size</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1442,6 +1452,7 @@ template&lt;int n_component, int dim, typename <a class="el" href="time__harmoni
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">file_name</td><td>The file name from which the number of boundary conditions is read</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">require_subsection_size</td><td>If true, the file must contain at least one "number" entry and an exception is raised otherwise. Solvers for which no variable size subsection is mandatory, such as the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> solvers whose boundary conditions are declared with a "number of boundary conditions" entry, set this to false. A file without any "number" entry then yields a size of zero.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1514,7 +1525,7 @@ template&lt;int n_component, int dim, typename <a class="el" href="time__harmoni
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00838">838</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00839">839</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -2924,7 +2935,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Tuple containing a map with the command line flags and a boolean set to 1 for the specific flag; and a vector of strings with the rest of the arguments that are not flags; in Lethe, this corresponds to the parameter file given to the application. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00765">765</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00766">766</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -2963,9 +2974,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00848">848</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00849">849</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00838">interpret_escape_sequences()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00839">interpret_escape_sequences()</a>.</p>
 
 </div>
 </div>
@@ -3010,7 +3021,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00811">811</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00812">812</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8cc_source.html#l00553">get_last_value_of_parameter()</a>.</p>
 
@@ -3040,7 +3051,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00740">740</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00741">741</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>

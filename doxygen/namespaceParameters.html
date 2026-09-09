@@ -88,6 +88,7 @@ $(function() {
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Parameters Namespace Reference</div></div>
@@ -183,6 +184,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1NonNewtonian.html">NonNewtonian</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1PeriodicBoundary.html">PeriodicBoundary</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1PhaseChange.html">PhaseChange</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1PhysicalProperties.html">PhysicalProperties</a></td></tr>
@@ -221,6 +224,11 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1VoidFractionParameters.html">VoidFractionParameters</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a381317ade54e7ed0b8001db41419b5f7" id="r_a381317ade54e7ed0b8001db41419b5f7"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a381317ade54e7ed0b8001db41419b5f7">PeriodicBoundaries</a> = std::map&lt; dealii::types::boundary_id, <a class="el" href="structParameters_1_1PeriodicBoundary.html">PeriodicBoundary</a> &gt;</td></tr>
+<tr class="separator:a381317ade54e7ed0b8001db41419b5f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -334,12 +342,32 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:abf9a3d883f67a19bea80ba4d93ad1c1c" id="r_abf9a3d883f67a19bea80ba4d93ad1c1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1SizeOfSubsections.html">SizeOfSubsections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#abf9a3d883f67a19bea80ba4d93ad1c1c">get_size_of_subsections</a> (const std::string &amp;file_name)</td></tr>
-<tr class="separator:abf9a3d883f67a19bea80ba4d93ad1c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadc75cfb32da341b9f4ead7b2846b351" id="r_aadc75cfb32da341b9f4ead7b2846b351"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1SizeOfSubsections.html">SizeOfSubsections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#aadc75cfb32da341b9f4ead7b2846b351">get_size_of_subsections</a> (const std::string &amp;file_name, const bool require_subsection_size=true)</td></tr>
+<tr class="separator:aadc75cfb32da341b9f4ead7b2846b351"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Drift velocity that is added to the tracer velocity to account for simplified multiphase simulations using drift-flux modeling. </p>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+</div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="a381317ade54e7ed0b8001db41419b5f7" name="a381317ade54e7ed0b8001db41419b5f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a381317ade54e7ed0b8001db41419b5f7">&#9670;&#160;</a></span>PeriodicBoundaries</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceParameters.html#a381317ade54e7ed0b8001db41419b5f7">Parameters::PeriodicBoundaries</a> = typedef std::map&lt;dealii::types::boundary_id, <a class="el" href="structParameters_1_1PeriodicBoundary.html">PeriodicBoundary</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The periodic boundary pairs of a simulation, keyed by the principal (first) boundary id of each pair. </p>
+<p>CFD and <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulations declare their boundary conditions through different parameter classes (<a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ...">BoundaryConditions::BoundaryConditions</a> and <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html" title="Boundary conditions for DEM simulations.">Parameters::Lagrangian::BCDEM</a> respectively), but both describe periodicity with this container, so that a single routine, <a class="el" href="grids_8h.html#a1e8fefbdbf5ca4f3a0e95354da101185" title="Modifies the triangulation to set up its periodic boundary conditions.">setup_periodic_boundary_conditions()</a>, sets up the periodicity of the triangulation for either solver. </p>
+
+<p class="definition">Definition at line <a class="el" href="periodic__boundary_8h_source.html#l00036">36</a> of file <a class="el" href="periodic__boundary_8h_source.html">periodic_boundary.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a3afa4d0c12c6c995b8b6978a4e413c3b" name="a3afa4d0c12c6c995b8b6978a4e413c3b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3afa4d0c12c6c995b8b6978a4e413c3b">&#9670;&#160;</a></span>CLSInitialConditionType</h2>
 
@@ -644,7 +672,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00058">58</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00072">72</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -914,7 +942,7 @@ iteration".</li>
 <tr><td class="fieldname"><a id="a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52" name="a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52"></a>extra_verbose&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00045">45</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00059">59</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -1023,8 +1051,8 @@ iteration".</li>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="abf9a3d883f67a19bea80ba4d93ad1c1c" name="abf9a3d883f67a19bea80ba4d93ad1c1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf9a3d883f67a19bea80ba4d93ad1c1c">&#9670;&#160;</a></span>get_size_of_subsections()</h2>
+<a id="aadc75cfb32da341b9f4ead7b2846b351" name="aadc75cfb32da341b9f4ead7b2846b351"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aadc75cfb32da341b9f4ead7b2846b351">&#9670;&#160;</a></span>get_size_of_subsections()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1033,8 +1061,18 @@ iteration".</li>
           <td class="memname"><a class="el" href="structParameters_1_1SizeOfSubsections.html">SizeOfSubsections</a> Parameters::get_size_of_subsections </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>file_name</em></td><td>)</td>
+          <td class="paramname"><em>file_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>require_subsection_size</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1042,10 +1080,14 @@ iteration".</li>
 <p>Extract the maximum number of all variable size sections within the parameter file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">file_name</td><td>Name of the parameter file from which the size are parsed </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">file_name</td><td>Name of the parameter file from which the sizes are parsed</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">require_subsection_size</td><td>If true, the parameter file must indicate the size of at least one variable size subsection, which is the case for every solver for which a "boundary conditions" subsection is mandatory. The <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> solvers, whose boundary conditions are declared in a "DEM boundary conditions" subsection with a "number of boundary
+conditions" entry, set this to false and consequently obtain a size of zero for parameter files that do not declare any manifold.</td></tr>
   </table>
   </dd>
 </dl>
+<p>//TODO make the size of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundary conditions parsed instead.</p>
+<dl class="section return"><dt>Returns</dt><dd>The size of the variable size subsections of the parameter file. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00090">90</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
