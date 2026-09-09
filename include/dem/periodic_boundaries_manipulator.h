@@ -197,7 +197,7 @@ private:
   /**
    * @brief Periodic boundary pairs of the simulation. Each entry carries the
    * neighbor boundary id of the pair and the direction of periodicity, which
-   * is the perpendicular axis of the periodic boundaries. Keys of this map are
+   * is normal to the periodic boundaries. Keys of this map are
    * the principal periodic boundary ids (periodic id 0).
    */
   Parameters::PeriodicBoundaries periodic_boundaries;
