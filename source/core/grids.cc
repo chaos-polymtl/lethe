@@ -707,31 +707,15 @@ apply_mesh_transformation(
 {
   // Mesh scaling
   GridTools::scale(mesh_parameters.scale, triangulation);
-  if constexpr (dim == 2 && spacedim == 2)
+  if constexpr (spacedim == 2)
     {
       // Box mesh rotation around the origin of the system coordinates
       GridTools::rotate(mesh_parameters.rotation_angle, triangulation);
 
       // Box mesh translation
-      Tensor<1, 2> translation_vector;
-      translation_vector[0] = mesh_parameters.translation[0];
-      translation_vector[1] = mesh_parameters.translation[1];
-      GridTools::shift(translation_vector, triangulation);
-    }
-  else if constexpr (dim == 2 && spacedim == 3)
-    {
-      // Box mesh rotation
-      GridTools::rotate(mesh_parameters.rotation_axis,
-                        mesh_parameters.rotation_angle,
-                        triangulation);
-
-      // Tensor<1, 3> translation_vector;
-      // translation_vector[0] = mesh_parameters.translation[0];
-      // translation_vector[1] = mesh_parameters.translation[1];
-      // Box mesh translation
       GridTools::shift(mesh_parameters.translation, triangulation);
     }
-  else if constexpr (dim == 3)
+  else if constexpr (spacedim == 3)
     {
       // Box mesh rotation
       GridTools::rotate(mesh_parameters.rotation_axis,
