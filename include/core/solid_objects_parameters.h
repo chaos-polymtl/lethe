@@ -182,20 +182,12 @@ namespace Parameters
         "inserted points will be higher for higher dimensions. Increasing this"
         "number will lead to a higher points density inside the solid.");
 
-      if constexpr (spacedim == 2)
-        {
-          prm.declare_entry("center of rotation",
-                            "0., 0.",
-                            Patterns::List(Patterns::Double()),
-                            "Solid object center of rotation");
-        }
-      if constexpr (spacedim == 3)
-        {
-          prm.declare_entry("center of rotation",
-                            "0., 0., 0.",
-                            Patterns::List(Patterns::Double()),
-                            "Solid object center of rotation");
-        }
+      std::string default_rotation = (spacedim == 2) ? "0., 0." : "0., 0., 0.";
+      prm.declare_entry("center of rotation",
+                        default_rotation,
+                        Patterns::List(Patterns::Double()),
+                        "Solid object center of rotation");
+
 
       prm.declare_entry("calculate force on solid",
                         "false",
@@ -445,20 +437,11 @@ namespace Parameters
       angular_velocity_parsed->declare_parameters(prm, 3);
       prm.leave_subsection();
 
-      if constexpr (spacedim == 2)
-        {
-          prm.declare_entry("center of rotation",
-                            "0., 0.",
-                            Patterns::List(Patterns::Double()),
-                            "Solid object center of rotation");
-        }
-      if constexpr (spacedim == 3)
-        {
-          prm.declare_entry("center of rotation",
-                            "0., 0., 0.",
-                            Patterns::List(Patterns::Double()),
-                            "Solid object center of rotation");
-        }
+      std::string default_rotation = (spacedim == 2) ? "0., 0." : "0., 0., 0.";
+      prm.declare_entry("center of rotation",
+                        default_rotation,
+                        Patterns::List(Patterns::Double()),
+                        "Solid object center of rotation");
 
       prm.declare_entry("thermal boundary type",
                         "adiabatic",
