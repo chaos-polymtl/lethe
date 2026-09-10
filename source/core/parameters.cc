@@ -3199,14 +3199,14 @@ namespace Parameters
         (spacedim == 2) ? "0., 0." : "0., 0., 0.";
       prm.declare_entry(
         "initial translation",
-        "0, 0, 0",
-        // default_translation,
+        default_translation,
         Patterns::List(Patterns::Double()),
         "Component of the desired translation of the mesh at initialization.");
 
+      std::string default_rotation = (spacedim == 2) ? "0., 0." : "1., 0., 0.";
       prm.declare_entry(
         "initial rotation axis",
-        "1, 0, 0",
+        default_rotation,
         Patterns::List(Patterns::Double()),
         "Component of the desired rotation of the mesh at initialization.\n"
         "In 2D, this has no effect, only a counter-clockwise rotation around the origin \n "
