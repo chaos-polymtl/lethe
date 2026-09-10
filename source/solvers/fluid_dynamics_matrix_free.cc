@@ -2786,6 +2786,16 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
     dealii::ExcMessage(
       "Matrix free Navier-Stokes does not support different orders for the velocity and the pressure!"));
 
+  // The matrix-free operators do not scale the pressure trial functions, so the
+  // pressure scaling factor is never applied to the Jacobian. The pressure
+  // degrees of freedom of the Newton correction are nevertheless rescaled at
+  // the end of the linear solve, which would silently produce a wrong Newton
+  // correction. The parameter is therefore rejected rather than ignored.
+  AssertThrow(
+    std::abs(nsparam.stabilization.pressure_scaling_factor - 1.) < 1e-8,
+    dealii::ExcMessage(
+      "Matrix free Navier-Stokes does not support the <pressure scaling factor> parameter of the <stabilization> subsection. Set it to 1, or use the matrix-based solver (lethe-fluid) if the pressure has to be rescaled."));
+
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_degree), dim + 1);
 
