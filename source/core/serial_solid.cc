@@ -273,35 +273,6 @@ SerialSolid<dim, spacedim>::rotate_grid(
     GridTools::rotate(axis, angle, *solid_tria);
 }
 
-// template <>
-// void
-// SerialSolid<1, 2>::rotate_grid(const double                         angle,
-//                                [[maybe_unused]] const Tensor<1, 3> &axis)
-// {
-//   GridTools::rotate(angle, *solid_tria);
-// }
-
-// template <>
-// void
-// SerialSolid<2, 2>::rotate_grid(const double                         angle,
-//                                [[maybe_unused]] const Tensor<1, 3> &axis)
-// {
-//   GridTools::rotate(angle, *solid_tria);
-// }
-
-// template <>
-// void
-// SerialSolid<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
-// {
-//   GridTools::rotate(axis, angle, *solid_tria);
-// }
-// template <>
-// void
-// SerialSolid<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
-// {
-//   GridTools::rotate(axis, angle, *solid_tria);
-// }
-
 template <int dim, int spacedim>
 void
 SerialSolid<dim, spacedim>::translate_grid(
@@ -309,36 +280,6 @@ SerialSolid<dim, spacedim>::translate_grid(
 {
   GridTools::shift(translation, *solid_tria);
 }
-
-// template <>
-// void
-// SerialSolid<1, 2>::translate_grid(const Tensor<1, 3> &translation)
-// {
-//   GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}),
-//   *solid_tria);
-// }
-
-// template <>
-// void
-// SerialSolid<2, 2>::translate_grid(const Tensor<1, 3> &translation)
-// {
-//   GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}),
-//   *solid_tria);
-// }
-
-// template <>
-// void
-// SerialSolid<2, 3>::translate_grid(const Tensor<1, 3> &translation)
-// {
-//   GridTools::shift(translation, *solid_tria);
-// }
-
-// template <>
-// void
-// SerialSolid<3, 3>::translate_grid(const Tensor<1, 3> &translation)
-// {
-//   GridTools::shift(translation, *solid_tria);
-// }
 
 template <int dim, int spacedim>
 void

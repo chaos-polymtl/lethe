@@ -232,56 +232,12 @@ SolidBase<dim, spacedim>::rotate_grid(
     GridTools::rotate(axis, angle, *solid_tria);
 }
 
-// template <>
-// void
-// SolidBase<2, 2>::rotate_grid(const double angle,
-//                              const Tensor<1, 3> /*axis*/
-//                                &)
-// {
-//   GridTools::rotate(angle, *solid_tria);
-// }
-// template <>
-// void
-// SolidBase<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
-// {
-//   GridTools::rotate(axis, angle, *solid_tria);
-// }
-// template <>
-// void
-// SolidBase<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
-// {
-//   GridTools::rotate(axis, angle, *solid_tria);
-// }
-
 template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::translate_grid(const Tensor<1, spacedim> &translation)
 {
   GridTools::shift(translation, *solid_tria);
 }
-
-// template <>
-// void
-// SolidBase<2, 2>::translate_grid(const Tensor<1, 3> &translation)
-// {
-//   GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}),
-//   *solid_tria);
-// }
-
-// template <>
-// void
-// SolidBase<2, 3>::translate_grid(const Tensor<1, 3> &translation)
-// {
-//   GridTools::shift(translation, *solid_tria);
-// }
-
-// template <>
-// void
-// SolidBase<3, 3>::translate_grid(const Tensor<1, 3> &translation)
-// {
-//   GridTools::shift(translation, *solid_tria);
-// }
-
 
 template <int dim, int spacedim>
 void
@@ -375,8 +331,6 @@ SolidBase<dim, spacedim>::setup_particles()
 
   // Compute fluid bounding box
   std::vector<std::vector<BoundingBox<spacedim>>> global_fluid_bounding_boxes;
-
-
 
   // Use the more general boost rtree bounding boxes
   std::vector<BoundingBox<spacedim>> all_boxes;
