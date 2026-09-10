@@ -297,7 +297,7 @@ DEMSolver<dim, PropertiesIndex>::box_refine_mesh(const bool restart)
   if (restart)
     return;
 
-  const Parameters::MeshBoxRefinement &box_refinement =
+  const Parameters::MeshBoxRefinement<dim> &box_refinement =
     *parameters.mesh_box_refinement;
 
   for (unsigned int i_box = 0;

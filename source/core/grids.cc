@@ -53,8 +53,8 @@
 template <int dim, int spacedim>
 static void
 warn_if_scaling_curved_manifolds(
-  const Parameters::Mesh<dim, spacedim>             &mesh_parameters,
-  const Triangulation<dim, spacedim> &triangulation)
+  const Parameters::Mesh<dim, spacedim> &mesh_parameters,
+  const Triangulation<dim, spacedim>    &triangulation)
 {
   if (mesh_parameters.scale == 1.0 ||
       mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::gmsh)
@@ -79,8 +79,9 @@ warn_if_scaling_curved_manifolds(
   pcout
     << "WARNING: a mesh 'scale' factor of " << mesh_parameters.scale
     << " is being applied to a '"
-    << (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::dealii ? "dealii" :
-                                                                 "lethe")
+    << (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::dealii ?
+          "dealii" :
+          "lethe")
     << "' grid. \nScaling moves the mesh vertices but not the curved "
        "manifolds attached to the triangulation, which can distort the "
        "geometry under refinement. \nVerify the resulting mesh, or dimension "
@@ -90,8 +91,9 @@ warn_if_scaling_curved_manifolds(
 
 template <int dim, int spacedim>
 void
-attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
-                             const Parameters::Mesh<dim, spacedim>       &mesh_parameters)
+attach_grid_to_triangulation(
+  Triangulation<dim, spacedim>          &triangulation,
+  const Parameters::Mesh<dim, spacedim> &mesh_parameters)
 
 {
   // GMSH input
@@ -381,7 +383,7 @@ setup_periodic_boundary_conditions(
 template <int dim, int spacedim>
 static void
 apply_initial_refinement(
-  const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Mesh<dim, spacedim>                 &mesh_parameters,
   const bool                                             restart,
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation)
 {
@@ -684,8 +686,8 @@ read_mesh_and_manifolds_for_stator_and_rotor(
 template <int dim, int spacedim>
 void
 build_refinement_box_triangulation(
-  const Parameters::Mesh       &box_mesh_parameters,
-  Triangulation<dim, spacedim> &box_triangulation)
+  const Parameters::Mesh<dim, spacedim> &box_mesh_parameters,
+  Triangulation<dim, spacedim>          &box_triangulation)
 {
   attach_grid_to_triangulation(box_triangulation, box_mesh_parameters);
 
@@ -806,14 +808,17 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const Parameters::Mortar<3>               &mortar_parameters);
 
 template void
-build_refinement_box_triangulation(const Parameters::Mesh<2> &box_mesh_parameters,
-                                   Triangulation<2, 2>    &box_triangulation);
+build_refinement_box_triangulation(
+  const Parameters::Mesh<2> &box_mesh_parameters,
+  Triangulation<2, 2>       &box_triangulation);
 template void
-build_refinement_box_triangulation(const Parameters::Mesh<2, 3> &box_mesh_parameters,
-                                   Triangulation<2, 3>    &box_triangulation);
+build_refinement_box_triangulation(
+  const Parameters::Mesh<2, 3> &box_mesh_parameters,
+  Triangulation<2, 3>          &box_triangulation);
 template void
-build_refinement_box_triangulation(const Parameters::Mesh<3> &box_mesh_parameters,
-                                   Triangulation<3, 3>    &box_triangulation);
+build_refinement_box_triangulation(
+  const Parameters::Mesh<3> &box_mesh_parameters,
+  Triangulation<3, 3>       &box_triangulation);
 
 template void
 apply_mesh_transformation(const Parameters::Mesh<2> &mesh_parameters,

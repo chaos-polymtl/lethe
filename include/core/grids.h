@@ -169,8 +169,8 @@ refine_triangulation_at_boundaries(
 template <int dim, int spacedim = dim>
 void
 build_refinement_box_triangulation(
-  const Parameters::Mesh       &box_mesh_parameters,
-  Triangulation<dim, spacedim> &box_triangulation);
+  const Parameters::Mesh<dim, spacedim> &box_mesh_parameters,
+  Triangulation<dim, spacedim>          &box_triangulation);
 
 /**
  * @brief Apply scaling, rotation and translation to the mesh in the listed
