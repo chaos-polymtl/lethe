@@ -3209,8 +3209,8 @@ namespace Parameters
         default_rotation,
         Patterns::List(Patterns::Double()),
         "Component of the desired rotation of the mesh at initialization.\n"
-        "In 2D, this has no effect, only a counter-clockwise rotation around the origin \n "
-        "of the coordinate system is applied.");
+        "In 2D, this parameter is not used, and a counter-clockwise rotation around the origin \n "
+        "of the coordinate system is applied according to the prescribed rotation angle.");
 
       prm.declare_entry(
         "initial rotation angle",
