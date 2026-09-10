@@ -33,11 +33,11 @@
  * @brief Build the mesh parameters of a unit square discretized by a single
  * deal.II hyper_cube cell.
  */
-Parameters::Mesh
+Parameters::Mesh<2>
 unit_square_mesh_parameters()
 {
-  Parameters::Mesh mesh_parameters;
-  mesh_parameters.type           = Parameters::Mesh::Type::dealii;
+  Parameters::Mesh<2> mesh_parameters;
+  mesh_parameters.type           = Parameters::Mesh<2>::Type::dealii;
   mesh_parameters.grid_type      = "hyper_cube";
   mesh_parameters.grid_arguments = "0 : 1 : true";
 
@@ -50,8 +50,8 @@ unit_square_mesh_parameters()
   mesh_parameters.check_for_diamond_cells             = false;
   mesh_parameters.expand_particle_wall_contact_search = false;
 
-  mesh_parameters.translation    = Tensor<1, 3>();
-  mesh_parameters.rotation_axis  = Tensor<1, 3>({1., 0., 0.});
+  mesh_parameters.translation    = Tensor<1, 2>();
+  mesh_parameters.rotation_axis  = Tensor<1, 2>({1., 0.});
   mesh_parameters.rotation_angle = 0.;
   mesh_parameters.scale          = 1.;
 
@@ -65,7 +65,7 @@ unit_square_mesh_parameters()
 void
 report_number_of_cells(
   const std::string           &case_name,
-  const Parameters::Mesh      &mesh_parameters,
+  const Parameters::Mesh<2>   &mesh_parameters,
   const bool                   restart,
   const Parameters::Manifolds &manifolds_parameters = Parameters::Manifolds())
 {
@@ -90,8 +90,8 @@ test_initial_refinement()
 {
   deallog << "--- Initial refinement ---" << std::endl;
 
-  Parameters::Mesh mesh_parameters   = unit_square_mesh_parameters();
-  mesh_parameters.initial_refinement = 2;
+  Parameters::Mesh<2> mesh_parameters = unit_square_mesh_parameters();
+  mesh_parameters.initial_refinement  = 2;
 
   // Without restart, the mesh is refined twice: 4^2 = 16 cells
   report_number_of_cells("initial refinement, no restart",
@@ -108,7 +108,7 @@ test_refinement_until_target_size()
 {
   deallog << "--- Refinement until target size ---" << std::endl;
 
-  Parameters::Mesh mesh_parameters         = unit_square_mesh_parameters();
+  Parameters::Mesh<2> mesh_parameters      = unit_square_mesh_parameters();
   mesh_parameters.refine_until_target_size = true;
 
   // The minimal cell diameter of the single-cell unit square is its diagonal,
@@ -129,8 +129,8 @@ test_refinement_at_boundaries()
 {
   deallog << "--- Refinement at boundaries ---" << std::endl;
 
-  Parameters::Mesh mesh_parameters   = unit_square_mesh_parameters();
-  mesh_parameters.initial_refinement = 2;
+  Parameters::Mesh<2> mesh_parameters = unit_square_mesh_parameters();
+  mesh_parameters.initial_refinement  = 2;
 
   // The hyper_cube is colorized: boundary id 0 is the x = 0 face. Refining it
   // once more adds 3 cells for each of the 4 cells touching that boundary.
@@ -158,7 +158,7 @@ test_manifold_attachment()
 {
   deallog << "--- Manifold attachment ---" << std::endl;
 
-  const Parameters::Mesh mesh_parameters = unit_square_mesh_parameters();
+  const Parameters::Mesh<2> mesh_parameters = unit_square_mesh_parameters();
 
   // Declare a spherical manifold centered at the origin and attach it to
   // manifold id 1
