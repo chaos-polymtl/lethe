@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Deal.II includes
@@ -40,14 +40,14 @@ test()
         Triangulation<2>::smoothing_on_coarsening));
 
   // Mesh of the solid
-  param->solid_mesh.type               = Parameters::Mesh::Type::dealii;
+  param->solid_mesh.type               = Parameters::Mesh<2>::Type::dealii;
   param->solid_mesh.grid_type          = "hyper_cube";
   param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
   param->solid_mesh.initial_refinement = 4;
   param->solid_mesh.simplex            = false;
   param->number_quadrature_points      = 2;
-  param->solid_mesh.translation        = Tensor<1, 3>({0., 0., 0.});
-  param->solid_mesh.rotation_axis      = Tensor<1, 3>({1., 0., 0.});
+  param->solid_mesh.translation        = Tensor<1, 2>({0., 0.});
+  param->solid_mesh.rotation_axis      = Tensor<1, 2>({1., 0.});
   param->solid_mesh.rotation_angle     = 0.;
 
   // Mesh of the fluid

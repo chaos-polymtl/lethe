@@ -1736,8 +1736,10 @@ namespace Parameters
   /**
    * @brief Mesh - Parameters that control mesh reading and mesh generation.
    */
-  struct Mesh
+  template <int dim, int spacedim = dim>
+  class Mesh
   {
+  public:
     // GMSH or dealii
     enum class Type : std::int8_t
     {
@@ -1787,11 +1789,15 @@ namespace Parameters
     bool expand_particle_wall_contact_search = false;
 
     // Grid displacement at initiation
-    Tensor<1, 3> translation;
+    Tensor<1, spacedim> translation;
 
     // Grid rotation at initiation
-    Tensor<1, 3> rotation_axis{{1., 0., 0.}};
-    double       rotation_angle = 0.;
+    Tensor<1, spacedim> rotation_axis = [] {
+      Tensor<1, spacedim> axis;
+      axis[0] = 1.;
+      return axis;
+    }();
+    double rotation_angle = 0.;
 
     /// Rescale the grid by the scale factor
     double scale = 1.;
@@ -1885,6 +1891,7 @@ namespace Parameters
    * Container of the parameters for box refinements. The regions to refine can
    * be described by either a GMSH or a deal.II mesh.
    */
+  template <int dim, int spacedim = dim>
   struct MeshBoxRefinement
   {
     /// Number of boxes delimiting refinement regions
@@ -1902,8 +1909,9 @@ namespace Parameters
      * Shared pointer of a vector of GMSH and deal.II meshes representing
      * refinement areas.
      */
-    std::shared_ptr<std::vector<Mesh>> refinement_boxes_meshes =
-      std::make_shared<std::vector<Mesh>>(max_number_of_refinement_boxes);
+    std::shared_ptr<std::vector<Mesh<dim, spacedim>>> refinement_boxes_meshes =
+      std::make_shared<std::vector<Mesh<dim, spacedim>>>(
+        max_number_of_refinement_boxes);
 
     /// Vector of additional refinement values of the different boxes
     std::vector<unsigned int> box_additional_refinements =
@@ -2223,7 +2231,7 @@ namespace Parameters
       linear
     } interface_type = InterfaceType::circular;
     /// Mesh parameters for the rotor part
-    std::shared_ptr<Mesh> rotor_mesh;
+    std::shared_ptr<Mesh<dim>> rotor_mesh;
     /// Boundary ID # of the rotor at the rotor-stator interface
     unsigned int rotor_boundary_id = 1;
     /// Boundary ID # of the stator at the rotor-stator interface

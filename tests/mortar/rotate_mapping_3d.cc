@@ -46,30 +46,30 @@ test()
   const unsigned int mapping_degree = 3;
   const unsigned int fe_degree      = 3;
 
-  Parameters::Mesh        mesh_parameters;
+  Parameters::Mesh<dim>   mesh_parameters;
   Parameters::Mortar<dim> mortar_parameters;
   Parameters::Manifolds   manifolds_parameters;
   // No periodic boundary is set up in this test
   const Parameters::PeriodicBoundaries periodic_boundaries;
 
   // Stator mesh parameters
-  mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
-  mesh_parameters.grid_type                = "cylinder_shell";
-  mesh_parameters.grid_arguments           = "2.0 : 0.5 : 1.0 : 4 : 6 : true";
-  mesh_parameters.scale                    = 1;
-  mesh_parameters.simplex                  = false;
-  mesh_parameters.initial_refinement       = 1;
-  mesh_parameters.refine_until_target_size = false;
-  mesh_parameters.boundaries_to_refine     = std::vector<int>();
+  mesh_parameters.type               = Parameters::Mesh<dim>::Type::dealii;
+  mesh_parameters.grid_type          = "cylinder_shell";
+  mesh_parameters.grid_arguments     = "2.0 : 0.5 : 1.0 : 4 : 6 : true";
+  mesh_parameters.scale              = 1;
+  mesh_parameters.simplex            = false;
+  mesh_parameters.initial_refinement = 1;
+  mesh_parameters.refine_until_target_size         = false;
+  mesh_parameters.boundaries_to_refine             = std::vector<int>();
   mesh_parameters.initial_refinement_at_boundaries = 0;
   mesh_parameters.translation                      = Tensor<1, dim>({0, 0, 0});
   mesh_parameters.rotation_axis                    = Tensor<1, dim>({0, 0, 1});
   mesh_parameters.rotation_angle                   = 0.0;
 
   // Rotor mesh parameters
-  mortar_parameters.enable           = "true";
-  mortar_parameters.rotor_mesh       = std::make_shared<Parameters::Mesh>();
-  mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
+  mortar_parameters.enable     = "true";
+  mortar_parameters.rotor_mesh = std::make_shared<Parameters::Mesh<dim>>();
+  mortar_parameters.rotor_mesh->type      = Parameters::Mesh<dim>::Type::dealii;
   mortar_parameters.rotor_mesh->grid_type = "cylinder_shell";
   mortar_parameters.rotor_mesh->grid_arguments =
     "2.0 : 0.25 : 0.5 : 4 : 6 : true";

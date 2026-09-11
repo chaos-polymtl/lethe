@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Deal.II includes
@@ -39,7 +39,7 @@ test()
         Triangulation<3>::smoothing_on_coarsening));
 
   // Mesh of the solid
-  param->solid_mesh.type               = Parameters::Mesh::Type::dealii;
+  param->solid_mesh.type               = Parameters::Mesh<3>::Type::dealii;
   param->solid_mesh.grid_type          = "hyper_ball";
   param->solid_mesh.grid_arguments     = "0 , 0 , 0 : 0.75 : false";
   param->solid_mesh.initial_refinement = 1;

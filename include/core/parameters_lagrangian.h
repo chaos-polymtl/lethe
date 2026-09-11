@@ -977,7 +977,7 @@ namespace Parameters
     {
     public:
       /// Mesh parameters for the floating grid.
-      Parameters::Mesh mesh;
+      Parameters::Mesh<dim> mesh;
 
       /// Motion parameters for the floating grid.
       Parameters::Lagrangian::GridMotion<dim> motion;

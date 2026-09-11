@@ -31,20 +31,20 @@ public:
   std::map<CLSSubequationsID, Parameters::NonLinearSolver>
                              cls_subequations_non_linear_solvers;
   Parameters::MeshAdaptation mesh_adaptation;
-  Parameters::Mesh           mesh;
+  Parameters::Mesh<dim>      mesh;
   Parameters::Dimensionality dimensionality;
-  std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
-  std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
-  Parameters::SimulationControl                     simulation_control;
-  Parameters::Timer                                 timer;
-  Parameters::FEM                                   fem_parameters;
-  Parameters::Forces                                forces_parameters;
-  std::shared_ptr<Parameters::Laser<dim>>           laser_parameters;
-  Parameters::PostProcessing<dim>                   post_processing;
-  Parameters::Restart                               restart_parameters;
-  Parameters::Manifolds                             manifolds_parameters;
-  BoundaryConditions::NSBoundaryConditions<dim>     boundary_conditions;
-  BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
+  std::shared_ptr<Parameters::MeshBoxRefinement<dim>> mesh_box_refinement;
+  std::shared_ptr<Parameters::Nitsche<dim>>           nitsche;
+  Parameters::SimulationControl                       simulation_control;
+  Parameters::Timer                                   timer;
+  Parameters::FEM                                     fem_parameters;
+  Parameters::Forces                                  forces_parameters;
+  std::shared_ptr<Parameters::Laser<dim>>             laser_parameters;
+  Parameters::PostProcessing<dim>                     post_processing;
+  Parameters::Restart                                 restart_parameters;
+  Parameters::Manifolds                               manifolds_parameters;
+  BoundaryConditions::NSBoundaryConditions<dim>       boundary_conditions;
+  BoundaryConditions::HTBoundaryConditions<dim>       boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::CLSBoundaryConditions<dim>    boundary_conditions_cls;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
@@ -92,7 +92,7 @@ public:
     dimensionality.declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
     physical_properties.declare_parameters(prm);
-    Parameters::Mesh::declare_parameters(prm);
+    Parameters::Mesh<dim>::declare_parameters(prm);
     nitsche = std::make_shared<Parameters::Nitsche<dim>>();
     nitsche->declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
@@ -118,7 +118,8 @@ public:
     laser_parameters = std::make_shared<Parameters::Laser<dim>>();
     laser_parameters->declare_parameters(prm);
     Parameters::MeshAdaptation::declare_parameters(prm);
-    mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
+    mesh_box_refinement =
+      std::make_shared<Parameters::MeshBoxRefinement<dim>>();
     mesh_box_refinement->declare_parameters(prm);
     for (auto physics_name : nonlinear_physics_names)
       {

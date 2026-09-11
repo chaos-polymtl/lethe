@@ -412,7 +412,8 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_torque_on_solid(
 
   // Todo center of rotation should be parameter passed.
   Point<spacedim> center_of_rotation =
-    this->simulation_parameters.nitsche->nitsche_solids[i_solid]->cor;
+    this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+      ->center_of_rotation;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();

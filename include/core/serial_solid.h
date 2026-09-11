@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_serial_solid_h
@@ -36,8 +36,9 @@ template <int dim, int spacedim = dim>
 class SerialSolid
 {
 public:
-  SerialSolid(std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
-              unsigned int                                             id);
+  SerialSolid(
+    std::shared_ptr<Parameters::RigidSolidObject<dim, spacedim>> &param,
+    unsigned int                                                  id);
 
   /**
    * @brief Maps the solid object in the background triangulation
@@ -289,7 +290,8 @@ private:
    *
    */
   void
-  rotate_grid(const double angle, [[maybe_unused]] const Tensor<1, 3> &axis);
+  rotate_grid(const double                                angle,
+              [[maybe_unused]] const Tensor<1, spacedim> &axis);
 
   /**
    * @brief Translate the grid. In spacedim=2, the third component is ignored
@@ -297,7 +299,7 @@ private:
    * @param translate The vector with which the solid is translated.
    */
   void
-  translate_grid(const Tensor<1, 3> &translate);
+  translate_grid(const Tensor<1, spacedim> &translate);
 
   // Member variables
 
@@ -307,7 +309,7 @@ private:
   const unsigned int this_mpi_process;
 
   // Parameters
-  std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param;
+  std::shared_ptr<Parameters::RigidSolidObject<dim, spacedim>> &param;
 
   // Identifier of the solid
   unsigned int id;
