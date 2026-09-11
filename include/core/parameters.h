@@ -1723,8 +1723,9 @@ namespace Parameters
    * @brief Mesh - Parameters that control mesh reading and mesh generation.
    */
   template <int dim, int spacedim = dim>
-  struct Mesh
+  class Mesh
   {
+  public:
     // GMSH or dealii
     enum class Type : std::int8_t
     {

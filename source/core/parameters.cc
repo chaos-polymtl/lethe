@@ -5314,11 +5314,11 @@ namespace Parameters
   template class PostProcessing<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
-  template struct Mesh<1>;
-  template struct Mesh<1, 2>;
-  template struct Mesh<2>;
-  template struct Mesh<2, 3>;
-  template struct Mesh<3>;
+  template class Mesh<1>;
+  template class Mesh<1, 2>;
+  template class Mesh<2>;
+  template class Mesh<2, 3>;
+  template class Mesh<3>;
   template struct MeshBoxRefinement<2>;
   template struct MeshBoxRefinement<3>;
   template struct ConstrainSolidDomain<2>;
