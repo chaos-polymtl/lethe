@@ -112,7 +112,7 @@ It gives the following velocity profiles at the inlet:
     :alt: inlet velocity profiles
     :align: center
     :name: inlet_velocity_profiles
-    :width: 500
+    :width: 800
 
 Parameter Files
 ---------------
@@ -498,7 +498,7 @@ Boundary Conditions
         end
     end
 
-The left face (id ``0``) is now a velocity inlet, driven by the profile described in the physical problem section :doc:`microwave-heating-cases`, while the right face (id ``1``) is an ``outlet``. The incoming air is also imposed at a fixed temperature of :math:`0` on that same inlet face, while every other wall remains adiabatic (``noflux``); note that the electromagnetic boundary conditions (not repeated here) are unchanged from Case 1.
+The left face (id ``0``) is now a velocity inlet, driven by the profile described in the `physical problem section <microwave-heating-cases_>`_, while the right face (id ``1``) is an ``outlet``. The incoming air is also imposed at a fixed temperature of :math:`0` on that same inlet face, while every other wall remains adiabatic (``noflux``); note that the electromagnetic boundary conditions (not repeated here) are unchanged from Case 1.
 
 Physical Properties
 ^^^^^^^^^^^^^^^^^^^
@@ -634,17 +634,17 @@ The first figure reproduces the results of Peng *et al.* [#Peng2024]_ for the al
     :alt: temperature field in the alumina cylinder, without fluid flow
     :align: center
     :name: temperature-al
-    :width: 500
+    :width: 600
 
-Because the cylinder's radius and permittivity place it near a resonant condition of the waveguide-cylinder system, the internal electric field, and therefore the heating rate, are strongly enhanced. The overall field distribution pattern is in agreement with the resonance-driven heating mechanism described by Peng *et al.* [#Peng2024]_. If the amplitude of the solution is compared, in our solution the amplitude of the electric field is lower than what they report, which is caused by a difference in the definition of the input power in the waveguide. To recover the same amplitude, one would need to scale the solution field by a factor of :math:`\sqrt{P_\mathrm{inlet}/P_\mathrm{total}} \approx 1.51`, where :math:`P_\mathrm{inlet}` is the power flowing through the waveguide inlet (the parameter `input_power`) and :math:`P_\mathrm{total}` is total power passing through the waveguide accounting for the reflected component of the electromagnetic wave (this needs to be computed numerically by integrating the Poynting vector over the waveguide cross-section).
+Because the cylinder's radius and permittivity place it near a resonant condition of the waveguide-cylinder system, the internal electric field, and therefore the heating rate, are strongly enhanced. The overall field distribution pattern is in agreement with the resonance-driven heating mechanism described by Peng *et al.* [#Peng2024]_. If the amplitude of the solution is compared, in our solution the amplitude of the electric field is lower than what they report, which is caused by a difference in the definition of the input power in the waveguide. To recover the same amplitude, one would need to scale the solution field by a factor of :math:`\sqrt{P_\mathrm{inlet}/P_\mathrm{total}} \approx 1.51`, where :math:`P_\mathrm{inlet}` is the power flowing through the waveguide inlet (the parameter ``input_power``) and :math:`P_\mathrm{total}` is total power passing through the waveguide accounting for the reflected component of the electromagnetic wave (this needs to be computed numerically by integrating the Poynting vector over the waveguide cross-section).
 
-The second figure shows a summary of the second test case, showing the corresponding temperature field and electric field amplitude after 60 seconds of simulation for different obstacle geometries. It also shows the average change in temperature (:math:`\Delta T`) in the obstacle along the crossing plane at :math:`x_1=\SI{0.0556}{\meter}` (:math:`x_2x_3`-plane), and the crossing plane at :math:`x_3=\SI{0.1}{\meter}` (:math:`x_1x_2`-plane), and the difference in average temperature with respect to the cylinder case (:math:`\delta \overline{T}`) along those same planes. The dashed lines bound the region between the :math:`\mathrm{P}_1` and :math:`\mathrm{P}_{99}` percentiles. Note that the gray lines in (a) indicate where the profiles of (b) have been taken.
+The second figure shows a summary of the second test case, showing the corresponding temperature field and electric field amplitude after 60 seconds of simulation for different obstacle geometries. It also shows the average change in temperature (:math:`\Delta T`) in the obstacle along the crossing plane at :math:`x_1=0.0556` m (:math:`x_2x_3`-plane), and the crossing plane at :math:`x_3=0.1` m (:math:`x_1x_2`-plane), and the difference in average temperature with respect to the cylinder case (:math:`\delta \overline{T}`) along those same planes. The dashed lines bound the region between the :math:`\mathrm{P}_1` and :math:`\mathrm{P}_{99}` percentiles. Note that the gray lines in (a) indicate where the profiles of (b) have been taken.
 
 .. image:: images/geometrie_temp_comparison.png
     :alt: temperature field in the SiC cylinder, cooled by an air flow
     :align: center
     :name: temperature-sic
-    :width: 500
+    :width: 600
 
 Unlike Case 1, the air flow continuously removes heat from the cylinder by forced convection, which skews the temperature field toward the downstream side of the cylinder. By looking at the figure, one can see that the different geometries lead to different heating patterns and rates. The tilted square prism shows slightly greater temperature non-uniformity, although the variations remain small compared with the overall temperature increase. Interestingly, the cylinder heats more slowly than the two square prisms, despite having a smaller volume. This demonstrates that microwave heating depends not only on the amount of material, but also how much of it can absorb electromagnetic energy. Consequently, at the end of the simulation, the square obstacles are significantly hotter than the cylinder and none has reached thermal equilibrium. Finally, we can also see the impact of the flow on the temperature distribution. Changing only the orientation of the square prism changes its heating rate and that even though the electromagnetic properties are identical and remain constant.
 
@@ -652,7 +652,7 @@ On a final note, we present an animation of the transient heating and flow field
 
 .. raw:: html
 
-    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/VIDEO_ID" title="Microwave heating of a cylinder in a filled waveguide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/shorts/WOHd7Wl-siE" title="Microwave heating of a SiC cylinder in an air-cooled waveguide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 Possibilities for Extension
 ---------------------------
