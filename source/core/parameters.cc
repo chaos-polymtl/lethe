@@ -86,6 +86,52 @@ DeclException4(ListsSizeMismatch,
 
 namespace Parameters
 {
+  namespace
+  {
+    // Reverse mappings for the shared Verbosity/FluidIndicator enums, used to
+    // derive declare_entry's default-value string from the corresponding
+    // struct member's own in-class default. Kept in sync by hand with the
+    // string->enum chains in the various parse_parameters() below.
+    //
+    // NOTE: all per-struct `to_string(EnumType)` overloads added throughout
+    // this file must also live directly inside `namespace Parameters` (in
+    // their own `namespace { ... }` block is fine) rather than in the global
+    // namespace: unqualified lookup stops at the first enclosing scope where
+    // a `to_string` is found, so a struct-local overload declared inside
+    // Parameters would otherwise hide these instead of overloading with them.
+    std::string
+    to_string(const Verbosity verbosity)
+    {
+      switch (verbosity)
+        {
+          case Verbosity::quiet:
+            return "quiet";
+          case Verbosity::verbose:
+            return "verbose";
+          case Verbosity::extra_verbose:
+            return "extra verbose";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const FluidIndicator indicator)
+    {
+      switch (indicator)
+        {
+          case FluidIndicator::fluid0:
+            return "fluid 0";
+          case FluidIndicator::fluid1:
+            return "fluid 1";
+          case FluidIndicator::both:
+            return "both";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   SizeOfSubsections
   get_size_of_subsections(const std::string &file_name,
                           const bool         require_subsection_size)
@@ -98,14 +144,99 @@ namespace Parameters
     return sizes;
   }
 
+  namespace
+  {
+    std::string
+    to_string(const SimulationControl::TimeSteppingMethod method)
+    {
+      switch (method)
+        {
+          case SimulationControl::TimeSteppingMethod::steady:
+            return "steady";
+          case SimulationControl::TimeSteppingMethod::steady_bdf:
+            return "steady_bdf";
+          case SimulationControl::TimeSteppingMethod::bdf1:
+            return "bdf1";
+          case SimulationControl::TimeSteppingMethod::bdf2:
+            return "bdf2";
+          case SimulationControl::TimeSteppingMethod::bdf3:
+            return "bdf3";
+          case SimulationControl::TimeSteppingMethod::sdirk22:
+            return "sdirk22";
+          case SimulationControl::TimeSteppingMethod::sdirk33:
+            return "sdirk33";
+          case SimulationControl::TimeSteppingMethod::sdirk43:
+            return "sdirk43";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const SimulationControl::BDFStartupMethods method)
+    {
+      switch (method)
+        {
+          case SimulationControl::BDFStartupMethods::multiple_step_bdf:
+            return "multiple step bdf";
+          case SimulationControl::BDFStartupMethods::initial_solution:
+            return "initial solution";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const SimulationControl::EndControl control)
+    {
+      switch (control)
+        {
+          case SimulationControl::EndControl::iteration:
+            return "iteration";
+          case SimulationControl::EndControl::time:
+            return "time";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const SimulationControl::OutputControl control)
+    {
+      switch (control)
+        {
+          case SimulationControl::OutputControl::iteration:
+            return "iteration";
+          case SimulationControl::OutputControl::time:
+            return "time";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const std::vector<double> &values)
+    {
+      std::string result;
+      for (unsigned int i = 0; i < values.size(); ++i)
+        {
+          if (i != 0)
+            result += ", ";
+          result += Patterns::Tools::Convert<double>::to_string(values[i]);
+        }
+      return result;
+    }
+  } // namespace
+
   void
   SimulationControl::declare_parameters(ParameterHandler &prm)
   {
+    const SimulationControl defaults;
     prm.enter_subsection("simulation control");
     {
       prm.declare_entry(
         "method",
-        "steady",
+        to_string(defaults.method),
         Patterns::Selection(
           "steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33|sdirk43"),
         "The time integration scheme. "
@@ -113,125 +244,141 @@ namespace Parameters
 
       prm.declare_entry(
         "bdf startup method",
-        "multiple step bdf",
+        to_string(defaults.bdf_startup_method),
         Patterns::Selection("multiple step bdf|initial solution"),
         "The kind of method used to startup high order bdf methods "
         "Choices are <multiple step bdf|initial solution>.");
 
       prm.declare_entry("time step",
-                        "1.",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.dt),
                         Patterns::Double(),
                         "Time step value");
       prm.declare_entry(
         "time end",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(defaults.time_end),
         Patterns::Double(),
         "Time value at which a transient simulation ends. Only used when the "
         "end control is set to time");
       prm.declare_entry(
         "iteration end",
-        "10",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.iteration_end),
         Patterns::Integer(0),
         "Transient iteration number at which a transient simulation ends. "
         "Only used when the end control is set to iteration");
       prm.declare_entry("startup time scaling",
-                        "0.4",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.startup_timestep_scaling),
                         Patterns::Double(),
                         "Scaling factor used in the iterations necessary to "
                         "start-up the BDF schemes.");
       prm.declare_entry(
         "adapt time step to respect CFL",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(defaults.adapt_with_cfl),
         Patterns::Bool(),
         "Adapt the time step to respect the maximum CFL condition. When multiple conditions are applied to the time step, this ensures that the CFL condition is also respected (Δt ≤ Δt_{CFL}). <true|false>");
       prm.declare_alias("adapt time step to respect CFL", "adapt", true);
       prm.declare_entry(
         "override time step on restart",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.override_time_step_on_restart),
         Patterns::Bool(),
         "Override checkpointed time step upon restart <true|false>");
       prm.declare_entry(
         "time step independent of end time",
-        "true",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.time_step_independent_of_end_time),
         Patterns::Bool(),
         "Ensures that the correct time step is kept when using adaptive time step simulations");
       prm.declare_entry("number mesh adapt",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.number_mesh_adaptation),
                         Patterns::Integer(),
                         "Number of mesh adaptation (for steady simulations)");
       prm.declare_entry("max cfl",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.maxCFL),
                         Patterns::Double(),
                         "Maximum CFL value");
       prm.declare_entry("max time step",
-                        "1e6",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.max_dt),
                         Patterns::Double(),
                         "Maximum time step value");
       prm.declare_entry(
         "adapt time step to respect CTR",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.adapt_with_capillary_time_step_ratio),
         Patterns::Bool(),
         "By setting to 'true', it ensures that the imposed maximum capillary time-step ratio (CTR) is respected throughout the simulation (Δt ≤ Δt_{CTR}). <true|false>");
       prm.declare_entry(
         "max capillary time-step ratio",
-        "1.0",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.max_capillary_time_step_ratio),
         Patterns::Double(0),
         "The capillary time-step ratio (CTR) corresponds to the ratio of the time step over capillary time-step constraint (Δt/Δt_σ)");
       prm.declare_entry("stop tolerance",
-                        "1e-10",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.stop_tolerance),
                         Patterns::Double(),
                         "Tolerance at which the simulation is stopped");
 
       prm.declare_entry("adaptative time step scaling",
-                        "1.1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.adaptative_time_step_scaling),
                         Patterns::Double(),
                         "Adaptative time step scaling");
       prm.declare_entry("output path",
-                        "./",
+                        defaults.output_folder,
                         Patterns::FileName(),
                         "File output prefix");
 
       prm.declare_entry("output name",
-                        "out",
+                        defaults.output_name,
                         Patterns::FileName(),
                         "File output prefix");
 
 
       prm.declare_entry("output frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.output_iteration_frequency),
                         Patterns::Integer(),
                         "Output iteration frequency");
 
       prm.declare_entry("output time frequency",
-                        "-1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.output_time_frequency),
                         Patterns::Double(),
                         "Output time frequency");
 
       prm.declare_entry(
         "output boundaries",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(defaults.output_boundaries),
         Patterns::Bool(),
         "Output the boundaries of the domain along with their ID");
 
       prm.declare_entry("log frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.log_frequency),
                         Patterns::Integer(),
                         "log frequency");
 
       prm.declare_entry("log precision",
-                        "6",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.log_precision),
                         Patterns::Integer(),
                         "Display precision when writing to log",
                         "This setting percolates to all output to the log");
 
       prm.declare_entry("output times",
-                        "-1",
+                        to_string(defaults.output_times_vector),
                         Patterns::List(Patterns::Double()),
                         "List of specific output times separated with a comma");
 
       prm.declare_entry(
         "end control",
-        "time",
+        to_string(defaults.end_control),
         Patterns::Selection("iteration|time"),
         "The control for the end of a transient simulation. The end "
         "condition is either a maximum time value (time end) or a maximum "
@@ -239,23 +386,25 @@ namespace Parameters
 
       prm.declare_entry(
         "output control",
-        "iteration",
+        to_string(defaults.output_control),
         Patterns::Selection("iteration|time"),
         "The control for the output of the simulation results"
         "Results can be either outputted at constant iteration frequency or at constant time");
 
       prm.declare_entry("output time interval",
-                        "0, 1.7976931348623157e308", // 0, Maximum double
+                        to_string(defaults.output_time_interval),
                         Patterns::List(Patterns::Double()),
                         "Output files for a desired time interval");
 
       prm.declare_entry("subdivision",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.subdivision),
                         Patterns::Integer(),
                         "Subdivision of mesh cell in postprocessing");
 
       prm.declare_entry("group files",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.group_files),
                         Patterns::Integer(),
                         "Maximal number of vtu output files");
     }
@@ -358,19 +507,40 @@ namespace Parameters
     prm.leave_subsection();
   } // namespace Parameters
 
+  namespace
+  {
+    std::string
+    to_string(const Timer::Type type)
+    {
+      switch (type)
+        {
+          case Timer::Type::none:
+            return "none";
+          case Timer::Type::iteration:
+            return "iteration";
+          case Timer::Type::end:
+            return "end";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   Timer::declare_parameters(ParameterHandler &prm)
   {
+    const Timer defaults;
     prm.enter_subsection("timer");
     {
       prm.declare_entry("type",
-                        "none",
+                        to_string(defaults.type),
                         Patterns::Selection("none|iteration|end"),
                         "Clock monitoring methods "
                         "Choices are <none|iteration|end>.");
       prm.declare_entry(
         "write time in error table",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.write_time_in_error_table),
         Patterns::Bool(),
         "Boolean to define if the time is written in the error table");
     }
@@ -397,15 +567,20 @@ namespace Parameters
   void
   PowerLawParameters::declare_parameters(ParameterHandler &prm)
   {
+    const PowerLawParameters defaults;
     prm.enter_subsection("power-law");
     {
       prm.declare_entry("K",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(defaults.K),
                         Patterns::Double(),
                         "Fluid consistency index");
-      prm.declare_entry("n", "0.5", Patterns::Double(), "Flow behavior index");
+      prm.declare_entry("n",
+                        Patterns::Tools::Convert<double>::to_string(defaults.n),
+                        Patterns::Double(),
+                        "Flow behavior index");
       prm.declare_entry("shear rate min",
-                        "0.001",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.shear_rate_min),
                         Patterns::Double(),
                         "Minimal shear rate magnitude");
     }
@@ -435,19 +610,32 @@ namespace Parameters
   void
   CarreauParameters::declare_parameters(ParameterHandler &prm)
   {
+    const CarreauParameters defaults;
     prm.enter_subsection("carreau");
     {
       prm.declare_entry("viscosity_0",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.kinematic_viscosity_0),
                         Patterns::Double(),
                         "Kinematic viscosity at rest");
       prm.declare_entry("viscosity_inf",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.kinematic_viscosity_inf),
                         Patterns::Double(),
                         "Kinematic viscosity for an infinite shear rate");
-      prm.declare_entry("lambda", "1.0", Patterns::Double(), "Relaxation time");
-      prm.declare_entry("a", "2.0", Patterns::Double(), "Carreau parameter");
-      prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
+      prm.declare_entry("lambda",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.lambda),
+                        Patterns::Double(),
+                        "Relaxation time");
+      prm.declare_entry("a",
+                        Patterns::Tools::Convert<double>::to_string(defaults.a),
+                        Patterns::Double(),
+                        "Carreau parameter");
+      prm.declare_entry("n",
+                        Patterns::Tools::Convert<double>::to_string(defaults.n),
+                        Patterns::Double(),
+                        "Power parameter");
     }
     prm.leave_subsection();
   }
@@ -504,26 +692,32 @@ namespace Parameters
   void
   ImmersedSolidTanhParameters::declare_parameters(ParameterHandler &prm)
   {
+    const ImmersedSolidTanhParameters defaults;
     prm.enter_subsection("immersed solid tanh");
     {
       prm.declare_entry("tracer diffusivity inside",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.tracer_diffusivity_inside),
                         Patterns::Double(),
                         "Tracer diffusivity inside the immersed solid");
       prm.declare_entry("tracer diffusivity outside",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.tracer_diffusivity_outside),
                         Patterns::Double(),
                         "Tracer diffusivity outside the immersed solid");
       prm.declare_entry("tracer reaction constant inside",
-                        "0.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.tracer_reaction_constant_inside),
                         Patterns::Double(),
                         "Tracer reaction constant inside the immersed solid");
       prm.declare_entry("tracer reaction constant outside",
-                        "0.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.tracer_reaction_constant_outside),
                         Patterns::Double(),
                         "Tracer reaction constant outside the immersed solid");
       prm.declare_entry("thickness",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.thickness),
                         Patterns::Double(),
                         "Thickness to be used with the tanh function");
     }
@@ -555,27 +749,33 @@ namespace Parameters
   void
   ImmersedSolidGaussianParameters::declare_parameters(ParameterHandler &prm)
   {
+    const ImmersedSolidGaussianParameters defaults;
     prm.enter_subsection("immersed solid gaussian");
     {
       prm.declare_entry("tracer diffusivity interface",
-                        "0.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.tracer_diffusivity_interface),
                         Patterns::Double(),
                         "Tracer diffusivity at the immersed solid interface");
       prm.declare_entry("tracer diffusivity bulk",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.tracer_diffusivity_bulk),
                         Patterns::Double(),
                         "Tracer diffusivity in the phase bulk");
       prm.declare_entry(
         "tracer reaction constant interface",
-        "0.0",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.tracer_reaction_constant_interface),
         Patterns::Double(),
         "Tracer reaction constant at the immersed solid interface");
       prm.declare_entry("tracer reaction constant bulk",
-                        "0.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.tracer_reaction_constant_bulk),
                         Patterns::Double(),
                         "Tracer reaction constant in the phase bulk");
       prm.declare_entry("thickness",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.thickness),
                         Patterns::Double(),
                         "Thickness to be used with the Gaussian function");
     }
@@ -608,24 +808,26 @@ namespace Parameters
   void
   IsothermalIdealGasDensityParameters::declare_parameters(ParameterHandler &prm)
   {
+    // dry air's density, specific gas constant and normal temperature
+    // (20 °C, 1 atm) as defaults
+    const IsothermalIdealGasDensityParameters defaults;
     prm.enter_subsection("isothermal_ideal_gas");
     {
       prm.declare_entry(
         "density_ref",
-        "1.2", // dry air's density at normal temperature and pressure (20 °C
-               // and 1 atm)
+        Patterns::Tools::Convert<double>::to_string(defaults.density_ref),
         Patterns::Double(),
         "Reference density of the gas in SI units for isothermal ideal gas equation of state in density calculation");
 
       prm.declare_entry(
         "R",
-        "287.05", // dry air's specific gas constant as default
+        Patterns::Tools::Convert<double>::to_string(defaults.R),
         Patterns::Double(),
         "Specific gas constant in SI units for isothermal ideal gas equation of state in density calculation");
 
       prm.declare_entry(
         "T",
-        "293.15", // normal temperature (20°C) as a default
+        Patterns::Tools::Convert<double>::to_string(defaults.T),
         Patterns::Double(),
         "Absolute temperature of the gas in kelvin (K) for isothermal ideal gas equation of state in density calculation");
     }
@@ -658,29 +860,32 @@ namespace Parameters
   void
   SurfaceTensionParameters::declare_parameters(dealii::ParameterHandler &prm)
   {
+    const SurfaceTensionParameters defaults;
     prm.declare_entry(
       "surface tension coefficient",
-      "0.0",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.surface_tension_coefficient),
       Patterns::Double(),
       "Surface tension coefficient for the corresponding pair of fluids or fluid-solid pair");
     prm.declare_entry(
       "reference state temperature",
-      "0.0",
+      Patterns::Tools::Convert<double>::to_string(defaults.T_0),
       Patterns::Double(),
       "Temperature of the reference state corresponding to the surface tension coefficient");
     prm.declare_entry(
       "temperature-driven surface tension gradient",
-      "0.0",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.surface_tension_gradient),
       Patterns::Double(),
       "Surface tension gradient with respect to the temperature for the corresponding pair of fluids or fluid-solid pair");
     prm.declare_entry(
       "solidus temperature",
-      "0",
+      Patterns::Tools::Convert<double>::to_string(defaults.T_solidus),
       Patterns::Double(),
       "Temperature of the solidus for the corresponding pair of fluids or fluid-solid pair");
     prm.declare_entry(
       "liquidus temperature",
-      "1",
+      Patterns::Tools::Convert<double>::to_string(defaults.T_liquidus),
       Patterns::Double(),
       "Temperature of the liquidus for the corresponding pair of fluids or fluid-solid pair");
   }
@@ -709,9 +914,11 @@ namespace Parameters
   MobilityCahnHilliardParameters::declare_parameters(
     dealii::ParameterHandler &prm)
   {
+    const MobilityCahnHilliardParameters defaults;
     prm.declare_entry(
       "cahn hilliard mobility constant",
-      "1e-7",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.mobility_cahn_hilliard_constant),
       Patterns::Double(),
       "Cahn-Hilliard mobility constant for the corresponding pair of fluids");
   }
@@ -737,13 +944,14 @@ namespace Parameters
     {
       prm.declare_entry(
         "enable",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(this->enable),
         Patterns::Bool(),
         "Enable/disable (true/false) the solid domain constraining feature.");
 
       prm.declare_entry(
         "enable domain restriction with plane",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          this->enable_domain_restriction_with_plane),
         Patterns::Bool(),
         "Enable/disable (true/false) the definition of a plane for geometrical\n"
         " restrictions on the domain where the solid domain constraining feature\n"
@@ -761,7 +969,8 @@ namespace Parameters
 
       prm.declare_entry(
         "number of constraints",
-        "0",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          this->number_of_constraints),
         Patterns::Integer(),
         "Number of solid constraints (maximum of 1 per fluid).");
 
@@ -867,33 +1076,70 @@ namespace Parameters
       prm.get_double("max temperature");
   }
 
+  namespace
+  {
+    std::string
+    to_string(const Stabilization::NavierStokesStabilization type)
+    {
+      switch (type)
+        {
+          case Stabilization::NavierStokesStabilization::pspg_supg:
+            return "pspg_supg";
+          case Stabilization::NavierStokesStabilization::gls:
+            return "gls";
+          case Stabilization::NavierStokesStabilization::grad_div:
+            return "grad_div";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Stabilization::ScalarLimiters type)
+    {
+      switch (type)
+        {
+          case Stabilization::ScalarLimiters::none:
+            return "none";
+          case Stabilization::ScalarLimiters::moe:
+            return "moe";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   Stabilization::declare_parameters(ParameterHandler &prm)
   {
+    const Stabilization defaults;
     prm.enter_subsection("stabilization");
     {
       prm.declare_entry(
         "use default stabilization",
-        "true",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.use_default_stabilization),
         Patterns::Bool(),
         "Use the default stabilization method provided by the solver");
       prm.declare_entry(
         "stabilization",
-        "pspg_supg",
+        to_string(defaults.stabilization),
         Patterns::Selection("pspg_supg|gls|grad_div"),
         "Type of stabilization used for the Navier-Stokes equations"
         "Choices are <pspg_supg|gls|grad_div>.");
 
       prm.declare_entry(
         "heat transfer dcdd stabilization",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.heat_transfer_dcdd_stabilization),
         Patterns::Bool(),
         "Apply Discontinuity-Capturing Directional Dissipation (DCDD) "
         "stabilization term on heat transfer <true|false>");
 
       prm.declare_entry(
         "cls dcdd stabilization",
-        "true",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.cls_dcdd_stabilization),
         Patterns::Bool(),
         "Apply Discontinuity-Capturing Directional Dissipation (DCDD) "
         "stabilization term on the CLS phase indicator <true|false>");
@@ -903,7 +1149,8 @@ namespace Parameters
 
       prm.declare_entry(
         "cls dcdd diffusion factor",
-        "0.5",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.dcdd_diffusion_coeff),
         Patterns::Double(),
         "Diffusion factor scaling the DCDD stabilization term in the CLS "
         "equation");
@@ -913,7 +1160,8 @@ namespace Parameters
 
       prm.declare_entry(
         "pressure scaling factor",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.pressure_scaling_factor),
         Patterns::Double(),
         "This parameter can be used to change the scale of pressure in the "
         "Navier-Stokes equations. When the velocity and pressure scales are very "
@@ -922,7 +1170,7 @@ namespace Parameters
 
       prm.declare_entry(
         "scalar limiter",
-        "none",
+        to_string(defaults.scalar_limiter),
         Patterns::Selection("none|moe"),
         "Type of scalar limiter. The limiters are only appropriate with the DG versions of the solvers and should only be used for advection-dominated problem.");
     }
@@ -1024,68 +1272,82 @@ namespace Parameters
   void
   PhaseChange::declare_parameters(ParameterHandler &prm)
   {
+    const PhaseChange defaults;
     prm.enter_subsection("phase change");
     {
       prm.declare_entry("solidus temperature",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.T_solidus),
                         Patterns::Double(),
                         "Temperature of the solidus");
       prm.declare_entry("liquidus temperature",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.T_liquidus),
                         Patterns::Double(),
                         "Temperature of the liquidus");
       prm.declare_entry("latent enthalpy",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.latent_enthalpy),
                         Patterns::Double(),
                         "Enthalpy of the phase change");
 
       prm.declare_entry("specific heat liquid",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.cp_l),
                         Patterns::Double(),
                         "Specific heat of the liquid phase");
 
       prm.declare_entry("specific heat solid",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.cp_s),
                         Patterns::Double(),
                         "Specific heat of the solid phase");
 
       prm.declare_entry("thermal conductivity liquid",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.thermal_conductivity_l),
                         Patterns::Double(),
                         "Thermal conductivity of the liquid phase");
 
       prm.declare_entry("thermal conductivity solid",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.thermal_conductivity_s),
                         Patterns::Double(),
                         "Thermal conductivity of the solid phase");
 
       prm.declare_entry("thermal expansion liquid",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.thermal_expansion_l),
                         Patterns::Double(),
                         "Thermal expansion coefficient of the liquid phase");
 
       prm.declare_entry("thermal expansion solid",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.thermal_expansion_s),
                         Patterns::Double(),
                         "Thermal expansion coefficient of the solid phase");
 
       prm.declare_entry("viscosity liquid",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.kinematic_viscosity_l),
                         Patterns::Double(),
                         "Kinematic viscosity of the liquid phase");
 
       prm.declare_entry("viscosity solid",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.kinematic_viscosity_s),
                         Patterns::Double(),
                         "Kinematic viscosity of the solid phase");
 
       prm.declare_entry("Darcy penalty liquid",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.penalty_l),
                         Patterns::Double(),
                         "Darcy penalty of the liquid phase");
 
       prm.declare_entry("Darcy penalty solid",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.penalty_s),
                         Patterns::Double(),
                         "Darcy penalty of the solid phase");
     }
@@ -1107,7 +1369,8 @@ namespace Parameters
     prm.enter_subsection("physical properties");
     {
       prm.declare_entry("number of fluids",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          number_of_fluids),
                         Patterns::Integer(),
                         "Number of fluids");
 
@@ -1118,7 +1381,8 @@ namespace Parameters
         }
 
       prm.declare_entry("number of solids",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          number_of_solids),
                         Patterns::Integer(),
                         "Number of solids");
 
@@ -1130,7 +1394,7 @@ namespace Parameters
 
       prm.declare_entry(
         "reference temperature",
-        "0",
+        Patterns::Tools::Convert<double>::to_string(reference_temperature),
         Patterns::Double(),
         "Reference temperature used for the calculation of physical properties and thermal expansion");
     }
@@ -1138,7 +1402,8 @@ namespace Parameters
     // Definition of interactions between materials
     prm.declare_entry(
       "number of material interactions",
-      "0",
+      Patterns::Tools::Convert<unsigned int>::to_string(
+        number_of_material_interactions),
       Patterns::Integer(),
       "Number of material interactions (either fluid-fluid or fluid-solid)");
 
@@ -1208,6 +1473,162 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    std::string
+    to_string(const Material::RheologicalModel model)
+    {
+      switch (model)
+        {
+          case Material::RheologicalModel::powerlaw:
+            return "power-law";
+          case Material::RheologicalModel::carreau:
+            return "carreau";
+          case Material::RheologicalModel::newtonian:
+            return "newtonian";
+          case Material::RheologicalModel::phase_change:
+            return "phase_change";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::DensityModel model)
+    {
+      switch (model)
+        {
+          case Material::DensityModel::constant:
+            return "constant";
+          case Material::DensityModel::isothermal_ideal_gas:
+            return "isothermal_ideal_gas";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::SpecificHeatModel model)
+    {
+      switch (model)
+        {
+          case Material::SpecificHeatModel::constant:
+            return "constant";
+          case Material::SpecificHeatModel::phase_change:
+            return "phase_change";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::ThermalConductivityModel model)
+    {
+      switch (model)
+        {
+          case Material::ThermalConductivityModel::constant:
+            return "constant";
+          case Material::ThermalConductivityModel::linear:
+            return "linear";
+          case Material::ThermalConductivityModel::phase_change:
+            return "phase_change";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::ThermalExpansionModel model)
+    {
+      switch (model)
+        {
+          case Material::ThermalExpansionModel::constant:
+            return "constant";
+          case Material::ThermalExpansionModel::phase_change:
+            return "phase_change";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::TracerDiffusivityModel model)
+    {
+      switch (model)
+        {
+          case Material::TracerDiffusivityModel::constant:
+            return "constant";
+          case Material::TracerDiffusivityModel::immersed_boundary_tanh:
+            return "immersed solid tanh";
+          case Material::TracerDiffusivityModel::immersed_boundary_gaussian:
+            return "immersed solid gaussian";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::TracerReactionPrefactorModel model)
+    {
+      switch (model)
+        {
+          case Material::TracerReactionPrefactorModel::none:
+            return "none";
+          case Material::TracerReactionPrefactorModel::constant:
+            return "constant";
+          case Material::TracerReactionPrefactorModel::immersed_boundary_tanh:
+            return "immersed solid tanh";
+          case Material::TracerReactionPrefactorModel::
+            immersed_boundary_gaussian:
+            return "immersed solid gaussian";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::ElectricConductivityModel model)
+    {
+      switch (model)
+        {
+          case Material::ElectricConductivityModel::constant:
+            return "constant";
+          case Material::ElectricConductivityModel::polynomial:
+            return "polynomial";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::ElectricPermittivityModel model)
+    {
+      switch (model)
+        {
+          case Material::ElectricPermittivityModel::constant:
+            return "constant";
+          case Material::ElectricPermittivityModel::polynomial:
+            return "polynomial";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Material::MagneticPermeabilityModel model)
+    {
+      switch (model)
+        {
+          case Material::MagneticPermeabilityModel::constant:
+            return "constant";
+          case Material::MagneticPermeabilityModel::polynomial:
+            return "polynomial";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   Material::declare_parameters(ParameterHandler  &prm,
                                const std::string &material_prefix,
@@ -1217,38 +1638,38 @@ namespace Parameters
                          Utilities::int_to_string(id, 1));
     {
       prm.declare_entry("density",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(density),
                         Patterns::Double(),
                         "Density for the fluid corresponding to Phase = " +
                           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "kinematic viscosity",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(kinematic_viscosity),
         Patterns::Double(),
         "Kinematic viscosity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "specific heat",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(specific_heat),
         Patterns::Double(),
         "Specific heat for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "thermal conductivity",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(thermal_conductivity),
         Patterns::Double(),
         "Thermal conductivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "thermal expansion",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(thermal_expansion),
         Patterns::Double(),
         "Thermal expansion coefficient for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
       prm.declare_entry(
         "tracer diffusivity model",
-        "constant",
+        to_string(tracer_diffusivity_model),
         Patterns::Selection(
           "constant|immersed solid tanh|immersed solid gaussian"),
         "Model used for the calculation of the tracer diffusivity"
@@ -1256,14 +1677,14 @@ namespace Parameters
 
       prm.declare_entry(
         "tracer diffusivity",
-        "0",
+        Patterns::Tools::Convert<double>::to_string(tracer_diffusivity),
         Patterns::Double(),
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
       prm.declare_entry(
         "tracer reaction constant model",
-        "constant",
+        to_string(tracer_reaction_prefactor_model),
         Patterns::Selection(
           "none|constant|immersed solid tanh|immersed solid gaussian"),
         "Model used for the calculation of the tracer reaction constant"
@@ -1271,21 +1692,21 @@ namespace Parameters
 
       prm.declare_entry(
         "tracer reaction constant",
-        "0",
+        Patterns::Tools::Convert<double>::to_string(tracer_reaction_constant),
         Patterns::Double(),
         "Tracer reaction constant for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
       prm.declare_entry(
         "tracer reaction order",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(tracer_reaction_order),
         Patterns::Double(),
         "Tracer reaction order for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
       prm.declare_entry(
         "tracer reaction threshold",
-        "1e-8",
+        Patterns::Tools::Convert<double>::to_string(tracer_reaction_threshold),
         Patterns::Double(),
         "Tracer reaction threshold for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1) + ". " +
@@ -1297,7 +1718,7 @@ namespace Parameters
 
       prm.declare_entry(
         "rheological model",
-        "newtonian",
+        to_string(rheological_model),
         Patterns::Selection("newtonian|power-law|carreau|phase_change"),
         "Rheological model "
         "Choices are <newtonian|power-law|carreau|phase_change>.");
@@ -1306,7 +1727,7 @@ namespace Parameters
 
 
       prm.declare_entry("density model",
-                        "constant",
+                        to_string(density_model),
                         Patterns::Selection("constant|isothermal_ideal_gas"),
                         "Model used for the calculation of the density"
                         "Choices are <constant|isothermal_ideal_gas>.");
@@ -1314,7 +1735,7 @@ namespace Parameters
       isothermal_ideal_gas_density_parameters.declare_parameters(prm);
 
       prm.declare_entry("specific heat model",
-                        "constant",
+                        to_string(specific_heat_model),
                         Patterns::Selection("constant|phase_change"),
                         "Model used for the calculation of the specific heat"
                         "Choices are <constant|phase_change>.");
@@ -1323,25 +1744,25 @@ namespace Parameters
 
       prm.declare_entry(
         "thermal conductivity model",
-        "constant",
+        to_string(thermal_conductivity_model),
         Patterns::Selection("constant|linear|phase_change"),
         "Model used for the calculation of the thermal conductivity"
         "Choices are <constant|linear|phase_change>.");
 
       prm.declare_entry(
         "thermal expansion model",
-        "constant",
+        to_string(thermal_expansion_model),
         Patterns::Selection("constant|phase_change"),
         "Model used for the calculation of the thermal expansion coefficient"
         "Choices are <constant|phase_change>.");
 
       prm.declare_entry("k_A0",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(k_A0),
                         Patterns::Double(),
                         "k_A0 parameter for linear conductivity model");
 
       prm.declare_entry("k_A1",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(k_A1),
                         Patterns::Double(),
                         "k_A1 parameter for linear conductivity model");
 
@@ -1350,13 +1771,13 @@ namespace Parameters
       // ----------------------------------
       prm.declare_entry(
         "electric conductivity model",
-        "constant",
+        to_string(electric_conductivity_model),
         Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the electric conductivity"
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "electric conductivity",
-        "0",
+        Patterns::Tools::Convert<double>::to_string(electric_conductivity),
         Patterns::Double(),
         "Electric conductivity for the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1));
@@ -1371,19 +1792,19 @@ namespace Parameters
 
       prm.declare_entry(
         "electric permittivity model",
-        "constant",
+        to_string(electric_permittivity_model),
         Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the electric permittivity"
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "electric permittivity real part",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(electric_permittivity_real),
         Patterns::Double(),
         "Real part of the electric permittivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "electric permittivity imag part",
-        "0",
+        Patterns::Tools::Convert<double>::to_string(electric_permittivity_imag),
         Patterns::Double(),
         "Imaginary part of the electric permittivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
@@ -1405,19 +1826,19 @@ namespace Parameters
 
       prm.declare_entry(
         "magnetic permeability model",
-        "constant",
+        to_string(magnetic_permeability_model),
         Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the magnetic permeability"
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "magnetic permeability real part",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(magnetic_permeability_real),
         Patterns::Double(),
         "Real part of the magnetic permeability for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "magnetic permeability imag part",
-        "0",
+        Patterns::Tools::Convert<double>::to_string(magnetic_permeability_imag),
         Patterns::Double(),
         "Imaginary part of the magnetic permeability for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
@@ -1703,6 +2124,53 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    std::string
+    to_string(const MaterialInteractions::MaterialInteractionsType type)
+    {
+      switch (type)
+        {
+          case MaterialInteractions::MaterialInteractionsType::fluid_fluid:
+            return "fluid-fluid";
+          case MaterialInteractions::MaterialInteractionsType::fluid_solid:
+            return "fluid-solid";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const MaterialInteractions::SurfaceTensionModel model)
+    {
+      switch (model)
+        {
+          case MaterialInteractions::SurfaceTensionModel::constant:
+            return "constant";
+          case MaterialInteractions::SurfaceTensionModel::linear:
+            return "linear";
+          case MaterialInteractions::SurfaceTensionModel::phase_change:
+            return "phase change";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const MaterialInteractions::MobilityCahnHilliardModel model)
+    {
+      switch (model)
+        {
+          case MaterialInteractions::MobilityCahnHilliardModel::constant:
+            return "constant";
+          case MaterialInteractions::MobilityCahnHilliardModel::quartic:
+            return "quartic";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   MaterialInteractions::declare_parameters(ParameterHandler  &prm,
                                            const unsigned int id) const
@@ -1712,7 +2180,7 @@ namespace Parameters
     {
       prm.declare_entry(
         "type",
-        "fluid-fluid",
+        to_string(material_interaction_type),
         Patterns::Selection("fluid-fluid|fluid-solid"),
         "Type of materials interacting. The choices are <fluid-fluid|fluid-solid>");
 
@@ -1733,7 +2201,7 @@ namespace Parameters
         // Surface tension interactions
         prm.declare_entry(
           "surface tension model",
-          "constant",
+          to_string(surface_tension_model),
           Patterns::Selection("constant|linear|phase change"),
           "Model used for the calculation of the surface tension coefficient\n"
           "The choices are <constant|linear|phase change>.");
@@ -1742,7 +2210,7 @@ namespace Parameters
         // Cahn-Hilliard mobility
         prm.declare_entry(
           "cahn hilliard mobility model",
-          "constant",
+          to_string(mobility_cahn_hilliard_model),
           Patterns::Selection("constant|quartic"),
           "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
           "\n"
@@ -1766,7 +2234,7 @@ namespace Parameters
         // Surface tension interactions
         prm.declare_entry(
           "surface tension model",
-          "constant",
+          to_string(surface_tension_model),
           Patterns::Selection("constant|linear|phase change"),
           "Model used for the calculation of the surface tension coefficient\n"
           "The choices are <constant|linear|phase change>.");
@@ -1775,7 +2243,7 @@ namespace Parameters
         // Cahn-Hilliard mobility
         prm.declare_entry(
           "cahn hilliard mobility model",
-          "constant",
+          to_string(mobility_cahn_hilliard_model),
           Patterns::Selection("constant|quartic"),
           "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
           "\n"
@@ -1901,35 +2369,42 @@ namespace Parameters
   void
   FEM::declare_parameters(ParameterHandler &prm)
   {
+    const FEM defaults;
     prm.enter_subsection("FEM");
     {
       prm.declare_entry("velocity degree",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.velocity_degree),
                         Patterns::Integer(0),
                         "interpolation degree for velocity");
       prm.declare_alias("velocity degree", "velocity order", true);
       prm.declare_entry("pressure degree",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.pressure_degree),
                         Patterns::Integer(0),
                         "interpolation degree for pressure");
       prm.declare_alias("pressure degree", "pressure order", true);
       prm.declare_entry("void fraction degree",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.void_fraction_degree),
                         Patterns::Integer(0),
                         "interpolation degree for void fraction");
       prm.declare_alias("void fraction degree", "void fraction order", true);
       prm.declare_entry("temperature degree",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.temperature_degree),
                         Patterns::Integer(0),
                         "interpolation degree for temperature");
       prm.declare_alias("temperature degree", "temperature order", true);
       prm.declare_entry("tracer degree",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.tracer_degree),
                         Patterns::Integer(0),
                         "interpolation degree for tracer");
       prm.declare_alias("tracer degree", "tracer order", true);
       prm.declare_entry("cls degree",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.CLS_degree),
                         Patterns::Integer(0),
                         "interpolation degree for cls");
       prm.declare_alias("cls degree", "VOF degree");
@@ -1937,7 +2412,8 @@ namespace Parameters
       prm.declare_alias("cls degree", "VOF order", true);
       prm.declare_entry(
         "phase cahn hilliard degree",
-        "1",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.phase_cahn_hilliard_degree),
         Patterns::Integer(),
         "interpolation degree phase parameter for the Cahn-Hilliard equations");
       prm.declare_alias("phase cahn hilliard degree",
@@ -1945,7 +2421,8 @@ namespace Parameters
                         true);
       prm.declare_entry(
         "potential cahn hilliard degree",
-        "1",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.potential_cahn_hilliard_degree),
         Patterns::Integer(),
         "interpolation degree chemical potential for the Cahn-Hilliard equations");
       prm.declare_alias("potential cahn hilliard degree",
@@ -1953,7 +2430,8 @@ namespace Parameters
                         true);
       prm.declare_entry(
         "electromagnetics trial degree",
-        "1",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.electromagnetics_trial_degree),
         Patterns::Integer(),
         "interpolation degree for the trial space of the electromagnetics physics (time-harmonic Maxwell equations).");
       prm.declare_alias("electromagnetics trial degree",
@@ -1961,7 +2439,8 @@ namespace Parameters
                         true);
       prm.declare_entry(
         "electromagnetics test degree",
-        "2",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.electromagnetics_test_degree),
         Patterns::Integer(),
         "interpolation degree for the test space of the electromagnetics physics (time-harmonic Maxwell equations).");
       prm.declare_alias("electromagnetics test degree",
@@ -1970,26 +2449,28 @@ namespace Parameters
 
       prm.declare_entry(
         "tracer uses dg",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(defaults.tracer_uses_dg),
         Patterns::Bool(),
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
 
       prm.declare_entry(
         "cls uses dg",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(defaults.CLS_uses_dg),
         Patterns::Bool(),
         "Switch CLS to Discontinuous Galerkin (DG) formulation");
       prm.declare_alias("cls uses dg", "VOF uses dg", true);
 
       prm.declare_entry(
         "enable bubble function velocity",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.enable_bubble_function_velocity),
         Patterns::Bool(),
         "Enable bubble enrichment function for the velocity field");
 
       prm.declare_entry(
         "enable bubble function pressure",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.enable_bubble_function_pressure),
         Patterns::Bool(),
         "Enable bubble enrichment function for the pressure field");
     }
@@ -2028,40 +2509,46 @@ namespace Parameters
   void
   Forces::declare_parameters(ParameterHandler &prm)
   {
+    const Forces defaults;
     prm.enter_subsection("forces");
     {
       prm.declare_entry(
         "verbosity",
-        "quiet",
+        to_string(defaults.verbosity),
         Patterns::Selection("quiet|verbose"),
         "State whether from the non-linear solver should be printed "
         "Choices are <quiet|verbose>.");
       prm.declare_entry("calculate force",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          defaults.calculate_force),
                         Patterns::Bool(),
                         "Enable calculation of force");
       prm.declare_entry("calculate torque",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          defaults.calculate_torque),
                         Patterns::Bool(),
                         "Enable calculation of torque");
       prm.declare_entry("force name",
-                        "force",
+                        defaults.force_output_name,
                         Patterns::FileName(),
                         "File output force prefix");
       prm.declare_entry("torque name",
-                        "torque",
+                        defaults.torque_output_name,
                         Patterns::FileName(),
                         "File output force prefix");
       prm.declare_entry("output precision",
-                        "10",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.output_precision),
                         Patterns::Integer(),
                         "Precision of the values outputted.");
       prm.declare_entry("calculation frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.calculation_frequency),
                         Patterns::Integer(),
                         "Calculation frequency");
       prm.declare_entry("output frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.output_frequency),
                         Patterns::Integer(),
                         "Output frequency");
     }
@@ -2092,24 +2579,27 @@ namespace Parameters
   void
   Laser_FreeSurfaceRadiation::declare_parameters(ParameterHandler &prm)
   {
+    const Laser_FreeSurfaceRadiation defaults;
     prm.enter_subsection("free surface radiation");
     {
       prm.declare_entry(
         "enable",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(defaults.enable_radiation),
         Patterns::Bool(),
         "Enable radiation at the free surface (air/metal interface) <true|false>");
       prm.declare_entry("Stefan-Boltzmann constant",
-                        "5.6703e-8",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.Stefan_Boltzmann_constant),
                         Patterns::Double(),
                         "Stefan-Boltzmann constant");
       prm.declare_entry("emissivity",
-                        "0.6",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.emissivity),
                         Patterns::Double(),
                         "Emissivity of the free surface (air/metal interface)");
       prm.declare_entry(
         "Tinf",
-        "0.0",
+        Patterns::Tools::Convert<double>::to_string(defaults.Tinf),
         Patterns::Double(),
         "Temperature (Double) of environment for radiation term at the free surface (air/metal interface)");
     }
@@ -2129,40 +2619,73 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    template <int dim>
+    std::string
+    to_string(const typename Laser<dim>::LaserType type)
+    {
+      switch (type)
+        {
+          case Laser<dim>::LaserType::exponential_decay:
+            return "exponential_decay";
+          case Laser<dim>::LaserType::gaussian_heat_flux_cls_interface:
+            return "gaussian_heat_flux_cls_interface";
+          case Laser<dim>::LaserType::uniform_heat_flux_cls_interface:
+            return "uniform_heat_flux_cls_interface";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   template <int dim>
   void
   Laser<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("laser parameters");
     {
-      prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
+      prm.declare_entry("enable",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          activate_laser),
+                        Patterns::Bool(),
+                        "Activate laser");
       prm.declare_entry(
         "type",
-        "gaussian_heat_flux_cls_interface",
+        to_string<dim>(laser_type),
         Patterns::Selection(
           "exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface"),
         "Type of laser model used."
         "Choices are <exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface>.");
       prm.declare_entry(
         "enable angle of incidence dependence",
-        "true",
+        Patterns::Tools::Convert<bool>::to_string(
+          enable_angle_of_incidence_dependence),
         Patterns::Bool(),
         "Enable the multiplication of the laser heat flux by the cosine of the angle of incidence of the laser with respect to the surface.");
       prm.declare_entry("concentration factor",
-                        "2.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          concentration_factor),
                         Patterns::Double(),
                         "Concentration factor");
-      prm.declare_entry("power", "0.0", Patterns::Double(), "Laser power");
+      prm.declare_entry("power",
+                        Patterns::Tools::Convert<double>::to_string(
+                          laser_power),
+                        Patterns::Double(),
+                        "Laser power");
       prm.declare_entry("absorptivity",
-                        "0.5",
+                        Patterns::Tools::Convert<double>::to_string(
+                          laser_absorptivity),
                         Patterns::Double(),
                         "Laser absorptivity");
       prm.declare_entry("penetration depth",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          penetration_depth),
                         Patterns::Double(),
                         "Penetration depth");
       prm.declare_entry("beam radius",
-                        "0.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          beam_radius),
                         Patterns::Double(),
                         "Laser beam radius");
       radiation.declare_parameters(prm);
@@ -2173,14 +2696,16 @@ namespace Parameters
       prm.leave_subsection();
 
       prm.declare_entry("start time",
-                        "0.0",
+                        Patterns::Tools::Convert<double>::to_string(start_time),
                         Patterns::Double(),
                         "Start time of laser");
       prm.declare_entry("end time",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(end_time),
                         Patterns::Double(),
                         "End time of laser");
 
+      // Not derived from a member default: see the comments on
+      // beam_orientation and rotation_axis in the header (dim-dependent).
       prm.declare_entry("beam orientation",
                         "z-",
                         Patterns::Selection("x+|x-|y+|y-|z+|z-"),
@@ -2189,7 +2714,7 @@ namespace Parameters
 
       prm.declare_entry(
         "beam rotation angle",
-        "0.0",
+        Patterns::Tools::Convert<double>::to_string(rotation_angle),
         Patterns::Double(),
         "Angle of rotation in rad of the beam axis with respect to the axis defined by the beam orientation parameter");
 
@@ -2363,7 +2888,8 @@ namespace Parameters
     prm.enter_subsection("isocontour bounding box");
     {
       prm.declare_entry("number of isocontour bounding boxes",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          number_of_isocontour_bounding_boxes),
                         Patterns::Integer(0),
                         "Number of monitored isocontours");
       prm.declare_entry(
@@ -2476,7 +3002,8 @@ namespace Parameters
     prm.enter_subsection("probing points");
     {
       prm.declare_entry("number of probing points",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          number_of_probing_points),
                         Patterns::Integer(0),
                         "Number of probing points");
 
@@ -2578,217 +3105,233 @@ namespace Parameters
     {
       prm.declare_entry(
         "verbosity",
-        "quiet",
+        to_string(verbosity),
         Patterns::Selection("quiet|verbose"),
         "State whether from the post-processing values should be printed "
         "Choices are <quiet|verbose>.");
 
       prm.declare_entry(
         "calculate kinetic energy",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_kinetic_energy),
         Patterns::Bool(),
         "Enable calculation of total kinetic energy. The total kinetic "
         "energy is calculated from the volumetric integral of the kinetic energy over the domain.");
 
       prm.declare_entry(
         "calculate enstrophy",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_enstrophy),
         Patterns::Bool(),
         "Enable calculation of total enstrophy. The total enstrophy "
         "is calculated from the volumetric integral of the enstrophy over the domain.");
 
       prm.declare_entry(
         "calculate pressure power",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_pressure_power),
         Patterns::Bool(),
         "Enable calculation of the pressure power. The pressure power "
         "is calculated from the volumetric integral of u.grad(p) over the domain.");
 
       prm.declare_entry(
         "calculate viscous dissipation",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          calculate_viscous_dissipation),
         Patterns::Bool(),
         "Enable calculation of the viscous dissipation. The viscous dissipation "
         "is calculated from the volumetric integral of grad(u).tau over the domain.");
 
       prm.declare_entry("calculate apparent viscosity",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          calculate_apparent_viscosity),
                         Patterns::Bool(),
                         "Enable calculation of apparent viscosity");
 
       prm.declare_entry("calculate average velocities",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          calculate_average_velocities),
                         Patterns::Bool(),
                         "Enable calculation of average velocities.");
 
       prm.declare_entry(
         "calculate average temperature and heat flux",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          calculate_average_temp_and_hf),
         Patterns::Bool(),
         "Enable calculation of time average temperature and time average heat flux");
 
       prm.declare_entry(
         "calculate pressure drop",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_pressure_drop),
         Patterns::Bool(),
         "Enable calculation of pressure drop between two boundaries.");
 
       prm.declare_entry("inlet boundary id",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          inlet_boundary_id),
                         Patterns::Integer(),
                         "Inlet boundary ID for pressure drop calculation");
 
       prm.declare_entry("outlet boundary id",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          outlet_boundary_id),
                         Patterns::Integer(),
                         "Outlet boundary ID for pressure drop calculation");
 
       prm.declare_entry("calculate flow rate",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          calculate_flow_rate),
                         Patterns::Bool(),
                         "Enable calculation of flow rate at boundaries.");
 
       prm.declare_entry(
         "calculate tracer flow rate",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_tracer_flow_rate),
         Patterns::Bool(),
         "Enable calculation of tracer flow rate at boundaries.");
 
       prm.declare_entry(
         "initial time for average velocity",
-        "0.0",
+        Patterns::Tools::Convert<double>::to_string(
+          initial_time_for_average_velocities),
         Patterns::Double(),
         "Initial time to start calculations for average velocities");
 
       prm.declare_entry(
         "initial time for average temperature and heat flux",
-        "0.0",
+        Patterns::Tools::Convert<double>::to_string(
+          initial_time_for_average_temp_and_hf),
         Patterns::Double(),
         "Initial time to start calculations for average temperature");
 
       prm.declare_entry("kinetic energy name",
-                        "kinetic_energy",
+                        kinetic_energy_output_name,
                         Patterns::FileName(),
                         "File output kinetic energy");
 
       prm.declare_entry("pressure drop name",
-                        "pressure_drop",
+                        pressure_drop_output_name,
                         Patterns::FileName(),
                         "File output pressure drop");
 
       prm.declare_entry("flow rate name",
-                        "flow_rate",
+                        flow_rate_output_name,
                         Patterns::FileName(),
                         "File output volumetric flux");
 
       prm.declare_entry("tracer flow rate name",
-                        "tracer_flow_rate",
+                        tracer_flow_rate_output_name,
                         Patterns::FileName(),
                         "Output file name for tracer flow rate");
 
       prm.declare_entry("enstrophy name",
-                        "enstrophy",
+                        enstrophy_output_name,
                         Patterns::FileName(),
                         "File output enstrophy");
 
       prm.declare_entry("pressure power name",
-                        "pressure_power",
+                        pressure_power_output_name,
                         Patterns::FileName(),
                         "File output pressure power");
 
       prm.declare_entry("viscous dissipation name",
-                        "viscous_dissipation",
+                        viscous_dissipation_output_name,
                         Patterns::FileName(),
                         "File output viscous dissipation");
 
       prm.declare_entry("apparent viscosity name",
-                        "apparent_viscosity",
+                        apparent_viscosity_output_name,
                         Patterns::FileName(),
                         "File output apparent viscosity");
 
       prm.declare_entry("output frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          output_frequency),
                         Patterns::Integer(),
                         "Output frequency");
 
       prm.declare_entry("calculation frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          calculation_frequency),
                         Patterns::Integer(),
                         "Calculation frequency of post-processed quantities.");
 
       prm.declare_entry("calculate tracer statistics",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          calculate_tracer_statistics),
                         Patterns::Bool(),
                         "Enable calculation of tracer statistics.");
 
       prm.declare_entry("tracer statistics name",
-                        "tracer_statistics",
+                        tracer_output_name,
                         Patterns::FileName(),
                         "File name output tracer statistics");
 
       prm.declare_entry(
         "calculate phase statistics",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_phase_statistics),
         Patterns::Bool(),
         "Enable calculation of phase statistics: maximum, minimum, average and integral over the domain (Cahn-Hilliard).");
 
       prm.declare_entry("phase statistics name",
-                        "phase_statistics",
+                        phase_output_name,
                         Patterns::FileName(),
                         "File name output phase statistics (Cahn-Hilliard)");
 
       prm.declare_entry("calculate temperature statistics",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          calculate_temperature_statistics),
                         Patterns::Bool(),
                         "Enable calculation of temperature statistics.");
 
       prm.declare_entry("temperature statistics name",
-                        "temperature_statistics",
+                        temperature_output_name,
                         Patterns::FileName(),
                         "File name output temperature statistics");
 
       prm.declare_entry("monitored fluid with phase change",
-                        "fluid 0",
+                        to_string(monitored_fluid_with_phase_change),
                         Patterns::Selection("fluid 0|fluid 1"),
                         "Fluid with phase change properties <fluid 0|fluid 1>");
 
       prm.declare_entry(
         "calculate algebraic melt volume",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          calculate_algebraic_melt_volume),
         Patterns::Bool(),
         "Enable calculation of the algebraic (phase indicator and liquid fraction weighted) melt volume in the domain. In the case of CLS simulations, the fluid of interest is selected with 'monitored fluid with phase change.'");
 
       prm.declare_entry("algebraic melt volume name",
-                        "melt_volume_alge",
+                        algebraic_melt_volume_output_name,
                         Patterns::FileName(),
                         "Filename of the algebraic melt volume output file");
 
       prm.declare_entry(
         "calculate geometric melt volume",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          calculate_geometric_melt_volume),
         Patterns::Bool(),
         "Enable calculation of the geometric melt volume. "
         "The melt volume is computed as the volume of fluid over the 'melting temperature'."
         "In the case of CLS simulations, the volume is the geometrical volume within the 'monitored fluid with phase change.'");
 
       prm.declare_entry("geometric melt volume name",
-                        "melt_volume_geo",
+                        geometric_melt_volume_output_name,
                         Patterns::FileName(),
                         "Filename of the geometric melt volume output file");
 
       prm.declare_entry(
         "melting temperature",
-        "0",
+        Patterns::Tools::Convert<double>::to_string(melting_temperature),
         Patterns::Double(0),
         "Temperature used to define the melting point of the fluid for volume calculation.");
 
       prm.declare_entry("calculate heat flux",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          calculate_heat_flux),
                         Patterns::Bool(),
                         "Enable calculation of heat flux.");
 
       prm.declare_entry("heat flux name",
-                        "heat_flux",
+                        heat_flux_output_name,
                         Patterns::FileName(),
                         "File name output for the heat flux");
 
@@ -2803,72 +3346,74 @@ namespace Parameters
                         "File name output for the convective flux");
 
       prm.declare_entry("postprocessed fluid",
-                        "both",
+                        to_string(postprocessed_fluid),
                         Patterns::Selection("fluid 0|fluid 1|both"),
                         "Fluid domain used for thermal postprocesses "
                         "in the heat equation <fluid 0|fluid 1|both>");
 
       prm.declare_entry(
         "calculate barycenter",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_barycenter),
         Patterns::Bool(),
         "Enable calculation of the barycenter location and velocity of fluid 1 in CLS and Cahn-Hilliard simulations.");
 
       prm.declare_entry(
         "barycenter name",
-        "barycenter_information",
+        barycenter_output_name,
         Patterns::FileName(),
         "Name of barycenter information output file in CLS or Cahn-Hilliard simulations");
 
       prm.declare_entry(
         "calculate mass conservation",
-        "true",
+        Patterns::Tools::Convert<bool>::to_string(calculate_mass_conservation),
         Patterns::Bool(),
         "Enable calculation of the mass and momentum of both fluids in CLS simulations.");
 
       prm.declare_entry(
         "mass conservation name",
-        "mass_conservation_information",
+        mass_conservation_output_name,
         Patterns::FileName(),
         "Name of mass conservation output file in CLS simulations");
 
       prm.declare_entry(
         "calculate phase energy",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_phase_energy),
         Patterns::Bool(),
         "Enable calculation of phase energies, including: total energy, bulk energy, and interface energy");
 
       prm.declare_entry(
         "phase energy name",
-        "phase_energy",
+        phase_energy_output_name,
         Patterns::FileName(),
         "Name of energy output file in Cahn-Hilliard simulations. The file is stored in the output folder specified in the simulation control subsection");
 
       prm.declare_entry(
         "calculate phase volumes",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(calculate_phase_volumes),
         Patterns::Bool(),
         "Enable calculation of total volume each phases in cfd-dem simulation, including: total volume of fluid, and total volume of particles");
 
       prm.declare_entry(
         "phase volumes name",
-        "phase_volumes",
+        phase_volumes_output_name,
         Patterns::FileName(),
         "Name of phases volume output file in cfd-dem simulations. The file is stored in the output folder specified in the simulation control subsection");
 
       prm.declare_entry("output qcriterion",
-                        "true",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          output_q_criterion),
                         Patterns::Bool(),
                         "Enable output of Q-criterion field <true|false>");
 
       prm.declare_entry("output vorticity",
-                        "true",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          output_vorticity),
                         Patterns::Bool(),
                         "Enable output of vorticity field <true|false>");
 
       prm.declare_entry(
         "output velocity gradient",
-        "true",
+        Patterns::Tools::Convert<bool>::to_string(output_velocity_gradient),
         Patterns::Bool(),
         "Enable output of velocity gradient field <true|false>");
 
@@ -2982,24 +3527,60 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    std::string
+    to_string(const NonLinearSolver::SolverType type)
+    {
+      switch (type)
+        {
+          case NonLinearSolver::SolverType::newton:
+            return "newton";
+          case NonLinearSolver::SolverType::inexact_newton:
+            return "inexact_newton";
+          case NonLinearSolver::SolverType::kinsol_newton:
+            return "kinsol_newton";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const NonLinearSolver::KinsolStrategy strategy)
+    {
+      switch (strategy)
+        {
+          case NonLinearSolver::KinsolStrategy::normal_newton:
+            return "normal_newton";
+          case NonLinearSolver::KinsolStrategy::line_search:
+            return "line_search";
+          case NonLinearSolver::KinsolStrategy::picard:
+            return "picard";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   NonLinearSolver::declare_parameters(ParameterHandler  &prm,
                                       const std::string &physics_name)
   {
+    const NonLinearSolver defaults;
     prm.enter_subsection("non-linear solver");
     {
       prm.enter_subsection(physics_name);
       {
         prm.declare_entry(
           "verbosity",
-          "verbose",
+          to_string(defaults.verbosity),
           Patterns::Selection("quiet|verbose"),
           "State whether the outputs from the non-linear solver should be printed. "
           "Choices are <quiet|verbose>.");
 
         prm.declare_entry(
           "solver",
-          "newton",
+          to_string(defaults.solver),
           Patterns::Selection("newton|kinsol_newton|inexact_newton"),
           "Non-linear solver that will be used "
           "Choices are <newton|kinsol_newton|inexact_newton>."
@@ -3011,22 +3592,24 @@ namespace Parameters
 
         prm.declare_entry(
           "kinsol strategy",
-          "line_search",
+          to_string(defaults.kinsol_strategy),
           Patterns::Selection("normal_newton|line_search|fixed_point|picard"),
           "Strategy that will be used by the kinsol newton solver");
 
         prm.declare_entry("tolerance",
-                          "1e-6",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.tolerance),
                           Patterns::Double(),
                           "Newton solver tolerance");
         prm.declare_entry("max iterations",
-                          "10",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.max_iterations),
                           Patterns::Integer(),
                           "Maximum number of Newton Iterations");
 
         prm.declare_entry(
           "step tolerance",
-          "0.9",
+          Patterns::Tools::Convert<double>::to_string(defaults.step_tolerance),
           Patterns::Double(),
           "Newton solver relative tolerance between steps."
           " If a newton iteration leads to a residual > step tolerance"
@@ -3035,14 +3618,16 @@ namespace Parameters
 
         prm.declare_entry(
           "matrix tolerance",
-          "0.1",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.matrix_tolerance),
           Patterns::Double(),
           "This parameter controls the frequency at which the matrix is refreshed in the inexact Newton solvers"
           "If the residual after a newton step < previous residual * matrix tolerance, the matrix is not re-assembled");
 
         prm.declare_entry(
           "force rhs calculation",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.force_rhs_calculation),
           Patterns::Bool(),
           "This is required if there is a fixed point component to the non-linear"
           "solver that is changed at the beginning of every newton iteration."
@@ -3052,19 +3637,21 @@ namespace Parameters
 
         prm.declare_entry(
           "reuse matrix",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(defaults.reuse_matrix),
           Patterns::Bool(),
           "Reuse the last jacobian matrix for the next non-linear problem solution");
 
         prm.declare_entry(
           "reuse preconditioner",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.reuse_preconditioner),
           Patterns::Bool(),
           "Reuse the last preconditioner for the next non-linear problem solution");
 
         prm.declare_entry(
           "abort at convergence failure",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.abort_at_convergence_failure),
           Patterns::Bool(),
           "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
       }
@@ -3124,30 +3711,60 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
+  namespace
+  {
+    std::string
+    to_string(const Mesh::Type type)
+    {
+      switch (type)
+        {
+          case Mesh::Type::gmsh:
+            return "gmsh";
+          case Mesh::Type::dealii:
+            return "dealii";
+          case Mesh::Type::lethe:
+            return "lethe";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const Tensor<1, 3> &tensor)
+    {
+      return Patterns::Tools::Convert<double>::to_string(tensor[0]) + ", " +
+             Patterns::Tools::Convert<double>::to_string(tensor[1]) + ", " +
+             Patterns::Tools::Convert<double>::to_string(tensor[2]);
+    }
+  } // namespace
+
   void
   Mesh::declare_parameters(ParameterHandler &prm)
   {
+    const Mesh defaults;
     prm.enter_subsection("mesh");
     {
       prm.declare_entry("type",
-                        "dealii",
+                        to_string(defaults.type),
                         Patterns::Selection("gmsh|dealii|lethe"),
                         "Type of mesh "
                         "Choices are <gmsh|dealii|lethe>.");
 
       prm.declare_entry("file name",
-                        "none",
+                        defaults.file_name,
                         Patterns::FileName(),
                         "GMSH file name");
 
       prm.declare_entry("initial refinement",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.initial_refinement),
                         Patterns::Integer(),
                         "Initial refinement of the mesh");
 
       prm.declare_entry(
         "initial boundary refinement",
-        "0",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.initial_refinement_at_boundaries),
         Patterns::Integer(),
         "Initial refinement of the mesh at the boundaries specified by the user");
 
@@ -3159,25 +3776,28 @@ namespace Parameters
 
       prm.declare_entry(
         "enable target size",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.refine_until_target_size),
         Patterns::Bool(),
         "Enable initial refinement until target size is reached.");
 
       prm.declare_entry(
         "simplex",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(defaults.simplex),
         Patterns::Bool(),
         "Indicates that the mesh used is a mesh made of only simplex elements.");
 
       prm.declare_entry(
         "check diamond cells",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.check_for_diamond_cells),
         Patterns::Bool(),
         "Enables checking the input grid for diamond-shaped cells.");
 
       prm.declare_entry(
         "expand particle-wall contact search",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.expand_particle_wall_contact_search),
         Patterns::Bool(),
         "Enables adding the boundary neighbor cells of boundary cells to the"
         "particle-wall contact search list. This feature should only be "
@@ -3186,23 +3806,24 @@ namespace Parameters
         "convex boundaries, this feature MUST NOT be activated");
 
       prm.declare_entry("target size",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.target_size),
                         Patterns::Double(),
                         "Target size of the initial refinement");
 
-      prm.declare_entry("grid type", "hyper_cube");
-      prm.declare_entry("grid arguments", "-1 : 1 : false");
+      prm.declare_entry("grid type", defaults.grid_type);
+      prm.declare_entry("grid arguments", defaults.grid_arguments);
 
       prm.declare_entry(
         "initial translation",
-        "0, 0, 0",
+        to_string(defaults.translation),
         Patterns::List(Patterns::Double()),
         "Component of the desired translation of the mesh at initialization. \n"
         "In 2D, the third value (z-component) is ignored.");
 
       prm.declare_entry(
         "initial rotation axis",
-        "1, 0, 0",
+        to_string(defaults.rotation_axis),
         Patterns::List(Patterns::Double()),
         "Component of the desired rotation of the mesh at initialization.\n"
         "In 2D, this has no effect, only a counter-clockwise rotation around the origin \n "
@@ -3210,12 +3831,13 @@ namespace Parameters
 
       prm.declare_entry(
         "initial rotation angle",
-        "0",
+        Patterns::Tools::Convert<double>::to_string(defaults.rotation_angle),
         Patterns::Double(),
         "Angle of rotation of the mesh at initialization around the axis in radian");
 
       prm.declare_entry("scale",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.scale),
                         Patterns::Double(0),
                         "Scaling factor used for the mesh.");
     }
@@ -3287,7 +3909,8 @@ namespace Parameters
     prm.enter_subsection("box refinement");
     {
       prm.declare_entry("number of refinement boxes",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          number_of_refinement_boxes),
                         Patterns::Integer(0),
                         "Number of refinement boxes specified");
       for (unsigned int i_box = 0; i_box < max_number_of_refinement_boxes;
@@ -3341,265 +3964,419 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    std::string
+    to_string(const LinearSolver::SolverType type)
+    {
+      switch (type)
+        {
+          case LinearSolver::SolverType::gmres:
+            return "gmres";
+          case LinearSolver::SolverType::bicgstab:
+            return "bicgstab";
+          case LinearSolver::SolverType::direct:
+            return "direct";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const LinearSolver::PreconditionerType type)
+    {
+      switch (type)
+        {
+          case LinearSolver::PreconditionerType::ilu:
+            return "ilu";
+          case LinearSolver::PreconditionerType::amg:
+            return "amg";
+          case LinearSolver::PreconditionerType::lsmg:
+            return "lsmg";
+          case LinearSolver::PreconditionerType::gcmg:
+            return "gcmg";
+          case LinearSolver::PreconditionerType::none:
+            return "none";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const LinearSolver::MultigridCoarseningSequenceType type)
+    {
+      switch (type)
+        {
+          case LinearSolver::MultigridCoarseningSequenceType::h:
+            return "h";
+          case LinearSolver::MultigridCoarseningSequenceType::p:
+            return "p";
+          case LinearSolver::MultigridCoarseningSequenceType::hp:
+            return "hp";
+          case LinearSolver::MultigridCoarseningSequenceType::ph:
+            return "ph";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(
+      const MGTransferGlobalCoarseningTools::PolynomialCoarseningSequenceType
+        type)
+    {
+      switch (type)
+        {
+          case MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::decrease_by_one:
+            return "decrease by one";
+          case MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::bisect:
+            return "bisect";
+          case MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::go_to_one:
+            return "go to one";
+          default:
+            Assert(false, ExcInternalError());
+            return "";
+        }
+    }
+
+    std::string
+    to_string(const LinearSolver::MultigridSmootherPreconditionerType type)
+    {
+      switch (type)
+        {
+          case LinearSolver::MultigridSmootherPreconditionerType::
+            InverseDiagonal:
+            return "inverse diagonal";
+          case LinearSolver::MultigridSmootherPreconditionerType::
+            AdditiveSchwarzMethod:
+            return "additive schwarz method";
+          case LinearSolver::MultigridSmootherPreconditionerType::Chebyshev:
+            return "chebyshev";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const LinearSolver::CoarseGridSolverType type)
+    {
+      switch (type)
+        {
+          case LinearSolver::CoarseGridSolverType::gmres:
+            return "gmres";
+          case LinearSolver::CoarseGridSolverType::amg:
+            return "amg";
+          case LinearSolver::CoarseGridSolverType::ilu:
+            return "ilu";
+          case LinearSolver::CoarseGridSolverType::direct:
+            return "direct";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   LinearSolver::declare_parameters(ParameterHandler  &prm,
                                    const std::string &physics_name)
   {
+    const LinearSolver defaults;
     prm.enter_subsection("linear solver");
     {
       prm.enter_subsection(physics_name);
       {
         prm.declare_entry(
           "verbosity",
-          "verbose",
+          to_string(defaults.verbosity),
           Patterns::Selection("quiet|verbose|extra verbose"),
           "State whether output from solver runs should be printed. "
           "Choices are <quiet|verbose|extra verbose>.");
         prm.declare_entry(
           "method",
-          "gmres",
+          to_string(defaults.solver),
           Patterns::Selection("gmres|bicgstab|direct"),
           "The iterative solver for the linear system of equations. "
           "Choices are <gmres|bicgstab|direct>.");
 
         prm.declare_entry(
           "rescale residual",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.rescale_residual_by_volume),
           Patterns::Bool(),
           "Rescale the residual by the square root of the volume of the triangulation");
         prm.declare_entry("relative residual",
-                          "1e-3",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.relative_residual),
                           Patterns::Double(),
                           "Linear solver residual");
         prm.declare_entry("minimum residual",
-                          "1e-12",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.minimum_residual),
                           Patterns::Double(),
                           "Linear solver minimum residual");
         prm.declare_entry("max iters",
-                          "1000",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.max_iterations),
                           Patterns::Integer(),
                           "Maximum solver iterations");
 
         prm.declare_entry("max krylov vectors",
-                          "100",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.max_krylov_vectors),
                           Patterns::Integer(),
                           "Maximum number of krylov vectors for GMRES");
 
         prm.declare_entry(
           "enable hessians in jacobian",
-          "true",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.enable_hessians_jacobian),
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the Jacobian");
 
         prm.declare_entry(
           "enable hessians in residual",
-          "true",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.enable_hessians_residual),
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the rhs");
 
         prm.declare_entry("preconditioner",
-                          "ilu",
+                          to_string(defaults.preconditioner),
                           Patterns::Selection("amg|ilu|lsmg|gcmg|none"),
                           "The preconditioner for the linear solver."
                           "Choices are <amg|ilu|lsmg|gcmg|none>.");
 
 
         prm.declare_entry("ilu preconditioner fill",
-                          "0",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.ilu_precond_fill),
                           Patterns::Double(),
                           "Ilu preconditioner fill");
 
         prm.declare_entry("ilu preconditioner absolute tolerance",
-                          "1e-12",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.ilu_precond_atol),
                           Patterns::Double(),
                           "Ilu preconditioner tolerance");
 
         prm.declare_entry("ilu preconditioner relative tolerance",
-                          "1.00",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.ilu_precond_rtol),
                           Patterns::Double(),
                           "Ilu relative tolerance");
 
         prm.declare_entry("amg preconditioner ilu fill",
-                          "0",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.amg_precond_ilu_fill),
                           Patterns::Double(),
                           "amg preconditioner ilu smoother fill");
 
         prm.declare_entry("amg preconditioner ilu absolute tolerance",
-                          "1e-12",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.amg_precond_ilu_atol),
                           Patterns::Double(),
                           "amg preconditioner ilu smoother absolute tolerance");
 
         prm.declare_entry("amg preconditioner ilu relative tolerance",
-                          "1.00",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.amg_precond_ilu_rtol),
                           Patterns::Double(),
                           "amg preconditioner ilu smoother relative tolerance");
 
         prm.declare_entry("amg aggregation threshold",
-                          "1e-14",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.amg_aggregation_threshold),
                           Patterns::Double(),
                           "amg aggregation threshold");
         prm.declare_entry("amg n cycles",
-                          "1",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.amg_n_cycles),
                           Patterns::Integer(),
                           "amg number of cycles");
         prm.declare_entry("amg w cycles",
-                          "false",
+                          Patterns::Tools::Convert<bool>::to_string(
+                            defaults.amg_w_cycles),
                           Patterns::Bool(),
                           "amg w cycling. If this is set to true, W cycling is "
                           "used. Otherwise, V cycling is used.");
         prm.declare_entry("amg smoother sweeps",
-                          "2",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.amg_smoother_sweeps),
                           Patterns::Integer(),
                           "amg smoother sweeps");
         prm.declare_entry("amg smoother overlap",
-                          "1",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.amg_smoother_overlap),
                           Patterns::Integer(),
                           "amg smoother overlap");
         prm.declare_entry(
           "force linear solver continuation",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.force_linear_solver_continuation),
           Patterns::Bool(),
           "A boolean that will force the linear solver to continue even if it fails");
 
         prm.declare_entry("mg min level",
-                          "-1",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.mg_min_level),
                           Patterns::Integer(),
                           "mg min level");
 
         prm.declare_entry("mg level min cells",
-                          "-1",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.mg_level_min_cells),
                           Patterns::Integer(),
                           "mg minimum number of cells for coarse level");
 
         prm.declare_entry("mg int level",
-                          "-1",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.mg_int_level),
                           Patterns::Integer(),
                           "mg int level");
 
         prm.declare_entry(
           "mg enable hessians in jacobian",
-          "true",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.mg_enable_hessians_jacobian),
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the Jacobian of mg operators");
 
         prm.declare_entry("mg smoother iterations",
-                          "10",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.mg_smoother_iterations),
                           Patterns::Integer(),
                           "mg smoother iterations for lsmg or gcmg");
 
         prm.declare_entry("mg smoother relaxation",
-                          "0.5",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.mg_smoother_relaxation),
                           Patterns::Double(),
                           "mg smoother relaxation for lsmg or gcmg");
 
         prm.declare_entry(
           "mg smoother preconditioner type",
-          "inverse diagonal",
+          to_string(defaults.mg_smoother_preconditioner_type),
           Patterns::Selection(
             "inverse diagonal|additive schwarz method|chebyshev"),
           "Preconditioner of smoother");
 
         prm.declare_entry("mg smoother chebyshev degree",
-                          "3",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.mg_smoother_chebyshev_degree),
                           Patterns::Integer(0),
                           "polynomial degree of the Chebyshev smoother");
 
         prm.declare_entry(
           "mg smoother chebyshev smoothing range",
-          "15",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.mg_smoother_chebyshev_smoothing_range),
           Patterns::Double(1.0),
           "smoothing range (lambda_max/lambda_min) of the Chebyshev smoother");
 
         prm.declare_entry(
           "mg smoother chebyshev eig cg n iterations",
-          "10",
+          Patterns::Tools::Convert<unsigned int>::to_string(
+            defaults.mg_smoother_chebyshev_eig_cg_n_iterations),
           Patterns::Integer(1),
           "cg/Lanczos iterations to estimate the maximum eigenvalue for the "
           "Chebyshev smoother");
 
         prm.declare_entry("mg smoother eig estimation",
-                          "true",
+                          Patterns::Tools::Convert<bool>::to_string(
+                            defaults.mg_smoother_eig_estimation),
                           Patterns::Bool(),
                           "estimate eigenvalues for relaxation parameter");
 
         prm.declare_entry("eig estimation smoothing range",
-                          "10",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.eig_estimation_smoothing_range),
                           Patterns::Double(),
                           "sets range between largest and smallest eig");
 
         prm.declare_entry("eig estimation cg n iterations",
-                          "10",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.eig_estimation_cg_n_iterations),
                           Patterns::Integer(),
                           "cg iterations performed to find eigenvalue");
 
         prm.declare_entry("eig estimation verbosity",
-                          "verbose",
+                          to_string(defaults.eig_estimation_verbose),
                           Patterns::Selection("quiet|verbose"),
                           "State whether MG should print max and min eigenvalue"
                           "Choices are <quiet|verbose>.");
 
         prm.declare_entry("mg coarse grid solver",
-                          "direct",
+                          to_string(defaults.mg_coarse_grid_solver),
                           Patterns::Selection("gmres|amg|ilu|direct"),
                           "The coarse grid solver for lsmg or gcmg"
                           "Choices are <gmres|amg|ilu|direct>.");
 
         prm.declare_entry(
           "mg coarse grid use fe q iso q1",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.mg_use_fe_q_iso_q1),
           Patterns::Bool(),
           "use elements with linear interpolation for coarse grid");
 
         prm.declare_entry("mg coarsening type",
-                          "h",
+                          to_string(defaults.mg_coarsening_type),
                           Patterns::Selection("h|p|hp|ph"),
                           "mg coarsening type for gcmg");
 
         prm.declare_entry("mg p coarsening type",
-                          "decrease by one",
+                          to_string(defaults.mg_p_coarsening_type),
                           Patterns::Selection(
                             "decrease by one|bisect|go to one"),
                           "mg p coarsening type for gcmg");
 
         prm.declare_entry("mg p min coarsening degree",
-                          "1",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.mg_p_min_coarsening_degree),
                           Patterns::Integer(),
                           "mg p minimum coarsening degree for gcmg");
 
         prm.declare_entry("mg gmres max iterations",
-                          "2000",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.mg_gmres_max_iterations),
                           Patterns::Integer(),
                           "mg gmres iterations for lsmg or gcmg");
 
         prm.declare_entry("mg gmres tolerance",
-                          "1e-14",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.mg_gmres_tolerance),
                           Patterns::Double(),
                           "mg gmres tolerance n for lsmg or gcmg");
 
         prm.declare_entry("mg gmres reduce",
-                          "1e-4",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.mg_gmres_reduce),
                           Patterns::Double(),
                           "mg gmres reduce for lsmg or gcmg");
 
         prm.declare_entry("mg gmres max krylov vectors",
-                          "30",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.mg_gmres_max_krylov_vectors),
                           Patterns::Integer(),
                           "mg gmres max krylov vectors for lsmg or gcmg");
 
         prm.declare_entry("mg gmres preconditioner",
-                          "amg",
+                          to_string(defaults.mg_gmres_preconditioner),
                           Patterns::Selection("amg|ilu"),
                           "The preconditioner for the mg gmres solver"
                           "Choices are <amg|ilu>.");
 
         prm.declare_entry("mg amg use default parameters",
-                          "false",
+                          Patterns::Tools::Convert<bool>::to_string(
+                            defaults.mg_amg_use_default_parameters),
                           Patterns::Bool(),
                           "Use default parameters for Trilinos AMG");
 
         prm.declare_entry(
           "mg verbosity",
-          "verbose",
+          to_string(defaults.mg_verbosity),
           Patterns::Selection("quiet|verbose|extra verbose"),
           "State whether LSMG or GCMG should print information about levels "
           "Choices are <quiet|verbose|extra verbose>.");
@@ -3824,32 +4601,70 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    std::string
+    to_string(const MeshAdaptation::Type type)
+    {
+      switch (type)
+        {
+          case MeshAdaptation::Type::none:
+            return "none";
+          case MeshAdaptation::Type::uniform:
+            return "uniform";
+          case MeshAdaptation::Type::adaptive:
+            return "adaptive";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const MultipleAdaptationParameters::ErrorEstimator estimator)
+    {
+      switch (estimator)
+        {
+          case MultipleAdaptationParameters::ErrorEstimator::kelly:
+            return "kelly";
+          case MultipleAdaptationParameters::ErrorEstimator::dpg:
+            return "dpg";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   MeshAdaptation::declare_parameters(ParameterHandler &prm)
   {
+    const MeshAdaptation                defaults;
+    const MultipleAdaptationParameters &variable_defaults =
+      defaults.var_adaptation_param;
     prm.enter_subsection("mesh adaptation");
     {
       prm.declare_entry("initial refinement steps",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.initial_refinement),
                         Patterns::Integer(),
                         "Number of pre-solve adaptive mesh refinement steps");
 
       prm.declare_entry("type",
-                        "none",
+                        to_string(defaults.type),
                         Patterns::Selection("none|uniform|adaptive"),
                         "Type of mesh adaptation"
                         "Choices are <none|uniform|adaptive>.");
 
       prm.declare_entry(
         "error estimator",
-        "kelly",
+        to_string(variable_defaults.error_estimator),
         Patterns::List(Patterns::Selection("kelly|dpg")),
         "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter."
         "Choices are <kelly|dpg>.");
 
       prm.declare_entry(
         "fraction refinement",
-        "0.1",
+        Patterns::Tools::Convert<double>::to_string(
+          variable_defaults.refinement_fraction),
         Patterns::List(Patterns::Double()),
         "Fraction of refined elements"
         "For multi-variables refinement, separate the different fractions with a comma "
@@ -3857,7 +4672,8 @@ namespace Parameters
 
       prm.declare_entry(
         "fraction coarsening",
-        "0.05",
+        Patterns::Tools::Convert<double>::to_string(
+          variable_defaults.coarsening_fraction),
         Patterns::List(Patterns::Double()),
         "Fraction of coarsened elements"
         "For multi-variables refinement, separate the different fractions with a comma "
@@ -3865,7 +4681,7 @@ namespace Parameters
 
       prm.declare_entry(
         "variable",
-        "velocity",
+        get_variable_string(defaults.vars),
         Patterns::List(Patterns::Selection(
           "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic fields")),
         "Variable(s) for error estimation"
@@ -3875,34 +4691,40 @@ namespace Parameters
 
       prm.declare_entry(
         "fraction type",
-        "number",
+        defaults.fractionType == FractionType::number ? "number" : "fraction",
         Patterns::Selection("number|fraction"),
         "How the fraction of refinement/coarsening are interpreted"
         "Choices are <number|fraction>.");
       prm.declare_entry("max number elements",
-                        "100000000",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.maximum_number_elements),
                         Patterns::Integer(),
                         "Maximum number of elements");
       prm.declare_entry("max refinement level",
-                        "10",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.maximum_refinement_level),
                         Patterns::Integer(),
                         "Maximum refinement level");
       prm.declare_entry("min refinement level",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.minimum_refinement_level),
                         Patterns::Integer(),
                         "Minimum refinement level");
       prm.declare_entry("frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.frequency),
                         Patterns::Integer(),
                         "Frequency of the mesh refinement");
       prm.declare_entry(
         "mesh refinement controller",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.mesh_controller_is_enabled),
         Patterns::Bool(),
         "Fraction of refined elements"
         "Enable a controller that will target a specific number of elements in the mesh equal to the maximum number of elements");
       prm.declare_entry("fix boundary refinement",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          defaults.is_boundary_refinement_fixed),
                         Patterns::Bool(),
                         "Enable fix boundary refinement");
       prm.declare_entry("boundaries fixed",
@@ -4050,21 +4872,41 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    std::string
+    to_string(const Testing::TestType type)
+    {
+      switch (type)
+        {
+          case Testing::TestType::particles:
+            return "particles";
+          case Testing::TestType::mobility_status:
+            return "mobility_status";
+          case Testing::TestType::subdomain:
+            return "subdomain";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   Testing::declare_parameters(ParameterHandler &prm)
   {
+    const Testing defaults;
     prm.enter_subsection("test");
     {
       prm.declare_entry(
         "enable",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(defaults.enabled),
         Patterns::Bool(),
         "Enable testing mode of a solver. Some solvers have a specific"
         "testing mode which enables the output of debug variables. This"
         "testing mode is generally used only for the automatic testing bench using ctest.");
       prm.declare_entry(
         "type",
-        "particles",
+        to_string(defaults.test_type),
         Patterns::Selection("particles|mobility_status|subdomain"),
         "Output type for testing mode. Currently, particles type will output "
         "each particle with some information and mobility_status or subdomain output results "
@@ -4100,25 +4942,28 @@ namespace Parameters
   void
   Restart::declare_parameters(ParameterHandler &prm)
   {
+    const Restart defaults;
     prm.enter_subsection("restart");
     {
       prm.declare_entry("filename",
-                        "restart",
+                        defaults.filename,
                         Patterns::FileName(),
                         "Prefix for the filename of checkpoints");
       prm.declare_entry("restart",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          defaults.restart),
                         Patterns::Bool(),
                         "Frequency for checkpointing");
       prm.declare_entry(
         "checkpoint",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(defaults.checkpoint),
         Patterns::Bool(),
         "Enable checkpointing. Checkpointing creates a restart"
         "point from which the simulation can be restarted from.");
 
       prm.declare_entry("frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.frequency),
                         Patterns::Integer(),
                         "Frequency for checkpointing");
     }
@@ -4138,14 +4983,48 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    std::string
+    to_string(const VelocitySource::RotatingFrameType type)
+    {
+      switch (type)
+        {
+          case VelocitySource::RotatingFrameType::none:
+            return "none";
+          case VelocitySource::RotatingFrameType::srf:
+            return "srf";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const VelocitySource::PermeabilityModel model)
+    {
+      switch (model)
+        {
+          case VelocitySource::PermeabilityModel::none:
+            return "none";
+          case VelocitySource::PermeabilityModel::darcy_phase_change:
+            return "darcy phase change";
+          case VelocitySource::PermeabilityModel::carman_kozeny_phase_change:
+            return "carman-kozeny phase change";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   VelocitySource::declare_parameters(ParameterHandler &prm)
   {
+    const VelocitySource defaults;
     prm.enter_subsection("velocity source");
     {
       prm.declare_entry(
         "rotating frame type",
-        "none",
+        to_string(defaults.rotating_frame_type),
         Patterns::Selection("none|srf"),
         "Rotating frame velocity-dependent source terms"
         "Choices are <none|srf>. The srf stands"
@@ -4154,38 +5033,39 @@ namespace Parameters
 
       prm.declare_entry(
         "omega_x",
-        "0 ",
+        Patterns::Tools::Convert<double>::to_string(defaults.omega_x),
         Patterns::Double(),
         "X component of the angular velocity vector of the frame of reference");
 
       prm.declare_entry(
         "omega_y",
-        "0 ",
+        Patterns::Tools::Convert<double>::to_string(defaults.omega_y),
         Patterns::Double(),
         "Y component of the angular velocity vector of the frame of reference");
 
       prm.declare_entry(
         "omega_z",
-        "0 ",
+        Patterns::Tools::Convert<double>::to_string(defaults.omega_z),
         Patterns::Double(),
         "Z component of the angular velocity vector of the frame of reference");
 
       prm.declare_entry(
         "enable Darcy multiply by density",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.enable_darcy_multiply_by_density),
         Patterns::Bool(),
         "Enable the multiplication of the Darcy force term by the density for dimensional consistency when solving the pressure rather than the kinematic pressure in the momentum balance.");
 
       prm.declare_entry(
         "permeability model",
-        "none",
+        to_string(defaults.permeability_model),
         Patterns::Selection(
           "none|darcy phase change|carman-kozeny phase change"),
         "Permeability models for phase change modelling."
         "Choices are <none|darcy phase change|carman-kozeny phase change>.");
 
       prm.declare_entry("Carman-Kozeny fluid with phase change",
-                        "fluid 0",
+                        to_string(defaults.fluid_with_phase_change),
                         Patterns::Selection("fluid 0|fluid 1|both"),
                         "Select which fluids have phase change"
                         "Choices are <fluid 0|fluid 1|both>.");
@@ -4499,13 +5379,14 @@ namespace Parameters
     {
       prm.declare_entry(
         "number of particles",
-        "1",
+        Patterns::Tools::Convert<unsigned int>::to_string(nb_particles),
         Patterns::Integer(),
         "The number of particles represented by IB. The maximal number of particles is equal to 10 when defined individually. If particles are loaded from a file, this parameter is overridden, and there is no limit to the number of particles.");
 
       prm.declare_entry(
         "assemble Navier-Stokes inside particles",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          assemble_navier_stokes_inside),
         Patterns::Bool(),
         "Bool to define if you assemble the inside of particles with the NS equation.");
 
@@ -4513,18 +5394,18 @@ namespace Parameters
       {
         prm.declare_entry(
           "stencil degree",
-          "2",
+          Patterns::Tools::Convert<unsigned int>::to_string(stencil_degree),
           Patterns::Integer(1),
           "The polynomial degree used in the extrapolation function");
         prm.declare_alias("stencil degree", "stencil order", true);
         prm.declare_entry(
           "length ratio",
-          "4",
+          Patterns::Tools::Convert<double>::to_string(length_ratio),
           Patterns::Double(),
           "The length ratio used to define the points for the IB stencil. See definition of epsilon_n in the paper on sharp IB.");
         prm.declare_entry(
           "enable extrapolation",
-          "true",
+          Patterns::Tools::Convert<bool>::to_string(enable_extrapolation),
           Patterns::Bool(),
           "Bool to define if extrapolation should be enabled (default). If disabled, all velocity degrees of freedom "
           "in a cell will be set to the particle velocity if that cell is cut. Setting to false is intended for "
@@ -4537,11 +5418,11 @@ namespace Parameters
       {
         prm.declare_entry(
           "load particles from file",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(load_particles_from_file),
           Patterns::Bool(),
           "Bool to define if particles are loaded from an external file");
         prm.declare_entry("particles file",
-                          "particles",
+                          particles_file,
                           Patterns::FileName(),
                           "The file name from which we load the particles");
         prm.leave_subsection();
@@ -4551,32 +5432,36 @@ namespace Parameters
       {
         prm.declare_entry(
           "initial refinement",
-          "0",
+          Patterns::Tools::Convert<unsigned int>::to_string(initial_refinement),
           Patterns::Integer(),
           "Number of refinements around the particles before the start of the simulation ");
         prm.declare_entry(
           "enable distance based coarsening",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(enable_coarsening),
           Patterns::Bool(),
           "Enable distance-based coarsening away from immersed boundary particles");
         prm.declare_entry(
           "refine mesh inside radius factor",
-          "0.5",
+          Patterns::Tools::Convert<double>::to_string(
+            refinement_inside_distance_factor),
           Patterns::Double(),
           "The factor that multiplies the radius to define the inside bound for the refinement of the mesh");
         prm.declare_entry(
           "refine mesh outside radius factor",
-          "1.5",
+          Patterns::Tools::Convert<double>::to_string(
+            refinement_outside_distance_factor),
           Patterns::Double(),
           "The factor that multiplies the radius to define the outside bound for the refinement of the mesh");
         prm.declare_entry(
           "coarsen mesh outside radius factor",
-          "2.0",
+          Patterns::Tools::Convert<double>::to_string(
+            coarsening_distance_factor),
           Patterns::Double(),
           "The factor that multiplies the radius to define the outside bound beyond which distance-based coarsening is allowed");
         prm.declare_entry(
           "refinement zone extrapolation",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            time_extrapolation_of_refinement_zone),
           Patterns::Bool(),
           "This parameter enables the extrapolation in time of the refinement zone. This means that it will try to refine where the particle will be at the end of the time step instead of the initial position.");
         prm.leave_subsection();
@@ -4586,27 +5471,28 @@ namespace Parameters
       {
         prm.declare_entry(
           "calculate force",
-          "true",
+          Patterns::Tools::Convert<bool>::to_string(calculate_force_ib),
           Patterns::Bool(),
           "Bool to define if the force is evaluated on each particle ");
         prm.declare_entry(
           "ib force output file",
-          "ib_force",
+          ib_force_output_file,
           Patterns::FileName(),
           "The name of the file where the data on the force of each particle is stored");
         prm.declare_entry(
           "ib particles pvd file",
-          "ib_particles_data",
+          ib_particles_pvd_file,
           Patterns::FileName(),
           "The output files of the pvd data for the ib particles");
         prm.declare_entry(
           "print DEM",
-          "true",
+          Patterns::Tools::Convert<bool>::to_string(print_dem),
           Patterns::Bool(),
           "Bool to define if particles' information are printed on the terminal when particles' time step is finished");
         prm.declare_entry(
           "enable extra sharp interface vtu output field",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            enable_extra_sharp_interface_vtu_output_field),
           Patterns::Bool(),
           "This parameter enables the output of more information related to the particles in the vtu file.");
         prm.leave_subsection();
@@ -4616,58 +5502,65 @@ namespace Parameters
       {
         prm.declare_entry(
           "contact search radius factor",
-          "3",
+          Patterns::Tools::Convert<double>::to_string(
+            contact_search_radius_factor),
           Patterns::Double(),
           "The factor that multiplies the radius to define the region of contact search around the particle");
         prm.declare_entry(
           "contact search frequency",
-          "1",
+          Patterns::Tools::Convert<int>::to_string(contact_search_frequency),
           Patterns::Integer(),
           "The frequency of update in the contact candidates list");
         prm.declare_entry(
           "particle nonlinear tolerance",
-          "1e-6",
+          Patterns::Tools::Convert<double>::to_string(
+            particle_nonlinear_tolerance),
           Patterns::Double(),
           "The nonlinear tolerance for the coupling of the particle dynamics and the fluid");
         prm.declare_entry("DEM coupling frequency",
-                          "1000",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            coupling_frequency),
                           Patterns::Integer(),
                           "The number of DEM time steps per CFD time step");
         prm.declare_entry("alpha",
-                          "1",
+                          Patterns::Tools::Convert<double>::to_string(alpha),
                           Patterns::Double(),
                           "relaxation parameter");
 
         prm.declare_entry("enable lubrication force",
-                          "true",
+                          Patterns::Tools::Convert<bool>::to_string(
+                            enable_lubrication_force),
                           Patterns::Bool(),
                           "Bool to enable or disable the lubrication force");
         prm.declare_entry(
           "lubrication range max",
-          "2",
+          Patterns::Tools::Convert<double>::to_string(lubrication_range_max),
           Patterns::Double(),
           "Gap require to consider the lubrication force. This value is multiplied the smallest cell size");
         prm.declare_entry(
           "lubrication range min",
-          "0.1",
+          Patterns::Tools::Convert<double>::to_string(lubrication_range_min),
           Patterns::Double(),
           "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
 
         prm.declare_entry(
           "explicit contact impulsion",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            explicit_contact_impulsion_calculation),
           Patterns::Bool(),
           "Bool to enable or disable the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step and using the resulting contact impulsion to evaluate all the other Newton's iterations. This reduces the number of times the DEM calculation is made.");
 
         prm.declare_entry(
           "explicit position integration",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            explicit_position_integration_calculation),
           Patterns::Bool(),
           "Bool to enable or disable the explicit position integration. This means that the particle position is obtained directly by the integration of the previous velocities only. This avoids multiple cut cell mapping for each newton iteration. Note that this limits the order of convergence in time to one.");
 
         prm.declare_entry(
           "approximate radius for contact",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            approximate_radius_for_contact),
           Patterns::Bool(),
           "Bool to turn on or off using the approximate radius of the particles during contact. If activated, the radius used in the contact calculation is constant and fixed to the effective radius of the shape. If not, the radius of curvature of the shape at the contact point is evaluated. For some shapes, this can be numerically expensive to evaluate.");
 
@@ -4677,31 +5570,34 @@ namespace Parameters
         {
           prm.declare_entry(
             "wall youngs modulus",
-            "100000000",
+            Patterns::Tools::Convert<double>::to_string(wall_youngs_modulus),
             Patterns::Double(),
             "The wall Young's modulus if IB particles are in contact with it");
 
           prm.declare_entry(
             "wall poisson ratio",
-            "0.3",
+            Patterns::Tools::Convert<double>::to_string(wall_poisson_ratio),
             Patterns::Double(),
             "The wall poisson ratio if IB particles are in contact with it");
 
           prm.declare_entry(
             "wall rolling friction coefficient",
-            "0",
+            Patterns::Tools::Convert<double>::to_string(
+              wall_rolling_friction_coefficient),
             Patterns::Double(),
             "The wall rolling friction coefficient if IB particles are in contact with it");
 
           prm.declare_entry(
             "wall friction coefficient",
-            "0",
+            Patterns::Tools::Convert<double>::to_string(
+              wall_friction_coefficient),
             Patterns::Double(),
             "The wall friction coefficient if IB particles are in contact with it");
 
           prm.declare_entry(
             "wall restitution coefficient",
-            "1",
+            Patterns::Tools::Convert<double>::to_string(
+              wall_restitution_coefficient),
             Patterns::Double(),
             "The wall restitution coefficient if IB particles are in contact with it");
           prm.leave_subsection();
@@ -4990,43 +5886,52 @@ namespace Parameters
   void
   DynamicFlowControl::declare_parameters(ParameterHandler &prm)
   {
+    const DynamicFlowControl defaults;
     prm.enter_subsection("flow control");
     {
       prm.declare_entry("enable",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          defaults.enable_flow_control),
                         Patterns::Bool(),
                         "Enable flow rate control");
       prm.declare_entry("average velocity",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.average_velocity_0),
                         Patterns::Double(),
                         "The target average velocity");
       prm.declare_entry("inlet boundary id",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.boundary_flow_id),
                         Patterns::Integer(),
                         "Boundary id of the inlet flow");
       prm.declare_entry("flow direction",
-                        "0",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.flow_direction),
                         Patterns::Integer(),
                         "Flow direction at flow inlet");
       prm.declare_entry("initial beta",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.beta_0),
                         Patterns::Double(),
                         "Beta coefficient value for the first step time");
       prm.declare_entry("alpha",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.alpha),
                         Patterns::Double(),
                         "Relaxation coefficient for flow controller");
       prm.declare_entry("enable beta particle",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          defaults.enable_beta_particle),
                         Patterns::Bool(),
                         "Enable beta force for particles");
       prm.declare_entry("beta threshold",
-                        "0.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.beta_threshold),
                         Patterns::Double(),
                         "Enable beta force for particles");
       prm.declare_entry(
         "verbosity",
-        "quiet",
+        to_string(defaults.verbosity),
         Patterns::Selection("quiet|verbose"),
         "State whether from the flow control information should be printed "
         "Choices are <quiet|verbose>.");
@@ -5066,68 +5971,98 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    std::string
+    to_string(const Evaporation::EvaporativeMassFluxModelType type)
+    {
+      switch (type)
+        {
+          case Evaporation::EvaporativeMassFluxModelType::constant:
+            return "constant";
+          case Evaporation::EvaporativeMassFluxModelType::temperature_dependent:
+            return "temperature_dependent";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   void
   Evaporation::declare_parameters(dealii::ParameterHandler &prm)
   {
+    const Evaporation defaults;
     prm.enter_subsection("evaporation");
     {
       prm.declare_entry(
         "evaporation mass flux model",
-        "constant",
+        to_string(defaults.evaporative_mass_flux_model_type),
         Patterns::Selection("constant|temperature_dependent"),
         "Model used for the calculation of the evaporative mass flux"
         "Choices are <constant|temperature_dependent>.");
       prm.declare_entry(
         "enable evaporative cooling",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.enable_evaporation_cooling),
         Patterns::Bool(),
         "Enable the evaporative cooling at the free surface (gas/liquid interface) in the energy equation <true|false>");
       prm.declare_entry(
         "enable recoil pressure",
-        "false",
+        Patterns::Tools::Convert<bool>::to_string(
+          defaults.enable_recoil_pressure),
         Patterns::Bool(),
         "Enable the recoil pressure due to evaporation at the free surface (gas/liquid interface) in the momentum equation <true|false>");
       prm.declare_entry(
         "evaporation mass flux",
-        "0.0",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.evaporation_mass_flux),
         Patterns::Double(),
         "Evaporation mass flux used if the constant evaporation model is selected in M*L^-2*T^-1");
       prm.declare_entry(
         "evaporation coefficient",
-        "0.82",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.evaporation_coefficient),
         Patterns::Double(),
         "Evaporation coefficient corresponding to the ratio between the net mass flux (evaporation-condensation) and the mass flux of evaporation");
       prm.declare_entry(
         "recoil pressure coefficient",
-        "0.56",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.recoil_pressure_coefficient),
         Patterns::Double(),
         "Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaporation");
       prm.declare_entry("molar mass",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.molar_mass),
                         Patterns::Double(),
                         "Molar mass of the material in M*N^-1");
       prm.declare_entry("boiling temperature",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.boiling_temperature),
                         Patterns::Double(),
                         "Boiling temperature in Theta");
       prm.declare_entry("evaporation latent heat",
-                        "0.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.latent_heat_evaporation),
                         Patterns::Double(),
                         "Latent heat of evaporation in L^2*T^-2");
       prm.declare_entry("ambient pressure",
-                        "101325",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.ambient_pressure),
                         Patterns::Double(),
                         "Pressure of the ambient gas in M*L^-1*T^-2");
       prm.declare_entry("ambient gas density",
-                        "1.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.ambient_gas_density),
                         Patterns::Double(),
                         "Ambient gas density in M*L^-3");
       prm.declare_entry("liquid density",
-                        "10.0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.liquid_density),
                         Patterns::Double(),
                         "Liquid density in M*L^-3");
       prm.declare_entry("universal gas constant",
-                        "8.3145",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.universal_gas_constant),
                         Patterns::Double(),
                         "Universal gas constant in M*L^2*T^-2*Theta^-1*N^-1");
     }
@@ -5180,23 +6115,25 @@ namespace Parameters
     prm.enter_subsection("mortar");
     {
       prm.declare_entry("enable",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(enable),
                         Patterns::Bool(),
                         "Enable mortar interface <true|false>");
       prm.declare_entry("interface type",
-                        "circular",
+                        interface_type == InterfaceType::circular ? "circular" :
+                                                                    "linear",
                         Patterns::Selection("circular|linear"),
                         "Type of mortar interface"
                         "Choices are <circular|linear>.");
       rotor_mesh = std::make_shared<Mesh>();
       rotor_mesh->declare_parameters(prm);
       prm.declare_entry("rotor boundary id",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          rotor_boundary_id),
                         Patterns::Integer(),
                         "Rotor boundary ID # of the mortar matching interface");
       prm.declare_entry(
         "stator boundary id",
-        "2",
+        Patterns::Tools::Convert<unsigned int>::to_string(stator_boundary_id),
         Patterns::Integer(),
         "Stator boundary ID # of the mortar matching interface");
       std::string default_entry_point = (dim == 2) ? "0., 0." : "0., 0., 0.";
@@ -5206,7 +6143,8 @@ namespace Parameters
                         "Center of rotation coordinates of rotor domain");
 
       prm.declare_entry("rotation axis direction",
-                        "2",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          rotation_axis_direction),
                         Patterns::Integer(0, 2),
                         "Direction of the rotation axis. Choices are <0|1|2>.");
 
@@ -5222,24 +6160,27 @@ namespace Parameters
       prm.leave_subsection();
 
       prm.declare_entry("penalty factor",
-                        "1.",
+                        Patterns::Tools::Convert<double>::to_string(sip_factor),
                         Patterns::Double(),
                         "Penalty factor for mortar elements");
       prm.declare_entry("oversampling factor",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          oversampling_factor),
                         Patterns::Integer(),
                         "Oversampling factor for quadrature points");
       prm.declare_entry("radius tolerance",
-                        "1e-8",
+                        Patterns::Tools::Convert<double>::to_string(
+                          radius_tolerance),
                         Patterns::Double(),
                         "Tolerance used for the interface radius computation");
       prm.declare_entry("cell weight",
-                        "1000",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          cell_weight),
                         Patterns::Integer(),
                         "Cell weight for load balancing of mortar cells");
       prm.declare_entry(
         "verbosity",
-        "quiet",
+        to_string(verbosity),
         Patterns::Selection("quiet|verbose|extra verbose"),
         "State whether from the mortar information should be printed "
         "Choices are <quiet|verbose|extra verbose>.");
