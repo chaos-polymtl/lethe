@@ -298,7 +298,7 @@ subsection physical properties
     set magnetic permeability imag part = 0.
 
     set thermal conductivity = 120.92
-    set specific heat        = 27.13
+    set specific heat        = 676.63
     set density              = 3210
   end
 end
