@@ -71,11 +71,11 @@ var searchData=
   ['number_5fof_5fparticles_68',['number_of_particles',['../classNavierStokesScratchData.html#a87cd5671045169b0b25e99ad568369f7',1,'NavierStokesScratchData']]],
   ['number_5fof_5fparticles_5fdirections_69',['number_of_particles_directions',['../classInsertionVolume.html#a8297c17e4ff36a2b4697deb66a50a36f',1,'InsertionVolume']]],
   ['number_5fof_5fprobing_5fpoints_70',['number_of_probing_points',['../structParameters_1_1PostProcessing_1_1ProbingPoints.html#ac98d7ed7937dbd00f7d591412a290f33',1,'Parameters::PostProcessing::ProbingPoints']]],
-  ['number_5fof_5frefinement_5fboxes_71',['number_of_refinement_boxes',['../structParameters_1_1MeshBoxRefinement.html#af56f25ce3a27b97ce2f67f213fbc2550',1,'Parameters::MeshBoxRefinement']]],
+  ['number_5fof_5frefinement_5fboxes_71',['number_of_refinement_boxes',['../structParameters_1_1MeshBoxRefinement.html#a1e88a8b0612b329876309fadd74c4494',1,'Parameters::MeshBoxRefinement']]],
   ['number_5fof_5fsolids_72',['number_of_solids',['../classParameters_1_1PhysicalProperties.html#a990328b529fc7c39c5fac0ec038284da',1,'Parameters::PhysicalProperties::number_of_solids'],['../classPhysicalPropertiesManager.html#ae0dc865d5d8034d74cbcb2cd9b5858ee',1,'PhysicalPropertiesManager::number_of_solids']]],
   ['number_5fof_5fvalid_5finsertion_5fpoint_5fglobal_73',['number_of_valid_insertion_point_global',['../classInsertionVolume.html#a5aa5293e297ccdd0f8d40cec1ad9782d',1,'InsertionVolume']]],
   ['number_5fof_5fwaveguide_5finlets_74',['number_of_waveguide_inlets',['../structParameters_1_1TimeHarmonicMaxwell.html#a0b428ea7e482d998ec16ffe22ec86664',1,'Parameters::TimeHarmonicMaxwell']]],
-  ['number_5fquadrature_5fpoints_75',['number_quadrature_points',['../classParameters_1_1NitscheObject.html#a1cb903fe5e891984b340a30e9fcc7c7e',1,'Parameters::NitscheObject::number_quadrature_points'],['../classNavierStokesBase.html#a35c9c6536d1c7c4f7dc905de1a6eb630',1,'NavierStokesBase::number_quadrature_points']]],
+  ['number_5fquadrature_5fpoints_75',['number_quadrature_points',['../classParameters_1_1NitscheObject.html#a90240bc33518d771683a6c0d003a0b0b',1,'Parameters::NitscheObject::number_quadrature_points'],['../classNavierStokesBase.html#a35c9c6536d1c7c4f7dc905de1a6eb630',1,'NavierStokesBase::number_quadrature_points']]],
   ['number_5fsolid_5fsurfaces_76',['number_solid_surfaces',['../classParameters_1_1DEMSolidObjects.html#a4349214190d53eacc2634950703c8f39',1,'Parameters::DEMSolidObjects']]],
   ['number_5fsolid_5fvolumes_77',['number_solid_volumes',['../classParameters_1_1DEMSolidObjects.html#a3a8a601d79a0550ba84f26c294a6d998',1,'Parameters::DEMSolidObjects']]],
   ['number_5fsolids_78',['number_solids',['../classParameters_1_1Nitsche.html#a5f5f249a8a1abb473ae7a03257455684',1,'Parameters::Nitsche']]]

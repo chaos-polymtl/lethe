@@ -2,7 +2,7 @@ var searchData=
 [
   ['dallavalle_0',['dallavalle',['../namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970',1,'Parameters']]],
   ['darcy_5fphase_5fchange_1',['darcy_phase_change',['../structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536a6832590b3de0c0cb79bcb54b868b25f3',1,'Parameters::VelocitySource']]],
-  ['dealii_2',['dealii',['../structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50ba3c4b939087811f328575e358443a5880',1,'Parameters::Mesh']]],
+  ['dealii_2',['dealii',['../classParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50ba3c4b939087811f328575e358443a5880',1,'Parameters::Mesh']]],
   ['death_5fstar_3',['death_star',['../classShape.html#a394819ce751267dc955abe4ad18ebdebae8ef59ac302678275d0e60506314b5f6',1,'Shape']]],
   ['dem_4',['dem',['../namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d',1,'DEM']]],
   ['dem_5fmp_5',['dem_mp',['../namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12',1,'DEM']]],

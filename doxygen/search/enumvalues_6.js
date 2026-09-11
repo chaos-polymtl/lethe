@@ -16,6 +16,6 @@ var searchData=
   ['gidaspow_13',['gidaspow',['../namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed',1,'Parameters']]],
   ['gls_14',['gls',['../structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaca6efd547a7b6d9885402b9544f941d5',1,'Parameters::Stabilization']]],
   ['gmres_15',['gmres',['../structParameters_1_1LinearSolver.html#aa5b1b843871c36f9abfbd2c7b4811929ad43c33b8e3d5435d9cbe65c156887a02',1,'Parameters::LinearSolver::gmres'],['../structParameters_1_1LinearSolver.html#a0c300811885c24fbdc85d98143af8743ad43c33b8e3d5435d9cbe65c156887a02',1,'Parameters::LinearSolver::gmres']]],
-  ['gmsh_16',['gmsh',['../structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50bab7c7797f3a0a1098b484e5e3a780e025',1,'Parameters::Mesh']]],
+  ['gmsh_16',['gmsh',['../classParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50bab7c7797f3a0a1098b484e5e3a780e025',1,'Parameters::Mesh']]],
   ['grad_5fdiv_17',['grad_div',['../structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bba5b26215bec0d4dc2a7af08e2ae886418',1,'Parameters::Stabilization']]]
 ];
