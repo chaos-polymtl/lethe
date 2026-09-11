@@ -50,12 +50,12 @@ namespace Parameters
    *
    * @tparam dim Number of spatial dimensions.
    */
-  template <int dim>
+  template <int dim, int spacedim = dim>
   class NitscheObject
   {
   public:
     NitscheObject()
-      : solid_velocity(dim)
+      : solid_velocity(spacedim)
     {}
 
     /**
@@ -77,16 +77,16 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm, unsigned int id);
 
     /// Mesh parameters for the solid object.
-    Parameters::Mesh solid_mesh;
+    Parameters::Mesh<dim, spacedim> solid_mesh;
 
     /// Number of quadrature points per 1D cell used to represent the solid.
     unsigned int number_quadrature_points;
 
     /// Velocity function imposed on the solid.
-    Functions::ParsedFunction<dim> solid_velocity;
+    Functions::ParsedFunction<spacedim> solid_velocity;
 
     /// Temperature function imposed on the solid boundary.
-    Functions::ParsedFunction<dim> solid_temperature;
+    Functions::ParsedFunction<spacedim> solid_temperature;
 
     /// Enable the motion of Nitsche particles.
     bool enable_particles_motion;
@@ -107,16 +107,13 @@ namespace Parameters
     bool stop_particles_lost;
 
     /// Center of rotation used for torque calculation.
-    Point<dim> center_of_rotation;
+    Point<spacedim> center_of_rotation;
 
     /// Enable calculation of forces on the solid.
     bool calculate_force_on_solid;
 
     /// Enable calculation of torques on the solid.
     bool calculate_torque_on_solid;
-
-    /// Center of rotation used for torque calculation.
-    Point<dim> cor;
 
     /// File name prefix for the force output.
     std::string force_output_name;
@@ -125,9 +122,10 @@ namespace Parameters
     std::string torque_output_name;
   };
 
-  template <int dim>
+  template <int dim, int spacedim>
   void
-  NitscheObject<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
+  NitscheObject<dim, spacedim>::declare_parameters(ParameterHandler &prm,
+                                                   unsigned int      id)
   {
     prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
@@ -184,20 +182,12 @@ namespace Parameters
         "inserted points will be higher for higher dimensions. Increasing this"
         "number will lead to a higher points density inside the solid.");
 
-      if constexpr (dim == 2)
-        {
-          prm.declare_entry("center of rotation",
-                            "0., 0.",
-                            Patterns::List(Patterns::Double()),
-                            "Solid object center of rotation");
-        }
-      if constexpr (dim == 3)
-        {
-          prm.declare_entry("center of rotation",
-                            "0., 0., 0.",
-                            Patterns::List(Patterns::Double()),
-                            "Solid object center of rotation");
-        }
+      std::string default_rotation = (spacedim == 2) ? "0., 0." : "0., 0., 0.";
+      prm.declare_entry("center of rotation",
+                        default_rotation,
+                        Patterns::List(Patterns::Double()),
+                        "Solid object center of rotation");
+
 
       prm.declare_entry("calculate force on solid",
                         "false",
@@ -219,9 +209,10 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  template <int dim>
+  template <int dim, int spacedim>
   void
-  NitscheObject<dim>::parse_parameters(ParameterHandler &prm, unsigned int id)
+  NitscheObject<dim, spacedim>::parse_parameters(ParameterHandler &prm,
+                                                 unsigned int      id)
   {
     prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
@@ -245,12 +236,12 @@ namespace Parameters
       const std::vector<double> temp =
         convert_string_to_vector<double>(prm, "center of rotation");
 
-      AssertThrow(temp.size() == dim,
+      AssertThrow(temp.size() == spacedim,
                   ExcMessage("Invalid center of rotation. This should be a " +
-                             Utilities::int_to_string(dim) +
+                             Utilities::int_to_string(spacedim) +
                              " dimensional point."));
 
-      for (unsigned int i = 0; i < dim; ++i)
+      for (unsigned int i = 0; i < spacedim; ++i)
         {
           center_of_rotation[i] = temp.at(i);
         }
@@ -370,7 +361,7 @@ namespace Parameters
    *
    * @tparam dim Number of spatial dimensions.
    */
-  template <int dim>
+  template <int dim, int spacedim = dim>
   class RigidSolidObject
   {
   public:
@@ -396,70 +387,61 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm, unsigned int id);
 
     /// Mesh parameters for the solid object.
-    Parameters::Mesh solid_mesh;
+    Parameters::Mesh<dim, spacedim> solid_mesh;
 
     /// Controls the generation of output files for this solid.
     bool output_bool;
 
     /// Translational velocity function of the solid object.
-    std::shared_ptr<Function<dim>> translational_velocity;
+    std::shared_ptr<Function<spacedim>> translational_velocity;
 
     /// Angular velocity function of the solid object.
-    std::shared_ptr<Function<dim>> angular_velocity;
+    std::shared_ptr<Function<spacedim>> angular_velocity;
 
     /// Center of rotation used to locate and rotate the solid object.
-    Point<dim> center_of_rotation;
+    Point<spacedim> center_of_rotation;
 
     /// Temperature function for the solid object boundary.
-    std::shared_ptr<Function<dim>> solid_temperature;
+    std::shared_ptr<Function<spacedim>> solid_temperature;
 
     /// Type of thermal boundary condition applied on the solid surface.
     ThermalBoundaryType thermal_boundary_type;
   };
 
 
-  template <int dim>
+  template <int dim, int spacedim>
   void
-  RigidSolidObject<dim>::declare_parameters(ParameterHandler &prm,
-                                            unsigned int      id)
+  RigidSolidObject<dim, spacedim>::declare_parameters(ParameterHandler &prm,
+                                                      unsigned int      id)
   {
     // Use ParsedFunction<dim> during parameter declaration. We need to do this
     // to use the declare_parameters function, which is not possible with
     // std::make_shared<Function<dim>> type. Please refer to the comment before
     // the translational_velocity and angular_velocity attributes declaration.
     auto translational_velocity_parsed =
-      std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      std::make_shared<Functions::ParsedFunction<spacedim>>(spacedim);
     auto angular_velocity_parsed =
-      std::make_shared<Functions::ParsedFunction<dim>>(3);
+      std::make_shared<Functions::ParsedFunction<spacedim>>(spacedim);
     auto solid_temperature_parsed =
-      std::make_shared<Functions::ParsedFunction<dim>>(1);
+      std::make_shared<Functions::ParsedFunction<spacedim>>(1);
 
     prm.enter_subsection("solid object " + Utilities::int_to_string(id, 1));
     {
       solid_mesh.declare_parameters(prm);
 
       prm.enter_subsection("translational velocity");
-      translational_velocity_parsed->declare_parameters(prm, dim);
+      translational_velocity_parsed->declare_parameters(prm, spacedim);
       prm.leave_subsection();
 
       prm.enter_subsection("angular velocity");
       angular_velocity_parsed->declare_parameters(prm, 3);
       prm.leave_subsection();
 
-      if constexpr (dim == 2)
-        {
-          prm.declare_entry("center of rotation",
-                            "0., 0.",
-                            Patterns::List(Patterns::Double()),
-                            "Solid object center of rotation");
-        }
-      if constexpr (dim == 3)
-        {
-          prm.declare_entry("center of rotation",
-                            "0., 0., 0.",
-                            Patterns::List(Patterns::Double()),
-                            "Solid object center of rotation");
-        }
+      std::string default_rotation = (spacedim == 2) ? "0., 0." : "0., 0., 0.";
+      prm.declare_entry("center of rotation",
+                        default_rotation,
+                        Patterns::List(Patterns::Double()),
+                        "Solid object center of rotation");
 
       prm.declare_entry("thermal boundary type",
                         "adiabatic",
@@ -485,21 +467,21 @@ namespace Parameters
     solid_temperature      = solid_temperature_parsed;
   }
 
-  template <int dim>
+  template <int dim, int spacedim>
   void
-  RigidSolidObject<dim>::parse_parameters(ParameterHandler &prm,
-                                          unsigned int      id)
+  RigidSolidObject<dim, spacedim>::parse_parameters(ParameterHandler &prm,
+                                                    unsigned int      id)
   {
     // Use ParsedFunction<dim> during parameter declaration. We need to do this
     // to use the parse_parameters function, which is not possible with
     // std::make_shared<Function<dim>> type. Please refer to the comment before
     // the translational_velocity and angular_velocity attributes declaration.
     auto translational_velocity_parsed =
-      std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      std::make_shared<Functions::ParsedFunction<spacedim>>(spacedim);
     auto angular_velocity_parsed =
-      std::make_shared<Functions::ParsedFunction<dim>>(3);
+      std::make_shared<Functions::ParsedFunction<spacedim>>(spacedim);
     auto solid_temperature_parsed =
-      std::make_shared<Functions::ParsedFunction<dim>>(1);
+      std::make_shared<Functions::ParsedFunction<spacedim>>(1);
 
     prm.enter_subsection("solid object " + Utilities::int_to_string(id, 1));
     {
@@ -515,12 +497,12 @@ namespace Parameters
       const std::vector<double> temp =
         convert_string_to_vector<double>(prm, "center of rotation");
 
-      AssertThrow(temp.size() == dim,
+      AssertThrow(temp.size() == spacedim,
                   ExcMessage("Invalid center of rotation. This should be a " +
-                             Utilities::int_to_string(dim) +
+                             Utilities::int_to_string(spacedim) +
                              " dimensional point."));
 
-      for (unsigned int i = 0; i < dim; ++i)
+      for (unsigned int i = 0; i < spacedim; ++i)
         {
           center_of_rotation[i] = temp.at(i);
         }
@@ -586,10 +568,10 @@ namespace Parameters
     Verbosity verbosity;
 
     /// Collection of rigid solid surface objects.
-    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_surfaces;
+    std::vector<std::shared_ptr<RigidSolidObject<dim - 1, dim>>> solid_surfaces;
 
     /// Collection of rigid solid volume objects.
-    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_volumes;
+    std::vector<std::shared_ptr<RigidSolidObject<dim, dim>>> solid_volumes;
 
     /// Number of active solid surface objects.
     unsigned int number_solid_surfaces;
@@ -622,7 +604,8 @@ namespace Parameters
         for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
              ++i_solid)
           {
-            solid_surfaces[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solid_surfaces[i_solid] =
+              std::make_shared<RigidSolidObject<dim - 1, dim>>();
             solid_surfaces[i_solid]->declare_parameters(prm, i_solid);
           }
       }
@@ -638,7 +621,8 @@ namespace Parameters
         for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
              ++i_solid)
           {
-            solid_volumes[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solid_volumes[i_solid] =
+              std::make_shared<RigidSolidObject<dim, dim>>();
             solid_volumes[i_solid]->declare_parameters(prm, i_solid);
           }
       }

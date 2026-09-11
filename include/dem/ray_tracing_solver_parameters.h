@@ -16,7 +16,7 @@ template <int dim>
 class RayTracingSolverParameters
 {
 public:
-  Parameters::Mesh                                mesh;
+  Parameters::Mesh<dim>                           mesh;
   Parameters::Manifolds                           manifolds_parameters;
   Parameters::Testing                             test;
   Parameters::Timer                               timer;
@@ -55,7 +55,7 @@ public:
       Patterns::Anything(),
       "Print a comment at the beginning of the console output.");
 
-    Parameters::Mesh::declare_parameters(prm);
+    Parameters::Mesh<dim>::declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);
     Parameters::Testing::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);

@@ -22,8 +22,9 @@ using namespace dealii;
  */
 template <int dim, int spacedim = dim>
 void
-attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
-                             const Parameters::Mesh       &mesh_parameters);
+attach_grid_to_triangulation(
+  Triangulation<dim, spacedim>          &triangulation,
+  const Parameters::Mesh<dim, spacedim> &mesh_parameters);
 
 /**
  * @brief Modifies the triangulation to set up its periodic boundary conditions
@@ -67,7 +68,7 @@ template <int dim, int spacedim = dim>
 void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Mesh<dim, spacedim>                 &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   bool                                                   restart,
   const Parameters::PeriodicBoundaries                  &periodic_boundaries);
@@ -98,7 +99,7 @@ template <int dim, int spacedim = dim>
 void
 read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::Mesh<dim, spacedim>                 &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   bool                                                   restart,
   const Parameters::PeriodicBoundaries                  &periodic_boundaries,
@@ -168,8 +169,8 @@ refine_triangulation_at_boundaries(
 template <int dim, int spacedim = dim>
 void
 build_refinement_box_triangulation(
-  const Parameters::Mesh       &box_mesh_parameters,
-  Triangulation<dim, spacedim> &box_triangulation);
+  const Parameters::Mesh<dim, spacedim> &box_mesh_parameters,
+  Triangulation<dim, spacedim>          &box_triangulation);
 
 /**
  * @brief Apply scaling, rotation and translation to the mesh in the listed
@@ -185,7 +186,8 @@ build_refinement_box_triangulation(
  */
 template <int dim, int spacedim = dim>
 void
-apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
-                          Triangulation<dim, spacedim> &triangulation);
+apply_mesh_transformation(
+  const Parameters::Mesh<dim, spacedim> &mesh_parameters,
+  Triangulation<dim, spacedim>          &triangulation);
 
 #endif

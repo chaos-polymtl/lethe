@@ -37,11 +37,11 @@
  *
  * @param[in] simplex Whether the mesh is converted to a simplex mesh
  */
-Parameters::Mesh
+Parameters::Mesh<2>
 transformed_unit_square_mesh_parameters(const bool simplex)
 {
-  Parameters::Mesh mesh_parameters;
-  mesh_parameters.type           = Parameters::Mesh::Type::dealii;
+  Parameters::Mesh<2> mesh_parameters;
+  mesh_parameters.type           = Parameters::Mesh<2>::Type::dealii;
   mesh_parameters.grid_type      = "hyper_cube";
   mesh_parameters.grid_arguments = "0 : 1 : true";
 
@@ -54,8 +54,8 @@ transformed_unit_square_mesh_parameters(const bool simplex)
   mesh_parameters.check_for_diamond_cells             = false;
   mesh_parameters.expand_particle_wall_contact_search = false;
 
-  mesh_parameters.translation    = Tensor<1, 3>({1., 0., 0.});
-  mesh_parameters.rotation_axis  = Tensor<1, 3>({0., 0., 1.});
+  mesh_parameters.translation    = Tensor<1, 2>({1., 0.});
+  mesh_parameters.rotation_axis  = Tensor<1, 2>({0., 0.});
   mesh_parameters.rotation_angle = std::numbers::pi / 2.;
   mesh_parameters.scale          = 2.;
 
@@ -95,7 +95,7 @@ report_bounding_box(const std::string      &case_name,
 void
 test_quad_mesh_transformation()
 {
-  const Parameters::Mesh mesh_parameters =
+  const Parameters::Mesh<2> mesh_parameters =
     transformed_unit_square_mesh_parameters(false);
 
   Triangulation<2> triangulation;
@@ -108,7 +108,7 @@ test_quad_mesh_transformation()
 void
 test_simplex_mesh_transformation()
 {
-  const Parameters::Mesh mesh_parameters =
+  const Parameters::Mesh<2> mesh_parameters =
     transformed_unit_square_mesh_parameters(true);
 
   // A simplex mesh is stored in a fully distributed triangulation, since it is
@@ -124,7 +124,7 @@ test_simplex_mesh_transformation()
 void
 test_refinement_box_transformation()
 {
-  const Parameters::Mesh box_mesh_parameters =
+  const Parameters::Mesh<2> box_mesh_parameters =
     transformed_unit_square_mesh_parameters(false);
 
   Triangulation<2> box_triangulation;

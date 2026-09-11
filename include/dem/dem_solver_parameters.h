@@ -16,13 +16,13 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh                               mesh;
-  Parameters::Manifolds                          manifolds_parameters;
-  std::shared_ptr<Parameters::MeshBoxRefinement> mesh_box_refinement;
-  Parameters::Testing                            test;
-  Parameters::Restart                            restart;
-  Parameters::Timer                              timer;
-  Parameters::SimulationControl                  simulation_control;
+  Parameters::Mesh<dim>                               mesh;
+  Parameters::Manifolds                               manifolds_parameters;
+  std::shared_ptr<Parameters::MeshBoxRefinement<dim>> mesh_box_refinement;
+  Parameters::Testing                                 test;
+  Parameters::Restart                                 restart;
+  Parameters::Timer                                   timer;
+  Parameters::SimulationControl                       simulation_control;
   Parameters::Lagrangian::LagrangianPhysicalProperties
                                                  lagrangian_physical_properties;
   Parameters::Lagrangian::InsertionInfo<dim>     insertion_info;
@@ -68,7 +68,8 @@ public:
     simulation_control.declare_parameters(prm);
     mesh.declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);
-    mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
+    mesh_box_refinement =
+      std::make_shared<Parameters::MeshBoxRefinement<dim>>();
     mesh_box_refinement->declare_parameters(prm);
     restart.declare_parameters(prm);
     timer.declare_parameters(prm);

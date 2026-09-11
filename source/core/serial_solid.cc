@@ -21,8 +21,8 @@
 
 template <int dim, int spacedim>
 SerialSolid<dim, spacedim>::SerialSolid(
-  std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
-  const unsigned int                                       id)
+  std::shared_ptr<Parameters::RigidSolidObject<dim, spacedim>> &param,
+  const unsigned int                                            id)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -162,7 +162,7 @@ template <int dim, int spacedim>
 void
 SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
 {
-  if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
+  if (param->solid_mesh.type == Parameters::Mesh<dim, spacedim>::Type::gmsh)
     {
       // Grid creation
       GridIn<dim, spacedim> grid_in;
@@ -173,7 +173,8 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
 
       grid_in.read_msh(input_file);
     }
-  else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
+  else if (param->solid_mesh.type ==
+           Parameters::Mesh<dim, spacedim>::Type::dealii)
     {
       if (param->solid_mesh.simplex)
         {
@@ -260,59 +261,22 @@ SerialSolid<dim, spacedim>::get_triangulation()
   return solid_tria;
 }
 
-template <>
+template <int dim, int spacedim>
 void
-SerialSolid<1, 2>::rotate_grid(const double                         angle,
-                               [[maybe_unused]] const Tensor<1, 3> &axis)
+SerialSolid<dim, spacedim>::rotate_grid(
+  const double                                angle,
+  [[maybe_unused]] const Tensor<1, spacedim> &axis)
 {
-  GridTools::rotate(angle, *solid_tria);
+  if constexpr (spacedim == 2)
+    GridTools::rotate(angle, *solid_tria);
+  else
+    GridTools::rotate(axis, angle, *solid_tria);
 }
 
-template <>
+template <int dim, int spacedim>
 void
-SerialSolid<2, 2>::rotate_grid(const double                         angle,
-                               [[maybe_unused]] const Tensor<1, 3> &axis)
-{
-  GridTools::rotate(angle, *solid_tria);
-}
-
-template <>
-void
-SerialSolid<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
-{
-  GridTools::rotate(axis, angle, *solid_tria);
-}
-template <>
-void
-SerialSolid<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
-{
-  GridTools::rotate(axis, angle, *solid_tria);
-}
-
-template <>
-void
-SerialSolid<1, 2>::translate_grid(const Tensor<1, 3> &translation)
-{
-  GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
-}
-
-template <>
-void
-SerialSolid<2, 2>::translate_grid(const Tensor<1, 3> &translation)
-{
-  GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
-}
-
-template <>
-void
-SerialSolid<2, 3>::translate_grid(const Tensor<1, 3> &translation)
-{
-  GridTools::shift(translation, *solid_tria);
-}
-
-template <>
-void
-SerialSolid<3, 3>::translate_grid(const Tensor<1, 3> &translation)
+SerialSolid<dim, spacedim>::translate_grid(
+  const Tensor<1, spacedim> &translation)
 {
   GridTools::shift(translation, *solid_tria);
 }
