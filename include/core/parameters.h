@@ -1793,12 +1793,12 @@ namespace Parameters
     Tensor<1, spacedim> translation;
 
     // Grid rotation at initiation
-    // rotation_axis is not given a default here: its declare_parameters()
-    // default ("1., 0., 0.") is spacedim == 3 specific and only used in 3D,
-    // so no single value works for both instantiations of this templated
-    // class.
-    Tensor<1, spacedim> rotation_axis;
-    double              rotation_angle = 0.;
+    Tensor<1, spacedim> rotation_axis = [] {
+      Tensor<1, spacedim> axis;
+      axis[0] = 1.;
+      return axis;
+    }();
+    double rotation_angle = 0.;
 
     /// Rescale the grid by the scale factor
     double scale = 1.;

@@ -3683,20 +3683,35 @@ namespace Parameters
 
   namespace
   {
+    template <int dim, int spacedim>
     std::string
-    to_string(const Mesh::Type type)
+    to_string(const typename Mesh<dim, spacedim>::Type type)
     {
       switch (type)
         {
-          case Mesh::Type::gmsh:
+          case Mesh<dim, spacedim>::Type::gmsh:
             return "gmsh";
-          case Mesh::Type::dealii:
+          case Mesh<dim, spacedim>::Type::dealii:
             return "dealii";
-          case Mesh::Type::lethe:
+          case Mesh<dim, spacedim>::Type::lethe:
             return "lethe";
         }
       Assert(false, ExcInternalError());
       return "";
+    }
+
+    template <int spacedim>
+    std::string
+    to_string(const Tensor<1, spacedim> &tensor)
+    {
+      std::string result;
+      for (unsigned int i = 0; i < spacedim; ++i)
+        {
+          if (i != 0)
+            result += ", ";
+          result += Patterns::Tools::Convert<double>::to_string(tensor[i]);
+        }
+      return result;
     }
   } // namespace
 
@@ -3708,7 +3723,7 @@ namespace Parameters
     prm.enter_subsection("mesh");
     {
       prm.declare_entry("type",
-                        to_string(defaults.type),
+                        to_string<dim, spacedim>(defaults.type),
                         Patterns::Selection("gmsh|dealii|lethe"),
                         "Type of mesh "
                         "Choices are <gmsh|dealii|lethe>.");
@@ -3777,18 +3792,15 @@ namespace Parameters
       prm.declare_entry("grid type", defaults.grid_type);
       prm.declare_entry("grid arguments", defaults.grid_arguments);
 
-      std::string default_translation =
-        (spacedim == 2) ? "0., 0." : "0., 0., 0.";
       prm.declare_entry(
         "initial translation",
-        default_translation,
+        to_string(defaults.translation),
         Patterns::List(Patterns::Double()),
         "Component of the desired translation of the mesh at initialization.");
 
-      std::string default_rotation = (spacedim == 2) ? "0., 0." : "1., 0., 0.";
       prm.declare_entry(
         "initial rotation axis",
-        default_rotation,
+        to_string(defaults.rotation_axis),
         Patterns::List(Patterns::Double()),
         "Component of the desired rotation of the mesh at initialization.\n"
         "In 2D, this parameter is not used, and a counter-clockwise rotation around the origin \n "
