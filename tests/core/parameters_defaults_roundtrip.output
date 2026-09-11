@@ -60,6 +60,7 @@ DEAL::  OK  stabilization
 DEAL::  OK  scalar_limiter
 DEAL::--- MeshBoxRefinement ---
 DEAL::  OK  number_of_refinement_boxes
+<<<<<<< HEAD
 DEAL::--- CFDDEM ---
 DEAL::  OK  grad_div
 DEAL::  OK  drag_model
@@ -90,4 +91,6 @@ DEAL::  OK  particle_wall_contact_force_method
 DEAL::  OK  rolling_resistance_method
 DEAL::  OK  integration_method
 DEAL::  OK  solver_type
+=======
+>>>>>>> 3ee381a6e (Add default values to the parameters)
 DEAL::OK
