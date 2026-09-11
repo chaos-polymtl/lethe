@@ -64,9 +64,9 @@ subsection time harmonic maxwell
     set waveguide power = 50
 
     set corner 0 = 0,0,0
-    set corner 1 = 0.,0.1092,0
-    set corner 2 = 0., 0., 0.1092
-    set corner 3 = 0., 0.1092, 0.1092
+    set corner 1 = 0.,10.92,0
+    set corner 2 = 0., 0., 5.46
+    set corner 3 = 0., 10.92, 5.46
 
     subsection waveguide mode
       set mode type    = TE
