@@ -135,7 +135,7 @@ namespace Parameters
       Tensor<1, 3> g;
 
       /// Number of particle types.
-      unsigned int particle_type_number;
+      unsigned int particle_type_number = 1;
 
       // Distribution type of each particle type (uniform, normal, lognormal,
       // custom)
@@ -232,61 +232,61 @@ namespace Parameters
       std::vector<double> real_youngs_modulus_particle;
 
       /// Young's modulus of the wall.
-      double youngs_modulus_wall;
+      double youngs_modulus_wall = 1000000.;
 
       /// Poisson's ratio of the wall.
-      double poisson_ratio_wall;
+      double poisson_ratio_wall = 0.3;
 
       /// Coefficient of restitution of the wall.
-      double restitution_coefficient_wall;
+      double restitution_coefficient_wall = 0.1;
 
       /// Friction coefficient of the wall.
-      double friction_coefficient_wall;
+      double friction_coefficient_wall = 0.1;
 
       /// Rolling friction coefficient of the wall.
-      double rolling_friction_wall;
+      double rolling_friction_wall = 0.1;
 
       /// Rolling viscous damping coefficient of the wall.
-      double rolling_viscous_damping_wall;
+      double rolling_viscous_damping_wall = 0.1;
 
       /// Surface energy of the wall.
-      double surface_energy_wall;
+      double surface_energy_wall = 0.0;
 
       /// Hamaker constant of the wall.
-      double hamaker_constant_wall;
+      double hamaker_constant_wall = 4.e-19;
 
       /// Thermal conductivity of the wall.
-      double thermal_conductivity_wall;
+      double thermal_conductivity_wall = 100;
 
       /// Microhardness of the wall.
-      double microhardness_wall;
+      double microhardness_wall = 1.e9;
 
       /// Surface slope of the wall.
-      double surface_slope_wall;
+      double surface_slope_wall = 0.1;
 
       /// Surface roughness of the wall.
-      double surface_roughness_wall;
+      double surface_roughness_wall = 1.e-10;
 
       /// Thermal accommodation coefficient of the wall.
-      double thermal_accommodation_wall;
+      double thermal_accommodation_wall = 0.7;
 
       /// Real Young's modulus of the wall.
-      double real_youngs_modulus_wall;
+      double real_youngs_modulus_wall = 0.;
 
       /// Thermal conductivity of the interstitial gas.
-      double thermal_conductivity_gas;
+      double thermal_conductivity_gas = 0.01;
 
       /// Specific heat of the interstitial gas.
-      double specific_heat_gas;
+      double specific_heat_gas = 1000;
 
       /// Dynamic viscosity of the interstitial gas.
-      double dynamic_viscosity_gas;
+      double dynamic_viscosity_gas = 1.e-5;
 
       /// Specific heats ratio of the interstitial gas.
-      double specific_heats_ratio_gas;
+      double specific_heats_ratio_gas = 1;
 
       /// Molecular mean free path of the interstitial gas.
-      double molecular_mean_free_path_gas;
+      double molecular_mean_free_path_gas = 68.e-9;
 
       /**
        * @brief Declare the parameters in the parameter handler.
@@ -435,53 +435,56 @@ namespace Parameters
         volume,
         /// Insertion using the packed method
         packed
-      } insertion_method; ///< Method used to insert particles
+      } insertion_method = InsertionMethod::volume; ///< Method used to insert
+                                                     ///< particles
 
       /// Number of particles inserted at each insertion step.
-      unsigned int inserted_this_step;
+      unsigned int inserted_this_step = 0;
 
       /// Frequency of insertion (in time steps).
-      int insertion_frequency;
+      int insertion_frequency = 0;
 
       /// Enable removal of particles in a specified region.
-      bool removing_particles_in_region;
+      bool removing_particles_in_region = false;
 
       /// First corner of the particle removal box.
       Point<3> clear_box_point_1;
 
       /// Second corner of the particle removal box.
-      Point<3> clear_box_point_2;
+      Point<3> clear_box_point_2{1., 1., 1.};
 
       /// List of input files for the file insertion method.
-      std::vector<std::string> list_of_input_files;
+      std::vector<std::string> list_of_input_files{"particles.input"};
 
       /// Normal vector of the insertion plane (plane method).
-      Tensor<1, 3> insertion_plane_normal_vector;
+      Tensor<1, 3> insertion_plane_normal_vector{{1., 0., 0.}};
 
       /// Point on the insertion plane (plane method).
       Point<3> insertion_plane_point;
 
       // Position and velocity components for the list insertion method.
-      std::vector<double> list_x, ///< x-position for list insertion.
-        list_y,                   ///< y-position for list insertion.
-        list_z,                   ///< z-position for list insertion.
-        list_vx,                  ///< x-velocity for list insertion.
-        list_vy,                  ///< y-velocity for list insertion.
-        list_vz,                  ///< z-velocity for list insertion.
-        list_wx,                  ///< x-angular velocity for list insertion.
-        list_wy,                  ///< y-angular velocity for list insertion.
-        list_wz,                  ///< z-angular velocity for list insertion.
-        list_d,                   ///< Diameter for list insertion.
-        list_T;                   ///< Temperature for list insertion
+      std::vector<double> list_x{0.}, ///< x-position for list insertion.
+        list_y{0.},                   ///< y-position for list insertion.
+        list_z{0.},                   ///< z-position for list insertion.
+        list_vx{0.},                  ///< x-velocity for list insertion.
+        list_vy{0.},                  ///< y-velocity for list insertion.
+        list_vz{0.},                  ///< z-velocity for list insertion.
+        list_wx{0.},                  ///< x-angular velocity for list insertion.
+        list_wy{0.},                  ///< y-angular velocity for list insertion.
+        list_wz{0.},                  ///< z-angular velocity for list insertion.
+        list_d{-1.0},                 ///< Diameter for list insertion.
+        list_T{0.};                   ///< Temperature for list insertion
 
       /// Direction sequence for particle insertion (1st, 2nd, 3rd).
-      std::vector<unsigned int> direction_sequence;
+      std::vector<unsigned int> direction_sequence =
+        (dim == 2) ? std::vector<unsigned int>{0, 1} :
+                     std::vector<unsigned int>{0, 1, 2};
 
       /// First corner of the insertion box (volume method).
       Point<3> insertion_box_point_1;
 
       /// Second corner of the insertion box (volume method).
-      Point<3> insertion_box_point_2;
+      Point<3> insertion_box_point_2{1., 1., 1.};
 
       /// Initial translational velocity of inserted particles.
       Tensor<1, 3> initial_vel;
@@ -494,13 +497,13 @@ namespace Parameters
       std::shared_ptr<Function<dim>> initial_temperature_function;
 
       /// Minimum distance threshold between inserted particles.
-      double distance_threshold;
+      double distance_threshold = 1.;
 
       /// Maximum random offset applied to insertion positions.
-      double insertion_maximum_offset;
+      double insertion_maximum_offset = 1.;
 
       /// Random seed for particle insertion.
-      int seed_for_insertion;
+      int seed_for_insertion = 1;
 
       /// Function used to accept or reject point in the insertion box when
       /// using the volume insertion.
@@ -553,41 +556,41 @@ namespace Parameters
         /// LoadBalanceMethod::dynamic but considering also the mobility status
         /// of the cells.
         dynamic_with_sparse_contacts
-      } load_balance_method; ///< Load balancing strategy for parallel DEM
-                             ///< simulations.
+      } load_balance_method = LoadBalanceMethod::none; ///< Load balancing
+                             ///< strategy for parallel DEM simulations.
 
       /// Load balance step (for single-step load balancing).
-      unsigned int load_balance_step;
+      unsigned int load_balance_step = 100000;
 
       /// Load balance frequency (in time steps).
-      unsigned int load_balance_frequency;
+      unsigned int load_balance_frequency = 100000;
 
       /// Load balance threshold (for dynamic load balancing).
-      double load_balance_threshold;
+      double load_balance_threshold = 0.5;
 
       /// Check frequency for dynamic load balancing.
-      unsigned int dynamic_load_balance_check_frequency;
+      unsigned int dynamic_load_balance_check_frequency = 10000;
 
       /// Frequency of particle-particle and particle-wall contact detection.
-      unsigned int contact_detection_frequency;
+      unsigned int contact_detection_frequency = 1;
 
       /// Function returning the weight of a cell based on its barycenter
       /// position.
       std::shared_ptr<Function<dim>> cell_weight_function;
 
       /// Particle weight used for load balancing.
-      unsigned int load_balance_particle_weight;
+      unsigned int load_balance_particle_weight = 2000;
 
       /// Factor applied to particle weight for active cells in load balancing
       /// (only used with adaptive sparse contacts).
-      double active_load_balancing_factor;
+      double active_load_balancing_factor = 1.0;
 
       /// Factor applied to particle weight for inactive cells in load balancing
       /// (only used with adaptive sparse contacts).
-      double inactive_load_balancing_factor;
+      double inactive_load_balancing_factor = 1.0;
 
       /// Safety factor for dynamic contact search.
-      double dynamic_contact_search_factor;
+      double dynamic_contact_search_factor = 0.8;
 
       /**
        * @brief Contact detection method used in the simulation.
@@ -599,27 +602,31 @@ namespace Parameters
         /// Carry-out contact detection when the maximum displacement of a
         /// particle exceeds the smallest contact search criterion.
         dynamic
-      } contact_detection_method; ///< Contact detection method used in the
-                                  ///< simulation.
+      } contact_detection_method =
+        ContactDetectionMethod::dynamic; ///< Contact detection method used in
+                                         ///< the simulation.
 
       /// Contact search neighborhood threshold (neighborhood diameter to
       /// particle diameter ratio).
-      double neighborhood_threshold;
+      double neighborhood_threshold = 1.3;
 
       /// Cut-off threshold beyond which Van der Waals forces are ignored.
-      double dmt_cut_off_threshold;
+      double dmt_cut_off_threshold = 0.1;
 
       /// Particle-particle contact force model.
-      ParticleParticleContactForceModel particle_particle_contact_force_model;
+      ParticleParticleContactForceModel particle_particle_contact_force_model =
+        ParticleParticleContactForceModel::hertz_mindlin_limit_overlap;
 
       /// Particle-wall contact force model.
-      ParticleWallContactForceModel particle_wall_contact_force_method;
+      ParticleWallContactForceModel particle_wall_contact_force_method =
+        ParticleWallContactForceModel::nonlinear;
 
       /// Rolling resistance torque method.
-      RollingResistanceMethod rolling_resistance_method;
+      RollingResistanceMethod rolling_resistance_method =
+        RollingResistanceMethod::constant;
 
       /// Model parameter for the EPSD rolling resistance model.
-      double f_coefficient_epsd;
+      double f_coefficient_epsd = 0.;
 
       /**
        * @brief Time integration method for particle motion.
@@ -630,28 +637,30 @@ namespace Parameters
         velocity_verlet,
         /// Explicit Euler first-order time integration scheme.
         explicit_euler
-      } integration_method; ///< Time integration method for particle motion.
+      } integration_method =
+        IntegrationMethod::velocity_verlet; ///< Time integration method for
+                                            ///< particle motion.
 
       /// Solver type (DEM, CFD-DEM, or DEM multiphysics).
-      DEM::SolverType solver_type;
+      DEM::SolverType solver_type = DEM::SolverType::dem;
 
       /// Enable sparse particle contacts to optimize performance.
-      bool sparse_particle_contacts;
+      bool sparse_particle_contacts = false;
 
       /// Enable advection of particles using cell-averaged fluid velocity and
       /// acceleration.
-      bool advect_particles;
+      bool advect_particles = false;
 
       /// Minimum granular temperature for cells where particle contacts are
       /// evaluated.
-      double granular_temperature_threshold;
+      double granular_temperature_threshold = 1e-4;
 
       /// Maximum solid fraction for cells where particle contacts are always
       /// evaluated regardless of granular temperature.
-      double solid_fraction_threshold;
+      double solid_fraction_threshold = 0.4;
 
       /// Disable position integration for particles.
-      bool disable_position_integration;
+      bool disable_position_integration = false;
 
       /**
        * @brief Declare the parameters in the parameter handler.
@@ -679,16 +688,17 @@ namespace Parameters
     {
     public:
       /// Enable force and torque post-processing on wall boundaries.
-      bool calculate_force_torque;
+      bool calculate_force_torque = false;
 
       /// Verbosity level for force and torque output.
-      Parameters::Verbosity force_torque_verbosity;
+      Parameters::Verbosity force_torque_verbosity =
+        Parameters::Verbosity::verbose;
 
       /// Output frequency (in time steps).
-      unsigned int output_frequency;
+      unsigned int output_frequency = 1;
 
       /// File name prefix for force and torque output.
-      std::string force_torque_output_name;
+      std::string force_torque_output_name = "force";
 
       /// Center of mass used for torque computation.
       Point<3> point_center_mass;
@@ -724,7 +734,7 @@ namespace Parameters
     {
     public:
       /// Number of floating walls.
-      unsigned int floating_walls_number;
+      unsigned int floating_walls_number = 0;
 
       /// A point on each floating wall surface.
       std::vector<Point<dim>> points_on_walls;
@@ -787,7 +797,7 @@ namespace Parameters
     {
     public:
       /// Number of DEM boundary conditions.
-      unsigned int number_of_dem_boundary_conditions;
+      unsigned int number_of_dem_boundary_conditions = 0;
 
       /// Boundary ids designated as outlets. A boundary's DEM boundary
       /// condition type is encoded by which container holds it: outlets here,
@@ -881,16 +891,16 @@ namespace Parameters
         rotational,
         /// Static grid.
         none
-      } motion_type; ///< Type of grid motion.
+      } motion_type = MotionType::none; ///< Type of grid motion.
 
       /// Translational velocity of the moving grid.
       Tensor<1, dim> grid_translational_velocity;
 
       /// Rotational speed of the rotating grid (rad/s).
-      double grid_rotational_speed;
+      double grid_rotational_speed = 0;
 
       /// Rotational axis of the rotating grid (0=x, 1=y, 2=z).
-      unsigned int grid_rotational_axis;
+      unsigned int grid_rotational_axis = 0;
 
       /**
        * @brief Declare the parameters in the parameter handler.
@@ -917,25 +927,25 @@ namespace Parameters
     struct LagrangianPostProcessing
     {
       /// Enable Lagrangian post-processing.
-      bool lagrangian_post_processing_enabled;
+      bool lagrangian_post_processing_enabled = false;
 
       /// Enable force chains visualization.
-      bool force_chains;
+      bool force_chains = false;
 
       /// Enable logging of particle-wall contact statistics.
-      bool particle_wall_collision_statistics;
+      bool particle_wall_collision_statistics = false;
 
       /// Log collisions with all walls (if false, only selected boundaries).
-      bool log_collisions_with_all_walls;
+      bool log_collisions_with_all_walls = true;
 
       /// Boundary IDs of the walls for which collisions are logged.
-      std::vector<int> particle_wall_collision_boundary_ids;
+      std::vector<int> particle_wall_collision_boundary_ids{0};
 
       /// Verbosity level for collision statistics output.
-      Parameters::Verbosity collision_verbosity;
+      Parameters::Verbosity collision_verbosity = Parameters::Verbosity::quiet;
 
       /// File name for exporting collision statistics (CSV format).
-      std::string collision_stats_file_name;
+      std::string collision_stats_file_name = "collision_statistics.csv";
 
       /**
        * @brief Declare the parameters in the parameter handler.
@@ -973,10 +983,10 @@ namespace Parameters
       Parameters::Lagrangian::GridMotion<dim> motion;
 
       /// Activation time of the floating grid.
-      double time_start;
+      double time_start = 0.;
 
       /// Deactivation time of the floating grid.
-      double time_end;
+      double time_end = 0.;
 
       /**
        * @brief Declare the parameters in the parameter handler.
@@ -1017,19 +1027,23 @@ namespace Parameters
       std::vector<double> step_between_photons_each_directions;
 
       /// Reference unit tensor defining the photon displacement direction.
-      Tensor<1, 3> ref_displacement_tensor_unit;
+      Tensor<1, 3> ref_displacement_tensor_unit{{0., 0., 1.}};
 
       /// Maximum random offset applied to the photon insertion position.
-      double max_insertion_offset;
+      double max_insertion_offset = 0.;
 
       /// Random seed for photon insertion position offset.
-      unsigned int prn_seed_photon_insertion;
+      unsigned int prn_seed_photon_insertion = 0;
 
       /// Maximum angular offset applied to the photon displacement direction.
-      double max_angular_offset;
+      double max_angular_offset = 0.;
 
-      /// Random seed for photon displacement angular offset.
-      unsigned int prn_seed_photon_displacement;
+      /// Random seed for photon displacement angular offset. Note: due to a
+      /// pre-existing quirk in parse_parameters(), this is actually parsed
+      /// from the "photon insertion prn seed" entry rather than "photon
+      /// angular offset prn seed", so its effective default is 0, not the
+      /// declared entry's own default of 1.
+      unsigned int prn_seed_photon_displacement = 0;
 
       /**
        * @brief Declare the parameters in the parameter handler.

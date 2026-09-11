@@ -3,6 +3,48 @@
 
 #include <solvers/initial_conditions.h>
 
+namespace
+{
+  std::string
+  to_string(const Parameters::FluidDynamicsInitialConditionType type)
+  {
+    switch (type)
+      {
+        case Parameters::FluidDynamicsInitialConditionType::none:
+          return "none";
+        case Parameters::FluidDynamicsInitialConditionType::L2projection:
+          return "L2projection";
+        case Parameters::FluidDynamicsInitialConditionType::viscous:
+          return "viscous";
+        case Parameters::FluidDynamicsInitialConditionType::nodal:
+          return "nodal";
+        case Parameters::FluidDynamicsInitialConditionType::ramp:
+          return "ramp";
+        case Parameters::FluidDynamicsInitialConditionType::
+          average_velocity_profile:
+          return "average_velocity_profile";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::CLSInitialConditionType type)
+  {
+    switch (type)
+      {
+        case Parameters::CLSInitialConditionType::none:
+          return "none";
+        case Parameters::CLSInitialConditionType::diffusive:
+          return "diffusive";
+        case Parameters::CLSInitialConditionType::geometric:
+          return "geometric";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+} // namespace
+
 namespace Parameters
 {
   void
@@ -12,18 +54,18 @@ namespace Parameters
     {
       prm.declare_entry(
         "initial n",
-        "1.0",
+        Patterns::Tools::Convert<double>::to_string(n_init),
         Patterns::Double(),
         "First n value with which to start the initial condition");
 
       prm.declare_entry(
         "iterations",
-        "0",
+        Patterns::Tools::Convert<int>::to_string(n_iter),
         Patterns::Integer(),
         "Number of iterations used in the ramp before reaching the final n value");
 
       prm.declare_entry("alpha",
-                        "0.5",
+                        Patterns::Tools::Convert<double>::to_string(alpha),
                         Patterns::Double(),
                         "Coefficient used for n-spacing.");
     }
@@ -49,18 +91,19 @@ namespace Parameters
     {
       prm.declare_entry(
         "initial kinematic viscosity",
-        "1.0",
+        Patterns::Tools::Convert<double>::to_string(
+          kinematic_viscosity_init),
         Patterns::Double(),
         "First kinematic viscosity value with which to start the initial condition");
 
       prm.declare_entry(
         "iterations",
-        "0",
+        Patterns::Tools::Convert<int>::to_string(n_iter),
         Patterns::Integer(),
         "Number of iterations used in the ramp before reaching the final kinematic viscosity value");
 
       prm.declare_entry("alpha",
-                        "0.5",
+                        Patterns::Tools::Convert<double>::to_string(alpha),
                         Patterns::Double(),
                         "Coefficient used for kinematic viscosity-spacing.");
     }
@@ -109,7 +152,7 @@ namespace Parameters
     {
       prm.declare_entry(
         "type",
-        "nodal",
+        to_string(type),
         Patterns::Selection(
           "L2projection|viscous|nodal|ramp|average_velocity_profile"),
         "Type of initial condition"
@@ -119,7 +162,8 @@ namespace Parameters
       prm.leave_subsection();
 
       prm.declare_entry("kinematic viscosity",
-                        "1",
+                        Patterns::Tools::Convert<double>::to_string(
+                          kinematic_viscosity),
                         Patterns::Double(),
                         "Kinematic viscosity for viscous initial conditions");
 
@@ -136,13 +180,14 @@ namespace Parameters
       CLS.declare_parameters(prm);
       prm.declare_entry(
         "smoothing type",
-        "none",
+        to_string(cls_initial_condition_smoothing),
         Patterns::Selection("none|diffusive|geometric"),
         "Apply a projection step with diffusion to smooth the CLS initial condition");
 
       prm.declare_entry(
         "diffusion factor",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(
+          projection_step_diffusion_factor),
         Patterns::Double(),
         "Factor applied to the diffusion term in the projection step");
       prm.leave_subsection();
@@ -158,11 +203,11 @@ namespace Parameters
       prm.enter_subsection("average velocity profile");
       prm.declare_entry(
         "checkpoint folder",
-        "./",
+        average_velocity_folder,
         Patterns::FileName(),
         "the path leading to the checkpointed average velocity profile");
       prm.declare_entry("checkpoint file name",
-                        "restart",
+                        average_velocity_file_name,
                         Patterns::FileName(),
                         "checkpoint file name");
       prm.leave_subsection();

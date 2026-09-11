@@ -33,9 +33,9 @@ namespace Parameters
 
   struct Ramp_n
   {
-    double n_init;
-    int    n_iter;
-    double alpha;
+    double n_init = 1.0;
+    int    n_iter = 0;
+    double alpha  = 0.5;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -45,9 +45,9 @@ namespace Parameters
 
   struct Ramp_viscosity
   {
-    double kinematic_viscosity_init;
-    int    n_iter;
-    double alpha;
+    double kinematic_viscosity_init = 1.0;
+    int    n_iter                   = 0;
+    double alpha                    = 0.5;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -74,13 +74,14 @@ namespace Parameters
       : uvwp(dim + 1)
     {}
 
-    FluidDynamicsInitialConditionType type;
+    FluidDynamicsInitialConditionType type =
+      FluidDynamicsInitialConditionType::nodal;
 
     // Velocity components
     Functions::ParsedFunction<dim> uvwp;
 
     // Artificial kinematic viscosity
-    double kinematic_viscosity;
+    double kinematic_viscosity = 1;
 
     // Temperature
     Functions::ParsedFunction<dim> temperature;
@@ -92,8 +93,9 @@ namespace Parameters
     Functions::ParsedFunction<dim> CLS;
 
 
-    CLSInitialConditionType cls_initial_condition_smoothing;
-    double                  projection_step_diffusion_factor;
+    CLSInitialConditionType cls_initial_condition_smoothing =
+      CLSInitialConditionType::none;
+    double projection_step_diffusion_factor = 1;
 
     // Non-Newtonian
     Ramp ramp;
@@ -107,8 +109,8 @@ namespace Parameters
       Functions::ParsedFunction<dim>(4 * dim);
 
     // Path to the checkpointed average velocity profile
-    std::string average_velocity_folder;
-    std::string average_velocity_file_name;
+    std::string average_velocity_folder    = "./";
+    std::string average_velocity_file_name = "restart";
 
     void
     declare_parameters(ParameterHandler &prm);
