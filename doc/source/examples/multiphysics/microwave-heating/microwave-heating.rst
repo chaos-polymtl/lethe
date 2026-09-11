@@ -25,7 +25,7 @@ Both parameter files below are located in the example's folder (``examples/multi
 - Parameter file, heating of a silicon carbide cylinder cooled by an air flow: ``filled_waveguide_cylinder_SiC.prm``
 
 .. note::
-    Additional parameter files for the square and tilted square obstacle are also available to make the results easily reproducable, but are not discussed in this example since they follow the same logic as the ``filled_waveguide_cylinder_SiC.prm`` case, but using another geometry. See the :ref:`Uniform Channel with Meshed Square Prism <channel-prism>` for details on this grid and its arguments.
+    Additional parameter files for the square and tilted square obstacles are also provided to make the results easy to reproduce, but they are not discussed in this example since they follow the same logic as the ``filled_waveguide_cylinder_SiC.prm`` case, only with a different obstacle geometry. See the :ref:`Uniform Channel with Meshed Square Prism <channel-prism>` for details on this grid and its arguments.
 
 Description of the Case
 -----------------------
@@ -41,7 +41,7 @@ Both cases share the same base geometry: a section of rectangular waveguide, wit
     :name: schematic
     :width: 500
 
-The waveguide's cross-section is :math:`109.2\ \mathrm{mm}\times54.6\ \mathrm{mm}` in both cases (a standard WR-430 rectangular waveguide), with the cylinder's axis pointing in the :math:`x_3`-direction. The cylinder itself is meshed (``mesh_obstacle = true``) so that the temperature field can be resolved inside it. In the case with fluid flow, the channel is longer to allow the flow to develop vortex downstream of the cylinder before reaching the outlet boundary condition. Note that because of how the ``uniform_channel_with_meshed_cylinder`` grid is built, the `x_3`-direction corresponds to the `x` axis, the `x_1`-direction to the `y` axis, and the `x_2`-direction to the `z` axis in the parameter files. 
+The waveguide's cross-section is :math:`109.2\ \mathrm{mm}\times54.6\ \mathrm{mm}` in both cases (a standard WR-430 rectangular waveguide), with the cylinder's axis pointing in the :math:`x_2`-direction. The cylinder itself is meshed (``mesh_obstacle = true``) so that the temperature field can be resolved inside it. In the case with fluid flow, the channel is longer to leave room for the wake to develop downstream of the cylinder before it reaches the outlet boundary condition. Note that because of how the ``uniform_channel_with_meshed_cylinder`` grid is built, the :math:`x_3`-direction corresponds to the mesh's ``x`` axis (the channel's length), the :math:`x_1`-direction to its ``y`` axis, and the :math:`x_2`-direction to its ``z`` axis (the cylinder's axis) in the parameter files. 
 
 - In ``filled_waveguide_cylinder_Al.prm``, the channel is :math:`200\ \mathrm{mm}` long, and the cylinder has a radius of :math:`24\ \mathrm{mm}`, centered midway along the channel.
 - In ``filled_waveguide_cylinder_SiC.prm``, the channel is :math:`400\ \mathrm{mm}` long to leave room for the flow to develop, and the cylinder has a radius of :math:`20\ \mathrm{mm}`.
@@ -53,7 +53,7 @@ Physical Problem
 
 The amount of power absorbed by a dielectric cylinder placed in a waveguide is strongly dependent on its radius and permittivity: for specific combinations of these two parameters, the internal electromagnetic field can build up through constructive interference. The ``filled_waveguide_cylinder_Al.prm`` case reproduces this behavior for a low-loss alumina cylinder and is meant to be compared against the results of Peng *et al.* [#Peng2024]_, who studied this exact resonance-driven heating mechanism, both theoretically (using Mie theory) and numerically, for low-loss cylindrical samples of alumina in a waveguide.
 
-The first test case follow their numerical and experimental setup. Like what is described in the :doc:`waveguide example <../waveguide/waveguide>`, the time-harmonic Maxwell solver excites a single rectangular waveguide mode (here, the fundamental :math:`\mathrm{TE}_{10}` mode) through a ``waveguide port`` boundary condition, and absorbs the wave transmitted past the cylinder through a matched ``impedance boundary`` condition, which mimics a semi-infinite waveguide by preventing spurious reflections back toward the cylinder.
+The first test case follows their numerical and experimental setup. Like what is described in the :doc:`waveguide example <../waveguide/waveguide>`, the time-harmonic Maxwell solver excites a single rectangular waveguide mode (here, the fundamental :math:`\mathrm{TE}_{10}` mode) through a ``waveguide port`` boundary condition, and absorbs the wave transmitted past the cylinder through a matched ``impedance boundary`` condition, which mimics a semi-infinite waveguide by preventing spurious reflections back toward the cylinder.
 
 Since ``set microwave heating = true`` is used in both cases, the power dissipated by the dielectric losses of the cylinder is automatically computed from the electromagnetic solution and added as a source term to the heat transfer equation,
 
@@ -65,9 +65,9 @@ see the :doc:`multiphysics <../../../parameters/cfd/multiphysics>` documentation
 .. tip::
     Because none of the physical properties used in this example depend on temperature, the electromagnetic fields do not need to be recomputed as the cylinder heats up. Both parameter files therefore rely on (or default to) ``subsection time coupling strategy`` with ``set type = none``: the electromagnetic problem is solved once, before the first time step, and the resulting heat source is then reused throughout the transient heat transfer solve. See the :doc:`../../../parameters/cfd/time_harmonic_maxwell` documentation for the other available coupling strategies, needed when the physical properties depend on the temperature.
 
-The heat transfer equation is then solved in time for 60 seconds, with the whole domain initially at a uniform reference temperature of 39.6 °C (without loss of generality, we use a rescaled temperature of 0 in the parameter files because in the post processing we compute the change in temperature). In the first case, the cylinder is surrounded by stagnant air, which is not allowed to flow (``fluid dynamics = false``), so that it can only lose heat by conduction through the surrounding air until it reaches the walls of the waveguide, which are all assumed to be insulated (``noflux``). 
+The heat transfer equation is then solved in time for 60 seconds, with the whole domain initially at a uniform reference temperature of 39.6 °C. Without loss of generality, we use a rescaled temperature of 0 in the parameter files, since only the resulting change in temperature, :math:`\Delta T`, is examined in the post-processing. In the first case, the cylinder is surrounded by stagnant air that is not allowed to flow (``fluid dynamics = false``), so it can only lose heat by conduction through the surrounding air until reaching the walls of the waveguide, all of which are assumed to be insulated (``noflux``). 
 
-In the second case, we build on the first case and introduce a laminar air flow along the channel with an imposed temperature of 0 °C, which is also the initial temperature of the domain, and keep the same ``noflux`` boundary condition on the channel walls and on the outlet. Additionally, the cylinder is now made of silicon carbide (SiC), a much lossier ceramic than the alumina used in the first case, so that it heats up in a more noticeable way. Now, for the fluid problem, the air flow is bounded by no-slip conditions at the walls of the waveguide, has an imposed velocity profile at the inlet, and a do-nothing boundary condition at the outlet. For the inlet air flow velocity profile, it is built using a separable two-dimensional smoothed top-hat profile. The velocity is constant in the central region of the inlet cross-section and decreases quadratically to zero over a layer extending over a prescribed percent of the channel width and height adjacent to each wall. The resulting profile therefore provides a uniform core while ensuring a smooth transition to the no-slip condition at the walls. The profile is scaled according to the specified Reynolds number (here, Re = 400). Mathematically, the condition is defined as :
+In the second case, we build on the first case and introduce a laminar air flow along the channel with an imposed inlet temperature of 0 °C, which is also the initial temperature of the domain; the ``noflux`` boundary condition is kept on the channel walls and on the outlet. Additionally, the cylinder is now made of silicon carbide (SiC), a much lossier ceramic than the alumina used in the first case, so that it heats up in a more noticeable way. For the fluid problem, the air flow is bounded by no-slip conditions at the walls of the waveguide, has an imposed velocity profile at the inlet, and a do-nothing boundary condition at the outlet. The inlet velocity profile is built using a separable two-dimensional smoothed top-hat profile: the velocity is constant in the central region of the inlet cross-section and decreases quadratically to zero over a layer extending over a prescribed percentage of the channel width and height adjacent to each wall. The resulting profile therefore provides a uniform core while ensuring a smooth transition to the no-slip condition at the walls, and is scaled according to the specified Reynolds number (here, :math:`\mathrm{Re} = 400`). Mathematically, the condition is defined as:
 
 .. math::
 
@@ -96,7 +96,7 @@ with :math:`c_{x_1}` and :math:`c_{x_2}` the channel width and height, respectiv
       & \xi > c_\xi-\dfrac{pc_\xi}{2}.
    \end{cases}
 
-The parameter :math:`\alpha` in the above equations is a scaling factor so it is more convenient to specify the Reynolds number, defined here as :math:`\mathrm{Re} = \dfrac{u_\mathrm{avg}L_\mathrm{obstacle}}{\nu}`, then recomputing the average velocity :math:`u_\mathrm{avg}` using the volumetric flow rate each time ones want to modify the velocity without changing the inlet profile shape. Finally, the parameters used in the ``filled_waveguide_cylinder_SiC.prm`` case are:
+The parameter :math:`\alpha` in the above equations is a scaling factor introduced so that the Reynolds number, defined here as :math:`\mathrm{Re} = \dfrac{u_\mathrm{avg}L_\mathrm{obstacle}}{\nu}`, can be specified directly; the average velocity :math:`u_\mathrm{avg}` is then recomputed from the volumetric flow rate each time one wants to change the velocity without altering the shape of the inlet profile. The parameters used in the ``filled_waveguide_cylinder_SiC.prm`` case are:
 
 .. math::
 
@@ -136,10 +136,10 @@ Simulation Control
         set subdivision                    = 3
     end
 
-The heat transfer equation is integrated in time with a first-order backward difference scheme (``bdf1``) up to :math:`t=60\ \mathrm{s}`. Since ``fluid dynamics = false`` (see below), no velocity field is solved for and the CFL condition is trivially satisfied at every time step; the time step therefore is set to a specific value of :math:`0.05` that is equal to the output frequency based on the simulation time, so that the solution is saved at every time step. 
+The heat transfer equation is integrated in time with a first-order backward difference scheme (``bdf1``) up to :math:`t=60\ \mathrm{s}`. Since ``fluid dynamics = false`` (see below), no velocity field is solved for, so the CFL condition is trivially satisfied at every time step; the time step is therefore set to a fixed value of :math:`0.05\ \mathrm{s}`, equal to the output time frequency, so that the solution is saved at every time step. 
 
 .. note::
-    The ``subdivision`` parameter is used to subdivided each cell into smaller sub-cells to produce smoother visualizations of the solution since here we are using higher order polynomial, but Paraview only supports linear interpolation between the vertices of each cell. 
+    The ``subdivision`` parameter subdivides each cell into smaller sub-cells for visualization purposes. Since higher-order polynomials are used here, but Paraview only interpolates linearly between the vertices of each cell, this subdivision is necessary to produce a smooth-looking visualization of the solution. 
 
 Mesh Adaptation
 ^^^^^^^^^^^^^^^
@@ -150,7 +150,7 @@ Mesh Adaptation
         set type = none
     end
 
-No adaptive mesh refinement is used in this example; the mesh resolution is instead controlled entirely by the ``mesh`` subsection below. An analysis of the mesh convergence and an optimization of the refinement area as also been performed prior to the simulation of the microwave-heating of the cylinder to ensure that the mesh is sufficiently refined to capture the electromagnetic, velocity and temperature fields accurately without requiring an excessive number of degrees of freedom (degrees of freedom are hard to keep bounded when performing mesh adaptation in a multiphysics problem, especially when the different physics have different mesh refinement requirements). 
+No adaptive mesh refinement is used in this example; the mesh resolution is instead controlled entirely by the ``mesh`` subsection below. A mesh-convergence analysis and an optimization of the refinement region were performed beforehand, to ensure that the mesh is sufficiently refined to accurately capture the electromagnetic, velocity, and temperature fields without requiring an excessive number of degrees of freedom (which are otherwise hard to keep bounded when performing mesh adaptation in a multiphysics problem, especially when the different physics have different mesh-refinement requirements). 
 
 Multiphysics
 ^^^^^^^^^^^^
@@ -178,7 +178,7 @@ Mesh
         set initial refinement = 2
     end
 
-This builds the :math:`200\ \mathrm{mm} \times 109.2\ \mathrm{mm}` channel cross-section extruded to a height of :math:`54.6\ \mathrm{mm}`, with a meshed cylinder of radius :math:`24\ \mathrm{mm}` (``mesh_obstacle = true``) centered at mid-length and mid-height of the channel, and colorized (``colorize = true``) boundaries.
+This builds a channel of length :math:`200\ \mathrm{mm}` along the mesh's ``x`` axis, with a :math:`109.2\ \mathrm{mm} \times 54.6\ \mathrm{mm}` cross-section spanning its ``y`` and ``z`` axes respectively, and a meshed cylinder of radius :math:`24\ \mathrm{mm}` (``mesh_obstacle = true``) extruded along ``z``, centered at mid-length and mid-height of the channel, with colorized (``colorize = true``) boundaries.
 
 Time Harmonic Maxwell
 ^^^^^^^^^^^^^^^^^^^^^
@@ -269,7 +269,7 @@ Boundary Conditions
         end
     end
 
-Every wall of the channel is insulated (``noflux``): in this first case.
+Every wall of the channel is insulated (``noflux``) in this first case.
 
 .. attention::
     As in the :doc:`waveguide <../waveguide/waveguide>` and :doc:`Fichera oven <../fichera-oven/fichera-oven>` examples, the ``subsection boundary conditions`` for the fluid dynamics boundaries cannot be removed from the parameter file, even though the fluid solver is disabled:
@@ -347,7 +347,7 @@ Physical Properties
         end
     end
 
-The waveguide is filled with air (``fluid 0``) where the material properties have been taken to be approximatly the one at International Standard Atmosphere. The cylinder (``solid 0``) is alumina (:math:`\mathrm{Al_2O_3}`): a low-loss ceramic with a relative permittivity of :math:`\varepsilon_r \approx 9.2 - 0.005i`. All its properties have been taken from Peng *et al.* [#Peng2024]_.
+The waveguide is filled with air (``fluid 0``), whose material properties have been taken to be approximately those of the International Standard Atmosphere. The cylinder (``solid 0``) is alumina (:math:`\mathrm{Al_2O_3}`), a low-loss ceramic with a relative permittivity of :math:`\varepsilon_r \approx 9.2 - 0.005i`; all its properties have been taken from Peng *et al.* [#Peng2024]_.
 
 Non-Linear and Linear Solver Control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -380,12 +380,12 @@ Non-Linear and Linear Solver Control
         end
     end
 
-Lethe always solve the heat transfer problem in a non-linear fashion, even though the physical properties are constant in this case, using Newton's method. The linear system arising from heat-transfer is solved with a GMRES iterative solver, while the time-harmonic Maxwell problem is solved with a Conjugate Gradient iterative solver. The preconditionner for the heat-transfer problem is the default ILU preconditioner, while the time-harmonic Maxwell problem is solved without any preconditioner. 
+Lethe always solves the heat transfer problem in a non-linear fashion using Newton's method, even though the physical properties are constant in this case. The linear system arising from heat transfer is solved with a GMRES iterative solver, while the time-harmonic Maxwell problem is solved with a Conjugate Gradient iterative solver. The preconditioner for the heat-transfer problem is the default ILU preconditioner, while the time-harmonic Maxwell problem is solved without any preconditioner. 
 
 Case 2: Adding Fluid Flow
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This second case (``filled_waveguide_cylinder_SiC.prm``) starts from the same base setup and adds a air flow along the channel, so that the cylinder is now convectively cooled while being heated by the electromagnetic field. Only the parameters that differ from, or are added to, Case 1 are detailed below.
+This second case (``filled_waveguide_cylinder_SiC.prm``) starts from the same base setup and adds an air flow along the channel, so that the cylinder is now convectively cooled while being heated by the electromagnetic field. Only the parameters that differ from, or are added to, Case 1 are detailed below.
 
 Simulation Control
 ^^^^^^^^^^^^^^^^^^
@@ -405,7 +405,7 @@ Simulation Control
         set max cfl = 1
     end
 
-Since now there is a fluid flow, the time step is now adapted to respect the CFL condition, with a maximum CFL number of 1. The initial time step is set to :math:`5\times10^{-5}\ \mathrm{s}` and is increased by a factor of :math:`1.005` at each time step until the CFL condition is violated, in which case the time step is reduced to satisfy the CFL condition again.    
+Because a fluid flow is now present, the time step is adapted at every iteration to respect the CFL condition, with a maximum CFL number of 1. The initial time step is set to :math:`5\times10^{-5}\ \mathrm{s}` and is increased by a factor of :math:`1.005` at each time step until the CFL condition is violated, at which point the time step is reduced to satisfy it again.    
 
 Multiphysics
 ^^^^^^^^^^^^
@@ -448,7 +448,7 @@ Mesh and Box Refinement
         end
     end
 
-The channel is now :math:`400\ \mathrm{mm}` long (to leave room for the flow to develop) and the cylinder radius is reduced to :math:`20\ \mathrm{mm}` to note be in the resonance mode. All lengths are given in centimeters here rather than meters (see the ``dimensionality`` subsection below), and the four channel walls (ids ``2`` to ``5``) receive one extra level of boundary refinement to better resolve the developing boundary layers.
+The channel is now :math:`400\ \mathrm{mm}` long, and the cylinder radius is reduced to :math:`20\ \mathrm{mm}` so that it no longer corresponds to a resonant condition of the waveguide-cylinder system (see the `physical problem section <microwave-heating-cases_>`_). The cylinder is also placed close to the inlet, :math:`100\ \mathrm{mm}` from the left face, leaving :math:`300\ \mathrm{mm}` of channel downstream for the wake to develop before the flow reaches the outlet. All lengths are given in centimeters here rather than meters (see the ``dimensionality`` subsection below), and the four channel walls (ids ``2`` to ``5``) receive one extra level of boundary refinement to better resolve the developing boundary layers.
 
 A ``box refinement`` region, a thin cylindrical shell wrapped around the physical cylinder, is also added, providing two additional levels of refinement in the vicinity of the object to better resolve both the thermal and momentum boundary layers there. See the :doc:`../../../parameters/cfd/box_refinement` documentation for details.
 
@@ -468,7 +468,7 @@ Initial Conditions
         end
     end
 
-The velocity field is initialized with an approximate fully-developed laminar profile for a rectangular duct, scaled to reach a Reynolds number of :math:`400` based on the channel's transverse dimensions, and rounded off near the walls (over ``percent = 10%`` of each transverse dimension) to avoid an unphysical discontinuity in the wall-normal velocity gradient at the channel edges. The same expression is reused verbatim as the inlet boundary condition below. Note that this velocity profile does not respect the presence of the cylinder, and results in oscillations in the flow field as the simulation starts, which are quickly damped by viscous effects over the first few time steps. This profile is chosen because it is the simplest one that respects the boundary conditions that are imposed at the inlet and on the walls.
+The velocity field is initialized with an approximate fully-developed laminar profile for a rectangular duct, scaled to reach a Reynolds number of :math:`400` based on the channel's transverse dimensions, and rounded off near the walls (over the outer 10% of each transverse dimension, ``percent = 0.1``) to avoid an unphysical discontinuity in the wall-normal velocity gradient at the channel edges. The same expression is reused verbatim as the inlet boundary condition below. Note that this velocity profile does not account for the presence of the cylinder, and results in oscillations in the flow field as the simulation starts; these are quickly damped by viscous effects over the first few time steps. This profile is chosen because it is the simplest one that satisfies the boundary conditions imposed at the inlet and on the walls.
 
 The temperature field is initialized at :math:`0`.
 
@@ -549,7 +549,7 @@ Physical Properties
         end
     end
 
-The cylinder is now silicon carbide (SiC), a much lossier ceramic than the alumina used in Case 1 (:math:`\varepsilon_r \approx 9.72 - 2.01i`) where the properties have been taken from the CRC Materials Science and Engineering Handbook [#CRC2006]_. 
+The cylinder is now silicon carbide (SiC), a much lossier ceramic than the alumina used in Case 1 (:math:`\varepsilon_r \approx 9.72 - 2.01i`), whose properties have been taken from the CRC Materials Science and Engineering Handbook [#CRC2006]_. 
 
 Dimensionality
 ^^^^^^^^^^^^^^
@@ -563,7 +563,7 @@ Dimensionality
         set electric current = 0.01  #ampere
     end
 
-For this second case, the length unit is set to :math:`0.01\ \mathrm{m}` (1 cm) rather than :math:`1\ \mathrm{m}` as in Case 1. This is because when using the matrix-free solver for the Navier-Stokes equations, the geometric multigrid preconditioner works better when the quantities involved are of order 1. So here, the average velocity with our geometry and a Reynolds number of 400 is :math:`\approx 14.8\ \mathrm{cm/s}`, so the length unit is set to 1 cm to keep the velocity closer to order 1. The electric current unit is also set to :math:`0.01\ \mathrm{A}` so the electromagnetic electric field is is directly outputed in :math:`\mathrm{V/m}` since :math:`\mathrm{V/m} \propto m/A`.
+For this second case, the length unit is set to :math:`0.01\ \mathrm{m}` (1 cm) rather than :math:`1\ \mathrm{m}` as in Case 1. This is because, when using the matrix-free solver for the Navier-Stokes equations, the geometric multigrid preconditioner works better when the quantities involved are of order 1. With our geometry and a Reynolds number of 400, the average velocity is :math:`\approx 14.8\ \mathrm{cm/s}`, so the length unit is set to 1 cm to keep the velocity closer to order 1. The electric current unit is also set to :math:`0.01\ \mathrm{A}` so that the electromagnetic electric field is directly output in :math:`\mathrm{V/m}`, since :math:`\mathrm{V/m} \propto \mathrm{m}/\mathrm{A}`.
 
 Linear Solver Control
 ^^^^^^^^^^^^^^^^^^^^^
@@ -643,12 +643,12 @@ Running the Simulations
     mpirun -np 8 lethe-fluid-matrix-free filled_waveguide_cylinder_SiC.prm
 
 .. warning::
-    Both cases are too expensive in memory to be run on a desktop computer except for really coarse meshes (where the simulation would not be converged). The first case has been run on a node with 128 cores and 1 TB of RAM, while the second case has been run on 8 nodes with 192 cores and 749 GB of RAM. The second case is also significantly more expensive in CPU time than the first one, due to the added cost of solving the fluid dynamics equations at every time step, it took approximately a day to run on the cluster. 
+    Both cases are too expensive in memory to be run on a desktop computer, except for very coarse meshes (for which the simulation would not be converged). The first case has been run on a single node with 128 cores and 1 TB of RAM, while the second case has been run on 4 nodes totaling 192 cores and 749 GB of RAM. The second case is also significantly more expensive in CPU time than the first, due to the added cost of solving the fluid dynamics equations at every time step; it took approximately a day to run.
 
 Results and Discussion
 ----------------------
 
-The first figure reproduces the results of Peng *et al.* [#Peng2024]_ for the alumina cylinder, showing the electromagnetic field amplitude solution in the :math:`x_1x_2`-plane at mid height and the evolution of the temperature field at two crossing lines (:math:`x_1=0.0546` and :math:`x_2=0.0273` m, denoted by the white stripes) :
+The first figure reproduces the results of Peng *et al.* [#Peng2024]_ for the alumina cylinder, showing the electromagnetic field amplitude solution in the :math:`x_1x_2`-plane at mid height and the evolution of the temperature field at two crossing lines (:math:`x_1=0.0546` and :math:`x_2=0.0273` m, denoted by the white stripes):
 
 .. image:: images/resonance_E.png
     :alt: temperature field in the alumina cylinder, without fluid flow
@@ -656,9 +656,9 @@ The first figure reproduces the results of Peng *et al.* [#Peng2024]_ for the al
     :name: temperature-al
     :width: 600
 
-Because the cylinder's radius and permittivity place it near a resonant condition of the waveguide-cylinder system, the internal electric field, and therefore the heating rate, are strongly enhanced. The overall field distribution pattern is in agreement with the resonance-driven heating mechanism described by Peng *et al.* [#Peng2024]_. If the amplitude of the solution is compared, in our solution the amplitude of the electric field is lower than what they report, which is caused by a difference in the definition of the input power in the waveguide. To recover the same amplitude, one would need to scale the solution field by a factor of :math:`\sqrt{P_\mathrm{inlet}/P_\mathrm{total}} \approx 1.51`, where :math:`P_\mathrm{inlet}` is the power flowing through the waveguide inlet (the parameter ``input_power``) and :math:`P_\mathrm{total}` is total power passing through the waveguide accounting for the reflected component of the electromagnetic wave (this needs to be computed numerically by integrating the Poynting vector over the waveguide cross-section).
+Because the cylinder's radius and permittivity place it near a resonant condition of the waveguide-cylinder system, the internal electric field, and therefore the heating rate, are strongly enhanced. The overall field distribution pattern is in agreement with the resonance-driven heating mechanism described by Peng *et al.* [#Peng2024]_. When comparing amplitudes, the electric field in our solution is lower than what they report, which is caused by a difference in the definition of the input power in the waveguide. To recover the same amplitude, one would need to scale the solution field by a factor of :math:`\sqrt{P_\mathrm{inlet}/P_\mathrm{total}} \approx 1.51`, where :math:`P_\mathrm{inlet}` is the power flowing through the waveguide inlet (the ``waveguide power`` parameter) and :math:`P_\mathrm{total}` is the total power passing through the waveguide, accounting for the reflected component of the electromagnetic wave (this needs to be computed numerically by integrating the Poynting vector over the waveguide cross-section).
 
-The second figure shows a summary of the second test case, showing the corresponding temperature field and electric field amplitude after 60 seconds of simulation for different obstacle geometries. It also shows the average change in temperature (:math:`\Delta T`) in the obstacle along the crossing plane at :math:`x_1=0.0556` m (:math:`x_2x_3`-plane), and the crossing plane at :math:`x_3=0.1` m (:math:`x_1x_2`-plane), and the difference in average temperature with respect to the cylinder case (:math:`\delta \overline{T}`) along those same planes. The dashed lines bound the region between the :math:`\mathrm{P}_1` and :math:`\mathrm{P}_{99}` percentiles. Note that the gray lines in (a) indicate where the profiles of (b) have been taken.
+The second figure shows a summary of the second test case, showing the corresponding temperature field and electric field amplitude after 60 seconds of simulation for different obstacle geometries. It also shows the average change in temperature (:math:`\Delta T`) inside the obstacle along two crossing planes, at :math:`x_1=0.0556` m (:math:`x_2x_3`-plane) and at :math:`x_3=0.1` m (:math:`x_1x_2`-plane), together with the difference in average temperature with respect to the cylinder case (:math:`\delta \overline{T}`) along those same planes. The dashed lines bound the region between the :math:`\mathrm{P}_1` and :math:`\mathrm{P}_{99}` percentiles. Note that the gray lines in (a) indicate where the profiles of (b) have been taken.
 
 .. image:: images/geometrie_temp_comparison.png
     :alt: temperature field in the SiC cylinder, cooled by an air flow
@@ -666,7 +666,7 @@ The second figure shows a summary of the second test case, showing the correspon
     :name: temperature-sic
     :width: 600
 
-Unlike Case 1, the air flow continuously removes heat from the cylinder by forced convection, which skews the temperature field toward the downstream side of the cylinder. By looking at the figure, one can see that the different geometries lead to different heating patterns and rates. The tilted square prism shows slightly greater temperature non-uniformity, although the variations remain small compared with the overall temperature increase. Interestingly, the cylinder heats more slowly than the two square prisms, despite having a smaller volume. This demonstrates that microwave heating depends not only on the amount of material, but also how much of it can absorb electromagnetic energy. Consequently, at the end of the simulation, the square obstacles are significantly hotter than the cylinder and none has reached thermal equilibrium. Finally, we can also see the impact of the flow on the temperature distribution. Changing only the orientation of the square prism changes its heating rate and that even though the electromagnetic properties are identical and remain constant.
+Unlike Case 1, the air flow continuously removes heat from the cylinder by forced convection, which skews the temperature field toward the downstream side of the cylinder. By looking at the figure, one can see that the different geometries lead to different heating patterns and rates. The tilted square prism shows slightly greater temperature non-uniformity, although the variations remain small compared with the overall temperature increase. Interestingly, the cylinder heats more slowly than the two square prisms, despite having a smaller volume. This demonstrates that microwave heating depends not only on the amount of material present, but also on how much of it can absorb electromagnetic energy. Consequently, at the end of the simulation, the square obstacles are significantly hotter than the cylinder, and none of the three obstacles has reached thermal equilibrium. Finally, this also highlights the impact of the flow on the temperature distribution: changing only the orientation of the square prism changes its heating rate, even though its electromagnetic properties remain identical and constant regardless of orientation.
 
 On a final note, we present an animation of the transient heating and flow fields for the SiC cylinder case, showing the evolution of the temperature field and the velocity field in the :math:`x_1x_2`-plane at mid height:
 
