@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/boundary_conditions.h>
+#include <core/grid_banana.h>
 #include <core/grid_birmingham_fluidized_bed.h>
 #include <core/grid_cube_merged.h>
 #include <core/grid_cylinder.h>
@@ -266,6 +267,18 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
 
           GridUniformChannelWithMeshedSquarePrism<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+      else if (grid_type == "banana")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - banana mesh with simplex is not supported"));
+
+          GridBanana<dim, spacedim> grid(mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
           GridTools::scale(mesh_parameters.scale, triangulation);

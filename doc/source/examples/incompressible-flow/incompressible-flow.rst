@@ -19,6 +19,7 @@ Incompressible Flow
     2d-sudden-expansion-flow/2d-sudden-expansion-flow
     2d-paddle-mixer-mortar/2d-paddle-mixer-mortar
     3d-flow-around-sphere/flow-around-sphere
+    3d-flow-around-banana/flow-around-banana
     3d-taylor-green-vortex/3d-taylor-green-vortex
     3d-turbulent-taylor-couette/3d-turbulent-taylor-couette
     3d-flow-over-periodic-hills/3d-flow-over-periodic-hills
@@ -88,6 +89,8 @@ Incompressible Flow
 
       incompressible_2_7 [label="Mixer with Pitched-Blade Turbine Impeller \nUsing Nitsche Immersed Boundary", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html", tooltip="Mixer with pitched-blade turbine impeller using Nitsche immersed boundary"];
 
+      incompressible_2_8 [label="Flow around a Banana", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-flow-around-banana/flow-around-banana.html"];
+
       incompressible_flow:e -> incompressible_1:w;
       incompressible_flow:e -> incompressible_2:w;
 
@@ -109,4 +112,5 @@ Incompressible Flow
       incompressible_2 -> incompressible_2_5:w;
       incompressible_2 -> incompressible_2_6:w;
       incompressible_2 -> incompressible_2_7:w;
+      incompressible_2 -> incompressible_2_8:w;
     }

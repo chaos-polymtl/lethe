@@ -6,6 +6,12 @@ file(COPY hex_extrusion_cad.step DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/shape_
 
 deal_ii_pickup_tests()
 
+# The banana grid is built on GridGenerator::uniform_channel_with_sphere, which
+# was introduced in deal.II 9.8.
+if(DEAL_II_VERSION VERSION_LESS 9.8.0)
+  set_tests_properties(core/grid_banana_01.${_build_type} PROPERTIES DISABLED TRUE)
+endif()
+
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(core/interface_tools_sphere_reconstruction.debug PROPERTIES TIMEOUT 2000)

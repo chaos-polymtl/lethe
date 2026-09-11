@@ -1,0 +1,79 @@
+DEAL::==================================================
+DEAL::Case: straight
+DEAL::Grid arguments: "2,3,2,2,2,2 : 0.5 : 0.6 : 4 : 0,0 : 0.25 : 1 : 2.6 : true : true"
+DEAL::Number of active cells : 1288
+DEAL::Number of vertices     : 1676
+DEAL::Mesh volume            : 1033.92
+DEAL::Cells                  : all valid
+DEAL::Boundary id 0 face count : 100
+DEAL::Boundary id 1 face count : 100
+DEAL::Boundary id 2 face count : 24
+DEAL::Boundary id 3 face count : 120
+DEAL::Boundary id 4 face count : 120
+DEAL::Boundary id 5 face count : 120
+DEAL::Boundary id 6 face count : 120
+DEAL::==================================================
+DEAL::Case: bent
+DEAL::Grid arguments: "2,3,2,2,2,2 : 0.5 : 0.6 : 4 : 0,0.4 : 0.25 : 1 : 2.6 : true : true"
+DEAL::Number of active cells : 1288
+DEAL::Number of vertices     : 1676
+DEAL::Mesh volume            : 1033.93
+DEAL::Cells                  : all valid
+DEAL::Boundary id 0 face count : 100
+DEAL::Boundary id 1 face count : 100
+DEAL::Boundary id 2 face count : 24
+DEAL::Boundary id 3 face count : 120
+DEAL::Boundary id 4 face count : 120
+DEAL::Boundary id 5 face count : 120
+DEAL::Boundary id 6 face count : 120
+DEAL::==================================================
+DEAL::Case: bent_fine
+DEAL::Grid arguments: "2,3,2,2,2,2 : 0.5 : 0.6 : 4 : 0,0.4 : 0.25 : 2 : 2.6 : true : true"
+DEAL::Number of active cells : 10304
+DEAL::Number of vertices     : 11782
+DEAL::Mesh volume            : 1033.92
+DEAL::Cells                  : all valid
+DEAL::Boundary id 0 face count : 400
+DEAL::Boundary id 1 face count : 400
+DEAL::Boundary id 2 face count : 96
+DEAL::Boundary id 3 face count : 480
+DEAL::Boundary id 4 face count : 480
+DEAL::Boundary id 5 face count : 480
+DEAL::Boundary id 6 face count : 480
+DEAL::==================================================
+DEAL::Case: bent_refined
+DEAL::Grid arguments: "2,3,2,2,2,2 : 0.5 : 0.6 : 4 : 0,0.4 : 0.25 : 1 : 2.6 : true : true"
+DEAL::Number of active cells : 10304
+DEAL::Number of vertices     : 11782
+DEAL::Mesh volume            : 1033.92
+DEAL::Cells                  : all valid
+DEAL::Boundary id 0 face count : 400
+DEAL::Boundary id 1 face count : 400
+DEAL::Boundary id 2 face count : 96
+DEAL::Boundary id 3 face count : 480
+DEAL::Boundary id 4 face count : 480
+DEAL::Boundary id 5 face count : 480
+DEAL::Boundary id 6 face count : 480
+DEAL::==================================================
+DEAL::Case: bent_refined_at_the_obstacle
+DEAL::Number of active cells : 13664
+DEAL::Cells                  : all valid
+DEAL::==================================================
+DEAL::Case: bent_streamwise
+DEAL::Grid arguments: "2,3,2,2,2,2 : 0.5 : 0.6 : 4 : 0.4,0 : 0.25 : 1 : 2.6 : true : true"
+DEAL::Number of active cells : 1288
+DEAL::Number of vertices     : 1676
+DEAL::Mesh volume            : 1033.93
+DEAL::Cells                  : all valid
+DEAL::Boundary id 0 face count : 100
+DEAL::Boundary id 1 face count : 100
+DEAL::Boundary id 2 face count : 24
+DEAL::Boundary id 3 face count : 120
+DEAL::Boundary id 4 face count : 120
+DEAL::Boundary id 5 face count : 120
+DEAL::Boundary id 6 face count : 120
+DEAL::Round trip on the obstacle, straight : exact
+DEAL::Round trip on the obstacle, bent : exact
+DEAL::Round trip on the obstacle, bent, on the shell around the obstacle : exact
+DEAL::New points on the obstacle, straight : on the surface
+DEAL::New points on the obstacle, bent : on the surface

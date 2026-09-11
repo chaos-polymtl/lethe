@@ -214,6 +214,47 @@ The ``grid arguments`` accepts up fourteen colon-separated values as listed abov
 .. note::
   If the obstacle is meshed, the boundary IDs follow the standard deal.II convention for a subdivided hyper rectangle: 0 for left (-x), 1 for right (+x), 2 for bottom (-y), and 3 for top (+y), if 3D, 4 for front (-z) and 5 for back (+z).
 
+.. _banana:
+
+Banana
+^^^^^^
+
+.. code-block:: text
+
+  subsection mesh
+    set type            = lethe
+    set grid type       = banana
+    set grid arguments  = lengths_heights_widths : inner_radius : outer_radius : elongation : bend : taper : refinement : blend_radius : use_transfinite_region : colorize
+
+If this grid type is chosen, a channel containing a banana-shaped obstacle is created.
+The mesh is the hexahedral O-grid produced by the deal.II ``uniform_channel_with_sphere``, whose ball is deformed into a banana: it is stretched along its axis, its cross-section is fattened at mid-span, and its spine is carried along a circular arc.
+The deformation is blended back to the identity away from the obstacle, so the six outer boundaries of the channel stay planar.
+The axis of the banana is the :math:`z` axis, across the streamwise direction :math:`x` of the channel.
+
+The ``grid arguments`` accepts up to ten colon-separated values as listed above.
+
+* The first three fields are required. ``lengths_heights_widths`` is a list of six integers giving the padding before, after, below, above, in front of and behind the obstacle, in units of :math:`2 \times` ``outer_radius``. ``inner_radius`` is the radius of the ball, that is half of the thickness of the banana, and ``outer_radius`` is half of the edge length of the cube that surrounds it.
+* ``elongation`` (default ``4``) is the stretching applied along the axis of the banana, which is therefore :math:`2 \times` ``elongation`` :math:`\times` ``inner_radius`` long.
+* ``bend`` (default ``0,0.5``) is given as ``bx,by``. Its direction is the direction in which the banana is bent, and its magnitude is the sagitta of the spine, that is the offset of the mid-span of the spine with respect to its two tips. Bending along :math:`y` gives a banana seen edge on from the inlet, bending along :math:`x` one that cups the incoming flow.
+* ``taper`` (default ``0.25``) is the relative fattening of the cross-section at mid-span.
+* ``refinement`` (default ``2``) is the number of global refinements applied *before* the ball is deformed.
+* ``blend_radius`` (default ``0.9`` times the distance from the obstacle to the closest boundary) is the radius beyond which the deformation vanishes.
+* The last 2 parameters are boolean: ``use_transfinite_region`` (default ``true``) enables a transfinite interpolation manifold between the banana and the cube that surrounds it, and ``colorize`` (default ``false``) assigns distinct boundary IDs.
+
+With ``colorize = true``, the boundary IDs are those of the deal.II generator: 0 for the inlet, 1 for the outlet, 2 for the banana, 3 and 4 for the bottom and top walls, and 5 and 6 for the front and back walls.
+
+.. important::
+  The ``refinement`` field is not a convenience. The O-grid of the underlying mesh spans the obstacle with a single cell in every direction, and a body that is one cell long cannot be bent: the deformation folds the cells over instead of curving them. The grid checks the Jacobian of every cell it produces and reports which parameter to change if it finds a folded one. Values of ``1`` and ``2`` are usually enough; ``0`` only works for a straight banana. The refinement is applied while the obstacle is still a sphere and the mesh is flattened afterwards, so the mesh that comes out is a coarse mesh in its own right, on which ``initial refinement``, ``initial boundary refinement`` and ``mesh adaptation`` work as they do on any other grid.
+
+.. note::
+  The elongation stretches the whole domain along :math:`z`, and not only the obstacle. The front and back paddings are therefore multiplied by ``elongation`` as well, and the cells of the bulk region are that much longer along :math:`z` than they are wide.
+
+.. warning::
+  A ``scale`` other than 1 moves the vertices of the mesh but not the banana manifold attached to it, which would distort the obstacle under refinement. Dimension the geometry through ``inner_radius`` and ``outer_radius`` instead.
+
+.. note::
+  Both the surface of the banana and the region of the grid around it carry a manifold, so a refinement of the generated grid puts its new vertices where the deformation of the spherical grid would have put them. Refining a grid generated with ``refinement`` set to :math:`n` gives, cell for cell, the grid that ``refinement`` set to :math:`n+1` generates. The two tips of the banana are nonetheless sharp, the more so the larger the ``elongation``: the radius of curvature there is ``inner_radius`` divided by ``elongation``, and a coarse grid with a large elongation is best checked before it is run on.
+
 .. _birmingham-fluidized-bed:
 
 Birmingham Fluidized Bed

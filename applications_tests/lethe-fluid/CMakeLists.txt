@@ -118,6 +118,12 @@ file(COPY time_harmonic_maxwell_waveguide_dirichlet_restart_files/L2Error_THM.ch
 
 deal_ii_pickup_tests()
 
+# The banana grid is built on GridGenerator::uniform_channel_with_sphere, which
+# was introduced in deal.II 9.8.
+if(DEAL_II_VERSION VERSION_LESS 9.8.0)
+  set_tests_properties(lethe-fluid/banana_gls.mpirun=1.${_build_type} PROPERTIES DISABLED TRUE)
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-fluid/mms3d_isothermal_compressible_ns_gls.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(lethe-fluid/gls_droplet_marangoni_effect.debug PROPERTIES TIMEOUT 2000)
