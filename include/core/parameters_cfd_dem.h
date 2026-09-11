@@ -187,47 +187,48 @@ namespace Parameters
 
   public:
     /// Void fraction computation method.
-    VoidFractionMode mode;
+    VoidFractionMode mode = VoidFractionMode::function;
 
     /// Analytical void fraction function (used when mode is function).
     Functions::ParsedFunction<dim> void_fraction;
 
     /// Read particle data from a DEM simulation checkpoint.
-    bool read_dem;
+    bool read_dem = false;
 
     /// File name of the DEM simulation checkpoint.
-    std::string dem_file_name;
+    std::string dem_file_name = "dem";
 
     /// Smoothing length for L2 projection of the void fraction.
-    double l2_smoothing_length;
+    double l2_smoothing_length = 0.001;
 
     /// Refinement factor applied to the particle radius for void fraction.
-    unsigned int particle_refinement_factor;
+    unsigned int particle_refinement_factor = 0;
 
     /// Smoothing length used in the quadrature centered method. For the
     /// spherical filter, half of this value is the averaging-sphere radius;
     /// for the gaussian filter, half of this value is the standard deviation
     /// sigma.
-    double qcm_smoothing_length;
+    double qcm_smoothing_length = 0;
 
     /// Use a sphere volume equal to the cell volume in QCM.
-    bool qcm_sphere_equal_cell_volume;
+    bool qcm_sphere_equal_cell_volume = false;
 
     /// Filter kernel used by the QCM to weigh particle contributions onto the
     /// mesh. The characteristic length of the filter is taken from
     /// qcm_smoothing_length (and qcm_sphere_equal_cell_volume when no length
     /// is set). For spherical, the length is the averaging-sphere radius. For
     /// gaussian, the length is the standard deviation sigma.
-    QCMFilterType qcm_filter_type;
+    QCMFilterType qcm_filter_type = QCMFilterType::spherical;
 
     /// Quadrature rule used for void fraction integration.
-    VoidFractionQuadratureRule quadrature_rule;
+    VoidFractionQuadratureRule quadrature_rule =
+      VoidFractionQuadratureRule::gauss;
 
     /// Number of quadrature points per cell used for void fraction integration.
-    unsigned int n_quadrature_points;
+    unsigned int n_quadrature_points = 0;
 
     /// Project particle velocity onto the fluid mesh.
-    bool project_particle_velocity;
+    bool project_particle_velocity = false;
   };
 
   /**
@@ -239,68 +240,70 @@ namespace Parameters
   struct CFDDEM
   {
     /// Enable grad-div stabilization.
-    bool grad_div;
+    bool grad_div = true;
 
     /// Drag model used for particle-fluid interaction.
-    DragModel drag_model;
+    DragModel drag_model = DragModel::difelice;
 
     /// Numerical coupling strategy for drag force computation.
-    DragCoupling drag_coupling;
+    DragCoupling drag_coupling = DragCoupling::semi_implicit;
 
     /// Volume-Averaged Navier-Stokes model formulation.
-    VANSModel vans_model;
+    VANSModel vans_model = VANSModel::modelA;
 
     /// Method used to control the DEM sub iterations.
-    SubSimulationControlDEM::DEMSubIterationLogic dem_iteration_control;
+    SubSimulationControlDEM::DEMSubIterationLogic dem_iteration_control =
+      SubSimulationControlDEM::DEMSubIterationLogic::
+        fixed_number_of_iterations;
 
     /// Frequency of DEM-CFD coupling (in DEM time steps).
-    unsigned int coupling_frequency;
+    unsigned int coupling_frequency = 100;
 
     /// Fraction of rayleigh time. This is used for when the
     /// DEMSubIterationLogic uses the Rayleigh time.
-    double fraction_of_rayleigh_time;
+    double fraction_of_rayleigh_time = 0.1;
 
     /// Enable drag force on particles.
-    bool drag_force;
+    bool drag_force = true;
 
     /// Enable buoyancy force on particles.
-    bool buoyancy_force;
+    bool buoyancy_force = true;
 
     /// Enable shear force on particles.
-    bool shear_force;
+    bool shear_force = true;
 
     /// Enable pressure gradient force on particles.
-    bool pressure_force;
+    bool pressure_force = true;
 
     /// Enable Saffman lift force on particles.
-    bool saffman_lift_force;
+    bool saffman_lift_force = false;
 
     /// Enable Magnus lift force on particles.
-    bool magnus_lift_force;
+    bool magnus_lift_force = false;
 
     /// Enable rotational viscous torque on particles.
-    bool rotational_viscous_torque;
+    bool rotational_viscous_torque = false;
 
     /// Enable vortical viscous torque on particles.
-    bool vortical_viscous_torque;
+    bool vortical_viscous_torque = false;
 
     /// Include the void fraction time derivative in the equations.
-    bool void_fraction_time_derivative;
+    bool void_fraction_time_derivative = true;
 
     /// Use interpolated void fraction instead of cell-averaged values.
-    bool interpolated_void_fraction;
+    bool interpolated_void_fraction = true;
 
     /// Stabilization constant for the void fraction equation.
-    double cstar;
+    double cstar = 1;
 
     /// Enable implicit stabilization of the void fraction.
-    bool implicit_stabilization;
+    bool implicit_stabilization = true;
 
     /// Enable output of particle statistics.
-    bool particle_statistics;
+    bool particle_statistics = true;
 
     /// Project particle forces onto the fluid mesh.
-    bool project_particle_forces;
+    bool project_particle_forces = false;
 
     /**
      * @brief Declare the parameters in the parameter handler.
