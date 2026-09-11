@@ -20,7 +20,7 @@ subsection simulation control
   set output time frequency          = 0.05
   set output path                    = ./output_square/
   set subdivision                    = 3
-  set max cfl = 1
+  set max cfl                        = 1
 end
 
 #---------------------------------------------------
@@ -28,7 +28,7 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                 = none
+  set type = none
 end
 
 #---------------------------------------------------
@@ -38,8 +38,8 @@ end
 subsection multiphysics
   set fluid dynamics    = true
   set microwave heating = true
-  set electromagnetics = true
-  set heat transfer = true
+  set electromagnetics  = true
+  set heat transfer     = true
 end
 
 #---------------------------------------------------
@@ -55,9 +55,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = lethe
-  set grid type          = uniform_channel_with_meshed_square_prism
-  set grid arguments     = 0., 0. : 40, 10.92 : 10, 5.56 : 2 : 4 : 0 : 1 : 1 : 2 : 8 : 5.46 : 3 : true : true
+  set type                        = lethe
+  set grid type                   = uniform_channel_with_meshed_square_prism
+  set grid arguments              = 0., 0. : 40, 10.92 : 10, 5.56 : 2 : 4 : 0 : 1 : 1 : 2 : 8 : 5.46 : 3 : true : true
   set initial refinement          = 2
   set initial boundary refinement = 1
   set boundaries refined          = 2,3,4,5
@@ -67,41 +67,40 @@ end
 # Box Refinement (around the cylinder)
 #---------------------------------------------------
 
-
 subsection box refinement
   set number of refinement boxes = 4
   subsection box 0
     subsection mesh
-       set type                        = dealii
-  set grid type                   = hyper_rectangle
-  set grid arguments              = -2.3,-2.3,0:2.3,-1.9,5.46:false
+      set type                = dealii
+      set grid type           = hyper_rectangle
+      set grid arguments      = -2.3,-2.3,0:2.3,-1.9,5.46:false
       set initial translation = 10, 5.56, 0
     end
     set additional refinement = 1
   end
-    subsection box 1
+  subsection box 1
     subsection mesh
-       set type                        = dealii
-  set grid type                   = hyper_rectangle
-  set grid arguments              = -2.3,1.9,0:2.3,2.3,5.46:false
+      set type                = dealii
+      set grid type           = hyper_rectangle
+      set grid arguments      = -2.3,1.9,0:2.3,2.3,5.46:false
       set initial translation = 10, 5.56, 0
     end
     set additional refinement = 1
   end
-    subsection box 2
+  subsection box 2
     subsection mesh
-       set type                        = dealii
-  set grid type                   = hyper_rectangle
-  set grid arguments              = -2.3,-2.3,0:-1.9,2.3,5.46:false
+      set type                = dealii
+      set grid type           = hyper_rectangle
+      set grid arguments      = -2.3,-2.3,0:-1.9,2.3,5.46:false
       set initial translation = 10, 5.56, 0
     end
     set additional refinement = 1
   end
-      subsection box 3
+  subsection box 3
     subsection mesh
-       set type                        = dealii
-  set grid type                   = hyper_rectangle
-  set grid arguments              = 1.9,-2.3,0:2.3,2.3,5.46:false
+      set type                = dealii
+      set grid type           = hyper_rectangle
+      set grid arguments      = 1.9,-2.3,0:2.3,2.3,5.46:false
       set initial translation = 10, 5.56, 0
     end
     set additional refinement = 1
@@ -113,12 +112,11 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-
   set type = nodal
 
   subsection uvwp
-     set Function constants  = c_width = 10.92, c_height = 5.46, Re = 400, scaling=  1.782122724170977, percent = 0.1
-     set Function expression = Re*scaling*abs((if(y < percent*c_width/2, y*(y-percent*c_width), if(y < c_width-(percent*c_width/2), (percent*c_width * percent*c_width)/4 , (y-c_width)*(y-c_width+ percent*c_width)))) * (if(z < percent*c_height/2, z*(z-percent*c_height), if(z < c_height-(percent*c_height/2), (percent*c_height * percent*c_height)/4, (z-c_height)*(z-c_height+percent*c_height)))));0;0;0
+    set Function constants  = c_width = 10.92, c_height = 5.46, Re = 400, scaling=  1.782122724170977, percent = 0.1
+    set Function expression = Re*scaling*abs((if(y < percent*c_width/2, y*(y-percent*c_width), if(y < c_width-(percent*c_width/2), (percent*c_width * percent*c_width)/4 , (y-c_width)*(y-c_width+ percent*c_width)))) * (if(z < percent*c_height/2, z*(z-percent*c_height), if(z < c_height-(percent*c_height/2), (percent*c_height * percent*c_height)/4, (z-c_height)*(z-c_height+percent*c_height)))));0;0;0
   end
 
   subsection temperature
@@ -136,7 +134,7 @@ subsection time harmonic maxwell
   set electromagnetic scaling type = power
 
   subsection time coupling strategy
-    set type               = none
+    set type = none
   end
 
   subsection waveguide inlet 0
@@ -171,8 +169,8 @@ subsection boundary conditions
     set id   = 0
     set type = function
     subsection u
-       set Function constants  = c_width = 10.92, c_height = 5.46, Re = 400, scaling=  1.782122724170977, percent = 0.1
-       set Function expression = Re*scaling*abs((if(y < percent*c_width/2, y*(y-percent*c_width), if(y < c_width-(percent*c_width/2), (percent*c_width * percent*c_width)/4 , (y-c_width)*(y-c_width+ percent*c_width)))) * (if(z < percent*c_height/2, z*(z-percent*c_height), if(z < c_height-(percent*c_height/2), (percent*c_height * percent*c_height)/4, (z-c_height)*(z-c_height+percent*c_height)))))
+      set Function constants  = c_width = 10.92, c_height = 5.46, Re = 400, scaling=  1.782122724170977, percent = 0.1
+      set Function expression = Re*scaling*abs((if(y < percent*c_width/2, y*(y-percent*c_width), if(y < c_width-(percent*c_width/2), (percent*c_width * percent*c_width)/4 , (y-c_width)*(y-c_width+ percent*c_width)))) * (if(z < percent*c_height/2, z*(z-percent*c_height), if(z < c_height-(percent*c_height/2), (percent*c_height * percent*c_height)/4, (z-c_height)*(z-c_height+percent*c_height)))))
     end
     subsection v
       set Function expression = 0
@@ -302,13 +300,12 @@ end
 #---------------------------------------------------
 
 subsection dimensionality
-  set length           = 0.01  #meter
-  set mass             = 1 #kilogramm
-  set time             = 1     #second
-  set temperature      = 1     #kelvin
-  set electric current = 0.01     #ampere
+  set length           = 0.01 #meter
+  set mass             = 1    #kilogramm
+  set time             = 1    #second
+  set temperature      = 1    #kelvin
+  set electric current = 0.01 #ampere
 end
-
 
 #---------------------------------------------------
 # Non-Linear Solver Control
@@ -370,7 +367,7 @@ subsection linear solver
     set verbosity         = verbose
     set relative residual = 1e-4
     set minimum residual  = 1e-8
-    set preconditioner = none
+    set preconditioner    = none
   end
 end
 
