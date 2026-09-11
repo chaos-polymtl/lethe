@@ -12,19 +12,19 @@ namespace AnalyticalSolutions
     prm.enter_subsection("analytical solution");
     prm.declare_entry(
       "enable",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(enable),
       Patterns::Bool(),
       "Enable the calculation of the analytical solution and L2 error");
     prm.declare_entry(
       "verbosity",
-      "quiet",
+      verbosity == Parameters::Verbosity::verbose ? "verbose" : "quiet",
       Patterns::Selection("quiet|verbose"),
       "State whether from the post-processing values should be printed "
       "Choices are <quiet|verbose>.");
 
     prm.declare_entry(
       "filename",
-      "L2Error",
+      filename,
       Patterns::FileName(),
       "File name for the output for the L2Error table with respect to time or mesh ");
 

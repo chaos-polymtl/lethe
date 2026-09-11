@@ -5,6 +5,123 @@
 
 namespace Parameters
 {
+  namespace
+  {
+    std::string
+    to_string(const VoidFractionMode mode)
+    {
+      switch (mode)
+        {
+          case VoidFractionMode::function:
+            return "function";
+          case VoidFractionMode::pcm:
+            return "pcm";
+          case VoidFractionMode::qcm:
+            return "qcm";
+          case VoidFractionMode::spm:
+            return "spm";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const QCMFilterType type)
+    {
+      switch (type)
+        {
+          case QCMFilterType::spherical:
+            return "spherical";
+          case QCMFilterType::gaussian:
+            return "gaussian";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const VoidFractionQuadratureRule rule)
+    {
+      switch (rule)
+        {
+          case VoidFractionQuadratureRule::gauss:
+            return "gauss";
+          case VoidFractionQuadratureRule::gauss_lobatto:
+            return "gauss-lobatto";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const DragModel model)
+    {
+      switch (model)
+        {
+          case DragModel::difelice:
+            return "difelice";
+          case DragModel::rong:
+            return "rong";
+          case DragModel::dallavalle:
+            return "dallavalle";
+          case DragModel::kochhill:
+            return "kochhill";
+          case DragModel::beetstra:
+            return "beetstra";
+          case DragModel::gidaspow:
+            return "gidaspow";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const DragCoupling coupling)
+    {
+      switch (coupling)
+        {
+          case DragCoupling::fully_implicit:
+            return "implicit";
+          case DragCoupling::semi_implicit:
+            return "semi-implicit";
+          case DragCoupling::fully_explicit:
+            return "explicit";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const VANSModel model)
+    {
+      switch (model)
+        {
+          case VANSModel::modelA:
+            return "modelA";
+          case VANSModel::modelB:
+            return "modelB";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+
+    std::string
+    to_string(const SubSimulationControlDEM::DEMSubIterationLogic logic)
+    {
+      switch (logic)
+        {
+          case SubSimulationControlDEM::DEMSubIterationLogic::
+            fixed_number_of_iterations:
+            return "number of iterations";
+          case SubSimulationControlDEM::DEMSubIterationLogic::
+            fixed_fraction_of_rayleigh_time_step:
+            return "fraction of rayleigh time";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   template <int dim>
   void
   VoidFractionParameters<dim>::declare_parameters(ParameterHandler &prm)
@@ -12,59 +129,63 @@ namespace Parameters
     prm.enter_subsection("void fraction");
     prm.declare_entry(
       "mode",
-      "function",
+      to_string(mode),
       Patterns::Selection("function|pcm|qcm|spm"),
       "Choose the method for the calculation of the void fraction");
     prm.enter_subsection("function");
     void_fraction.declare_parameters(prm);
     prm.leave_subsection();
     prm.declare_entry("read dem",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(read_dem),
                       Patterns::Bool(),
                       "Define particles using a DEM simulation results file.");
     prm.declare_entry("dem file name",
-                      "dem",
+                      dem_file_name,
                       Patterns::FileName(),
                       "File output dem prefix");
     prm.declare_entry("l2 smoothing length",
-                      "0.001",
+                      Patterns::Tools::Convert<double>::to_string(
+                        l2_smoothing_length),
                       Patterns::Double(),
                       "The smoothing length for void fraction L2 projection");
     prm.declare_entry(
       "particle refinement factor",
-      "0",
+      Patterns::Tools::Convert<unsigned int>::to_string(
+        particle_refinement_factor),
       Patterns::Double(),
       "The refinement factor used to calculate the number of pseudo-particles in the satellite point method");
     prm.declare_entry(
       "qcm smoothing length",
-      "0",
+      Patterns::Tools::Convert<double>::to_string(qcm_smoothing_length),
       Patterns::Double(),
       "The smoothing length of the QCM filter. With the spherical filter, half of this value is the averaging-sphere radius; with the gaussian filter, half of this value is the standard deviation sigma.");
     // Backwards-compatible alias for the previous parameter name.
     prm.declare_alias("qcm smoothing length", "qcm sphere diameter", true);
     prm.declare_entry(
       "qcm sphere equal cell volume",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(
+        qcm_sphere_equal_cell_volume),
       Patterns::Bool(),
       "Specify whether the virtual sphere has the same volume as the mesh element");
     prm.declare_entry(
       "qcm filter type",
-      "spherical",
+      to_string(qcm_filter_type),
       Patterns::Selection("spherical|gaussian"),
       "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm smoothing length' is the averaging-sphere radius. With 'gaussian', half of 'qcm smoothing length' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
     prm.declare_entry(
       "quadrature rule",
-      "gauss",
+      to_string(quadrature_rule),
       Patterns::Selection("gauss|gauss-lobatto"),
       "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme");
     prm.declare_entry(
       "n quadrature points",
-      "0",
+      Patterns::Tools::Convert<unsigned int>::to_string(
+        n_quadrature_points),
       Patterns::Integer(),
       "Number of quadrature points per cell used in the QCM void fraction scheme");
     prm.declare_entry(
       "project particle velocity",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(project_particle_velocity),
       Patterns::Bool(),
       "Specify whether the particle velocity is projected using QCM");
 
@@ -127,103 +248,120 @@ namespace Parameters
   void
   CFDDEM::declare_parameters(ParameterHandler &prm)
   {
+    const CFDDEM defaults;
     prm.enter_subsection("cfd-dem");
     prm.declare_entry("grad div",
-                      "true",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.grad_div),
                       Patterns::Bool(),
                       "Choose whether or not to apply grad_div stabilization");
     prm.declare_entry("void fraction time derivative",
-                      "true",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.void_fraction_time_derivative),
                       Patterns::Bool(),
                       "Choose whether or not to implement d(epsilon)/dt ");
     prm.declare_entry(
       "interpolated void fraction",
-      "true",
+      Patterns::Tools::Convert<bool>::to_string(
+        defaults.interpolated_void_fraction),
       Patterns::Bool(),
       "Choose whether the void fraction is the one of the cell or the one interpolated at the particle position.");
     prm.declare_entry("drag force",
-                      "true",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.drag_force),
                       Patterns::Bool(),
                       "Choose whether or not to apply drag force");
     prm.declare_entry("buoyancy force",
-                      "true",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.buoyancy_force),
                       Patterns::Bool(),
                       "Choose whether or not to apply buoyancy force");
     prm.declare_entry("shear force",
-                      "true",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.shear_force),
                       Patterns::Bool(),
                       "Choose whether or not to apply shear force");
     prm.declare_entry("pressure force",
-                      "true",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.pressure_force),
                       Patterns::Bool(),
                       "Choose whether or not to apply pressure force");
     prm.declare_entry("saffman lift force",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.saffman_lift_force),
                       Patterns::Bool(),
                       "Choose whether or not to apply Saffman-Mei lift force");
     prm.declare_entry("magnus lift force",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.magnus_lift_force),
                       Patterns::Bool(),
                       "Choose whether or not to apply Magnus lift force");
     prm.declare_entry(
       "rotational viscous torque",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(
+        defaults.rotational_viscous_torque),
       Patterns::Bool(),
       "Choose whether or not to apply rotational viscous torque on particles");
     prm.declare_entry(
       "vortical viscous torque",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(
+        defaults.vortical_viscous_torque),
       Patterns::Bool(),
       "Choose whether or not to apply vortical viscous torque on particles");
     prm.declare_entry("drag model",
-                      "difelice",
+                      to_string(defaults.drag_model),
                       Patterns::Selection(
                         "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
                       "The drag model used to determine the drag coefficient");
     prm.declare_entry(
       "dem iteration control",
-      "number of iterations",
+      to_string(defaults.dem_iteration_control),
       Patterns::Selection("number of iterations|fraction of rayleigh time"),
       "The strategy used to control the DEM iterations in CFD-DEM simulations");
     prm.declare_entry("coupling frequency",
-                      "100",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.coupling_frequency),
                       Patterns::Integer(1),
                       "dem-cfd coupling frequency");
     prm.declare_entry(
       "fraction rayleigh time",
-      "0.1",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.fraction_of_rayleigh_time),
       Patterns::Double(0., 1.),
       "Fraction of Rayleigh time used to control the DEM iterations.");
     prm.declare_entry("vans model",
-                      "modelA",
+                      to_string(defaults.vans_model),
                       Patterns::Selection("modelA|modelB"),
                       "The volume averaged Navier Stokes model to be solved.");
     prm.declare_entry(
       "grad-div length scale",
-      "1",
+      Patterns::Tools::Convert<double>::to_string(defaults.cstar),
       Patterns::Double(),
       "Constant cs for the calculation of the grad-div stabilization (gamma = kinematic_viscosity + cs * velocity)");
     prm.declare_entry(
       "implicit stabilization",
-      "true",
+      Patterns::Tools::Convert<bool>::to_string(
+        defaults.implicit_stabilization),
       Patterns::Bool(),
       "Choose whether or not to use implicit or explicit stabilization");
 
     prm.declare_entry(
       "particle statistics",
-      "true",
+      Patterns::Tools::Convert<bool>::to_string(
+        defaults.particle_statistics),
       Patterns::Bool(),
       "Outputs statistics about the particles such as their total kinetic energy, angular momentum, etc.");
 
     prm.declare_entry(
       "drag coupling",
-      "semi-implicit",
+      to_string(defaults.drag_coupling),
       Patterns::Selection("implicit|semi-implicit|explicit"),
       "Formulation for the drag force. Choices are implicit|semi-implicit|explicit. The default value is semi-implicit, which represents the legacy coupling method.");
 
     prm.declare_entry(
       "project particle forces",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(
+        defaults.project_particle_forces),
       Patterns::Bool(),
       "In the VANS solver, specify whether the two-way coupling forces, including the drag, are calculated by projecting the forces acting on the particles onto the fluid grid using the QCM filter.");
 

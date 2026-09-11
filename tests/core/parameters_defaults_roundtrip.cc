@@ -6,16 +6,23 @@
  * default member initializers and the default strings its
  * declare_parameters() derives from them.
  *
- * For a representative subset of structs in include/core/parameters.h, this
- * default-constructs an instance (using the in-class initializers), calls
- * declare_parameters() into a fresh ParameterHandler, then parse_parameters()
- * the untouched defaults into a second, independently default-constructed
- * instance. If declare_parameters() and the header defaults ever drift apart,
- * the two instances stop matching and this test fails.
+ * For a representative subset of structs across include/core/parameters.h,
+ * parameters_cfd_dem.h, parameters_multiphysics.h, parameters_lagrangian.h,
+ * and solvers/initial_conditions.h, this default-constructs an instance
+ * (using the in-class initializers), calls declare_parameters() into a fresh
+ * ParameterHandler, then parse_parameters() the untouched defaults into a
+ * second, independently default-constructed instance. If declare_parameters()
+ * and the header defaults ever drift apart, the two instances stop matching
+ * and this test fails.
  */
 
 // Lethe
 #include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
+#include <core/parameters_lagrangian.h>
+#include <core/parameters_multiphysics.h>
+
+#include <solvers/initial_conditions.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -222,6 +229,110 @@ test_mesh_box_refinement()
 }
 
 void
+test_cfddem()
+{
+  deallog << "--- CFDDEM ---" << std::endl;
+  const Parameters::CFDDEM expected;
+  ParameterHandler         prm;
+  Parameters::CFDDEM::declare_parameters(prm);
+  Parameters::CFDDEM actual;
+  actual.parse_parameters(prm);
+
+  check("grad_div", actual.grad_div, expected.grad_div);
+  check("drag_model", actual.drag_model, expected.drag_model);
+  check("drag_coupling", actual.drag_coupling, expected.drag_coupling);
+  check("vans_model", actual.vans_model, expected.vans_model);
+  check("coupling_frequency",
+        actual.coupling_frequency,
+        expected.coupling_frequency);
+  check("fraction_of_rayleigh_time",
+        actual.fraction_of_rayleigh_time,
+        expected.fraction_of_rayleigh_time);
+  check("cstar", actual.cstar, expected.cstar);
+  check("particle_statistics",
+        actual.particle_statistics,
+        expected.particle_statistics);
+}
+
+void
+test_multiphysics()
+{
+  deallog << "--- Multiphysics<2> ---" << std::endl;
+  const Parameters::Multiphysics<2> expected;
+  ParameterHandler                  prm;
+  expected.declare_parameters(prm);
+  Parameters::Multiphysics<2> actual;
+  const Parameters::Dimensionality dimensions;
+  actual.parse_parameters(prm, dimensions);
+
+  check("fluid_dynamics", actual.fluid_dynamics, expected.fluid_dynamics);
+  check("heat_transfer", actual.heat_transfer, expected.heat_transfer);
+  check("CLS", actual.CLS, expected.CLS);
+  check("cahn_hilliard", actual.cahn_hilliard, expected.cahn_hilliard);
+  check("electromagnetics",
+        actual.electromagnetics,
+        expected.electromagnetics);
+  check("cls_parameters.diffusivity",
+        actual.cls_parameters.diffusivity,
+        expected.cls_parameters.diffusivity);
+  check("cahn_hilliard_parameters.epsilon",
+        actual.cahn_hilliard_parameters.epsilon,
+        expected.cahn_hilliard_parameters.epsilon);
+}
+
+void
+test_initial_conditions_ramp()
+{
+  deallog << "--- Ramp ---" << std::endl;
+  const Parameters::Ramp expected;
+  ParameterHandler       prm;
+  Parameters::Ramp       declare_source;
+  declare_source.declare_parameters(prm);
+  Parameters::Ramp actual;
+  actual.parse_parameters(prm);
+
+  check("ramp_n.n_init", actual.ramp_n.n_init, expected.ramp_n.n_init);
+  check("ramp_n.alpha", actual.ramp_n.alpha, expected.ramp_n.alpha);
+  check("ramp_viscosity.kinematic_viscosity_init",
+        actual.ramp_viscosity.kinematic_viscosity_init,
+        expected.ramp_viscosity.kinematic_viscosity_init);
+}
+
+void
+test_lagrangian_model_parameters()
+{
+  deallog << "--- Lagrangian::ModelParameters<2> ---" << std::endl;
+  const Parameters::Lagrangian::ModelParameters<2> expected;
+  ParameterHandler                                 prm;
+  Parameters::Lagrangian::ModelParameters<2>::declare_parameters(prm);
+  Parameters::Lagrangian::ModelParameters<2> actual;
+  actual.parse_parameters(prm);
+
+  check("load_balance_method",
+        actual.load_balance_method,
+        expected.load_balance_method);
+  check("contact_detection_method",
+        actual.contact_detection_method,
+        expected.contact_detection_method);
+  check("neighborhood_threshold",
+        actual.neighborhood_threshold,
+        expected.neighborhood_threshold);
+  check("particle_particle_contact_force_model",
+        actual.particle_particle_contact_force_model,
+        expected.particle_particle_contact_force_model);
+  check("particle_wall_contact_force_method",
+        actual.particle_wall_contact_force_method,
+        expected.particle_wall_contact_force_method);
+  check("rolling_resistance_method",
+        actual.rolling_resistance_method,
+        expected.rolling_resistance_method);
+  check("integration_method",
+        actual.integration_method,
+        expected.integration_method);
+  check("solver_type", actual.solver_type, expected.solver_type);
+}
+
+void
 test()
 {
   test_timer();
@@ -230,6 +341,10 @@ test()
   test_linear_solver();
   test_stabilization();
   test_mesh_box_refinement();
+  test_cfddem();
+  test_multiphysics();
+  test_initial_conditions_ramp();
+  test_lagrangian_model_parameters();
 }
 
 int

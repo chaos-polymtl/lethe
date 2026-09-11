@@ -44,7 +44,7 @@ namespace AnalyticalSolutions
     /**
      * Filename used to store the L2 norm of the error
      */
-    std::string filename;
+    std::string filename = "L2Error";
 
 
     /**
@@ -124,7 +124,7 @@ namespace AnalyticalSolutions
      * Controls if the L2 norm of the error is printed to the terminal
      * during the simulation.
      */
-    Parameters::Verbosity verbosity;
+    Parameters::Verbosity verbosity = Parameters::Verbosity::quiet;
 
     /**
      * ParsedFunction that contains  the analytical solution for the velocity

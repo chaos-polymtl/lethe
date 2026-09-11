@@ -171,13 +171,13 @@ namespace Parameters
   struct CahnHilliard_PhaseFilter
   {
     // Type of filter
-    Parameters::FilterType type;
+    Parameters::FilterType type = FilterType::none;
 
     // \f$beta\f$ value for the tanh filter
-    double beta;
+    double beta = 20;
 
     // Type of verbosity for the phase filter
-    Parameters::Verbosity verbosity;
+    Parameters::Verbosity verbosity = Parameters::Verbosity::quiet;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -197,25 +197,25 @@ namespace Parameters
 
     bool enable = false;
 
-    Parameters::SharpeningType type;
+    Parameters::SharpeningType type = SharpeningType::constant;
 
     // Parameters for constant sharpening
-    double threshold;
+    double threshold = 0.5;
 
     // Parameters for adaptive sharpening
-    double threshold_max_deviation;
-    int    max_iterations;
+    double threshold_max_deviation = 0.20;
+    int    max_iterations          = 20;
 
     // Other sharpening parameters
-    double interface_sharpness;
+    double interface_sharpness = 2;
 
-    bool monitoring;
+    bool monitoring = false;
 
     /// Conservation tolerance on the fluid monitored,
     /// used with adaptive sharpening
-    double tolerance;
+    double tolerance = 1e-6;
 
-    Parameters::FluidIndicator monitored_fluid;
+    Parameters::FluidIndicator monitored_fluid = Parameters::FluidIndicator::fluid1;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -229,18 +229,18 @@ namespace Parameters
    */
   struct CLS_SurfaceTensionForce
   {
-    bool enable;
+    bool enable = false;
 
-    double phase_indicator_gradient_diffusion_factor;
-    double curvature_diffusion_factor;
+    double phase_indicator_gradient_diffusion_factor = 4;
+    double curvature_diffusion_factor                = 1;
 
-    bool output_cls_auxiliary_fields;
+    bool output_cls_auxiliary_fields = false;
 
     // Type of verbosity for the surface tension force calculation
-    Parameters::Verbosity verbosity;
+    Parameters::Verbosity verbosity = Parameters::Verbosity::quiet;
 
     // Enable marangoni effect
-    bool enable_marangoni_effect;
+    bool enable_marangoni_effect = false;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -254,13 +254,13 @@ namespace Parameters
   struct CLS_PhaseFilter
   {
     // Type of filter
-    Parameters::FilterType type;
+    Parameters::FilterType type = FilterType::none;
 
     // $$\beta$$ value for the tanh filter
-    double beta;
+    double beta = 20;
 
     // Type of verbosity for the phase filter
-    Parameters::Verbosity verbosity;
+    Parameters::Verbosity verbosity = Parameters::Verbosity::quiet;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -284,20 +284,20 @@ namespace Parameters
      * <tt>output path</tt> folder specified in the <tt>simulation control</tt>
      * subsection.
      * */
-    bool output_reinitialization_steps;
+    bool output_reinitialization_steps = false;
     /// Constant multiplying the mesh-size in the evaluation of the diffusion
     /// coefficient.
-    double diffusivity_multiplier;
+    double diffusivity_multiplier = 1.;
     /// Constant representing the power to which the mesh-size is elevated in
     /// the evaluation of the diffusion coefficient.
-    double diffusivity_power;
+    double diffusivity_power = 1.;
     /// Constant factor used in the computation of the artificial time step of
     /// the reinitialization equation
-    double dtau_factor;
+    double dtau_factor = 0.25;
     /// Steady-state criterion used for the artificial time-stepping scheme.
-    double steady_state_criterion;
+    double steady_state_criterion = 1e-4;
     /// Maximum number of reinitialization steps.
-    double max_steps_number;
+    double max_steps_number = 10000;
 
     /**
      * @brief Declare the parameters.
@@ -325,14 +325,15 @@ namespace Parameters
     /// Enables/Disables the geometric interface reinitialization.
     bool enable = false;
     /// Enables/Disables the output of the signed distance field
-    bool output_signed_distance;
+    bool output_signed_distance = false;
     /// Maximum reinitialization distance value
-    double max_reinitialization_distance;
+    double max_reinitialization_distance = 1.;
     /// Transformation type transforming the signed distance to a phase
     /// indicator
-    RedistanciationTransformationType transformation_type;
+    RedistanciationTransformationType transformation_type =
+      RedistanciationTransformationType::tanh;
     /// Interface thickness for the tanh transformation
-    double tanh_thickness;
+    double tanh_thickness = 1.;
 
     /**
      * @brief Declare the parameters.
@@ -360,14 +361,15 @@ namespace Parameters
   struct CLS_ReinitializationMethod
   {
     /// Reinitialization method type
-    Parameters::ReinitializationMethodType reinitialization_method_type;
+    Parameters::ReinitializationMethodType reinitialization_method_type =
+      ReinitializationMethodType::none;
 
     /// Reinitialization frequency at every \f$x\f$ time steps the CLS phase
     /// fraction field will be regularized
-    int frequency;
+    int frequency = 10;
 
     /// Type of verbosity of the PDE-based interface reinitialization solver.
-    Parameters::Verbosity verbosity;
+    Parameters::Verbosity verbosity = Parameters::Verbosity::quiet;
 
     /// Interface sharpening parameters
     Parameters::CLS_InterfaceSharpening sharpening;
@@ -408,15 +410,16 @@ namespace Parameters
     Parameters::CLS_PhaseFilter            phase_filter;
     Parameters::CLS_ReinitializationMethod reinitialization_method;
 
-    Parameters::FluidIndicator viscous_dissipative_fluid;
+    Parameters::FluidIndicator viscous_dissipative_fluid =
+      Parameters::FluidIndicator::fluid1;
 
     // artificial diffusivity (diffusion coefficient) (in L^2/s) added to the
     // CLS transport equation. This parameter is zero by default, and can be
     // increased to improve the wetting of the phases in the vicinity of
     // boundaries
-    double diffusivity;
+    double diffusivity = 0;
 
-    bool compressible;
+    bool compressible = false;
 
     void
     declare_parameters(ParameterHandler &prm) const;
@@ -428,16 +431,17 @@ namespace Parameters
   {
     // Smoothing parameter \f$\xi\f$ in the Cahn-Hilliard equations (potential
     // equation)
-    double potential_smoothing_coefficient;
+    double potential_smoothing_coefficient = 1;
 
     // Epsilon set strategy (automatic|manual)
-    Parameters::EpsilonSetMethod epsilon_set_method;
+    Parameters::EpsilonSetMethod epsilon_set_method =
+      EpsilonSetMethod::automatic;
 
     // Epsilon verbosity
-    Parameters::EpsilonVerbosity epsilon_verbosity;
+    Parameters::EpsilonVerbosity epsilon_verbosity = EpsilonVerbosity::quiet;
 
     // Epsilon value in the Cahn-Hilliard equations
-    double epsilon;
+    double epsilon = 1.0;
 
     // Phase filtration parameters
     Parameters::CahnHilliard_PhaseFilter cahn_hilliard_phase_filter;
@@ -457,31 +461,32 @@ namespace Parameters
   {
     // Integration method for the time coupling of the time-harmonic Maxwell
     // solver
-    Parameters::TimeHarmonicMaxwellCouplingStrategy time_coupling_strategy;
+    Parameters::TimeHarmonicMaxwellCouplingStrategy time_coupling_strategy =
+      TimeHarmonicMaxwellCouplingStrategy::none;
 
     // Coupling parameter for the time coupling strategy. If the time coupling
     // strategy is based on the iteration count, this parameter represents the
     // number of time iterations between two consecutive resolutions of the
     // electromagnetic fields.
-    unsigned int coupling_iteration;
+    unsigned int coupling_iteration = 1;
 
     // If the time coupling strategy is based on time, this parameter represents
     // the real time interval between two consecutive resolutions of the
     // electromagnetic fields.
-    double coupling_time;
+    double coupling_time = 1;
 
     // If the time coupling strategy is based on a threshold, this parameter
     // represents the change in the electromagnetic properties of the medium
     // (i.e., permittivity, permeability or conductivity) that triggers the
     // recomputation of the electromagnetic fields.
-    double coupling_threshold;
+    double coupling_threshold = 0.1;
 
     // We use vectors in the following to be able to define multiple waveguides
     // in the same simulation.
-    unsigned int number_of_waveguide_inlets;
+    unsigned int number_of_waveguide_inlets = 0;
 
     // Frequency of the electromagnetic wave (in Hz)
-    double electromagnetic_frequency;
+    double electromagnetic_frequency = 1;
 
     // Boundary ids where waveguide ports are applied so the port can be linked
     // to the right boundary
@@ -493,14 +498,15 @@ namespace Parameters
 
     // Electric field amplitude used for the normalization of the solution (in
     // V/m)
-    double electric_field_amplitude;
+    double electric_field_amplitude = 1;
 
     // Magnetic field amplitude used for the normalization of the solution (in
     // A/m)
-    double magnetic_field_amplitude;
+    double magnetic_field_amplitude = 1;
 
     // Type of scaling to apply to the solution after solving the linear system
-    Parameters::ElectromagneticScalingType electromagnetic_scaling_type;
+    Parameters::ElectromagneticScalingType electromagnetic_scaling_type =
+      ElectromagneticScalingType::none;
 
     // Waveguide mode to simulate (TE|TM)
     std::vector<Parameters::WaveguideMode> waveguide_mode;
@@ -527,17 +533,17 @@ namespace Parameters
   template <int dim>
   struct Multiphysics
   {
-    bool fluid_dynamics;
-    bool heat_transfer;
-    bool tracer;
-    bool CLS;
-    bool cahn_hilliard;
-    bool electromagnetics;
+    bool fluid_dynamics    = true;
+    bool heat_transfer     = false;
+    bool tracer            = false;
+    bool CLS               = false;
+    bool cahn_hilliard     = false;
+    bool electromagnetics  = false;
 
     // subparameters for heat_transfer
-    bool viscous_dissipation;
-    bool thermal_buoyancy_force;
-    bool microwave_heating;
+    bool viscous_dissipation    = false;
+    bool thermal_buoyancy_force = false;
+    bool microwave_heating      = false;
 
     Parameters::CLS                      cls_parameters;
     Parameters::CahnHilliard             cahn_hilliard_parameters;

@@ -28,6 +28,168 @@ DeclException1(
   << " is equal or smaller than 0." << std::endl
   << "Interface reinitialization method requires an frequency larger than 0.");
 
+namespace
+{
+  std::string
+  to_string(const Parameters::Verbosity verbosity)
+  {
+    switch (verbosity)
+      {
+        case Parameters::Verbosity::quiet:
+          return "quiet";
+        case Parameters::Verbosity::verbose:
+          return "verbose";
+        case Parameters::Verbosity::extra_verbose:
+          return "extra verbose";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::FluidIndicator indicator)
+  {
+    switch (indicator)
+      {
+        case Parameters::FluidIndicator::fluid0:
+          return "fluid 0";
+        case Parameters::FluidIndicator::fluid1:
+          return "fluid 1";
+        case Parameters::FluidIndicator::both:
+          return "both";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::FilterType type)
+  {
+    switch (type)
+      {
+        case Parameters::FilterType::none:
+          return "none";
+        case Parameters::FilterType::clip:
+          return "clip";
+        case Parameters::FilterType::tanh:
+          return "tanh";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::SharpeningType type)
+  {
+    switch (type)
+      {
+        case Parameters::SharpeningType::constant:
+          return "constant";
+        case Parameters::SharpeningType::adaptive:
+          return "adaptive";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::RedistanciationTransformationType type)
+  {
+    switch (type)
+      {
+        case Parameters::RedistanciationTransformationType::tanh:
+          return "tanh";
+        case Parameters::RedistanciationTransformationType::
+          piecewise_polynomial:
+          return "piecewise polynomial";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::ReinitializationMethodType type)
+  {
+    switch (type)
+      {
+        case Parameters::ReinitializationMethodType::none:
+          return "none";
+        case Parameters::ReinitializationMethodType::sharpening:
+          return "projection-based interface sharpening";
+        case Parameters::ReinitializationMethodType::pde_based:
+          return "pde-based interface reinitialization";
+        case Parameters::ReinitializationMethodType::geometric:
+          return "geometric interface reinitialization";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::EpsilonSetMethod method)
+  {
+    switch (method)
+      {
+        case Parameters::EpsilonSetMethod::automatic:
+          return "automatic";
+        case Parameters::EpsilonSetMethod::manual:
+          return "manual";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::EpsilonVerbosity verbosity)
+  {
+    switch (verbosity)
+      {
+        case Parameters::EpsilonVerbosity::quiet:
+          return "quiet";
+        case Parameters::EpsilonVerbosity::verbose:
+          return "verbose";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::TimeHarmonicMaxwellCouplingStrategy strategy)
+  {
+    switch (strategy)
+      {
+        case Parameters::TimeHarmonicMaxwellCouplingStrategy::none:
+          return "none";
+        case Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration:
+          return "iteration";
+        case Parameters::TimeHarmonicMaxwellCouplingStrategy::time:
+          return "time";
+        case Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold:
+          return "threshold";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const Parameters::ElectromagneticScalingType type)
+  {
+    switch (type)
+      {
+        case Parameters::ElectromagneticScalingType::none:
+          return "none";
+        case Parameters::ElectromagneticScalingType::electric_field:
+          return "electric field";
+        case Parameters::ElectromagneticScalingType::magnetic_field:
+          return "magnetic field";
+        case Parameters::ElectromagneticScalingType::power:
+          return "power";
+      }
+    Assert(false, dealii::ExcInternalError());
+    return "";
+  }
+} // namespace
+
 template <int dim>
 void
 Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
@@ -35,52 +197,58 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
   prm.enter_subsection("multiphysics");
   {
     prm.declare_entry("fluid dynamics",
-                      "true",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        fluid_dynamics),
                       Patterns::Bool(),
                       "Fluid flow calculation <true|false>");
 
     prm.declare_entry("heat transfer",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        heat_transfer),
                       Patterns::Bool(),
                       "Thermic calculation <true|false>");
 
     prm.declare_entry("tracer",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(tracer),
                       Patterns::Bool(),
                       "Passive tracer calculation <true|false>");
 
     prm.declare_entry("cls",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(CLS),
                       Patterns::Bool(),
                       "CLS calculation <true|false>");
     prm.declare_alias("cls", "VOF", true);
 
     prm.declare_entry("cahn hilliard",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        cahn_hilliard),
                       Patterns::Bool(),
                       "Cahn-Hilliard calculation <true|false>");
 
     prm.declare_entry(
       "electromagnetics",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(electromagnetics),
       Patterns::Bool(),
       "Time harmonic electromagnetics calculation <true|false>");
 
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        viscous_dissipation),
                       Patterns::Bool(),
                       "Viscous dissipation in heat equation <true|false>");
 
     prm.declare_entry("thermal buoyancy force",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        thermal_buoyancy_force),
                       Patterns::Bool(),
                       "Thermal buoyancy force calculation <true|false>");
     prm.declare_alias("thermal buoyancy force",
                       "buoyancy force",
                       true); // temporary alias for backward compatibility
     prm.declare_entry("microwave heating",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        microwave_heating),
                       Patterns::Bool(),
                       "Microwave heating calculation <true|false>");
   }
@@ -127,21 +295,21 @@ Parameters::CLS::declare_parameters(ParameterHandler &prm) const
     phase_filter.declare_parameters(prm);
 
     prm.declare_entry("viscous dissipative fluid",
-                      "fluid 1",
+                      to_string(viscous_dissipative_fluid),
                       Patterns::Selection("fluid 0|fluid 1|both"),
                       "Fluid to which the viscous dissipation is applied "
                       "in the heat equation <fluid 0|fluid 1|both>");
 
     prm.declare_entry(
       "diffusivity",
-      "0",
+      Patterns::Tools::Convert<double>::to_string(diffusivity),
       Patterns::Double(),
       "Diffusivity (diffusion coefficient in L^2/s) in the phase indicator transport equation. "
       "Default value is 0 to have pure advection.");
 
     prm.declare_entry(
       "compressible",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(compressible),
       Patterns::Bool(),
       "Enable phase compressibility in the CLS equation. This leads to the inclusion of the phase * div(u) term in the CLS equation. "
       "It should be set to false when the phases are incompressible");
@@ -185,21 +353,21 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
   {
     prm.declare_entry(
       "type",
-      "none",
+      to_string(reinitialization_method_type),
       Patterns::Selection(
         "none|projection-based interface sharpening|pde-based interface reinitialization|geometric interface reinitialization"),
       "CLS interface reinitialization method");
 
     prm.declare_entry(
       "frequency",
-      "10",
+      Patterns::Tools::Convert<int>::to_string(frequency),
       Patterns::Integer(),
       "Reinitialization frequency (number of time steps) at which the "
       "interface reinitialization process will be applied to the CLS "
       "phase indicator field.");
     prm.declare_entry(
       "verbosity",
-      "quiet",
+      to_string(verbosity),
       Patterns::Selection("quiet|verbose|extra verbose"),
       "States whether the output from the interface reinitialization method "
       "should be printed."
@@ -269,11 +437,12 @@ Parameters::CLS_ReinitializationMethod::parse_parameters(ParameterHandler &prm)
 void
 Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 {
+  const CLS_InterfaceSharpening defaults;
   prm.enter_subsection("projection-based interface sharpening");
   {
     prm.declare_entry(
       "type",
-      "constant",
+      to_string(defaults.type),
       Patterns::Selection("constant|adaptive"),
       "CLS interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
@@ -283,7 +452,7 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
     // Parameters for constant sharpening
     prm.declare_entry(
       "threshold",
-      "0.5",
+      Patterns::Tools::Convert<double>::to_string(defaults.threshold),
       Patterns::Double(),
       "Interface sharpening threshold that represents the phase indicator at which "
       "the interphase is considered located");
@@ -291,7 +460,8 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
     // Parameters for adaptive sharpening
     prm.declare_entry(
       "threshold max deviation",
-      "0.20",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.threshold_max_deviation),
       Patterns::Double(),
       "Maximum deviation (from the base value of 0.5) considered in the search "
       "algorithm to ensure mass conservation. "
@@ -299,25 +469,25 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry(
       "max iterations",
-      "20",
+      Patterns::Tools::Convert<int>::to_string(defaults.max_iterations),
       Patterns::Integer(),
       "Maximum number of iteration in the bissection algorithm that ensures mass conservation");
 
     prm.declare_entry(
       "monitoring",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(defaults.monitoring),
       Patterns::Bool(),
       "Enable conservation monitoring in multiphase fluid simulations <true|false>");
 
     prm.declare_entry(
       "tolerance",
-      "1e-6",
+      Patterns::Tools::Convert<double>::to_string(defaults.tolerance),
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptive sharpening");
 
     prm.declare_entry(
       "monitored fluid",
-      "fluid 1",
+      to_string(defaults.monitored_fluid),
       Patterns::Selection("fluid 0|fluid 1"),
       "Fluid for which conservation is monitored <fluid 0|fluid 1>, used with adaptive sharpening.");
 
@@ -325,7 +495,8 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
     // values less than 1 leads to interface smoothing instead of sharpening.
     prm.declare_entry(
       "interface sharpness",
-      "2",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.interface_sharpness),
       Patterns::Double(),
       "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
   }
@@ -378,21 +549,25 @@ Parameters::CLS_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 void
 Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
 {
+  const CLS_SurfaceTensionForce defaults;
   prm.enter_subsection("surface tension force");
   {
     prm.declare_entry("enable",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable),
                       Patterns::Bool(),
                       "Enable surface tension force calculation <true|false>");
 
     prm.declare_entry("output auxiliary fields",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.output_cls_auxiliary_fields),
                       Patterns::Bool(),
                       "Output the phase indicator gradient and curvature");
 
     prm.declare_entry(
       "phase indicator gradient diffusion factor",
-      "4",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.phase_indicator_gradient_diffusion_factor),
       Patterns::Double(),
       "Factor applied to the filter for phase indicator gradient calculations to damp high-frequency errors");
     prm.declare_alias("phase indicator gradient diffusion factor",
@@ -401,20 +576,22 @@ Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry(
       "curvature diffusion factor",
-      "1",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.curvature_diffusion_factor),
       Patterns::Double(),
       "Factor applied to the filter for curvature calculations to damp high-frequency errors");
 
     prm.declare_entry(
       "verbosity",
-      "quiet",
+      to_string(defaults.verbosity),
       Patterns::Selection("quiet|verbose"),
       "State whether the output from the surface tension force calculations should be printed "
       "Choices are <quiet|verbose>.");
 
 
     prm.declare_entry("enable marangoni effect",
-                      "false",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_marangoni_effect),
                       Patterns::Bool(),
                       "Enable marangoni effect calculation <true|false>");
   }
@@ -449,11 +626,12 @@ Parameters::CLS_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
 void
 Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
 {
+  const CLS_PhaseFilter defaults;
   prm.enter_subsection("phase filtration");
   {
     prm.declare_entry(
       "type",
-      "none",
+      to_string(defaults.type),
       Patterns::Selection("none|tanh"),
       "CLS phase indicator filtration type, "
       "if <none> is selected, the phase won't be filtered"
@@ -463,13 +641,13 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "must be defined");
     prm.declare_entry(
       "beta",
-      "20",
+      Patterns::Tools::Convert<double>::to_string(defaults.beta),
       Patterns::Double(),
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
     prm.declare_entry("verbosity",
-                      "quiet",
+                      to_string(defaults.verbosity),
                       Patterns::Selection("quiet|verbose|extra verbose"),
                       "States whether the filtered data should be printed "
                       "Choices are <quiet|verbose>.");
@@ -511,37 +689,43 @@ void
 Parameters::CLS_PDEBasedInterfaceReinitialization::declare_parameters(
   dealii::ParameterHandler &prm)
 {
+  const CLS_PDEBasedInterfaceReinitialization defaults;
   prm.enter_subsection("PDE-based interface reinitialization");
   {
     prm.declare_entry(
       "output reinitialization steps",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(
+        defaults.output_reinitialization_steps),
       Patterns::Bool(),
       "Enables pvtu format outputs of the PDE-based interface reinitialization "
       "steps <true|false>");
     prm.declare_entry(
       "diffusivity multiplier",
-      "1.",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.diffusivity_multiplier),
       Patterns::Double(),
       "Factor that multiplies the mesh-size in the mesh-dependant diffusion "
       "coefficient of the PDE-based interface reinitialization.");
     prm.declare_entry(
       "diffusivity power",
-      "1.",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.diffusivity_power),
       Patterns::Double(),
       "Power value applied to the mesh-size in the mesh-dependant diffusion "
       "coefficient of the PDE-based interface reinitialization.");
     prm.declare_entry("steady-state criterion",
-                      "1e-4",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.steady_state_criterion),
                       Patterns::Double(),
                       "Tolerance for the artificial time-stepping scheme.");
     prm.declare_entry("max steps number",
-                      "10000",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.max_steps_number),
                       Patterns::Integer(),
                       "Maximum number of reinitialization steps.");
     prm.declare_entry(
       "artificial time-step factor",
-      "0.25",
+      Patterns::Tools::Convert<double>::to_string(defaults.dtau_factor),
       Patterns::Double(),
       "Factor multiplying the artificial time step in the PDE-based "
       "interface reinitialization.");
@@ -573,26 +757,30 @@ void
 Parameters::CLS_GeometricInterfaceReinitialization::declare_parameters(
   dealii::ParameterHandler &prm)
 {
+  const CLS_GeometricInterfaceReinitialization defaults;
   prm.enter_subsection("geometric interface reinitialization");
   {
     prm.declare_entry(
       "output signed distance",
-      "false",
+      Patterns::Tools::Convert<bool>::to_string(
+        defaults.output_signed_distance),
       Patterns::Bool(),
       "Enables pvtu format outputs of the geometric interface reinitialization "
       "steps <true|false>");
     prm.declare_entry("max reinitialization distance",
-                      "1.",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.max_reinitialization_distance),
                       Patterns::Double(),
                       "Maximum reinitialization distance value");
     prm.declare_entry(
       "transformation type",
-      "tanh",
+      to_string(defaults.transformation_type),
       Patterns::Selection("tanh|piecewise polynomial"),
       "Transformation function used to get the phase indicator from the signed "
       "distance");
     prm.declare_entry("tanh thickness",
-                      "1.",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.tanh_thickness),
                       Patterns::Double(),
                       "Interface thickness for the tanh transformation");
   }
@@ -628,11 +816,12 @@ Parameters::CLS_GeometricInterfaceReinitialization::parse_parameters(
 void
 Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
 {
+  const CahnHilliard_PhaseFilter defaults;
   prm.enter_subsection("phase filtration");
   {
     prm.declare_entry(
       "type",
-      "none",
+      to_string(defaults.type),
       Patterns::Selection("none|clip|tanh"),
       "CahnHilliard phase filtration type, "
       "if <none> is selected, the phase won't be filtered"
@@ -643,13 +832,13 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "must be defined");
     prm.declare_entry(
       "beta",
-      "20",
+      Patterns::Tools::Convert<double>::to_string(defaults.beta),
       Patterns::Double(),
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
     prm.declare_entry("verbosity",
-                      "quiet",
+                      to_string(defaults.verbosity),
                       Patterns::Selection("quiet|verbose|extra verbose"),
                       "States whether the filtered data should be printed "
                       "Choices are <quiet|verbose>.");
@@ -704,7 +893,8 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
 
     prm.declare_entry(
       "potential smoothing coefficient",
-      "1",
+      Patterns::Tools::Convert<double>::to_string(
+        potential_smoothing_coefficient),
       Patterns::Double(),
       "Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.");
 
@@ -712,19 +902,19 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
     {
       prm.declare_entry(
         "method",
-        "automatic",
+        to_string(epsilon_set_method),
         Patterns::Selection("automatic|manual"),
         "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)");
 
       prm.declare_entry(
         "value",
-        "1.0",
+        Patterns::Tools::Convert<double>::to_string(epsilon),
         Patterns::Double(),
         "Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element");
 
       prm.declare_entry(
         "verbosity",
-        "quiet",
+        to_string(epsilon_verbosity),
         Patterns::Selection("quiet|verbose"),
         "Display the value of epsilon for each time iteration if set to verbose");
     }
@@ -794,13 +984,14 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
     prm.enter_subsection("time coupling strategy");
     {
       prm.declare_entry("type",
-                        "none",
+                        to_string(time_coupling_strategy),
                         Patterns::Selection("none|iteration|time|threshold"),
                         "The type of time coupling strategy to use.");
 
       prm.declare_entry(
         "coupling iteration",
-        "1",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          coupling_iteration),
         Patterns::Integer(1),
         "Coupling parameter for the time coupling strategy based on "
         "iteration, this parameter represents the number of time iterations "
@@ -808,7 +999,7 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
       prm.declare_entry(
         "coupling time",
-        "1",
+        Patterns::Tools::Convert<double>::to_string(coupling_time),
         Patterns::Double(DBL_MIN),
         "Coupling parameter for the time coupling strategy based on time. "
         "This parameter represents the real time interval between two "
@@ -816,7 +1007,7 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
       prm.declare_entry(
         "coupling threshold",
-        "0.1",
+        Patterns::Tools::Convert<double>::to_string(coupling_threshold),
         Patterns::Double(0),
         "Coupling parameter for the time coupling strategy based on a "
         "threshold. This parameter represents the change in the "
@@ -829,30 +1020,34 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
     prm.declare_entry(
       "electromagnetic frequency",
-      "1",
+      Patterns::Tools::Convert<double>::to_string(
+        electromagnetic_frequency),
       Patterns::Double(0),
       "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
 
     prm.declare_entry(
       "electromagnetic scaling type",
-      "none",
+      to_string(electromagnetic_scaling_type),
       Patterns::Selection("none|electric field|magnetic field|power"),
       "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.");
 
     prm.declare_entry(
       "electric field amplitude",
-      "1",
+      Patterns::Tools::Convert<double>::to_string(
+        electric_field_amplitude),
       Patterns::Double(0),
       "The amplitude of the electric field used for the normalization of the solution in [V/m].");
 
     prm.declare_entry(
       "magnetic field amplitude",
-      "1",
+      Patterns::Tools::Convert<double>::to_string(
+        magnetic_field_amplitude),
       Patterns::Double(0),
       "The amplitude of the magnetic field used for the normalization of the solution in [A/m].");
 
     prm.declare_entry("number of waveguide inlets",
-                      "0",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        number_of_waveguide_inlets),
                       Patterns::Integer(0),
                       "Number of waveguide inlets in the simulation.");
 
