@@ -41,7 +41,7 @@ Both cases share the same base geometry: a section of rectangular waveguide, wit
     :name: schematic
     :width: 500
 
-The waveguide's cross-section is :math:`109.2\ \mathrm{mm}\times54.6\ \mathrm{mm}` in both cases (a standard WR-430 rectangular waveguide), with the cylinder's axis pointing in the :math:`x_2`-direction. The cylinder itself is meshed (``mesh_obstacle = true``) so that the temperature field can be resolved inside it. In the case with fluid flow, the channel is longer to allow the flow to develop vortex downstream of the cylinder before reaching the outlet boundary condition. 
+The waveguide's cross-section is :math:`109.2\ \mathrm{mm}\times54.6\ \mathrm{mm}` in both cases (a standard WR-430 rectangular waveguide), with the cylinder's axis pointing in the :math:`x_3`-direction. The cylinder itself is meshed (``mesh_obstacle = true``) so that the temperature field can be resolved inside it. In the case with fluid flow, the channel is longer to allow the flow to develop vortex downstream of the cylinder before reaching the outlet boundary condition. Note that because of how the ``uniform_channel_with_meshed_cylinder`` grid is built, the `x_3`-direction corresponds to the `x` axis, the `x_1`-direction to the `y` axis, and the `x_2`-direction to the `z` axis in the parameter files. 
 
 - In ``filled_waveguide_cylinder_Al.prm``, the channel is :math:`200\ \mathrm{mm}` long, and the cylinder has a radius of :math:`24\ \mathrm{mm}`, centered midway along the channel.
 - In ``filled_waveguide_cylinder_SiC.prm``, the channel is :math:`400\ \mathrm{mm}` long to leave room for the flow to develop, and the cylinder has a radius of :math:`20\ \mathrm{mm}`.
@@ -65,9 +65,9 @@ see the :doc:`multiphysics <../../../parameters/cfd/multiphysics>` documentation
 .. tip::
     Because none of the physical properties used in this example depend on temperature, the electromagnetic fields do not need to be recomputed as the cylinder heats up. Both parameter files therefore rely on (or default to) ``subsection time coupling strategy`` with ``set type = none``: the electromagnetic problem is solved once, before the first time step, and the resulting heat source is then reused throughout the transient heat transfer solve. See the :doc:`../../../parameters/cfd/time_harmonic_maxwell` documentation for the other available coupling strategies, needed when the physical properties depend on the temperature.
 
-The heat transfer equation is then solved in time for 60 seconds, with the whole domain initially at a uniform reference temperature of 39.6 °C (without loss of generality, we use a rescaled temperature of 0 in the parameter files, see the ``dimensionality`` subsection below). In the first case, the cylinder is surrounded by stagnant air, which is not allowed to flow (``fluid dynamics = false``), so that it can only lose heat by conduction through the surrounding air until it reaches the walls of the waveguide, which are all assumed to be insulated (``noflux``). 
+The heat transfer equation is then solved in time for 60 seconds, with the whole domain initially at a uniform reference temperature of 39.6 °C (without loss of generality, we use a rescaled temperature of 0 in the parameter files because in the post processing we compute the change in temperature). In the first case, the cylinder is surrounded by stagnant air, which is not allowed to flow (``fluid dynamics = false``), so that it can only lose heat by conduction through the surrounding air until it reaches the walls of the waveguide, which are all assumed to be insulated (``noflux``). 
 
-In the second case, we build on the first case and introduce a laminar air flow along the channel with an imposed temperature of 0 °C and keep the same ``noflux`` boundary condition on the channel walls and on the outlet. Additionally, the cylinder is now made of silicon carbide (SiC), a much lossier ceramic than the alumina used in the first case, so that it heats up in a more noticeable way. Now, for the fluid problem, the air flow is bounded by no-slip conditions at the walls of the waveguide, has an imposed velocity profile at the inlet, and a do-nothing boundary condition at the outlet. For the inlet air flow velocity profile, it is built using a separable two-dimensional smoothed top-hat profile. The velocity is constant in the central region of the inlet cross-section and decreases quadratically to zero over a layer extending over a prescribed percent of the channel width and height adjacent to each wall. The resulting profile therefore provides a uniform core while ensuring a smooth transition to the no-slip condition at the walls. The profile is scaled according to the specified Reynolds number (here, Re = 400). Mathematically, the condition is defined as :
+In the second case, we build on the first case and introduce a laminar air flow along the channel with an imposed temperature of 0 °C, which is also the initial temperature of the domain, and keep the same ``noflux`` boundary condition on the channel walls and on the outlet. Additionally, the cylinder is now made of silicon carbide (SiC), a much lossier ceramic than the alumina used in the first case, so that it heats up in a more noticeable way. Now, for the fluid problem, the air flow is bounded by no-slip conditions at the walls of the waveguide, has an imposed velocity profile at the inlet, and a do-nothing boundary condition at the outlet. For the inlet air flow velocity profile, it is built using a separable two-dimensional smoothed top-hat profile. The velocity is constant in the central region of the inlet cross-section and decreases quadratically to zero over a layer extending over a prescribed percent of the channel width and height adjacent to each wall. The resulting profile therefore provides a uniform core while ensuring a smooth transition to the no-slip condition at the walls. The profile is scaled according to the specified Reynolds number (here, Re = 400). Mathematically, the condition is defined as :
 
 .. math::
 
@@ -196,9 +196,9 @@ Time Harmonic Maxwell
             set waveguide power = 50
 
             set corner 0 = 0,0,0
-            set corner 1 = 0.,0.1092,0
-            set corner 2 = 0., 0., 0.1092
-            set corner 3 = 0., 0.1092, 0.1092
+            set corner 1 = 0.,10.92,0
+            set corner 2 = 0., 0., 5.46
+            set corner 3 = 0., 10.92, 5.46
 
             subsection waveguide mode
                 set mode type    = TE
@@ -387,6 +387,26 @@ Case 2: Adding Fluid Flow
 
 This second case (``filled_waveguide_cylinder_SiC.prm``) starts from the same base setup and adds a air flow along the channel, so that the cylinder is now convectively cooled while being heated by the electromagnetic field. Only the parameters that differ from, or are added to, Case 1 are detailed below.
 
+Simulation Control
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: text
+
+    subsection simulation control
+        set method                         = bdf1
+        set time step                      = 0.00005
+        set adapt time step to respect CFL = true
+        set adaptative time step scaling   = 1.005
+        set output control                 = time
+        set time end                       = 60
+        set output time frequency          = 0.05
+        set output path                    = ./output_cylinder/
+        set subdivision                    = 3
+        set max cfl = 1
+    end
+
+Since now there is a fluid flow, the time step is now adapted to respect the CFL condition, with a maximum CFL number of 1. The initial time step is set to :math:`5\times10^{-5}\ \mathrm{s}` and is increased by a factor of :math:`1.005` at each time step until the CFL condition is violated, in which case the time step is reduced to satisfy the CFL condition again.    
+
 Multiphysics
 ^^^^^^^^^^^^
 
@@ -524,7 +544,7 @@ Physical Properties
             set magnetic permeability imag part = 0.
 
             set thermal conductivity = 120.92
-            set specific heat        = 27.13
+            set specific heat        = 676.63
             set density              = 3210
         end
     end
@@ -543,7 +563,7 @@ Dimensionality
         set electric current = 0.01  #ampere
     end
 
-For this second case, the length unit is set to :math:`0.01\ \mathrm{m}` (1 cm) rather than :math:`1\ \mathrm{m}` as in Case 1. This is because when using the matrix-free solver for the Navier-Stokes equations, the geometric multigrid preconditioner works better when the quantities involved are of order 1. So here, the average velocity with our geometry and a Reynolds number of 400 is :math:`\approx 0.04\ \mathrm{cm/s}`, so the length unit is set to 1 cm to keep the velocity of order 1. The electric current unit is also set to :math:`0.01\ \mathrm{A}` so the electromagnetic electric field is is directly outputed in :math:`\mathrm{V/m}` since :math:`\mathrm{V/m} \propto m/A`.
+For this second case, the length unit is set to :math:`0.01\ \mathrm{m}` (1 cm) rather than :math:`1\ \mathrm{m}` as in Case 1. This is because when using the matrix-free solver for the Navier-Stokes equations, the geometric multigrid preconditioner works better when the quantities involved are of order 1. So here, the average velocity with our geometry and a Reynolds number of 400 is :math:`\approx 14.8\ \mathrm{cm/s}`, so the length unit is set to 1 cm to keep the velocity closer to order 1. The electric current unit is also set to :math:`0.01\ \mathrm{A}` so the electromagnetic electric field is is directly outputed in :math:`\mathrm{V/m}` since :math:`\mathrm{V/m} \propto m/A`.
 
 Linear Solver Control
 ^^^^^^^^^^^^^^^^^^^^^
@@ -607,7 +627,7 @@ Restart
         set restart    = false
     end
 
-Since this second case is significantly more expensive than Case 1, the simulation have been runned on the clusters of the Digital Reasearch Alliance of Canada. Consequently, checkpointing is enabled so that the simulation can be resumed if it needs to be interrupted or does not finish in the requested time. See the :doc:`../../../parameters/cfd/restart` documentation for details.
+Since this second case is significantly more expensive than Case 1, the simulation has been run on the clusters of the Digital Research Alliance of Canada. Consequently, checkpointing is enabled so that the simulation can be resumed if it needs to be interrupted or does not finish in the requested time. See the :doc:`../../../parameters/cfd/restart` documentation for details.
 
 Running the Simulations
 -----------------------
