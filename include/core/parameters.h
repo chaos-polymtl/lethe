@@ -1088,8 +1088,9 @@ namespace Parameters
    * @tparam dim Denotes the number of spatial dimensions.
    */
   template <int dim>
-  struct PostProcessing
+  class PostProcessing
   {
+  public:
     /**
      * @brief Isocontour bounding box parameters. This is used to get the
      * evolution of the bounding values (In 2D: \f$x_\mathrm{min}\f$,
