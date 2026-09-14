@@ -21,7 +21,6 @@ namespace Parameters
                           "0., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Gravitational acceleration vector");
-        prm.declare_alias("g", "gx", true);
         prm.declare_entry(
           "gy",
           "0.",
@@ -272,9 +271,6 @@ namespace Parameters
         Patterns::List(Patterns::Double(0.)),
         "Probabilities associated with each diameter values for "
         "a custom distribution. ");
-      prm.declare_alias("custom distribution diameters probabilities",
-                        "Probabilities associated with each diameter value for "
-                        "a custom distribution. ");
 
       // Normal, lognormal and custom distributions
       prm.declare_entry("distribution weighting basis",

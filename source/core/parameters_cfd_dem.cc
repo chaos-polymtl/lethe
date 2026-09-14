@@ -40,8 +40,6 @@ namespace Parameters
       "0",
       Patterns::Double(),
       "The smoothing length of the QCM filter. With the spherical filter, half of this value is the averaging-sphere radius; with the gaussian filter, half of this value is the standard deviation sigma.");
-    // Backwards-compatible alias for the previous parameter name.
-    prm.declare_alias("qcm smoothing length", "qcm sphere diameter", true);
     prm.declare_entry(
       "qcm sphere equal cell volume",
       "false",

@@ -144,7 +144,6 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Adapt the time step to respect the maximum CFL condition. When multiple conditions are applied to the time step, this ensures that the CFL condition is also respected (Δt ≤ Δt_{CFL}). <true|false>");
-      prm.declare_alias("adapt time step to respect CFL", "adapt", true);
       prm.declare_entry(
         "override time step on restart",
         "false",
@@ -800,9 +799,6 @@ namespace Parameters
                       "Absolute filtered phase indicator tolerance used in "
                       "conjunction with CLS simulations to select the cells "
                       "on which the constraint is applied.");
-    prm.declare_alias("phase indicator tolerance",
-                      "phase fraction tolerance",
-                      true);
     prm.declare_entry("min temperature",
                       "-999",
                       Patterns::Double(),
@@ -897,9 +893,6 @@ namespace Parameters
         Patterns::Bool(),
         "Apply Discontinuity-Capturing Directional Dissipation (DCDD) "
         "stabilization term on the CLS phase indicator <true|false>");
-      prm.declare_alias("cls dcdd stabilization",
-                        "vof dcdd stabilization",
-                        true);
 
       prm.declare_entry(
         "cls dcdd diffusion factor",
@@ -907,9 +900,6 @@ namespace Parameters
         Patterns::Double(),
         "Diffusion factor scaling the DCDD stabilization term in the CLS "
         "equation");
-      prm.declare_alias("cls dcdd diffusion factor",
-                        "vof dcdd diffusion factor",
-                        true);
 
       prm.declare_entry(
         "pressure scaling factor",
@@ -1907,66 +1897,46 @@ namespace Parameters
                         "1",
                         Patterns::Integer(0),
                         "interpolation degree for velocity");
-      prm.declare_alias("velocity degree", "velocity order", true);
       prm.declare_entry("pressure degree",
                         "1",
                         Patterns::Integer(0),
                         "interpolation degree for pressure");
-      prm.declare_alias("pressure degree", "pressure order", true);
       prm.declare_entry("void fraction degree",
                         "1",
                         Patterns::Integer(0),
                         "interpolation degree for void fraction");
-      prm.declare_alias("void fraction degree", "void fraction order", true);
       prm.declare_entry("temperature degree",
                         "1",
                         Patterns::Integer(0),
                         "interpolation degree for temperature");
-      prm.declare_alias("temperature degree", "temperature order", true);
       prm.declare_entry("tracer degree",
                         "1",
                         Patterns::Integer(0),
                         "interpolation degree for tracer");
-      prm.declare_alias("tracer degree", "tracer order", true);
       prm.declare_entry("cls degree",
                         "1",
                         Patterns::Integer(0),
                         "interpolation degree for cls");
-      prm.declare_alias("cls degree", "VOF degree");
-      prm.declare_alias("cls degree", "cls order", true);
-      prm.declare_alias("cls degree", "VOF order", true);
       prm.declare_entry(
         "phase cahn hilliard degree",
         "1",
         Patterns::Integer(),
         "interpolation degree phase parameter for the Cahn-Hilliard equations");
-      prm.declare_alias("phase cahn hilliard degree",
-                        "phase cahn hilliard order",
-                        true);
       prm.declare_entry(
         "potential cahn hilliard degree",
         "1",
         Patterns::Integer(),
         "interpolation degree chemical potential for the Cahn-Hilliard equations");
-      prm.declare_alias("potential cahn hilliard degree",
-                        "potential cahn hilliard order",
-                        true);
       prm.declare_entry(
         "electromagnetics trial degree",
         "1",
         Patterns::Integer(),
         "interpolation degree for the trial space of the electromagnetics physics (time-harmonic Maxwell equations).");
-      prm.declare_alias("electromagnetics trial degree",
-                        "electromagnetics trial order",
-                        true);
       prm.declare_entry(
         "electromagnetics test degree",
         "2",
         Patterns::Integer(),
         "interpolation degree for the test space of the electromagnetics physics (time-harmonic Maxwell equations).");
-      prm.declare_alias("electromagnetics test degree",
-                        "electromagnetics test order",
-                        true);
 
       prm.declare_entry(
         "tracer uses dg",
@@ -1979,7 +1949,6 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Switch CLS to Discontinuous Galerkin (DG) formulation");
-      prm.declare_alias("cls uses dg", "VOF uses dg", true);
 
       prm.declare_entry(
         "enable bubble function velocity",
@@ -3308,9 +3277,6 @@ namespace Parameters
               "0",
               Patterns::Integer(0),
               "Additional refinements of the principal mesh within the area delimited by the 'box' mesh.");
-            prm.declare_alias("additional refinement",
-                              "initial refinement",
-                              true);
           }
           prm.leave_subsection();
         }
@@ -4524,7 +4490,6 @@ namespace Parameters
           "2",
           Patterns::Integer(1),
           "The polynomial degree used in the extrapolation function");
-        prm.declare_alias("stencil degree", "stencil order", true);
         prm.declare_entry(
           "length ratio",
           "4",
