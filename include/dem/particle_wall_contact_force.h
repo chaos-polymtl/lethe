@@ -1191,11 +1191,15 @@ private:
   Point<3>                                   center_mass_container;
 
   // Containers
-  typedef std::vector<
-    std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               double,
-               LetheGridTools::ParticleTriangleContactIndicator,
-               particle_wall_contact_info<dim> *>>
+  struct particle_triangle_contact_candidate
+  {
+    typename Triangulation<dim - 1, dim>::active_cell_iterator triangle_cell;
+    double                                                     normal_overlap;
+    LetheGridTools::ParticleTriangleContactIndicator contact_indicator;
+    particle_wall_contact_info<dim>                 *contact_info;
+  };
+
+  typedef std::vector<particle_triangle_contact_candidate>
     particle_triangle_contact_description;
 
   typedef ankerl::unordered_dense::map<types::particle_index,

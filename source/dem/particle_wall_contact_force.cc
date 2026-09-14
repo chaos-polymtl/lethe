@@ -270,10 +270,10 @@ ParticleWallContactForce<dim,
                C1 != this_contact_record.end();)
             {
               // Extract the information of C1
-              auto T1_cell              = std::get<0>(*C1);
-              auto contact_indicator_C1 = std::get<2>(*C1);
+              auto T1_cell              = C1->triangle_cell;
+              auto contact_indicator_C1 = C1->contact_indicator;
               particle_wall_contact_info<dim> &contact_info_C1 =
-                *std::get<3>(*C1);
+                *C1->contact_info;
 
               // Assigning the triangle neighboring list of T1;
               const auto &T1_es_neighbors = this_solid_es_neighbors.at(T1_cell);
@@ -286,10 +286,10 @@ ParticleWallContactForce<dim,
               while (C2 != this_contact_record.end())
                 {
                   // Extract the information of C2
-                  auto T2_cell              = std::get<0>(*C2);
-                  auto contact_indicator_C2 = std::get<2>(*C2);
+                  auto T2_cell              = C2->triangle_cell;
+                  auto contact_indicator_C2 = C2->contact_indicator;
                   particle_wall_contact_info<dim> &contact_info_C2 =
-                    *std::get<3>(*C2);
+                    *C2->contact_info;
 
                   // First, we check if both triangle are neighbors. If they
                   // are not neighbors, C1 and C2 are automatically valid.
@@ -479,9 +479,9 @@ ParticleWallContactForce<dim,
                ++contact)
             {
               //  Extract the information of the contact
-              auto normal_overlap = std::get<1>(*contact);
+              auto normal_overlap = contact->normal_overlap;
               particle_wall_contact_info<dim> &contact_info =
-                *std::get<3>(*contact);
+                *contact->contact_info;
 
               // Defining local variables which will be used within the
               // contact calculation
