@@ -203,6 +203,12 @@ ParticleWallContactForce<dim,
                ++vertex)
             triangle[vertex] = triangle_cell_iterator->vertex(vertex);
 
+          // Precompute this triangle's particle-independent geometric data
+          // (edge vectors, normal, fundamental-form coefficients) once, so
+          // it is not recomputed for every particle candidate below.
+          const auto triangle_data =
+            LetheGridTools::prepare_triangle_projection_data(triangle);
+
           // We reserve the contact record of this triangle an arbitrary number
           // of contacts
           contact_record.reserve(map_info.size());
@@ -213,7 +219,7 @@ ParticleWallContactForce<dim,
               // We check the contact between the triangle and the particle.
               auto particle_triangle_information = LetheGridTools::
                 find_particle_triangle_projection<dim, PropertiesIndex>(
-                  triangle, contact_info.particle);
+                  triangle_data, contact_info.particle);
 
               const auto &[pass_distance_check,
                            projection_point,

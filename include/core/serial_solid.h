@@ -18,6 +18,8 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 /**
@@ -184,10 +186,10 @@ public:
     return id;
   }
 
-  typedef std::map<
+  typedef std::unordered_map<
     typename Triangulation<dim, spacedim>::active_cell_iterator,
     std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
-    cut_cell_comparison<spacedim>>
+    cut_cell_hash<spacedim>>
     triangulation_cell_neighbors_map;
 
   /**

@@ -1218,34 +1218,56 @@ LetheGridTools::find_cells_cut_by_object(
   std::vector<SerialSolid<1, 2>> &list_of_objects);
 
 
+template <int dim>
+LetheGridTools::TriangleProjectionData<dim>
+LetheGridTools::prepare_triangle_projection_data(
+  const std::vector<Point<dim>> &triangle)
+{
+  const auto &p_0 = triangle[0];
+  const auto &p_1 = triangle[1];
+  const auto &p_2 = triangle[2];
+
+  TriangleProjectionData<dim> triangle_data;
+  triangle_data.p_0 = p_0;
+  triangle_data.e_0 = p_1 - p_0;
+  triangle_data.e_1 = p_2 - p_0;
+
+  const Tensor<1, dim> normal =
+    cross_product_3d(triangle_data.e_0, triangle_data.e_1);
+  triangle_data.unit_normal = normal / normal.norm();
+
+  triangle_data.a   = triangle_data.e_0.norm_square();
+  triangle_data.b   = scalar_product(triangle_data.e_0, triangle_data.e_1);
+  triangle_data.c   = triangle_data.e_1.norm_square();
+  triangle_data.det = triangle_data.a * triangle_data.c -
+                      triangle_data.b * triangle_data.b;
+
+  return triangle_data;
+}
+
 template <int dim, typename PropertiesIndex>
 std::tuple<bool,
            Point<3>,
            Tensor<1, 3>,
            LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::find_particle_triangle_projection(
-  const std::vector<Point<dim>>          &triangle,
+  const TriangleProjectionData<dim>      &triangle_data,
   const Particles::ParticleIterator<dim> &particle)
 {
   // Variable declarations
   bool pass_distance_check;
 
-  auto &p_0 = triangle[0];
-  auto &p_1 = triangle[1];
-  auto &p_2 = triangle[2];
+  const Point<dim>     &p_0 = triangle_data.p_0;
+  const Tensor<1, dim> &e_0 = triangle_data.e_0;
+  const Tensor<1, dim> &e_1 = triangle_data.e_1;
 
-  const Tensor<1, dim> e_0 = p_1 - p_0;
-  const Tensor<1, dim> e_1 = p_2 - p_0;
-
-  Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
-  const double   norm_normal = normal.norm();
-  Tensor<1, dim> unit_normal = normal / norm_normal;
+  Tensor<1, dim> unit_normal = triangle_data.unit_normal;
   Tensor<1, 3>   unit_normal_3d;
 
-  const double a   = e_0.norm_square();
-  const double b   = scalar_product(e_0, e_1);
-  const double c   = e_1.norm_square();
-  const double det = a * c - b * b;
+  const double a   = triangle_data.a;
+  const double b   = triangle_data.b;
+  const double c   = triangle_data.c;
+  const double det = triangle_data.det;
 
   // Pre-allocation for speed
   const double radius = particle->get_properties()[PropertiesIndex::dp] * 0.5;
@@ -1440,8 +1462,10 @@ LetheGridTools::find_particle_triangle_projection(
   if (!region_zero)
     {
       // normal vector
-      normal         = particle_position - pt_in_triangle;
-      unit_normal_3d = tensor_nd_to_3d(normal / normal.norm());
+      const Tensor<1, dim> point_to_particle_normal =
+        particle_position - pt_in_triangle;
+      unit_normal_3d =
+        tensor_nd_to_3d(point_to_particle_normal / point_to_particle_normal.norm());
     }
 
   // Cast pt_in_triangle on Point<3>
@@ -1454,6 +1478,14 @@ LetheGridTools::find_particle_triangle_projection(
                          contact_indicator);
 }
 
+template LetheGridTools::TriangleProjectionData<2>
+LetheGridTools::prepare_triangle_projection_data<2>(
+  const std::vector<Point<2>> &triangle);
+
+template LetheGridTools::TriangleProjectionData<3>
+LetheGridTools::prepare_triangle_projection_data<3>(
+  const std::vector<Point<3>> &triangle);
+
 // input dim == 2
 template std::tuple<bool,
                     Point<3>,
@@ -1461,8 +1493,8 @@ template std::tuple<bool,
                     LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::DEMProperties::PropertiesIndex>(
-    const std::vector<Point<2>>          &triangle,
-    const Particles::ParticleIterator<2> &particle);
+    const LetheGridTools::TriangleProjectionData<2> &triangle_data,
+    const Particles::ParticleIterator<2>            &particle);
 
 template std::tuple<bool,
                     Point<3>,
@@ -1470,8 +1502,8 @@ template std::tuple<bool,
                     LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::CFDDEMProperties::PropertiesIndex>(
-    const std::vector<Point<2>>          &triangle,
-    const Particles::ParticleIterator<2> &particle);
+    const LetheGridTools::TriangleProjectionData<2> &triangle_data,
+    const Particles::ParticleIterator<2>            &particle);
 
 template std::tuple<bool,
                     Point<3>,
@@ -1479,8 +1511,8 @@ template std::tuple<bool,
                     LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::DEMMPProperties::PropertiesIndex>(
-    const std::vector<Point<2>>          &triangle,
-    const Particles::ParticleIterator<2> &particle);
+    const LetheGridTools::TriangleProjectionData<2> &triangle_data,
+    const Particles::ParticleIterator<2>            &particle);
 
 template std::tuple<bool,
                     Point<3>,
@@ -1489,8 +1521,8 @@ template std::tuple<bool,
 LetheGridTools::find_particle_triangle_projection<
   2,
   DEM::CFDDEMMPProperties::PropertiesIndex>(
-  const std::vector<Point<2>>          &triangle,
-  const Particles::ParticleIterator<2> &particle);
+  const LetheGridTools::TriangleProjectionData<2> &triangle_data,
+  const Particles::ParticleIterator<2>            &particle);
 
 // input dim == 3
 template std::tuple<bool,
@@ -1499,8 +1531,8 @@ template std::tuple<bool,
                     LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::DEMProperties::PropertiesIndex>(
-    const std::vector<Point<3>>          &triangle,
-    const Particles::ParticleIterator<3> &particle);
+    const LetheGridTools::TriangleProjectionData<3> &triangle_data,
+    const Particles::ParticleIterator<3>            &particle);
 
 template std::tuple<bool,
                     Point<3>,
@@ -1508,8 +1540,8 @@ template std::tuple<bool,
                     LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::CFDDEMProperties::PropertiesIndex>(
-    const std::vector<Point<3>>          &triangle,
-    const Particles::ParticleIterator<3> &particle);
+    const LetheGridTools::TriangleProjectionData<3> &triangle_data,
+    const Particles::ParticleIterator<3>            &particle);
 
 template std::tuple<bool,
                     Point<3>,
@@ -1517,8 +1549,8 @@ template std::tuple<bool,
                     LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::DEMMPProperties::PropertiesIndex>(
-    const std::vector<Point<3>>          &triangle,
-    const Particles::ParticleIterator<3> &particle);
+    const LetheGridTools::TriangleProjectionData<3> &triangle_data,
+    const Particles::ParticleIterator<3>            &particle);
 
 template std::tuple<bool,
                     Point<3>,
@@ -1527,8 +1559,8 @@ template std::tuple<bool,
 LetheGridTools::find_particle_triangle_projection<
   3,
   DEM::CFDDEMMPProperties::PropertiesIndex>(
-  const std::vector<Point<3>>          &triangle,
-  const Particles::ParticleIterator<3> &particle);
+  const LetheGridTools::TriangleProjectionData<3> &triangle_data,
+  const Particles::ParticleIterator<3>            &particle);
 
 
 template <int dim>
