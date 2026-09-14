@@ -21,16 +21,6 @@ namespace Parameters
                           "0., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Gravitational acceleration vector");
-        prm.declare_entry(
-          "gy",
-          "0.",
-          Patterns::Double(),
-          "Gravitational acceleration in y direction (deprecated, use <g> as vector)");
-        prm.declare_entry(
-          "gz",
-          "0.",
-          Patterns::Double(),
-          "Gravitational acceleration in z direction (deprecated, use <g> as vector)");
 
         prm.declare_entry("number of particle types",
                           "1",
@@ -164,14 +154,7 @@ namespace Parameters
                             thermal_accommodation_particle,
                             real_youngs_modulus_particle);
 
-      // Deprecated parameter handling
-      // <g> used to be 3 parameters: <gx>, <gy> and <gz>
-      // If <gx> is in the input file, it will be used as the value for <g>
-      // as an alias. This way, the parameter <g> is not a tensor and allows the
-      // parsing of deprecated parameters.
-      g = value_string_to_tensor<3>(prm.get("g"),
-                                    prm.get_double("gy"),
-                                    prm.get_double("gz"));
+      g = value_string_to_tensor<3>(prm.get("g"));
 
       particle_type_number = prm.get_integer("number of particle types");
 

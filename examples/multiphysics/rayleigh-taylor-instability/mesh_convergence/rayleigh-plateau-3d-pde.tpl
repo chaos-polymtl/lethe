@@ -12,18 +12,18 @@ set print parameters = all
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set time end         = 0.08
-  set time step        = MAX_TIME_STEP
-  set output name      = CASE_NAME
-  set output frequency = 200
-  set output path      = ./output/
-  set adapt            = true
-  set max cfl          = 0.25
-  set max time step    = MAX_TIME_STEP
-  set group files      = 96
-  set subdivision      = 1
-  #set output time interval = 0.05, 0.08
+  set method                         = bdf2
+  set time end                       = 0.08
+  set time step                      = MAX_TIME_STEP
+  set output name                    = CASE_NAME
+  set output frequency               = 200
+  set output path                    = ./output/
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.25
+  set max time step                  = MAX_TIME_STEP
+  set group files                    = 96
+  set subdivision                    = 1
+  #set output time interval           = 0.05, 0.08
 end
 
 #---------------------------------------------------
@@ -51,11 +51,11 @@ subsection CLS
       set interface sharpness = 1.5
     end
     subsection PDE-based interface reinitialization
-      set steady-state criterion = 1e-4
-      set max steps number       = 10000
-      set diffusivity multiplier = DIFFUSIVITY_MULT
-      set diffusivity power      = 1.0
-      set reinitialization CFL   = 0.25
+      set steady-state criterion      = 1e-4
+      set max steps number            = 10000
+      set diffusivity multiplier      = DIFFUSIVITY_MULT
+      set diffusivity power           = 1.0
+      set artificial time-step factor = 0.25
     end
     subsection geometric interface reinitialization
       set max reinitialization distance = REINITIALIZATION_DISTANCE
