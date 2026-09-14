@@ -167,6 +167,12 @@ ParticleWallContactForce<dim,
   // Initiate containers
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
 
+  // Ensure there is one persistent contact record per solid object, reused
+  // (and cleared) every call instead of being reallocated from scratch each
+  // DEM timestep.
+  if (solid_contact_records.size() != solids.size())
+    solid_contact_records.resize(solids.size());
+
   // Iterating over the solid objects
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
@@ -175,21 +181,34 @@ ParticleWallContactForce<dim,
       const auto &[this_solid_es_neighbors, this_solid_vs_neighbors] =
         solids[solid_counter]->get_neighbors_maps();
 
-      // For each solid surface, we create a map, called the contact_record,
-      // used to store every contact. The key of that map is the particle local
-      // ID. The value is a vector of tuple storing the required information to
-      // compute the contact force later on.
+      // For each solid surface, we reuse a persistent map, called the
+      // contact_record, used to store every contact. The key of that map is
+      // the particle local ID. The value is a vector of tuple storing the
+      // required information to compute the contact force later on.
       // The information includes:
       // 1. The triangle cell with which the contact is occurring,
       // 2. The normal overlap,
       // 3. The type of contact (face, edge or vertex)
       // 4. The contact info associated.
-      particle_triangle_contact_record contact_record;
+      particle_triangle_contact_record &contact_record =
+        solid_contact_records[solid_counter];
+      contact_record.clear();
 
       typename dem_data_structures<
         dim>::particle_triangle_cell_from_mesh_potentially_in_contact
         &particle_floating_mesh_potential_contact_pair =
           particle_floating_mesh_potentially_in_contact[solid_counter];
+
+      // Reserve for an upper bound on the number of distinct particles this
+      // solid's contact record will hold (the same particle may appear near
+      // several triangles, so this sum over-counts, but never under-counts),
+      // so it isn't repeatedly rehashed while accumulating contacts across
+      // triangles below.
+      std::size_t total_candidate_count = 0;
+      for (const auto &triangle_entry :
+           particle_floating_mesh_potential_contact_pair)
+        total_candidate_count += triangle_entry.second.size();
+      contact_record.reserve(total_candidate_count);
 
       // Loop over every triangle of the solid object
       for (auto &[triangle_cell_iterator, map_info] :
@@ -208,10 +227,6 @@ ParticleWallContactForce<dim,
           // it is not recomputed for every particle candidate below.
           const auto triangle_data =
             LetheGridTools::prepare_triangle_projection_data(triangle);
-
-          // We reserve the contact record of this triangle an arbitrary number
-          // of contacts
-          contact_record.reserve(map_info.size());
 
           // Loop on every particle using their contact info
           for (auto &&contact_info : map_info | boost::adaptors::map_values)

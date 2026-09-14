@@ -1205,6 +1205,10 @@ private:
   typedef ankerl::unordered_dense::map<types::particle_index,
                                        particle_triangle_contact_description>
     particle_triangle_contact_record;
+
+  // One persistent contact record per solid object, reused (and cleared)
+  // every call instead of being reallocated from scratch each DEM timestep.
+  std::vector<particle_triangle_contact_record> solid_contact_records;
 };
 
 #endif
