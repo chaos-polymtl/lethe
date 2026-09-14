@@ -724,7 +724,6 @@ namespace BoundaryConditions
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
-
   }
 
   /**
