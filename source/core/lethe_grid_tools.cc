@@ -1236,11 +1236,11 @@ LetheGridTools::prepare_triangle_projection_data(
     cross_product_3d(triangle_data.e_0, triangle_data.e_1);
   triangle_data.unit_normal = normal / normal.norm();
 
-  triangle_data.a   = triangle_data.e_0.norm_square();
-  triangle_data.b   = scalar_product(triangle_data.e_0, triangle_data.e_1);
-  triangle_data.c   = triangle_data.e_1.norm_square();
-  triangle_data.det = triangle_data.a * triangle_data.c -
-                      triangle_data.b * triangle_data.b;
+  triangle_data.a = triangle_data.e_0.norm_square();
+  triangle_data.b = scalar_product(triangle_data.e_0, triangle_data.e_1);
+  triangle_data.c = triangle_data.e_1.norm_square();
+  triangle_data.det =
+    triangle_data.a * triangle_data.c - triangle_data.b * triangle_data.b;
 
   return triangle_data;
 }
@@ -1464,8 +1464,8 @@ LetheGridTools::find_particle_triangle_projection(
       // normal vector
       const Tensor<1, dim> point_to_particle_normal =
         particle_position - pt_in_triangle;
-      unit_normal_3d =
-        tensor_nd_to_3d(point_to_particle_normal / point_to_particle_normal.norm());
+      unit_normal_3d = tensor_nd_to_3d(point_to_particle_normal /
+                                       point_to_particle_normal.norm());
     }
 
   // Cast pt_in_triangle on Point<3>

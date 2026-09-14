@@ -183,7 +183,7 @@ ParticleWallContactForce<dim,
 
       // For each solid surface, we reuse a persistent map, called the
       // contact_record, used to store every contact. The key of that map is
-      // the particle local ID. The value is a vector of tuple storing the
+      // the particle local ID. The value is a vector of struct storing the
       // required information to compute the contact force later on.
       // The information includes:
       // 1. The triangle cell with which the contact is occurring,
