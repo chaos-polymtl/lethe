@@ -74,7 +74,7 @@ We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the 
 
 .. tip::
 
-  The -DCMAKE_CXX_FLAGS="-march=native" works on both Rorqual, Nibi, and Trillium. To ensure that the flag has worked correctly, the cmake output should contain the following information : ``Vectorization level:    512 bit (sse2 avx2 avx512*)``.
+  The -DCMAKE_CXX_FLAGS="-march=native" works on both Rorqual, Nibi, Fir and Trillium. To ensure that the flag has worked correctly, the cmake output should contain the following information : ``Vectorization level:    512 bit (sse2 avx2 avx512*)``.
 
 .. warning::
 
@@ -134,6 +134,7 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
   #SBATCH --time=1:00:00 #maximum time for the simulation (hh:mm:ss)
   #SBATCH --mem=120G #memory usage per node. See cluster specification for maximal amount.
   #SBATCH --job-name=$yourjobname
+  #SBATCH --output=$outputname
   #SBATCH --mail-type=ALL
   #SBATCH --mail-user=$your.email.address@email.provider
 
@@ -147,6 +148,9 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
 .. tip::
     If you have jobs that need to be launched one after the other, you can add ``#SBATCH --dependency=$previous-slurm-job-id`` to your launching script. This will make sure that the job will only start once the previous job has finished.
 
+.. warning::
+    On nibi, the ``mpirun lethe_application_name_wanted`` must be replace by ``mpirun --mca fs_ufs_lock_algorithm 1 lethe_application_name_wanted`` in your ``job.sh`` file for checkpointing to work effectively.
+
 The job is sent using:
 
 .. code-block:: text
@@ -154,9 +158,9 @@ The job is sent using:
 
   sbatch job.sh
 
-Status can be followed with the ``sq`` command: under ``ST``, ``PD`` indicates a pending job, and ``R`` a running job.
+Status can be followed with the ``squeue`` (or ``sq``) command: under ``ST``, ``PD`` indicates a pending job, and ``R`` a running job. The flag ``--start`` can be added to this command to display the time at which a job is estimated to be start according to the job scheduler.
 
-Console outputs are written in ``slurm-$jobID.out``. For instance, to display the 20 last lines from this file, use:
+Console outputs are written in ``$outputname``, or in ``slurm-$jobID.out`` if left undefined. For instance, to display the 20 last lines from this file, use:
 
 .. code-block:: text
   :class: copy-button
@@ -173,11 +177,13 @@ Please consult the documentation for the machine you are using for the specifica
 +=================+=====================+=====================+==============================================+
 | Narval          | 64                  | 248 Go              | https://docs.alliancecan.ca/wiki/Narval/en   |
 +-----------------+---------------------+---------------------+----------------------------------------------+
-| Trillium        | 192                 | 755 Go              | https://docs.alliancecan.ca/wiki/Trillium/en |
+| Trillium        | 192                 | 749 Go              | https://docs.alliancecan.ca/wiki/Trillium/en |
 +-----------------+---------------------+---------------------+----------------------------------------------+
-| Rorqual         | 192                 | 760 Go              | https://docs.alliancecan.ca/wiki/Rorqual/en  |
+| Rorqual         | 192                 | 750 Go              | https://docs.alliancecan.ca/wiki/Rorqual/en  |
 +-----------------+---------------------+---------------------+----------------------------------------------+
-| Nibi            | 192                 | 754 Go              | https://docs.alliancecan.ca/wiki/Nibi/en     |
+| Nibi            | 192                 | 748 Go              | https://docs.alliancecan.ca/wiki/Nibi/en     |
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Fir             | 192                 | 750 Go              | https://docs.alliancecan.ca/wiki/Fir/en      |
 +-----------------+---------------------+---------------------+----------------------------------------------+
 
 Saving a SSH Key (Linux)

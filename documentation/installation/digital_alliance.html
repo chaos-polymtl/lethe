@@ -503,7 +503,7 @@ export PATH=$PATH:$HOME/lethe/inst/bin/
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>The -DCMAKE_CXX_FLAGS=”-march=native” works on both Rorqual, Nibi, and Trillium. To ensure that the flag has worked correctly, the cmake output should contain the following information : <code class="docutils literal notranslate"><span class="pre">Vectorization</span> <span class="pre">level:</span>&#160;&#160;&#160; <span class="pre">512</span> <span class="pre">bit</span> <span class="pre">(sse2</span> <span class="pre">avx2</span> <span class="pre">avx512*)</span></code>.</p>
+<p>The -DCMAKE_CXX_FLAGS=”-march=native” works on both Rorqual, Nibi, Fir and Trillium. To ensure that the flag has worked correctly, the cmake output should contain the following information : <code class="docutils literal notranslate"><span class="pre">Vectorization</span> <span class="pre">level:</span>&#160;&#160;&#160; <span class="pre">512</span> <span class="pre">bit</span> <span class="pre">(sse2</span> <span class="pre">avx2</span> <span class="pre">avx512*)</span></code>.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -542,6 +542,7 @@ nice ninja -j6 install
 #SBATCH --time=1:00:00 #maximum time for the simulation (hh:mm:ss)
 #SBATCH --mem=120G #memory usage per node. See cluster specification for maximal amount.
 #SBATCH --job-name=$yourjobname
+#SBATCH --output=$outputname
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=$your.email.address@email.provider
 
@@ -557,12 +558,16 @@ mpirun lethe_application_name_wanted parameter_file_name.prm
 <p class="admonition-title">Tip</p>
 <p>If you have jobs that need to be launched one after the other, you can add <code class="docutils literal notranslate"><span class="pre">#SBATCH</span> <span class="pre">--dependency=$previous-slurm-job-id</span></code> to your launching script. This will make sure that the job will only start once the previous job has finished.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>On nibi, the <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">lethe_application_name_wanted</span></code> must be replace by <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">--mca</span> <span class="pre">fs_ufs_lock_algorithm</span> <span class="pre">1</span> <span class="pre">lethe_application_name_wanted</span></code> in your <code class="docutils literal notranslate"><span class="pre">job.sh</span></code> file for checkpointing to work effectively.</p>
+</div>
 <p>The job is sent using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sbatch job.sh
 </pre></div>
 </div>
-<p>Status can be followed with the <code class="docutils literal notranslate"><span class="pre">sq</span></code> command: under <code class="docutils literal notranslate"><span class="pre">ST</span></code>, <code class="docutils literal notranslate"><span class="pre">PD</span></code> indicates a pending job, and <code class="docutils literal notranslate"><span class="pre">R</span></code> a running job.</p>
-<p>Console outputs are written in <code class="docutils literal notranslate"><span class="pre">slurm-$jobID.out</span></code>. For instance, to display the 20 last lines from this file, use:</p>
+<p>Status can be followed with the <code class="docutils literal notranslate"><span class="pre">squeue</span></code> (or <code class="docutils literal notranslate"><span class="pre">sq</span></code>) command: under <code class="docutils literal notranslate"><span class="pre">ST</span></code>, <code class="docutils literal notranslate"><span class="pre">PD</span></code> indicates a pending job, and <code class="docutils literal notranslate"><span class="pre">R</span></code> a running job. The flag <code class="docutils literal notranslate"><span class="pre">--start</span></code> can be added to this command to display the time at which a job is estimated to be start according to the job scheduler.</p>
+<p>Console outputs are written in <code class="docutils literal notranslate"><span class="pre">$outputname</span></code>, or in <code class="docutils literal notranslate"><span class="pre">slurm-$jobID.out</span></code> if left undefined. For instance, to display the 20 last lines from this file, use:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>tail -n 20 slurm-$jobID.out
 </pre></div>
 </div>
@@ -587,18 +592,23 @@ mpirun lethe_application_name_wanted parameter_file_name.prm
 </tr>
 <tr class="row-odd"><td><p>Trillium</p></td>
 <td><p>192</p></td>
-<td><p>755 Go</p></td>
+<td><p>749 Go</p></td>
 <td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Trillium/en">https://docs.alliancecan.ca/wiki/Trillium/en</a></p></td>
 </tr>
 <tr class="row-even"><td><p>Rorqual</p></td>
 <td><p>192</p></td>
-<td><p>760 Go</p></td>
+<td><p>750 Go</p></td>
 <td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Rorqual/en">https://docs.alliancecan.ca/wiki/Rorqual/en</a></p></td>
 </tr>
 <tr class="row-odd"><td><p>Nibi</p></td>
 <td><p>192</p></td>
-<td><p>754 Go</p></td>
+<td><p>748 Go</p></td>
 <td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Nibi/en">https://docs.alliancecan.ca/wiki/Nibi/en</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Fir</p></td>
+<td><p>192</p></td>
+<td><p>750 Go</p></td>
+<td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Fir/en">https://docs.alliancecan.ca/wiki/Fir/en</a></p></td>
 </tr>
 </tbody>
 </table>
