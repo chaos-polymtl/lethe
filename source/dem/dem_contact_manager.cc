@@ -395,6 +395,17 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_broad_search(
 
 template <int dim, typename PropertiesIndex>
 void
+DEMContactManager<dim, PropertiesIndex>::set_periodic_offset_per_direction(
+  const Tensor<1, dim> &offset_per_direction)
+{
+  this->periodic_offset_per_direction = offset_per_direction;
+  for (int d = 0; d < dim; ++d)
+    this->inverse_periodic_offset_per_direction[d] =
+      offset_per_direction[d] != 0. ? 1. / offset_per_direction[d] : 0.;
+}
+
+template <int dim, typename PropertiesIndex>
+void
 DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
   const double neighborhood_threshold)
 {
@@ -421,7 +432,8 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
         local_local_periodic_adjacent_particles,
         local_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        periodic_offset_per_direction);
+        periodic_offset_per_direction,
+        inverse_periodic_offset_per_direction);
 
       // Fine search for local-ghost periodic particle-particle
       particle_particle_fine_search<dim, ghost_periodic_particle_particle>(
@@ -429,7 +441,8 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
         local_ghost_periodic_adjacent_particles,
         ghost_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        periodic_offset_per_direction);
+        periodic_offset_per_direction,
+        inverse_periodic_offset_per_direction);
 
       // Fine search for ghost-local periodic particle-particle
       particle_particle_fine_search<dim,
@@ -438,7 +451,8 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
         ghost_local_periodic_adjacent_particles,
         ghost_local_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        periodic_offset_per_direction);
+        periodic_offset_per_direction,
+        inverse_periodic_offset_per_direction);
     }
 }
 
