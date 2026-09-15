@@ -1,14 +1,13 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Application test for compute_combined_periodic_offsets in 3D.
+# Application test for periodic_offset_per_direction in 3D.
 #
 # Two stationary particles are placed in slight overlap across the
 # z-periodic boundary, in a fully periodic unit cube. The periodic BCs are
 # registered in the order x, y, z so that a correct contact requires the
-# pure +/- offset of the THIRD registered pair to be present in
-# combined_periodic_offsets, which was the case missed most aggressively
-# by the original implementation bug. The Hertzian repulsion pushes them apart along z.
+# offset of the THIRD registered pair to be correctly accumulated into
+# periodic_offset_per_direction. The Hertzian repulsion pushes them apart along z.
 #
 # Simulation horizon is intentionally short to keep the dynamics 1D and
 # robust to floating-point drift.

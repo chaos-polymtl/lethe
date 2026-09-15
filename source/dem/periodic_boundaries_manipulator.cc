@@ -13,6 +13,7 @@
 #include <deal.II/fe/fe_values.h>
 
 #include <algorithm>
+#include <array>
 #include <ranges>
 #include <unordered_map>
 
@@ -22,6 +23,52 @@ template <int dim>
 PeriodicBoundariesManipulator<dim>::PeriodicBoundariesManipulator()
   : periodic_boundaries_enabled(false)
 {}
+
+template <int dim>
+void
+PeriodicBoundariesManipulator<dim>::set_periodic_boundaries_information(
+  const Parameters::PeriodicBoundaries &periodic_boundaries)
+{
+  // If this function is reached and the map is not empty
+  if (periodic_boundaries.empty())
+    return;
+
+  // compute_periodic_offset_per_direction() sums every periodic boundary
+  // pair's offset directly into a single Tensor<1, dim>, one component per
+  // direction. This requires at most one periodic boundary pair per
+  // direction: two pairs sharing a direction would silently add into the
+  // same component and corrupt the periodic contact search.
+  std::array<bool, dim> direction_is_used{};
+  for (const auto &[id, boundary] : periodic_boundaries)
+    {
+      AssertThrow(boundary.direction < static_cast<unsigned int>(dim),
+                  ExcMessage(
+                    "PeriodicBoundariesManipulator: periodic direction " +
+                    std::to_string(boundary.direction) +
+                    " configured for boundary id " + std::to_string(id) +
+                    " is out of range for a " + std::to_string(dim) +
+                    "D simulation."));
+      AssertThrow(
+        !direction_is_used[boundary.direction],
+        ExcMessage(
+          "PeriodicBoundariesManipulator: more than one periodic boundary "
+          "pair is configured for direction " +
+          std::to_string(boundary.direction) +
+          ". At most one periodic boundary pair per direction is "
+          "supported."));
+      direction_is_used[boundary.direction] = true;
+    }
+
+  periodic_boundaries_enabled = true;
+
+  // Communicate to the action manager that there are periodic boundaries
+  DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
+
+  this->periodic_boundaries = periodic_boundaries;
+
+  // Initialize offset map
+  this->periodic_offsets.clear();
+}
 
 template <int dim>
 void
@@ -137,8 +184,9 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
         }
     }
 
-  // Once periodic offsets calculated, combine them
-  this->compute_combined_periodic_offsets();
+  // Once periodic offsets calculated, combine them into a single
+  // per-direction tensor
+  this->compute_periodic_offset_per_direction();
 }
 
 template <int dim>
@@ -227,39 +275,20 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
 
 template <int dim>
 void
-PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
+PeriodicBoundariesManipulator<dim>::compute_periodic_offset_per_direction()
 {
-  this->combined_periodic_offsets.clear();
+  Tensor<1, dim> offset_per_direction;
 
+  // Each entry of periodic_offsets is nonzero in exactly one component (the
+  // direction of that periodic boundary pair, see get_periodic_boundaries_info
+  // and map_periodic_cells), and set_periodic_boundaries_information()
+  // guarantees at most one pair per direction, so summing them gives, for
+  // every direction, the signed period of the domain along that direction
+  // (0 if the direction is not periodic).
   for (auto const &[id, offset] : this->periodic_offsets)
-    {
-      size_t current_size = this->combined_periodic_offsets.size();
+    offset_per_direction += offset;
 
-      if (current_size == 0)
-        {
-          // Seed with +/- offest for first PB pair
-          this->combined_periodic_offsets.push_back(offset);
-          this->combined_periodic_offsets.push_back(-offset);
-        }
-      else
-        {
-          // Pure +/- offset for the new direction: a particle may cross only
-          // this boundary pair without crossing any of the previous ones.
-          this->combined_periodic_offsets.push_back(offset);
-          this->combined_periodic_offsets.push_back(-offset);
-
-          for (size_t i = 0; i < current_size; ++i)
-            {
-              // A particle next to a periodic boundary can be next to pb0 or
-              // pb1. We need to account for its periodic images across periodic
-              // directions, hence the +/- offset.
-              this->combined_periodic_offsets.push_back(
-                this->combined_periodic_offsets[i] + offset);
-              this->combined_periodic_offsets.push_back(
-                this->combined_periodic_offsets[i] - offset);
-            }
-        }
-    }
+  this->periodic_offset_per_direction = offset_per_direction;
 }
 
 template <int dim>
