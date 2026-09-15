@@ -682,64 +682,9 @@ value_string_to_tensor(const std::string &value_string)
                     "or point."));
 
   Tensor<1, spacedim> output_tensor;
-  for (unsigned int i = 0; i < vector_of_double.size(); ++i)
+  for (int i = 0; i < spacedim; ++i)
     output_tensor[i] = vector_of_double[i];
 
-  return output_tensor;
-}
-
-/**
- * @brief Return the tensor corresponding to the @p value_string_0, but it can
- * also allow the usage of deprecated parameters that used to be 3 individual
- * entries instead of a list of values.
- * In the case of a single entry declaration, the delimiter separating the
- * elements of the @p value_string_0 is a comma (",").
- *
- * @remark The function is used to construct Point<spacedim> objects.
- *
- * @tparam spacedim Number of spatial dimensions (2D or 3D).
- *
- * @param[in] value_string_0 A string in the parameter file corresponding to the
- * first component of the tensor or to the tensor itself.
- * @param[in] value_1 A double in the parameter file corresponding to the
- * second component of the tensor.
- * @param[in] value_2 A double in the parameter file corresponding to the
- * third component of the tensor. Only specify if @p spacedim = 3.
- *
- * @return A Tensor<1,spacedim> corresponding to the input parameters in the
- * parameter file.
- */
-template <int spacedim>
-inline Tensor<1, spacedim>
-value_string_to_tensor(const std::string &value_string_0,
-                       const double      &value_1,
-                       const double      &value_2 = 0)
-{
-  std::vector<std::string> vector_of_string(
-    Utilities::split_string_list(value_string_0));
-  Tensor<1, spacedim> output_tensor;
-
-  // The used parameter is a list of values
-  if (vector_of_string.size() > 1)
-    {
-      std::vector<double> vector_of_double =
-        Utilities::string_to_double(vector_of_string);
-      Assert(vector_of_double.size() == 3 || vector_of_double.size() == 2,
-             ExcMessage("Invalid string: " + value_string_0 +
-                        ". This should be a two or three dimensional vector "
-                        "or point."));
-      for (unsigned int i = 0; i < vector_of_double.size(); ++i)
-        output_tensor[i] = vector_of_double[i];
-    }
-  else // Depreciated individual entries
-    {
-      // Since the first parameter is the alias of the new parameter,
-      // the value of the first parameter is obtained for its entry
-      output_tensor[0] = Utilities::string_to_double(value_string_0);
-      output_tensor[1] = value_1;
-      if constexpr (spacedim == 3)
-        output_tensor[2] = value_2;
-    }
   return output_tensor;
 }
 

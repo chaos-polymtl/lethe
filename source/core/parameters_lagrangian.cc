@@ -152,7 +152,16 @@ namespace Parameters
                             thermal_accommodation_particle,
                             real_youngs_modulus_particle);
 
-      g = value_string_to_tensor<3>(prm.get("g"));
+      std::vector<std::string> vector_of_string(
+        Utilities::split_string_list(prm.get("g")));
+      std::vector<double> vector_of_double =
+        Utilities::string_to_double(vector_of_string);
+
+      if (vector_of_double.size() == 2)
+        vector_of_double.push_back(0.);
+
+      for (unsigned int i = 0; i < 3; ++i)
+        g[i] = vector_of_double[i];
 
       particle_type_number = prm.get_integer("number of particle types");
 
