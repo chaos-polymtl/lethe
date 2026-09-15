@@ -202,7 +202,7 @@ ParticleWallContactForce<dim,
       // Reserve for an upper bound on the number of distinct particles this
       // solid's contact record will hold (the same particle may appear near
       // several triangles, so this sum over-counts, but never under-counts),
-      // so it isn't repeatedly rehashed while accumulating contacts across
+      // so it is not repeatedly rehashed while accumulating contacts across
       // triangles below.
       std::size_t total_candidate_count = 0;
       for (const auto &triangle_entry :

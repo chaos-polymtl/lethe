@@ -298,20 +298,22 @@ namespace LetheGridTools
    * fundamental form), precomputed once by prepare_triangle_projection_data
    * so that repeated find_particle_triangle_projection queries against the
    * same triangle (e.g. for several nearby particles) do not recompute it.
+   * This data is defined "Geometric Tools for Computer Graphics, Eberly 2003
+   * Chapter 10.3.2 - Point to triangle."
    *
    * @tparam dim An integer that denotes the number of spatial dimensions.
    */
   template <int dim>
   struct TriangleProjectionData
   {
-    Point<dim>     p_0;
-    Tensor<1, dim> e_0;
-    Tensor<1, dim> e_1;
-    Tensor<1, dim> unit_normal;
-    double         a;
-    double         b;
-    double         c;
-    double         det;
+    Point<dim>     p_0;         // Point 0
+    Tensor<1, dim> e_0;         // Vector (0 -> 1)
+    Tensor<1, dim> e_1;         // Vector (0 -> 2)
+    Tensor<1, dim> unit_normal; // Normal unit vector of the triangle
+    double         a;           // squared length of edge 0 (e_0.norm_square())
+    double         b;   // dot product between the two edge vectors (mixed term)
+    double         c;   // squared length of edge 1 (e_1.norm_square())
+    double         det; // Determinant
   };
 
   /**
