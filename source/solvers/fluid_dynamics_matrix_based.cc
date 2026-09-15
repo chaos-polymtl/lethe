@@ -32,6 +32,8 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <cmath>
+#include <exception>
 
 
 // Constructor for class FluidDynamicsMatrixBased
@@ -1748,7 +1750,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
           newton_update       = completely_distributed_solution;
           success             = true;
         }
-      catch (const ExceptionBase &e)
+      catch (const std::exception &e)
         {
           const bool last_attempt = (iter == max_iter - 1);
 
@@ -1891,7 +1893,7 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(const double absolute_residual,
           newton_update       = completely_distributed_solution;
           success             = true;
         }
-      catch (const ExceptionBase &e)
+      catch (const std::exception &e)
         {
           const bool last_attempt = (iter == max_iter - 1);
 
@@ -1925,7 +1927,7 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(const double absolute_residual,
 
 // The solver starts from the initial fill level provided in the parameter file.
 // If for any reason the linear solver crashes, it will restart with a fill
-// level increased by 1. This restart happens up to a maximum of 20 times, after
+// level increased by 1. This restart happens up to a maximum of 3 times, after
 // which it will let the solver crash. If a change happened on the fill level,
 // it will go back to its original value at the end of the restart process.
 template <int dim>
@@ -2016,7 +2018,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
           }
           success = true;
         }
-      catch (const ExceptionBase &e)
+      catch (const std::exception &e)
         {
           const bool last_attempt = (iter == max_iter - 1);
 
@@ -2035,7 +2037,11 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
                               << " (tolerance " << linear_solver_tolerance
                               << ")." << std::endl;
 
-                  if (nc->last_step < solver_control.max_steps())
+                  if (!std::isfinite(nc->last_residual))
+                    this->pcout
+                      << " The residual is not finite, which indicates a breakdown of the BiCGStab iteration or of the preconditioner."
+                      << std::endl;
+                  else if (nc->last_step < solver_control.max_steps())
                     this->pcout
                       << " The iteration budget was not exhausted, which points to a BiCGStab breakdown rather than slow convergence."
                       << std::endl;
