@@ -53,7 +53,6 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       "false",
                       Patterns::Bool(),
                       "CLS calculation <true|false>");
-    prm.declare_alias("cls", "VOF", true);
 
     prm.declare_entry("cahn hilliard",
                       "false",
@@ -76,9 +75,6 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       "false",
                       Patterns::Bool(),
                       "Thermal buoyancy force calculation <true|false>");
-    prm.declare_alias("thermal buoyancy force",
-                      "buoyancy force",
-                      true); // temporary alias for backward compatibility
     prm.declare_entry("microwave heating",
                       "false",
                       Patterns::Bool(),
@@ -395,9 +391,6 @@ Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       "4",
       Patterns::Double(),
       "Factor applied to the filter for phase indicator gradient calculations to damp high-frequency errors");
-    prm.declare_alias("phase indicator gradient diffusion factor",
-                      "phase fraction gradient diffusion factor",
-                      true);
 
     prm.declare_entry(
       "curvature diffusion factor",
@@ -545,9 +538,6 @@ Parameters::CLS_PDEBasedInterfaceReinitialization::declare_parameters(
       Patterns::Double(),
       "Factor multiplying the artificial time step in the PDE-based "
       "interface reinitialization.");
-    prm.declare_alias("artificial time-step factor",
-                      "reinitialization CFL",
-                      true);
   }
   prm.leave_subsection();
 }

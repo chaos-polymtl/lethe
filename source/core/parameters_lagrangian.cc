@@ -15,23 +15,10 @@ namespace Parameters
     {
       prm.enter_subsection("lagrangian physical properties");
       {
-        // Parameter <g> is a list of values, its deprecated version are
-        // individual parameters <gx>, <gy> and <gz>
         prm.declare_entry("g",
                           "0., 0., 0.",
-                          Patterns::List(Patterns::Double()),
+                          Patterns::List(Patterns::Double(), 2, 3),
                           "Gravitational acceleration vector");
-        prm.declare_alias("g", "gx", true);
-        prm.declare_entry(
-          "gy",
-          "0.",
-          Patterns::Double(),
-          "Gravitational acceleration in y direction (deprecated, use <g> as vector)");
-        prm.declare_entry(
-          "gz",
-          "0.",
-          Patterns::Double(),
-          "Gravitational acceleration in z direction (deprecated, use <g> as vector)");
 
         prm.declare_entry("number of particle types",
                           "1",
@@ -165,14 +152,16 @@ namespace Parameters
                             thermal_accommodation_particle,
                             real_youngs_modulus_particle);
 
-      // Deprecated parameter handling
-      // <g> used to be 3 parameters: <gx>, <gy> and <gz>
-      // If <gx> is in the input file, it will be used as the value for <g>
-      // as an alias. This way, the parameter <g> is not a tensor and allows the
-      // parsing of deprecated parameters.
-      g = value_string_to_tensor<3>(prm.get("g"),
-                                    prm.get_double("gy"),
-                                    prm.get_double("gz"));
+      std::vector<std::string> vector_of_string(
+        Utilities::split_string_list(prm.get("g")));
+      std::vector<double> vector_of_double =
+        Utilities::string_to_double(vector_of_string);
+
+      if (vector_of_double.size() == 2)
+        vector_of_double.push_back(0.);
+
+      for (unsigned int i = 0; i < 3; ++i)
+        g[i] = vector_of_double[i];
 
       particle_type_number = prm.get_integer("number of particle types");
 
@@ -272,9 +261,6 @@ namespace Parameters
         Patterns::List(Patterns::Double(0.)),
         "Probabilities associated with each diameter values for "
         "a custom distribution. ");
-      prm.declare_alias("custom distribution diameters probabilities",
-                        "Probabilities associated with each diameter value for "
-                        "a custom distribution. ");
 
       // Normal, lognormal and custom distributions
       prm.declare_entry("distribution weighting basis",

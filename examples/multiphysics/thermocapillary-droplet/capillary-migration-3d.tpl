@@ -56,7 +56,7 @@ subsection CLS
       set max steps number              = 10000
       set diffusivity multiplier        = EPSILON
       set diffusivity power             = 1.0
-      set reinitialization CFL          = 0.25
+      set artificial time-step factor   = 0.25
     end
     subsection geometric interface reinitialization
       set max reinitialization distance = REINITIALIZATION_DISTANCE
