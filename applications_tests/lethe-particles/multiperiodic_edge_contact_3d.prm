@@ -4,17 +4,17 @@
 # Edge-crossing companion to multiperiodic_single_axis_collisions_3d.
 #
 # Two stationary particles overlap across the y-z edge of a fully periodic
-# unit cube: their only near-image requires the COMBINED offset (0, +/-y,
-# +/-z), i.e. crossings of the second AND third registered periodic
-# pairs simultaneously, with no x-crossing involved. The y-z combined
-# offset is precisely one of the entries omitted by the original buggy
-# compute_combined_periodic_offsets, which only generated combined offsets
-# that involved the first registered pair (x).
+# unit cube: their nearest image requires a translation on BOTH the y and z
+# directions simultaneously (0, +/-y, +/-z), i.e. crossings of the second AND
+# third registered periodic pairs at once, with no x-crossing involved. This
+# exercises the minimum image convention's per-direction independence
+# (see particle_particle_fine_search): each periodic axis must produce its
+# own nonzero translation for this corner/edge case to be detected.
 #
 # The Hertzian repulsion separates them along the y-z diagonal.
 #
-# Together with single-axis test (which checks the pure
-# offsets) this covers both branches of the offset list construction.
+# Together with the single-axis test (which checks a lone periodic
+# direction) this covers both single- and multi-direction periodic images.
 
 # Listing of Parameters
 #----------------------
