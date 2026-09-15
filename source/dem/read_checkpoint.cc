@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/checkpoint_control.h>
+#include <core/utilities.h>
 
 #include <dem/dem_action_manager.h>
 #include <dem/read_checkpoint.h>
@@ -35,11 +36,11 @@ read_checkpoint(
   // Load checkpoint controller
   std::string checkpoint_controller_object_filename =
     prefix + ".checkpoint_controller";
+  check_file_exists(checkpoint_controller_object_filename,
+                    "checkpoint file of the checkpoint controller, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream iss_checkpoint_controller_obj(
     checkpoint_controller_object_filename);
-
-  AssertThrow(iss_checkpoint_controller_obj,
-              ExcFileNotOpen(checkpoint_controller_object_filename));
 
   boost::archive::text_iarchive ia_checkpoint_controller_obj(
     iss_checkpoint_controller_obj, boost::archive::no_header);
@@ -59,10 +60,11 @@ read_checkpoint(
     }
 
   // Gather particle serialization information
-  std::string   particle_filename = prefix + ".particles";
+  std::string particle_filename = prefix + ".particles";
+  check_file_exists(particle_filename,
+                    "checkpoint file of the particles, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(particle_filename.c_str());
-
-  AssertThrow(input, ExcFileNotOpen(particle_filename));
 
   std::string buffer;
   std::getline(input, buffer);
@@ -72,9 +74,9 @@ read_checkpoint(
   ia >> particle_handler;
 
   const std::string filename = prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-
-  AssertThrow(in, ExcFileNotOpen(filename));
+  check_file_exists(filename,
+                    "checkpoint file of the triangulation, given by "
+                    "'subsection restart' - 'set filename'");
 
   try
     {
@@ -93,8 +95,11 @@ read_checkpoint(
 
 
   // Load insertion object
-  std::string   insertion_object_filename = prefix + ".insertion_object";
-  std::ifstream iss_insertion_obj(insertion_object_filename);
+  std::string insertion_object_filename = prefix + ".insertion_object";
+  check_file_exists(insertion_object_filename,
+                    "checkpoint file of the insertion object, given by "
+                    "'subsection restart' - 'set filename'");
+  std::ifstream                 iss_insertion_obj(insertion_object_filename);
   boost::archive::text_iarchive ia_insertion_obj(iss_insertion_obj,
                                                  boost::archive::no_header);
   insertion_object->deserialize(ia_insertion_obj);

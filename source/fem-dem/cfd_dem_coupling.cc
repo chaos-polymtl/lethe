@@ -3,6 +3,7 @@
 
 #include <core/grids.h>
 #include <core/solutions_output.h>
+#include <core/utilities.h>
 
 #include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
@@ -279,6 +280,9 @@ CFDDEMSolver<dim, PropertiesIndex>::read_dem()
   // Load checkpoint controller
   std::string checkpoint_controller_object_filename =
     prefix + ".checkpoint_controller";
+  check_file_exists(checkpoint_controller_object_filename,
+                    "checkpoint file of the checkpoint controller, given by "
+                    "'subsection void fraction' - 'set dem file name'");
   std::ifstream iss_checkpoint_controller_obj(
     checkpoint_controller_object_filename);
   boost::archive::text_iarchive ia_checkpoint_controller_obj(
@@ -291,9 +295,11 @@ CFDDEMSolver<dim, PropertiesIndex>::read_dem()
   prefix = prefix + "_" + Utilities::int_to_string(checkpoint_id);
 
   // Gather particle serialization information
-  std::string   particle_filename = prefix + ".particles";
+  std::string particle_filename = prefix + ".particles";
+  check_file_exists(particle_filename,
+                    "checkpoint file of the particles, given by "
+                    "'subsection void fraction' - 'set dem file name'");
   std::ifstream input(particle_filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(particle_filename));
 
   std::string buffer;
   std::getline(input, buffer);
@@ -313,14 +319,9 @@ CFDDEMSolver<dim, PropertiesIndex>::read_dem()
   ia >> temporary_particle_handler;
 
   const std::string filename = prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
+  check_file_exists(filename,
+                    "checkpoint file of the triangulation, given by "
+                    "'subsection void fraction' - 'set dem file name'");
 
   if (auto parallel_triangulation =
         dynamic_cast<parallel::distributed::Triangulation<dim> *>(
@@ -498,9 +499,11 @@ CFDDEMSolver<dim, PropertiesIndex>::read_checkpoint()
     }
 
   // Gather particle serialization information
-  std::string   particle_filename = prefix + ".particles";
+  std::string particle_filename = prefix + ".particles";
+  check_file_exists(particle_filename,
+                    "checkpoint file of the particles, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(particle_filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(particle_filename));
 
   std::string buffer;
   std::getline(input, buffer);
@@ -510,14 +513,9 @@ CFDDEMSolver<dim, PropertiesIndex>::read_checkpoint()
   ia >> this->particle_handler;
 
   const std::string filename = prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
+  check_file_exists(filename,
+                    "checkpoint file of the triangulation, given by "
+                    "'subsection restart' - 'set filename'");
 
   try
     {

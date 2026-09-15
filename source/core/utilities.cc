@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/exceptions.h>
 #include <core/revision.h>
 #include <core/utilities.h>
 #include <core/vector.h>
@@ -13,6 +14,7 @@
 
 #include <filesystem>
 #include <regex>
+#include <system_error>
 #include <type_traits>
 
 template <typename T>
@@ -215,6 +217,34 @@ make_table_tensors_scalars(
     }
 
   return table;
+}
+
+void
+check_file_exists(const std::string &file_name,
+                  const std::string &file_description)
+{
+  AssertThrow(!file_name.empty(), EmptyFileName(file_description));
+
+  // The error code overload of std::filesystem::exists is used so that a
+  // problem with the file system is reported through the exceptions below
+  // rather than through a std::filesystem::filesystem_error that the user
+  // cannot act upon.
+  std::error_code             error_code;
+  const std::filesystem::path path(file_name);
+
+  AssertThrow(std::filesystem::exists(path, error_code),
+              FileDoesNotExist(file_name, file_description));
+
+  // A directory can be opened as a stream on Linux, and it is only the read
+  // that fails afterwards, so a directory given where a file is expected is
+  // rejected explicitly.
+  AssertThrow(!std::filesystem::is_directory(path, error_code),
+              FileIsNotReadable(file_name, file_description));
+
+  // The remaining case is a file whose permissions prevent Lethe from reading
+  // it, which opening the file detects.
+  const std::ifstream file(file_name);
+  AssertThrow(file.good(), FileIsNotReadable(file_name, file_description));
 }
 
 void
@@ -553,9 +583,10 @@ std::string
 get_last_value_of_parameter(const std::string &file_name,
                             const std::string &parameter_name)
 {
+  check_file_exists(file_name, "parameter file given to the application");
+
   std::string   return_value;
   std::ifstream x_file(file_name);
-  AssertThrow(x_file.fail() == false, ExcIO());
 
   while (x_file)
     {
@@ -592,11 +623,12 @@ int
 get_max_value_of_parameter(const std::string &file_name,
                            const std::string &parameter_name)
 {
+  check_file_exists(file_name, "parameter file given to the application");
+
   std::string return_string;
   int         return_value = -100000;
 
   std::ifstream x_file(file_name);
-  AssertThrow(x_file.fail() == false, ExcIO());
 
   while (x_file)
     {
@@ -670,7 +702,7 @@ get_dimension(const std::string &file_name)
           "the C++ run time environment expects input files to have "
           "Unix-style line endings ('\\n'). You need to convert your "
           "input file to use the correct line endings before running "
-          "ASPECT with it."));
+          "Lethe with it."));
       try
         {
           return dealii::Utilities::string_to_int(dimension);

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/simulation_control.h>
+#include <core/utilities.h>
 
 #include <cfloat>
 #include <fstream>
@@ -224,9 +225,11 @@ SimulationControl::save(const std::string &prefix)
 void
 SimulationControl::read(const std::string &prefix)
 {
-  std::string   filename = prefix + ".simulationcontrol";
+  std::string filename = prefix + ".simulationcontrol";
+  check_file_exists(filename,
+                    "checkpoint file of the simulation control, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(filename));
 
   std::string buffer;
   std::getline(input, buffer);
@@ -244,9 +247,11 @@ std::vector<double>
 SimulationControl::get_checkpointed_simulation_control_info(
   const std::string &prefix)
 {
-  std::string   filename = prefix + ".simulationcontrol";
+  std::string filename = prefix + ".simulationcontrol";
+  check_file_exists(filename,
+                    "checkpoint file of the simulation control, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(filename));
 
   // Store the time steps and last checkpointed time without modifying the
   // simulation control information
