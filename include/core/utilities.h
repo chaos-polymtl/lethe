@@ -1135,6 +1135,23 @@ struct cut_cell_comparison
 };
 
 /**
+ * @brief Hash functor to enable using cut-cell (embedded triangulation)
+ * active cell iterators as keys of an unordered associative container, for
+ * example std::unordered_map. Pairs with cut_cell_comparison, which orders
+ * the same iterators for ordered associative containers.
+ */
+template <int dim>
+struct cut_cell_hash
+{
+  inline std::size_t
+  operator()(const typename Triangulation<dim - 1, dim>::active_cell_iterator
+               &cell) const
+  {
+    return std::hash<int>()(cell->global_active_cell_index());
+  }
+};
+
+/**
  * @brief Evaluates the values of a scalar field at remote points of the domain
  * from the mapping, the DoF handler and the solution field.
  *

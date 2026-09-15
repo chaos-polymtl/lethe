@@ -167,6 +167,12 @@ ParticleWallContactForce<dim,
   // Initiate containers
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
 
+  // Ensure there is one persistent contact record per solid object, reused
+  // (and cleared) every call instead of being reallocated from scratch each
+  // DEM timestep.
+  if (solid_contact_records.size() != solids.size())
+    solid_contact_records.resize(solids.size());
+
   // Iterating over the solid objects
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
@@ -175,21 +181,34 @@ ParticleWallContactForce<dim,
       const auto &[this_solid_es_neighbors, this_solid_vs_neighbors] =
         solids[solid_counter]->get_neighbors_maps();
 
-      // For each solid surface, we create a map, called the contact_record,
-      // used to store every contact. The key of that map is the particle local
-      // ID. The value is a vector of tuple storing the required information to
-      // compute the contact force later on.
+      // For each solid surface, we reuse a persistent map, called the
+      // contact_record, used to store every contact. The key of that map is
+      // the particle local ID. The value is a vector of struct storing the
+      // required information to compute the contact force later on.
       // The information includes:
       // 1. The triangle cell with which the contact is occurring,
       // 2. The normal overlap,
       // 3. The type of contact (face, edge or vertex)
       // 4. The contact info associated.
-      particle_triangle_contact_record contact_record;
+      particle_triangle_contact_record &contact_record =
+        solid_contact_records[solid_counter];
+      contact_record.clear();
 
       typename dem_data_structures<
         dim>::particle_triangle_cell_from_mesh_potentially_in_contact
         &particle_floating_mesh_potential_contact_pair =
           particle_floating_mesh_potentially_in_contact[solid_counter];
+
+      // Reserve for an upper bound on the number of distinct particles this
+      // solid's contact record will hold (the same particle may appear near
+      // several triangles, so this sum over-counts, but never under-counts),
+      // so it is not repeatedly rehashed while accumulating contacts across
+      // triangles below.
+      std::size_t total_candidate_count = 0;
+      for (const auto &triangle_entry :
+           particle_floating_mesh_potential_contact_pair)
+        total_candidate_count += triangle_entry.second.size();
+      contact_record.reserve(total_candidate_count);
 
       // Loop over every triangle of the solid object
       for (auto &[triangle_cell_iterator, map_info] :
@@ -203,9 +222,11 @@ ParticleWallContactForce<dim,
                ++vertex)
             triangle[vertex] = triangle_cell_iterator->vertex(vertex);
 
-          // We reserve the contact record of this triangle an arbitrary number
-          // of contacts
-          contact_record.reserve(map_info.size());
+          // Precompute this triangle's particle-independent geometric data
+          // (edge vectors, normal, fundamental-form coefficients) once, so
+          // it is not recomputed for every particle candidate below.
+          const auto triangle_data =
+            LetheGridTools::prepare_triangle_projection_data(triangle);
 
           // Loop on every particle using their contact info
           for (auto &&contact_info : map_info | boost::adaptors::map_values)
@@ -213,7 +234,7 @@ ParticleWallContactForce<dim,
               // We check the contact between the triangle and the particle.
               auto particle_triangle_information = LetheGridTools::
                 find_particle_triangle_projection<dim, PropertiesIndex>(
-                  triangle, contact_info.particle);
+                  triangle_data, contact_info.particle);
 
               const auto &[pass_distance_check,
                            projection_point,
@@ -270,10 +291,10 @@ ParticleWallContactForce<dim,
                C1 != this_contact_record.end();)
             {
               // Extract the information of C1
-              auto T1_cell              = std::get<0>(*C1);
-              auto contact_indicator_C1 = std::get<2>(*C1);
+              auto T1_cell              = C1->triangle_cell;
+              auto contact_indicator_C1 = C1->contact_indicator;
               particle_wall_contact_info<dim> &contact_info_C1 =
-                *std::get<3>(*C1);
+                *C1->contact_info;
 
               // Assigning the triangle neighboring list of T1;
               const auto &T1_es_neighbors = this_solid_es_neighbors.at(T1_cell);
@@ -286,10 +307,10 @@ ParticleWallContactForce<dim,
               while (C2 != this_contact_record.end())
                 {
                   // Extract the information of C2
-                  auto T2_cell              = std::get<0>(*C2);
-                  auto contact_indicator_C2 = std::get<2>(*C2);
+                  auto T2_cell              = C2->triangle_cell;
+                  auto contact_indicator_C2 = C2->contact_indicator;
                   particle_wall_contact_info<dim> &contact_info_C2 =
-                    *std::get<3>(*C2);
+                    *C2->contact_info;
 
                   // First, we check if both triangle are neighbors. If they
                   // are not neighbors, C1 and C2 are automatically valid.
@@ -479,9 +500,9 @@ ParticleWallContactForce<dim,
                ++contact)
             {
               //  Extract the information of the contact
-              auto normal_overlap = std::get<1>(*contact);
+              auto normal_overlap = contact->normal_overlap;
               particle_wall_contact_info<dim> &contact_info =
-                *std::get<3>(*contact);
+                *contact->contact_info;
 
               // Defining local variables which will be used within the
               // contact calculation

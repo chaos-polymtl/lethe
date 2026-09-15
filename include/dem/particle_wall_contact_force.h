@@ -1190,17 +1190,51 @@ private:
   const unsigned int                         vertices_per_triangle = 3;
   Point<3>                                   center_mass_container;
 
-  // Containers
-  typedef std::vector<
-    std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               double,
-               LetheGridTools::ParticleTriangleContactIndicator,
-               particle_wall_contact_info<dim> *>>
+  /**
+   * @brief Contact candidate between a particle and a triangle
+   * from a solid surface. Stores the required information to evaluate the
+   * contact.
+   *
+   * @tparam dim Dimensionality of the simulation space.
+   *
+   * @param triangle_cell Iterator pointing to the triangle cell involved in the contact.
+   * @param normal_overlap Magnitude of the normal overlap between the particle and the triangle.
+   * @param contact_indicator Indicator representing the type of particle-triangle contact.
+   * @param contact_info Pointer to additional contact-related information, if applicable.
+   */
+  struct particle_triangle_contact_candidate
+  {
+    typename Triangulation<dim - 1, dim>::active_cell_iterator triangle_cell;
+    double                                                     normal_overlap;
+    LetheGridTools::ParticleTriangleContactIndicator contact_indicator;
+    particle_wall_contact_info<dim>                 *contact_info;
+  };
+
+  /**
+   * @brief All the particle-triangle contact candidates found for a single
+   * particle against the triangles of one solid object. A particle may lie
+   * close enough to several triangles of the same solid (e.g. near an edge
+   * or vertex shared by adjacent triangles), so more than one candidate can
+   * be stored for the same particle.
+   */
+  typedef std::vector<particle_triangle_contact_candidate>
     particle_triangle_contact_description;
 
+  /**
+   * @brief Contact record for one solid object, mapping the local index of
+   * every particle with at least one contact candidate against this solid's
+   * triangles to its particle_triangle_contact_description.
+   */
   typedef ankerl::unordered_dense::map<types::particle_index,
                                        particle_triangle_contact_description>
     particle_triangle_contact_record;
+
+  /**
+   * @brief Every solid-object is associated with a contact record. This
+   * container is index for each solid object. This container is cleared every
+   * DEM time step rather than reallocated.
+   */
+  std::vector<particle_triangle_contact_record> solid_contact_records;
 };
 
 #endif

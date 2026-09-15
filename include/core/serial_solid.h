@@ -18,6 +18,8 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 /**
@@ -184,10 +186,10 @@ public:
     return id;
   }
 
-  typedef std::map<
+  typedef std::unordered_map<
     typename Triangulation<dim, spacedim>::active_cell_iterator,
     std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
-    cut_cell_comparison<spacedim>>
+    cut_cell_hash<spacedim>>
     triangulation_cell_neighbors_map;
 
   /**
@@ -196,10 +198,11 @@ public:
    * are sharing a vertex or an edge (two vertex). 1. edge-sharing and 2.
    * vertex-sharing.
    *
-   * @return A tuple containing the four neighboring cells maps.
+   * @return A tuple of references to the edge-sharing and vertex-sharing
+   * neighboring cells maps.
    */
-  inline std::tuple<triangulation_cell_neighbors_map,
-                    triangulation_cell_neighbors_map>
+  inline std::tuple<const triangulation_cell_neighbors_map &,
+                    const triangulation_cell_neighbors_map &>
   get_neighbors_maps() const
   {
     return std::tie(es_neighbors, vs_neighbors);

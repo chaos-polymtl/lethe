@@ -293,6 +293,44 @@ namespace LetheGridTools
   };
 
   /**
+   * @brief Particle-independent geometric data of a triangle (its first
+   * vertex, edge vectors, unit normal, and the coefficients of its first
+   * fundamental form), precomputed once by prepare_triangle_projection_data
+   * so that repeated find_particle_triangle_projection queries against the
+   * same triangle (e.g. for several nearby particles) do not recompute it.
+   * This data is defined "Geometric Tools for Computer Graphics, Eberly 2003
+   * Chapter 10.3.2 - Point to triangle."
+   *
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   */
+  template <int dim>
+  struct TriangleProjectionData
+  {
+    Point<dim>     p_0;         // Point 0
+    Tensor<1, dim> e_0;         // Vector (0 -> 1)
+    Tensor<1, dim> e_1;         // Vector (0 -> 2)
+    Tensor<1, dim> unit_normal; // Normal unit vector of the triangle
+    double         a;           // squared length of edge 0 (e_0.norm_square())
+    double         b;   // dot product between the two edge vectors (mixed term)
+    double         c;   // squared length of edge 1 (e_1.norm_square())
+    double         det; // Determinant
+  };
+
+  /**
+   * @brief Precomputes the particle-independent geometric data of a triangle
+   * (see TriangleProjectionData) used by find_particle_triangle_projection.
+   *
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   *
+   * @param triangle A vector of points that defines a triangle
+   *
+   * @return The precomputed triangle data.
+   */
+  template <int dim>
+  TriangleProjectionData<dim>
+  prepare_triangle_projection_data(const std::vector<Point<dim>> &triangle);
+
+  /**
    * @brief Calculates the distance between particles and a triangle (defined using
    * three vertices). The full calculation is taken from  Geometric Tools for
    * Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to triangle.
@@ -306,7 +344,11 @@ namespace LetheGridTools
    * @tparam dim An integer that denotes the number of spatial dimensions.
    * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    *
-   * @param triangle A vector of points that defines a triangle
+   * @param triangle_data Precomputed particle-independent geometric data of
+   * the triangle, from prepare_triangle_projection_data. Reusing it across
+   * several particles tested against the same triangle avoids recomputing
+   * this triangle's edge vectors, normal and fundamental-form coefficients
+   * for each particle.
    * @param particle A particle_iterator that refers to the particle
    * located in the background (base) cell
    *
@@ -319,7 +361,7 @@ namespace LetheGridTools
   template <int dim, typename PropertiesIndex>
   std::tuple<bool, Point<3>, Tensor<1, 3>, ParticleTriangleContactIndicator>
   find_particle_triangle_projection(
-    const std::vector<Point<dim>>          &triangle,
+    const TriangleProjectionData<dim>      &triangle_data,
     const Particles::ParticleIterator<dim> &particle);
 
   /**
