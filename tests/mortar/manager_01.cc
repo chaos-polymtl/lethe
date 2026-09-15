@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -10,18 +10,18 @@
 int
 main()
 {
-  const unsigned int N                   = 100;
-  const unsigned int dim                 = 2;
-  const unsigned int n_subdivisions      = 10;
-  const unsigned int n_quadrature_points = 3;
-  const double       radius              = 1.0;
+  const unsigned int              N                    = 100;
+  const unsigned int              dim                  = 2;
+  const std::vector<unsigned int> n_subdivisions       = {10, 1};
+  const unsigned int              n_quadrature_points  = 3;
+  const std::vector<double>       interface_dimensions = {1.0, 1.0};
 
   for (unsigned int i = 0; i <= N; ++i)
     {
       const double rotate = 2 * numbers::PI / N * i;
 
       const MortarManagerCircle<dim> manager(n_subdivisions,
-                                             radius,
+                                             interface_dimensions,
                                              QGauss<dim>(n_quadrature_points),
                                              rotate);
 

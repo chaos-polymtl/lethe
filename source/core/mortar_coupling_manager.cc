@@ -26,11 +26,10 @@ MortarManagerBase<dim>::is_mesh_aligned() const
 {
   AssertThrow(dim != 1, ExcInternalError());
 
-  // Prescribed tolerance to verify the mesh alignment in the real space
-  // TODO Make this tolerance dependent on the cell size
-  constexpr double tolerance = 1e-8;
   // Angle variation within each cell (in radians)
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
+  // Tolerance to verify the mesh alignment in the real space
+  const double tolerance = 1e-8 * delta_0;
 
   return std::abs(rotation_angle / delta_0 -
                   std::round(rotation_angle / delta_0)) < tolerance;
