@@ -11,7 +11,7 @@
 # x = 0.020 and x = 0.980 land in cells that are owned by different ranks.
 #
 # This guards two distinct things at once:
-#  1. compute_combined_periodic_offsets must include the pure +/- offset
+#  1. periodic_offset_per_direction must correctly include the offset
 #     of the second registered pair.
 #  2. The periodic ghost particle pipeline (update_local_particle_containers,
 #     update_fine_search_candidates, ghost_local_periodic_particle_particle
