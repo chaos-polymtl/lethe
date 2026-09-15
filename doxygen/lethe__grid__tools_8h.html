@@ -104,7 +104,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for lethe_grid_tools.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="lethe__grid__tools_8h__incl.svg" width="1783" height="740"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="lethe__grid__tools_8h__incl.svg" width="1431" height="740"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -116,6 +116,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLetheGridTools_1_1TriangleProjectionData.html">LetheGridTools::TriangleProjectionData&lt; dim &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLetheGridTools_1_1hash__cell.html">LetheGridTools::hash_cell&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLetheGridTools_1_1equal__cell.html">LetheGridTools::equal_cell&lt; dim &gt;</a></td></tr>
@@ -182,9 +184,12 @@ Functions</h2></td></tr>
 <tr class="memitem:adcc54656da552f633c48fca2b6f172e1" id="r_adcc54656da552f633c48fca2b6f172e1"><td class="memTemplParams" colspan="2">template&lt;int spacedim, int structdim&gt; </td></tr>
 <tr class="memitem:adcc54656da552f633c48fca2b6f172e1"><td class="memTemplItemLeft" align="right" valign="top">std::map&lt; typename DoFHandler&lt; spacedim &gt;::active_cell_iterator, std::map&lt; unsigned int, typename DoFHandler&lt; structdim, spacedim &gt;::active_cell_iterator &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#adcc54656da552f633c48fca2b6f172e1">LetheGridTools::find_cells_cut_by_object</a> (const DoFHandler&lt; spacedim &gt; &amp;dof_handler, std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; spacedim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map, std::vector&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; structdim, spacedim &gt; &gt; &amp;list_of_objects)</td></tr>
 <tr class="separator:adcc54656da552f633c48fca2b6f172e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27fab7ba7182b6475b802f0e98844496" id="r_a27fab7ba7182b6475b802f0e98844496"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
-<tr class="memitem:a27fab7ba7182b6475b802f0e98844496"><td class="memTemplItemLeft" align="right" valign="top">std::tuple&lt; bool, Point&lt; 3 &gt;, Tensor&lt; 1, 3 &gt;, <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">ParticleTriangleContactIndicator</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a27fab7ba7182b6475b802f0e98844496">LetheGridTools::find_particle_triangle_projection</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle, const Particles::ParticleIterator&lt; dim &gt; &amp;particle)</td></tr>
-<tr class="separator:a27fab7ba7182b6475b802f0e98844496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaccb15d32b669c021e051953043dccfe" id="r_aaccb15d32b669c021e051953043dccfe"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:aaccb15d32b669c021e051953043dccfe"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structLetheGridTools_1_1TriangleProjectionData.html">TriangleProjectionData</a>&lt; dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#aaccb15d32b669c021e051953043dccfe">LetheGridTools::prepare_triangle_projection_data</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle)</td></tr>
+<tr class="separator:aaccb15d32b669c021e051953043dccfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbf66b2d00bab8943ad7e47a173314e3" id="r_afbf66b2d00bab8943ad7e47a173314e3"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:afbf66b2d00bab8943ad7e47a173314e3"><td class="memTemplItemLeft" align="right" valign="top">std::tuple&lt; bool, Point&lt; 3 &gt;, Tensor&lt; 1, 3 &gt;, <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">ParticleTriangleContactIndicator</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#afbf66b2d00bab8943ad7e47a173314e3">LetheGridTools::find_particle_triangle_projection</a> (const <a class="el" href="structLetheGridTools_1_1TriangleProjectionData.html">TriangleProjectionData</a>&lt; dim &gt; &amp;triangle_data, const Particles::ParticleIterator&lt; dim &gt; &amp;particle)</td></tr>
+<tr class="separator:afbf66b2d00bab8943ad7e47a173314e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1" id="r_a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">LetheGridTools::find_point_triangle_distance</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle_vertices, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a0441112a1d2ecc434246a30f9ef098a1"><td class="memSeparator" colspan="2">&#160;</td></tr>

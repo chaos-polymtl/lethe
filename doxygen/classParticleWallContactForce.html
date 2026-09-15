@@ -86,6 +86,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
@@ -105,6 +106,11 @@ Inheritance diagram for ParticleWallContactForce&lt; dim, PropertiesIndex, conta
 <div class="center"><iframe scrolling="no" frameborder="0" src="classParticleWallContactForce__inherit__graph.svg" width="230" height="168"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParticleWallContactForce_1_1particle__triangle__contact__candidate.html">particle_triangle_contact_candidate</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa70ba8717c3957adfe5ead2df09f1a5d" id="r_aa70ba8717c3957adfe5ead2df09f1a5d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#aa70ba8717c3957adfe5ead2df09f1a5d">ParticleWallContactForce</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
@@ -141,9 +147,9 @@ Static Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
 Private Types</h2></td></tr>
-<tr class="memitem:a7576ee7648e059b2f349846b4c6b3a60" id="r_a7576ee7648e059b2f349846b4c6b3a60"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; std::tuple&lt; typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator, double, <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">LetheGridTools::ParticleTriangleContactIndicator</a>, <a class="el" href="structparticle__wall__contact__info.html">particle_wall_contact_info</a>&lt; dim &gt; * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#a7576ee7648e059b2f349846b4c6b3a60">particle_triangle_contact_description</a></td></tr>
-<tr class="separator:a7576ee7648e059b2f349846b4c6b3a60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9d8a8049ee53958a46f6a8cbefefa0b" id="r_ac9d8a8049ee53958a46f6a8cbefefa0b"><td class="memItemLeft" align="right" valign="top">typedef ankerl::unordered_dense::map&lt; types::particle_index, <a class="el" href="classParticleWallContactForce.html#a7576ee7648e059b2f349846b4c6b3a60">particle_triangle_contact_description</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#ac9d8a8049ee53958a46f6a8cbefefa0b">particle_triangle_contact_record</a></td></tr>
+<tr class="memitem:ae277d5bc6fea4cf6ae0899803c2014e1" id="r_ae277d5bc6fea4cf6ae0899803c2014e1"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="structParticleWallContactForce_1_1particle__triangle__contact__candidate.html">particle_triangle_contact_candidate</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#ae277d5bc6fea4cf6ae0899803c2014e1">particle_triangle_contact_description</a></td></tr>
+<tr class="separator:ae277d5bc6fea4cf6ae0899803c2014e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9d8a8049ee53958a46f6a8cbefefa0b" id="r_ac9d8a8049ee53958a46f6a8cbefefa0b"><td class="memItemLeft" align="right" valign="top">typedef ankerl::unordered_dense::map&lt; types::particle_index, <a class="el" href="classParticleWallContactForce.html#ae277d5bc6fea4cf6ae0899803c2014e1">particle_triangle_contact_description</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#ac9d8a8049ee53958a46f6a8cbefefa0b">particle_triangle_contact_record</a></td></tr>
 <tr class="separator:ac9d8a8049ee53958a46f6a8cbefefa0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
@@ -226,6 +232,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a91e5c85cb8ae7995ac43923a01e01596"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0c6b590f25d3538d7164340f9c748bd" id="r_ad0c6b590f25d3538d7164340f9c748bd"><td class="memItemLeft" align="right" valign="top">Point&lt; 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#ad0c6b590f25d3538d7164340f9c748bd">center_mass_container</a></td></tr>
 <tr class="separator:ad0c6b590f25d3538d7164340f9c748bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1cd25e6c614b260a481586d4395d0749" id="r_a1cd25e6c614b260a481586d4395d0749"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classParticleWallContactForce.html#ac9d8a8049ee53958a46f6a8cbefefa0b">particle_triangle_contact_record</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#a1cd25e6c614b260a481586d4395d0749">solid_contact_records</a></td></tr>
+<tr class="separator:a1cd25e6c614b260a481586d4395d0749"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -247,8 +255,8 @@ class ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00110">110</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a7576ee7648e059b2f349846b4c6b3a60" name="a7576ee7648e059b2f349846b4c6b3a60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7576ee7648e059b2f349846b4c6b3a60">&#9670;&#160;</a></span>particle_triangle_contact_description</h2>
+<a id="ae277d5bc6fea4cf6ae0899803c2014e1" name="ae277d5bc6fea4cf6ae0899803c2014e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae277d5bc6fea4cf6ae0899803c2014e1">&#9670;&#160;</a></span>particle_triangle_contact_description</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -259,7 +267,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::vector&lt; std::tuple&lt;typename Triangulation&lt;dim - 1, dim&gt;::active_cell_iterator, double, <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">LetheGridTools::ParticleTriangleContactIndicator</a>, <a class="el" href="structparticle__wall__contact__info.html">particle_wall_contact_info</a>&lt;dim&gt; *&gt; &gt; <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::particle_triangle_contact_description</td>
+          <td class="memname">typedef std::vector&lt;<a class="el" href="structParticleWallContactForce_1_1particle__triangle__contact__candidate.html">particle_triangle_contact_candidate</a>&gt; <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::particle_triangle_contact_description</td>
         </tr>
       </table>
   </td>
@@ -269,7 +277,9 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l01199">1199</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p>All the particle-triangle contact candidates found for a single particle against the triangles of one solid object. A particle may lie close enough to several triangles of the same solid (e.g. near an edge or vertex shared by adjacent triangles), so more than one candidate can be stored for the same particle. </p>
+
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l01221">1221</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -285,7 +295,7 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef ankerl::unordered_dense::map&lt;types::particle_index, <a class="el" href="classParticleWallContactForce.html#a7576ee7648e059b2f349846b4c6b3a60">particle_triangle_contact_description</a>&gt; <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::particle_triangle_contact_record</td>
+          <td class="memname">typedef ankerl::unordered_dense::map&lt;types::particle_index, <a class="el" href="classParticleWallContactForce.html#ae277d5bc6fea4cf6ae0899803c2014e1">particle_triangle_contact_description</a>&gt; <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::particle_triangle_contact_record</td>
         </tr>
       </table>
   </td>
@@ -295,7 +305,9 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l01203">1203</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p>Contact record for one solid object, mapping the local index of every particle with at least one contact candidate against this solid's triangles to its particle_triangle_contact_description. </p>
+
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l01230">1230</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -320,7 +332,7 @@ template&lt;int dim, typename PropertiesIndex , ParticleWallContactForceModel co
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00024">24</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__wall__contact__force_8cc_source.html#l00588">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::set_effective_properties()</a>, and <a class="el" href="particle__wall__contact__force_8cc_source.html#l00705">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::set_multiphysic_properties()</a>.</p>
+<p class="reference">References <a class="el" href="particle__wall__contact__force_8cc_source.html#l00609">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::set_effective_properties()</a>, and <a class="el" href="particle__wall__contact__force_8cc_source.html#l00726">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::set_multiphysic_properties()</a>.</p>
 
 </div>
 </div>
@@ -1029,7 +1041,7 @@ template&lt;int dim, typename PropertiesIndex , ParticleWallContactForceModel co
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00152">152</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="solid__objects__parameters_8h_source.html#l00037">Parameters::adiabatic</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00275">apply_heat_transfer_on_single_local_particle()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00137">calculate_contact_thermal_conductance()</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00025">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::force</a>, <a class="el" href="log__collision__data_8h_source.html#l00139">get_location()</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00026">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::heat_transfer_rate</a>, <a class="el" href="contact__info_8h_source.html#l00052">particle_wall_contact_info&lt; dim &gt;::particle</a>, <a class="el" href="contact__type_8h_source.html#l00019">particle_floating_mesh</a>, and <a class="el" href="particle__interaction__outcomes_8h_source.html#l00024">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::torque</a>.</p>
+<p class="reference">References <a class="el" href="solid__objects__parameters_8h_source.html#l00037">Parameters::adiabatic</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00275">apply_heat_transfer_on_single_local_particle()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00137">calculate_contact_thermal_conductance()</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00025">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::force</a>, <a class="el" href="log__collision__data_8h_source.html#l00139">get_location()</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00026">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::heat_transfer_rate</a>, <a class="el" href="contact__info_8h_source.html#l00052">particle_wall_contact_info&lt; dim &gt;::particle</a>, <a class="el" href="contact__type_8h_source.html#l00019">particle_floating_mesh</a>, <a class="el" href="namespaceLetheGridTools.html#aaccb15d32b669c021e051953043dccfe">LetheGridTools::prepare_triangle_projection_data()</a>, and <a class="el" href="particle__interaction__outcomes_8h_source.html#l00024">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::torque</a>.</p>
 
 </div>
 </div>
@@ -1387,7 +1399,7 @@ template&lt;int dim, typename PropertiesIndex , ParticleWallContactForceModel co
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00587">587</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00608">608</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00031">DEMSolverParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00806">Parameters::Lagrangian::BCDEM::boundary_rotational_speed</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00810">Parameters::Lagrangian::BCDEM::boundary_rotational_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00802">Parameters::Lagrangian::BCDEM::boundary_translational_velocity</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::forces_torques</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00027">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00138">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00814">Parameters::Lagrangian::BCDEM::point_on_rotation_axis</a>.</p>
 
@@ -1427,7 +1439,7 @@ template&lt;int dim, typename PropertiesIndex , ParticleWallContactForceModel co
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00704">704</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00725">725</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00027">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00138">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>.</p>
 
@@ -2278,6 +2290,34 @@ template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespacePar
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l01189">1189</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+
+</div>
+</div>
+<a id="a1cd25e6c614b260a481586d4395d0749" name="a1cd25e6c614b260a481586d4395d0749"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cd25e6c614b260a481586d4395d0749">&#9670;&#160;</a></span>solid_contact_records</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex , <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204e">Parameters::Lagrangian::ParticleWallContactForceModel</a> contact_model, <a class="el" href="namespaceParameters_1_1Lagrangian.html#ac41aed1853eee7a1933daa560973327b">Parameters::Lagrangian::RollingResistanceMethod</a> rolling_friction_model&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="classParticleWallContactForce.html#ac9d8a8049ee53958a46f6a8cbefefa0b">particle_triangle_contact_record</a>&gt; <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::solid_contact_records</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Every solid-object is associated with a contact record. This container is index for each solid object. This container is cleared every <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step rather than reallocated. </p>
+
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l01237">1237</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
