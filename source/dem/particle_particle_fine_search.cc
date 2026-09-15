@@ -12,6 +12,7 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#include <array>
 #include <cmath>
 #include <limits>
 #include <unordered_map>
@@ -34,7 +35,7 @@ namespace
    * @param periodic_offset_per_direction A tensor whose component d holds
    * the signed period of the domain along direction d (0 if d is not
    * periodic).
-   * @param inverse_periodic_offset_per_direction A tensor whose component d
+   * @param inverse_periodic_offset_per_direction An array whose component d
    * holds the reciprocal of periodic_offset_per_direction's component d (0
    * if d is not periodic), used to avoid a division.
    * @return The nearest translation, and whether any periodic direction
@@ -45,10 +46,10 @@ namespace
   template <int dim>
   std::pair<Tensor<1, dim>, bool>
   nearest_periodic_translation(
-    const Point<dim, double> &particle_one_location,
-    const Point<dim, double> &particle_two_real_location,
-    const Tensor<1, dim>     &periodic_offset_per_direction,
-    const Tensor<1, dim>     &inverse_periodic_offset_per_direction)
+    const Point<dim, double>      &particle_one_location,
+    const Point<dim, double>      &particle_two_real_location,
+    const Tensor<1, dim>          &periodic_offset_per_direction,
+    const std::array<double, dim> &inverse_periodic_offset_per_direction)
   {
     Tensor<1, dim> nearest_translation;
     bool           found_periodic_translation = false;
@@ -76,10 +77,10 @@ particle_particle_fine_search(
                                                   &particle_container,
   adjacent_pairs_for_contact_t<dim, contact_type> &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                       &contact_pair_candidates,
-  const double          neighborhood_threshold,
-  const Tensor<1, dim> &periodic_offset_per_direction,
-  const Tensor<1, dim> &inverse_periodic_offset_per_direction)
+                                &contact_pair_candidates,
+  const double                   neighborhood_threshold,
+  const Tensor<1, dim>          &periodic_offset_per_direction,
+  const std::array<double, dim> &inverse_periodic_offset_per_direction)
 {
   // First iterating over adjacent_particles
   for (auto &&adjacent_particles_list :
@@ -304,10 +305,10 @@ particle_particle_fine_search<2, local_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 2> &periodic_offset_per_direction,
-  const Tensor<1, 2> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 2>          &periodic_offset_per_direction,
+  const std::array<double, 2> &inverse_periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<2, ghost_particle_particle>(
@@ -316,10 +317,10 @@ particle_particle_fine_search<2, ghost_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 2> &periodic_offset_per_direction,
-  const Tensor<1, 2> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 2>          &periodic_offset_per_direction,
+  const std::array<double, 2> &inverse_periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<2, local_periodic_particle_particle>(
@@ -328,10 +329,10 @@ particle_particle_fine_search<2, local_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 2> &periodic_offset_per_direction,
-  const Tensor<1, 2> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 2>          &periodic_offset_per_direction,
+  const std::array<double, 2> &inverse_periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<2, ghost_periodic_particle_particle>(
@@ -340,10 +341,10 @@ particle_particle_fine_search<2, ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 2> &periodic_offset_per_direction,
-  const Tensor<1, 2> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 2>          &periodic_offset_per_direction,
+  const std::array<double, 2> &inverse_periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<2, ghost_local_periodic_particle_particle>(
@@ -352,10 +353,10 @@ particle_particle_fine_search<2, ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 2> &periodic_offset_per_direction,
-  const Tensor<1, 2> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 2>          &periodic_offset_per_direction,
+  const std::array<double, 2> &inverse_periodic_offset_per_direction);
 
 
 // 3D templates
@@ -366,10 +367,10 @@ particle_particle_fine_search<3, local_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 3> &periodic_offset_per_direction,
-  const Tensor<1, 3> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 3>          &periodic_offset_per_direction,
+  const std::array<double, 3> &inverse_periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<3, ghost_particle_particle>(
@@ -378,10 +379,10 @@ particle_particle_fine_search<3, ghost_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 3> &periodic_offset_per_direction,
-  const Tensor<1, 3> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 3>          &periodic_offset_per_direction,
+  const std::array<double, 3> &inverse_periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<3, local_periodic_particle_particle>(
@@ -390,10 +391,10 @@ particle_particle_fine_search<3, local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 3> &periodic_offset_per_direction,
-  const Tensor<1, 3> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 3>          &periodic_offset_per_direction,
+  const std::array<double, 3> &inverse_periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<3, ghost_periodic_particle_particle>(
@@ -402,10 +403,10 @@ particle_particle_fine_search<3, ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 3> &periodic_offset_per_direction,
-  const Tensor<1, 3> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 3>          &periodic_offset_per_direction,
+  const std::array<double, 3> &inverse_periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<3, ghost_local_periodic_particle_particle>(
@@ -414,7 +415,7 @@ particle_particle_fine_search<3, ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
-  const Tensor<1, 3> &periodic_offset_per_direction,
-  const Tensor<1, 3> &inverse_periodic_offset_per_direction);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const Tensor<1, 3>          &periodic_offset_per_direction,
+  const std::array<double, 3> &inverse_periodic_offset_per_direction);
