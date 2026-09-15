@@ -15,11 +15,9 @@ namespace Parameters
     {
       prm.enter_subsection("lagrangian physical properties");
       {
-        // Parameter <g> is a list of values, its deprecated version are
-        // individual parameters <gx>, <gy> and <gz>
         prm.declare_entry("g",
                           "0., 0., 0.",
-                          Patterns::List(Patterns::Double()),
+                          Patterns::List(Patterns::Double(), 2, 3),
                           "Gravitational acceleration vector");
 
         prm.declare_entry("number of particle types",

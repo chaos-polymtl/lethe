@@ -682,7 +682,7 @@ value_string_to_tensor(const std::string &value_string)
                     "or point."));
 
   Tensor<1, spacedim> output_tensor;
-  for (unsigned int i = 0; i < spacedim; ++i)
+  for (unsigned int i = 0; i < vector_of_double.size(); ++i)
     output_tensor[i] = vector_of_double[i];
 
   return output_tensor;
