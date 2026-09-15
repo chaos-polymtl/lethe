@@ -9,6 +9,8 @@
 
 #include <deal.II/base/tensor.h>
 
+#include <array>
+
 using namespace dealii;
 
 /**
@@ -49,10 +51,11 @@ using adjacent_pairs_for_contact_t = std::conditional_t<
  * signed period of the domain along direction d (0 if d is not periodic),
  * used to find the nearest periodic image of particles crossing periodic
  * boundaries via the minimum image convention.
- * @param inverse_periodic_offset_per_direction A tensor whose component d
+ * @param inverse_periodic_offset_per_direction An array whose component d
  * holds the reciprocal of periodic_offset_per_direction's component d (0 if
  * d is not periodic), used to avoid a division when applying the minimum
- * image convention.
+ * image convention. This is a plain array of independent scale factors, not
+ * a Tensor, since it is only ever used component-wise.
  */
 template <int dim, ContactType contact_type>
 void
@@ -61,9 +64,9 @@ particle_particle_fine_search(
                                                   &particle_container,
   adjacent_pairs_for_contact_t<dim, contact_type> &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                       &contact_pair_candidates,
-  const double          neighborhood_threshold,
-  const Tensor<1, dim> &periodic_offset_per_direction         = {},
-  const Tensor<1, dim> &inverse_periodic_offset_per_direction = {});
+                                &contact_pair_candidates,
+  const double                   neighborhood_threshold,
+  const Tensor<1, dim>          &periodic_offset_per_direction         = {},
+  const std::array<double, dim> &inverse_periodic_offset_per_direction = {});
 
 #endif

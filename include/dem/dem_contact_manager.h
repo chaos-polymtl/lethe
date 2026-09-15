@@ -11,6 +11,7 @@
 #include <dem/particle_particle_broad_search.h>
 #include <dem/particle_wall_broad_search.h>
 
+#include <array>
 #include <unordered_map>
 
 using namespace DEM;
@@ -400,9 +401,11 @@ private:
    * @brief Reciprocal of periodic_offset_per_direction, component d is 0 if
    * direction d is not periodic. Precomputed alongside
    * periodic_offset_per_direction so the particle-particle fine search can
-   * avoid a division on every call.
+   * avoid a division on every call. This is a plain array of independent
+   * scale factors, not a Tensor: it is only ever used component-wise
+   * (multiplying a scalar delta), never as a vector quantity.
    */
-  Tensor<1, dim> inverse_periodic_offset_per_direction;
+  std::array<double, dim> inverse_periodic_offset_per_direction{};
 };
 
 #endif
