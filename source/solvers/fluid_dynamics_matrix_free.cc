@@ -46,6 +46,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <cmath>
+#include <exception>
 
 /**
  * @brief A base class of preconditioners used by the smoother.
@@ -3946,7 +3947,7 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
                        this->system_rhs,
                        *(this->ilu_preconditioner));
       }
-    catch (const ExceptionBase &e)
+    catch (const std::exception &e)
       {
         if (!this->simulation_parameters.linear_solver
                .at(PhysicsID::fluid_dynamics)
@@ -4090,7 +4091,7 @@ FluidDynamicsMatrixFree<dim>::solve_system_BiCGStab(
                        this->system_rhs,
                        *(this->ilu_preconditioner));
       }
-    catch (const ExceptionBase &e)
+    catch (const std::exception &e)
       {
         if (!this->simulation_parameters.linear_solver
                .at(PhysicsID::fluid_dynamics)
@@ -4106,9 +4107,13 @@ FluidDynamicsMatrixFree<dim>::solve_system_BiCGStab(
                             << " (tolerance " << linear_solver_tolerance << ")."
                             << std::endl;
 
-                if (nc->last_step < solver_control.max_steps())
+                if (!std::isfinite(nc->last_residual))
                   this->pcout
-                    << " The iteration budget was not exhausted, which points to a BiCGStab breakdown rather than slow convergence."
+                    << " The residual is not finite, which indicates a breakdown of the BiCGStab iteration or of the preconditioner."
+                    << std::endl;
+                else
+                  this->pcout
+                    << " The iteration budget was exhausted. BiCGStab restarts silently when it breaks down, so this may be either slow convergence or a breakdown."
                     << std::endl;
               }
 
