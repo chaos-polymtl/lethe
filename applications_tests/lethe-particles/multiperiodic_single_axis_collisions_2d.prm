@@ -4,11 +4,12 @@
 # Application test for periodic_offset_per_direction in 2D.
 #
 # Two stationary particles are placed in slight overlap across the
-# x-periodic boundary, in a fully periodic unit square. The y-periodic BC
-# is registered first and the x-periodic BC second, so a correct contact
-# requires the offset of the SECOND registered pair to be correctly
-# accumulated into periodic_offset_per_direction. The Hertzian repulsion
-# pushes them apart along x.
+# x-periodic boundary, in a unit square that is periodic in both x and y.
+# periodic_offset_per_direction must hold a correct, independent, nonzero
+# entry for x (not just for y) for the minimum image convention to detect
+# this contact -- a regression that dropped or zeroed either direction's
+# offset would leave this contact undetected. The Hertzian repulsion pushes
+# them apart along x.
 #
 # The simulation is intentionally short (5e-3 s, 500 steps) so that the
 # only 1D contact dynamics dominate and the final positions are robust to
