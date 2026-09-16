@@ -188,13 +188,7 @@ public:
     const double                                      neighborhood_threshold);
 
   /**
-   * @brief Set the periodic offset (signed period) for every direction and
-   * precompute its per-direction reciprocal.
-   *
-   * The reciprocal is cached so the particle-particle fine search can find
-   * the nearest periodic image with a multiplication instead of a division,
-   * since this offset only changes when cell neighbors are searched again,
-   * far less often than fine search runs.
+   * @brief Set the periodic offset (signed period) for every direction.
    *
    * @param[in] offset_per_direction Signed period of the domain along every
    * direction, used for determining periodic contacts.
@@ -396,14 +390,6 @@ private:
    * non-periodic geometry.
    */
   std::array<double, dim> periodic_offset_per_direction{};
-
-  /**
-   * @brief Reciprocal of periodic_offset_per_direction, component d is 0 if
-   * direction d is not periodic. Precomputed alongside
-   * periodic_offset_per_direction so the particle-particle fine search can
-   * avoid a division on every call.
-   */
-  std::array<double, dim> inverse_periodic_offset_per_direction{};
 };
 
 #endif
