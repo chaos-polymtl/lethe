@@ -181,13 +181,13 @@ find_cell_periodic_neighbors(
                   auto search_iterator =
                     total_cell_list.find(periodic_neighbor);
 
-                  // Check if the neighbor cell is in already in the
-                  // local_periodic_neighbor_vector
-                  // Note from Gabo: I don't understand how this could happen
-                  // since we are looping over cell on boundary 1.
-                  // I think the only case would be if periodic_neighbor_list
-                  // has duplicate cell. If this is the case, it is weird that
-                  // get_periodic_neighbor_list returns a list with duplicates.
+                  // Check if the neighbor cell is already in
+                  // local_periodic_neighbor_vector. Duplicates are expected
+                  // here: get_periodic_neighbor_list sweeps every one of
+                  // this cell's periodic vertices independently, and a
+                  // shared periodic face has multiple coinciding vertices,
+                  // each contributing the same neighbor cell — hence the
+                  // explicit membership check below before each push.
                   auto local_search_iterator =
                     std::find(local_periodic_neighbor_vector.begin(),
                               local_periodic_neighbor_vector.end(),

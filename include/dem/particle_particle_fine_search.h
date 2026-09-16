@@ -34,10 +34,20 @@ using adjacent_pairs_for_contact_t = std::conditional_t<
  * pair, if they are not in contact anymore it will delete the pair from the
  * pairs_in_contact and also its information from pairs_in_contact_info.
  * Then it iterates over the contact candidates from broad search to see if
- * they already exist in the pairs_in_contact or not, if they are not in the
- * pairs_in_contact and have an overlap, the pair will be added to the
- * pairs_in_contact and its contact information will be stored in the
- * corresponding element of the pairs_in_contact_info.
+ * they already exist in the pairs_in_contact or not. Broad search
+ * regenerates this candidate list from cell-neighbor relationships on every
+ * call, with no regard to existing contact status, so it is a superset that
+ * also includes pairs already present in pairs_in_contact; for those, a
+ * cheap map lookup (find()/contains(), never operator[], so a candidate
+ * that is not actually in contact never auto-vivifies an empty entry) skips
+ * the pair immediately, before recomputing its distance or, for periodic
+ * contacts, its nearest periodic image, since the loop above already
+ * handled it. This lookup also turns the rare duplicate candidates that
+ * broad search can generate for the same pair within a single cycle into a
+ * cheap no-op. If a candidate is not already in the pairs_in_contact and
+ * has an overlap, the pair will be added to the pairs_in_contact and its
+ * contact information will be stored in the corresponding element of the
+ * pairs_in_contact_info.
  *
  * @param particle_container A container that is used to obtain iterators to
  * particles using their ids.

@@ -211,8 +211,11 @@ particle_particle_fine_search(
     }
 
   // Now iterating over contact_pair_candidates (maps of pairs), which
-  // is the output of broad search. If a pair is in vicinity (distance <
-  // threshold), it is added to the adjacent_particles
+  // is the output of broad search. Broad search regenerates this candidate
+  // list from cell-neighbor relationships on every call, with no regard to
+  // existing contact status, so it is a superset that also includes pairs
+  // already present in adjacent_particles above. If a pair is in vicinity
+  // (distance < threshold), it is added to the adjacent_particles.
   for (auto &[particle_one_id, second_particle_container] :
        contact_pair_candidates)
     {
@@ -225,6 +228,25 @@ particle_particle_fine_search(
       for (const types::particle_index &particle_two_id :
            second_particle_container)
         {
+          // Skip candidates already established in adjacent_particles: the
+          // loop above already handled them, so recomputing distance (or,
+          // for periodic contacts, the nearest_periodic_translation
+          // round/multiply) here would be wasted work that emplace() below
+          // would just discard anyway. find()/contains() are used on both
+          // maps, never operator[], so a candidate that isn't actually in
+          // contact never auto-vivifies an empty entry. This also turns
+          // the rare duplicate candidates that broad search can generate
+          // for the same pair within one cycle (see find_cell_neighbors.cc's
+          // get_periodic_neighbor_list, which pushes a shared-face neighbor
+          // cell once per coinciding vertex) into a cheap no-op instead of
+          // doing the expensive work twice.
+          const auto adjacent_particles_iterator =
+            adjacent_particles.find(particle_one_id);
+          if (adjacent_particles_iterator != adjacent_particles.end() &&
+              adjacent_particles_iterator->second.second_particles.contains(
+                particle_two_id))
+            continue;
+
           auto particle_two = particle_container.at(particle_two_id);
 
           // For non-periodic contacts
