@@ -12,7 +12,6 @@
 #include <dem/particle_wall_broad_search.h>
 
 #include <array>
-#include <unordered_map>
 
 using namespace DEM;
 
@@ -142,10 +141,10 @@ public:
    *
    * @param[in] particle_handler Storage of particles and their accessor
    * functions.
-   * @param[in] boundary_cells_object Information of the boundary cells and
+   * @param[in] boundary_cell_object Information of the boundary cells and
    * faces.
    * @param[in] solid_surfaces_mesh_info Mapping of solid surfaces meshes.
-   * @param[in] floating_wall Properties of the floating walls.
+   * @param[in] floating_walls Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
    * @param[in] sparse_particle_contact_object Allow to check the mobility
    * status of cells.
@@ -178,7 +177,7 @@ public:
    * Executes functions that update the particle-wall contacts pairs containers
    * and compute the contact information of the collision particle-wall.
    *
-   * @param[in] floating_wall Properties of the floating walls.
+   * @param[in] floating_walls Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
    * @param[in] neighborhood_threshold Threshold value of contact detection.
    */
@@ -201,7 +200,8 @@ public:
    * direction, used for determining periodic contacts.
    */
   void
-  set_periodic_offset_per_direction(const Tensor<1, dim> &offset_per_direction);
+  set_periodic_offset_per_direction(
+    const std::array<double, dim> &offset_per_direction);
 
   /**
    * @brief Return the particle-floating mesh contact container.
@@ -395,15 +395,13 @@ private:
    * not periodic. Zero-initialized by default for compatibility with
    * non-periodic geometry.
    */
-  Tensor<1, dim> periodic_offset_per_direction;
+  std::array<double, dim> periodic_offset_per_direction{};
 
   /**
    * @brief Reciprocal of periodic_offset_per_direction, component d is 0 if
    * direction d is not periodic. Precomputed alongside
    * periodic_offset_per_direction so the particle-particle fine search can
-   * avoid a division on every call. This is a plain array of independent
-   * scale factors, not a Tensor: it is only ever used component-wise
-   * (multiplying a scalar delta), never as a vector quantity.
+   * avoid a division on every call.
    */
   std::array<double, dim> inverse_periodic_offset_per_direction{};
 };
