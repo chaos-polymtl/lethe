@@ -1,28 +1,43 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Reproducer for a CONFIRMED cross-rank double-counting of periodic
-# particle-particle contact force, specific to domains periodic in 2+
-# directions run on 2+ MPI ranks. This test is intentionally committed in a
-# failing (red) state: its job is to document and pin down the bug, not to
-# fix it (see the PR/issue this originated from for the fix).
+# Regression test pinning the fix for a cross-rank double-counting of
+# periodic particle-particle contact force, specific to domains periodic in
+# 2+ directions run on 2+ MPI ranks.
 #
-# Root cause: find_cell_periodic_neighbors (in find_cell_neighbors.cc)
-# tracks which cells have been claimed as periodic "main" cells using two
-# separate sets, one for the local branch and one for the ghost branch,
-# that never cross-check each other. With a single periodic direction this
-# is harmless. With two simultaneous periodic directions (here: X principal
-# on x_max, boundary id 1; Y principal on y_min, boundary id 2), the 4x4x1
-# mesh below has a "mixed" corner cell C (x-index 3, y-index 3, touching
-# x_max only) whose Y-periodic image is cell D (x-index 3, y-index 0,
-# touching both x_max and y_min, i.e. principal on both directions at
-# once). A rank-partition check (2 ranks, this exact mesh) confirmed C and
-# D land on different ranks by default (no mesh/id tuning needed): C is
-# owned by rank 1, D by rank 0. Each rank's local cell (principal on at
-# least one direction) independently sweeps all of its periodic vertices
-# and can reach the other rank's cell as a ghost, so the same physical
-# contact gets recorded, and force-applied, via two different ContactType
-# containers landing on the same rank.
+# Root cause: find_cell_periodic_neighbors (in find_cell_neighbors.cc) had
+# no working cross-check between its local-owned-cell branch and its
+# ghost-cell branch. The local branch performed no check at all against a
+# ghost periodic neighbor also being independently processed as a "main"
+# cell on its own rank; the ghost branch did check a set, but that set held
+# only ghost cells while the value being searched for was always locally
+# owned, so the check could never fire. With a single periodic direction
+# this defect is harmless, because only the principal side of a periodic
+# boundary is ever a "main" cell, so a given periodic relationship can only
+# ever be discovered from one side. With two simultaneous periodic
+# directions (here: X principal on x_max, boundary id 1; Y principal on
+# y_min, boundary id 2), the 4x4x1 mesh below has a "mixed" corner cell C
+# (x-index 3, y-index 3, touching x_max only) whose Y-periodic image is
+# cell D (x-index 3, y-index 0, touching both x_max and y_min, i.e.
+# principal on both directions at once) -- so both C and D are
+# independently "main" cells, and each one's sweep of its own periodic
+# vertices reaches the other. A rank-partition check (2 ranks, this exact
+# mesh) confirmed C and D land on different ranks by default (no mesh/id
+# tuning needed): C is owned by rank 1, D by rank 0. On rank 1, C's sweep
+# recorded (C local, D ghost) and D's sweep independently recorded (D
+# ghost, C local); both containers apply their contact force to the local
+# particle of the pair, so C's particle received the same contact force
+# twice on the same rank (and symmetrically for D's particle on rank 0).
+#
+# Fix: of the two cells of such a pair, only the one with the smallest
+# dealii::CellId now records it. CellId identifies a cell identically on
+# every process, ghost cells included, so rank 0 and rank 1 elect the same
+# cell without exchanging anything, and each rank applies the contact force
+# exactly once to its own particle. A periodic neighbor that does not
+# itself touch a principal periodic boundary is never a "main" cell, so it
+# can never discover a pair from its own side -- it is always recorded
+# unconditionally by the cell that found it, which is why a single periodic
+# direction needs no election and is unaffected by this fix.
 #
 # Detection strategy: this configuration places particle 0 in cell C and
 # particle 1 in cell D, moving toward each other along Y so their only
@@ -47,15 +62,16 @@
 # case at 1 rank (self-consistent, exact 0.1 m/s reversal, exact energy
 # conservation: 1.3090e-03 J before and after).
 #
-# CONFIRMED at 2 ranks: both particles end up displaced by exactly 4e-4 m
+# Before the fix, both particles ended up displaced by exactly 4e-4 m
 # further apart than the trusted 1-rank answer (id 0: y=0.9736 -> 0.9732,
 # id 1: y=0.0264 -> 0.0268), fully deterministic and reproducible across
 # repeated runs -- i.e. not MPI nondeterminism, and in precisely the
-# direction predicted by an extra outward force impulse. The committed
-# multiperiodic_mixed_corner_2ranks.mpirun=2.output is deliberately the
-# 1-rank answer (not an independently-run, self-certifying 2-rank output),
-# so this test currently fails ctest, documenting the confirmed divergence
-# as a regression target for the fix.
+# direction predicted by an extra outward force impulse (confirmed present
+# on master as well, unrelated to any other change on this branch). With
+# the fix, the 2-rank run matches the trusted 1-rank answer exactly, so
+# multiperiodic_mixed_corner_2ranks.mpirun=2.output is byte-identical to
+# multiperiodic_mixed_corner_2ranks.mpirun=1.output except for the printed
+# rank count.
 
 set dimension = 3
 
