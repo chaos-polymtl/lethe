@@ -14,6 +14,7 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <array>
 #include <map>
 #include <unordered_map>
 
@@ -119,10 +120,10 @@ public:
   /**
    * @brief Return the periodic offset (signed period) for every direction.
    *
-   * @return Tensor whose component d is the signed period of the domain
+   * @return Array whose component d is the signed period of the domain
    * along direction d if d is periodic, or 0 otherwise.
    */
-  inline const Tensor<1, dim> &
+  inline const std::array<double, dim> &
   get_periodic_offset_per_direction() const
   {
     return periodic_offset_per_direction;
@@ -203,7 +204,7 @@ private:
    * image convention, without searching over combinations of periodic
    * offsets.
    */
-  Tensor<1, dim> periodic_offset_per_direction;
+  std::array<double, dim> periodic_offset_per_direction{};
 };
 
 #endif

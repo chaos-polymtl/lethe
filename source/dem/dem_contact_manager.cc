@@ -396,7 +396,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_broad_search(
 template <int dim, typename PropertiesIndex>
 void
 DEMContactManager<dim, PropertiesIndex>::set_periodic_offset_per_direction(
-  const Tensor<1, dim> &offset_per_direction)
+  const std::array<double, dim> &offset_per_direction)
 {
   this->periodic_offset_per_direction = offset_per_direction;
   for (int d = 0; d < dim; ++d)
