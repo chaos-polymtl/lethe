@@ -8,7 +8,7 @@
  * The four situations that the function distinguishes are covered: a file that
  * can't be read, a file name that was left empty, a file that does not exist and
  * a directory given where a file is expected. The last case of the test
- * verifies that get_dimension, which is the first function to open the
+ * verifies that `get_dimension`, which is the first function to open the
  * parameter file in every application, now reports a parameter file that does
  * not exist instead of raising a generic input/output error.
  */
