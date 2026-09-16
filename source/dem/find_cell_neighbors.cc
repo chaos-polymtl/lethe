@@ -3,9 +3,50 @@
 
 #include <dem/find_cell_neighbors.h>
 
+#include <deal.II/grid/cell_id.h>
 #include <deal.II/grid/grid_tools.h>
 
 using namespace DEM;
+
+namespace
+{
+  /**
+   * @brief Elect the single cell of a pair of periodic cells that records
+   * their periodic relationship.
+   *
+   * Two cells that both touch a principal periodic boundary are both
+   * processed as periodic main cells, and each one finds the other when it
+   * sweeps its periodic vertices. Keeping both discoveries records the same
+   * physical contact in two different containers, which both apply the
+   * contact force to the local particle of the pair: the force is then
+   * applied twice. The cell with the smallest CellId is elected to record
+   * the pair. CellId is used rather than the cell iterator because it
+   * identifies a cell identically on every process, ghost cells included,
+   * so the two processes that share a cross-process periodic pair elect the
+   * same cell without exchanging anything.
+   *
+   * @param[in] cell The periodic main cell currently being processed.
+   * @param[in] periodic_neighbor A periodic neighbor of that cell.
+   * @param[in] all_main_cell_list Every cell this function processes as a
+   * periodic main cell.
+   * @return Whether cell is the elected cell of the pair.
+   */
+  template <int dim>
+  bool
+  cell_records_periodic_pair(
+    const typename Triangulation<dim>::active_cell_iterator &cell,
+    const typename Triangulation<dim>::active_cell_iterator &periodic_neighbor,
+    const typename dem_data_structures<dim>::cell_set       &all_main_cell_list)
+  {
+    // A periodic neighbor that does not touch a principal periodic boundary
+    // is never processed as a main cell, so it can never discover this pair
+    // from its own side: the current cell must record it.
+    if (all_main_cell_list.find(periodic_neighbor) == all_main_cell_list.end())
+      return true;
+
+    return cell->id() < periodic_neighbor->id();
+  }
+} // namespace
 
 template <int dim, bool reciprocal>
 void
@@ -120,7 +161,16 @@ find_cell_periodic_neighbors(
     ghost_local_periodic_neighbor_vector;
 
   typename dem_data_structures<dim>::cell_set total_cell_list;
-  typename dem_data_structures<dim>::cell_set total_ghost_cell_list;
+
+  // Every distinct cell of periodic_boundaries_cells_information touches a
+  // principal periodic boundary and is therefore processed as a periodic
+  // main cell by the loop below. Collecting them all before the loop is
+  // what lets the loop recognize a periodic neighbor that is itself a main
+  // cell, and would thus discover the very same periodic relationship from
+  // its own side.
+  typename dem_data_structures<dim>::cell_set all_main_cell_list;
+  for (const auto &pb_cell_struct : periodic_boundaries_cells_information)
+    all_main_cell_list.insert(pb_cell_struct.second.cell);
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -206,6 +256,15 @@ find_cell_periodic_neighbors(
                 }
               else if (periodic_neighbor->is_ghost())
                 {
+                  // Only the elected cell of the pair records it, otherwise
+                  // the ghost branch below records it a second time and the
+                  // contact force is applied twice to the same local
+                  // particle.
+                  if (!cell_records_periodic_pair<dim>(cell,
+                                                       periodic_neighbor,
+                                                       all_main_cell_list))
+                    continue;
+
                   // If the cell neighbor is a ghost, it should be added in
                   // the ghost_periodic_neighbor_vector container
                   auto ghost_search_iterator =
@@ -243,7 +302,6 @@ find_cell_periodic_neighbors(
 
           // The first element of each vector is the cell itself
           ghost_local_periodic_neighbor_vector.push_back(cell);
-          total_ghost_cell_list.insert(cell);
 
           // Empty list of periodic cell neighbor
           typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
@@ -259,17 +317,28 @@ find_cell_periodic_neighbors(
             {
               if (periodic_neighbor->is_locally_owned())
                 {
-                  auto search_iterator =
-                    total_ghost_cell_list.find(periodic_neighbor);
+                  // Only the elected cell of the pair records it, otherwise
+                  // the local branch above records it a second time and
+                  // the contact force is applied twice to the same local
+                  // particle.
+                  if (!cell_records_periodic_pair<dim>(cell,
+                                                       periodic_neighbor,
+                                                       all_main_cell_list))
+                    continue;
 
+                  // Check if the neighbor cell is already in
+                  // ghost_local_periodic_neighbor_vector. Duplicates are
+                  // expected here: get_periodic_neighbor_list sweeps every
+                  // one of this cell's periodic vertices independently, and
+                  // a shared periodic face has multiple coinciding
+                  // vertices, each contributing the same neighbor cell.
                   auto local_search_iterator =
                     std::find(ghost_local_periodic_neighbor_vector.begin(),
                               ghost_local_periodic_neighbor_vector.end(),
                               periodic_neighbor);
 
-                  if (search_iterator == total_ghost_cell_list.end() &&
-                      local_search_iterator ==
-                        ghost_local_periodic_neighbor_vector.end())
+                  if (local_search_iterator ==
+                      ghost_local_periodic_neighbor_vector.end())
                     {
                       ghost_local_periodic_neighbor_vector.push_back(
                         periodic_neighbor);

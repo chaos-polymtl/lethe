@@ -44,15 +44,32 @@ find_cell_neighbors(
 /**
  * @brief Finds the periodic neighbor list (without repetition) of all the
  * active cells in the triangulation. It gets the coinciding vertices of the
- * cells at the periodic boundary 0 to get lists of the periodic neighbor
- * cells on the periodic boundary 1 for each cell. There is some check to
- * prevent repetition of a cell in a list (up to 8 vertices can have the
- * same cell in common in 3D).
+ * cells at a principal periodic boundary to get lists of the periodic
+ * neighbor cells on the matching periodic boundary for each cell. There is
+ * some check to prevent repetition of a cell in a list (up to 8 vertices can
+ * have the same cell in common in 3D).
  * 3 types of container are used for periodic mapping of cell neighbors :
  * local-local cells, local-ghost cells and ghost-local cells. The last
- * container is necessary since the mapping are only from periodic boundary 0
- * to periodic boundary 1 and the ghost-local particle pairs need distinction
- * for proper handling of search of particle pairs and contact forces.
+ * container is necessary since the mapping are only from the principal
+ * periodic boundary to the matching one and the ghost-local particle pairs
+ * need distinction for proper handling of search of particle pairs and
+ * contact forces.
+ *
+ * With more than one periodic direction, a cell can touch two principal
+ * periodic boundaries at once, and two such cells can find each other from
+ * both sides: one records the pair as a local-ghost contact, the other
+ * records the same pair as a ghost-local contact. Both containers apply the
+ * contact force to the local particle of the pair, so keeping both would
+ * apply that force twice. To prevent this, of the two cells of such a pair,
+ * only the one with the smallest CellId records it (see
+ * cell_records_periodic_pair in the .cc file). CellId identifies a cell
+ * identically on every process, ghost cells included, so the two processes
+ * that share a cross-process periodic pair elect the same cell without
+ * exchanging anything. A periodic neighbor that does not itself touch a
+ * principal periodic boundary is never a main cell and can never discover
+ * the pair from its own side, so it is always recorded by the cell that
+ * found it — this is why a single periodic direction needs no election at
+ * all.
  *
  * @param triangulation Triangulation to access the information of the cells
  * @param periodic_boundaries_cells_information A container of information
