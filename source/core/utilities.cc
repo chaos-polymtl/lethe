@@ -253,8 +253,8 @@ fill_table_from_file(TableHandler      &table,
                      const std::string &delimiter)
 {
   table.clear();
+  check_file_exists(file_name, "tabulated data file");
   std::ifstream myfile(file_name);
-  AssertThrow(myfile, ExcFileNotOpen(file_name));
 
   std::string              line;
   std::vector<std::string> vector_of_column_names;
@@ -300,8 +300,8 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 {
   // fill a pair, first being a vector of vector name and the second being the
   // vector of vector associated with the vector name.
+  check_file_exists(file, "tabulated data file");
   std::ifstream myfile(file);
-  AssertThrow(myfile, ExcFileNotOpen(file));
 
   std::string              line;
   std::vector<std::string> column_names;
@@ -352,8 +352,8 @@ fill_string_vectors_from_file(
   const std::string                               &file,
   const std::string                               &delimiter)
 {
+  check_file_exists(file, "tabulated data file");
   std::ifstream myfile(file);
-  AssertThrow(myfile, ExcFileNotOpen(file));
 
   std::string              line;
   std::vector<std::string> column_names;
