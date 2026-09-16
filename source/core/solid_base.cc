@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/solid_base.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
@@ -110,6 +111,15 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
 {
   if (param->solid_mesh.type == Parameters::Mesh<spacedim>::Type::gmsh)
     {
+      // The mesh file is checked here, before the branch below, so that every
+      // rank raises the same error. The simplex branch reads the file from
+      // within a lambda that is only run by the root of each group of
+      // processes, and a check placed there would leave the other ranks
+      // waiting.
+      check_file_exists(param->solid_mesh.file_name,
+                        "gmsh mesh file of the solid object, given by "
+                        "'subsection mesh' - 'set file name'");
+
       if (param->solid_mesh.simplex)
         {
           auto        comm      = solid_tria->get_mpi_communicator();
@@ -362,8 +372,10 @@ SolidBase<dim, spacedim>::load_particles(const std::string &filename_part)
   setup_particles_handler();
 
   // Gather particle serialization information
+  check_file_exists(filename_part,
+                    "checkpoint file of the solid particles, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(filename_part.c_str());
-  AssertThrow(input, ExcFileNotOpen(filename_part));
 
   std::string buffer;
   std::getline(input, buffer);
@@ -760,9 +772,11 @@ SolidBase<dim, spacedim>::read_checkpoint(const std::string &prefix)
     move_solid_triangulation_with_displacement();
 
   // Gather particle serialization information and deserialize them
-  std::string   particle_filename = prefix + ".particles";
+  std::string particle_filename = prefix + ".particles";
+  check_file_exists(particle_filename,
+                    "checkpoint file of the solid particles, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(particle_filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(particle_filename));
 
   std::string buffer;
   std::getline(input, buffer);

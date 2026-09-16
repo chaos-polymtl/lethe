@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/pvd_handler.h>
+#include <core/utilities.h>
 
 #include <fstream>
 
@@ -24,9 +25,11 @@ void
 PVDHandler::read(const std::string &prefix)
 {
   times_and_names.clear();
-  std::string   filename = prefix + ".pvdhandler";
+  std::string filename = prefix + ".pvdhandler";
+  check_file_exists(filename,
+                    "checkpoint file of the pvd handler, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(filename));
 
   std::string  buffer;
   unsigned int size;

@@ -3,6 +3,7 @@
 
 #include <core/lethe_grid_tools.h>
 #include <core/solutions_output.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/point.h>
 
@@ -164,6 +165,10 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
 {
   if (param->solid_mesh.type == Parameters::Mesh<dim, spacedim>::Type::gmsh)
     {
+      check_file_exists(param->solid_mesh.file_name,
+                        "gmsh mesh file of the solid object, given by "
+                        "'subsection mesh' - 'set file name'");
+
       // Grid creation
       GridIn<dim, spacedim> grid_in;
       // Attach triangulation
@@ -545,6 +550,9 @@ SerialSolid<dim, spacedim>::read_checkpoint(const std::string &prefix)
     // displacement_dh.distribute_dofs(fe);
     std::string file_name =
       prefix + ".solid_object." + Utilities::int_to_string(id, 2) + ".dof";
+    check_file_exists(file_name,
+                      "checkpoint file of the degrees of freedom of the solid "
+                      "object, given by 'subsection restart' - 'set filename'");
     std::ifstream                 ifs(file_name);
     boost::archive::text_iarchive ia(ifs);
     displacement_dh.load(ia, 0);
@@ -553,6 +561,9 @@ SerialSolid<dim, spacedim>::read_checkpoint(const std::string &prefix)
   {
     std::string file_name = prefix + ".solid_object." +
                             Utilities::int_to_string(id, 2) + ".displacement";
+    check_file_exists(file_name,
+                      "checkpoint file of the displacement of the solid "
+                      "object, given by 'subsection restart' - 'set filename'");
     std::ifstream                 ifs(file_name);
     boost::archive::text_iarchive ia(ifs);
     displacement.load(ia, 0);

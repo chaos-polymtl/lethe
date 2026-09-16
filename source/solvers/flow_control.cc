@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020, 2023-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/utilities.h>
+
 #include <solvers/flow_control.h>
 
 #include <fstream>
@@ -118,9 +120,11 @@ template <int dim>
 void
 FlowControl<dim>::read(const std::string &prefix)
 {
-  std::string   filename = prefix + ".flowcontrol";
+  std::string filename = prefix + ".flowcontrol";
+  check_file_exists(filename,
+                    "checkpoint file of the dynamic flow control, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(filename));
 
   std::string buffer;
   std::getline(input, buffer);
