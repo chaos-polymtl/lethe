@@ -4,10 +4,12 @@
 # Application test for periodic_offset_per_direction in 3D.
 #
 # Two stationary particles are placed in slight overlap across the
-# z-periodic boundary, in a fully periodic unit cube. The periodic BCs are
-# registered in the order x, y, z so that a correct contact requires the
-# offset of the THIRD registered pair to be correctly accumulated into
-# periodic_offset_per_direction. The Hertzian repulsion pushes them apart along z.
+# z-periodic boundary, in a fully periodic unit cube (periodic in x, y and
+# z). periodic_offset_per_direction must hold a correct, independent,
+# nonzero entry for z alongside the x and y ones for the minimum image
+# convention to detect this contact -- a regression that dropped or zeroed
+# any one direction's offset would leave this contact undetected. The
+# Hertzian repulsion pushes them apart along z.
 #
 # Simulation horizon is intentionally short to keep the dynamics 1D and
 # robust to floating-point drift.
