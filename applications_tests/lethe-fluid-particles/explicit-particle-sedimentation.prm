@@ -8,7 +8,7 @@
 # The particle should follow the analytical solution but slightly overshoot
 # it due to the two-way coupling.
 # A python file is provided within the /single_particle_sedimentation_reference/
-# folder that can be used to verify the validaty of the solution
+# folder that can be used to verify the validity of the solution
 # for the particle trajectory and velocity.
 
 # Listing of Parameters
