@@ -1,0 +1,177 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Reproducer for a CONFIRMED cross-rank double-counting of periodic
+# particle-particle contact force, specific to domains periodic in 2+
+# directions run on 2+ MPI ranks. This test is intentionally committed in a
+# failing (red) state: its job is to document and pin down the bug, not to
+# fix it (see the PR/issue this originated from for the fix).
+#
+# Root cause: find_cell_periodic_neighbors (in find_cell_neighbors.cc)
+# tracks which cells have been claimed as periodic "main" cells using two
+# separate sets, one for the local branch and one for the ghost branch,
+# that never cross-check each other. With a single periodic direction this
+# is harmless. With two simultaneous periodic directions (here: X principal
+# on x_max, boundary id 1; Y principal on y_min, boundary id 2), the 4x4x1
+# mesh below has a "mixed" corner cell C (x-index 3, y-index 3, touching
+# x_max only) whose Y-periodic image is cell D (x-index 3, y-index 0,
+# touching both x_max and y_min, i.e. principal on both directions at
+# once). A rank-partition check (2 ranks, this exact mesh) confirmed C and
+# D land on different ranks by default (no mesh/id tuning needed): C is
+# owned by rank 1, D by rank 0. Each rank's local cell (principal on at
+# least one direction) independently sweeps all of its periodic vertices
+# and can reach the other rank's cell as a ghost, so the same physical
+# contact gets recorded, and force-applied, via two different ContactType
+# containers landing on the same rank.
+#
+# Detection strategy: this configuration places particle 0 in cell C and
+# particle 1 in cell D, moving toward each other along Y so their only
+# contact is through the Y-periodic image at this exact corner (direct
+# separation in x and z is 0; direct separation in y is far outside the
+# neighborhood threshold, so no spurious non-periodic contact exists).
+# Restitution is 1.0, friction and rolling resistance are 0, particles
+# start exactly touching (zero overlap, so zero contact potential energy at
+# t=0), and g is 0, so with equal-mass particles, momentum and kinetic
+# energy conservation alone (independent of the exact nonlinear
+# Hertz-Mindlin force law) pin the post-collision outcome exactly: a full
+# velocity sign reversal for both particles (0: +0.1 -> -0.1, 1: -0.1 ->
+# +0.1). Ghost cells cannot exist at 1 rank, so
+# cells_ghost_periodic_neighbor_list and cells_ghost_local_periodic_neighbor_list
+# are structurally always empty there, making the double-discovery
+# mechanism above impossible at 1 rank (not just unlikely) -- so the 1-rank
+# run is a trustworthy oracle for the correct answer. Per
+# periodic_boundary_collisions.mpirun={1,2}.output (a single-periodic-
+# direction case), the two rank counts' outputs are expected to be
+# identical except for the printed rank count itself; that was confirmed
+# by direct diff before writing this test, and reconfirmed for this exact
+# case at 1 rank (self-consistent, exact 0.1 m/s reversal, exact energy
+# conservation: 1.3090e-03 J before and after).
+#
+# CONFIRMED at 2 ranks: both particles end up displaced by exactly 4e-4 m
+# further apart than the trusted 1-rank answer (id 0: y=0.9736 -> 0.9732,
+# id 1: y=0.0264 -> 0.0268), fully deterministic and reproducible across
+# repeated runs -- i.e. not MPI nondeterminism, and in precisely the
+# direction predicted by an extra outward force impulse. The committed
+# multiperiodic_mixed_corner_2ranks.mpirun=2.output is deliberately the
+# 1-rank answer (not an independently-run, self-certifying 2-rank output),
+# so this test currently fails ctest, documenting the confirmed divergence
+# as a regression target for the fix.
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 1e-5
+  set time end         = 3e-2
+  set log frequency    = 3000
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = constant
+    set frequency                = 50
+    set neighborhood threshold   = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = none
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0., 0., 0.
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.05
+    set number of particles               = 2
+    set density particles                 = 2000
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 1.0
+    set friction coefficient particles    = 0.0
+    set rolling friction particles        = 0.0
+  end
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+# Particle 0 sits in mixed corner cell C (0.75-1.0, 0.75-1.0), particle 1 in
+# double-principal corner cell D (0.75-1.0, 0.0-0.25). They approach each
+# other along y with equal and opposite velocity; the periodic gap at t=0 is
+# (1 - 0.975) + 0.025 = 0.05, exactly equal to the diameter, so the
+# particles start exactly touching (zero overlap, zero contact potential
+# energy) and the whole compress/rebound/separate cycle happens within the
+# simulated window.
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 1000000
+  set list x              = 0.850, 0.850
+  set list y              = 0.975, 0.025
+  set list z              = 0.125, 0.125
+  set list velocity x     = 0.000, 0.000
+  set list velocity y     = 0.100, -0.100
+  set list velocity z     = 0.000, 0.000
+  set list omega x        = 0.000, 0.000
+  set list omega y        = 0.000, 0.000
+  set list omega z        = 0.000, 0.000
+  set list diameters      = 0.050, 0.050
+  set list temperatures   = 0.000, 0.000
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = dealii
+  set grid type                           = subdivided_hyper_rectangle
+  set grid arguments                      = 4, 4, 1 : 0.0, 0.0, 0.0 : 1.0, 1.0, 0.25 : true
+  set initial refinement                  = 0
+  set expand particle-wall contact search = false
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 2
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 0
+    set periodic direction = 0
+  end
+
+  subsection boundary condition 1
+    set type               = periodic
+    set periodic id 0      = 2
+    set periodic id 1      = 3
+    set periodic direction = 1
+  end
+end
