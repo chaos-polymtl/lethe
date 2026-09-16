@@ -28,6 +28,8 @@
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
+#include <array>
+
 using namespace dealii;
 
 template <int dim>
@@ -70,7 +72,7 @@ test()
     cells_info;
   manipulator.map_periodic_cells(triangulation, cells_info);
 
-  const Tensor<1, dim> &offset_per_direction =
+  const std::array<double, dim> &offset_per_direction =
     manipulator.get_periodic_offset_per_direction();
 
   deallog << "dim = " << dim << ", periodic_offset_per_direction = (";

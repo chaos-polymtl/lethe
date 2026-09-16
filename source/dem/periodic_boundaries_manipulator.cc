@@ -277,7 +277,7 @@ template <int dim>
 void
 PeriodicBoundariesManipulator<dim>::compute_periodic_offset_per_direction()
 {
-  Tensor<1, dim> offset_per_direction;
+  std::array<double, dim> offset_per_direction{};
 
   // Each entry of periodic_offsets is nonzero in exactly one component (the
   // direction of that periodic boundary pair, see get_periodic_boundaries_info
@@ -286,7 +286,8 @@ PeriodicBoundariesManipulator<dim>::compute_periodic_offset_per_direction()
   // every direction, the signed period of the domain along that direction
   // (0 if the direction is not periodic).
   for (auto const &[id, offset] : this->periodic_offsets)
-    offset_per_direction += offset;
+    for (int d = 0; d < dim; ++d)
+      offset_per_direction[d] += offset[d];
 
   this->periodic_offset_per_direction = offset_per_direction;
 }

@@ -7,8 +7,6 @@
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
 
-#include <deal.II/base/tensor.h>
-
 #include <array>
 
 using namespace dealii;
@@ -47,10 +45,12 @@ using adjacent_pairs_for_contact_t = std::conditional_t<
  * @param contact_pair_candidates The output of broad search which shows
  * contact pair candidates.
  * @param neighborhood_threshold A value which defines the neighbor particles.
- * @param periodic_offset_per_direction A tensor whose component d holds the
+ * @param periodic_offset_per_direction An array whose component d holds the
  * signed period of the domain along direction d (0 if d is not periodic),
  * used to find the nearest periodic image of particles crossing periodic
- * boundaries via the minimum image convention.
+ * boundaries via the minimum image convention. This is a plain array of
+ * independent scale factors, not a Tensor, since it is only ever used
+ * component-wise.
  * @param inverse_periodic_offset_per_direction An array whose component d
  * holds the reciprocal of periodic_offset_per_direction's component d (0 if
  * d is not periodic), used to avoid a division when applying the minimum
@@ -66,7 +66,7 @@ particle_particle_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
                                 &contact_pair_candidates,
   const double                   neighborhood_threshold,
-  const Tensor<1, dim>          &periodic_offset_per_direction         = {},
+  const std::array<double, dim> &periodic_offset_per_direction         = {},
   const std::array<double, dim> &inverse_periodic_offset_per_direction = {});
 
 #endif
