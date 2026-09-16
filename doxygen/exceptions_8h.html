@@ -103,7 +103,7 @@ Include dependency graph for exceptions.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="exceptions_8h__dep__incl.svg" width="4336" height="726"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="exceptions_8h__dep__incl.svg" width="4530" height="726"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="exceptions_8h_source.html">Go to the source code of this file.</a></p>
@@ -114,15 +114,63 @@ Functions</h2></td></tr>
 <tr class="separator:a3dac88f65ceb8fd470561f959e5a7ea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5d93ae5c63eea113e8c4fb89bfbad26" id="r_ab5d93ae5c63eea113e8c4fb89bfbad26"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="exceptions_8h.html#ab5d93ae5c63eea113e8c4fb89bfbad26">DeclException1</a> (NoSolidWarning, std::string,&lt;&lt; &quot;No solid defined: impossible to assemble nitsche restriction in &quot;&lt;&lt; arg1&lt;&lt; &quot; solver. Change the 'number of solids' parameter.&quot;)</td></tr>
 <tr class="separator:ab5d93ae5c63eea113e8c4fb89bfbad26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a869cc41aa3238552af5447c1056911cb" id="r_a869cc41aa3238552af5447c1056911cb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="exceptions_8h.html#a869cc41aa3238552af5447c1056911cb">DeclException1</a> (EmptyFileName, std::string,&lt;&lt; &quot;No file name was given for the &quot;&lt;&lt; arg1&lt;&lt; &quot;. Specify it in the parameter file before running Lethe.&quot;)</td></tr>
+<tr class="separator:a869cc41aa3238552af5447c1056911cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab324aa13e55076a6fa82fd5cfbed8f18" id="r_ab324aa13e55076a6fa82fd5cfbed8f18"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="exceptions_8h.html#ab324aa13e55076a6fa82fd5cfbed8f18">DeclException2</a> (FileDoesNotExist, std::string, std::string,&lt;&lt; &quot;The &quot;&lt;&lt; arg2&lt;&lt; &quot; &lt;&quot;&lt;&lt; arg1&lt;&lt; &quot;&gt; does not exist. &quot;&lt;&lt; &quot;Verify that its name is spelled correctly. Relative paths are &quot;&lt;&lt; &quot;interpreted from the directory in which the application was launched, &quot;&lt;&lt; &quot;not from the directory of the parameter file.&quot;)</td></tr>
+<tr class="separator:ab324aa13e55076a6fa82fd5cfbed8f18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a573251cbe85ae39cedb2f10975a93e14" id="r_a573251cbe85ae39cedb2f10975a93e14"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="exceptions_8h.html#a573251cbe85ae39cedb2f10975a93e14">DeclException2</a> (FileIsNotReadable, std::string, std::string,&lt;&lt; &quot;The &quot;&lt;&lt; arg2&lt;&lt; &quot; &lt;&quot;&lt;&lt; arg1&lt;&lt; &quot;&gt; exists but could not be opened for &quot;&lt;&lt; &quot;reading. Verify that it is a file and not a directory, and that its &quot;&lt;&lt; &quot;permissions allow Lethe to read it.&quot;)</td></tr>
+<tr class="separator:a573251cbe85ae39cedb2f10975a93e14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Common exception declarations shared across multiple solvers in Lethe. </p>
-<p>This file defines deal.II-style exception macros used to report errors related to the Nitsche immersed boundary method across different solver types, avoiding code repetition. </p>
+<p>This file defines deal.II-style exception macros used to report errors that are raised from more than one place in Lethe, such as the errors related to the Nitsche immersed boundary method or to the files that Lethe reads, avoiding code repetition. </p>
 
 <p class="definition">Definition in file <a class="el" href="exceptions_8h_source.html">exceptions.h</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a869cc41aa3238552af5447c1056911cb" name="a869cc41aa3238552af5447c1056911cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a869cc41aa3238552af5447c1056911cb">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">EmptyFileName&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;No file name was given for the &quot;&lt;&lt; arg1&lt;&lt; &quot;. Specify it in the parameter file before running Lethe.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Exception raised when no name was given for a file that Lethe must read. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg1</td><td>Description of the role of the file. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ab5d93ae5c63eea113e8c4fb89bfbad26" name="ab5d93ae5c63eea113e8c4fb89bfbad26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5d93ae5c63eea113e8c4fb89bfbad26">&#9670;&#160;</a></span>DeclException1()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5d93ae5c63eea113e8c4fb89bfbad26">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,6 +205,92 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">arg1</td><td>Name of the solver in which the error occurred. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab324aa13e55076a6fa82fd5cfbed8f18" name="ab324aa13e55076a6fa82fd5cfbed8f18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab324aa13e55076a6fa82fd5cfbed8f18">&#9670;&#160;</a></span>DeclException2() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException2 </td>
+          <td>(</td>
+          <td class="paramtype">FileDoesNotExist&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Exception raised when a file that Lethe must read does not exist. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg1</td><td>Path of the file, as given by the user. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg2</td><td>Description of the role of the file. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a573251cbe85ae39cedb2f10975a93e14" name="a573251cbe85ae39cedb2f10975a93e14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a573251cbe85ae39cedb2f10975a93e14">&#9670;&#160;</a></span>DeclException2() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException2 </td>
+          <td>(</td>
+          <td class="paramtype">FileIsNotReadable&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Exception raised when a file that Lethe must read exists but cannot be opened for reading. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg1</td><td>Path of the file, as given by the user. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg2</td><td>Description of the role of the file. </td></tr>
   </table>
   </dd>
 </dl>

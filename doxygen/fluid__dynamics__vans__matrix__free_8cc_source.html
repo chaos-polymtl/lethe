@@ -749,46 +749,46 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>  <span class="comment">// Load checkpoint controller</span></div>
 <div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>  std::string checkpoint_controller_object_filename =</div>
 <div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>    prefix + <span class="stringliteral">&quot;.checkpoint_controller&quot;</span>;</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>  std::ifstream iss_checkpoint_controller_obj(</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>    checkpoint_controller_object_filename);</div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>  boost::archive::text_iarchive ia_checkpoint_controller_obj(</div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    iss_checkpoint_controller_obj, boost::archive::no_header);</div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span> </div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> checkpoint_id;</div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>  ia_checkpoint_controller_obj &gt;&gt; checkpoint_id;</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>  <a class="code hl_function" href="core_2utilities_8h.html#a1889a1173f8dafd76574024a7e779587">check_file_exists</a>(checkpoint_controller_object_filename,</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>                    <span class="stringliteral">&quot;checkpoint file of the checkpoint controller, given by &quot;</span></div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>                    <span class="stringliteral">&quot;&#39;subsection void fraction&#39; - &#39;set dem file name&#39;&quot;</span>);</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>  std::ifstream iss_checkpoint_controller_obj(</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    checkpoint_controller_object_filename);</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>  boost::archive::text_iarchive ia_checkpoint_controller_obj(</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>    iss_checkpoint_controller_obj, boost::archive::no_header);</div>
 <div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span> </div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>  <span class="comment">// New prefix for the remaining files</span></div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>  prefix = prefix + <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(checkpoint_id);</div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> checkpoint_id;</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>  ia_checkpoint_controller_obj &gt;&gt; checkpoint_id;</div>
 <div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span> </div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>  <span class="comment">// Gather particle serialization information</span></div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>  std::string   particle_filename = prefix + <span class="stringliteral">&quot;.particles&quot;</span>;</div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>  std::ifstream input(particle_filename.c_str());</div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>  AssertThrow(input, ExcFileNotOpen(particle_filename));</div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span> </div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>  std::string buffer;</div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>  std::getline(input, buffer);</div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>  std::istringstream            iss(buffer);</div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>  boost::archive::text_iarchive ia(iss, boost::archive::no_header);</div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>  <span class="comment">// New prefix for the remaining files</span></div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>  prefix = prefix + <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(checkpoint_id);</div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span> </div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>  <span class="comment">// Gather particle serialization information</span></div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>  std::string particle_filename = prefix + <span class="stringliteral">&quot;.particles&quot;</span>;</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>  <a class="code hl_function" href="core_2utilities_8h.html#a1889a1173f8dafd76574024a7e779587">check_file_exists</a>(particle_filename,</div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>                    <span class="stringliteral">&quot;checkpoint file of the particles, given by &quot;</span></div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>                    <span class="stringliteral">&quot;&#39;subsection void fraction&#39; - &#39;set dem file name&#39;&quot;</span>);</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>  std::ifstream input(particle_filename.c_str());</div>
 <div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span> </div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>  <span class="comment">// Create a temporary particle_handler with the DEM properties of the</span></div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>  <span class="comment">// simulation this one is restarted from</span></div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>  <span class="keyword">using </span>DEMPropertiesIndex =</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    <a class="code hl_typedef" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">DEM::matching_dem_properties_index&lt;PropertiesIndex&gt;</a>;</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>  std::string buffer;</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>  std::getline(input, buffer);</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>  std::istringstream            iss(buffer);</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>  boost::archive::text_iarchive ia(iss, boost::archive::no_header);</div>
 <div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span> </div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>  Particles::ParticleHandler&lt;dim&gt; temporary_particle_handler(</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>    *this-&gt;triangulation, particle_mapping, DEMPropertiesIndex::n_properties);</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span> </div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>  ia &gt;&gt; temporary_particle_handler;</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>  <span class="comment">// Create a temporary particle_handler with the DEM properties of the</span></div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>  <span class="comment">// simulation this one is restarted from</span></div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>  <span class="keyword">using </span>DEMPropertiesIndex =</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>    <a class="code hl_typedef" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">DEM::matching_dem_properties_index&lt;PropertiesIndex&gt;</a>;</div>
 <div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span> </div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>  <span class="keyword">const</span> std::string filename = prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>;</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>  std::ifstream     in(filename.c_str());</div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>  <span class="keywordflow">if</span> (!in)</div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>    AssertThrow(<span class="keyword">false</span>,</div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>                ExcMessage(</div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>                  std::string(</div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>                    <span class="stringliteral">&quot;You are trying to restart a previous computation, &quot;</span></div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>                    <span class="stringliteral">&quot;but the restart file &lt;&quot;</span>) +</div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>                  filename + <span class="stringliteral">&quot;&gt; does not appear to exist!&quot;</span>));</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>  Particles::ParticleHandler&lt;dim&gt; temporary_particle_handler(</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>    *this-&gt;triangulation, particle_mapping, DEMPropertiesIndex::n_properties);</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span> </div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>  ia &gt;&gt; temporary_particle_handler;</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span> </div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>  <span class="keyword">const</span> std::string filename = prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>;</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>  <a class="code hl_function" href="core_2utilities_8h.html#a1889a1173f8dafd76574024a7e779587">check_file_exists</a>(filename,</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>                    <span class="stringliteral">&quot;checkpoint file of the triangulation, given by &quot;</span></div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>                    <span class="stringliteral">&quot;&#39;subsection void fraction&#39; - &#39;set dem file name&#39;&quot;</span>);</div>
 <div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span> </div>
 <div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>  <span class="keywordflow">if</span> (<span class="keyword">auto</span> parallel_triangulation =</div>
 <div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>        <span class="keyword">dynamic_cast&lt;</span>parallel::distributed::Triangulation&lt;dim&gt; *<span class="keyword">&gt;</span>(</div>
@@ -1284,10 +1284,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassParticleProjector_html_afd81d1ff58843af02d697987cc931504"><div class="ttname"><a href="classParticleProjector.html#afd81d1ff58843af02d697987cc931504">ParticleProjector::fluid_drag_on_particles</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 3, PropertiesIndex::fem_drag_x &gt; fluid_drag_on_particles</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00886">particle_projector.h:886</a></div></div>
 <div class="ttc" id="aclassVANSOperator_html"><div class="ttname"><a href="classVANSOperator.html">VANSOperator</a></div><div class="ttdoc">Implements the matrix-free operator for the VANS equations.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00020">fluid_dynamics_vans_matrix_free_operators.h:21</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html"><div class="ttname"><a href="core_2utilities_8h.html">utilities.h</a></div></div>
+<div class="ttc" id="acore_2utilities_8h_html_a1889a1173f8dafd76574024a7e779587"><div class="ttname"><a href="core_2utilities_8h.html#a1889a1173f8dafd76574024a7e779587">check_file_exists</a></div><div class="ttdeci">void check_file_exists(const std::string &amp;file_name, const std::string &amp;file_description)</div><div class="ttdoc">Verify that a file that Lethe must read exists and can be opened, and raise an error stated in the us...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00223">utilities.cc:223</a></div></div>
 <div class="ttc" id="afluid__dynamics__vans__matrix__free_8h_html"><div class="ttname"><a href="fluid__dynamics__vans__matrix__free_8h.html">fluid_dynamics_vans_matrix_free.h</a></div></div>
 <div class="ttc" id="afluid__dynamics__vans__matrix__free__operators_8h_html"><div class="ttname"><a href="fluid__dynamics__vans__matrix__free__operators_8h.html">fluid_dynamics_vans_matrix_free_operators.h</a></div></div>
 <div class="ttc" id="agrids_8h_html"><div class="ttname"><a href="grids_8h.html">grids.h</a></div></div>
-<div class="ttc" id="agrids_8h_html_ac1ac4fcf9ed77a6a0f0762867c992d3e"><div class="ttname"><a href="grids_8h.html#ac1ac4fcf9ed77a6a0f0762867c992d3e">read_mesh_and_manifolds</a></div><div class="ttdeci">void read_mesh_and_manifolds(parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const Parameters::Mesh&lt; dim, spacedim &gt; &amp;mesh_parameters, const Parameters::Manifolds &amp;manifolds_parameters, bool restart, const Parameters::PeriodicBoundaries &amp;periodic_boundaries)</div><div class="ttdoc">Completely sets up a mesh and its manifolds.</div><div class="ttdef"><b>Definition</b> <a href="grids_8cc_source.html#l00423">grids.cc:423</a></div></div>
+<div class="ttc" id="agrids_8h_html_ac1ac4fcf9ed77a6a0f0762867c992d3e"><div class="ttname"><a href="grids_8h.html#ac1ac4fcf9ed77a6a0f0762867c992d3e">read_mesh_and_manifolds</a></div><div class="ttdeci">void read_mesh_and_manifolds(parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &amp;triangulation, const Parameters::Mesh&lt; dim, spacedim &gt; &amp;mesh_parameters, const Parameters::Manifolds &amp;manifolds_parameters, bool restart, const Parameters::PeriodicBoundaries &amp;periodic_boundaries)</div><div class="ttdoc">Completely sets up a mesh and its manifolds.</div><div class="ttdef"><b>Definition</b> <a href="grids_8cc_source.html#l00433">grids.cc:433</a></div></div>
 <div class="ttc" id="alethe__grid__tools_8h_html"><div class="ttname"><a href="lethe__grid__tools_8h.html">lethe_grid_tools.h</a></div></div>
 <div class="ttc" id="amanifolds_8h_html"><div class="ttname"><a href="manifolds_8h.html">manifolds.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a></div><div class="ttdeci">PhysicsID</div><div class="ttdoc">Unique identifiers for each physics module in Lethe.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00026">multiphysics.h:27</a></div></div>

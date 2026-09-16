@@ -103,6 +103,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="grid__uniform__channel__with__meshed__cylinder_8h_source.html">core/grid_uniform_channel_with_meshed_cylinder.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">core/grid_uniform_channel_with_meshed_square_prism.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="grids_8h_source.html">core/grids.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="core_2utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/conditional_ostream.h&gt;</code><br />
 <code>#include &lt;deal.II/base/mpi.h&gt;</code><br />
 <code>#include &lt;deal.II/base/types.h&gt;</code><br />
@@ -118,7 +119,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for grids.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="grids_8cc__incl.svg" width="3716" height="491"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="grids_8cc__incl.svg" width="3394" height="491"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="grids_8cc_source.html">Go to the source code of this file.</a></p>
@@ -238,7 +239,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00385">385</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00395">395</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l01755">Parameters::Mesh&lt; dim, spacedim &gt;::boundaries_to_refine</a>, <a class="el" href="parameters_8h_source.html#l01748">Parameters::Mesh&lt; dim, spacedim &gt;::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01752">Parameters::Mesh&lt; dim, spacedim &gt;::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00122">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01758">Parameters::Mesh&lt; dim, spacedim &gt;::refine_until_target_size</a>, <a class="el" href="parameters_8h_source.html#l01761">Parameters::Mesh&lt; dim, spacedim &gt;::simplex</a>, and <a class="el" href="parameters_8h_source.html#l01764">Parameters::Mesh&lt; dim, spacedim &gt;::target_size</a>.</p>
 
@@ -372,7 +373,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00704">704</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00714">714</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l01782">Parameters::Mesh&lt; dim, spacedim &gt;::rotation_angle</a>, <a class="el" href="parameters_8h_source.html#l01781">Parameters::Mesh&lt; dim, spacedim &gt;::rotation_axis</a>, <a class="el" href="parameters_8h_source.html#l01785">Parameters::Mesh&lt; dim, spacedim &gt;::scale</a>, and <a class="el" href="parameters_8h_source.html#l01778">Parameters::Mesh&lt; dim, spacedim &gt;::translation</a>.</p>
 
@@ -499,9 +500,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00094">94</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00095">95</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00704">apply_mesh_transformation()</a>, <a class="el" href="parameters_8h_source.html#l01739">Parameters::Mesh&lt; dim, spacedim &gt;::file_name</a>, <a class="el" href="parameters_8h_source.html#l01745">Parameters::Mesh&lt; dim, spacedim &gt;::grid_arguments</a>, <a class="el" href="parameters_8h_source.html#l01742">Parameters::Mesh&lt; dim, spacedim &gt;::grid_type</a>, <a class="el" href="parameters_8h_source.html#l01748">Parameters::Mesh&lt; dim, spacedim &gt;::initial_refinement</a>, <a class="el" href="grid__birmingham__fluidized__bed_8cc_source.html#l00376">GridBirminghamFluidizedBed&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__cube__merged_8cc_source.html#l00149">GridCubeMerged&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__fichera__oven_8cc_source.html#l00139">GridFicheraOven&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__impinging__jet__mixer_8cc_source.html#l00616">GridImpingingJetMixer&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__periodic__hills_8cc_source.html#l00344">GridPeriodicHills&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__uniform__channel__with__meshed__cylinder_8cc_source.html#l00490">GridUniformChannelWithMeshedCylinder&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00672">GridUniformChannelWithMeshedSquarePrism&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="parameters_8h_source.html#l01785">Parameters::Mesh&lt; dim, spacedim &gt;::scale</a>, <a class="el" href="parameters_8h_source.html#l01761">Parameters::Mesh&lt; dim, spacedim &gt;::simplex</a>, <a class="el" href="parameters_8h_source.html#l01736">Parameters::Mesh&lt; dim, spacedim &gt;::type</a>, and <a class="el" href="grids_8cc_source.html#l00055">warn_if_scaling_curved_manifolds()</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00714">apply_mesh_transformation()</a>, <a class="el" href="utilities_8cc_source.html#l00223">check_file_exists()</a>, <a class="el" href="parameters_8h_source.html#l01739">Parameters::Mesh&lt; dim, spacedim &gt;::file_name</a>, <a class="el" href="parameters_8h_source.html#l01745">Parameters::Mesh&lt; dim, spacedim &gt;::grid_arguments</a>, <a class="el" href="parameters_8h_source.html#l01742">Parameters::Mesh&lt; dim, spacedim &gt;::grid_type</a>, <a class="el" href="parameters_8h_source.html#l01748">Parameters::Mesh&lt; dim, spacedim &gt;::initial_refinement</a>, <a class="el" href="grid__birmingham__fluidized__bed_8cc_source.html#l00376">GridBirminghamFluidizedBed&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__cube__merged_8cc_source.html#l00149">GridCubeMerged&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__fichera__oven_8cc_source.html#l00139">GridFicheraOven&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__impinging__jet__mixer_8cc_source.html#l00616">GridImpingingJetMixer&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__periodic__hills_8cc_source.html#l00344">GridPeriodicHills&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__uniform__channel__with__meshed__cylinder_8cc_source.html#l00490">GridUniformChannelWithMeshedCylinder&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00672">GridUniformChannelWithMeshedSquarePrism&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="parameters_8h_source.html#l01785">Parameters::Mesh&lt; dim, spacedim &gt;::scale</a>, <a class="el" href="parameters_8h_source.html#l01761">Parameters::Mesh&lt; dim, spacedim &gt;::simplex</a>, <a class="el" href="parameters_8h_source.html#l01736">Parameters::Mesh&lt; dim, spacedim &gt;::type</a>, and <a class="el" href="grids_8cc_source.html#l00056">warn_if_scaling_curved_manifolds()</a>.</p>
 
 </div>
 </div>
@@ -627,9 +628,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00688">688</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00698">698</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00094">attach_grid_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01748">Parameters::Mesh&lt; dim, spacedim &gt;::initial_refinement</a>, and <a class="el" href="parameters_8h_source.html#l01761">Parameters::Mesh&lt; dim, spacedim &gt;::simplex</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00095">attach_grid_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01748">Parameters::Mesh&lt; dim, spacedim &gt;::initial_refinement</a>, and <a class="el" href="parameters_8h_source.html#l01761">Parameters::Mesh&lt; dim, spacedim &gt;::simplex</a>.</p>
 
 </div>
 </div>
@@ -837,9 +838,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00423">423</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00433">433</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00385">apply_initial_refinement()</a>, <a class="el" href="grids_8cc_source.html#l00094">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="manifolds_8h_source.html#l00037">Parameters::Manifolds::ids</a>, <a class="el" href="grids_8cc_source.html#l00343">setup_periodic_boundary_conditions()</a>, and <a class="el" href="parameters_8h_source.html#l01736">Parameters::Mesh&lt; dim, spacedim &gt;::type</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00395">apply_initial_refinement()</a>, <a class="el" href="grids_8cc_source.html#l00095">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="manifolds_8h_source.html#l00037">Parameters::Manifolds::ids</a>, <a class="el" href="grids_8cc_source.html#l00353">setup_periodic_boundary_conditions()</a>, and <a class="el" href="parameters_8h_source.html#l01736">Parameters::Mesh&lt; dim, spacedim &gt;::type</a>.</p>
 
 </div>
 </div>
@@ -1020,9 +1021,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00477">477</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00487">487</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00385">apply_initial_refinement()</a>, <a class="el" href="grids_8cc_source.html#l00094">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="manifolds_8h_source.html#l00037">Parameters::Manifolds::ids</a>, <a class="el" href="structParameters_1_1Mortar.html#ac5c4e93a8149627f5e4135bebc920c8f">Parameters::Mortar&lt; dim &gt;::interface_type</a>, <a class="el" href="parameters_8h_source.html#l02216">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l02214">Parameters::Mortar&lt; dim &gt;::rotor_mesh</a>, <a class="el" href="grids_8cc_source.html#l00343">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l02218">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>, and <a class="el" href="parameters_8h_source.html#l01736">Parameters::Mesh&lt; dim, spacedim &gt;::type</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00395">apply_initial_refinement()</a>, <a class="el" href="grids_8cc_source.html#l00095">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="manifolds_8h_source.html#l00037">Parameters::Manifolds::ids</a>, <a class="el" href="structParameters_1_1Mortar.html#ac5c4e93a8149627f5e4135bebc920c8f">Parameters::Mortar&lt; dim &gt;::interface_type</a>, <a class="el" href="parameters_8h_source.html#l02216">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l02214">Parameters::Mortar&lt; dim &gt;::rotor_mesh</a>, <a class="el" href="grids_8cc_source.html#l00353">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l02218">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>, and <a class="el" href="parameters_8h_source.html#l01736">Parameters::Mesh&lt; dim, spacedim &gt;::type</a>.</p>
 
 </div>
 </div>
@@ -1148,7 +1149,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00343">343</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00353">353</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
 </div>
 </div>
@@ -1199,7 +1200,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00055">55</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00056">56</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l01785">Parameters::Mesh&lt; dim, spacedim &gt;::scale</a>, and <a class="el" href="parameters_8h_source.html#l01736">Parameters::Mesh&lt; dim, spacedim &gt;::type</a>.</p>
 
