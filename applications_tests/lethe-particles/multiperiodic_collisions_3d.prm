@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This DEM test checks the simultaneous multi-pair periodic contact of a
+# This test checks the simultaneous multi-pair periodic contact of a
 # moving particle with seven stationary corner particles in a fully
 # periodic 3D unit cube. Particle 0 starts near (0.85, 0.85, 0.15) and
 # moves diagonally toward the (0.975, 0.975, 0.025) corner. Just before
