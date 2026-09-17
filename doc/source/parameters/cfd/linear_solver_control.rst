@@ -112,13 +112,27 @@ where :math:`R` is the residual vector and :math:`V` is the volume of the entire
 * The ``max iters`` puts a hard stop on the number of solver iterations (number of steps printed when ``set verbosity = verbose``).
 
 .. tip::
-	If ``max iters`` is reached, the code will throw this type of message: 
+	If ``max iters`` is reached in a matrix-based application, the code will throw this type of message: 
 	
 	.. code-block:: text
 	
-		GMRES solver failed! Trying with a higher preconditioner fill level.
+		GMRES solver failed! Trying with a higher preconditioner fill level. New fill = ...
 
-	meaning that the code increases the preconditioner fill (see tip on default values below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the ``max iters`` or adjusting other parameters, for example increasing ``max krylov vectors``.
+	meaning that the code increases the preconditioner fill (see tip on default values below) in order to converge within the number of solver iterations. If the solve still fails after 3 attempts, the simulation stops and the last attempt is reported:
+
+	.. code-block:: text
+	
+		GMRES solver failed after 3 attempts.
+		Last attempt stopped at iteration ... with a residual of ... (tolerance ...).
+
+	The matrix-free applications do not retry with a higher preconditioner fill level, so a failed solve is reported directly:
+
+	.. code-block:: text
+	
+		GMRES solver failed.
+		It stopped at iteration ... with a residual of ... (tolerance ...).
+
+	The ``bicgstab`` solver reports the same information under its own name, and additionally states whether the residual became non-finite or the iteration budget was exhausted. If you encounter any of these messages, consider increasing the ``max iters`` or adjusting other parameters, for example increasing ``max krylov vectors``.
 
 * ``force linear solver continuation`` when set to ``true``, forces the linear solver to continue, even if the ``minimum residual`` is not reached. Only available for ``gmres`` and ``bicgstab`` solvers within the ``lethe-fluid`` and ``lethe-fluid-matrix-free`` applications.
 
@@ -245,7 +259,12 @@ ILU preconditioner
 	
 		GMRES solver failed! Trying with a higher preconditioner fill level. New fill = ...
 
-	and it does not disappear when increasing ``max iters``, increasing the ``ilu preconditioner fill`` in the ``.prm`` file will make the computation slightly faster.
+	and it does not disappear when increasing ``max iters``, increasing the ``ilu preconditioner fill`` in the ``.prm`` file will make the computation slightly faster. If the three attempts are exhausted, the simulation stops on:
+
+	.. code-block:: text
+	
+		GMRES solver failed after 3 attempts.
+		Last attempt stopped at iteration ... with a residual of ... (tolerance ...).
 
 -------------------
 AMG preconditioner

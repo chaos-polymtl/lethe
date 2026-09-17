@@ -14,6 +14,7 @@
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>
 #include <solvers/navier_stokes_cls_assemblers.h>
 
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -24,12 +25,15 @@
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/sparse_direct.h>
 #include <deal.II/lac/sparse_ilu.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <cmath>
+#include <exception>
 
 
 // Constructor for class FluidDynamicsMatrixBased
@@ -1678,10 +1682,19 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .max_krylov_vectors);
 
+  AssertThrow(
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .preconditioner ==
+        Parameters::LinearSolver::PreconditionerType::ilu ||
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .preconditioner == Parameters::LinearSolver::PreconditionerType::amg,
+    ExcMessage(
+      "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
+
   // The solver starts from the initial fill level for the ILU(n) or the ILU
   // smoother provided in the parameter file. If for any reason the linear
   // solver crashes, it will restart with a fill level increased by 1. This
-  // restart happens up to a maximum of 20 times, after which it will let the
+  // restart happens up to a maximum of 3 times, after which it will let the
   // solver crash. If a change happened on the fill level, it will go back
   // to its original value at the end of the restart process.
   while (success == false and iter < max_iter)
@@ -1713,18 +1726,6 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
                            completely_distributed_solution,
                            system_rhs,
                            *amg_preconditioner);
-            else
-              AssertThrow(
-                this->simulation_parameters.linear_solver
-                      .at(PhysicsID::fluid_dynamics)
-                      .preconditioner ==
-                    Parameters::LinearSolver::PreconditionerType::ilu ||
-                  this->simulation_parameters.linear_solver
-                      .at(PhysicsID::fluid_dynamics)
-                      .preconditioner ==
-                    Parameters::LinearSolver::PreconditionerType::amg,
-                ExcMessage(
-                  "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
 
             if (this->simulation_parameters.linear_solver
                   .at(PhysicsID::fluid_dynamics)
@@ -1749,8 +1750,26 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
           newton_update       = completely_distributed_solution;
           success             = true;
         }
-      catch (std::exception &e)
+      catch (const std::exception &e)
         {
+          const bool last_attempt = (iter == max_iter - 1);
+
+          if (last_attempt && !this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .force_linear_solver_continuation)
+            {
+              this->pcout << " GMRES solver failed after " << max_iter
+                          << " attempts." << std::endl;
+              if (const auto *nc =
+                    dynamic_cast<const SolverControl::NoConvergence *>(&e))
+                this->pcout << " Last attempt stopped at iteration "
+                            << nc->last_step << " with a residual of "
+                            << nc->last_residual / rescale_metric
+                            << " (tolerance " << linear_solver_tolerance << ")."
+                            << std::endl;
+              throw;
+            }
+
           current_preconditioner_fill_level += 1;
           this->pcout
             << " GMRES solver failed! Trying with a higher preconditioner fill level. New fill = "
@@ -1762,7 +1781,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
               if (!this->simulation_parameters.linear_solver
                      .at(PhysicsID::fluid_dynamics)
                      .force_linear_solver_continuation)
-                throw e;
+                throw;
 
               else
                 {
@@ -1838,6 +1857,15 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(const double absolute_residual,
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .max_krylov_vectors);
 
+  AssertThrow(
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .preconditioner ==
+        Parameters::LinearSolver::PreconditionerType::ilu ||
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .preconditioner == Parameters::LinearSolver::PreconditionerType::amg,
+    ExcMessage(
+      "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
+
   // The solver starts from the initial fill level for the ILU(n) or the ILU
   // smoother provided in the parameter file. If for any reason the linear
   // solver crashes, it will restart with a fill level increased by 1. This
@@ -1873,18 +1901,6 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(const double absolute_residual,
                            completely_distributed_solution,
                            this->system_rhs,
                            *amg_preconditioner);
-            else
-              AssertThrow(
-                this->simulation_parameters.linear_solver
-                      .at(PhysicsID::fluid_dynamics)
-                      .preconditioner ==
-                    Parameters::LinearSolver::PreconditionerType::ilu ||
-                  this->simulation_parameters.linear_solver
-                      .at(PhysicsID::fluid_dynamics)
-                      .preconditioner ==
-                    Parameters::LinearSolver::PreconditionerType::amg,
-                ExcMessage(
-                  "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
 
             if (this->simulation_parameters.linear_solver
                   .at(PhysicsID::fluid_dynamics)
@@ -1909,18 +1925,32 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(const double absolute_residual,
           newton_update       = completely_distributed_solution;
           success             = true;
         }
-      catch (std::exception &e)
+      catch (const std::exception &e)
         {
+          const bool last_attempt = (iter == max_iter - 1);
+
+          if (last_attempt && !this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .force_linear_solver_continuation)
+            {
+              this->pcout
+                << " GMRES solver failed while solving the L2 projection problem after "
+                << max_iter << " attempts." << std::endl;
+              if (const auto *nc =
+                    dynamic_cast<const SolverControl::NoConvergence *>(&e))
+                this->pcout << " Last attempt stopped at iteration "
+                            << nc->last_step << " with a residual of "
+                            << nc->last_residual / rescale_metric
+                            << " (tolerance " << linear_solver_tolerance << ")."
+                            << std::endl;
+              throw;
+            }
+
           current_preconditioner_fill_level += 1;
           this->pcout
             << " GMRES solver failed while solving the L2 projection problem! Trying with a higher preconditioner fill level. New fill = "
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
-
-          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
-                                         .at(PhysicsID::fluid_dynamics)
-                                         .force_linear_solver_continuation)
-            throw e;
         }
       iter += 1;
     }
@@ -1929,7 +1959,7 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(const double absolute_residual,
 
 // The solver starts from the initial fill level provided in the parameter file.
 // If for any reason the linear solver crashes, it will restart with a fill
-// level increased by 1. This restart happens up to a maximum of 20 times, after
+// level increased by 1. This restart happens up to a maximum of 3 times, after
 // which it will let the solver crash. If a change happened on the fill level,
 // it will go back to its original value at the end of the restart process.
 template <int dim>
@@ -1980,6 +2010,13 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
                                true,
                                true);
   TrilinosWrappers::SolverBicgstab solver(solver_control, solver_parameters);
+
+  AssertThrow(
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu,
+    ExcMessage(
+      "This linear solver does not support this preconditioner. Only <ilu> preconditioner is supported."));
+
   while (success == false and iter < max_iter)
     {
       try
@@ -1998,14 +2035,6 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
                            completely_distributed_solution,
                            system_rhs,
                            *ilu_preconditioner);
-            else
-              AssertThrow(
-                this->simulation_parameters.linear_solver
-                    .at(PhysicsID::fluid_dynamics)
-                    .preconditioner ==
-                  Parameters::LinearSolver::PreconditionerType::ilu,
-                ExcMessage(
-                  "This linear solver does not support this preconditioner. Only <ilu> preconditioner is supported."));
 
             if (this->simulation_parameters.linear_solver
                   .at(PhysicsID::fluid_dynamics)
@@ -2021,18 +2050,41 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
           }
           success = true;
         }
-      catch (std::exception &e)
+      catch (const std::exception &e)
         {
+          const bool last_attempt = (iter == max_iter - 1);
+
+          if (last_attempt && !this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .force_linear_solver_continuation)
+            {
+              this->pcout << " BiCGStab solver failed after " << max_iter
+                          << " attempts." << std::endl;
+              if (const auto *nc =
+                    dynamic_cast<const SolverControl::NoConvergence *>(&e))
+                {
+                  this->pcout << " Last attempt stopped at iteration "
+                              << nc->last_step << " with a residual of "
+                              << nc->last_residual / rescale_metric
+                              << " (tolerance " << linear_solver_tolerance
+                              << ")." << std::endl;
+
+                  if (!std::isfinite(nc->last_residual))
+                    this->pcout
+                      << " The residual is not finite, which indicates a breakdown of the BiCGStab iteration or of the preconditioner."
+                      << std::endl;
+                  else if (nc->last_step < solver_control.max_steps())
+                    this->pcout
+                      << " The iteration budget was not exhausted, which points to a BiCGStab breakdown rather than slow convergence."
+                      << std::endl;
+                }
+              throw;
+            }
           current_preconditioner_fill_level += 1;
           this->pcout
             << " BiCGStab solver failed! Trying with a higher preconditioner fill level. New fill = "
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
-
-          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
-                                         .at(PhysicsID::fluid_dynamics)
-                                         .force_linear_solver_continuation)
-            throw e;
         }
       iter += 1;
     }
