@@ -76,8 +76,8 @@ namespace
 
             // If the nearest_translation got rounded to 0., this means that
             // the particles are in the same cell or in a real neighboring cell
-            // or that the current direction is not linking this periodic contact.
-            // (By real, we mean not periodic neighboring cell)
+            // or that the current direction is not linking this periodic
+            // contact. (By real, we mean not periodic neighboring cell)
             found_periodic_translation |= (nearest_translation[d] != 0.);
           }
       }
