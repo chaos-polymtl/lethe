@@ -1781,7 +1781,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
               if (!this->simulation_parameters.linear_solver
                      .at(PhysicsID::fluid_dynamics)
                      .force_linear_solver_continuation)
-                throw e;
+                throw;
 
               else
                 {
