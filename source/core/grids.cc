@@ -328,7 +328,7 @@ attach_grid_to_triangulation(
           AssertThrow(
             !mesh_parameters.simplex,
             ExcMessage(
-              "Unsupported mesh type - mw_pipe_and_waveguide mesh with simplex is not supported"));
+              "Unsupported mesh type - pipe_and_waveguide mesh with simplex is not supported"));
 
           GridPipeAndWaveguide<dim, spacedim> grid(
             mesh_parameters.grid_arguments);

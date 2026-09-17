@@ -226,7 +226,8 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
   // Dimension Test
   if constexpr (!(dim == 3 && spacedim == 3))
     {
-      AssertThrow(false, ExcMessage("GridCavityMw is only supported in 3D."));
+      AssertThrow(false,
+                  ExcMessage("GridPipeAndWaveguide is only supported in 3D."));
       return;
     }
 
