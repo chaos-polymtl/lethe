@@ -339,7 +339,7 @@ Waveguide Cavity
     set grid arguments     = 0.07 : 0.05 : 0.1 : 0.07 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 : true
   end
 
-This three-dimensional mesh is a waveguide cavity embedded in a cylinder. The geometry consists of three section joined along the z-axis: a bottom cylinder, a central cylinder into which the rectangular-based waveguide is embedded, and a top cylinder. The following ``grid arguments`` can be prescribed:
+This three-dimensional mesh is a waveguide cavity embedded in a cylinder. The geometry consists of three sections joined along the z-axis: a bottom cylinder, a central cylinder into which the rectangular-based waveguide is embedded, and a top cylinder. The following ``grid arguments`` can be prescribed:
 
 * ``rectangle_width`` is the waveguide width;
 * ``rectangle_length`` is the waveguide length;
