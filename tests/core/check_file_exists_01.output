@@ -1,0 +1,7 @@
+
+DEAL::Existing file: no exception raised
+DEAL::Empty file name: exception raised
+DEAL::Missing file: exception raised
+DEAL::Directory: exception raised
+DEAL::Missing parameter file: exception raised
+DEAL::Dimension of an existing parameter file: 2

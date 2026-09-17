@@ -2209,14 +2209,9 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   std::string checkpoint_file_prefix)
 {
   const std::string filename = checkpoint_file_prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
+  check_file_exists(filename,
+                    "checkpoint file of the triangulation, given by "
+                    "'subsection restart' - 'set filename'");
 
   try
     {

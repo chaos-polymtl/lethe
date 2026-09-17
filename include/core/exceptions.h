@@ -5,9 +5,10 @@
  * @file exceptions.h
  * @brief Common exception declarations shared across multiple solvers in Lethe.
  *
- * This file defines deal.II-style exception macros used to report errors
- * related to the Nitsche immersed boundary method across different solver
- * types, avoiding code repetition.
+ * This file defines deal.II-style exception macros used to report errors that
+ * are raised from more than one place in Lethe, such as the errors related to
+ * the Nitsche immersed boundary method or to the files that Lethe reads,
+ * avoiding code repetition.
  */
 
 #ifndef lethe_exceptions_h
@@ -44,5 +45,46 @@ DeclException1(
   std::string,
   << "No solid defined: impossible to assemble nitsche restriction in " << arg1
   << " solver. Change the 'number of solids' parameter.");
+
+/**
+ * @brief Exception raised when no name was given for a file that Lethe must
+ * read.
+ *
+ * @param[in] arg1 Description of the role of the file.
+ */
+DeclException1(EmptyFileName,
+               std::string,
+               << "No file name was given for the " << arg1
+               << ". Specify it in the parameter file before running Lethe.");
+
+/**
+ * @brief Exception raised when a file that Lethe must read does not exist.
+ *
+ * @param[in] arg1 Path of the file, as given by the user.
+ * @param[in] arg2 Description of the role of the file.
+ */
+DeclException2(
+  FileDoesNotExist,
+  std::string,
+  std::string,
+  << "The " << arg2 << " <" << arg1 << "> does not exist. "
+  << "Verify that its name is spelled correctly. Relative paths are "
+  << "interpreted from the directory in which the application was launched, "
+  << "not from the directory of the parameter file.");
+
+/**
+ * @brief Exception raised when a file that Lethe must read exists but cannot
+ * be opened for reading.
+ *
+ * @param[in] arg1 Path of the file, as given by the user.
+ * @param[in] arg2 Description of the role of the file.
+ */
+DeclException2(
+  FileIsNotReadable,
+  std::string,
+  std::string,
+  << "The " << arg2 << " <" << arg1 << "> exists but could not be opened for "
+  << "reading. Verify that it is a file and not a directory, and that its "
+  << "permissions allow Lethe to read it.");
 
 #endif

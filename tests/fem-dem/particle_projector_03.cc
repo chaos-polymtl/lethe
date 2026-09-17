@@ -189,7 +189,6 @@ test_void_fraction_qcm(const unsigned int fe_degree,
     make_default_linear_solver();
 
   linear_solver_parameters.minimum_residual = 1e-10;
-  linear_solver_parameters.verbosity        = Parameters::Verbosity::quiet;
 
   // Setup a pcout which is required by the ParticleProjector.
 

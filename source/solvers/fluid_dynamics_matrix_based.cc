@@ -1775,6 +1775,38 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
             << " GMRES solver failed! Trying with a higher preconditioner fill level. New fill = "
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
+
+          if (iter == max_iter - 1)
+            {
+              if (!this->simulation_parameters.linear_solver
+                     .at(PhysicsID::fluid_dynamics)
+                     .force_linear_solver_continuation)
+                throw e;
+
+              else
+                {
+                  this->pcout
+                    << " GMRES solver failed! Continuing the Newton step as requested by the <force linear solver continuation> parameter."
+                    << std::endl;
+
+                  // A failed linear solve may leave the Newton update with
+                  // non-finite entries (e.g. a preconditioner or operator
+                  // breakdown). Continuing with such a Newton update would
+                  // propagate NaNs/Infs through the whole Newton iteration. To
+                  // stay defensive, we reset the Newton update to zero in that
+                  // case so that this Newton step makes no progress instead of
+                  // poisoning the solution. The l2_norm() call is collective
+                  // and triggers the MPI reduction required for a global check
+                  // across all processes.
+                  if (!std::isfinite(this->newton_update.l2_norm()))
+                    {
+                      this->pcout
+                        << " The Newton update contains non-finite values; resetting it to zero."
+                        << std::endl;
+                      this->newton_update = 0.0;
+                    }
+                }
+            }
         }
       iter += 1;
     }

@@ -10,6 +10,7 @@
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
 #include <core/grids.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/mpi.h>
@@ -99,6 +100,15 @@ attach_grid_to_triangulation(
   // GMSH input
   if (mesh_parameters.type == Parameters::Mesh<dim, spacedim>::Type::gmsh)
     {
+      // The mesh file is checked here, before the branch below, so that every
+      // rank raises the same error. The simplex branch reads the file from
+      // within a lambda that is only run by the root of each group of
+      // processes, and a check placed there would leave the other ranks
+      // waiting.
+      check_file_exists(mesh_parameters.file_name,
+                        "gmsh mesh file given by 'subsection mesh' - "
+                        "'set file name'");
+
       if (mesh_parameters.simplex)
         {
           auto        comm      = triangulation.get_mpi_communicator();

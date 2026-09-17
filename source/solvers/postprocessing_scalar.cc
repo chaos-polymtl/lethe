@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/utilities.h>
 #include <core/vector.h>
 
 #include <solvers/postprocessing_scalar.h>
@@ -133,9 +134,11 @@ AverageScalar<dim>::read(const std::string &prefix)
   std::vector<GlobalVectorType *> sum_vectors;
   sum_vectors.push_back(&sum_scalar_dt_with_ghost_cells);
 
-  std::string   filename = prefix + ".averagescalar";
+  std::string filename = prefix + ".averagescalar";
+  check_file_exists(filename,
+                    "checkpoint file of the time-averaged scalar, given by "
+                    "'subsection restart' - 'set filename'");
   std::ifstream input(filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(filename));
 
   std::string buffer;
   std::getline(input, buffer);
