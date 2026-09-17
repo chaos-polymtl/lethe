@@ -61,7 +61,7 @@ var searchData=
   ['polynomialelectricconductivity_58',['PolynomialElectricConductivity',['../classPolynomialElectricConductivity.html',1,'']]],
   ['polynomialelectricpermittivity_59',['PolynomialElectricPermittivity',['../classPolynomialElectricPermittivity.html',1,'']]],
   ['polynomialmagneticpermeability_60',['PolynomialMagneticPermeability',['../classPolynomialMagneticPermeability.html',1,'']]],
-  ['postprocessing_61',['PostProcessing',['../structParameters_1_1PostProcessing.html',1,'Parameters']]],
+  ['postprocessing_61',['PostProcessing',['../classParameters_1_1PostProcessing.html',1,'Parameters']]],
   ['postprocessingprobes_62',['PostprocessingProbes',['../classPostprocessingProbes.html',1,'']]],
   ['powerlaw_63',['PowerLaw',['../classPowerLaw.html',1,'']]],
   ['powerlawparameters_64',['PowerLawParameters',['../structParameters_1_1PowerLawParameters.html',1,'Parameters']]],

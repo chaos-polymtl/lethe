@@ -1440,7 +1440,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Compute the algebraic (phase indicator and liquid fraction weighted) melt volume (3D) or surface (2D) in a domain. The monitored fluid must be selected with <a class="el" href="structParameters_1_1PostProcessing.html#a80e3523df4e5252ee9a373e6cc0dd2d2" title="FluidIndicator corresponding to the fluid which has phase change.">Parameters::PostProcessing::monitored_fluid_with_phase_change</a>. </p>
+<p>Compute the algebraic (phase indicator and liquid fraction weighted) melt volume (3D) or surface (2D) in a domain. The monitored fluid must be selected with <a class="el" href="classParameters_1_1PostProcessing.html#a80e3523df4e5252ee9a373e6cc0dd2d2" title="FluidIndicator corresponding to the fluid which has phase change.">Parameters::PostProcessing::monitored_fluid_with_phase_change</a>. </p>
 <dl class="section remark"><dt>Remarks</dt><dd>For CLS multiphase flow, only one of the fluids can be monitored. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02168">2168</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
@@ -1474,7 +1474,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Compute the geometric melt volume (3D) or surface (2D) and the contour surface area (3D) or length (2D) in a domain. The melt region is delimited by the <a class="el" href="structParameters_1_1PostProcessing.html#add8657ebd771ad00c333891f3cdb7790" title="Melting temperature iso-value.">Parameters::PostProcessing::melting_temperature</a> isosurface (3D) or isocurve (2D) within the subdomain occupied by the fluid selected with <a class="el" href="structParameters_1_1PostProcessing.html#a80e3523df4e5252ee9a373e6cc0dd2d2" title="FluidIndicator corresponding to the fluid which has phase change.">Parameters::PostProcessing::monitored_fluid_with_phase_change</a>. </p>
+<p>Compute the geometric melt volume (3D) or surface (2D) and the contour surface area (3D) or length (2D) in a domain. The melt region is delimited by the <a class="el" href="classParameters_1_1PostProcessing.html#add8657ebd771ad00c333891f3cdb7790" title="Melting temperature iso-value.">Parameters::PostProcessing::melting_temperature</a> isosurface (3D) or isocurve (2D) within the subdomain occupied by the fluid selected with <a class="el" href="classParameters_1_1PostProcessing.html#a80e3523df4e5252ee9a373e6cc0dd2d2" title="FluidIndicator corresponding to the fluid which has phase change.">Parameters::PostProcessing::monitored_fluid_with_phase_change</a>. </p>
 <dl class="section remark"><dt>Remarks</dt><dd>For CLS multiphase flow, only one of the fluids can be monitored. The volume is computed as the geometrical volume with respect to the phase indicator isocurve (isosurface) of value 0.5. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02343">2343</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>

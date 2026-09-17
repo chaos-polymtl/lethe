@@ -108,7 +108,7 @@ var searchData=
   ['end_5flog_105',['end_log',['../structcollision__event.html#ad12e25c95c6be22a8af73f4d84dbf278',1,'collision_event']]],
   ['end_5ftime_106',['end_time',['../classParameters_1_1Laser.html#a198957c1e1fc9ae5eb3b2686894c45fc',1,'Parameters::Laser::end_time'],['../classSimulationControl.html#ac2218ca6050ced4d713076cfc65af65d',1,'SimulationControl::end_time']]],
   ['endcontrol_107',['EndControl',['../structParameters_1_1SimulationControl.html#a91a5545bc9f9d6ec7c9dbc4caf71c937',1,'Parameters::SimulationControl']]],
-  ['enstrophy_5foutput_5fname_108',['enstrophy_output_name',['../structParameters_1_1PostProcessing.html#ab7bb8375721831e837101c8cd5c0a793',1,'Parameters::PostProcessing']]],
+  ['enstrophy_5foutput_5fname_108',['enstrophy_output_name',['../classParameters_1_1PostProcessing.html#ab7bb8375721831e837101c8cd5c0a793',1,'Parameters::PostProcessing']]],
   ['enstrophy_5ftable_109',['enstrophy_table',['../classNavierStokesBase.html#ae01fbee428575d65138349d35c4dcf7f',1,'NavierStokesBase']]],
   ['enthalpy_110',['enthalpy',['../classPhaseChangeSpecificHeat.html#a8db0c85702ecfeb176fbd570e411835a',1,'PhaseChangeSpecificHeat']]],
   ['enthalpy_5fscaling_111',['enthalpy_scaling',['../classParameters_1_1Dimensionality.html#af449c6f9313fdcee05bc1d36fff71b86',1,'Parameters::Dimensionality']]],

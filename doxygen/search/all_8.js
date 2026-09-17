@@ -49,7 +49,7 @@ var searchData=
   ['generate_5finsertion_5flocation_46',['generate_insertion_location',['../classInsertionPacked.html#a15af1f9644e2eea0bfa71ffc1100e0e0',1,'InsertionPacked']]],
   ['geometric_47',['geometric',['../namespaceParameters.html#a3afa4d0c12c6c995b8b6978a4e413c3ba65a383f3960a0cb2b8b0ace54817d575',1,'Parameters::geometric'],['../namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa65a383f3960a0cb2b8b0ace54817d575',1,'Parameters::geometric']]],
   ['geometric_5finterface_5freinitialization_48',['geometric_interface_reinitialization',['../structParameters_1_1CLS__ReinitializationMethod.html#ad7ec0f2ae101283de11677e3c4e0276a',1,'Parameters::CLS_ReinitializationMethod']]],
-  ['geometric_5fmelt_5fvolume_5foutput_5fname_49',['geometric_melt_volume_output_name',['../structParameters_1_1PostProcessing.html#a7e5262d3d38c95cf9b380029fa1aedbb',1,'Parameters::PostProcessing']]],
+  ['geometric_5fmelt_5fvolume_5foutput_5fname_49',['geometric_melt_volume_output_name',['../classParameters_1_1PostProcessing.html#a7e5262d3d38c95cf9b380029fa1aedbb',1,'Parameters::PostProcessing']]],
   ['geometry_50',['geometry',['../classGridImpingingJetMixer.html#a428b3784e730053b7088344675d75090',1,'GridImpingingJetMixer']]],
   ['get_5faction_5fmanager_51',['get_action_manager',['../classDEMActionManager.html#a4b4056b87d7e85d3832581f90a4daa53',1,'DEMActionManager']]],
   ['get_5factive_5fphysics_52',['get_active_physics',['../classMultiphysicsInterface.html#ab606999dfa9e7dfa3df70c54753c17b4',1,'MultiphysicsInterface']]],
