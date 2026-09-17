@@ -576,11 +576,21 @@ end
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iters</span></code> is reached, the code will throw this type of message:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GMRES solver failed! Trying with a higher preconditioner fill level.
+<p>If <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iters</span></code> is reached in a matrix-based application, the code will throw this type of message:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GMRES solver failed! Trying with a higher preconditioner fill level. New fill = ...
 </pre></div>
 </div>
-<p>meaning that the code increases the preconditioner fill (see tip on default values below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iters</span></code> or adjusting other parameters, for example increasing <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">krylov</span> <span class="pre">vectors</span></code>.</p>
+<p>meaning that the code increases the preconditioner fill (see tip on default values below) in order to converge within the number of solver iterations. If the solve still fails after 3 attempts, the simulation stops and the last attempt is reported:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GMRES solver failed after 3 attempts.
+Last attempt stopped at iteration ... with a residual of ... (tolerance ...).
+</pre></div>
+</div>
+<p>The matrix-free applications do not retry with a higher preconditioner fill level, so a failed solve is reported directly:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GMRES solver failed.
+It stopped at iteration ... with a residual of ... (tolerance ...).
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">bicgstab</span></code> solver reports the same information under its own name, and additionally states whether the residual became non-finite or the iteration budget was exhausted. If you encounter any of these messages, consider increasing the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iters</span></code> or adjusting other parameters, for example increasing <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">krylov</span> <span class="pre">vectors</span></code>.</p>
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">force</span> <span class="pre">linear</span> <span class="pre">solver</span> <span class="pre">continuation</span></code> when set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, forces the linear solver to continue, even if the <code class="docutils literal notranslate"><span class="pre">minimum</span> <span class="pre">residual</span></code> is not reached. Only available for <code class="docutils literal notranslate"><span class="pre">gmres</span></code> and <code class="docutils literal notranslate"><span class="pre">bicgstab</span></code> solvers within the <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> and <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> applications.</p></li>
@@ -726,7 +736,11 @@ set ilu preconditioner relative tolerance = 1.00
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GMRES solver failed! Trying with a higher preconditioner fill level. New fill = ...
 </pre></div>
 </div>
-<p>and it does not disappear when increasing <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iters</span></code>, increasing the <code class="docutils literal notranslate"><span class="pre">ilu</span> <span class="pre">preconditioner</span> <span class="pre">fill</span></code> in the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file will make the computation slightly faster.</p>
+<p>and it does not disappear when increasing <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iters</span></code>, increasing the <code class="docutils literal notranslate"><span class="pre">ilu</span> <span class="pre">preconditioner</span> <span class="pre">fill</span></code> in the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file will make the computation slightly faster. If the three attempts are exhausted, the simulation stops on:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GMRES solver failed after 3 attempts.
+Last attempt stopped at iteration ... with a residual of ... (tolerance ...).
+</pre></div>
+</div>
 </div>
 </section>
 <section id="amg-preconditioner">
