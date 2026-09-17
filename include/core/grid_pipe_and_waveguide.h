@@ -134,7 +134,8 @@ private:
    * |  4  | r             | double                         | yes      | Outer radius of the circle                                       |
    * |  5  | R             | double                         | yes      | Inner circle radius or inner square side                         |
    * |  6  | inner_circle  | true/false                     | yes      | True : the inner shape is a circle, False : it is a square       |
-   * Example: @code "detailed_circle(disk,center,1,3,7,3,false)" @endcode
+   * Example: @code "0.07 : 0.05 : 0.1 : 0.07 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 :
+   * true" @endcode
    */
   void
   detailed_circle(Triangulation<2, 2> &tria,
