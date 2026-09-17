@@ -51,15 +51,33 @@ namespace
     Tensor<1, dim> nearest_translation;
     bool           found_periodic_translation = false;
 
+    // Loop on every direction
     for (int d = 0; d < dim; ++d)
       {
+        // If the periodic offset associated with this direction is zero,
+        // this means that the direction is not periodic, thus we skip it.
+        // Also, it prevents a division by zero.
         if (periodic_offset_per_direction[d] != 0.)
           {
+            // Real distance between p1 and p2
             const double delta =
               particle_one_location[d] - particle_two_real_location[d];
+
+            // If p1 is on one side of the triangulation and p2 is on the other
+            // side and both sides are linked through a periodic boundary
+            // condition, the distance between those two particle should be
+            // around one period (~ 0.9 ), thus when we round, we get 1.0, which
+            // we then multiply to the actual periodic_offset. When p1 and p2
+            // and near periodic corner, this method will also work because the
+            // rounding will give 1.0 for more than one direction.
             nearest_translation[d] =
               std::round(delta / periodic_offset_per_direction[d]) *
               periodic_offset_per_direction[d];
+
+            // If the nearest_translation got rounded to 0., this means that
+            // the particles are in the same cell or in a real neighboring cell
+            // or that the current direction is not linking this periodic contact.
+            // (By real, we mean not periodic neighboring cell)
             found_periodic_translation |= (nearest_translation[d] != 0.);
           }
       }
@@ -181,9 +199,10 @@ particle_particle_fine_search(
                         particle_two_real_location + nearest_translation) :
                       std::numeric_limits<double>::max();
 
-                  // If simulation is well defined, there should be at most
-                  // one periodic image that brings the particles within a
-                  // neighborhood threshold.
+                  // nearest_periodic_translation returns the single closest
+                  // periodic image (minimum image convention), not one
+                  // chosen among several candidates, so this distance either
+                  // confirms or rules out the periodic contact directly.
                   if (min_square_distance > neighborhood_threshold)
                     {
                       adjacent_particles_list_iterator = second_particles.erase(
@@ -266,9 +285,10 @@ particle_particle_fine_search(
                     particle_two_real_location + nearest_translation) :
                   std::numeric_limits<double>::max();
 
-              // If simulation is well defined, there should be at most one
-              // periodic image that brings the particles within a
-              // neighborhood threshold.
+              // nearest_periodic_translation returns the single closest
+              // periodic image (minimum image convention), not one chosen
+              // among several candidates, so this distance either confirms
+              // or rules out the periodic contact directly.
               if (min_square_distance < neighborhood_threshold)
                 {
                   // Save a translation that falls within the threshold

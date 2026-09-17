@@ -34,10 +34,10 @@ PeriodicBoundariesManipulator<dim>::set_periodic_boundaries_information(
     return;
 
   // compute_periodic_offset_per_direction() sums every periodic boundary
-  // pair's offset directly into a single Tensor<1, dim>, one component per
-  // direction. This requires at most one periodic boundary pair per
-  // direction: two pairs sharing a direction would silently add into the
-  // same component and corrupt the periodic contact search.
+  // pair's offset directly into a single std::array<double, dim>, one
+  // component per direction. This requires at most one periodic boundary
+  // pair per direction: two pairs sharing a direction would silently add
+  // into the same component.
   std::array<bool, dim> direction_is_used{};
   for (const auto &[id, boundary] : periodic_boundaries)
     {
@@ -185,7 +185,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
     }
 
   // Once periodic offsets calculated, combine them into a single
-  // per-direction tensor
+  // per-direction array
   this->compute_periodic_offset_per_direction();
 }
 
