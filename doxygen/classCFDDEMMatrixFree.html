@@ -87,8 +87,8 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classCFDDEMMatrixFree-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt; Class Template Reference</div></div>
 </div><!--header-->
@@ -135,8 +135,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a556929601fd0996edf883aaab9cd4e16 inherit pub_methods_classPhysicsSolver" id="r_a556929601fd0996edf883aaab9cd4e16"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a556929601fd0996edf883aaab9cd4e16">get_current_newton_iteration</a> () const</td></tr>
 <tr class="separator:a556929601fd0996edf883aaab9cd4e16 inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
 <tr class="memitem:a9968a687cf366ef49ace0ecbc1889c1b" id="r_a9968a687cf366ef49ace0ecbc1889c1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a9968a687cf366ef49ace0ecbc1889c1b">dem_setup_parameters</a> ()</td></tr>
 <tr class="separator:a9968a687cf366ef49ace0ecbc1889c1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ded9661fd238c7ded31f569c648632e" id="r_a6ded9661fd238c7ded31f569c648632e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a6ded9661fd238c7ded31f569c648632e">setup_distribution_type</a> ()</td></tr>
@@ -185,91 +185,6 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a44c1e24ec12bf15651d8667c91afecb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae931db5addac3275ae3681bfe1e41112" id="r_ae931db5addac3275ae3681bfe1e41112"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ae931db5addac3275ae3681bfe1e41112">dem_contact_build</a> ()</td></tr>
 <tr class="separator:ae931db5addac3275ae3681bfe1e41112"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
-<tr class="memitem:a3e7302ac9d5cb831367ec12d9b8856f4" id="r_a3e7302ac9d5cb831367ec12d9b8856f4"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classSubSimulationControlDEM.html">SubSimulationControlDEM</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a3e7302ac9d5cb831367ec12d9b8856f4">dem_simulation_control</a></td></tr>
-<tr class="separator:a3e7302ac9d5cb831367ec12d9b8856f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adda83cd6b70351319d5b4b403c38d5fc" id="r_adda83cd6b70351319d5b4b403c38d5fc"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#adda83cd6b70351319d5b4b403c38d5fc">g</a></td></tr>
-<tr class="separator:adda83cd6b70351319d5b4b403c38d5fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19f7a63ffb4b80a3e3a0da7f5e1353db" id="r_a19f7a63ffb4b80a3e3a0da7f5e1353db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a19f7a63ffb4b80a3e3a0da7f5e1353db">contact_outcome</a></td></tr>
-<tr class="separator:a19f7a63ffb4b80a3e3a0da7f5e1353db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b7a70bcff9a953bfd86ac9e28156ec7" id="r_a4b7a70bcff9a953bfd86ac9e28156ec7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a4b7a70bcff9a953bfd86ac9e28156ec7">displacement</a></td></tr>
-<tr class="separator:a4b7a70bcff9a953bfd86ac9e28156ec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fd963607f0fb182da39d860d1942421" id="r_a1fd963607f0fb182da39d860d1942421"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a1fd963607f0fb182da39d860d1942421">MOI</a></td></tr>
-<tr class="separator:a1fd963607f0fb182da39d860d1942421"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b10cfa11e0b9d9bcb1c0af58c79d853" id="r_a5b10cfa11e0b9d9bcb1c0af58c79d853"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a5b10cfa11e0b9d9bcb1c0af58c79d853">neighborhood_threshold_squared</a></td></tr>
-<tr class="separator:a5b10cfa11e0b9d9bcb1c0af58c79d853"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58bc74325fef67aaf115eee826ca8021" id="r_a58bc74325fef67aaf115eee826ca8021"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a58bc74325fef67aaf115eee826ca8021">size_distribution_object_container</a></td></tr>
-<tr class="separator:a58bc74325fef67aaf115eee826ca8021"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a482a7ba7bffba5b0dbafe5f394a9d9c1" id="r_a482a7ba7bffba5b0dbafe5f394a9d9c1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a482a7ba7bffba5b0dbafe5f394a9d9c1">maximum_particle_diameter</a></td></tr>
-<tr class="separator:a482a7ba7bffba5b0dbafe5f394a9d9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a048d7d7a935e98132b0d42c156a2d08c" id="r_a048d7d7a935e98132b0d42c156a2d08c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a048d7d7a935e98132b0d42c156a2d08c">smallest_contact_search_criterion</a></td></tr>
-<tr class="separator:a048d7d7a935e98132b0d42c156a2d08c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac33f1ae21508b8a3cdce261e275685e8" id="r_ac33f1ae21508b8a3cdce261e275685e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classOngoingCollisionLog.html">OngoingCollisionLog</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ac33f1ae21508b8a3cdce261e275685e8">ongoing_collision_log</a></td></tr>
-<tr class="separator:ac33f1ae21508b8a3cdce261e275685e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5764017eba08a809299c0432fb17ada" id="r_ac5764017eba08a809299c0432fb17ada"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCompletedCollisionLog.html">CompletedCollisionLog</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ac5764017eba08a809299c0432fb17ada">collision_event_log</a></td></tr>
-<tr class="separator:ac5764017eba08a809299c0432fb17ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad62c62dd598575023feaf86de94a82b" id="r_aad62c62dd598575023feaf86de94a82b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEMContactManager.html">DEMContactManager</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#aad62c62dd598575023feaf86de94a82b">contact_manager</a></td></tr>
-<tr class="separator:aad62c62dd598575023feaf86de94a82b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc30959ea8e693b678c118a574fa750e" id="r_abc30959ea8e693b678c118a574fa750e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#abc30959ea8e693b678c118a574fa750e">load_balancing</a></td></tr>
-<tr class="separator:abc30959ea8e693b678c118a574fa750e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac90b69a14557465018443c73f1342b8a" id="r_ac90b69a14557465018443c73f1342b8a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticlePointLineForce.html">ParticlePointLineForce</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ac90b69a14557465018443c73f1342b8a">particle_point_line_contact_force_object</a></td></tr>
-<tr class="separator:ac90b69a14557465018443c73f1342b8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a958747c15250dab3060cde0a73c59dc1" id="r_a958747c15250dab3060cde0a73c59dc1"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classIntegrator.html">Integrator</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a958747c15250dab3060cde0a73c59dc1">integrator_object</a></td></tr>
-<tr class="separator:a958747c15250dab3060cde0a73c59dc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ae561a2f40278659542463ed626f41a" id="r_a5ae561a2f40278659542463ed626f41a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a5ae561a2f40278659542463ed626f41a">insertion_object</a></td></tr>
-<tr class="separator:a5ae561a2f40278659542463ed626f41a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1aece23dc46cfb349770d5809f878da5" id="r_a1aece23dc46cfb349770d5809f878da5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a1aece23dc46cfb349770d5809f878da5">particle_particle_contact_force_object</a></td></tr>
-<tr class="separator:a1aece23dc46cfb349770d5809f878da5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3820c6540061e8d88168778ac4863df" id="r_ad3820c6540061e8d88168778ac4863df"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParticleWallContactForceBase.html">ParticleWallContactForceBase</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ad3820c6540061e8d88168778ac4863df">particle_wall_contact_force_object</a></td></tr>
-<tr class="separator:ad3820c6540061e8d88168778ac4863df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66ede7754b8a32f4107fc68d0e361703" id="r_a66ede7754b8a32f4107fc68d0e361703"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classVisualization.html">Visualization</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a66ede7754b8a32f4107fc68d0e361703">visualization_object</a></td></tr>
-<tr class="separator:a66ede7754b8a32f4107fc68d0e361703"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8d992a7dd5b0b7a219c758fd96ee07d" id="r_ad8d992a7dd5b0b7a219c758fd96ee07d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBoundaryCellsInformation.html">BoundaryCellsInformation</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ad8d992a7dd5b0b7a219c758fd96ee07d">boundary_cell_object</a></td></tr>
-<tr class="separator:ad8d992a7dd5b0b7a219c758fd96ee07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a402d73a3acd2b78c2a1cbcf022e396cd" id="r_a402d73a3acd2b78c2a1cbcf022e396cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::solid_surfaces_mesh_information&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a402d73a3acd2b78c2a1cbcf022e396cd">solid_surfaces_mesh_info</a></td></tr>
-<tr class="separator:a402d73a3acd2b78c2a1cbcf022e396cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a9e19d54227055ca241044d512c459f" id="r_a4a9e19d54227055ca241044d512c459f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::boundary_points_and_normal_vectors&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a4a9e19d54227055ca241044d512c459f">updated_boundary_points_and_normal_vectors</a></td></tr>
-<tr class="separator:a4a9e19d54227055ca241044d512c459f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3a57b288e54fad30fbd7b4224d4b539" id="r_ab3a57b288e54fad30fbd7b4224d4b539"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::vector_on_boundary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ab3a57b288e54fad30fbd7b4224d4b539">forces_boundary_information</a></td></tr>
-<tr class="separator:ab3a57b288e54fad30fbd7b4224d4b539"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7b4ad747a037aeedd4a9e89e1a8db85" id="r_ae7b4ad747a037aeedd4a9e89e1a8db85"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::vector_on_boundary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ae7b4ad747a037aeedd4a9e89e1a8db85">torques_boundary_information</a></td></tr>
-<tr class="separator:ae7b4ad747a037aeedd4a9e89e1a8db85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a191bb7bc6ff0f781565b2283ea6a91fa" id="r_a191bb7bc6ff0f781565b2283ea6a91fa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a191bb7bc6ff0f781565b2283ea6a91fa">periodic_boundaries_cells_information</a></td></tr>
-<tr class="separator:a191bb7bc6ff0f781565b2283ea6a91fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a853ee882493bf56f050e47cf209b8293" id="r_a853ee882493bf56f050e47cf209b8293"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a853ee882493bf56f050e47cf209b8293">periodic_boundaries_object</a></td></tr>
-<tr class="separator:a853ee882493bf56f050e47cf209b8293"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e8e370f5aad368d5c5da1933c5292e3" id="r_a4e8e370f5aad368d5c5da1933c5292e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a4e8e370f5aad368d5c5da1933c5292e3">sparse_contacts_object</a></td></tr>
-<tr class="separator:a4e8e370f5aad368d5c5da1933c5292e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a108cf1c4617afc4fc792f069fca7f11f" id="r_a108cf1c4617afc4fc792f069fca7f11f"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a108cf1c4617afc4fc792f069fca7f11f">contact_search_counter</a></td></tr>
-<tr class="separator:a108cf1c4617afc4fc792f069fca7f11f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cf6f1fb33230b4b908a6da7b4705e2f" id="r_a6cf6f1fb33230b4b908a6da7b4705e2f"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a6cf6f1fb33230b4b908a6da7b4705e2f">contact_search_total_number</a></td></tr>
-<tr class="separator:a6cf6f1fb33230b4b908a6da7b4705e2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b6bf34a03387c725902dca6722be1e2" id="r_a5b6bf34a03387c725902dca6722be1e2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a5b6bf34a03387c725902dca6722be1e2">contact_list</a></td></tr>
-<tr class="separator:a5b6bf34a03387c725902dca6722be1e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae61befe0e8c2a25ef1947ff0a93975dd" id="r_ae61befe0e8c2a25ef1947ff0a93975dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEM_1_1ParticleProperties.html">DEM::ParticleProperties</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ae61befe0e8c2a25ef1947ff0a93975dd">properties_class</a></td></tr>
-<tr class="separator:ae61befe0e8c2a25ef1947ff0a93975dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1185ff5280152c7ee71e0c5264d00b6" id="r_ae1185ff5280152c7ee71e0c5264d00b6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPVDHandler.html">PVDHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ae1185ff5280152c7ee71e0c5264d00b6">grid_pvdhandler</a></td></tr>
-<tr class="separator:ae1185ff5280152c7ee71e0c5264d00b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a184422e550c9bc385b7df8885d576b09" id="r_a184422e550c9bc385b7df8885d576b09"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPVDHandler.html">PVDHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a184422e550c9bc385b7df8885d576b09">particles_pvdhandler</a></td></tr>
-<tr class="separator:a184422e550c9bc385b7df8885d576b09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f6992bc661aefeaa80cb688c1d27719" id="r_a3f6992bc661aefeaa80cb688c1d27719"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a3f6992bc661aefeaa80cb688c1d27719">dem_parameters</a></td></tr>
-<tr class="separator:a3f6992bc661aefeaa80cb688c1d27719"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f3465f2a79a46c2875b41d7d2076b17" id="r_a1f3465f2a79a46c2875b41d7d2076b17"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a1f3465f2a79a46c2875b41d7d2076b17">rayleigh_time_step</a></td></tr>
-<tr class="separator:a1f3465f2a79a46c2875b41d7d2076b17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e83b91a13f50dd9b237580b14e37e92" id="r_a7e83b91a13f50dd9b237580b14e37e92"><td class="memItemLeft" align="right" valign="top">TableHandler&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a7e83b91a13f50dd9b237580b14e37e92">table_phase_volumes</a></td></tr>
-<tr class="separator:a7e83b91a13f50dd9b237580b14e37e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2ea80e49c7a2f88dfd9ad29c4364926" id="r_ac2ea80e49c7a2f88dfd9ad29c4364926"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEMActionManager.html">DEMActionManager</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ac2ea80e49c7a2f88dfd9ad29c4364926">dem_action_manager</a></td></tr>
-<tr class="separator:ac2ea80e49c7a2f88dfd9ad29c4364926"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_attribs_classPhysicsSolver"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classPhysicsSolver')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classPhysicsSolver.html">PhysicsSolver&lt; VectorType &gt;</a></td></tr>
-<tr class="memitem:a438c5dbf8b3a750d042d56ffc3285f1f inherit pub_attribs_classPhysicsSolver" id="r_a438c5dbf8b3a750d042d56ffc3285f1f"><td class="memItemLeft" align="right" valign="top">ConditionalOStream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a438c5dbf8b3a750d042d56ffc3285f1f">pcout</a></td></tr>
-<tr class="separator:a438c5dbf8b3a750d042d56ffc3285f1f inherit pub_attribs_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13df07fecddd07c49c6c6f7355c27ac8 inherit pub_attribs_classPhysicsSolver" id="r_a13df07fecddd07c49c6c6f7355c27ac8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a13df07fecddd07c49c6c6f7355c27ac8">time_stepping_method</a></td></tr>
-<tr class="separator:a13df07fecddd07c49c6c6f7355c27ac8 inherit pub_attribs_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classFluidDynamicsVANSMatrixFree"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classFluidDynamicsVANSMatrixFree')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree&lt; dim, PropertiesIndex &gt;</a></td></tr>
 <tr class="memitem:a8b1ed5393b04b14240ed93ed3ad1f540 inherit pro_methods_classFluidDynamicsVANSMatrixFree" id="r_a8b1ed5393b04b14240ed93ed3ad1f540"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a8b1ed5393b04b14240ed93ed3ad1f540">setup_dofs</a> () override</td></tr>
 <tr class="separator:a8b1ed5393b04b14240ed93ed3ad1f540 inherit pro_methods_classFluidDynamicsVANSMatrixFree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -419,6 +334,83 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:aafccb927a868ab52abb8411752067137 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a128f74e8a6586b126d8b9ad9a1b63cae inherit pro_methods_classNavierStokesBase" id="r_a128f74e8a6586b126d8b9ad9a1b63cae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a128f74e8a6586b126d8b9ad9a1b63cae">verify_consistency_of_boundary_conditions</a> ()</td></tr>
 <tr class="separator:a128f74e8a6586b126d8b9ad9a1b63cae inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a3e7302ac9d5cb831367ec12d9b8856f4" id="r_a3e7302ac9d5cb831367ec12d9b8856f4"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classSubSimulationControlDEM.html">SubSimulationControlDEM</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a3e7302ac9d5cb831367ec12d9b8856f4">dem_simulation_control</a></td></tr>
+<tr class="separator:a3e7302ac9d5cb831367ec12d9b8856f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adda83cd6b70351319d5b4b403c38d5fc" id="r_adda83cd6b70351319d5b4b403c38d5fc"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#adda83cd6b70351319d5b4b403c38d5fc">g</a></td></tr>
+<tr class="separator:adda83cd6b70351319d5b4b403c38d5fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19f7a63ffb4b80a3e3a0da7f5e1353db" id="r_a19f7a63ffb4b80a3e3a0da7f5e1353db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a19f7a63ffb4b80a3e3a0da7f5e1353db">contact_outcome</a></td></tr>
+<tr class="separator:a19f7a63ffb4b80a3e3a0da7f5e1353db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b7a70bcff9a953bfd86ac9e28156ec7" id="r_a4b7a70bcff9a953bfd86ac9e28156ec7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a4b7a70bcff9a953bfd86ac9e28156ec7">displacement</a></td></tr>
+<tr class="separator:a4b7a70bcff9a953bfd86ac9e28156ec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fd963607f0fb182da39d860d1942421" id="r_a1fd963607f0fb182da39d860d1942421"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a1fd963607f0fb182da39d860d1942421">MOI</a></td></tr>
+<tr class="separator:a1fd963607f0fb182da39d860d1942421"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b10cfa11e0b9d9bcb1c0af58c79d853" id="r_a5b10cfa11e0b9d9bcb1c0af58c79d853"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a5b10cfa11e0b9d9bcb1c0af58c79d853">neighborhood_threshold_squared</a></td></tr>
+<tr class="separator:a5b10cfa11e0b9d9bcb1c0af58c79d853"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58bc74325fef67aaf115eee826ca8021" id="r_a58bc74325fef67aaf115eee826ca8021"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a58bc74325fef67aaf115eee826ca8021">size_distribution_object_container</a></td></tr>
+<tr class="separator:a58bc74325fef67aaf115eee826ca8021"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a482a7ba7bffba5b0dbafe5f394a9d9c1" id="r_a482a7ba7bffba5b0dbafe5f394a9d9c1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a482a7ba7bffba5b0dbafe5f394a9d9c1">maximum_particle_diameter</a></td></tr>
+<tr class="separator:a482a7ba7bffba5b0dbafe5f394a9d9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a048d7d7a935e98132b0d42c156a2d08c" id="r_a048d7d7a935e98132b0d42c156a2d08c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a048d7d7a935e98132b0d42c156a2d08c">smallest_contact_search_criterion</a></td></tr>
+<tr class="separator:a048d7d7a935e98132b0d42c156a2d08c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac33f1ae21508b8a3cdce261e275685e8" id="r_ac33f1ae21508b8a3cdce261e275685e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classOngoingCollisionLog.html">OngoingCollisionLog</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ac33f1ae21508b8a3cdce261e275685e8">ongoing_collision_log</a></td></tr>
+<tr class="separator:ac33f1ae21508b8a3cdce261e275685e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5764017eba08a809299c0432fb17ada" id="r_ac5764017eba08a809299c0432fb17ada"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCompletedCollisionLog.html">CompletedCollisionLog</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ac5764017eba08a809299c0432fb17ada">collision_event_log</a></td></tr>
+<tr class="separator:ac5764017eba08a809299c0432fb17ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad62c62dd598575023feaf86de94a82b" id="r_aad62c62dd598575023feaf86de94a82b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEMContactManager.html">DEMContactManager</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#aad62c62dd598575023feaf86de94a82b">contact_manager</a></td></tr>
+<tr class="separator:aad62c62dd598575023feaf86de94a82b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc30959ea8e693b678c118a574fa750e" id="r_abc30959ea8e693b678c118a574fa750e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#abc30959ea8e693b678c118a574fa750e">load_balancing</a></td></tr>
+<tr class="separator:abc30959ea8e693b678c118a574fa750e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac90b69a14557465018443c73f1342b8a" id="r_ac90b69a14557465018443c73f1342b8a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticlePointLineForce.html">ParticlePointLineForce</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ac90b69a14557465018443c73f1342b8a">particle_point_line_contact_force_object</a></td></tr>
+<tr class="separator:ac90b69a14557465018443c73f1342b8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a958747c15250dab3060cde0a73c59dc1" id="r_a958747c15250dab3060cde0a73c59dc1"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classIntegrator.html">Integrator</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a958747c15250dab3060cde0a73c59dc1">integrator_object</a></td></tr>
+<tr class="separator:a958747c15250dab3060cde0a73c59dc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ae561a2f40278659542463ed626f41a" id="r_a5ae561a2f40278659542463ed626f41a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a5ae561a2f40278659542463ed626f41a">insertion_object</a></td></tr>
+<tr class="separator:a5ae561a2f40278659542463ed626f41a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1aece23dc46cfb349770d5809f878da5" id="r_a1aece23dc46cfb349770d5809f878da5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a1aece23dc46cfb349770d5809f878da5">particle_particle_contact_force_object</a></td></tr>
+<tr class="separator:a1aece23dc46cfb349770d5809f878da5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3820c6540061e8d88168778ac4863df" id="r_ad3820c6540061e8d88168778ac4863df"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParticleWallContactForceBase.html">ParticleWallContactForceBase</a>&lt; dim, PropertiesIndex &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ad3820c6540061e8d88168778ac4863df">particle_wall_contact_force_object</a></td></tr>
+<tr class="separator:ad3820c6540061e8d88168778ac4863df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66ede7754b8a32f4107fc68d0e361703" id="r_a66ede7754b8a32f4107fc68d0e361703"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classVisualization.html">Visualization</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a66ede7754b8a32f4107fc68d0e361703">visualization_object</a></td></tr>
+<tr class="separator:a66ede7754b8a32f4107fc68d0e361703"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8d992a7dd5b0b7a219c758fd96ee07d" id="r_ad8d992a7dd5b0b7a219c758fd96ee07d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBoundaryCellsInformation.html">BoundaryCellsInformation</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ad8d992a7dd5b0b7a219c758fd96ee07d">boundary_cell_object</a></td></tr>
+<tr class="separator:ad8d992a7dd5b0b7a219c758fd96ee07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a402d73a3acd2b78c2a1cbcf022e396cd" id="r_a402d73a3acd2b78c2a1cbcf022e396cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::solid_surfaces_mesh_information&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a402d73a3acd2b78c2a1cbcf022e396cd">solid_surfaces_mesh_info</a></td></tr>
+<tr class="separator:a402d73a3acd2b78c2a1cbcf022e396cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a9e19d54227055ca241044d512c459f" id="r_a4a9e19d54227055ca241044d512c459f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::boundary_points_and_normal_vectors&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a4a9e19d54227055ca241044d512c459f">updated_boundary_points_and_normal_vectors</a></td></tr>
+<tr class="separator:a4a9e19d54227055ca241044d512c459f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3a57b288e54fad30fbd7b4224d4b539" id="r_ab3a57b288e54fad30fbd7b4224d4b539"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::vector_on_boundary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ab3a57b288e54fad30fbd7b4224d4b539">forces_boundary_information</a></td></tr>
+<tr class="separator:ab3a57b288e54fad30fbd7b4224d4b539"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7b4ad747a037aeedd4a9e89e1a8db85" id="r_ae7b4ad747a037aeedd4a9e89e1a8db85"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::vector_on_boundary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ae7b4ad747a037aeedd4a9e89e1a8db85">torques_boundary_information</a></td></tr>
+<tr class="separator:ae7b4ad747a037aeedd4a9e89e1a8db85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a191bb7bc6ff0f781565b2283ea6a91fa" id="r_a191bb7bc6ff0f781565b2283ea6a91fa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a191bb7bc6ff0f781565b2283ea6a91fa">periodic_boundaries_cells_information</a></td></tr>
+<tr class="separator:a191bb7bc6ff0f781565b2283ea6a91fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a853ee882493bf56f050e47cf209b8293" id="r_a853ee882493bf56f050e47cf209b8293"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a853ee882493bf56f050e47cf209b8293">periodic_boundaries_object</a></td></tr>
+<tr class="separator:a853ee882493bf56f050e47cf209b8293"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e8e370f5aad368d5c5da1933c5292e3" id="r_a4e8e370f5aad368d5c5da1933c5292e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a4e8e370f5aad368d5c5da1933c5292e3">sparse_contacts_object</a></td></tr>
+<tr class="separator:a4e8e370f5aad368d5c5da1933c5292e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a108cf1c4617afc4fc792f069fca7f11f" id="r_a108cf1c4617afc4fc792f069fca7f11f"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a108cf1c4617afc4fc792f069fca7f11f">contact_search_counter</a></td></tr>
+<tr class="separator:a108cf1c4617afc4fc792f069fca7f11f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cf6f1fb33230b4b908a6da7b4705e2f" id="r_a6cf6f1fb33230b4b908a6da7b4705e2f"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a6cf6f1fb33230b4b908a6da7b4705e2f">contact_search_total_number</a></td></tr>
+<tr class="separator:a6cf6f1fb33230b4b908a6da7b4705e2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b6bf34a03387c725902dca6722be1e2" id="r_a5b6bf34a03387c725902dca6722be1e2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classstatistics.html">statistics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a5b6bf34a03387c725902dca6722be1e2">contact_list</a></td></tr>
+<tr class="separator:a5b6bf34a03387c725902dca6722be1e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae61befe0e8c2a25ef1947ff0a93975dd" id="r_ae61befe0e8c2a25ef1947ff0a93975dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEM_1_1ParticleProperties.html">DEM::ParticleProperties</a>&lt; dim, PropertiesIndex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ae61befe0e8c2a25ef1947ff0a93975dd">properties_class</a></td></tr>
+<tr class="separator:ae61befe0e8c2a25ef1947ff0a93975dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1185ff5280152c7ee71e0c5264d00b6" id="r_ae1185ff5280152c7ee71e0c5264d00b6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPVDHandler.html">PVDHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ae1185ff5280152c7ee71e0c5264d00b6">grid_pvdhandler</a></td></tr>
+<tr class="separator:ae1185ff5280152c7ee71e0c5264d00b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a184422e550c9bc385b7df8885d576b09" id="r_a184422e550c9bc385b7df8885d576b09"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPVDHandler.html">PVDHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a184422e550c9bc385b7df8885d576b09">particles_pvdhandler</a></td></tr>
+<tr class="separator:a184422e550c9bc385b7df8885d576b09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f6992bc661aefeaa80cb688c1d27719" id="r_a3f6992bc661aefeaa80cb688c1d27719"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a3f6992bc661aefeaa80cb688c1d27719">dem_parameters</a></td></tr>
+<tr class="separator:a3f6992bc661aefeaa80cb688c1d27719"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f3465f2a79a46c2875b41d7d2076b17" id="r_a1f3465f2a79a46c2875b41d7d2076b17"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a1f3465f2a79a46c2875b41d7d2076b17">rayleigh_time_step</a></td></tr>
+<tr class="separator:a1f3465f2a79a46c2875b41d7d2076b17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e83b91a13f50dd9b237580b14e37e92" id="r_a7e83b91a13f50dd9b237580b14e37e92"><td class="memItemLeft" align="right" valign="top">TableHandler&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#a7e83b91a13f50dd9b237580b14e37e92">table_phase_volumes</a></td></tr>
+<tr class="separator:a7e83b91a13f50dd9b237580b14e37e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2ea80e49c7a2f88dfd9ad29c4364926" id="r_ac2ea80e49c7a2f88dfd9ad29c4364926"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEMActionManager.html">DEMActionManager</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCFDDEMMatrixFree.html#ac2ea80e49c7a2f88dfd9ad29c4364926">dem_action_manager</a></td></tr>
+<tr class="separator:ac2ea80e49c7a2f88dfd9ad29c4364926"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classFluidDynamicsVANSMatrixFree"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classFluidDynamicsVANSMatrixFree')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree&lt; dim, PropertiesIndex &gt;</a></td></tr>
 <tr class="memitem:a7187e7a7c189ba71097bba4882615399 inherit pro_attribs_classFluidDynamicsVANSMatrixFree" id="r_a7187e7a7c189ba71097bba4882615399"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCFDDEMSimulationParameters.html">CFDDEMSimulationParameters</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a7187e7a7c189ba71097bba4882615399">cfd_dem_simulation_parameters</a></td></tr>
 <tr class="separator:a7187e7a7c189ba71097bba4882615399 inherit pro_attribs_classFluidDynamicsVANSMatrixFree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -570,6 +562,14 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a0116182fcb14803f673fb2fe05ef21b5 inherit pro_attribs_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73a3f683e37a5a3b4344a398690b6d22 inherit pro_attribs_classNavierStokesBase" id="r_a73a3f683e37a5a3b4344a398690b6d22"><td class="memItemLeft" align="right" valign="top">AffineConstraints&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a73a3f683e37a5a3b4344a398690b6d22">dynamic_zero_constraints</a></td></tr>
 <tr class="separator:a73a3f683e37a5a3b4344a398690b6d22 inherit pro_attribs_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_attribs_classPhysicsSolver"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classPhysicsSolver')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classPhysicsSolver.html">PhysicsSolver&lt; VectorType &gt;</a></td></tr>
+<tr class="memitem:a438c5dbf8b3a750d042d56ffc3285f1f inherit pub_attribs_classPhysicsSolver" id="r_a438c5dbf8b3a750d042d56ffc3285f1f"><td class="memItemLeft" align="right" valign="top">ConditionalOStream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a438c5dbf8b3a750d042d56ffc3285f1f">pcout</a></td></tr>
+<tr class="separator:a438c5dbf8b3a750d042d56ffc3285f1f inherit pub_attribs_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13df07fecddd07c49c6c6f7355c27ac8 inherit pub_attribs_classPhysicsSolver" id="r_a13df07fecddd07c49c6c6f7355c27ac8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a13df07fecddd07c49c6c6f7355c27ac8">time_stepping_method</a></td></tr>
+<tr class="separator:a13df07fecddd07c49c6c6f7355c27ac8 inherit pub_attribs_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
@@ -637,7 +637,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -672,7 +672,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -712,7 +712,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -744,7 +744,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -776,7 +776,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -810,7 +810,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -846,7 +846,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -883,7 +883,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -915,7 +915,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -947,7 +947,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -981,7 +981,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1013,7 +1013,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1048,7 +1048,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1090,7 +1090,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1126,7 +1126,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1162,7 +1162,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1196,16 +1196,16 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Reports the ratio between the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step and the Rayleigh time. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00327">327</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00331">331</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00353">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;::dem_simulation_control</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>, and <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00475">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;::rayleigh_time_step</a>.</p>
+<p class="reference">References <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00357">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;::dem_simulation_control</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>, and <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00479">CFDDEMMatrixFree&lt; dim, PropertiesIndex &gt;::rayleigh_time_step</a>.</p>
 
 </div>
 </div>
@@ -1240,7 +1240,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1256,7 +1256,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a18c7e94509bc492226891d12ec13302d">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00126">126</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00130">130</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00956">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00791">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::refine_mesh()</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03277">FluidDynamicsMatrixFree&lt; dim &gt;::set_initial_condition_fd()</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00878">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::simulation_parameters</a>.</p>
 
@@ -1282,7 +1282,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1315,7 +1315,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1384,7 +1384,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1416,7 +1416,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1448,7 +1448,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1484,7 +1484,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1516,14 +1516,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Information about boundary cells for contact detection. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00425">425</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00429">429</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1544,7 +1544,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1552,7 +1552,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Object to store completed collision events. </p>
 <p>Stores complete collision event data including start and end information for post-processing and analysis purposes. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00394">394</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00398">398</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1573,14 +1573,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Statistics container for timing and contact list information. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00460">460</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00464">464</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1601,13 +1601,13 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <p>Manager for particle-particle and particle-wall contact detection and handling </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00398">398</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00402">402</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1628,14 +1628,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Container for particle interaction outcomes (forces and torques) </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00360">360</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00364">364</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1656,14 +1656,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Counter for contact searches performed in the current CFD iteration. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00454">454</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00458">458</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1684,14 +1684,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Total number of contact searches since simulation start. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00457">457</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00461">461</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1712,14 +1712,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Pointer to <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> action manager for handling DEM-specific operations. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00482">482</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00486">486</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1740,14 +1740,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation parameters container. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00472">472</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00476">476</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1768,13 +1768,13 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <p>Sub simulation control object used to control the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> sub iterations for each CFD time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00353">353</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00357">357</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1795,14 +1795,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Displacement vector for particle motion calculations. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00363">363</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00367">367</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1823,14 +1823,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Force information stored on boundary elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00437">437</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00441">441</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1851,14 +1851,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Gravitational acceleration vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00357">357</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00361">361</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1879,14 +1879,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>PVD handler for grid visualization output. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00466">466</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00470">470</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1907,14 +1907,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Particle insertion method handler. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00411">411</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00415">415</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1935,14 +1935,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Time integration scheme for particle motion equations. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00408">408</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00412">412</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1963,14 +1963,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Load balancing handler for distributing particles across MPI processes. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00401">401</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00405">405</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1991,14 +1991,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Maximum diameter among all particles in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00375">375</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00379">379</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2019,14 +2019,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Moment of inertia values for all particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00366">366</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00370">370</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2047,14 +2047,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Squared threshold distance for neighborhood particle detection. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00369">369</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00373">373</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2075,7 +2075,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -2083,7 +2083,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Object to store ongoing collision information. </p>
 <p>Stores particle ID, boundary ID, velocity tensor, angular velocity tensor, and collision time for collisions currently in progress. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00386">386</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00390">390</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2104,14 +2104,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Contact force model for particle-particle interactions. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00415">415</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00419">419</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2132,14 +2132,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Handler for point and line contact forces between particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00405">405</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00409">409</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2160,14 +2160,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Contact force model for particle-wall interactions. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00419">419</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00423">423</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2188,14 +2188,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>PVD handler for particle visualization output. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00469">469</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00473">473</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2216,14 +2216,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Information about cells involved in periodic boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00445">445</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00449">449</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2244,14 +2244,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Handler for periodic boundary condition manipulations. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00448">448</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00452">452</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2272,14 +2272,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Particle properties handler for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00463">463</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00467">467</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2300,14 +2300,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Rayleigh time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00475">475</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00479">479</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2328,14 +2328,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Container for particle size distribution objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00372">372</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00376">376</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2356,14 +2356,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Smallest criterion used for contact search algorithms. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00378">378</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00382">382</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2384,14 +2384,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Mesh information for solid surfaces in contact with particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00429">429</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00433">433</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2412,14 +2412,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Object for handling adaptive sparse contact detection algorithms. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00451">451</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00455">455</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2440,13 +2440,13 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <p>TableHandler for post-processing phase volume calculations Stores total fluid volume and total particle volume data </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00479">479</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00483">483</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2467,14 +2467,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Torque information stored on boundary elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00441">441</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00445">445</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2495,14 +2495,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Updated boundary points and their corresponding normal vectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00433">433</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00437">437</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2523,14 +2523,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p><a class="el" href="classVisualization.html" title="Building patches of particle properties for visualization. This function is taken from Aspect and dea...">Visualization</a> handler for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> output generation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00422">422</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00426">426</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
 </div>
 </div>
