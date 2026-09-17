@@ -41,7 +41,7 @@ PeriodicBoundariesManipulator<dim>::set_periodic_boundaries_information(
   std::array<bool, dim> direction_is_used{};
   for (const auto &[id, boundary] : periodic_boundaries)
     {
-      AssertThrow(boundary.direction < static_cast<unsigned int>(dim),
+      AssertThrow(std::cmp_less(boundary.direction, dim),
                   ExcMessage(
                     "PeriodicBoundariesManipulator: periodic direction " +
                     std::to_string(boundary.direction) +
