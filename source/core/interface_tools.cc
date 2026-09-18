@@ -703,64 +703,66 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                          Point<dim> &closest_point)
 {
 
-   Vector<double> current_solution(dim + 1);
-  Vector<double> solution_update(dim + 1);
+  Vector<double> current_solution(dim + 1);
+    Vector<double> solution_update(dim + 1);
+ 
+    Vector<double>     residual(dim + 1);
+    FullMatrix<double> hessian(dim + 1, dim + 1);
+ 
+    for (unsigned int i = 0; i < dim; ++i)
+      current_solution[i] = closest_point[i];
+ 
+ 
+    for (unsigned int newton_iter = 0; newton_iter < 100;
+         ++newton_iter)
+      {
+        hessian             = 0.0;
+        residual            = 0.0;
+        const double lambda = current_solution[dim];
+        for (unsigned int k = 0; k < dof_values.size(); ++k)
+          {
+            const auto value_k = fe.shape_value(k, closest_point);
+            const auto grad_k  = fe.shape_grad(k, closest_point);
+            const auto hess_k  = fe.shape_grad_grad(k, closest_point);
+            for (unsigned int i = 0; i < dim; ++i)
+              {
+                for (unsigned int j = 0; j < dim; ++j)
+                  hessian(i, j) += lambda * dof_values[k] * hess_k[i][j];
+ 
+                hessian(i, dim) += dof_values[k] * grad_k[i];
+                hessian(dim, i) += dof_values[k] * grad_k[i];
+              }
+ 
+            for (unsigned int i = 0; i < dim; ++i)
+              residual[i] -= lambda * dof_values[k] * grad_k[i];
+ 
+            residual[dim] -= dof_values[k] * value_k;
+          }
+ 
+ 
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            residual[i] -= current_solution[i] - point[i];
+            hessian[i][i] += 1.0;
+          }
+ 
+        if (residual.l2_norm() < 1e-12)
+          break;
+ 
+ 
+        hessian.gauss_jordan();
+        hessian.vmult(solution_update, residual);
+        current_solution += solution_update;
+ 
+        for (unsigned int i = 0; i < dim; ++i)
+          closest_point[i] = current_solution[i];
+      }
+ 
+    // Check if the Newton iteration converged
+    Assert(residual.l2_norm() < 1e-12,
+           ExcMessage("Newton iteration did not converge"));
 
-  Vector<double>     residual(dim + 1);
-  FullMatrix<double> hessian(dim + 1, dim + 1);
-
-  for (unsigned int i = 0; i < dim; ++i)
-    current_solution[i] = closest_point[i];
-
-
-  for (unsigned int newton_iter = 0; newton_iter < 100;
-        ++newton_iter)
-    {
-      hessian             = 0.0;
-      residual            = 0.0;
-      const double lambda = current_solution[dim];
-      for (unsigned int k = 0; k < dof_values.size(); ++k)
-        {
-          const auto value_k = fe.shape_value(k, closest_point);
-          const auto grad_k  = fe.shape_grad(k, closest_point);
-          const auto hess_k  = fe.shape_grad_grad(k, closest_point);
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              for (unsigned int j = 0; j < dim; ++j)
-                hessian(i, j) += lambda * dof_values[k] * hess_k[i][j];
-
-              hessian(i, dim) += dof_values[k] * grad_k[i];
-              hessian(dim, i) += dof_values[k] * grad_k[i];
-            }
-
-          for (unsigned int i = 0; i < dim; ++i)
-            residual[i] -= lambda * dof_values[k] * grad_k[i];
-
-          residual[dim] -= dof_values[k] * value_k;
-        }
-
-
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          residual[i] -= current_solution[i] - point[i];
-          hessian[i][i] += 1.0;
-        }
-
-      if (residual.l2_norm() < 1e-12)
-        break;
-
-
-      hessian.gauss_jordan();
-      hessian.vmult(solution_update, residual);
-      current_solution += solution_update;
-
-      for (unsigned int i = 0; i < dim; ++i)
-        closest_point[i] = current_solution[i];
-    }
-
-  // Check if the Newton iteration converged
-  Assert(residual.l2_norm() < 1e-12,
-          ExcMessage("Newton iteration did not converge"));
+    return true;
 
 }
 
