@@ -8,7 +8,7 @@
 # The particle should follow the analytical solution but slightly overshoot
 # it due to the two-way coupling.
 # A python file is provided within the /single_particle_sedimentation_reference/
-# folder that can be used to verify the validaty of the solution
+# folder that can be used to verify the validity of the solution
 # for the particle trajectory and velocity.
 
 # Listing of Parameters
@@ -55,8 +55,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 4,8,4:-0.025,0,-0.025:0.025,0.10,0.025:false
-  set initial refinement = 1
+  set grid arguments     = 1,2,1:-0.025,0,-0.025:0.025,0.10,0.025:false
+  set initial refinement = 2
 end
 
 #---------------------------------------------------

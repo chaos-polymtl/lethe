@@ -938,7 +938,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart ||
-      this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
+      this->cfd_dem_simulation_parameters.void_fraction->read_dem,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
       .periodic_boundaries);
 
