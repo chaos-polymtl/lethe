@@ -1,6 +1,6 @@
 
 *********************
-Running on 1 rank(s)
+Running on 2 rank(s)
 *********************
 The particle size distribution of particle type 0 is uniform.
 DEM time step is 0.163418% of Rayleigh time step
@@ -15,6 +15,6 @@ This feature is useful in geometries with convex boundaries.
 *********************************************************************
 2 particles of type 0 were inserted, 0 particles of type 0 remaining
 *********************************************************************
-id, type, dp, x, y, z 
-0 0 0.05000 0.0256 0.5000 
-1 0 0.05000 0.9744 0.5000 
+id, type, dp, x, y, z
+0 0 0.05000 0.0256 0.5000
+1 0 0.05000 0.9744 0.5000

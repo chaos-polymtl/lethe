@@ -14,9 +14,9 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <array>
 #include <map>
 #include <unordered_map>
-#include <vector>
 
 using namespace dealii;
 
@@ -46,22 +46,7 @@ public:
    */
   void
   set_periodic_boundaries_information(
-    const Parameters::PeriodicBoundaries &periodic_boundaries)
-  {
-    // If this function is reached and the map is not empty
-    if (periodic_boundaries.empty())
-      return;
-
-    periodic_boundaries_enabled = true;
-
-    // Communicate to the action manager that there are periodic boundaries
-    DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
-
-    this->periodic_boundaries = periodic_boundaries;
-
-    // Initialize offset map
-    this->periodic_offsets.clear();
-  }
+    const Parameters::PeriodicBoundaries &periodic_boundaries);
 
   /**
    * @brief Execute the mapping of the cells on periodic boundaries and store
@@ -133,14 +118,15 @@ public:
   }
 
   /**
-   * @brief Return the combined periodic offsets
+   * @brief Return the periodic offset (signed period) for every direction.
    *
-   * @return Combined periodic offsets.
+   * @return Array whose component d is the signed period of the domain
+   * along direction d if d is periodic, or 0 otherwise.
    */
-  inline const std::vector<Tensor<1, dim>> &
-  get_combined_periodic_offsets() const
+  inline const std::array<double, dim> &
+  get_periodic_offset_per_direction() const
   {
-    return combined_periodic_offsets;
+    return periodic_offset_per_direction;
   }
 
 private:
@@ -182,11 +168,11 @@ private:
     bool &particle_has_been_moved);
 
   /**
-   * @brief Compute the combined periodic offsets and store them in
-   * combined_periodic_offsets.
+   * @brief Compute the periodic offset (signed period) for every direction
+   * and store it in periodic_offset_per_direction.
    */
   void
-  compute_combined_periodic_offsets();
+  compute_periodic_offset_per_direction();
 
   /**
    * @brief Flag for periodic boundary conditions in simulation. Useful to
@@ -211,10 +197,14 @@ private:
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 
   /**
-   * @brief Storage for all 9 (2D) or 27 (3D) precomputed periodic translation
-   * vectors. Calculated from periodic_offsets.
+   * @brief Signed period of the domain along every direction. Component d is
+   * the signed period of direction d if it is periodic, or 0 otherwise.
+   * Calculated from periodic_offsets. Used by the particle-particle fine
+   * search to find the nearest periodic image of a particle via the minimum
+   * image convention, without searching over combinations of periodic
+   * offsets.
    */
-  std::vector<Tensor<1, dim>> combined_periodic_offsets;
+  std::array<double, dim> periodic_offset_per_direction{};
 };
 
 #endif

@@ -2,20 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Unit test for PeriodicBoundariesManipulator::compute_combined_periodic_offsets.
+ * @brief Unit test for
+ * PeriodicBoundariesManipulator::compute_periodic_offset_per_direction.
  *
  * Builds a unit hyper_cube triangulation made fully periodic in every
  * direction, drives the public set_periodic_boundaries_information +
- * map_periodic_cells path of PeriodicBoundariesManipulator, then prints
- * the resulting combined_periodic_offsets sorted lexicographically.
+ * map_periodic_cells path of PeriodicBoundariesManipulator, then prints the
+ * resulting periodic_offset_per_direction.
  *
- * For a fully periodic unit hyper_cube the offset magnitudes are all 1, so
- * the expected combined_periodic_offsets is exactly the set of non-zero
- * vectors with each component in {-1, 0, +1}: 8 entries in 2D, 26 in 3D.
- *
- * Sorting before printing makes the output independent of insertion order,
- * so the test asserts SET equality (not just size) against the canonical
- * expected set. A wrong-but-same-size list would diff differently.
+ * For a fully periodic unit hyper_cube the period along every direction is
+ * 1, so the expected periodic_offset_per_direction is (1, 1) in 2D and
+ * (1, 1, 1) in 3D.
  */
 
 // Deal.II
@@ -31,7 +28,7 @@
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
-#include <algorithm>
+#include <array>
 
 using namespace dealii;
 
@@ -75,32 +72,13 @@ test()
     cells_info;
   manipulator.map_periodic_cells(triangulation, cells_info);
 
-  // Snapshot and sort lexicographically so the test output is
-  // independent of insertion order.
-  std::vector<Tensor<1, dim>> offsets =
-    manipulator.get_combined_periodic_offsets();
-  std::sort(offsets.begin(),
-            offsets.end(),
-            [](const Tensor<1, dim> &a, const Tensor<1, dim> &b) {
-              for (int d = 0; d < dim; ++d)
-                {
-                  if (a[d] < b[d])
-                    return true;
-                  if (a[d] > b[d])
-                    return false;
-                }
-              return false;
-            });
+  const std::array<double, dim> &offset_per_direction =
+    manipulator.get_periodic_offset_per_direction();
 
-  deallog << "dim = " << dim << ", size = " << offsets.size() << std::endl;
-  for (const auto &o : offsets)
-    {
-      deallog << " (";
-      for (int d = 0; d < dim; ++d)
-        deallog << (d == 0 ? "" : ", ") << o[d];
-      deallog << ")" << std::endl;
-    }
-  deallog << std::endl;
+  deallog << "dim = " << dim << ", periodic_offset_per_direction = (";
+  for (int d = 0; d < dim; ++d)
+    deallog << (d == 0 ? "" : ", ") << offset_per_direction[d];
+  deallog << ")" << std::endl;
 }
 
 int
