@@ -16,7 +16,7 @@
 using namespace dealii;
 
 /**
- * @brief Generates a 3D mesh of a waveguide cavity embedded in a cylinder in which a liquid flows
+ * @brief Generates a 3D mesh of a waveguide embedded in a cylindrical cavity in which a liquid flows
  *
  * The geometry consists of three sections joined along the z-axis:
  * - A bottom cylinder
