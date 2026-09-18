@@ -698,174 +698,69 @@ template <int dim, typename VectorType>
 bool
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   newton_raphson_method_for_minimization(const Point<dim>          &point,
-                                         const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                         const FiniteElement<dim>  &fe,
                                          const std::vector<double> &dof_values,
                                          Point<dim> &closest_point)
 {
 
-  FEPointEvaluation<1, dim> fe_point_evaluation(
-    *mapping, *fe, update_gradients | update_values);
+   Vector<double> current_solution(dim + 1);
+  Vector<double> solution_update(dim + 1);
 
-  std::vector<Point<dim>> unit_closest_point_vec(1);
+  Vector<double>     residual(dim + 1);
+  FullMatrix<double> hessian(dim + 1, dim + 1);
 
-  for (unsigned int iter = 0; iter < 20; ++iter)
-  {
-    Tensor<1, dim> grad;
-    double value = 0.0;
+  for (unsigned int i = 0; i < dim; ++i)
+    current_solution[i] = closest_point[i];
 
-    // Point<dim> unit_closest_point = mapping->transform_real_to_unit_cell(cell, closest_point);
 
-    // unit_closest_point_vec[0] = unit_closest_point;
-
-    // fe_point_evaluation.reinit(cell, unit_closest_point_vec);
-    // fe_point_evaluation.evaluate(dof_values,
-    //                               EvaluationFlags::gradients | EvaluationFlags::values);
-
-    // Tensor<1, dim> grad = fe_point_evaluation.get_gradient(0);
-    // double value = fe_point_evaluation.get_value(0);
-
-    for (unsigned int k = 0; k < dof_values.size(); ++k)
+  for (unsigned int newton_iter = 0; newton_iter < 100;
+        ++newton_iter)
     {
-      const auto grad_k  = fe->shape_grad(k, closest_point);
-      grad += dof_values[k] * grad_k;
-      value += dof_values[k] * fe->shape_value(k, closest_point);
+      hessian             = 0.0;
+      residual            = 0.0;
+      const double lambda = current_solution[dim];
+      for (unsigned int k = 0; k < dof_values.size(); ++k)
+        {
+          const auto value_k = fe.shape_value(k, closest_point);
+          const auto grad_k  = fe.shape_grad(k, closest_point);
+          const auto hess_k  = fe.shape_grad_grad(k, closest_point);
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              for (unsigned int j = 0; j < dim; ++j)
+                hessian(i, j) += lambda * dof_values[k] * hess_k[i][j];
 
+              hessian(i, dim) += dof_values[k] * grad_k[i];
+              hessian(dim, i) += dof_values[k] * grad_k[i];
+            }
+
+          for (unsigned int i = 0; i < dim; ++i)
+            residual[i] -= lambda * dof_values[k] * grad_k[i];
+
+          residual[dim] -= dof_values[k] * value_k;
+        }
+
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          residual[i] -= current_solution[i] - point[i];
+          hessian[i][i] += 1.0;
+        }
+
+      if (residual.l2_norm() < 1e-12)
+        break;
+
+
+      hessian.gauss_jordan();
+      hessian.vmult(solution_update, residual);
+      current_solution += solution_update;
+
+      for (unsigned int i = 0; i < dim; ++i)
+        closest_point[i] = current_solution[i];
     }
 
-    
-
-    Tensor<1, dim> vector_point_closest_point = point - closest_point;
-
-    Tensor<1, dim> delta_1 = -value*grad/(grad.norm()*grad.norm() + 1e-16);
-
-    double tmp = vector_point_closest_point*grad;
-    Tensor<1, dim> delta_2 = vector_point_closest_point - tmp/(grad.norm()*grad.norm() + 1e-16)*grad;
-
-    Tensor<1, dim> corr = delta_1 + delta_2;
-    Tensor<1, dim> closest_point_tmp = closest_point + corr;
-
-    double relaxation = 1.0;
-    bool check = false;
-    for (int k = 0; k < dim; ++k)
-    {
-      if (closest_point_tmp[k] > 1.0 + 1e-10 || closest_point_tmp[k] < 0.0 - 1e-10)
-      {
-        check = true;
-
-        if (corr[k] > 1e-10)
-        {
-          relaxation = std::min((1.0 - closest_point_tmp[k]) /
-                                (corr[k]),
-                              relaxation);
-        }
-        else if (corr[k] < -1e-10)
-        {
-          relaxation = std::min((0.0 - closest_point_tmp[k]) /
-                                (corr[k]),
-                              relaxation);
-        }
-      }
-    }
-    corr *= relaxation;
-    closest_point = closest_point + corr;
-
-    // if (check)
-    //   return true;
-
-
-    double criterion = corr.norm();
-    
-    if (criterion < 1e-6)
-      return true;
-  }
-
-  return false;
-
-  // std::cout << "Point = " << point <<std::endl;
-
-  // for (unsigned int newton_iter = 0; newton_iter < 20; ++newton_iter)
-  //   {
-  //     auto vector_point_closest_point =  point - closest_point;
-
-  //     grad = 0.0;
-  //     value = 0.0;
-  //     for (unsigned int k = 0; k < dof_values.size(); ++k)
-  //       {
-  //         const auto grad_k  = fe->shape_grad(k, closest_point);
-  //         grad += dof_values[k] * grad_k;
-  //         value += dof_values[k] * fe->shape_value(k, closest_point);
-  //       }
-
-  //     for (unsigned int i = 0; i < dim; ++i)
-  //     {
-  //       solution_update[i] = -value/(grad.norm()*grad.norm()+1e-16)*grad[i];
-  //     }
-  //     current_solution[dim] = vector_point_closest_point*grad/(grad.norm()*grad.norm()+1e-16);
-
-  //     // if (grad.norm() < )
-  //     // std::cout << "it = "<< newton_iter << " value = " << value << std::endl;
-
-  //     Tensor<1, dim> delta_2 = vector_point_closest_point - current_solution[dim]*grad;
-
-  //     if (delta_2.norm() > 0.1)
-  //       delta_2 *= 0.1/(delta_2.norm()+1e-16);
-
-  //     Point<dim> corr;
-  //     for (unsigned int i = 0; i < dim; ++i)
-  //     {
-  //       solution_update[i] += delta_2[i];
-  //       corr[i] = solution_update[i];
-  //     }
-
-
-
-
-  //     double relaxation = 1.0;
-  //     for (unsigned int i = 0; i < dim; ++i)
-  //       {
-
-  //         std::cout << "i = " << i << std::endl;
-  //         std::cout << "value = " << value << std::endl;
-
-  //         std::cout << "grad_i = " << grad[i] << std::endl;
-
-
-  //         double relaxation_i = 1.0;
-  //         double closest_point_i = closest_point[i] + corr[i];
-  //         std::cout << "closest_point_i = " << closest_point_i << std::endl;
-  //         std::cout << "corr[i] = " << corr[i] << std::endl;
-
-  //         bool outside = true;
-  //         unsigned int iter = 0;
-  //         while ((outside))
-  //         {
-  //           if (((closest_point_i) > -1e-10) && ((closest_point_i) < 1 + 1e-10))
-  //             outside = false;
-  //           else
-  //           {
-  //             relaxation_i *= 0.5;
-  //             closest_point_i = closest_point[i] + relaxation_i*corr[i];
-  //           }
-  //           // iter += 1;
-  //         }
-  //         relaxation = std::min(relaxation,relaxation_i);
-
-
-  //       }
-
-  //       std::cout << "relaxation = " << relaxation << std::endl;
-      
-  //     for (unsigned int i = 0; i < dim; ++i)
-  //     {
-  //       current_solution[i] += relaxation*solution_update[i];
-  //       closest_point[i] = current_solution[i];
-  //     }
-
-  //     if (relaxation*corr.norm() < 1e-12)
-  //     {
-  //       break;
-  //     }
-  //   }
+  // Check if the Newton iteration converged
+  Assert(residual.l2_norm() < 1e-12,
+          ExcMessage("Newton iteration did not converge"));
 
 }
 
@@ -950,22 +845,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
             {
               const Point<dim> point = dof_support_points.at(dof_indices[i]);
 
-              // for (const auto &neighbor : active_neighbors)
-              // {
-              //   const NonMatching::LocationToLevelSet neighbor_location =
-              //     mesh_classifier.location_to_level_set(neighbor);
-
-              //   if (neighbor_location != NonMatching::LocationToLevelSet::intersected)
-              //     continue;
-
-              //   neighbor->get_dof_values(level_set,
-              //                  neighbor_dof_values.begin(),
-              //                  neighbor_dof_values.end());
-
-
-              // }
-
-
               Point<dim> closest_point = point;
 
               const Point<dim> unit_point =
@@ -974,7 +853,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               Point<dim> unit_closest_point = mapping->transform_real_to_unit_cell(cell, closest_point);
               
               bool converged =newton_raphson_method_for_minimization(unit_point,
-                                                     cell,
+                                                     *fe,
                                                      cell_dof_values,
                                                      unit_closest_point);
 
@@ -985,7 +864,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               {
                 double closest_point_i = unit_closest_point[jj];
   
-                  if (((closest_point_i) < 0.0 - 1e-5) || ((closest_point_i) > 1 + 1e-5))
+                  if (((closest_point_i) < 0.0 - 1e-10) || ((closest_point_i) > 1 + 1e-10))
                     {
                       outside = true;
                       break;

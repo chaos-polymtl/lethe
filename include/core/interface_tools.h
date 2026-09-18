@@ -648,7 +648,7 @@ namespace InterfaceTools
     bool
     newton_raphson_method_for_minimization(
       const Point<dim>          &point,
-      const typename DoFHandler<dim>::active_cell_iterator &cell,
+      const FiniteElement<dim>  &fe,
       const std::vector<double> &dof_values,
       Point<dim>                &closest_point);
 
