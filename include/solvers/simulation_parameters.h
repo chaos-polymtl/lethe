@@ -545,6 +545,9 @@ public:
           "You are attempting to evaluate temperature values using at least one postprocessing probe, but 'heat transfer = false' in the 'multiphysics' subsection."));
   }
 
+  // TODO AA add check evaporation and CLS (current evaporation only works with
+  // CLS)
+
   inline bool
   no_fluid_fluid_interaction_error(
     std::vector<Parameters::MaterialInteractions> &material_interactions)

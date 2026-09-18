@@ -3,6 +3,7 @@
 
 #include "core/interface_tools.h"
 #include <core/bdf.h>
+#include <core/physical_property_model.h>
 #include <core/time_integration_utilities.h>
 
 #include <solvers/heat_transfer.h>
@@ -2485,6 +2486,115 @@ HeatTransfer<dim>::write_geometric_melt_volume()
 
       this->melt_volume_geo_table.write_text(output);
     }
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::postprocess_evaporated_mass()
+{
+  const unsigned int n_q_points   = this->cell_quadrature->size();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+
+  // Local variable to check if it is a CLS simulation
+  const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
+
+  AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
+                                   .monitored_fluid_with_phase_change ==
+                                 Parameters::FluidIndicator::fluid1),
+              ExcMessage(
+                "For single-fluid flows only 'fluid 0' can be monitored."));
+
+  // Initialize heat transfer information
+  std::vector<double> local_temperature_values(n_q_points);
+  FEValues<dim>       fe_values_ht(*this->temperature_mapping,
+                             *this->fe,
+                             *this->cell_quadrature,
+                             update_values | update_JxW_values);
+
+  // Initialize CLS information
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_cls;
+  std::shared_ptr<FEValues<dim>>         fe_values_cls;
+  std::vector<Tensor<1, dim>> filtered_phase_gradient_values(n_q_points);
+  dof_handler_cls =
+    std::shared_ptr<const DoFHandler<dim>>(&this->multiphysics->get_dof_handler(
+                                             PhysicsID::CLS),
+                                           [](const DoFHandler<dim> *) {});
+
+  fe_values_cls =
+    std::make_shared<FEValues<dim>>(this->multiphysics->get_mapping(
+                                      PhysicsID::CLS),
+                                    dof_handler_cls->get_fe(),
+                                    *this->cell_quadrature,
+                                    update_gradients);
+
+  // Initialize evaporation model
+  auto &evaporation_model_parameters = this->simulation_parameters.evaporation;
+  auto  evaporation_model =
+    EvaporationModel::model_cast(evaporation_model_parameters);
+  std::map<field, std::vector<double>> fields;
+
+  if (evaporation_model->depends_on(field::temperature))
+    fields.insert(
+      std::pair<field, std::vector<double>>(field::temperature, n_q_points));
+
+  // Multiphase flow
+  std::vector<double> mass_flux(n_q_points);
+
+  // Variable for integration
+  double current_evaporated_mass(0.0);
+
+  // Time interval since last computation of the evaporated mass used for the
+  // time integral
+  const double time_variation = this->simulation_control->get_time_step();
+
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_ht.reinit(cell);
+
+          // Gather local temperature values if required
+          if (evaporation_model->depends_on(field::temperature))
+            {
+              fe_values_ht.get_function_values(*this->present_solution,
+                                               local_temperature_values);
+              set_field_vector(field::temperature,
+                               local_temperature_values,
+                               fields);
+            }
+
+          evaporation_model->mass_flux(fields, mass_flux);
+
+          // Get CLS cell iterator
+          typename DoFHandler<dim>::active_cell_iterator cell_cls(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            &(*dof_handler_cls));
+
+          // Get filtered gradient values
+          fe_values_cls->reinit(cell_cls);
+          fe_values_cls->get_function_gradients(
+            this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+            filtered_phase_gradient_values);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              current_evaporated_mass +=
+                filtered_phase_gradient_values[q].norm() * mass_flux[q] *
+                fe_values_ht.JxW(q);
+            }
+        }
+    }
+
+  // Sum over ranks
+  current_evaporated_mass =
+    Utilities::MPI::sum(current_evaporated_mass, mpi_communicator);
+
+  // Time integration
+  evaporated_mass += current_evaporated_mass * time_variation;
+
+  // TODO AA output tables
 }
 
 template <int dim>

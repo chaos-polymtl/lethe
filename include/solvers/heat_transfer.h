@@ -619,6 +619,22 @@ private:
   write_geometric_melt_volume();
 
   /**
+   * @brief Compute the evaporated mass in a domain.
+   * The monitored fluid must be selected with
+   * Parameters::PostProcessing::monitored_fluid_with_phase_change.
+   *
+   * @remark For CLS multiphase flow, only one of the fluids can be monitored.
+   */
+  void
+  postprocess_evaporated_mass();
+
+  /**
+   * @brief Post-processing. Write the algebraic evaporated mass to an output file.
+   */
+  void
+  write_algebraic_evaporated_mass();
+
+  /**
    * Post-processing. Calculate the heat flux at heat transfer boundary
    * conditions.
    *
@@ -926,6 +942,15 @@ private:
    * bounding values.
    */
   std::vector<TableHandler> temperature_isocontour_bounding_values_tables;
+
+  /**
+   * Time integral of the evaporated mass during the simulation from \f$t=0\f$
+   * to the current time.
+   *
+   * @note The value is updated during the post-processing of the evaporated
+   * mass in HeatTransfer<dim>::postprocess_evaporated_mass().
+   */
+  double evaporated_mass = 0.0;
 };
 
 
