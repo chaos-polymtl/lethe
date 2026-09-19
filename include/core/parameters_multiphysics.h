@@ -215,7 +215,8 @@ namespace Parameters
     /// used with adaptive sharpening
     double tolerance = 1e-6;
 
-    Parameters::FluidIndicator monitored_fluid = Parameters::FluidIndicator::fluid1;
+    Parameters::FluidIndicator monitored_fluid =
+      Parameters::FluidIndicator::fluid1;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -533,12 +534,12 @@ namespace Parameters
   template <int dim>
   struct Multiphysics
   {
-    bool fluid_dynamics    = true;
-    bool heat_transfer     = false;
-    bool tracer            = false;
-    bool CLS               = false;
-    bool cahn_hilliard     = false;
-    bool electromagnetics  = false;
+    bool fluid_dynamics   = true;
+    bool heat_transfer    = false;
+    bool tracer           = false;
+    bool CLS              = false;
+    bool cahn_hilliard    = false;
+    bool electromagnetics = false;
 
     // subparameters for heat_transfer
     bool viscous_dissipation    = false;

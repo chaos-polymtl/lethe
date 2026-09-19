@@ -253,8 +253,7 @@ namespace Parameters
 
     /// Method used to control the DEM sub iterations.
     SubSimulationControlDEM::DEMSubIterationLogic dem_iteration_control =
-      SubSimulationControlDEM::DEMSubIterationLogic::
-        fixed_number_of_iterations;
+      SubSimulationControlDEM::DEMSubIterationLogic::fixed_number_of_iterations;
 
     /// Frequency of DEM-CFD coupling (in DEM time steps).
     unsigned int coupling_frequency = 100;

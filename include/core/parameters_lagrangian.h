@@ -436,7 +436,7 @@ namespace Parameters
         /// Insertion using the packed method
         packed
       } insertion_method = InsertionMethod::volume; ///< Method used to insert
-                                                     ///< particles
+                                                    ///< particles
 
       /// Number of particles inserted at each insertion step.
       unsigned int inserted_this_step = 0;
@@ -469,11 +469,11 @@ namespace Parameters
         list_vx{0.},                  ///< x-velocity for list insertion.
         list_vy{0.},                  ///< y-velocity for list insertion.
         list_vz{0.},                  ///< z-velocity for list insertion.
-        list_wx{0.},                  ///< x-angular velocity for list insertion.
-        list_wy{0.},                  ///< y-angular velocity for list insertion.
-        list_wz{0.},                  ///< z-angular velocity for list insertion.
-        list_d{-1.0},                 ///< Diameter for list insertion.
-        list_T{0.};                   ///< Temperature for list insertion
+        list_wx{0.},  ///< x-angular velocity for list insertion.
+        list_wy{0.},  ///< y-angular velocity for list insertion.
+        list_wz{0.},  ///< z-angular velocity for list insertion.
+        list_d{-1.0}, ///< Diameter for list insertion.
+        list_T{0.};   ///< Temperature for list insertion
 
       /// Direction sequence for particle insertion (1st, 2nd, 3rd).
       std::vector<unsigned int> direction_sequence =
@@ -556,8 +556,9 @@ namespace Parameters
         /// LoadBalanceMethod::dynamic but considering also the mobility status
         /// of the cells.
         dynamic_with_sparse_contacts
-      } load_balance_method = LoadBalanceMethod::none; ///< Load balancing
-                             ///< strategy for parallel DEM simulations.
+      } load_balance_method =
+        LoadBalanceMethod::none; ///< Load balancing
+                                 ///< strategy for parallel DEM simulations.
 
       /// Load balance step (for single-step load balancing).
       unsigned int load_balance_step = 100000;

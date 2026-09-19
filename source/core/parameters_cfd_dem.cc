@@ -161,8 +161,7 @@ namespace Parameters
       "The smoothing length of the QCM filter. With the spherical filter, half of this value is the averaging-sphere radius; with the gaussian filter, half of this value is the standard deviation sigma.");
     prm.declare_entry(
       "qcm sphere equal cell volume",
-      Patterns::Tools::Convert<bool>::to_string(
-        qcm_sphere_equal_cell_volume),
+      Patterns::Tools::Convert<bool>::to_string(qcm_sphere_equal_cell_volume),
       Patterns::Bool(),
       "Specify whether the virtual sphere has the same volume as the mesh element");
     prm.declare_entry(
@@ -177,8 +176,7 @@ namespace Parameters
       "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme");
     prm.declare_entry(
       "n quadrature points",
-      Patterns::Tools::Convert<unsigned int>::to_string(
-        n_quadrature_points),
+      Patterns::Tools::Convert<unsigned int>::to_string(n_quadrature_points),
       Patterns::Integer(),
       "Number of quadrature points per cell used in the QCM void fraction scheme");
     prm.declare_entry(
@@ -345,8 +343,7 @@ namespace Parameters
 
     prm.declare_entry(
       "particle statistics",
-      Patterns::Tools::Convert<bool>::to_string(
-        defaults.particle_statistics),
+      Patterns::Tools::Convert<bool>::to_string(defaults.particle_statistics),
       Patterns::Bool(),
       "Outputs statistics about the particles such as their total kinetic energy, angular momentum, etc.");
 
