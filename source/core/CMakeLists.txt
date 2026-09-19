@@ -13,6 +13,7 @@ add_library(lethe-core
   grid_cylinder.cc
   grid_fichera_oven.cc
   grid_impinging_jet_mixer.cc
+  grid_pipe_and_waveguide.cc
   grid_periodic_hills.cc
   grid_uniform_channel_with_meshed_cylinder.cc
   grid_uniform_channel_with_meshed_square_prism.cc
