@@ -27,6 +27,7 @@ var searchData=
   ['gridmotion_24',['GridMotion',['../classParameters_1_1Lagrangian_1_1GridMotion.html',1,'Parameters::Lagrangian']]],
   ['gridmotionbase_25',['GridMotionBase',['../classGridMotionBase.html',1,'']]],
   ['gridperiodichills_26',['GridPeriodicHills',['../classGridPeriodicHills.html',1,'']]],
-  ['griduniformchannelwithmeshedcylinder_27',['GridUniformChannelWithMeshedCylinder',['../classGridUniformChannelWithMeshedCylinder.html',1,'']]],
-  ['griduniformchannelwithmeshedsquareprism_28',['GridUniformChannelWithMeshedSquarePrism',['../classGridUniformChannelWithMeshedSquarePrism.html',1,'']]]
+  ['gridpipeandwaveguide_27',['GridPipeAndWaveguide',['../classGridPipeAndWaveguide.html',1,'']]],
+  ['griduniformchannelwithmeshedcylinder_28',['GridUniformChannelWithMeshedCylinder',['../classGridUniformChannelWithMeshedCylinder.html',1,'']]],
+  ['griduniformchannelwithmeshedsquareprism_29',['GridUniformChannelWithMeshedSquarePrism',['../classGridUniformChannelWithMeshedSquarePrism.html',1,'']]]
 ];

@@ -11,10 +11,10 @@
 <!-- Node0 -->
 <g id="Node000000" class="node">
 <title>Node0</title>
-<g id="a_Node000000"><a xlink:href="classParameters_1_1Mesh.html" target="_top" xlink:title="Mesh &#45; Parameters that control mesh reading and mesh generation.">
+<g id="a_Node000000"><a xlink:href="classParameters_1_1Mesh.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="#666666" points="137,-30 0,-30 0,0 137,0 137,-30"/>
 <text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">Parameters::Mesh&lt; dim,</text>
-<text text-anchor="middle" x="68.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00"> spacedim &gt;</text>
+<text text-anchor="middle" x="68.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00"> dim &gt;</text>
 </a>
 </g>
 </g>
