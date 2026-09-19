@@ -279,12 +279,16 @@ PeriodicBoundariesManipulator<dim>::compute_periodic_offset_per_direction()
 {
   std::array<double, dim> offset_per_direction{};
 
-  // Each entry of periodic_offsets is nonzero in exactly one component (the
-  // direction of that periodic boundary pair, see get_periodic_boundaries_info
-  // and map_periodic_cells), and set_periodic_boundaries_information()
-  // guarantees at most one pair per direction, so summing them gives, for
-  // every direction, the signed period of the domain along that direction
-  // (0 if the direction is not periodic).
+  // Since Lethe only support PBC that are align the cartesian coordinates
+  // (x,y,z), each entry of periodic_offsets is nonzero in exactly one component
+  // (the direction of the associated periodic boundary pair). Further more,
+  // Lethe does not support multiple PBC in the same direction. Instead of
+  // storing the entire Tensor<1,dim>, we only store the norm of that tensor,
+  // which is equivalent to the distance between linked periodic boundaries, or
+  // period of the domain for a given direction. Since the PBC can be declare
+  // in any order (not necessarily x first, y second and z last) we use the
+  // += instead of .norm()
+  //
   for (auto const &[id, offset] : this->periodic_offsets)
     for (int d = 0; d < dim; ++d)
       offset_per_direction[d] += offset[d];
