@@ -33,15 +33,15 @@
 #include <core/parameters_multiphysics.h>
 
 #include <solvers/initial_conditions.h>
-=======
+  =======
 >>>>>>> 3ee381a6e (Add default values to the parameters)
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
-template <typename T>
-void
-check(const std::string &label, const T &computed, const T &expected)
+  template <typename T>
+  void
+  check(const std::string &label, const T &computed, const T &expected)
 {
   if (computed == expected)
     deallog << "  OK  " << label << std::endl;
@@ -274,7 +274,7 @@ test_multiphysics()
   const Parameters::Multiphysics<2> expected;
   ParameterHandler                  prm;
   expected.declare_parameters(prm);
-  Parameters::Multiphysics<2> actual;
+  Parameters::Multiphysics<2>      actual;
   const Parameters::Dimensionality dimensions;
   actual.parse_parameters(prm, dimensions);
 
@@ -282,9 +282,7 @@ test_multiphysics()
   check("heat_transfer", actual.heat_transfer, expected.heat_transfer);
   check("CLS", actual.CLS, expected.CLS);
   check("cahn_hilliard", actual.cahn_hilliard, expected.cahn_hilliard);
-  check("electromagnetics",
-        actual.electromagnetics,
-        expected.electromagnetics);
+  check("electromagnetics", actual.electromagnetics, expected.electromagnetics);
   check("cls_parameters.diffusivity",
         actual.cls_parameters.diffusivity,
         expected.cls_parameters.diffusivity);

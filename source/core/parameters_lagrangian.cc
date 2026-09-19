@@ -612,17 +612,16 @@ namespace Parameters
       to_string(const Point<3> &point)
       {
         return Patterns::Tools::Convert<double>::to_string(point[0]) + " , " +
-               Patterns::Tools::Convert<double>::to_string(point[1]) +
-               " , " +
+               Patterns::Tools::Convert<double>::to_string(point[1]) + " , " +
                Patterns::Tools::Convert<double>::to_string(point[2]);
       }
 
       std::string
       to_string(const Tensor<1, 3> &tensor)
       {
-        return Patterns::Tools::Convert<double>::to_string(tensor[0]) +
-               ", " + Patterns::Tools::Convert<double>::to_string(tensor[1]) +
-               ", " + Patterns::Tools::Convert<double>::to_string(tensor[2]);
+        return Patterns::Tools::Convert<double>::to_string(tensor[0]) + ", " +
+               Patterns::Tools::Convert<double>::to_string(tensor[1]) + ", " +
+               Patterns::Tools::Convert<double>::to_string(tensor[2]);
       }
 
       template <int dim>
@@ -803,8 +802,7 @@ namespace Parameters
 
         prm.declare_entry(
           "insertion prn seed",
-          Patterns::Tools::Convert<int>::to_string(
-            defaults.seed_for_insertion),
+          Patterns::Tools::Convert<int>::to_string(defaults.seed_for_insertion),
           Patterns::Integer(),
           "Pseudo-random number seed used to generate the position offsets");
         prm.declare_entry("initial velocity",
@@ -1038,8 +1036,8 @@ namespace Parameters
               return "frequent";
             case ModelParameters<dim>::LoadBalanceMethod::dynamic:
               return "dynamic";
-            case ModelParameters<dim>::LoadBalanceMethod::
-              dynamic_with_sparse_contacts:
+            case ModelParameters<
+              dim>::LoadBalanceMethod::dynamic_with_sparse_contacts:
               return "dynamic_with_sparse_contacts";
           }
         Assert(false, dealii::ExcInternalError());
@@ -1086,8 +1084,7 @@ namespace Parameters
               return "linear";
             case ParticleParticleContactForceModel::hertz_mindlin_limit_force:
               return "hertz_mindlin_limit_force";
-            case ParticleParticleContactForceModel::
-              hertz_mindlin_limit_overlap:
+            case ParticleParticleContactForceModel::hertz_mindlin_limit_overlap:
               return "hertz_mindlin_limit_overlap";
             case ParticleParticleContactForceModel::hertz:
               return "hertz";
@@ -1194,12 +1191,11 @@ namespace Parameters
                             Patterns::Double(),
                             "Threshold for dynamic load-balancing");
 
-          prm.declare_entry(
-            "dynamic check frequency",
-            Patterns::Tools::Convert<unsigned int>::to_string(
-              defaults.dynamic_load_balance_check_frequency),
-            Patterns::Integer(),
-            "Checking frequency for dynamic load-balancing");
+          prm.declare_entry("dynamic check frequency",
+                            Patterns::Tools::Convert<unsigned int>::to_string(
+                              defaults.dynamic_load_balance_check_frequency),
+                            Patterns::Integer(),
+                            "Checking frequency for dynamic load-balancing");
 
 
           auto cell_weight_function_parsed =
@@ -2234,8 +2230,7 @@ namespace Parameters
                           Patterns::Double(),
                           "Start time");
         prm.declare_entry("end time",
-                          Patterns::Tools::Convert<double>::to_string(
-                            time_end),
+                          Patterns::Tools::Convert<double>::to_string(time_end),
                           Patterns::Double(),
                           "End time");
       }

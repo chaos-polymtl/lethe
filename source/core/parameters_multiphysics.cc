@@ -197,14 +197,12 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
   prm.enter_subsection("multiphysics");
   {
     prm.declare_entry("fluid dynamics",
-                      Patterns::Tools::Convert<bool>::to_string(
-                        fluid_dynamics),
+                      Patterns::Tools::Convert<bool>::to_string(fluid_dynamics),
                       Patterns::Bool(),
                       "Fluid flow calculation <true|false>");
 
     prm.declare_entry("heat transfer",
-                      Patterns::Tools::Convert<bool>::to_string(
-                        heat_transfer),
+                      Patterns::Tools::Convert<bool>::to_string(heat_transfer),
                       Patterns::Bool(),
                       "Thermic calculation <true|false>");
 
@@ -219,8 +217,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       "CLS calculation <true|false>");
 
     prm.declare_entry("cahn hilliard",
-                      Patterns::Tools::Convert<bool>::to_string(
-                        cahn_hilliard),
+                      Patterns::Tools::Convert<bool>::to_string(cahn_hilliard),
                       Patterns::Bool(),
                       "Cahn-Hilliard calculation <true|false>");
 
@@ -491,8 +488,7 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
     // values less than 1 leads to interface smoothing instead of sharpening.
     prm.declare_entry(
       "interface sharpness",
-      Patterns::Tools::Convert<double>::to_string(
-        defaults.interface_sharpness),
+      Patterns::Tools::Convert<double>::to_string(defaults.interface_sharpness),
       Patterns::Double(),
       "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
   }
@@ -701,8 +697,7 @@ Parameters::CLS_PDEBasedInterfaceReinitialization::declare_parameters(
       "coefficient of the PDE-based interface reinitialization.");
     prm.declare_entry(
       "diffusivity power",
-      Patterns::Tools::Convert<double>::to_string(
-        defaults.diffusivity_power),
+      Patterns::Tools::Convert<double>::to_string(defaults.diffusivity_power),
       Patterns::Double(),
       "Power value applied to the mesh-size in the mesh-dependant diffusion "
       "coefficient of the PDE-based interface reinitialization.");
@@ -980,8 +975,7 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
       prm.declare_entry(
         "coupling iteration",
-        Patterns::Tools::Convert<unsigned int>::to_string(
-          coupling_iteration),
+        Patterns::Tools::Convert<unsigned int>::to_string(coupling_iteration),
         Patterns::Integer(1),
         "Coupling parameter for the time coupling strategy based on "
         "iteration, this parameter represents the number of time iterations "
@@ -1010,8 +1004,7 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
     prm.declare_entry(
       "electromagnetic frequency",
-      Patterns::Tools::Convert<double>::to_string(
-        electromagnetic_frequency),
+      Patterns::Tools::Convert<double>::to_string(electromagnetic_frequency),
       Patterns::Double(0),
       "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
 
@@ -1023,15 +1016,13 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
     prm.declare_entry(
       "electric field amplitude",
-      Patterns::Tools::Convert<double>::to_string(
-        electric_field_amplitude),
+      Patterns::Tools::Convert<double>::to_string(electric_field_amplitude),
       Patterns::Double(0),
       "The amplitude of the electric field used for the normalization of the solution in [V/m].");
 
     prm.declare_entry(
       "magnetic field amplitude",
-      Patterns::Tools::Convert<double>::to_string(
-        magnetic_field_amplitude),
+      Patterns::Tools::Convert<double>::to_string(magnetic_field_amplitude),
       Patterns::Double(0),
       "The amplitude of the magnetic field used for the normalization of the solution in [A/m].");
 

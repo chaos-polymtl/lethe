@@ -91,8 +91,7 @@ namespace Parameters
     {
       prm.declare_entry(
         "initial kinematic viscosity",
-        Patterns::Tools::Convert<double>::to_string(
-          kinematic_viscosity_init),
+        Patterns::Tools::Convert<double>::to_string(kinematic_viscosity_init),
         Patterns::Double(),
         "First kinematic viscosity value with which to start the initial condition");
 
