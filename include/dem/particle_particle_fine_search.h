@@ -46,11 +46,9 @@ using adjacent_pairs_for_contact_t = std::conditional_t<
  * contact pair candidates.
  * @param neighborhood_threshold A value which defines the neighbor particles.
  * @param periodic_offset_per_direction An array whose component d holds the
- * signed period of the domain along direction d (0 if d is not periodic),
- * used to find the nearest periodic image of particles crossing periodic
- * boundaries via the minimum image convention. This is a plain array of
- * independent scale factors, not a Tensor, since it is only ever used
- * component-wise.
+ * signed distance associated with each periodic directions. If the given d
+ * direction is not periodic, the signed distance is 0.
+ *
  */
 template <int dim, ContactType contact_type>
 void
@@ -62,5 +60,32 @@ particle_particle_fine_search(
                                 &contact_pair_candidates,
   const double                   neighborhood_threshold,
   const std::array<double, dim> &periodic_offset_per_direction = {});
+
+
+/**
+ * @brief Find the translation that brings the nearest periodic image of
+ * particle two to particle one. Since periodic directions are axis-aligned
+ * and independent, this translation is found directly, one direction at a
+ * time (minimum image convention), instead of searching over every
+ * combination of periodic offsets.
+ *
+ * @param particle_one_location Location of particle one.
+ * @param particle_two_real_location Real (non-translated) location of
+ * particle two.
+ * @param periodic_offset_per_direction An array whose component d holds
+ * the signed period of the domain along direction d (0 if d is not
+ * periodic).
+ *
+ * @return The nearest translation, and whether any periodic direction
+ * required a nonzero translation. A pair whose nearest image requires no
+ * translation on any periodic direction is not a periodic contact (it is
+ * already handled by the non-periodic contact types).
+ */
+template <int dim>
+std::pair<Tensor<1, dim>, bool>
+nearest_periodic_translation(
+  const Point<dim, double>      &particle_one_location,
+  const Point<dim, double>      &particle_two_real_location,
+  const std::array<double, dim> &periodic_offset_per_direction);
 
 #endif

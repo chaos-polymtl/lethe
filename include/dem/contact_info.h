@@ -45,7 +45,7 @@ template <int dim>
 struct periodic_particle_particle_contact_info
   : particle_particle_contact_info<dim>
 {
-  Tensor<1, 3> periodic_offset;
+  Tensor<1, dim> periodic_offset;
 };
 
 /**

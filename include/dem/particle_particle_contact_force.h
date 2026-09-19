@@ -307,13 +307,13 @@ protected:
    */
   inline Point<3>
   get_periodic_location(const Particles::ParticleIterator<dim> &particle,
-                        const Tensor<1, 3> &periodic_offset) &
+                        const Tensor<1, dim> &periodic_offset) &
   {
     if constexpr (dim == 3)
       return (particle->get_location() + periodic_offset);
 
     if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location()) + periodic_offset;
+      return point_nd_to_3d(particle->get_location() + periodic_offset);
   }
 
   /**
