@@ -15,75 +15,9 @@
 #include <array>
 #include <cmath>
 #include <limits>
-#include <unordered_map>
 #include <utility>
 
 using namespace dealii;
-
-namespace
-{
-  /**
-   * @brief Find the translation that brings the nearest periodic image of
-   * particle two to particle one. Since periodic directions are axis-aligned
-   * and independent, this translation is found directly, one direction at a
-   * time (minimum image convention), instead of searching over every
-   * combination of periodic offsets.
-   *
-   * @param particle_one_location Location of particle one.
-   * @param particle_two_real_location Real (non-translated) location of
-   * particle two.
-   * @param periodic_offset_per_direction An array whose component d holds
-   * the signed period of the domain along direction d (0 if d is not
-   * periodic).
-   *
-   * @return The nearest translation, and whether any periodic direction
-   * required a nonzero translation. A pair whose nearest image requires no
-   * translation on any periodic direction is not a periodic contact (it is
-   * already handled by the non-periodic contact types).
-   */
-  template <int dim>
-  std::pair<Tensor<1, dim>, bool>
-  nearest_periodic_translation(
-    const Point<dim, double>      &particle_one_location,
-    const Point<dim, double>      &particle_two_real_location,
-    const std::array<double, dim> &periodic_offset_per_direction)
-  {
-    Tensor<1, dim> nearest_translation;
-    bool           found_periodic_translation = false;
-
-    // Loop on every direction
-    for (int d = 0; d < dim; ++d)
-      {
-        // If the periodic offset associated with this direction is zero,
-        // this means that the direction is not periodic, thus we skip it.
-        // Also, it prevents a division by zero.
-        if (periodic_offset_per_direction[d] != 0.)
-          {
-            // Real distance between p1 and p2
-            const double delta =
-              particle_one_location[d] - particle_two_real_location[d];
-
-            // If p1 is on one side of the triangulation and p2 is on the other
-            // side and both sides are linked through a periodic boundary
-            // condition, the distance between those two particle should be
-            // around one period (~ 0.9 ), thus when we round, we get 1.0, which
-            // we then multiply to the actual periodic_offset. When p1 and p2
-            // and near periodic corner, this method will also work because the
-            // rounding will give 1.0 for more than one direction.
-            nearest_translation[d] =
-              std::round(delta / periodic_offset_per_direction[d]) *
-              periodic_offset_per_direction[d];
-
-            // If the nearest_translation got rounded to 0., this means that
-            // the particles are in the same cell or in a real neighboring cell
-            // or that the current direction is not linking this periodic
-            // contact. (By real, we mean not periodic neighboring cell)
-            found_periodic_translation |= (nearest_translation[d] != 0.);
-          }
-      }
-    return {nearest_translation, found_periodic_translation};
-  }
-} // namespace
 
 template <int dim, ContactType contact_type>
 void
@@ -100,8 +34,10 @@ particle_particle_fine_search(
   for (auto &&adjacent_particles_list :
        adjacent_particles | boost::adaptors::map_values)
     {
+      // List of potential particles
       auto &second_particles = adjacent_particles_list.second_particles;
 
+      // If the list is empty, we continue.
       if (second_particles.empty())
         continue;
 
@@ -150,73 +86,74 @@ particle_particle_fine_search(
           for (auto adjacent_particles_list_iterator = second_particles.begin();
                adjacent_particles_list_iterator != second_particles.end();)
             {
-              // Getting contact information and particle 2 as local variables
+              // Getting the contact information and particle 2 as local
+              // variables
               auto &adjacent_pair_information =
                 adjacent_particles_list_iterator->second;
               auto &particle_two = adjacent_pair_information.particle_two;
 
-              // Finding the properties of the particles in contact
+              // Finding the properties of particles 2.
               Point<dim, double> particle_two_real_location =
                 particle_two->get_location();
 
-              // Reuse the periodic image found on a previous call: for a
+              // Reuse the periodic offset found on a previous call: for a
               // persisting contact this translation practically never
-              // changes between fine search calls (that would require a
-              // particle displacement on the order of a full domain period
-              // within one contact-detection substep), so this avoids the
-              // minimum image convention's round/divide work on the common
-              // path. Positions are still fetched fresh above, so this is
-              // bit-identical to a full recomputation whenever the cached
-              // translation is still correct.
-              Tensor<1, dim> cached_translation;
-              for (int d = 0; d < dim; ++d)
-                cached_translation[d] =
-                  adjacent_pair_information.periodic_offset[d];
-
+              // changes between fine search calls. This avoids the
+              // minimum periodic image search with the signed periodic
+              // distance.
+              Tensor<1, dim> cached_translation =
+                adjacent_pair_information.periodic_offset;
               const double cached_square_distance =
                 particle_one_location.distance_square(
                   particle_two_real_location + cached_translation);
 
+              // Using the caches periodic offset, if the shared distance
+              // respect the neighborhood threshold, this means that the
+              // particles stayed on their respective side of the PBC.
               if (cached_square_distance <= neighborhood_threshold)
-                {
-                  ++adjacent_particles_list_iterator;
-                }
+                ++adjacent_particles_list_iterator;
+
+              // If not, either one particle crossed the PBC or both crossed it
+              // or they just moved apart.
               else
                 {
-                  // Cached image no longer holds (contact is ending, or,
-                  // rarely, the nearest image changed): fall back to the
-                  // exact minimum image convention computation before
-                  // deciding to erase.
+                  // Cached periodic offset no longer holds. Fall back to the
+                  // distance computation using the minimum image convention.
+                  // If the distance between the particles is higher than the
+                  // neighbor threshold, we erase the potential contact from the
+                  // list.
+                  // The nearest_translation is the periodic offset.
                   const auto [nearest_translation, found_periodic_translation] =
                     nearest_periodic_translation<dim>(
                       particle_one_location,
                       particle_two_real_location,
                       periodic_offset_per_direction);
 
+                  // If a periodic offset was found, the min_square_distance is
+                  // computed. Otherwise, we know that the particle are far
+                  // apart, thus we impose the min_square_distance to a high
+                  // value (max())
                   const double min_square_distance =
                     found_periodic_translation ?
                       particle_one_location.distance_square(
                         particle_two_real_location + nearest_translation) :
                       std::numeric_limits<double>::max();
 
-                  // nearest_periodic_translation returns the single closest
-                  // periodic image (minimum image convention), not one
-                  // chosen among several candidates, so this distance either
-                  // confirms or rules out the periodic contact directly.
+                  // If the min_square_distance does not respect the
+                  // neighborhood threshold at this point, this means that the
+                  // particle officially moved apart. We can remove the
+                  // potential contact from the list.
                   if (min_square_distance > neighborhood_threshold)
-                    {
-                      adjacent_particles_list_iterator = second_particles.erase(
-                        adjacent_particles_list_iterator);
-                    }
+                    adjacent_particles_list_iterator =
+                      second_particles.erase(adjacent_particles_list_iterator);
+
+                  // Otherwise, this means that one or both particle crossed the
+                  // PBC. We update the periodic_offset in the periodic
+                  // contact_info.
                   else
                     {
-                      // Save a translation that falls within the threshold
-                      Tensor<1, 3> offset_3d;
-                      for (int d = 0; d < dim; ++d)
-                        offset_3d[d] = nearest_translation[d];
-
-                      adjacent_pair_information.periodic_offset = offset_3d;
-
+                      adjacent_pair_information.periodic_offset =
+                        nearest_translation;
                       ++adjacent_particles_list_iterator;
                     }
                 }
@@ -291,11 +228,6 @@ particle_particle_fine_search(
               // or rules out the periodic contact directly.
               if (min_square_distance < neighborhood_threshold)
                 {
-                  // Save a translation that falls within the threshold
-                  Tensor<1, 3> offset_3d;
-                  for (int d = 0; d < dim; ++d)
-                    offset_3d[d] = nearest_translation[d];
-
                   auto &particle_one_contact_list =
                     adjacent_particles[particle_one_id];
                   particle_one_contact_list.particle_one = particle_one;
@@ -304,11 +236,55 @@ particle_particle_fine_search(
                     particle_two_id,
                     periodic_particle_particle_contact_info<dim>{
                       {particle_two, Tensor<1, 3>(), Tensor<1, 3>()},
-                      offset_3d});
+                      nearest_translation});
                 }
             }
         }
     }
+}
+
+template <int dim>
+std::pair<Tensor<1, dim>, bool>
+nearest_periodic_translation(
+  const Point<dim, double>      &particle_one_location,
+  const Point<dim, double>      &particle_two_real_location,
+  const std::array<double, dim> &periodic_offset_per_direction)
+{
+  Tensor<1, dim> nearest_translation;
+  bool           found_periodic_translation = false;
+
+  // Loop on every direction
+  for (int d = 0; d < dim; ++d)
+    {
+      // If the periodic offset associated with this direction is zero,
+      // this means that the direction is not periodic, thus we skip it.
+      // Also, it prevents a division by zero a bit later in the code.
+      if (periodic_offset_per_direction[d] != 0.)
+        {
+          // Real distance between p1 and p2
+          const double delta =
+            particle_one_location[d] - particle_two_real_location[d];
+
+          // If particle 1 (p1) is on one side of the triangulation and p2 is
+          // on the other side and both sides/boundaries are linked through a
+          // PBC, the distance between those two particle should
+          // be around one period (~ 0.9), thus when we round, we get 1.0,
+          // which we then multiply to the actual periodic_offset. When p1 and
+          // p2 and near periodic corner, this method will also work because the
+          // rounding will give 1.0 for more than one direction.
+          nearest_translation[d] =
+            std::round(delta / periodic_offset_per_direction[d]) *
+            periodic_offset_per_direction[d];
+
+          // If the nearest_translation got rounded to 0., this means that
+          // the particles are in the same cell or in a real neighboring cell
+          // or that the current direction is not linking this periodic
+          // contact. (By real neighboring cell, we mean a neighboring cell that
+          // is not periodic neighboring cell)
+          found_periodic_translation |= (nearest_translation[d] != 0.);
+        }
+    }
+  return {nearest_translation, found_periodic_translation};
 }
 
 // 2D templates

@@ -197,12 +197,12 @@ private:
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 
   /**
-   * @brief Signed period of the domain along every direction. Component d is
-   * the signed period of direction d if it is periodic, or 0 otherwise.
-   * Calculated from periodic_offsets. Used by the particle-particle fine
-   * search to find the nearest periodic image of a particle via the minimum
-   * image convention, without searching over combinations of periodic
-   * offsets.
+   * @brief Signed distance (or period) associated with each periodic boundary
+   * pairs. The component d of this array return the distance (in absolute
+   * value) between the two boundaries facing in that d direction (x,y,z). If
+   * the associated d direction is not periodic, the array returns a 0. This
+   * array is used by the particle-particle fine search to find the nearest
+   * periodic image of a particle.
    */
   std::array<double, dim> periodic_offset_per_direction{};
 };
