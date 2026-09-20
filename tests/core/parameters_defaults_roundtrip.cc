@@ -311,6 +311,43 @@ test_lagrangian_model_parameters()
 }
 
 void
+test_insertion_info()
+{
+  deallog << "--- Lagrangian::InsertionInfo<3> ---" << std::endl;
+  const Parameters::Lagrangian::InsertionInfo<3> expected;
+  ParameterHandler                               prm;
+  Parameters::Lagrangian::InsertionInfo<3>::declare_parameters(prm);
+  Parameters::Lagrangian::InsertionInfo<3> actual;
+  actual.parse_parameters(prm);
+
+  check("insertion_method", actual.insertion_method, expected.insertion_method);
+  check("inserted_this_step",
+        actual.inserted_this_step,
+        expected.inserted_this_step);
+  check("insertion_frequency",
+        actual.insertion_frequency,
+        expected.insertion_frequency);
+  check("list_of_input_files",
+        actual.list_of_input_files,
+        expected.list_of_input_files);
+  // parse_parameters() has to overwrite the in-class default sequence rather
+  // than append to it; appending leaves the parsed axes past index dim - 1,
+  // where no consumer of direction_sequence ever reads them.
+  check("direction_sequence",
+        actual.direction_sequence,
+        expected.direction_sequence);
+  check("distance_threshold",
+        actual.distance_threshold,
+        expected.distance_threshold);
+  check("insertion_maximum_offset",
+        actual.insertion_maximum_offset,
+        expected.insertion_maximum_offset);
+  check("seed_for_insertion",
+        actual.seed_for_insertion,
+        expected.seed_for_insertion);
+}
+
+void
 test()
 {
   test_timer();
@@ -322,6 +359,7 @@ test()
   test_cfddem();
   test_multiphysics();
   test_lagrangian_model_parameters();
+  test_insertion_info();
 }
 
 int

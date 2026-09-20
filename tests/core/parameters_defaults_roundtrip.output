@@ -86,4 +86,13 @@ DEAL::  OK  particle_wall_contact_force_method
 DEAL::  OK  rolling_resistance_method
 DEAL::  OK  integration_method
 DEAL::  OK  solver_type
+DEAL::--- Lagrangian::InsertionInfo<3> ---
+DEAL::  OK  insertion_method
+DEAL::  OK  inserted_this_step
+DEAL::  OK  insertion_frequency
+DEAL::  OK  list_of_input_files
+DEAL::  OK  direction_sequence
+DEAL::  OK  distance_threshold
+DEAL::  OK  insertion_maximum_offset
+DEAL::  OK  seed_for_insertion
 DEAL::OK

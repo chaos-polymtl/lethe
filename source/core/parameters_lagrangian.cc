@@ -944,7 +944,11 @@ namespace Parameters
           convert_string_to_vector<int>(prm, "insertion direction sequence");
 
         // We don't need to check the size of the array, since the declare_entry
-        // takes care of this check.
+        // takes care of this check. The member carries an in-class default
+        // sequence, so it has to be emptied before being refilled from the
+        // parameter file, otherwise the parsed axes would be appended after
+        // the default ones and never read back.
+        direction_sequence.clear();
         direction_sequence.reserve(dim);
         for (int i = 0; i < dim; ++i)
           direction_sequence.push_back(axis_order.at(i));
