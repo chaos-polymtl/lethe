@@ -60,7 +60,6 @@ DEAL::  OK  stabilization
 DEAL::  OK  scalar_limiter
 DEAL::--- MeshBoxRefinement ---
 DEAL::  OK  number_of_refinement_boxes
-<<<<<<< HEAD
 DEAL::--- CFDDEM ---
 DEAL::  OK  grad_div
 DEAL::  OK  drag_model
@@ -78,10 +77,6 @@ DEAL::  OK  cahn_hilliard
 DEAL::  OK  electromagnetics
 DEAL::  OK  cls_parameters.diffusivity
 DEAL::  OK  cahn_hilliard_parameters.epsilon
-DEAL::--- Ramp ---
-DEAL::  OK  ramp_n.n_init
-DEAL::  OK  ramp_n.alpha
-DEAL::  OK  ramp_viscosity.kinematic_viscosity_init
 DEAL::--- Lagrangian::ModelParameters<2> ---
 DEAL::  OK  load_balance_method
 DEAL::  OK  contact_detection_method
@@ -91,6 +86,4 @@ DEAL::  OK  particle_wall_contact_force_method
 DEAL::  OK  rolling_resistance_method
 DEAL::  OK  integration_method
 DEAL::  OK  solver_type
-=======
->>>>>>> 3ee381a6e (Add default values to the parameters)
 DEAL::OK

@@ -7,8 +7,8 @@
  * declare_parameters() derives from them.
  *
  * For a representative subset of structs across include/core/parameters.h,
- * parameters_cfd_dem.h, parameters_multiphysics.h, parameters_lagrangian.h,
- * and solvers/initial_conditions.h, this default-constructs an instance
+ * parameters_cfd_dem.h, parameters_multiphysics.h and
+ * parameters_lagrangian.h, this default-constructs an instance
  * (using the in-class initializers), calls declare_parameters() into a fresh
  * ParameterHandler, then parse_parameters() the untouched defaults into a
  * second, independently default-constructed instance. If declare_parameters()
@@ -18,21 +18,16 @@
 
 // Lethe
 #include <core/parameters.h>
-<<<<<<< HEAD
 #include <core/parameters_cfd_dem.h>
 #include <core/parameters_lagrangian.h>
 #include <core/parameters_multiphysics.h>
 
-#include <solvers/initial_conditions.h>
-  == == ==
-  =
->>>>>>> 3ee381a6e (Add default values to the parameters)
-
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
-    template <typename T>
-    void check(const std::string &label, const T &computed, const T &expected)
+template <typename T>
+void
+check(const std::string &label, const T &computed, const T &expected)
 {
   if (computed == expected)
     deallog << "  OK  " << label << std::endl;
@@ -99,10 +94,10 @@ void
 test_mesh()
 {
   deallog << "--- Mesh ---" << std::endl;
-  const Parameters::Mesh expected;
-  ParameterHandler       prm;
-  Parameters::Mesh::declare_parameters(prm);
-  Parameters::Mesh actual;
+  const Parameters::Mesh<2> expected;
+  ParameterHandler          prm;
+  Parameters::Mesh<2>::declare_parameters(prm);
+  Parameters::Mesh<2> actual;
   actual.parse_parameters(prm);
 
   check("type", actual.type, expected.type);
@@ -216,14 +211,14 @@ void
 test_mesh_box_refinement()
 {
   deallog << "--- MeshBoxRefinement ---" << std::endl;
-  const Parameters::MeshBoxRefinement expected;
-  ParameterHandler                    prm;
+  const Parameters::MeshBoxRefinement<2> expected;
+  ParameterHandler                       prm;
   // declare_parameters() is a non-static member function here (it sizes
   // per-box subsections from instance state), so any fresh instance's
   // in-class defaults can be used to declare the entries.
-  Parameters::MeshBoxRefinement declare_source;
+  Parameters::MeshBoxRefinement<2> declare_source;
   declare_source.declare_parameters(prm);
-  Parameters::MeshBoxRefinement actual;
+  Parameters::MeshBoxRefinement<2> actual;
   actual.parse_parameters(prm);
 
   check("number_of_refinement_boxes",
@@ -282,24 +277,6 @@ test_multiphysics()
 }
 
 void
-test_initial_conditions_ramp()
-{
-  deallog << "--- Ramp ---" << std::endl;
-  const Parameters::Ramp expected;
-  ParameterHandler       prm;
-  Parameters::Ramp       declare_source;
-  declare_source.declare_parameters(prm);
-  Parameters::Ramp actual;
-  actual.parse_parameters(prm);
-
-  check("ramp_n.n_init", actual.ramp_n.n_init, expected.ramp_n.n_init);
-  check("ramp_n.alpha", actual.ramp_n.alpha, expected.ramp_n.alpha);
-  check("ramp_viscosity.kinematic_viscosity_init",
-        actual.ramp_viscosity.kinematic_viscosity_init,
-        expected.ramp_viscosity.kinematic_viscosity_init);
-}
-
-void
 test_lagrangian_model_parameters()
 {
   deallog << "--- Lagrangian::ModelParameters<2> ---" << std::endl;
@@ -344,7 +321,6 @@ test()
   test_mesh_box_refinement();
   test_cfddem();
   test_multiphysics();
-  test_initial_conditions_ramp();
   test_lagrangian_model_parameters();
 }
 
