@@ -340,16 +340,16 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
   const double sdt = 1. / dt;
 
   // RBVMS-only quantities (Bazilevs et al. 2007). The transient term of tau_M
-  // (eq. 64) is 4/dt^2 (0 for steady). The inverse-estimate constant C_I (see
-  // paper text after eq. 70) is taken order dependent as 3*k^2.
+  // (eq. 64) is 4/dt^2 (0 for steady). The inverse Jacobian is scaled by 2k
+  // (see compute_metric_tensor) and the inverse-estimate constant C_I (see
+  // paper text after eq. 70) is taken as 9 (see calculate_rbvms_tau).
   const bool is_steady =
     this->simulation_control->get_assembly_method() ==
     Parameters::SimulationControl::TimeSteppingMethod::steady;
-  const double       four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
-  const unsigned int velocity_fe_degree =
-    scratch_data.fe_values.get_fe().degree;
-  const double rbvms_c_i =
-    3. * static_cast<double>(velocity_fe_degree * velocity_fe_degree);
+  const double four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
+  const double rbvms_reference_scaling =
+    2. * static_cast<double>(scratch_data.fe_values.get_fe().degree);
+  const double rbvms_c_i = 9.;
 
   // Pressure scaling factor
   const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
@@ -387,7 +387,10 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       Tensor<2, dim> metric_tensor;
       Tensor<1, dim> metric_vector;
-      compute_metric_tensor(inverse_jacobian, metric_tensor, metric_vector);
+      compute_metric_tensor(inverse_jacobian,
+                            rbvms_reference_scaling,
+                            metric_tensor,
+                            metric_vector);
 
       double tau;      // tau_M (eq. 64)
       double tau_lsic; // tau_C (eq. 65)
@@ -558,11 +561,10 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
   const bool is_steady =
     this->simulation_control->get_assembly_method() ==
     Parameters::SimulationControl::TimeSteppingMethod::steady;
-  const double       four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
-  const unsigned int velocity_fe_degree =
-    scratch_data.fe_values.get_fe().degree;
-  const double rbvms_c_i =
-    3. * static_cast<double>(velocity_fe_degree * velocity_fe_degree);
+  const double four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
+  const double rbvms_reference_scaling =
+    2. * static_cast<double>(scratch_data.fe_values.get_fe().degree);
+  const double rbvms_c_i = 9.;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -599,7 +601,10 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
 
       Tensor<2, dim> metric_tensor;
       Tensor<1, dim> metric_vector;
-      compute_metric_tensor(inverse_jacobian, metric_tensor, metric_vector);
+      compute_metric_tensor(inverse_jacobian,
+                            rbvms_reference_scaling,
+                            metric_tensor,
+                            metric_vector);
 
       double tau;      // tau_M (eq. 64)
       double tau_lsic; // tau_C (eq. 65)

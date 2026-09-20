@@ -112,13 +112,13 @@ The stabilization parameters are computed from the element contravariant metric 
 
    G_{ij} = \sum_k \frac{\partial \xi_k}{\partial x_i}\frac{\partial \xi_k}{\partial x_j}, \qquad  g_i = \sum_j \frac{\partial \xi_j}{\partial x_i}
 
-where :math:`\boldsymbol{\xi}(\mathbf{x})` is the mapping from the physical element to the reference element (so :math:`\partial \xi_k / \partial x_i` are the entries of the inverse of the mapping Jacobian). The momentum and continuity stabilization parameters are then
+where :math:`\boldsymbol{\xi}(\mathbf{x})` is the mapping from the physical element to the reference element (so :math:`\partial \xi_k / \partial x_i` are the entries of the inverse of the mapping Jacobian). Bazilevs et al. define :math:`\boldsymbol{\xi}` on the bi-unit cell :math:`[-1,1]^d`, whereas deal.II uses :math:`[0,1]^d`. Lethe therefore scales :math:`\partial \xi_k / \partial x_i` by :math:`2k`, where :math:`k` is the polynomial degree of the velocity interpolation. The factor 2 maps to the bi-unit cell and the factor :math:`k` matches the element size :math:`h/k` used by the other stabilizations. With this scaling, :math:`\tau_M \rightarrow h/(2|\mathbf{u}|)` and :math:`\tau_C \rightarrow |\mathbf{u}| h/2` in the advection-dominated limit, as in the SUPG/PSPG formulation. The momentum and continuity stabilization parameters are then
 
 .. math::
 
    \tau_{M} = \left( \frac{4}{\Delta t^{2}} + u_i G_{ij} u_j + C_I \nu^2 G_{ij} G_{ij} \right)^{-1/2}, \qquad \tau_{C} = \frac{1}{\tau_{M}\, g_i g_i}
 
-where :math:`C_I` is a positive constant arising from an element-wise inverse estimate, taken in Lethe as :math:`C_I = 3 k^2` with :math:`k` the polynomial degree of the velocity interpolation. Both the SUPG and the PSPG terms use :math:`\tau_M` (there is no separate pressure stabilization parameter), and in steady simulations the transient :math:`4/\Delta t^{2}` term is dropped.
+where :math:`C_I` is a positive constant arising from an element-wise inverse estimate, taken in Lethe as :math:`C_I = 9`. Since the metric tensor already includes the degree scaling, this constant recovers (in 1D) the diffusion-dominated limit :math:`\tau_M = h^2/(12\nu)` of the SUPG/PSPG formulation. Both the SUPG and the PSPG terms use :math:`\tau_M` (there is no separate pressure stabilization parameter), and in steady simulations the transient :math:`4/\Delta t^{2}` term is dropped.
 
 As in the SUPG/PSPG and GLS formulations, the Jacobian is assembled with the stabilization parameters :math:`\tau_M` and :math:`\tau_C` frozen (their dependence on the solution is not linearized). This stabilization is currently available for constant-density (incompressible) Newtonian flows with the monolithic solvers (``lethe-fluid`` and ``lethe-fluid-matrix-free``).
 

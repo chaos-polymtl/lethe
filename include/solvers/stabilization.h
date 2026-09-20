@@ -87,16 +87,27 @@ calculate_navier_stokes_gls_tau_transient(const double u_mag,
  * G is symmetric, so the transpose ambiguity only manifests on sheared cells;
  * it is checked explicitly by the rbvms_metric_tensor unit test.
  *
+ * Reference-cell scaling: Bazilevs et al. define xi on the bi-unit cell
+ * [-1,1]^d, whereas deal.II uses [0,1]^d, so dxi/dx is half as large.
+ * Furthermore, Lethe's element size used by the other stabilizations is h/k
+ * (see compute_cell_diameter). Passing reference_scaling = 2k multiplies dxi/dx
+ * by that factor (G by (2k)^2 and g by 2k), so that tau_M -> h/(2|u|) and
+ * tau_C -> |u|h/2 in the advective limit, consistently with the pspg_supg and
+ * gls stabilizations.
+ *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).
  * @param[in] inverse_jacobian J^{-T} as returned by inverse_jacobian(q), with
  *   entry [i][j] = dxi_j/dx_i.
+ * @param[in] reference_scaling Scaling factor applied to dxi/dx (2k in Lethe,
+ *   with k the FE degree of the velocity).
  * @param[out] metric_tensor The contravariant metric tensor G (eq. 66).
  * @param[out] metric_vector The metric vector g (eq. 69).
  */
 template <int dim, typename Number>
 inline void
 compute_metric_tensor(const Tensor<2, dim, Number> &inverse_jacobian,
+                      const double                  reference_scaling,
                       Tensor<2, dim, Number>       &metric_tensor,
                       Tensor<1, dim, Number>       &metric_vector)
 {
@@ -117,6 +128,11 @@ compute_metric_tensor(const Tensor<2, dim, Number> &inverse_jacobian,
               inverse_jacobian[i][k] * inverse_jacobian[j][k];
         }
     }
+
+  // Map dxi/dx from the deal.II [0,1]^d cell to the bi-unit cell of Bazilevs
+  // et al. and account for the FE degree (see reference-cell scaling above).
+  metric_tensor *= reference_scaling * reference_scaling;
+  metric_vector *= reference_scaling;
 }
 
 /**
@@ -135,8 +151,10 @@ compute_metric_tensor(const Tensor<2, dim, Number> &inverse_jacobian,
  *   g.g   = sum_i  g_i  g_i       (eq. 70)
  *
  * Both SUPG and PSPG use tau_M (eq. 72). C_I is the positive constant from an
- * element-wise inverse estimate (Johnson; see paper text after eq. 70); Lethe
- * uses the order-dependent value C_I = 3*k^2 (k = FE degree).
+ * element-wise inverse estimate (Johnson; see paper text after eq. 70). Since
+ * G already accounts for the FE degree (see compute_metric_tensor), Lethe uses
+ * the constant C_I = 9, which recovers (in 1D) the viscous limit
+ * tau_M = h^2/(12 nu) of the pspg_supg and gls stabilizations.
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).

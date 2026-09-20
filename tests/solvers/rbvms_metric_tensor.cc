@@ -91,7 +91,8 @@ test()
   // Compute the metric tensor and vector using the helper under test.
   Tensor<2, dim, double> G;
   Tensor<1, dim, double> g;
-  compute_metric_tensor(inv_j, G, g);
+  // Unit reference scaling so the analytic [0,1]-cell values apply.
+  compute_metric_tensor(inv_j, 1., G, g);
 
   // Analytic reference values (see file header), exact binary fractions.
   Tensor<2, dim, double> G_exact;
@@ -158,7 +159,7 @@ test()
   // convention flipping in a future version (see compute_metric_tensor docs).
   Tensor<2, dim, double> G_transposed;
   Tensor<1, dim, double> g_transposed;
-  compute_metric_tensor(transpose(inv_j), G_transposed, g_transposed);
+  compute_metric_tensor(transpose(inv_j), 1., G_transposed, g_transposed);
   double sentinel_diff = (G - G_transposed).norm();
   deallog << "transpose sentinel (G is shear-sensitive)  : "
           << (sentinel_diff > 1e-6 ? "OK" : "FAIL") << std::endl;

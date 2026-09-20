@@ -655,6 +655,18 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                 .phase_change_parameters.T_solidus));
         }
 
+      // The RBVMS stabilization is only implemented for Newtonian flows. Check
+      // it here since the non-Newtonian core below would otherwise silently
+      // replace it.
+      AssertThrow(
+        this->simulation_parameters.stabilization.use_default_stabilization ||
+          this->simulation_parameters.stabilization.stabilization !=
+            Parameters::Stabilization::NavierStokesStabilization::rbvms ||
+          !this->simulation_parameters.physical_properties_manager
+             .is_non_newtonian(),
+        ExcMessage(
+          "The RBVMS stabilization is only supported for Newtonian flows."));
+
       if (this->simulation_parameters.physical_properties_manager
             .is_non_newtonian())
         {
