@@ -72,7 +72,8 @@ test()
 
   Tensor<2, dim, double> G;
   Tensor<1, dim, double> g;
-  compute_metric_tensor(inverse_jacobian, G, g);
+  // Unit reference scaling so the analytic [0,1]-cell values apply.
+  compute_metric_tensor(inverse_jacobian, 1., G, g);
 
   // Analytic reference values (identical to rbvms_metric_tensor).
   Tensor<2, dim, double> G_exact;

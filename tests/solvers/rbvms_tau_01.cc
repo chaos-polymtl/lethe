@@ -75,7 +75,7 @@ namespace
     u[2] = 3.0;
 
     const Number nu  = 0.5;
-    const double c_i = 12.0; // = 3*k^2 for k = 2
+    const double c_i = 9.0; // Lethe's C_I
 
     Number tau_m, tau_c;
     calculate_rbvms_tau<dim, Number>(
