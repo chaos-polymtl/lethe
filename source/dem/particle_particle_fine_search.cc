@@ -210,22 +210,28 @@ particle_particle_fine_search(
               Point<dim, double> particle_two_real_location =
                 particle_two->get_location();
 
+              // nearest_periodic_translation returns periodic translation that
+              // brings two particle the closest together. (if they are close
+              // enough)
               const auto [nearest_translation, found_periodic_translation] =
                 nearest_periodic_translation<dim>(
                   particle_one_location,
                   particle_two_real_location,
                   periodic_offset_per_direction);
 
+              // If is possible that the two particle moved far appart so much
+              // that the round operation in the nearest_periodic_translation
+              // function return a 0. In this case, found_periodic_translation
+              // will be at false. Thus, we need to make sure that this isn't
+              // the case by imposing min_square_distance to max().
               const double min_square_distance =
                 found_periodic_translation ?
                   particle_one_location.distance_square(
                     particle_two_real_location + nearest_translation) :
                   std::numeric_limits<double>::max();
 
-              // nearest_periodic_translation returns the single closest
-              // periodic image (minimum image convention), not one chosen
-              // among several candidates, so this distance either confirms
-              // or rules out the periodic contact directly.
+              // If the neighborhood_threshold is respected, we add particle 2
+              // to particle 1 potential contact list. Otherwise, we do nothing.
               if (min_square_distance < neighborhood_threshold)
                 {
                   auto &particle_one_contact_list =
