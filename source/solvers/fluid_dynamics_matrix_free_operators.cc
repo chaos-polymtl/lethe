@@ -198,6 +198,16 @@ NavierStokesOperatorBase<dim, number>::reinit(
       "Only SUPG/PSPG, GLS and RBVMS stabilization is supported at the "
       "moment.");
 
+  // The RBVMS stabilization parameters use the constant kinematic viscosity,
+  // hence it is only implemented for Newtonian flows.
+  AssertThrow(
+    stabilization !=
+        Parameters::Stabilization::NavierStokesStabilization::rbvms ||
+      !(this->properties_manager &&
+        this->properties_manager->is_non_newtonian()),
+    ExcMessage(
+      "The RBVMS stabilization is only supported for Newtonian flows."));
+
   this->simulation_control = simulation_control;
 
   this->enable_hessians_jacobian = enable_hessians_jacobian;
@@ -967,12 +977,14 @@ NavierStokesOperatorBase<dim, number>::
     }
 
   // RBVMS-only quantities (Bazilevs et al. 2007). The transient term of tau_M
-  // (eq. 64) is 4/dt^2 = 4*sdt^2 (0 for steady). The inverse-estimate constant
-  // C_I (see paper text after eq. 70) is taken order dependent as 3*k^2.
+  // (eq. 64) is 4/dt^2 = 4*sdt^2 (0 for steady). The inverse Jacobian is
+  // scaled by 2k (see compute_metric_tensor) and the inverse-estimate constant
+  // C_I (see paper text after eq. 70) is taken as 9 (see calculate_rbvms_tau).
   const double four_over_dt_squared = 4. * sdt * sdt;
-  const double rbvms_c_i =
-    3. * static_cast<double>(this->fe_degree * this->fe_degree);
-  const bool is_rbvms =
+  const double rbvms_reference_scaling =
+    2. * static_cast<double>(this->fe_degree);
+  const double rbvms_c_i = 9.;
+  const bool   is_rbvms =
     this->stabilization ==
     Parameters::Stabilization::NavierStokesStabilization::rbvms;
 
@@ -1011,20 +1023,24 @@ NavierStokesOperatorBase<dim, number>::
               nonlinear_previous_hessian(cell, q) = integrator.get_hessian(q);
             }
 
-          // Calculate tau
-          VectorizedArray<number> u_mag_squared = 1e-12;
-          for (int k = 0; k < dim; ++k)
-            u_mag_squared += Utilities::fixed_power<2>(
-              this->nonlinear_previous_advective_values(cell, q)[k]);
+          // Calculate tau (overwritten below by the metric-based values for
+          // RBVMS)
+          if (!is_rbvms)
+            {
+              VectorizedArray<number> u_mag_squared = 1e-12;
+              for (int k = 0; k < dim; ++k)
+                u_mag_squared += Utilities::fixed_power<2>(
+                  this->nonlinear_previous_advective_values(cell, q)[k]);
 
-          stabilization_parameter(cell, q) =
-            1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
-                           4. * u_mag_squared / h / h +
-                           9. * Utilities::fixed_power<2>(
-                                  4. * kinematic_viscosity / (h * h)));
+              stabilization_parameter(cell, q) =
+                1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
+                               4. * u_mag_squared / h / h +
+                               9. * Utilities::fixed_power<2>(
+                                      4. * kinematic_viscosity / (h * h)));
 
-          stabilization_parameter_lsic(cell, q) =
-            std::sqrt(u_mag_squared) * h * 0.5;
+              stabilization_parameter_lsic(cell, q) =
+                std::sqrt(u_mag_squared) * h * 0.5;
+            }
         }
 
       // Compute kinematic viscosity-related entries for non-Newtonian fluids
@@ -1142,6 +1158,7 @@ NavierStokesOperatorBase<dim, number>::
               Tensor<2, dim, VectorizedArray<number>> metric_tensor;
               Tensor<1, dim, VectorizedArray<number>> metric_vector;
               compute_metric_tensor(integrator.inverse_jacobian(q),
+                                    rbvms_reference_scaling,
                                     metric_tensor,
                                     metric_vector);
 
