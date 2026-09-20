@@ -149,12 +149,11 @@ Visualization<dim, PropertiesIndex>::print_xyz(
 template <int dim, typename PropertiesIndex>
 void
 Visualization<dim, PropertiesIndex>::print_intermediate_format(
-  const Vector<float>   &data_to_print,
-  const DoFHandler<dim> &background_dh,
-  const MPI_Comm        &mpi_communicator)
+  const Vector<float>      &data_to_print,
+  const DoFHandler<dim>    &background_dh,
+  const MPI_Comm           &mpi_communicator,
+  const ConditionalOStream &pcout)
 {
-  unsigned int n_mpi_processes(
-    Utilities::MPI::n_mpi_processes(mpi_communicator));
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
@@ -167,30 +166,33 @@ Visualization<dim, PropertiesIndex>::print_intermediate_format(
                            DataOut<dim>::type_cell_data);
   data_out.build_patches();
 
+  // Generate a string stream buffer to store this rank's output, dropping
+  // the header lines since they contain deal.II version information that
+  // may change
   std::stringstream out;
+  data_out.write_deal_II_intermediate(out);
 
-  // Add data in deal.II intermediate format to the string stream buffer for
-  // each processor in order
-  for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
-       ++processor_number)
+  std::ostringstream local_block;
+  std::string        line;
+  unsigned int       counter = 0;
+  while (std::getline(out, line))
     {
-      usleep(100);
-      MPI_Barrier(mpi_communicator);
-      if (processor_number == this_mpi_process)
-        {
-          // Generate a string stream buffer to store the output
-          data_out.write_deal_II_intermediate(out);
+      if (counter++ > 4)
+        local_block << line << std::endl;
+    }
 
-          // Print in terminal but remove part of the header since it
-          // contains some deal.II version information that may change
-          std::string  line;
-          unsigned int counter = 0;
-          while (std::getline(out, line))
-            {
-              if (counter++ > 4)
-                std::cout << line << std::endl;
-            }
-        }
+  // Rank 0 gathers every rank's block and prints them in rank order. This
+  // avoids relying on a usleep/MPI_Barrier round-robin to serialize raw
+  // std::cout writes across ranks, which does not guarantee that the
+  // process launcher forwards each rank's stdout in order and can produce
+  // nondeterministic output.
+  const auto gathered =
+    Utilities::MPI::gather(mpi_communicator, local_block.str(), 0);
+
+  if (this_mpi_process == 0)
+    {
+      for (const auto &block : gathered)
+        pcout << block;
     }
 }
 

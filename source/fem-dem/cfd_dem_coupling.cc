@@ -1743,7 +1743,8 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
                       visualization_object.print_intermediate_format(
                         mobility_status,
                         this->particle_projector.dof_handler,
-                        this->mpi_communicator);
+                        this->mpi_communicator,
+                        this->pcout);
                     }
                   break;
                 }

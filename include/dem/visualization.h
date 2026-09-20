@@ -61,11 +61,13 @@ public:
    * @param data_to_print The vector of data to be printed.
    * @param background_dh The DoFHandler of the background grid.
    * @param mpi_communicator The MPI communicator.
+   * @param pcout Printing in parallel.
    */
   void
-  print_intermediate_format(const Vector<float>   &data_to_print,
-                            const DoFHandler<dim> &background_dh,
-                            const MPI_Comm        &mpi_communicator);
+  print_intermediate_format(const Vector<float>      &data_to_print,
+                            const DoFHandler<dim>    &background_dh,
+                            const MPI_Comm           &mpi_communicator,
+                            const ConditionalOStream &pcout);
 
   ~Visualization();
 
