@@ -6,7 +6,6 @@
  * default member initializers and the default strings its
  * declare_parameters() derives from them.
  *
-<<<<<<< HEAD
  * For a representative subset of structs across include/core/parameters.h,
  * parameters_cfd_dem.h, parameters_multiphysics.h, parameters_lagrangian.h,
  * and solvers/initial_conditions.h, this default-constructs an instance
@@ -15,14 +14,6 @@
  * second, independently default-constructed instance. If declare_parameters()
  * and the header defaults ever drift apart, the two instances stop matching
  * and this test fails.
-=======
- * For a representative subset of structs in include/core/parameters.h, this
- * default-constructs an instance (using the in-class initializers), calls
- * declare_parameters() into a fresh ParameterHandler, then parse_parameters()
- * the untouched defaults into a second, independently default-constructed
- * instance. If declare_parameters() and the header defaults ever drift apart,
- * the two instances stop matching and this test fails.
->>>>>>> 3ee381a6e (Add default values to the parameters)
  */
 
 // Lethe
@@ -33,15 +24,15 @@
 #include <core/parameters_multiphysics.h>
 
 #include <solvers/initial_conditions.h>
-  =======
+  == == ==
+  =
 >>>>>>> 3ee381a6e (Add default values to the parameters)
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
-  template <typename T>
-  void
-  check(const std::string &label, const T &computed, const T &expected)
+    template <typename T>
+    void check(const std::string &label, const T &computed, const T &expected)
 {
   if (computed == expected)
     deallog << "  OK  " << label << std::endl;
@@ -241,7 +232,6 @@ test_mesh_box_refinement()
 }
 
 void
-<<<<<<< HEAD
 test_cfddem()
 {
   deallog << "--- CFDDEM ---" << std::endl;
@@ -344,8 +334,6 @@ test_lagrangian_model_parameters()
 }
 
 void
-=======
->>>>>>> 3ee381a6e (Add default values to the parameters)
 test()
 {
   test_timer();
@@ -354,13 +342,10 @@ test()
   test_linear_solver();
   test_stabilization();
   test_mesh_box_refinement();
-<<<<<<< HEAD
   test_cfddem();
   test_multiphysics();
   test_initial_conditions_ramp();
   test_lagrangian_model_parameters();
-=======
->>>>>>> 3ee381a6e (Add default values to the parameters)
 }
 
 int
