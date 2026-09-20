@@ -182,7 +182,7 @@ Visualization<dim, PropertiesIndex>::print_intermediate_format(
     }
 
   // Rank 0 gathers every rank's block and prints them in rank order. This
-  // avoids relying on a usleep/MPI_Barrier round-robin to serialize raw
+  // avoids relying on a usleep/MPI_Barrier to serialize raw
   // std::cout writes across ranks, which does not guarantee that the
   // process launcher forwards each rank's stdout in order and can produce
   // nondeterministic output.
