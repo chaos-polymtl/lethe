@@ -39,18 +39,18 @@ test()
   // Fully periodic unit hyper_cube; colorize so opposite faces have IDs
   // (2*d, 2*d+1) per direction d.
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
-  Point<dim> p0;
-  Point<dim> p1;
+  Point<dim>                                p0;
+  Point<dim>                                p1;
   if constexpr (dim == 2)
-  {
-    p0 = {0., 0.};
-    p1 = {1., 3.};
-  }
+    {
+      p0 = {0., 0.};
+      p1 = {1., 3.};
+    }
   if constexpr (dim == 3)
-  {
-    p0 = {0., 0., 0.};
-    p1 = {1., 3., 2.};
-  }
+    {
+      p0 = {0., 0., 0.};
+      p1 = {1., 3., 2.};
+    }
   GridGenerator::hyper_rectangle(triangulation, p0, p1, /*colorize=*/true);
 
   std::vector<GridTools::PeriodicFacePair<
