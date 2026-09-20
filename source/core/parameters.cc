@@ -3705,7 +3705,7 @@ namespace Parameters
     to_string(const Tensor<1, spacedim> &tensor)
     {
       std::string result;
-      for (unsigned int i = 0; i < spacedim; ++i)
+      for (int i = 0; i < spacedim; ++i)
         {
           if (i != 0)
             result += ", ";
