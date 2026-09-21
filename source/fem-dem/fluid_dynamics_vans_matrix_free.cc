@@ -549,7 +549,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 template <int dim, typename PropertiesIndex>
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)
-  : FluidDynamicsMatrixFree<dim>(param.cfd_parameters)
+  : FluidDynamicsMatrixFree<dim>(param.cfd_parameters, /* p_is_vans */ true)
   , cfd_dem_simulation_parameters(param)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,

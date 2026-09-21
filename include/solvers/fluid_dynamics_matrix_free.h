@@ -419,8 +419,12 @@ public:
    * according to simulation parameters.
    *
    * @param[in] nsparam Relevant parameters for the solver.
+   * @param[in] p_is_vans Whether the solver solves the volume-averaged
+   * Navier-Stokes (VANS) equations, as opposed to the standard
+   * Navier-Stokes equations.
    */
-  FluidDynamicsMatrixFree(SimulationParameters<dim> &nsparam);
+  FluidDynamicsMatrixFree(SimulationParameters<dim> &nsparam,
+                          const bool                 p_is_vans = false);
 
   /**
    * @brief Destructor.

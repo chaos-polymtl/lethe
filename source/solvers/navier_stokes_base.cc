@@ -46,7 +46,8 @@
  */
 template <int dim, typename VectorType, typename DofsType>
 NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
-  SimulationParameters<dim> &p_nsparam)
+  SimulationParameters<dim> &p_nsparam,
+  const bool                 p_is_vans)
   : PhysicsSolver<VectorType>(
       p_nsparam.physics_solving_strategy.at(PhysicsID::fluid_dynamics))
   , mpi_communicator(MPI_COMM_WORLD)
@@ -166,8 +167,12 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   simulation_parameters.physical_properties_manager.provide_simulation_control(
     simulation_control);
 
-  multiphysics = std::make_shared<MultiphysicsInterface<dim>>(
-    simulation_parameters, triangulation, simulation_control, this->pcout);
+  multiphysics =
+    std::make_shared<MultiphysicsInterface<dim>>(simulation_parameters,
+                                                 triangulation,
+                                                 simulation_control,
+                                                 this->pcout,
+                                                 p_is_vans);
 
   // If mortar is enabled, we need to change one default parameter of the
   // function that computes normal vectors. In this case, we cannot use the
