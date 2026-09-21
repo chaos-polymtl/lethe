@@ -15,7 +15,7 @@
 template <int dim, typename PropertiesIndex>
 FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
   CFDDEMSimulationParameters<dim> &nsparam)
-  : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters)
+  : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters, /* p_is_vans */ true)
   , cfd_dem_simulation_parameters(nsparam)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
@@ -196,6 +196,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::iterate()
 {
   announce_string(this->pcout, "Volume-Averaged Fluid Dynamics");
 
+  // Solve and percolate the auxiliary physics that should be treated BEFORE
+  // the fluid dynamics
+  this->multiphysics->solve(
+    false, this->simulation_parameters.simulation_control.method);
+  this->multiphysics->percolate_time_vectors(false);
+
   if (this->simulation_parameters.multiphysics.fluid_dynamics)
     {
       this->forcing_function->set_time(
@@ -209,6 +215,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::iterate()
       // the velocity and the pressure fields and move on.
       this->set_specified_fluid_dynamics_solution();
     }
+
+  // Solve and percolate the auxiliary physics that should be treated AFTER
+  // the fluid dynamics
+  this->multiphysics->solve(
+    true, this->simulation_parameters.simulation_control.method);
+  this->multiphysics->percolate_time_vectors(true);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1163,6 +1175,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
+
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
 
   particle_handler.exchange_ghost_particles(true);
 

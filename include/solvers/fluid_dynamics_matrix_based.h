@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_matrix_based_h
@@ -33,7 +33,14 @@ class FluidDynamicsMatrixBased
   : public NavierStokesBase<dim, GlobalVectorType, IndexSet>
 {
 public:
-  FluidDynamicsMatrixBased(SimulationParameters<dim> &nsparam);
+  /**
+   * @param[in] nsparam Relevant parameters for the solver.
+   * @param[in] p_is_vans Whether the solver solves the volume-averaged
+   * Navier-Stokes (VANS) equations, as opposed to the standard
+   * Navier-Stokes equations.
+   */
+  FluidDynamicsMatrixBased(SimulationParameters<dim> &nsparam,
+                           const bool                 p_is_vans = false);
   ~FluidDynamicsMatrixBased();
 
   /**
