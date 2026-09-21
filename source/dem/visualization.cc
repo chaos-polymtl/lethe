@@ -177,6 +177,7 @@ Visualization<dim, PropertiesIndex>::print_intermediate_format(
   unsigned int       counter = 0;
   while (std::getline(out, line))
     {
+      // Increment the counter and drop header lines
       if (counter++ > 4)
         local_block << line << std::endl;
     }
