@@ -187,6 +187,111 @@ FluidDynamicsVANS<dim, PropertiesIndex>::vertices_cell_mapping()
       this->particle_projector.dof_handler, vertices_to_periodic_cell);
 }
 
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANS<dim, PropertiesIndex>::prepare_particles_for_mesh_adaptation()
+{
+  // Void fraction SolutionTransfer. Also used in CFDDEMSolver::load_balance()
+  // when the triangulation is repartitioned instead of refined.
+  std::vector<const GlobalVectorType *> vf_set_transfer;
+  vf_set_transfer.push_back(&particle_projector.void_fraction_locally_relevant);
+  for (const auto &previous : particle_projector.previous_void_fraction)
+    vf_set_transfer.push_back(&previous);
+
+  void_fraction_solution_transfer =
+    std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(
+      particle_projector.dof_handler);
+  void_fraction_solution_transfer->prepare_for_coarsening_and_refinement(
+    vf_set_transfer);
+
+  // The particle handler must also be prepared before the triangulation
+  // changes, so particles are correctly relocated to their new cells.
+  particle_handler.prepare_for_coarsening_and_refinement();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANS<dim,
+                  PropertiesIndex>::unpack_particles_after_mesh_adaptation()
+{
+  // particle_projector.dof_handler was already redistributed (and its
+  // vectors zeroed by ParticleProjector::setup_dofs()) by the setup_dofs()
+  // call inside NavierStokesBase::refine_mesh_uniform()/refine_mesh_adaptive().
+  // Restore the void fraction field now, this is also called in
+  // CFDDEMSolver::load_balance() when the triangulation is repartitioned
+  // instead of refined.
+  std::vector<GlobalVectorType *> vf_system(
+    1 + particle_projector.previous_void_fraction.size());
+
+  GlobalVectorType vf_distributed_system(particle_projector.locally_owned_dofs,
+                                         this->mpi_communicator);
+  vf_system[0] = &vf_distributed_system;
+
+  std::vector<GlobalVectorType> vf_distributed_previous_solutions;
+  vf_distributed_previous_solutions.reserve(
+    particle_projector.previous_void_fraction.size());
+  for (unsigned int i = 0; i < particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      vf_distributed_previous_solutions.emplace_back(
+        particle_projector.locally_owned_dofs, this->mpi_communicator);
+      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
+    }
+
+  void_fraction_solution_transfer->interpolate(vf_system);
+
+  particle_projector.void_fraction_locally_relevant = vf_distributed_system;
+  for (unsigned int i = 0; i < particle_projector.previous_void_fraction.size();
+       ++i)
+    particle_projector.previous_void_fraction[i] =
+      vf_distributed_previous_solutions[i];
+
+  void_fraction_solution_transfer.reset();
+
+  // Unpack particle handler now that the triangulation change is complete.
+  particle_handler.unpack_after_coarsening_and_refinement();
+
+  // The vertex-to-cell map used by void fraction interpolation is stale
+  // after the triangulation change.
+  vertices_cell_mapping();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANS<dim, PropertiesIndex>::refine_mesh_and_synchronize_particles()
+{
+  // NavierStokesBase::refine_mesh() only actually changes the triangulation
+  // when this condition holds -- see refine_mesh()/refine_mesh_uniform()/
+  // refine_mesh_adaptive() in navier_stokes_base.cc, including the
+  // additional guards against refining past the maximum refinement level
+  // for uniform refinement, and against a non-parallel::distributed
+  // triangulation for adaptive refinement (refine_mesh_adaptive() silently
+  // returns in that case). The particle handler and the void fraction
+  // solution must be prepared for coarsening and refinement immediately
+  // before, and restored immediately after, an actual triangulation change
+  // -- not around a call that turns out to be a no-op -- so both
+  // conditions are replicated here.
+  const Parameters::MeshAdaptation &mesh_adaptation =
+    this->simulation_parameters.mesh_adaptation;
+  const bool will_refine =
+    mesh_adaptation.type != Parameters::MeshAdaptation::Type::none &&
+    this->simulation_control->is_refinement_step(mesh_adaptation) &&
+    (mesh_adaptation.type != Parameters::MeshAdaptation::Type::uniform ||
+     this->triangulation->n_global_levels() <=
+       mesh_adaptation.maximum_refinement_level) &&
+    (mesh_adaptation.type != Parameters::MeshAdaptation::Type::adaptive ||
+     dynamic_cast<const parallel::distributed::Triangulation<dim> *>(
+       this->triangulation.get()) != nullptr);
+
+  if (will_refine)
+    prepare_particles_for_mesh_adaptation();
+
+  NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+
+  if (will_refine)
+    unpack_particles_after_mesh_adaptation();
+}
+
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial conditions
@@ -1211,7 +1316,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
         }
       else
         {
-          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+          refine_mesh_and_synchronize_particles();
           vertices_cell_mapping();
           calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();

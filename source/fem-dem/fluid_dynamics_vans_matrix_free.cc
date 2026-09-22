@@ -7,6 +7,7 @@
 #include <core/manifolds.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
+#include <core/vector.h>
 
 #include <dem/particle_handler_conversion.h>
 #include <fem-dem/fluid_dynamics_vans_matrix_free.h>
@@ -928,6 +929,148 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
 
 template <int dim, typename PropertiesIndex>
 void
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
+  prepare_particles_for_mesh_adaptation()
+{
+  // Void fraction SolutionTransfer. Mirrors the void fraction transfer
+  // already done in CFDDEMMatrixFree::load_balance() when the triangulation
+  // is repartitioned instead of refined.
+  std::vector<const VectorType *> vf_set_transfer;
+  vf_set_transfer.push_back(&particle_projector.void_fraction_solution);
+  particle_projector.void_fraction_solution.update_ghost_values();
+
+  for (unsigned int i = 0;
+       i < particle_projector.void_fraction_previous_solution.size();
+       ++i)
+    {
+      particle_projector.void_fraction_previous_solution[i]
+        .update_ghost_values();
+      vf_set_transfer.push_back(
+        &particle_projector.void_fraction_previous_solution[i]);
+    }
+
+  void_fraction_solution_transfer =
+    std::make_unique<SolutionTransfer<dim, VectorType>>(
+      particle_projector.dof_handler);
+  void_fraction_solution_transfer->prepare_for_coarsening_and_refinement(
+    vf_set_transfer);
+
+  // The particle handler must also be prepared before the triangulation
+  // changes, so particles are correctly relocated to their new cells.
+  particle_handler.prepare_for_coarsening_and_refinement();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
+  unpack_particles_after_mesh_adaptation()
+{
+  // particle_projector.dof_handler was already redistributed (and its
+  // vectors zeroed by ParticleProjector::setup_dofs()) by the setup_dofs()
+  // call inside NavierStokesBase::refine_mesh_uniform()/refine_mesh_adaptive().
+  // Restore the void fraction field now, mirroring
+  // CFDDEMMatrixFree::load_balance().
+  std::vector<VectorType *> vf_system(
+    1 + particle_projector.void_fraction_previous_solution.size());
+
+  VectorType vf_distributed_system(particle_projector.locally_owned_dofs,
+                                   particle_projector.locally_relevant_dofs,
+                                   this->mpi_communicator);
+  vf_system[0] = &vf_distributed_system;
+
+  std::vector<VectorType> vf_distributed_previous_solutions;
+  vf_distributed_previous_solutions.reserve(
+    particle_projector.void_fraction_previous_solution.size());
+  for (unsigned int i = 0;
+       i < particle_projector.void_fraction_previous_solution.size();
+       ++i)
+    {
+      vf_distributed_previous_solutions.emplace_back(
+        particle_projector.locally_owned_dofs,
+        particle_projector.locally_relevant_dofs,
+        this->mpi_communicator);
+      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
+    }
+
+  void_fraction_solution_transfer->interpolate(vf_system);
+  void_fraction_solution_transfer.reset();
+
+  // interpolate() only fills locally owned entries, leaving stale ghosts,
+  // just like in CFDDEMMatrixFree::load_balance() -- refresh them before
+  // storing, since the BDF void fraction time derivative amplifies stale
+  // ghosts by ~1/dt.
+  vf_distributed_system.update_ghost_values();
+  particle_projector.void_fraction_solution = vf_distributed_system;
+
+#ifndef LETHE_USE_LDV
+  // We also wish the Trilinos solution to be updated.
+  convert_vector_dealii_to_trilinos(
+    particle_projector.void_fraction_locally_owned,
+    particle_projector.void_fraction_solution);
+  particle_projector.void_fraction_locally_relevant =
+    particle_projector.void_fraction_locally_owned;
+#endif
+
+  for (unsigned int i = 0;
+       i < particle_projector.void_fraction_previous_solution.size();
+       ++i)
+    {
+      vf_distributed_previous_solutions[i].update_ghost_values();
+      particle_projector.void_fraction_previous_solution[i] =
+        vf_distributed_previous_solutions[i];
+
+#ifndef LETHE_USE_LDV
+      convert_vector_dealii_to_trilinos(
+        particle_projector.void_fraction_locally_owned,
+        particle_projector.void_fraction_previous_solution[i]);
+      particle_projector.previous_void_fraction[i] =
+        particle_projector.void_fraction_locally_owned;
+#endif
+    }
+
+  // Unpack particle handler now that the triangulation change is complete.
+  particle_handler.unpack_after_coarsening_and_refinement();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
+  refine_mesh_and_synchronize_particles()
+{
+  // NavierStokesBase::refine_mesh() only actually changes the triangulation
+  // when this condition holds -- see refine_mesh()/refine_mesh_uniform()/
+  // refine_mesh_adaptive() in navier_stokes_base.cc, including the
+  // additional guards against refining past the maximum refinement level
+  // for uniform refinement, and against a non-parallel::distributed
+  // triangulation for adaptive refinement (refine_mesh_adaptive() silently
+  // returns in that case). The particle handler and the void fraction
+  // solution must be prepared for coarsening and refinement immediately
+  // before, and restored immediately after, an actual triangulation change
+  // -- not around a call that turns out to be a no-op -- so both
+  // conditions are replicated here.
+  const Parameters::MeshAdaptation &mesh_adaptation =
+    this->simulation_parameters.mesh_adaptation;
+  const bool will_refine =
+    mesh_adaptation.type != Parameters::MeshAdaptation::Type::none &&
+    this->simulation_control->is_refinement_step(mesh_adaptation) &&
+    (mesh_adaptation.type != Parameters::MeshAdaptation::Type::uniform ||
+     this->triangulation->n_global_levels() <=
+       mesh_adaptation.maximum_refinement_level) &&
+    (mesh_adaptation.type != Parameters::MeshAdaptation::Type::adaptive ||
+     dynamic_cast<const parallel::distributed::Triangulation<dim> *>(
+       this->triangulation.get()) != nullptr);
+
+  if (will_refine)
+    prepare_particles_for_mesh_adaptation();
+
+  this->refine_mesh();
+
+  if (will_refine)
+    unpack_particles_after_mesh_adaptation();
+}
+
+template <int dim, typename PropertiesIndex>
+void
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
@@ -981,7 +1124,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 
       if (!this->simulation_control->is_at_start())
         {
-          this->refine_mesh();
+          this->refine_mesh_and_synchronize_particles();
         }
 
       if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))

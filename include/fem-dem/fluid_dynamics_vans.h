@@ -16,6 +16,8 @@
 
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/numerics/solution_transfer.h>
+
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
 
@@ -138,6 +140,45 @@ protected:
    */
   void
   vertices_cell_mapping();
+
+  /**
+   * @brief Refine or coarsen the mesh, keeping the particle handler and the
+   * void fraction solution consistent with the new triangulation.
+   *
+   * NavierStokesBase::refine_mesh() has no knowledge of the particle handler
+   * or of the void fraction solution, which lives on a separate DoFHandler.
+   * This wraps that call with the particle-handler/void-fraction
+   * prepare-and-unpack sequence for coarsening and refinement, mirroring
+   * what CFDDEMSolver::load_balance() already does for the same data when
+   * the triangulation is repartitioned instead of refined.
+   */
+  void
+  refine_mesh_and_synchronize_particles();
+
+  /**
+   * @brief Prepare the particle handler and the void fraction solution for
+   * an upcoming triangulation change (mesh refinement or coarsening).
+   *
+   * Must be called immediately before the triangulation is actually
+   * changed, with unpack_particles_after_mesh_adaptation() called
+   * immediately after, and nothing else modifying the triangulation or
+   * redistributing degrees of freedom in between. Virtual so that
+   * CFDDEMSolver can extend it with DEM-specific bookkeeping.
+   */
+  virtual void
+  prepare_particles_for_mesh_adaptation();
+
+  /**
+   * @brief Restore the particle handler and the void fraction solution
+   * after a triangulation change, and rebuild the vertex-to-cell map.
+   *
+   * Must be called after setup_dofs() has redistributed the void fraction
+   * DoFHandler on the new triangulation. Virtual so that CFDDEMSolver can
+   * extend it to also rebuild the DEM contact-detection caches, which
+   * likewise go stale after a triangulation change.
+   */
+  virtual void
+  unpack_particles_after_mesh_adaptation();
 
   /**
    * @brief Monitor mass conservation in the VANS system.
@@ -309,6 +350,11 @@ protected:
 
   /// Particle projector for calculating void fraction and particle effects
   ParticleProjector<dim, PropertiesIndex> particle_projector;
+
+  /// Bridges the void fraction solution across the prepare/unpack split of
+  /// a mesh refinement or coarsening step
+  std::unique_ptr<SolutionTransfer<dim, GlobalVectorType>>
+    void_fraction_solution_transfer;
 
   /// Flag indicating whether the domain has periodic boundary conditions
   bool has_periodic_boundaries;
