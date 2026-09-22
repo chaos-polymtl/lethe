@@ -32,8 +32,6 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 -->Repartitioning triangulation
-
-Warning: Diamond-shaped cells were detected in the input triangulation. These cells have a vertex or edge shared with a wall, but not a face. It is strongly recommended to use a triangulation without such cells. If you wish to include them in the particle-wall contact list, set check_diamond_cells = true in the .prm file. Note: these cells are not detected when grid motion is enabled.
 Load balance finished
 Average, minimum and maximum number of particles on the processors are 1.5525000000e+04 , 1.7360000000e+03 and 2.9314000000e+04
 Minimum and maximum number of cells owned by the processors are 6.7900000000e+02 and 6.7900000000e+02
@@ -41,6 +39,8 @@ Setup DOFs
    Number of active cells:       679
    Number of degrees of freedom: 5952
    Volume of triangulation:      1.0185000000e-03
+
+Warning: Diamond-shaped cells were detected in the input triangulation. These cells have a vertex or edge shared with a wall, but not a face. It is strongly recommended to use a triangulation without such cells. If you wish to include them in the particle-wall contact list, set check_diamond_cells = true in the .prm file. Note: these cells are not detected when grid motion is enabled.
 DEM contact search at dem step 1
 DEM contact search at dem step 50
 Finished 50 DEM iterations
@@ -89,6 +89,6 @@ Particle statistics
 | Variable                     | Min              | Max              | Average          | Total            | 
 | Contact list generation      | 0.0000000000e+00 | 2.0000000000e+00 | 2.0000000000e+00 | 4.0000000000e+00 | 
 | Velocity magnitude           | 2.0228624213e-04 | 7.7450027133e-02 | 1.2157705425e-02 | 3.7749675344e+02 | 
-| Angular velocity magnitude   | 1.5320897143e-02 | 1.4600015707e+01 | 2.3098385443e+00 | 7.1720486801e+04 | 
+| Angular velocity magnitude   | 1.5320897144e-02 | 1.4600015707e+01 | 2.3098385443e+00 | 7.1720486801e+04 | 
 | Translational kinetic energy | 4.2281919212e-13 | 6.1981937442e-08 | 1.9710570907e-09 | 6.1201322667e-05 | 
-| Rotational kinetic energy    | 3.0317990029e-15 | 2.7532056868e-09 | 9.5688455245e-11 | 2.9711265354e-06 | 
+| Rotational kinetic energy    | 3.0317990031e-15 | 2.7532056868e-09 | 9.5688455245e-11 | 2.9711265354e-06 | 
