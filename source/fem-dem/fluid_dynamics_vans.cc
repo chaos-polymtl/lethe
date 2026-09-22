@@ -208,6 +208,15 @@ FluidDynamicsVANS<dim, PropertiesIndex>::iterate()
         this->simulation_control->get_current_time());
 
       PhysicsSolver<GlobalVectorType>::solve_governing_system();
+
+      // If the auxiliary physics need to be solved after the fluid dynamics,
+      // the matrix free  solver requires to update the value here. This is due
+      // to the different type of vectors. This is copied from the
+      // navier_stokes_base.cc file.
+      if (this->multiphysics->get_active_physics().size() > 1)
+        {
+          this->update_solutions_for_multiphysics();
+        }
     }
   else
     {
