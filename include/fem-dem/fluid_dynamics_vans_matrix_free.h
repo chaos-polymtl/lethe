@@ -9,6 +9,8 @@
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/particle_projector.h>
 
+#include <deal.II/numerics/solution_transfer.h>
+
 
 /**
  * @brief A geometric multigrid preconditioner implementation for
@@ -252,6 +254,45 @@ protected:
   void
   evaluate_time_derivative_void_fraction();
 
+  /**
+   * @brief Refine or coarsen the mesh, keeping the particle handler and the
+   * void fraction solution consistent with the new triangulation.
+   *
+   * NavierStokesBase::refine_mesh() has no knowledge of the particle handler
+   * or of the void fraction solution, which lives on a separate DoFHandler.
+   * This wraps that call with the particle-handler/void-fraction
+   * prepare-and-unpack sequence for coarsening and refinement, mirroring
+   * what CFDDEMMatrixFree::load_balance() already does for the same data
+   * when the triangulation is repartitioned instead of refined.
+   */
+  void
+  refine_mesh_and_synchronize_particles();
+
+  /**
+   * @brief Prepare the particle handler and the void fraction solution for
+   * an upcoming triangulation change (mesh refinement or coarsening).
+   *
+   * Must be called immediately before the triangulation is actually
+   * changed, with unpack_particles_after_mesh_adaptation() called
+   * immediately after, and nothing else modifying the triangulation or
+   * redistributing degrees of freedom in between. Virtual so that
+   * CFDDEMMatrixFree can extend it with DEM-specific bookkeeping.
+   */
+  virtual void
+  prepare_particles_for_mesh_adaptation();
+
+  /**
+   * @brief Restore the particle handler and the void fraction solution
+   * after a triangulation change.
+   *
+   * Must be called after setup_dofs() has redistributed the void fraction
+   * DoFHandler on the new triangulation. Virtual so that CFDDEMMatrixFree
+   * can extend it to also rebuild the DEM contact-detection caches, which
+   * likewise go stale after a triangulation change.
+   */
+  virtual void
+  unpack_particles_after_mesh_adaptation();
+
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
@@ -272,5 +313,10 @@ protected:
 
   /// Vector to store the time derivative of the void fraction
   VectorType time_derivative_void_fraction;
+
+  /// Bridges the void fraction solution across the prepare/unpack split of
+  /// a mesh refinement or coarsening step
+  std::unique_ptr<SolutionTransfer<dim, VectorType>>
+    void_fraction_solution_transfer;
 };
 #endif
