@@ -109,8 +109,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a72b92b019f14c1bea6afd79a09f0661f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbe7be953d1cc3d22da0f466e810b0ee" id="r_afbe7be953d1cc3d22da0f466e810b0ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">print_xyz</a> (dealii::Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator, const ConditionalOStream &amp;pcout)</td></tr>
 <tr class="separator:afbe7be953d1cc3d22da0f466e810b0ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c35eeed4d8e69907a854fc3d4156d02" id="r_a6c35eeed4d8e69907a854fc3d4156d02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a6c35eeed4d8e69907a854fc3d4156d02">print_intermediate_format</a> (const Vector&lt; float &gt; &amp;data_to_print, const DoFHandler&lt; dim &gt; &amp;background_dh, const MPI_Comm &amp;mpi_communicator)</td></tr>
-<tr class="separator:a6c35eeed4d8e69907a854fc3d4156d02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03ec5000ab465145168d8c64bc491c3e" id="r_a03ec5000ab465145168d8c64bc491c3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a03ec5000ab465145168d8c64bc491c3e">print_intermediate_format</a> (const Vector&lt; float &gt; &amp;data_to_print, const DoFHandler&lt; dim &gt; &amp;background_dh, const MPI_Comm &amp;mpi_communicator, const ConditionalOStream &amp;pcout)</td></tr>
+<tr class="separator:a03ec5000ab465145168d8c64bc491c3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f0ca336cb4fd5e5d77cadb3ff7c9a89" id="r_a0f0ca336cb4fd5e5d77cadb3ff7c9a89"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a0f0ca336cb4fd5e5d77cadb3ff7c9a89">~Visualization</a> ()</td></tr>
 <tr class="separator:a0f0ca336cb4fd5e5d77cadb3ff7c9a89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -270,7 +270,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implementation of the corresponding function of the base class. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8cc_source.html#l00206">206</a> of file <a class="el" href="visualization_8cc_source.html">visualization.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8cc_source.html#l00209">209</a> of file <a class="el" href="visualization_8cc_source.html">visualization.cc</a>.</p>
 
 </div>
 </div>
@@ -299,7 +299,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="visualization_8cc_source.html#l00217">217</a> of file <a class="el" href="visualization_8cc_source.html">visualization.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8cc_source.html#l00220">220</a> of file <a class="el" href="visualization_8cc_source.html">visualization.cc</a>.</p>
 
 </div>
 </div>
@@ -330,12 +330,12 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implementation of the corresponding function of the base class. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8cc_source.html#l00199">199</a> of file <a class="el" href="visualization_8cc_source.html">visualization.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8cc_source.html#l00202">202</a> of file <a class="el" href="visualization_8cc_source.html">visualization.cc</a>.</p>
 
 </div>
 </div>
-<a id="a6c35eeed4d8e69907a854fc3d4156d02" name="a6c35eeed4d8e69907a854fc3d4156d02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c35eeed4d8e69907a854fc3d4156d02">&#9670;&#160;</a></span>print_intermediate_format()</h2>
+<a id="a03ec5000ab465145168d8c64bc491c3e" name="a03ec5000ab465145168d8c64bc491c3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03ec5000ab465145168d8c64bc491c3e">&#9670;&#160;</a></span>print_intermediate_format()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -358,7 +358,13 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const MPI_Comm &amp;&#160;</td>
-          <td class="paramname"><em>mpi_communicator</em>&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ConditionalOStream &amp;&#160;</td>
+          <td class="paramname"><em>pcout</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -374,6 +380,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
     <tr><td class="paramname">data_to_print</td><td>The vector of data to be printed. </td></tr>
     <tr><td class="paramname">background_dh</td><td>The DoFHandler of the background grid. </td></tr>
     <tr><td class="paramname">mpi_communicator</td><td>The MPI communicator. </td></tr>
+    <tr><td class="paramname">pcout</td><td>Printing in parallel. </td></tr>
   </table>
   </dd>
 </dl>
@@ -454,7 +461,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>A list of field names for all data components stored in patches. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00101">101</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00103">103</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
@@ -482,7 +489,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Output information that is filled by <a class="el" href="classVisualization.html#a72b92b019f14c1bea6afd79a09f0661f" title="Build the patches of properties of particles for visualization.">build_patches()</a> and written by the write function of the base class. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00096">96</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00098">98</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
@@ -510,7 +517,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Particle properties that are written in output files. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00116">116</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00118">118</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
@@ -538,7 +545,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Store which of the data fields are vectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00111">111</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00113">113</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
