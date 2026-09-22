@@ -725,7 +725,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
   // QCM filter characteristic length. For the spherical filter this is the
   // averaging-sphere radius; for the gaussian filter it is the standard
   // deviation sigma. The same parameter (qcm_smoothing_length) supplies it in
-  // both cases: half the smoothing length.
+  // both cases.
   double filter_length = 0.0;
   double particles_volume_in_kernel;
   double quadrature_void_fraction;
@@ -812,16 +812,12 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
               const double r_particle =
                 0.5 * particle_properties[PropertiesIndex::dp];
 
-              // Loop over neighboring cells to determine if a given
-              // neighboring particle contributes to the solid volume of the
-              // current reference sphere
+              // Loop over neighboring cells to determine if the current
+              // particle intersects the filter kernels centered at their
+              // quadrature points.
               //***********************************************************************
               for (unsigned int m = 0; m < active_neighbors.size(); m++)
                 {
-                  // Define the radius of the reference sphere to be used as
-                  // the averaging volume for the QCM. If the reference sphere
-                  // diameter was given by the user the value is already
-                  // defined since it is not dependent on any measure of the
                   // Define the length of the reference kernel to be used as
                   // the averaging volume for the QCM. If the reference kernel
                   // length was given by the user the value is already
@@ -851,9 +847,9 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
                     }
                 }
 
-              // Loop over periodic neighboring cells to determine if a given
-              // neighboring particle contributes to the solid volume of the
-              // current reference sphere
+              // Loop over periodic neighboring cells to determine if the
+              // current particle intersects the filter kernels centered
+              // at their quadrature points.
               //***********************************************************************
               for (unsigned int m = 0; m < active_periodic_neighbors.size();
                    m++)
@@ -966,8 +962,8 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
 
               for (unsigned int m = 0; m < active_neighbors.size(); m++)
                 {
-                  // Loop over particles in neighbor cell
-                  // Begin and end iterator for particles in neighbor cell
+                  // Loop over particles in neighboring cell
+                  // Begin and end iterator for particles in neighboring cell
                   const auto pic =
                     particle_handler->particles_in_cell(active_neighbors[m]);
                   for (auto &particle : pic)
@@ -977,7 +973,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
                         particle_properties[PropertiesIndex::dp] * 0.5;
 
                       // Calculate the ratio between the particle volume and the
-                      // total volume it contributes to
+                      // total volume it contributes to all kernels
                       const double particle_volume_ratio =
                         (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
                          (2 * dim)) /
@@ -1018,7 +1014,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
 
                       // Adjust the location of the particle in the cell to
                       // account for the periodicity. If the position of the
-                      // periodic cell if greater than the position of the
+                      // periodic cell is greater than the position of the
                       // current cell, the particle location needs a negative
                       // correction, and vice versa. Since the particle is in
                       // the periodic cell, this correction is the inverse of
@@ -1050,7 +1046,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
                         quadrature_point_location[q]);
 
                       // Calculate the ratio between the particle volume and the
-                      // total volume it contributes to
+                      // total volume it contributes to all kernels
                       const double particle_volume_ratio =
                         (M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
                          (2 * dim)) /
