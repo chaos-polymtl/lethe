@@ -1581,6 +1581,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
                                               this->pcout,
                                               this->mpi_communicator);
 
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
+
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart)
     dem_action_manager->restart_simulation();
