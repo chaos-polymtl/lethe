@@ -9,6 +9,9 @@
 #include <solvers/tracer.h>
 
 #include <deal.II/base/exceptions.h>
+
+#include <string>
+
 #define _unused(x) ((void)(x))
 
 DeclException1(
@@ -84,7 +87,7 @@ DeclExceptionMsg(CahnHilliardWithThermalBuoyancyForceError,
 
 DeclException1(
   PhysicsVANSFormNotImplementedError,
-  bool,
+  std::string,
   << "The \"" << arg1
   << "\" auxiliary physics is enabled together with the VANS "
      "(volume-averaged Navier-Stokes) fluid dynamics solver, but a "

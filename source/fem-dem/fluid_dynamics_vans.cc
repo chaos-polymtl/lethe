@@ -250,10 +250,6 @@ FluidDynamicsVANS<dim,
 
   // Unpack particle handler now that the triangulation change is complete.
   particle_handler.unpack_after_coarsening_and_refinement();
-
-  // The vertex-to-cell map used by void fraction interpolation is stale
-  // after the triangulation change.
-  vertices_cell_mapping();
 }
 
 template <int dim, typename PropertiesIndex>
