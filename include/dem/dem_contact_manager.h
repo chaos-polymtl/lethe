@@ -11,7 +11,7 @@
 #include <dem/particle_particle_broad_search.h>
 #include <dem/particle_wall_broad_search.h>
 
-#include <unordered_map>
+#include <array>
 
 using namespace DEM;
 
@@ -141,10 +141,10 @@ public:
    *
    * @param[in] particle_handler Storage of particles and their accessor
    * functions.
-   * @param[in] boundary_cells_object Information of the boundary cells and
+   * @param[in] boundary_cell_object Information of the boundary cells and
    * faces.
    * @param[in] solid_surfaces_mesh_info Mapping of solid surfaces meshes.
-   * @param[in] floating_wall Properties of the floating walls.
+   * @param[in] floating_walls Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
    * @param[in] sparse_particle_contact_object Allow to check the mobility
    * status of cells.
@@ -177,7 +177,7 @@ public:
    * Executes functions that update the particle-wall contacts pairs containers
    * and compute the contact information of the collision particle-wall.
    *
-   * @param[in] floating_wall Properties of the floating walls.
+   * @param[in] floating_walls Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
    * @param[in] neighborhood_threshold Threshold value of contact detection.
    */
@@ -188,16 +188,14 @@ public:
     const double                                      neighborhood_threshold);
 
   /**
-   * @brief Set the combined offsets for periodic boundaries.
+   * @brief Set the periodic offset (signed period) for every direction.
    *
-   * @param[in] offsets Combined periodic offsets for periodic
-   * boundaries, used for determining periodic contacts.
+   * @param[in] offset_per_direction Signed period of the domain along every
+   * direction, used for determining periodic contacts.
    */
-  inline void
-  set_combined_periodic_offsets(const std::vector<Tensor<1, dim>> &offsets)
-  {
-    this->combined_periodic_offsets = offsets;
-  }
+  void
+  set_periodic_offset_per_direction(
+    const std::array<double, dim> &offset_per_direction);
 
   /**
    * @brief Return the particle-floating mesh contact container.
@@ -385,12 +383,13 @@ private:
 
 private:
   /**
-   * @brief Storage for all precomputed periodic translation vectors,
-   * representing translations between pairs of periodic faces and corners.
-   * Initialized to identity (zero offset) for compatibility with non-periodic
-   * geometry
+   * @brief Signed period of the domain along every direction, used by the
+   * particle-particle fine search to find the nearest periodic image of a
+   * particle (minimum image convention). Component d is 0 if direction d is
+   * not periodic. Zero-initialized by default for compatibility with
+   * non-periodic geometry.
    */
-  std::vector<Tensor<1, dim>> combined_periodic_offsets;
+  std::array<double, dim> periodic_offset_per_direction{};
 };
 
 #endif

@@ -12,7 +12,10 @@
 
 #include <boost/range/adaptor/map.hpp>
 
-#include <unordered_map>
+#include <array>
+#include <cmath>
+#include <limits>
+#include <utility>
 
 using namespace dealii;
 
@@ -23,16 +26,18 @@ particle_particle_fine_search(
                                                   &particle_container,
   adjacent_pairs_for_contact_t<dim, contact_type> &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                                    &contact_pair_candidates,
-  const double                       neighborhood_threshold,
-  const std::vector<Tensor<1, dim>> &combined_periodic_offsets)
+                                &contact_pair_candidates,
+  const double                   neighborhood_threshold,
+  const std::array<double, dim> &periodic_offset_per_direction)
 {
   // First iterating over adjacent_particles
   for (auto &&adjacent_particles_list :
        adjacent_particles | boost::adaptors::map_values)
     {
+      // List of potential particles
       auto &second_particles = adjacent_particles_list.second_particles;
 
+      // If the list is empty, we continue.
       if (second_particles.empty())
         continue;
 
@@ -81,56 +86,76 @@ particle_particle_fine_search(
           for (auto adjacent_particles_list_iterator = second_particles.begin();
                adjacent_particles_list_iterator != second_particles.end();)
             {
-              // Getting contact information and particle 2 as local variables
+              // Getting the contact information and particle 2 as local
+              // variables
               auto &adjacent_pair_information =
                 adjacent_particles_list_iterator->second;
               auto &particle_two = adjacent_pair_information.particle_two;
 
-              // Finding the properties of the particles in contact
+              // Finding the properties of particles 2.
               Point<dim, double> particle_two_real_location =
                 particle_two->get_location();
 
-              // Find minimum periodic distance squared between particle one and
-              // the set of periodic images of particle two. The nearest
-              // periodic image corresponds to a given periodic offset,
-              // indicating if the particles are in contact through a periodic
-              // edge, face, or corner.
-              double min_square_distance = std::numeric_limits<double>::max();
-              Tensor<1, dim> nearest_translation;
+              // Reuse the periodic offset found on a previous call: for a
+              // persisting contact this translation practically never
+              // changes between fine search calls. This avoids the
+              // minimum periodic image search with the signed periodic
+              // distance.
+              Tensor<1, dim> cached_translation =
+                adjacent_pair_information.periodic_offset;
+              const double cached_square_distance =
+                particle_one_location.distance_square(
+                  particle_two_real_location + cached_translation);
 
-              for (const auto &translation : combined_periodic_offsets)
-                {
-                  // Check particle 1 against every periodic image of particle 2
-                  double current_square_distance =
-                    particle_one_location.distance_square(
-                      particle_two_real_location + translation);
+              // Using the caches periodic offset, if the shared distance
+              // respect the neighborhood threshold, this means that the
+              // particles stayed on their respective side of the PBC.
+              if (cached_square_distance <= neighborhood_threshold)
+                ++adjacent_particles_list_iterator;
 
-                  if (current_square_distance < min_square_distance)
-                    {
-                      min_square_distance = current_square_distance;
-                      nearest_translation = translation;
-                    }
-                }
-
-
-              // If simulation is well defined, there should be at most one
-              // translation from combined_periodic_offsets that brings a
-              // periodic image within a neighborhood threshold.
-              if (min_square_distance > neighborhood_threshold)
-                {
-                  adjacent_particles_list_iterator =
-                    second_particles.erase(adjacent_particles_list_iterator);
-                }
+              // If not, either one particle crossed the PBC or both crossed it
+              // or they just moved apart.
               else
                 {
-                  // Save a translation that falls within the threshold
-                  Tensor<1, 3> offset_3d;
-                  for (int d = 0; d < dim; ++d)
-                    offset_3d[d] = nearest_translation[d];
+                  // Cached periodic offset no longer holds. Fall back to the
+                  // distance computation using the minimum image convention.
+                  // If the distance between the particles is higher than the
+                  // neighbor threshold, we erase the potential contact from the
+                  // list.
+                  // The nearest_translation is the periodic offset.
+                  const auto [nearest_translation, found_periodic_translation] =
+                    nearest_periodic_translation<dim>(
+                      particle_one_location,
+                      particle_two_real_location,
+                      periodic_offset_per_direction);
 
-                  adjacent_pair_information.periodic_offset = offset_3d;
+                  // If a periodic offset was found, the min_square_distance is
+                  // computed. Otherwise, we know that the particle are far
+                  // apart, thus we impose the min_square_distance to a high
+                  // value (max())
+                  const double min_square_distance =
+                    found_periodic_translation ?
+                      particle_one_location.distance_square(
+                        particle_two_real_location + nearest_translation) :
+                      std::numeric_limits<double>::max();
 
-                  ++adjacent_particles_list_iterator;
+                  // If the min_square_distance does not respect the
+                  // neighborhood threshold at this point, this means that the
+                  // particle officially moved apart. We can remove the
+                  // potential contact from the list.
+                  if (min_square_distance > neighborhood_threshold)
+                    adjacent_particles_list_iterator =
+                      second_particles.erase(adjacent_particles_list_iterator);
+
+                  // Otherwise, this means that one or both particle crossed the
+                  // PBC. We update the periodic_offset in the periodic
+                  // contact_info.
+                  else
+                    {
+                      adjacent_pair_information.periodic_offset =
+                        nearest_translation;
+                      ++adjacent_particles_list_iterator;
+                    }
                 }
             }
         }
@@ -185,37 +210,30 @@ particle_particle_fine_search(
               Point<dim, double> particle_two_real_location =
                 particle_two->get_location();
 
-              // Find minimum periodic distance squared between particle one and
-              // the set of periodic images of particle two. The nearest
-              // periodic image corresponds to a given periodic offset,
-              // indicating if the particles are in contact through a periodic
-              // edge, face, or corner.
-              double min_square_distance = std::numeric_limits<double>::max();
-              Tensor<1, dim> nearest_translation;
+              // nearest_periodic_translation returns periodic translation that
+              // brings two particle the closest together. (if they are close
+              // enough)
+              const auto [nearest_translation, found_periodic_translation] =
+                nearest_periodic_translation<dim>(
+                  particle_one_location,
+                  particle_two_real_location,
+                  periodic_offset_per_direction);
 
-              for (const auto &translation : combined_periodic_offsets)
-                {
-                  double current_square_distance =
-                    particle_one_location.distance_square(
-                      particle_two_real_location + translation);
+              // If is possible that the two particle moved far appart so much
+              // that the round operation in the nearest_periodic_translation
+              // function return a 0. In this case, found_periodic_translation
+              // will be at false. Thus, we need to make sure that this isn't
+              // the case by imposing min_square_distance to max().
+              const double min_square_distance =
+                found_periodic_translation ?
+                  particle_one_location.distance_square(
+                    particle_two_real_location + nearest_translation) :
+                  std::numeric_limits<double>::max();
 
-                  if (current_square_distance < min_square_distance)
-                    {
-                      min_square_distance = current_square_distance;
-                      nearest_translation = translation;
-                    }
-                }
-
-              // If simulation is well defined, there should be at most one
-              // translation from combined_periodic_offsets that brings a
-              // periodic image within a neighborhood threshold.
+              // If the neighborhood_threshold is respected, we add particle 2
+              // to particle 1 potential contact list. Otherwise, we do nothing.
               if (min_square_distance < neighborhood_threshold)
                 {
-                  // Save a translation that falls within the threshold
-                  Tensor<1, 3> offset_3d;
-                  for (int d = 0; d < dim; ++d)
-                    offset_3d[d] = nearest_translation[d];
-
                   auto &particle_one_contact_list =
                     adjacent_particles[particle_one_id];
                   particle_one_contact_list.particle_one = particle_one;
@@ -224,11 +242,55 @@ particle_particle_fine_search(
                     particle_two_id,
                     periodic_particle_particle_contact_info<dim>{
                       {particle_two, Tensor<1, 3>(), Tensor<1, 3>()},
-                      offset_3d});
+                      nearest_translation});
                 }
             }
         }
     }
+}
+
+template <int dim>
+std::pair<Tensor<1, dim>, bool>
+nearest_periodic_translation(
+  const Point<dim, double>      &particle_one_location,
+  const Point<dim, double>      &particle_two_real_location,
+  const std::array<double, dim> &periodic_offset_per_direction)
+{
+  Tensor<1, dim> nearest_translation;
+  bool           found_periodic_translation = false;
+
+  // Loop on every direction
+  for (int d = 0; d < dim; ++d)
+    {
+      // If the periodic offset associated with this direction is zero,
+      // this means that the direction is not periodic, thus we skip it.
+      // Also, it prevents a division by zero a bit later in the code.
+      if (periodic_offset_per_direction[d] != 0.)
+        {
+          // Real distance between p1 and p2
+          const double delta =
+            particle_one_location[d] - particle_two_real_location[d];
+
+          // If particle 1 (p1) is on one side of the triangulation and p2 is
+          // on the other side and both sides/boundaries are linked through a
+          // PBC, the distance between those two particle should
+          // be around one period (~ 0.9), thus when we round, we get 1.0,
+          // which we then multiply to the actual periodic_offset. When p1 and
+          // p2 and near periodic corner, this method will also work because the
+          // rounding will give 1.0 for more than one direction.
+          nearest_translation[d] =
+            std::round(delta / periodic_offset_per_direction[d]) *
+            periodic_offset_per_direction[d];
+
+          // If the nearest_translation got rounded to 0., this means that
+          // the particles are in the same cell or in a real neighboring cell
+          // or that the current direction is not linking this periodic
+          // contact. (By real neighboring cell, we mean a neighboring cell that
+          // is not periodic neighboring cell)
+          found_periodic_translation |= (nearest_translation[d] != 0.);
+        }
+    }
+  return {nearest_translation, found_periodic_translation};
 }
 
 // 2D templates
@@ -239,9 +301,9 @@ particle_particle_fine_search<2, local_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 2>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 2> &periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<2, ghost_particle_particle>(
@@ -250,9 +312,9 @@ particle_particle_fine_search<2, ghost_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 2>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 2> &periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<2, local_periodic_particle_particle>(
@@ -261,9 +323,9 @@ particle_particle_fine_search<2, local_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 2>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 2> &periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<2, ghost_periodic_particle_particle>(
@@ -272,9 +334,9 @@ particle_particle_fine_search<2, ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 2>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 2> &periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<2, ghost_local_periodic_particle_particle>(
@@ -283,9 +345,9 @@ particle_particle_fine_search<2, ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 2>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 2> &periodic_offset_per_direction);
 
 
 // 3D templates
@@ -296,9 +358,9 @@ particle_particle_fine_search<3, local_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 3>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 3> &periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<3, ghost_particle_particle>(
@@ -307,9 +369,9 @@ particle_particle_fine_search<3, ghost_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 3>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 3> &periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<3, local_periodic_particle_particle>(
@@ -318,9 +380,9 @@ particle_particle_fine_search<3, local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 3>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 3> &periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<3, ghost_periodic_particle_particle>(
@@ -329,9 +391,9 @@ particle_particle_fine_search<3, ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 3>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 3> &periodic_offset_per_direction);
 
 template void
 particle_particle_fine_search<3, ghost_local_periodic_particle_particle>(
@@ -340,6 +402,6 @@ particle_particle_fine_search<3, ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                                  &contact_pair_candidates,
-  const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 3>> &combined_periodic_offsets);
+                              &contact_pair_candidates,
+  const double                 neighborhood_threshold,
+  const std::array<double, 3> &periodic_offset_per_direction);

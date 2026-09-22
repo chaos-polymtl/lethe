@@ -89,18 +89,6 @@ public:
   }
 
   /**
-   * @brief Set the value of the combined periodic offsets for this class.
-   *
-   * @param [in] offsets Combined periodic offsets from the
-   * PeriodicBoundariesManipulator class.
-   */
-  inline void
-  set_combined_periodic_offsets(const std::vector<Tensor<1, dim>> &offsets)
-  {
-    this->combined_periodic_offsets = offsets;
-  }
-
-  /**
    * @brief Return the number of contacts that occurred in the
    * present pseudo-time step when using the packed insertion method.
    *
@@ -132,12 +120,6 @@ protected:
    * are assumed to have the same offset.
    */
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
-
-  /**
-   * @brief Storage for all 9 (2D) or 27 (3D) precomputed periodic translation
-   * vectors. Calculated from periodic_offsets.
-   */
-  std::vector<Tensor<1, dim>> combined_periodic_offsets;
 };
 
 /**
@@ -325,13 +307,13 @@ protected:
    */
   inline Point<3>
   get_periodic_location(const Particles::ParticleIterator<dim> &particle,
-                        const Tensor<1, 3> &periodic_offset) &
+                        const Tensor<1, dim> &periodic_offset) &
   {
     if constexpr (dim == 3)
       return (particle->get_location() + periodic_offset);
 
     if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location()) + periodic_offset;
+      return point_nd_to_3d(particle->get_location() + periodic_offset);
   }
 
   /**
