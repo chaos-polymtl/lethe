@@ -1581,11 +1581,11 @@ namespace Parameters
     /// Type of preconditioner
     enum class PreconditionerType : std::int8_t
     {
-      ilu,  /// Incomplete LU Factorization
-      amg,  /// Algebraic Multigrid
-      lsmg, /// Local-Smoothing Geometric Multigrid
-      gcmg, /// Global-Coarsening Multigrid
-      none  /// No preconditioner
+      ilu,  ///< Incomplete LU Factorization
+      amg,  ///< Algebraic Multigrid
+      lsmg, ///< Local-Smoothing Geometric Multigrid
+      gcmg, ///< Global-Coarsening Multigrid
+      none  ///< No preconditioner
     };
     PreconditionerType preconditioner = PreconditionerType::ilu;
 
