@@ -370,10 +370,12 @@ namespace Parameters
                         "Display precision when writing to log",
                         "This setting percolates to all output to the log");
 
-      prm.declare_entry("output times",
-                        Patterns::Tools::Convert<std::vector<double>>::to_string(defaults.output_times_vector),
-                        Patterns::List(Patterns::Double()),
-                        "List of specific output times separated with a comma");
+      prm.declare_entry(
+        "output times",
+        Patterns::Tools::Convert<std::vector<double>>::to_string(
+          defaults.output_times_vector),
+        Patterns::List(Patterns::Double()),
+        "List of specific output times separated with a comma");
 
       prm.declare_entry(
         "end control",
@@ -390,10 +392,12 @@ namespace Parameters
         "The control for the output of the simulation results"
         "Results can be either outputted at constant iteration frequency or at constant time");
 
-      prm.declare_entry("output time interval",
-                        Patterns::Tools::Convert<std::vector<double>>::to_string(defaults.output_time_interval),
-                        Patterns::List(Patterns::Double()),
-                        "Output files for a desired time interval");
+      prm.declare_entry(
+        "output time interval",
+        Patterns::Tools::Convert<std::vector<double>>::to_string(
+          defaults.output_time_interval),
+        Patterns::List(Patterns::Double()),
+        "Output files for a desired time interval");
 
       prm.declare_entry("subdivision",
                         Patterns::Tools::Convert<unsigned int>::to_string(
@@ -3794,13 +3798,15 @@ namespace Parameters
 
       prm.declare_entry(
         "initial translation",
-        Patterns::Tools::Convert<Tensor<1, spacedim>>::to_string(defaults.translation),
+        Patterns::Tools::Convert<Tensor<1, spacedim>>::to_string(
+          defaults.translation),
         Patterns::List(Patterns::Double()),
         "Component of the desired translation of the mesh at initialization.");
 
       prm.declare_entry(
         "initial rotation axis",
-        Patterns::Tools::Convert<Tensor<1, spacedim>>::to_string(defaults.rotation_axis),
+        Patterns::Tools::Convert<Tensor<1, spacedim>>::to_string(
+          defaults.rotation_axis),
         Patterns::List(Patterns::Double()),
         "Component of the desired rotation of the mesh at initialization.\n"
         "In 2D, this parameter is not used, and a counter-clockwise rotation around the origin \n "
