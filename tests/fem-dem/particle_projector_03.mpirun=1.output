@@ -8,7 +8,7 @@ Void Fraction
   -Tolerance of iterative solver is : 1.00000e-10
 DEAL:0::Check 1	6.50208e-14
 DEAL:0::Convergence step 1 value 6.50208e-14
-  -Iterative solver took : 1.00000 steps 
+  -Iterative solver took : 1 steps to reach a residual norm of 6.50208e-14
 ------------------
 Force on particle
 ------------------
@@ -31,7 +31,7 @@ Void Fraction
   -Tolerance of iterative solver is : 1.00000e-10
 DEAL:0::Check 1	6.55333e-14
 DEAL:0::Convergence step 1 value 6.55333e-14
-  -Iterative solver took : 1.00000 steps 
+  -Iterative solver took : 1 steps to reach a residual norm of 6.55333e-14
 ------------------
 Force on particle
 ------------------
@@ -54,7 +54,7 @@ Void Fraction
   -Tolerance of iterative solver is : 1.00000e-10
 DEAL:0::Check 1	6.50208e-14
 DEAL:0::Convergence step 1 value 6.50208e-14
-  -Iterative solver took : 1.00000 steps 
+  -Iterative solver took : 1 steps to reach a residual norm of 6.50208e-14
 ------------------
 Force on particle
 ------------------
@@ -77,7 +77,7 @@ Void Fraction
   -Tolerance of iterative solver is : 1.00000e-10
 DEAL:0::Check 1	6.55333e-14
 DEAL:0::Convergence step 1 value 6.55333e-14
-  -Iterative solver took : 1.00000 steps 
+  -Iterative solver took : 1 steps to reach a residual norm of 6.55333e-14
 ------------------
 Force on particle
 ------------------
