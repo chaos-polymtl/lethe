@@ -642,11 +642,6 @@ namespace Parameters
                             defaults.insertion_plane_normal_vector),
                           Patterns::List(Patterns::Double()),
                           "Insertion plane normal vector");
-        prm.declare_entry(
-          "insertion plane threshold distance",
-          "0.",
-          Patterns::Double(),
-          "If all the vertices of a cell are closer or equal to this value, than this cell is in the plane");
 
         // List:
         prm.declare_entry(
