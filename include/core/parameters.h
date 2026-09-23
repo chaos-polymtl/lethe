@@ -843,8 +843,8 @@ namespace Parameters
     /// Defines if default stabilization parameters should be used
     bool use_default_stabilization = true;
 
-    /// Indicates if DCDD stabilization should be used for the heat transfer 
-    /// equation 
+    /// Indicates if DCDD stabilization should be used for the heat transfer
+    /// equation
     bool heat_transfer_dcdd_stabilization = false;
 
     /// Boolean indicating if the DCDD stabilization term for the CLS phase
