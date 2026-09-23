@@ -3794,13 +3794,13 @@ namespace Parameters
 
       prm.declare_entry(
         "initial translation",
-        to_string(defaults.translation),
+        Patterns::Tools::Convert<Tensor<1, spacedim>>::to_string(defaults.translation),
         Patterns::List(Patterns::Double()),
         "Component of the desired translation of the mesh at initialization.");
 
       prm.declare_entry(
         "initial rotation axis",
-        to_string(defaults.rotation_axis),
+        Patterns::Tools::Convert<Tensor<1, spacedim>>::to_string(defaults.rotation_axis),
         Patterns::List(Patterns::Double()),
         "Component of the desired rotation of the mesh at initialization.\n"
         "In 2D, this parameter is not used, and a counter-clockwise rotation around the origin \n "
