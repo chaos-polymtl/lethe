@@ -2139,11 +2139,12 @@ namespace Parameters
             Patterns::Selection("true|false"),
             "State whether collisions with all walls should be logged"
             "Choices are <true|false>.");
-          prm.declare_entry("wall boundary ids",
-                            to_string(
-                              defaults.particle_wall_collision_boundary_ids),
-                            Patterns::List(Patterns::Integer()),
-                            "Boundary ids of the walls to log collisions with");
+          prm.declare_entry(
+            "wall boundary ids",
+            Patterns::Tools::Convert<std::vector<int>>::to_string(
+              defaults.particle_wall_collision_boundary_ids),
+            Patterns::List(Patterns::Integer()),
+            "Boundary ids of the walls to log collisions with");
           prm.declare_entry(
             "collision statistics file",
             defaults.collision_stats_file_name,
