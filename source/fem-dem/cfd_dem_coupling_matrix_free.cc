@@ -896,6 +896,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::
       sparse_contacts_object.map_periodic_nodes(
         this->particle_projector.void_fraction_constraints);
     }
+
+  // Update the local and ghost cells (if ASC enabled)
+  sparse_contacts_object.update_local_and_ghost_cell_set(
+    this->particle_projector.dof_handler);
 }
 
 template <int dim, typename PropertiesIndex>

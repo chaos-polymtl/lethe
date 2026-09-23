@@ -256,33 +256,33 @@ template <int dim, typename PropertiesIndex>
 void
 FluidDynamicsVANS<dim, PropertiesIndex>::refine_mesh_and_synchronize_particles()
 {
-  // NavierStokesBase::refine_mesh() only actually changes the triangulation
-  // when this condition holds -- see refine_mesh()/refine_mesh_uniform()/
-  // refine_mesh_adaptive() in navier_stokes_base.cc, including the
-  // additional guards against refining past the maximum refinement level
-  // for uniform refinement, and against a non-parallel::distributed
-  // triangulation for adaptive refinement (refine_mesh_adaptive() silently
-  // returns in that case). The particle handler and the void fraction
-  // solution must be prepared for coarsening and refinement immediately
-  // before, and restored immediately after, an actual triangulation change
-  // -- not around a call that turns out to be a no-op -- so both
-  // conditions are replicated here.
+  // The mesh adaptation logic is not owned by the VANS solver, but by the base
+  // class. However, the VANS solver needs to know whether a refinement step
+  // will be performed so that it can prepare the particle handler and the void
+  // fraction solution for the mesh adaptation. The logic below checks whether a
+  // refinement step will be performed based on the simulation parameters and
+  // the current state of the simulation control. If the logic in the base class
+  // changes, this code may need to be updated accordingly.
   const Parameters::MeshAdaptation &mesh_adaptation =
     this->simulation_parameters.mesh_adaptation;
+
+  const bool is_refinement_step =
+    this->simulation_control->is_refinement_step(mesh_adaptation);
+  const bool uniform_under_max_level =
+    mesh_adaptation.type == Parameters::MeshAdaptation::Type::uniform &&
+    this->triangulation->n_global_levels() <=
+      mesh_adaptation.maximum_refinement_level;
+  const bool is_adaptive =
+    mesh_adaptation.type == Parameters::MeshAdaptation::Type::adaptive;
+
   const bool will_refine =
     mesh_adaptation.type != Parameters::MeshAdaptation::Type::none &&
-    this->simulation_control->is_refinement_step(mesh_adaptation) &&
-    (mesh_adaptation.type != Parameters::MeshAdaptation::Type::uniform ||
-     this->triangulation->n_global_levels() <=
-       mesh_adaptation.maximum_refinement_level) &&
-    (mesh_adaptation.type != Parameters::MeshAdaptation::Type::adaptive ||
-     dynamic_cast<const parallel::distributed::Triangulation<dim> *>(
-       this->triangulation.get()) != nullptr);
+    is_refinement_step && (uniform_under_max_level || is_adaptive);
 
   if (will_refine)
     prepare_particles_for_mesh_adaptation();
 
-  NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+  this->refine_mesh();
 
   if (will_refine)
     unpack_particles_after_mesh_adaptation();
