@@ -1898,23 +1898,32 @@ void
 ParticleProjector<dim,
                   PropertiesIndex>::solve_linear_system_and_update_solution()
 {
-  // Calculate rescale metric in case rescale is active.
+  // Calculate rescale metric as the square root of the volume of the mesh in
+  // case rescale is active.
   const double rescale_metric =
     linear_solver_parameters.rescale_residual_by_volume ?
       std::sqrt(GridTools::volume(*triangulation)) :
       1.0;
 
-  // Solve the L2 projection system
-  const double non_rescaled_linear_solver_tolerance =
-    linear_solver_parameters.minimum_residual;
-  const double linear_solver_tolerance =
-    non_rescaled_linear_solver_tolerance / rescale_metric;
+  // Get the solver's minimum tolerance set in the prm
+  const double minimum_absolute_residual = linear_solver_parameters.minimum_residual;
+  // Get the relative residual set in the prm
+  const double relative_residual = linear_solver_parameters.relative_residual;
+  // Get the current residual of the system and scale it by the rescale metric 
+  // if required
+  const double current_residual = system_rhs_void_fraction.l2_norm() / rescale_metric;
+  // Calculate the scaled absolute tolerance of the linear solver
+  const double linear_solver_tolerance = std::max(minimum_absolute_residual, 
+                                          relative_residual * current_residual);
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
+
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
 
   const IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
 
@@ -1954,9 +1963,9 @@ ParticleProjector<dim,
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver took : "
-                  << solver_control.last_step() / rescale_metric << " steps "
-                  << std::endl;
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps to reach a residual norm of "
+                  << solver_control.last_value() / rescale_metric << std::endl;
     }
 
   void_fraction_constraints.distribute(completely_distributed_solution);
