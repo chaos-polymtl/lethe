@@ -213,19 +213,6 @@ namespace Parameters
       Assert(false, ExcInternalError());
       return "";
     }
-
-    std::string
-    to_string(const std::vector<double> &values)
-    {
-      std::string result;
-      for (unsigned int i = 0; i < values.size(); ++i)
-        {
-          if (i != 0)
-            result += ", ";
-          result += Patterns::Tools::Convert<double>::to_string(values[i]);
-        }
-      return result;
-    }
   } // namespace
 
   void
@@ -3702,20 +3689,6 @@ namespace Parameters
         }
       Assert(false, ExcInternalError());
       return "";
-    }
-
-    template <int spacedim>
-    std::string
-    to_string(const Tensor<1, spacedim> &tensor)
-    {
-      std::string result;
-      for (int i = 0; i < spacedim; ++i)
-        {
-          if (i != 0)
-            result += ", ";
-          result += Patterns::Tools::Convert<double>::to_string(tensor[i]);
-        }
-      return result;
     }
   } // namespace
 

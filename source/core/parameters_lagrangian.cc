@@ -3,6 +3,10 @@
 
 #include <core/parameters_lagrangian.h>
 
+#include <deal.II/base/patterns.h>
+#include <deal.II/base/point.h>
+#include <deal.II/base/tensor.h>
+
 #include <deal.II/grid/grid_in.h>
 
 namespace Parameters
@@ -555,75 +559,6 @@ namespace Parameters
 
     namespace
     {
-      std::string
-      to_string(const std::vector<double> &values)
-      {
-        std::string result;
-        for (unsigned int i = 0; i < values.size(); ++i)
-          {
-            if (i != 0)
-              result += ", ";
-            result += Patterns::Tools::Convert<double>::to_string(values[i]);
-          }
-        return result;
-      }
-
-      std::string
-      to_string(const std::vector<unsigned int> &values)
-      {
-        std::string result;
-        for (unsigned int i = 0; i < values.size(); ++i)
-          {
-            if (i != 0)
-              result += ",";
-            result +=
-              Patterns::Tools::Convert<unsigned int>::to_string(values[i]);
-          }
-        return result;
-      }
-
-      std::string
-      to_string(const std::vector<int> &values)
-      {
-        std::string result;
-        for (unsigned int i = 0; i < values.size(); ++i)
-          {
-            if (i != 0)
-              result += ",";
-            result += Patterns::Tools::Convert<int>::to_string(values[i]);
-          }
-        return result;
-      }
-
-      std::string
-      to_string(const std::vector<std::string> &values)
-      {
-        std::string result;
-        for (unsigned int i = 0; i < values.size(); ++i)
-          {
-            if (i != 0)
-              result += ", ";
-            result += values[i];
-          }
-        return result;
-      }
-
-      std::string
-      to_string(const Point<3> &point)
-      {
-        return Patterns::Tools::Convert<double>::to_string(point[0]) + " , " +
-               Patterns::Tools::Convert<double>::to_string(point[1]) + " , " +
-               Patterns::Tools::Convert<double>::to_string(point[2]);
-      }
-
-      std::string
-      to_string(const Tensor<1, 3> &tensor)
-      {
-        return Patterns::Tools::Convert<double>::to_string(tensor[0]) + ", " +
-               Patterns::Tools::Convert<double>::to_string(tensor[1]) + ", " +
-               Patterns::Tools::Convert<double>::to_string(tensor[2]);
-      }
-
       template <int dim>
       std::string
       to_string(const typename InsertionInfo<dim>::InsertionMethod method)
@@ -679,25 +614,32 @@ namespace Parameters
 
         prm.declare_entry(
           "removal box points coordinates",
-          to_string(defaults.clear_box_point_1) + " : " +
-            to_string(defaults.clear_box_point_2),
+          Patterns::Tools::Convert<Point<3>>::to_string(
+            defaults.clear_box_point_1) +
+            " : " +
+            Patterns::Tools::Convert<Point<3>>::to_string(
+              defaults.clear_box_point_2),
           Patterns::List(
             Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
           "Coordinates of two points for the removal box (x1, y1, z1 : x2, y2, z2)");
 
         // File:
-        prm.declare_entry("list of input files",
-                          to_string(defaults.list_of_input_files),
-                          Patterns::List(Patterns::FileName()),
-                          "The file name from which we load the particles");
+        prm.declare_entry(
+          "list of input files",
+          Patterns::Tools::Convert<std::vector<std::string>>::to_string(
+            defaults.list_of_input_files),
+          Patterns::List(Patterns::FileName()),
+          "The file name from which we load the particles");
 
         // Plane:
         prm.declare_entry("insertion plane point",
-                          to_string(defaults.insertion_plane_point),
+                          Patterns::Tools::Convert<Point<3>>::to_string(
+                            defaults.insertion_plane_point),
                           Patterns::List(Patterns::Double()),
                           "Insertion plane point location");
         prm.declare_entry("insertion plane normal vector",
-                          to_string(defaults.insertion_plane_normal_vector),
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
+                            defaults.insertion_plane_normal_vector),
                           Patterns::List(Patterns::Double()),
                           "Insertion plane normal vector");
         prm.declare_entry(
@@ -707,71 +649,100 @@ namespace Parameters
           "If all the vertices of a cell are closer or equal to this value, than this cell is in the plane");
 
         // List:
-        prm.declare_entry("list x",
-                          to_string(defaults.list_x),
-                          Patterns::List(Patterns::Double()),
-                          "List of particles x positions");
-        prm.declare_entry("list y",
-                          to_string(defaults.list_y),
-                          Patterns::List(Patterns::Double()),
-                          "List of particles y positions");
-        prm.declare_entry("list z",
-                          to_string(defaults.list_z),
-                          Patterns::List(Patterns::Double()),
-                          "List of particles z positions");
-        prm.declare_entry("list velocity x",
-                          to_string(defaults.list_vx),
-                          Patterns::List(Patterns::Double()),
-                          "List of initial velocities x");
-        prm.declare_entry("list velocity y",
-                          to_string(defaults.list_vy),
-                          Patterns::List(Patterns::Double()),
-                          "List of initial velocities y");
-        prm.declare_entry("list velocity z",
-                          to_string(defaults.list_vz),
-                          Patterns::List(Patterns::Double()),
-                          "List of initial velocities z");
-        prm.declare_entry("list omega x",
-                          to_string(defaults.list_wx),
-                          Patterns::List(Patterns::Double()),
-                          "List of initial omega x");
-        prm.declare_entry("list omega y",
-                          to_string(defaults.list_wy),
-                          Patterns::List(Patterns::Double()),
-                          "List of initial omega y");
-        prm.declare_entry("list omega z",
-                          to_string(defaults.list_wz),
-                          Patterns::List(Patterns::Double()),
-                          "List of initial omega z");
-        prm.declare_entry("list diameters",
-                          to_string(defaults.list_d),
-                          Patterns::List(Patterns::Double()),
-                          "List of diameters");
-        prm.declare_entry("list temperatures",
-                          to_string(defaults.list_T),
-                          Patterns::List(Patterns::Double()),
-                          "List of initial temperatures");
+        prm.declare_entry(
+          "list x",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_x),
+          Patterns::List(Patterns::Double()),
+          "List of particles x positions");
+        prm.declare_entry(
+          "list y",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_y),
+          Patterns::List(Patterns::Double()),
+          "List of particles y positions");
+        prm.declare_entry(
+          "list z",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_z),
+          Patterns::List(Patterns::Double()),
+          "List of particles z positions");
+        prm.declare_entry(
+          "list velocity x",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_vx),
+          Patterns::List(Patterns::Double()),
+          "List of initial velocities x");
+        prm.declare_entry(
+          "list velocity y",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_vy),
+          Patterns::List(Patterns::Double()),
+          "List of initial velocities y");
+        prm.declare_entry(
+          "list velocity z",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_vz),
+          Patterns::List(Patterns::Double()),
+          "List of initial velocities z");
+        prm.declare_entry(
+          "list omega x",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_wx),
+          Patterns::List(Patterns::Double()),
+          "List of initial omega x");
+        prm.declare_entry(
+          "list omega y",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_wy),
+          Patterns::List(Patterns::Double()),
+          "List of initial omega y");
+        prm.declare_entry(
+          "list omega z",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_wz),
+          Patterns::List(Patterns::Double()),
+          "List of initial omega z");
+        prm.declare_entry(
+          "list diameters",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_d),
+          Patterns::List(Patterns::Double()),
+          "List of diameters");
+        prm.declare_entry(
+          "list temperatures",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_T),
+          Patterns::List(Patterns::Double()),
+          "List of initial temperatures");
         // Volume:
         if constexpr (dim == 2)
           {
-            prm.declare_entry("insertion direction sequence",
-                              to_string(defaults.direction_sequence),
-                              Patterns::List(Patterns::Integer(0, 1), 2, 2),
-                              "Direction of particle insertion for the volume "
-                              "insertion method.");
+            prm.declare_entry(
+              "insertion direction sequence",
+              Patterns::Tools::Convert<std::vector<unsigned int>>::to_string(
+                defaults.direction_sequence),
+              Patterns::List(Patterns::Integer(0, 1), 2, 2),
+              "Direction of particle insertion for the volume "
+              "insertion method.");
           }
         else
           {
-            prm.declare_entry("insertion direction sequence",
-                              to_string(defaults.direction_sequence),
-                              Patterns::List(Patterns::Integer(0, 2), 3, 3),
-                              "Direction of particle insertion for the volume "
-                              "insertion method.");
+            prm.declare_entry(
+              "insertion direction sequence",
+              Patterns::Tools::Convert<std::vector<unsigned int>>::to_string(
+                defaults.direction_sequence),
+              Patterns::List(Patterns::Integer(0, 2), 3, 3),
+              "Direction of particle insertion for the volume "
+              "insertion method.");
           }
         prm.declare_entry(
           "insertion box points coordinates",
-          to_string(defaults.insertion_box_point_1) + " : " +
-            to_string(defaults.insertion_box_point_2),
+          Patterns::Tools::Convert<Point<3>>::to_string(
+            defaults.insertion_box_point_1) +
+            " : " +
+            Patterns::Tools::Convert<Point<3>>::to_string(
+              defaults.insertion_box_point_2),
           Patterns::List(
             Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
           "Coordinates of two points for the insertion box (x1, y1, z1 : x2, y2, z2)");
@@ -806,11 +777,13 @@ namespace Parameters
           Patterns::Integer(),
           "Pseudo-random number seed used to generate the position offsets");
         prm.declare_entry("initial velocity",
-                          to_string(defaults.initial_vel),
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
+                            defaults.initial_vel),
                           Patterns::List(Patterns::Double()),
                           "Initial velocity (x, y, z)");
         prm.declare_entry("initial angular velocity",
-                          to_string(defaults.initial_omega),
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
+                            defaults.initial_omega),
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
 
@@ -2267,7 +2240,8 @@ namespace Parameters
       {
         // Location of the first photon to be inserted
         prm.declare_entry("starting photon insertion position",
-                          to_string(defaults.starting_point),
+                          Patterns::Tools::Convert<Point<3>>::to_string(
+                            defaults.starting_point),
                           Patterns::List(Patterns::Double()),
                           "Location of the first photon being inserted.");
 
@@ -2296,7 +2270,8 @@ namespace Parameters
         // In which direction photons will move considering a photon maximum
         // angle offset equal to 0.
         prm.declare_entry("reference displacement vector",
-                          to_string(defaults.ref_displacement_tensor_unit),
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
+                            defaults.ref_displacement_tensor_unit),
                           Patterns::List(Patterns::Double()),
                           "Reference displacement vector of each photons.");
 
