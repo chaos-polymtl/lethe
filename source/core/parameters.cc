@@ -371,7 +371,7 @@ namespace Parameters
                         "This setting percolates to all output to the log");
 
       prm.declare_entry("output times",
-                        to_string(defaults.output_times_vector),
+                        Patterns::Tools::Convert<std::vector<double>>::to_string(defaults.output_times_vector),
                         Patterns::List(Patterns::Double()),
                         "List of specific output times separated with a comma");
 
@@ -391,7 +391,7 @@ namespace Parameters
         "Results can be either outputted at constant iteration frequency or at constant time");
 
       prm.declare_entry("output time interval",
-                        to_string(defaults.output_time_interval),
+                        Patterns::Tools::Convert<std::vector<double>>::to_string(defaults.output_time_interval),
                         Patterns::List(Patterns::Double()),
                         "Output files for a desired time interval");
 
@@ -807,7 +807,7 @@ namespace Parameters
   void
   IsothermalIdealGasDensityParameters::declare_parameters(ParameterHandler &prm)
   {
-    // dry air's density, specific gas constant and normal temperature
+    // Dry air's density, specific gas constant and normal temperature
     // (20 °C, 1 atm) as defaults
     const IsothermalIdealGasDensityParameters defaults;
     prm.enter_subsection("isothermal_ideal_gas");
@@ -3562,7 +3562,7 @@ namespace Parameters
         prm.declare_entry(
           "kinsol strategy",
           to_string(defaults.kinsol_strategy),
-          Patterns::Selection("normal_newton|line_search|fixed_point|picard"),
+          Patterns::Selection("normal_newton|line_search|picard"),
           "Strategy that will be used by the kinsol newton solver");
 
         prm.declare_entry("tolerance",
