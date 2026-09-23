@@ -50,6 +50,8 @@ report_cell_size_to_particle_diameter_ratio(
   double ratio = min_vertex_distance / maximum_particle_diameter;
   pcout << "Minimum cell size to maximum particle diameter ratio: " << ratio
         << std::endl;
+  pcout << "-------------------------------------------------------------------"
+        << std::endl;
 
   if (ratio < 1.0)
     {

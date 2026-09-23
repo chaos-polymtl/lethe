@@ -124,8 +124,8 @@ protected:
    * @brief Set the initial condition. The version in this class does not output
    * the solution, since the void fraction is not initialized yet.
    *
-   * @param[in] initial_condition_type Type of method  use to impose initial
-   *condition.
+   * @param[in] initial_condition_type Type of method used to impose initial
+   * condition.
    *
    * @param[in] restart Indicator if the simulation is being restarted or not.
    *
@@ -153,10 +153,6 @@ protected:
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
-
-    this->pcout
-      << "---------------------------------------------------------------"
-      << std::endl;
   }
 
   /**
