@@ -1341,11 +1341,8 @@ namespace Parameters
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
   {
     fluids.resize(max_fluids);
-    number_of_fluids = 1;
     solids.resize(max_solids);
-    number_of_solids = 0;
     material_interactions.resize(max_material_interactions);
-    number_of_material_interactions = 0;
 
     prm.enter_subsection("physical properties");
     {
