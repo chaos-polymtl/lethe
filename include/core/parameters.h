@@ -619,7 +619,7 @@ namespace Parameters
     double k_A1 = 0.;
 
     /// Material parameters for the electromagnetics solver. Only the
-    /// permittivity and the permability are complex-valued because they can
+    /// permittivity and the permeability are complex-valued because they can
     /// store electromagnetic energy in the medium and also dissipate it.
 
     /// Electric_conductivity
@@ -840,13 +840,15 @@ namespace Parameters
    */
   struct Stabilization
   {
-    // Defines if default stabilization parameters should be used
+    /// Defines if default stabilization parameters should be used
     bool use_default_stabilization = true;
 
+    /// Indicates if DCDD stabilization should be used for the heat transfer 
+    /// equation 
     bool heat_transfer_dcdd_stabilization = false;
 
     /// Boolean indicating if the DCDD stabilization term for the CLS phase
-    /// fraction should be assembled (@p true) or not (@p false).
+    /// indicator should be assembled (@p true) or not (@p false).
     bool cls_dcdd_stabilization = true;
 
     // Diffusion factor scaling the DCDD stabilization term in the CLS equation
@@ -1353,7 +1355,7 @@ namespace Parameters
       Parameters::FluidIndicator::fluid0;
 
     /// Melting temperature iso-value
-    double melting_temperature = 0;
+    double melting_temperature = 0.;
 
     /// Enable heat flux calculation
     bool calculate_heat_flux = false;
