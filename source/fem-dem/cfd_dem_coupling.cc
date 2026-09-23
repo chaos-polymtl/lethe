@@ -1628,11 +1628,6 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
          .restart)
     read_dem();
 
-  report_cell_size_to_particle_diameter_ratio(*this->triangulation,
-                                              maximum_particle_diameter,
-                                              this->pcout,
-                                              this->mpi_communicator);
-
   this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
 
   this->setup_dofs();
@@ -1641,6 +1636,11 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
+
+  report_cell_size_to_particle_diameter_ratio(*this->triangulation,
+                                              maximum_particle_diameter,
+                                              this->pcout,
+                                              this->mpi_communicator);
 
   // In the case the simulation is being restarted from a checkpoint file, the
   // restart_simulation parameter is set to true. This allows to perform all

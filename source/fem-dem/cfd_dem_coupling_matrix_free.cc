@@ -1647,10 +1647,6 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
       !this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
          .restart)
     read_dem();
-  report_cell_size_to_particle_diameter_ratio(*this->triangulation,
-                                              maximum_particle_diameter,
-                                              this->pcout,
-                                              this->mpi_communicator);
 
   this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
 
@@ -1660,6 +1656,11 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
+
+  report_cell_size_to_particle_diameter_ratio(*this->triangulation,
+                                              maximum_particle_diameter,
+                                              this->pcout,
+                                              this->mpi_communicator);
 
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart)
