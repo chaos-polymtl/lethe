@@ -1906,15 +1906,17 @@ ParticleProjector<dim,
       1.0;
 
   // Get the solver's minimum tolerance set in the prm
-  const double minimum_absolute_residual = linear_solver_parameters.minimum_residual;
+  const double minimum_absolute_residual =
+    linear_solver_parameters.minimum_residual;
   // Get the relative residual set in the prm
   const double relative_residual = linear_solver_parameters.relative_residual;
-  // Get the current residual of the system and scale it by the rescale metric 
+  // Get the current residual of the system and scale it by the rescale metric
   // if required
-  const double current_residual = system_rhs_void_fraction.l2_norm() / rescale_metric;
+  const double current_residual =
+    system_rhs_void_fraction.l2_norm() / rescale_metric;
   // Calculate the scaled absolute tolerance of the linear solver
-  const double linear_solver_tolerance = std::max(minimum_absolute_residual, 
-                                          relative_residual * current_residual);
+  const double linear_solver_tolerance =
+    std::max(minimum_absolute_residual, relative_residual * current_residual);
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
