@@ -782,7 +782,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
   // Prepare the void fraction solution and the particle handler for the
   // upcoming triangulation change, exactly as done for an actual mesh
   // refinement.
-  this->prepare_particles_for_mesh_adaptation();
+  this->prepare_VANS_for_mesh_adaptation();
 
   this->pcout << "-->Repartitioning triangulation" << std::endl;
 
@@ -812,6 +812,8 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
 
   this->pcout << "Setup DOFs" << std::endl;
   this->setup_dofs();
+
+  rebuild_dem_caches_after_triangulation_change();
 
   // Velocity Vectors
   std::vector<VectorType *> x_system(1 + this->previous_solutions->size());
@@ -858,7 +860,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
   // Restore the void fraction solution, unpack the particle handler, and
   // rebuild the DEM contact-detection caches, exactly as done for an
   // actual mesh refinement.
-  this->unpack_particles_after_mesh_adaptation();
+  this->restore_VANS_after_mesh_adaptation();
 }
 
 template <int dim, typename PropertiesIndex>
@@ -902,14 +904,6 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::
     this->particle_projector.dof_handler);
 }
 
-template <int dim, typename PropertiesIndex>
-void
-CFDDEMMatrixFree<dim, PropertiesIndex>::unpack_particles_after_mesh_adaptation()
-{
-  FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
-    unpack_particles_after_mesh_adaptation();
-  rebuild_dem_caches_after_triangulation_change();
-}
 
 template <int dim, typename PropertiesIndex>
 void
@@ -1628,6 +1622,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
       if (!this->simulation_control->is_at_start())
         {
           this->refine_mesh_and_synchronize_particles();
+          rebuild_dem_caches_after_triangulation_change();
         }
 
       // We calculate the void fraction and the particle-fluid interaction using

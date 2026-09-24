@@ -189,67 +189,78 @@ FluidDynamicsVANS<dim, PropertiesIndex>::vertices_cell_mapping()
 
 template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim, PropertiesIndex>::prepare_particles_for_mesh_adaptation()
+FluidDynamicsVANS<dim, PropertiesIndex>::prepare_VANS_for_mesh_adaptation()
 {
-  // Void fraction SolutionTransfer. Also used in CFDDEMSolver::load_balance()
-  // when the triangulation is repartitioned instead of refined.
+  // Void Fraction
   std::vector<const GlobalVectorType *> vf_set_transfer;
-  vf_set_transfer.push_back(&particle_projector.void_fraction_locally_relevant);
-  for (const auto &previous : particle_projector.previous_void_fraction)
-    vf_set_transfer.push_back(&previous);
+  vf_set_transfer.push_back(
+    &this->particle_projector.void_fraction_locally_relevant);
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      vf_set_transfer.push_back(
+        &this->particle_projector.previous_void_fraction[i]);
+    }
 
+  // Prepare for Serialization
   void_fraction_solution_transfer =
     std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(
       particle_projector.dof_handler);
   void_fraction_solution_transfer->prepare_for_coarsening_and_refinement(
     vf_set_transfer);
 
-  // The particle handler must also be prepared before the triangulation
-  // changes, so particles are correctly relocated to their new cells.
-  particle_handler.prepare_for_coarsening_and_refinement();
+  // Prepare particle handle for serialization
+  this->particle_handler.prepare_for_coarsening_and_refinement();
 }
 
 template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANS<dim,
-                  PropertiesIndex>::unpack_particles_after_mesh_adaptation()
+FluidDynamicsVANS<dim, PropertiesIndex>::restore_VANS_after_mesh_adaptation()
 {
-  // particle_projector.dof_handler was already redistributed (and its
-  // vectors zeroed by ParticleProjector::setup_dofs()) by the setup_dofs()
-  // call inside NavierStokesBase::refine_mesh_uniform()/refine_mesh_adaptive().
-  // Restore the void fraction field now, this is also called in
-  // CFDDEMSolver::load_balance() when the triangulation is repartitioned
-  // instead of refined.
+  // Void Fraction Vectors
   std::vector<GlobalVectorType *> vf_system(
-    1 + particle_projector.previous_void_fraction.size());
+    1 + this->particle_projector.previous_void_fraction.size());
 
-  GlobalVectorType vf_distributed_system(particle_projector.locally_owned_dofs,
-                                         this->mpi_communicator);
-  vf_system[0] = &vf_distributed_system;
+  GlobalVectorType vf_distributed_system(
+    this->particle_projector.locally_owned_dofs, this->mpi_communicator);
+
+  vf_system[0] = &(vf_distributed_system);
 
   std::vector<GlobalVectorType> vf_distributed_previous_solutions;
+
   vf_distributed_previous_solutions.reserve(
-    particle_projector.previous_void_fraction.size());
-  for (unsigned int i = 0; i < particle_projector.previous_void_fraction.size();
+    this->particle_projector.previous_void_fraction.size());
+
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
-        particle_projector.locally_owned_dofs, this->mpi_communicator);
+        GlobalVectorType(this->particle_projector.locally_owned_dofs,
+                         this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
 
   void_fraction_solution_transfer->interpolate(vf_system);
 
-  particle_projector.void_fraction_locally_relevant = vf_distributed_system;
-  for (unsigned int i = 0; i < particle_projector.previous_void_fraction.size();
+  this->particle_projector.void_fraction_locally_relevant =
+    vf_distributed_system;
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
        ++i)
-    particle_projector.previous_void_fraction[i] =
-      vf_distributed_previous_solutions[i];
+    {
+      this->particle_projector.previous_void_fraction[i] =
+        vf_distributed_previous_solutions[i];
+    }
 
   void_fraction_solution_transfer.reset();
 
-  // Unpack particle handler now that the triangulation change is complete.
-  particle_handler.unpack_after_coarsening_and_refinement();
+  // Unpack particle handler after load balancing step
+  this->particle_handler.unpack_after_coarsening_and_refinement();
+
+  // Regenerate vertex to cell map
+  this->vertices_cell_mapping();
 }
 
 template <int dim, typename PropertiesIndex>
@@ -280,12 +291,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::refine_mesh_and_synchronize_particles()
     is_refinement_step && (uniform_under_max_level || is_adaptive);
 
   if (will_refine)
-    prepare_particles_for_mesh_adaptation();
+    prepare_VANS_for_mesh_adaptation();
 
   this->refine_mesh();
 
   if (will_refine)
-    unpack_particles_after_mesh_adaptation();
+    restore_VANS_after_mesh_adaptation();
 }
 
 // Do an iteration with the NavierStokes Solver
@@ -1313,7 +1324,6 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
       else
         {
           refine_mesh_and_synchronize_particles();
-          vertices_cell_mapping();
           calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }

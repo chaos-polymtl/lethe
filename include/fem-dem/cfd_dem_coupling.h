@@ -140,7 +140,7 @@ protected:
     do
       {
         if (ref_iter > 0)
-          this->refine_mesh_and_synchronize_particles();
+          this->refine_mesh();
 
         this->set_initial_condition_fd(initial_condition_type, restart);
         if (!restart)
@@ -213,23 +213,9 @@ protected:
    * @brief Rebuild the DEM contact-detection caches (cell neighbor lists,
    * boundary cells, adaptive sparse contacts local/ghost cell set, periodic
    * cell remap) from the current triangulation.
-   *
-   * These caches only depend on the current triangulation state, not on why
-   * it changed, so this is used both after load balancing (repartitioning)
-   * and after mesh refinement/coarsening.
    */
   void
   rebuild_dem_caches_after_triangulation_change();
-
-  /**
-   * @brief Restore the particle handler and void fraction solution after a
-   * triangulation change
-   * (FluidDynamicsVANS::unpack_particles_after_mesh_adaptation()), then rebuild
-   * the DEM contact-detection caches, which also go stale after a triangulation
-   * change.
-   */
-  void
-  unpack_particles_after_mesh_adaptation() override;
 
   /**
    * @brief Check if particles need to be inserted and perform insertion.
