@@ -120,6 +120,7 @@ class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
   /**
+   * @brief Construct the Navier-Stokes base and the multiphysics interface.
    * @param[in] nsparam Relevant parameters for the solver.
    * @param[in] p_is_vans Whether the solver solves the volume-averaged
    * Navier-Stokes (VANS) equations, as opposed to the standard

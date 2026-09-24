@@ -258,12 +258,10 @@ protected:
    * @brief Refine or coarsen the mesh, keeping the particle handler and the
    * void fraction solution consistent with the new triangulation.
    *
-   * NavierStokesBase::refine_mesh() has no knowledge of the particle handler
-   * or of the void fraction solution, which lives on a separate DoFHandler.
-   * This wraps that call with the particle-handler/void-fraction
-   * prepare-and-unpack sequence for coarsening and refinement, mirroring
-   * what CFDDEMMatrixFree::load_balance() already does for the same data
-   * when the triangulation is repartitioned instead of refined.
+   * This function is needed because NavierStokesBase::refine_mesh() has no
+   * knowledge of the particle handler or of the void fraction solution. This
+   * function therefore wraps that call with the particle-handler/void-fraction
+   * prepare-and-unpack sequence for coarsening and refinement when necessary.
    */
   void
   refine_mesh_and_synchronize_particles();
@@ -271,27 +269,16 @@ protected:
   /**
    * @brief Prepare the particle handler and the void fraction solution for
    * an upcoming triangulation change (mesh refinement or coarsening).
-   *
-   * Must be called immediately before the triangulation is actually
-   * changed, with unpack_particles_after_mesh_adaptation() called
-   * immediately after, and nothing else modifying the triangulation or
-   * redistributing degrees of freedom in between. Virtual so that
-   * CFDDEMMatrixFree can extend it with DEM-specific bookkeeping.
    */
-  virtual void
-  prepare_particles_for_mesh_adaptation();
+  void
+  prepare_VANS_for_mesh_adaptation();
 
   /**
    * @brief Restore the particle handler and the void fraction solution
-   * after a triangulation change.
-   *
-   * Must be called after setup_dofs() has redistributed the void fraction
-   * DoFHandler on the new triangulation. Virtual so that CFDDEMMatrixFree
-   * can extend it to also rebuild the DEM contact-detection caches, which
-   * likewise go stale after a triangulation change.
+   * after a triangulation change, and rebuild the vertex-to-cell map.
    */
-  virtual void
-  unpack_particles_after_mesh_adaptation();
+  void
+  restore_VANS_after_mesh_adaptation();
 
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
@@ -314,8 +301,7 @@ protected:
   /// Vector to store the time derivative of the void fraction
   VectorType time_derivative_void_fraction;
 
-  /// Bridges the void fraction solution across the prepare/unpack split of
-  /// a mesh refinement or coarsening step
+  /// Void fraction solution transfer object for mesh adaptation
   std::unique_ptr<SolutionTransfer<dim, VectorType>>
     void_fraction_solution_transfer;
 };

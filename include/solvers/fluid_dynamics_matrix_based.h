@@ -34,6 +34,7 @@ class FluidDynamicsMatrixBased
 {
 public:
   /**
+   * @brief Construct the matrix-based Navier-Stokes solver.
    * @param[in] nsparam Relevant parameters for the solver.
    * @param[in] p_is_vans Whether the solver solves the volume-averaged
    * Navier-Stokes (VANS) equations, as opposed to the standard

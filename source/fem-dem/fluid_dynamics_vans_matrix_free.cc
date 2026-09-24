@@ -929,24 +929,22 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
 
 template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
-  prepare_particles_for_mesh_adaptation()
+FluidDynamicsVANSMatrixFree<dim,
+                            PropertiesIndex>::prepare_VANS_for_mesh_adaptation()
 {
-  // Void fraction SolutionTransfer. Mirrors the void fraction transfer
-  // already done in CFDDEMMatrixFree::load_balance() when the triangulation
-  // is repartitioned instead of refined.
+  // Void Fraction
   std::vector<const VectorType *> vf_set_transfer;
-  vf_set_transfer.push_back(&particle_projector.void_fraction_solution);
-  particle_projector.void_fraction_solution.update_ghost_values();
+  vf_set_transfer.push_back(&this->particle_projector.void_fraction_solution);
+  this->particle_projector.void_fraction_solution.update_ghost_values();
 
   for (unsigned int i = 0;
-       i < particle_projector.void_fraction_previous_solution.size();
+       i < this->particle_projector.void_fraction_previous_solution.size();
        ++i)
     {
-      particle_projector.void_fraction_previous_solution[i]
+      this->particle_projector.void_fraction_previous_solution[i]
         .update_ghost_values();
       vf_set_transfer.push_back(
-        &particle_projector.void_fraction_previous_solution[i]);
+        &this->particle_projector.void_fraction_previous_solution[i]);
     }
 
   void_fraction_solution_transfer =
@@ -963,73 +961,96 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
 template <int dim, typename PropertiesIndex>
 void
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
-  unpack_particles_after_mesh_adaptation()
+  restore_VANS_after_mesh_adaptation()
 {
-  // particle_projector.dof_handler was already redistributed (and its
-  // vectors zeroed by ParticleProjector::setup_dofs()) by the setup_dofs()
-  // call inside NavierStokesBase::refine_mesh_uniform()/refine_mesh_adaptive().
-  // Restore the void fraction field now, mirroring
-  // CFDDEMMatrixFree::load_balance().
+  // Void Fraction Vectors
   std::vector<VectorType *> vf_system(
-    1 + particle_projector.void_fraction_previous_solution.size());
+    1 + this->particle_projector.previous_void_fraction.size());
 
-  VectorType vf_distributed_system(particle_projector.locally_owned_dofs,
-                                   particle_projector.locally_relevant_dofs,
-                                   this->mpi_communicator);
-  vf_system[0] = &vf_distributed_system;
+  VectorType vf_distributed_system(
+    this->particle_projector.locally_owned_dofs,
+    this->particle_projector.locally_relevant_dofs,
+    this->mpi_communicator);
+
+  vf_system[0] = &(vf_distributed_system);
 
   std::vector<VectorType> vf_distributed_previous_solutions;
+
   vf_distributed_previous_solutions.reserve(
-    particle_projector.void_fraction_previous_solution.size());
+    this->particle_projector.previous_void_fraction.size());
+
   for (unsigned int i = 0;
-       i < particle_projector.void_fraction_previous_solution.size();
+       i < this->particle_projector.previous_void_fraction.size();
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
-        particle_projector.locally_owned_dofs,
-        particle_projector.locally_relevant_dofs,
-        this->mpi_communicator);
+        VectorType(this->particle_projector.locally_owned_dofs,
+                   this->particle_projector.locally_relevant_dofs,
+                   this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
 
   void_fraction_solution_transfer->interpolate(vf_system);
+
+  // From here on, the void fraction vectors are interpolated and we can safely
+  // delete the solution transfer object.
   void_fraction_solution_transfer.reset();
 
-  // interpolate() only fills locally owned entries, leaving stale ghosts,
-  // just like in CFDDEMMatrixFree::load_balance() -- refresh them before
-  // storing, since the BDF void fraction time derivative amplifies stale
-  // ghosts by ~1/dt.
+  // Refresh the ghost values of the freshly interpolated void fraction vectors,
+  // exactly as is done for the fluid vectors above. interpolate() only fills
+  // locally owned entries, leaving stale ghosts. If these are not refreshed,
+  // the stale ghosts are later propagated by percolate_void_fraction (which
+  // copies whole vectors) and, when a checkpoint is written on a load balance
+  // step, packed into the checkpoint by prepare_for_serialization (which reads
+  // ghost values to serialize the dofs of locally owned cells sitting on a
+  // subdomain boundary). This would store wrong void fractions on those dofs
+  // and, since the BDF void fraction time derivative amplifies them by ~1/dt,
+  // cause an abnormally high residual on the restarted step.
   vf_distributed_system.update_ghost_values();
-  particle_projector.void_fraction_solution = vf_distributed_system;
+
+  // Store the interpolated void fraction before converting it to a Trilinos
+  // vector, otherwise the conversion below would pick up the stale (post
+  // setup_dofs, zeroed) content of void_fraction_solution instead of the
+  // freshly interpolated field.
+  this->particle_projector.void_fraction_solution = vf_distributed_system;
 
 #ifndef LETHE_USE_LDV
   // We also wish the Trilinos solution to be updated.
   convert_vector_dealii_to_trilinos(
-    particle_projector.void_fraction_locally_owned,
-    particle_projector.void_fraction_solution);
-  particle_projector.void_fraction_locally_relevant =
-    particle_projector.void_fraction_locally_owned;
+    this->particle_projector.void_fraction_locally_owned,
+    this->particle_projector.void_fraction_solution);
+
+  this->particle_projector.void_fraction_locally_relevant =
+    this->particle_projector.void_fraction_locally_owned;
 #endif
 
   for (unsigned int i = 0;
-       i < particle_projector.void_fraction_previous_solution.size();
+       i < this->particle_projector.previous_void_fraction.size();
        ++i)
     {
+      // Refresh the ghost values before storing, for the same reason as the
+      // void_fraction_solution above: interpolate() leaves stale ghosts, which
+      // would otherwise be propagated by percolation and serialized into the
+      // checkpoint on a load balance step.
       vf_distributed_previous_solutions[i].update_ghost_values();
-      particle_projector.void_fraction_previous_solution[i] =
+
+      this->particle_projector.void_fraction_previous_solution[i] =
         vf_distributed_previous_solutions[i];
 
 #ifndef LETHE_USE_LDV
+      // We also wish the Trilinos solution to be updated.
       convert_vector_dealii_to_trilinos(
-        particle_projector.void_fraction_locally_owned,
-        particle_projector.void_fraction_previous_solution[i]);
-      particle_projector.previous_void_fraction[i] =
-        particle_projector.void_fraction_locally_owned;
+        this->particle_projector.void_fraction_locally_owned,
+        this->particle_projector.void_fraction_previous_solution[i]);
+      this->particle_projector.previous_void_fraction[i] =
+        this->particle_projector.void_fraction_locally_owned;
 #endif
     }
 
-  // Unpack particle handler now that the triangulation change is complete.
-  particle_handler.unpack_after_coarsening_and_refinement();
+  vf_system.clear();
+
+  // Unpack particle handler after load balancing step
+  this->particle_handler.unpack_after_coarsening_and_refinement();
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1061,12 +1082,12 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
     is_refinement_step && (uniform_under_max_level || is_adaptive);
 
   if (will_refine)
-    prepare_particles_for_mesh_adaptation();
+    prepare_VANS_for_mesh_adaptation();
 
   this->refine_mesh();
 
   if (will_refine)
-    unpack_particles_after_mesh_adaptation();
+    restore_VANS_after_mesh_adaptation();
 }
 
 template <int dim, typename PropertiesIndex>
