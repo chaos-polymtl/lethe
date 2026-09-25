@@ -1345,6 +1345,13 @@ namespace Parameters
     /// Melting temperature iso-value
     double melting_temperature;
 
+    /// Enable the global enthalpy variation post-processing
+    bool calculate_global_enthalpy_variation = false;
+
+    /// Prefix for the global enthalpy variation output filename
+    std::string global_enthalpy_variation_output_name =
+      "global_enthalpy_variation";
+
     /// Enable heat flux calculation
     bool calculate_heat_flux;
 

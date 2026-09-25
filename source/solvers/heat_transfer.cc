@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include "core/interface_tools.h"
 #include <core/bdf.h>
+#include <core/interface_tools.h>
 #include <core/time_integration_utilities.h>
 
 #include <solvers/heat_transfer.h>
@@ -1209,6 +1209,18 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         this->write_geometric_melt_volume();
     }
 
+  // Global enthalpy variation
+  if (simulation_parameters.post_processing.calculate_global_enthalpy_variation)
+    {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Calculate global enthalpy variation");
+      postprocess_global_enthalpy_variation();
+      if (simulation_control->get_iteration_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        this->write_global_enthalpy_variation();
+    }
+
   // Temperature isocontour bounding boxes
   if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
         .ids_and_isocontours_per_variable.contains(Variable::temperature))
@@ -1397,6 +1409,15 @@ HeatTransfer<dim>::gather_tables()
           .geometric_melt_volume_output_name +
         suffix);
 
+  if (this->simulation_parameters.post_processing
+        .calculate_global_enthalpy_variation)
+    table_output_structs.emplace_back(
+      this->global_enthalpy_postprocessing.global_enthalpy_variation_table,
+      prefix +
+        this->simulation_parameters.post_processing
+          .global_enthalpy_variation_output_name +
+        suffix);
+
   if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
         .ids_and_isocontours_per_variable.contains(Variable::temperature))
     {
@@ -1460,6 +1481,12 @@ HeatTransfer<dim>::write_checkpoint()
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
   serialize_tables_vector(table_output_structs, mpi_communicator);
+
+  // Save initial enthalpy value
+  if (this->simulation_parameters.post_processing
+        .calculate_global_enthalpy_variation)
+    this->global_enthalpy_postprocessing.save_initial_enthalpy(
+      checkpoint_file_prefix);
 }
 
 template <int dim>
@@ -1530,8 +1557,13 @@ HeatTransfer<dim>::read_checkpoint()
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
   deserialize_tables_vector(table_output_structs, mpi_communicator);
-}
 
+  // Get initial enthalpy value
+  if (this->simulation_parameters.post_processing
+        .calculate_global_enthalpy_variation)
+    this->global_enthalpy_postprocessing.read_initial_enthalpy(
+      checkpoint_file_prefix);
+}
 
 template <int dim>
 void
@@ -2203,7 +2235,8 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
         &this->multiphysics->get_dof_handler(PhysicsID::CLS),
         [](const DoFHandler<dim> *) {});
       fe_values_cls =
-        std::make_shared<FEValues<dim>>(*this->temperature_mapping,
+        std::make_shared<FEValues<dim>>(this->multiphysics->get_mapping(
+                                          PhysicsID::CLS),
                                         dof_handler_cls->get_fe(),
                                         *this->cell_quadrature,
                                         update_values);
@@ -2484,6 +2517,204 @@ HeatTransfer<dim>::write_geometric_melt_volume()
       std::ofstream output(filename.c_str());
 
       this->melt_volume_geo_table.write_text(output);
+    }
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::postprocess_global_enthalpy_variation()
+{
+  const unsigned int n_q_points   = this->cell_quadrature->size();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+
+  // Local variable to check if it is a CLS simulation
+  const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
+
+  // Initialize heat transfer information
+  std::vector<double> local_temperature_values(n_q_points);
+  FEValues<dim>       fe_values_ht(*this->temperature_mapping,
+                             *this->fe,
+                             *this->cell_quadrature,
+                             update_values | update_JxW_values);
+
+  // Initialize CLS information
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_cls;
+  std::shared_ptr<FEValues<dim>>         fe_values_cls;
+  std::vector<double>                    filtered_phase_values(n_q_points);
+  if (gather_cls)
+    {
+      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
+        [](const DoFHandler<dim> *) {});
+      fe_values_cls =
+        std::make_shared<FEValues<dim>>(this->multiphysics->get_mapping(
+                                          PhysicsID::CLS),
+                                        dof_handler_cls->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values);
+    }
+
+  // Initialize fluid dynamics (fd) information for the pressure field if
+  // required
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_fd;
+  std::shared_ptr<FEValues<dim>>         fe_values_fd;
+  std::vector<double>                    pressure_values(n_q_points);
+  FEValuesExtractors::Scalar             pressure_extractor(dim);
+
+  // Initialize fluid property information
+  auto &properties_manager =
+    this->simulation_parameters.physical_properties_manager;
+  const auto &density_models = properties_manager.get_density_vector();
+  const auto &specific_heat_models =
+    properties_manager.get_specific_heat_vector();
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  density_0(n_q_points);
+  std::vector<double>                  density_1(n_q_points);
+
+  // Check if the pressure field is required
+  const bool &pressure_dependant =
+    properties_manager.field_is_required(field::pressure);
+
+  // Get prepare for necessary fields
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::temperature, n_q_points));
+  if (pressure_dependant)
+    {
+      fields.insert(
+        std::pair<field, std::vector<double>>(field::pressure, n_q_points));
+
+      dof_handler_fd = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::fluid_dynamics),
+        [](const DoFHandler<dim> *) {});
+      fe_values_fd =
+        std::make_shared<FEValues<dim>>(this->multiphysics->get_mapping(
+                                          PhysicsID::fluid_dynamics),
+                                        dof_handler_fd->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values);
+    }
+
+  // Initialize integration variable
+  double current_enthalpy(0.);
+
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Gather heat transfer information
+          fe_values_ht.reinit((cell));
+          fe_values_ht.get_function_values(*this->present_solution,
+                                           local_temperature_values);
+          set_field_vector(field::temperature,
+                           local_temperature_values,
+                           fields);
+
+          if (gather_cls)
+            {
+              // Get CLS active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_cls(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                &(*dof_handler_cls));
+
+              // Gather CLS information
+              fe_values_cls->reinit(cell_cls);
+              fe_values_cls->get_function_values(
+                this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+                filtered_phase_values);
+            }
+          if (pressure_dependant)
+            {
+              // Get fluid dynamics active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                &(*dof_handler_fd));
+
+              // Gather fluid dynamics information
+              fe_values_fd->reinit(cell_fd);
+              (*fe_values_fd)[pressure_extractor].get_function_values(
+                this->multiphysics->get_solution(PhysicsID::fluid_dynamics),
+                pressure_values);
+              set_field_vector(field::pressure, pressure_values, fields);
+            }
+
+          // Compute density in the cell
+          density_models[0]->vector_value(fields, density_0);
+          if (gather_cls)
+            density_models[1]->vector_value(fields, density_1);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              const double &temperature_q = local_temperature_values[q];
+              const double  enthalpy_0_q =
+                density_0[q] * specific_heat_models[0]->enthalpy(temperature_q);
+              // Single phase flow
+              if (!gather_cls)
+                current_enthalpy += enthalpy_0_q * fe_values_ht.JxW(q);
+              else
+                {
+                  const double enthalpy_1_q =
+                    density_1[q] *
+                    specific_heat_models[1]->enthalpy(temperature_q);
+
+                  current_enthalpy +=
+                    calculate_point_property(filtered_phase_values[q],
+                                             enthalpy_0_q,
+                                             enthalpy_1_q) *
+                    fe_values_ht.JxW(q);
+                }
+            } // End loop on quadrature points
+        }
+    } // End loop over cells
+
+  // Sum over processes
+  current_enthalpy = Utilities::MPI::sum(current_enthalpy, mpi_communicator);
+
+  // Set initial enthalpy if at the beginning of the simulation
+  if (this->simulation_control->get_iteration_number() == 0)
+    this->global_enthalpy_postprocessing.initial_enthalpy = current_enthalpy;
+
+  // Compute enthalpy variation from the beginning of the simulation
+  const double enthalpy_variation =
+    current_enthalpy - this->global_enthalpy_postprocessing.initial_enthalpy;
+
+  // Console output
+  if (this->simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+
+    this->pcout
+      << this->global_enthalpy_postprocessing.global_enthalpy_variation_label
+      << enthalpy_variation << std::endl;
+
+  // Add values to table
+  this->global_enthalpy_postprocessing.global_enthalpy_variation_table
+    .add_value("time", this->simulation_control->get_current_time());
+  this->global_enthalpy_postprocessing.global_enthalpy_variation_table
+    .add_value(this->global_enthalpy_postprocessing
+                 .global_enthalpy_variation_column_name,
+               enthalpy_variation);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::write_global_enthalpy_variation()
+{
+  auto mpi_communicator = triangulation->get_mpi_communicator();
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::string filename =
+        simulation_parameters.simulation_control.output_folder +
+        simulation_parameters.post_processing
+          .global_enthalpy_variation_output_name +
+        ".dat";
+      std::ofstream output(filename.c_str());
+
+      this->global_enthalpy_postprocessing.global_enthalpy_variation_table
+        .write_text(output);
     }
 }
 

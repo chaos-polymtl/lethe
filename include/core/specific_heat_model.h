@@ -28,6 +28,16 @@ public:
    */
   static std::shared_ptr<SpecificHeatModel>
   model_cast(const Parameters::Material &material_properties);
+
+  /**
+   * @brief Computes the specific enthalpy for a given temperature \f$T\f$.
+   *
+   * @param[in] T Temperature at which the enthalpy is computed.
+   *
+   * @return Value of the specific enthalpy evaluated at \f$T\f$.
+   */
+  virtual inline double
+  enthalpy(const double T) = 0;
 };
 
 
@@ -136,6 +146,20 @@ public:
     (void)id;
     std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
   };
+
+  /**
+   * @brief Computes the specific enthalpy for a given temperature \f$T\f$.
+   *
+   * @param[in] T Temperature at which the enthalpy is computed.
+   *
+   * @return Value of the specific enthalpy evaluated at \f$T\f$.
+   */
+  inline double
+  enthalpy(const double T) override
+  {
+    return specific_heat * T;
+  }
+
 
 private:
   const double specific_heat;
@@ -447,9 +471,8 @@ public:
    *
    * @return Value of the enthalpy evaluated at \f$T\f$.
    */
-
   inline double
-  enthalpy(const double T)
+  enthalpy(const double T) override
   {
     if (T > param.T_liquidus)
       return (param.cp_s * param.T_solidus +

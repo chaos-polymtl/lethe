@@ -1,6 +1,13 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#-------------------------------------------------------------------------------
+# DESCRIPTION:
+# This tests the box refinement feature, with the checkpointing system.
+# This test also checks gaussian_heat_flux_cls_interface model by simulating the
+# melt of a bare-plate.
+#-------------------------------------------------------------------------------
+
 # Listing of Parameters
 #----------------------
 
@@ -64,24 +71,20 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 6
+  set number = 4
   subsection bc 0
-    set id   = 2
+    set id   = 2,3,5
     set type = noslip
   end
   subsection bc 1
-    set id   = 5
-    set type = noslip
-  end
-  subsection bc 2
     set id   = 6
     set type = outlet
   end
-  subsection bc 3
+  subsection bc 2
     set id   = 7
     set type = slip
   end
-  subsection bc 4
+  subsection bc 3
     set id   = 4
     set type = function
     subsection u
@@ -91,10 +94,6 @@ subsection boundary conditions
       set Function expression = 0
     end
   end
-  subsection bc 5
-    set id   = 3
-    set type = noslip
-  end
 end
 
 #---------------------------------------------------
@@ -102,35 +101,16 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions heat transfer
-  set number = 6
+  set number = 2
   subsection bc 0
-    set id   = 2
+    set id   = 2,4
     set type = temperature
     subsection value
       set Function expression = 298
     end
   end
   subsection bc 1
-    set id   = 5
-    set type = noflux
-  end
-  subsection bc 2
-    set id   = 6
-    set type = noflux
-  end
-  subsection bc 3
-    set id   = 7
-    set type = noflux
-  end
-  subsection bc 4
-    set id   = 4
-    set type = temperature
-    subsection value
-      set Function expression = 298
-    end
-  end
-  subsection bc 5
-    set id   = 3
+    set id   = 3,5,6,7
     set type = noflux
   end
 end
@@ -140,24 +120,9 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions CLS
-  set number = 6
+  set number = 1
   subsection bc 0
-    set id = 2
-  end
-  subsection bc 1
-    set id = 5
-  end
-  subsection bc 2
-    set id = 6
-  end
-  subsection bc 3
-    set id = 7
-  end
-  subsection bc 4
-    set id = 4
-  end
-  subsection bc 5
-    set id = 3
+    set id = 2,3,4,5,6,7
   end
 end
 
