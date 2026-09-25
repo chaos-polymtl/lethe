@@ -2265,6 +2265,25 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Convert a Verbosity value to the string used in parameter files.
+   *
+   * @param[in] verbosity Verbosity level to convert.
+   *
+   * @return The parameter-file string ("quiet", "verbose" or "extra verbose").
+   */
+  std::string
+  to_string(const Verbosity verbosity);
+
+  /**
+   * @brief Convert a Verbosity value to the string used in parameter files.
+   *
+   * @param[in] verbosity Verbosity level to convert.
+   *
+   * @return The parameter-file string ("quiet", "verbose" or "extra verbose").
+   */
+  std::string
+  to_string(const Parameters::FluidIndicator indicator);
 
 } // namespace Parameters
 #endif
