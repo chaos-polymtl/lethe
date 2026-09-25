@@ -86,51 +86,43 @@ DeclException4(ListsSizeMismatch,
 
 namespace Parameters
 {
-  namespace
-  {
-    // Reverse mappings for the shared Verbosity/FluidIndicator enums, used to
-    // derive declare_entry's default-value string from the corresponding
-    // struct member's own in-class default. Kept in sync by hand with the
-    // string->enum chains in the various parse_parameters() below.
-    //
-    // NOTE: all per-struct `to_string(EnumType)` overloads added throughout
-    // this file must also live directly inside `namespace Parameters` (in
-    // their own `namespace { ... }` block is fine) rather than in the global
-    // namespace: unqualified lookup stops at the first enclosing scope where
-    // a `to_string` is found, so a struct-local overload declared inside
-    // Parameters would otherwise hide these instead of overloading with them.
-    std::string
-    to_string(const Verbosity verbosity)
-    {
-      switch (verbosity)
-        {
-          case Verbosity::quiet:
-            return "quiet";
-          case Verbosity::verbose:
-            return "verbose";
-          case Verbosity::extra_verbose:
-            return "extra verbose";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
 
-    std::string
-    to_string(const FluidIndicator indicator)
-    {
-      switch (indicator)
-        {
-          case FluidIndicator::fluid0:
-            return "fluid 0";
-          case FluidIndicator::fluid1:
-            return "fluid 1";
-          case FluidIndicator::both:
-            return "both";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
+  // Reverse mappings for the shared Verbosity/FluidIndicator enums, used to
+  // derive declare_entry's default-value string from the corresponding
+  // struct member's own in-class default. Kept in sync by hand with the
+  // string->enum chains in the various parse_parameters() below.
+
+  std::string
+  to_string(const Verbosity verbosity)
+  {
+    switch (verbosity)
+      {
+        case Verbosity::quiet:
+          return "quiet";
+        case Verbosity::verbose:
+          return "verbose";
+        case Verbosity::extra_verbose:
+          return "extra verbose";
+      }
+    Assert(false, ExcInternalError());
+    return "";
+  }
+
+  std::string
+  to_string(const FluidIndicator indicator)
+  {
+    switch (indicator)
+      {
+        case FluidIndicator::fluid0:
+          return "fluid 0";
+        case FluidIndicator::fluid1:
+          return "fluid 1";
+        case FluidIndicator::both:
+          return "both";
+      }
+    Assert(false, ExcInternalError());
+    return "";
+  } // namespace Parameters
 
   SizeOfSubsections
   get_size_of_subsections(const std::string &file_name,

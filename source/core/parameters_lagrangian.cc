@@ -1563,26 +1563,6 @@ namespace Parameters
       }
       prm.leave_subsection();
     }
-
-    namespace
-    {
-      std::string
-      to_string(const Parameters::Verbosity verbosity)
-      {
-        switch (verbosity)
-          {
-            case Parameters::Verbosity::quiet:
-              return "quiet";
-            case Parameters::Verbosity::verbose:
-              return "verbose";
-            case Parameters::Verbosity::extra_verbose:
-              return "extra verbose";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-    } // namespace
-
     template <int dim>
     void
     ForceTorqueOnWall<dim>::declare_parameters(ParameterHandler &prm)

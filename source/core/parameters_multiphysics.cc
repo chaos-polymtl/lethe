@@ -28,167 +28,138 @@ DeclException1(
   << " is equal or smaller than 0." << std::endl
   << "Interface reinitialization method requires an frequency larger than 0.");
 
-namespace
+namespace Parameters
 {
-  std::string
-  to_string(const Parameters::Verbosity verbosity)
+  namespace
   {
-    switch (verbosity)
-      {
-        case Parameters::Verbosity::quiet:
-          return "quiet";
-        case Parameters::Verbosity::verbose:
-          return "verbose";
-        case Parameters::Verbosity::extra_verbose:
-          return "extra verbose";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
+    std::string
+    to_string(const Parameters::FilterType type)
+    {
+      switch (type)
+        {
+          case Parameters::FilterType::none:
+            return "none";
+          case Parameters::FilterType::clip:
+            return "clip";
+          case Parameters::FilterType::tanh:
+            return "tanh";
+        }
+      Assert(false, dealii::ExcInternalError());
+      return "";
+    }
 
-  std::string
-  to_string(const Parameters::FluidIndicator indicator)
-  {
-    switch (indicator)
-      {
-        case Parameters::FluidIndicator::fluid0:
-          return "fluid 0";
-        case Parameters::FluidIndicator::fluid1:
-          return "fluid 1";
-        case Parameters::FluidIndicator::both:
-          return "both";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
+    std::string
+    to_string(const Parameters::SharpeningType type)
+    {
+      switch (type)
+        {
+          case Parameters::SharpeningType::constant:
+            return "constant";
+          case Parameters::SharpeningType::adaptive:
+            return "adaptive";
+        }
+      Assert(false, dealii::ExcInternalError());
+      return "";
+    }
 
-  std::string
-  to_string(const Parameters::FilterType type)
-  {
-    switch (type)
-      {
-        case Parameters::FilterType::none:
-          return "none";
-        case Parameters::FilterType::clip:
-          return "clip";
-        case Parameters::FilterType::tanh:
-          return "tanh";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
+    std::string
+    to_string(const Parameters::RedistanciationTransformationType type)
+    {
+      switch (type)
+        {
+          case Parameters::RedistanciationTransformationType::tanh:
+            return "tanh";
+          case Parameters::RedistanciationTransformationType::
+            piecewise_polynomial:
+            return "piecewise polynomial";
+        }
+      Assert(false, dealii::ExcInternalError());
+      return "";
+    }
 
-  std::string
-  to_string(const Parameters::SharpeningType type)
-  {
-    switch (type)
-      {
-        case Parameters::SharpeningType::constant:
-          return "constant";
-        case Parameters::SharpeningType::adaptive:
-          return "adaptive";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
+    std::string
+    to_string(const Parameters::ReinitializationMethodType type)
+    {
+      switch (type)
+        {
+          case Parameters::ReinitializationMethodType::none:
+            return "none";
+          case Parameters::ReinitializationMethodType::sharpening:
+            return "projection-based interface sharpening";
+          case Parameters::ReinitializationMethodType::pde_based:
+            return "pde-based interface reinitialization";
+          case Parameters::ReinitializationMethodType::geometric:
+            return "geometric interface reinitialization";
+        }
+      Assert(false, dealii::ExcInternalError());
+      return "";
+    }
 
-  std::string
-  to_string(const Parameters::RedistanciationTransformationType type)
-  {
-    switch (type)
-      {
-        case Parameters::RedistanciationTransformationType::tanh:
-          return "tanh";
-        case Parameters::RedistanciationTransformationType::
-          piecewise_polynomial:
-          return "piecewise polynomial";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
+    std::string
+    to_string(const Parameters::EpsilonSetMethod method)
+    {
+      switch (method)
+        {
+          case Parameters::EpsilonSetMethod::automatic:
+            return "automatic";
+          case Parameters::EpsilonSetMethod::manual:
+            return "manual";
+        }
+      Assert(false, dealii::ExcInternalError());
+      return "";
+    }
 
-  std::string
-  to_string(const Parameters::ReinitializationMethodType type)
-  {
-    switch (type)
-      {
-        case Parameters::ReinitializationMethodType::none:
-          return "none";
-        case Parameters::ReinitializationMethodType::sharpening:
-          return "projection-based interface sharpening";
-        case Parameters::ReinitializationMethodType::pde_based:
-          return "pde-based interface reinitialization";
-        case Parameters::ReinitializationMethodType::geometric:
-          return "geometric interface reinitialization";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
+    std::string
+    to_string(const Parameters::EpsilonVerbosity verbosity)
+    {
+      switch (verbosity)
+        {
+          case Parameters::EpsilonVerbosity::quiet:
+            return "quiet";
+          case Parameters::EpsilonVerbosity::verbose:
+            return "verbose";
+        }
+      Assert(false, dealii::ExcInternalError());
+      return "";
+    }
 
-  std::string
-  to_string(const Parameters::EpsilonSetMethod method)
-  {
-    switch (method)
-      {
-        case Parameters::EpsilonSetMethod::automatic:
-          return "automatic";
-        case Parameters::EpsilonSetMethod::manual:
-          return "manual";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
+    std::string
+    to_string(const Parameters::TimeHarmonicMaxwellCouplingStrategy strategy)
+    {
+      switch (strategy)
+        {
+          case Parameters::TimeHarmonicMaxwellCouplingStrategy::none:
+            return "none";
+          case Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration:
+            return "iteration";
+          case Parameters::TimeHarmonicMaxwellCouplingStrategy::time:
+            return "time";
+          case Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold:
+            return "threshold";
+        }
+      Assert(false, dealii::ExcInternalError());
+      return "";
+    }
 
-  std::string
-  to_string(const Parameters::EpsilonVerbosity verbosity)
-  {
-    switch (verbosity)
-      {
-        case Parameters::EpsilonVerbosity::quiet:
-          return "quiet";
-        case Parameters::EpsilonVerbosity::verbose:
-          return "verbose";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
-
-  std::string
-  to_string(const Parameters::TimeHarmonicMaxwellCouplingStrategy strategy)
-  {
-    switch (strategy)
-      {
-        case Parameters::TimeHarmonicMaxwellCouplingStrategy::none:
-          return "none";
-        case Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration:
-          return "iteration";
-        case Parameters::TimeHarmonicMaxwellCouplingStrategy::time:
-          return "time";
-        case Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold:
-          return "threshold";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
-
-  std::string
-  to_string(const Parameters::ElectromagneticScalingType type)
-  {
-    switch (type)
-      {
-        case Parameters::ElectromagneticScalingType::none:
-          return "none";
-        case Parameters::ElectromagneticScalingType::electric_field:
-          return "electric field";
-        case Parameters::ElectromagneticScalingType::magnetic_field:
-          return "magnetic field";
-        case Parameters::ElectromagneticScalingType::power:
-          return "power";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
-} // namespace
+    std::string
+    to_string(const Parameters::ElectromagneticScalingType type)
+    {
+      switch (type)
+        {
+          case Parameters::ElectromagneticScalingType::none:
+            return "none";
+          case Parameters::ElectromagneticScalingType::electric_field:
+            return "electric field";
+          case Parameters::ElectromagneticScalingType::magnetic_field:
+            return "magnetic field";
+          case Parameters::ElectromagneticScalingType::power:
+            return "power";
+        }
+      Assert(false, dealii::ExcInternalError());
+      return "";
+    }
+  } // namespace
+} // namespace Parameters
 
 template <int dim>
 void
