@@ -1329,6 +1329,111 @@ HeatTransfer<dim>::compute_error_estimate(
         fe->component_mask(FEValuesExtractors::Scalar(0));
       compute_kelly(estimated_error_per_cell, temperature_mask);
     }
+  if (ivar.first == Variable::melt_indicator)
+    {
+      AssertThrow(
+        ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+        ExcMessage(
+          "Only the Kelly error estimator is currently implemented for the "
+          "<liquid_fraction> field."));
+
+
+      ComponentMask melt_indicator_mask =
+        fe->component_mask(FEValuesExtractors::Scalar(0));
+
+      const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+
+      // Local variable to check if it is a CLS simulation
+      const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
+
+      AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
+                                      .monitored_fluid_with_phase_change ==
+                                    Parameters::FluidIndicator::fluid1),
+                  ExcMessage(
+                    "For single-fluid flows only 'fluid 0' can be monitored."));
+
+      // Initialize melt indicator vectors
+      GlobalVectorType melt_indicator_vector_owned_copy(
+        this->dof_handler->locally_owned_dofs(), mpi_communicator);
+      GlobalVectorType melt_indicator_vector_relevant_copy(
+        this->dof_handler->locally_owned_dofs(),
+        DoFTools::extract_locally_relevant_dofs(*this->dof_handler),
+        mpi_communicator);
+
+      // For single fluid flows
+      const double melting_temperature =
+        this->simulation_parameters.post_processing.melting_temperature;
+      std::cout << melting_temperature << std::endl;
+
+      // Initialize CLS related objects
+      std::shared_ptr<const DoFHandler<dim>>      dof_handler_cls;
+      std::shared_ptr<NonMatching::FEValues<dim>> non_matching_fe_values_cls;
+      std::shared_ptr<GlobalVectorType>           phase_indicator_vector_owned_copy;
+      const double phase_indicator_interface_value = 0.5;
+
+      const auto &physical_properties_parameters =
+      this->simulation_parameters.physical_properties_manager.get_physical_properties_parameters();
+
+      if (gather_cls)
+        {
+          // Get liquidus temperature and generate signed phase indicator level set
+          // for intersection operation
+          dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+            &this->multiphysics->get_dof_handler(PhysicsID::CLS),
+            [](const DoFHandler<dim> *) {});
+
+          // Local copy to shift phase indicator solution to make the region of
+          // interest 'inside' (negative values)
+          phase_indicator_vector_owned_copy = std::make_shared<GlobalVectorType>();
+          phase_indicator_vector_owned_copy->reinit(
+            this->dof_handler->locally_owned_dofs(), mpi_communicator);
+          FETools::interpolate(
+            *dof_handler_cls,
+            this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+            *this->dof_handler,
+            *phase_indicator_vector_owned_copy); // Ensure DoF correspondence for
+          // intersection vector later
+          // phase_indicator_vector_owned_copy->add(-phase_indicator_interface_value);
+          // if (this->simulation_parameters.post_processing
+          //       .monitored_fluid_with_phase_change ==
+          //     Parameters::FluidIndicator::fluid1)
+          //   phase_indicator_vector_owned_copy->operator*=(-1);
+
+          // Get the intersection region between the monitored fluid and the
+          // melting temperature isocurve
+          for (const auto dof_id : this->dof_handler->locally_owned_dofs())
+            {
+              double liquid_fraction = calculate_liquid_fraction((*this->present_solution)[dof_id], physical_properties_parameters
+                                                .fluids[1]
+                                                .phase_change_parameters);
+              melt_indicator_vector_owned_copy[dof_id] =
+                std::min<double>(liquid_fraction,
+                                (*phase_indicator_vector_owned_copy)[dof_id]);
+            }
+          melt_indicator_vector_relevant_copy = melt_indicator_vector_owned_copy;
+        }
+      else // Single-fluid flow
+        {
+          // Transpose temperature to get volume of the region where the temperature
+          // is over the melting temperature
+          melt_indicator_vector_owned_copy = *this->present_solution;
+          melt_indicator_vector_owned_copy.add(-melting_temperature);
+          melt_indicator_vector_owned_copy.operator*=(
+            -1); // Make the liquid region 'inside' (negative values) for the
+                // NonMatching MeshClassifier.
+          melt_indicator_vector_relevant_copy = melt_indicator_vector_owned_copy;
+        }
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->temperature_mapping,
+        *this->dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        melt_indicator_vector_relevant_copy,
+        estimated_error_per_cell,
+        melt_indicator_mask);
+    }
 }
 
 

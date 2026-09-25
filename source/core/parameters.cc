@@ -3841,9 +3841,9 @@ namespace Parameters
         "variable",
         "velocity",
         Patterns::List(Patterns::Selection(
-          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic fields")),
+          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic fields|melt indicator")),
         "Variable(s) for error estimation"
-        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic_fields>."
+        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic_fields|melt indicator>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variable = velocity,temperature')");
 
@@ -3956,6 +3956,8 @@ namespace Parameters
             vars = Variable::magnetic_field;
           else if (var_vec[i] == "electromagnetic fields")
             vars = Variable::electromagnetic_fields;
+          else if (var_vec[i] == "melt indicator")
+            vars = Variable::melt_indicator;
           else
             throw std::logic_error(
               "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, electric field, magnetic field or electromagnetic fields. Note that <electric field> or <magnetic field> and <electromagnetic fields> are mutually exclusive.");

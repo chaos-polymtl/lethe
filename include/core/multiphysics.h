@@ -67,7 +67,9 @@ enum class Variable : unsigned int
   /// Magnetic field vector field from electromagnetics
   magnetic_field = 8,
   /// Combination of both electric and magnetic fields from electromagnetics
-  electromagnetic_fields = 9
+  electromagnetic_fields = 9,
+  /// Melt indicator scalar field from heat transfer and cls
+  melt_indicator = 10
 };
 
 /**
