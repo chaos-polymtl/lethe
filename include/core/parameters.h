@@ -98,12 +98,13 @@ namespace Parameters
       sdirk43
     } method = TimeSteppingMethod::steady;
 
-    // Method used for time progression (steady, unsteady)
+    // Method used for DEM time progression
     enum class LagrangianTimeSteppingMethod : std::uint8_t
     {
+      /// Explicit Euler time integration scheme
       explicit_euler,
-      velocity_verlet,
-      gear3
+      /// Velocity Verlet time integration scheme
+      velocity_verlet
     } lagrangian_method = LagrangianTimeSteppingMethod::explicit_euler;
 
     // Initial time step
@@ -116,7 +117,7 @@ namespace Parameters
     unsigned int iteration_end = 10;
 
     // Boolean to keep the time step for the last iteration regardless of the
-    // end time specify. Both for fixed time step and adaptive time step.
+    // end time specified. Both for fixed time step and adaptive time step.
     bool time_step_independent_of_end_time = true;
 
     /**
@@ -212,33 +213,33 @@ namespace Parameters
       multiple_step_bdf,
     } bdf_startup_method = BDFStartupMethods::multiple_step_bdf;
 
-    // Frequency of the output (for iteration output control)
+    /// Frequency of the output (for iteration output control)
     unsigned int output_iteration_frequency = 1;
 
-    // Time frequency of the output (for time output control)
+    /// Time frequency of the output (for time output control)
     double output_time_frequency = -1;
 
-    // Output at specific times (for time output control)
+    /// Output at specific times (for time output control)
     std::vector<double> output_times_vector{-1.};
 
-    // Time window for file output (for both iteration and time output control)
+    /// Time window for file output (for both iteration and time output control)
     std::vector<double> output_time_interval{
       0.,
       std::numeric_limits<double>::max()};
 
-    // Enable output of the boundaries
+    /// Enable output of the boundaries in a separate VTU file
     bool output_boundaries = false;
 
-    // Frequency of the log output to the terminal
+    /// Frequency of the log output to the terminal
     unsigned int log_frequency = 1;
 
-    // Display precision of the log output to the terminal
+    /// Display precision of the log output to the terminal
     unsigned int log_precision = 6;
 
-    // Subdivisions of the results in the output
+    /// Subdivisions of the results in the output
     unsigned int subdivision = 1;
 
-    // Subdivisions of the results in the output
+    /// Number of vtu files written at an output step
     unsigned int group_files = 1;
 
     static void
@@ -259,43 +260,43 @@ namespace Parameters
    */
   struct PhaseChange
   {
-    // Solidus temperature - Units in K
+    /// Solidus temperature - Units in K
     double T_solidus = 0.;
 
-    // Liquidus temperature - Units in K
+    /// Liquidus temperature - Units in K
     double T_liquidus = 1.;
 
-    // Latent enthalpy for the phase change - Units in J/kg
+    /// Latent enthalpy for the phase change - Units in J/kg
     double latent_enthalpy = 1.;
 
-    // Specific heat of liquid - Units in J/(kg*K)
+    /// Specific heat of liquid - Units in J/(kg*K)
     double cp_l = 1.;
 
-    // Specific heat of solid - Units in J/(kg*K)
+    /// Specific heat of solid - Units in J/(kg*K)
     double cp_s = 1.;
 
-    // Thermal conductivity of liquid - Units in W/(m*K)
+    /// Thermal conductivity of liquid - Units in W/(m*K)
     double thermal_conductivity_l = 1.;
 
-    // Thermal conductivity of solid - Units in W/(m*K)
+    /// Thermal conductivity of solid - Units in W/(m*K)
     double thermal_conductivity_s = 1.;
 
-    // Thermal expansion coefficient of liquid - Units in 1/K
+    /// Thermal expansion coefficient of liquid - Units in 1/K
     double thermal_expansion_l = 1.;
 
-    // Thermal expansion coefficient of solid - Units in 1/K
+    /// Thermal expansion coefficient of solid - Units in 1/K
     double thermal_expansion_s = 0.;
 
-    // kinematic viscosity of liquid - Units in m^2/(s)
+    /// kinematic viscosity of liquid - Units in m^2/(s)
     double kinematic_viscosity_l = 1.;
 
-    // kinematic viscosity of solid - Units in m^2/(s)
+    /// kinematic viscosity of solid - Units in m^2/(s)
     double kinematic_viscosity_s = 1.;
 
-    // Darcy penalty of liquid - Units in 1/(s)
+    /// Darcy penalty of liquid - Units in 1/(s)
     double penalty_l = 0.;
 
-    // Darcy penalty of solid - Units in 1/(s)
+    /// Darcy penalty of solid - Units in 1/(s)
     double penalty_s = 0.;
 
     static void
@@ -406,11 +407,11 @@ namespace Parameters
    */
   struct IsothermalIdealGasDensityParameters
   {
-    // Reference state density of the gas in Pa
+    /// Reference state density of the gas in kg/m^3
     double density_ref = 1.2;
-    // Specific gas constant in J/kg/K
+    /// Specific gas constant in J/kg/K
     double R = 287.05;
-    // Absolute temperature of the ideal gas in K
+    /// Absolute temperature of the ideal gas in K
     double T = 293.15;
 
     static void
@@ -2271,6 +2272,8 @@ namespace Parameters
    * @param[in] verbosity Verbosity level to convert.
    *
    * @return The parameter-file string ("quiet", "verbose" or "extra verbose").
+   *
+   * TODO: Replace with a Magic Enum
    */
   std::string
   to_string(const Verbosity verbosity);
@@ -2278,9 +2281,11 @@ namespace Parameters
   /**
    * @brief Convert a Verbosity value to the string used in parameter files.
    *
-   * @param[in] verbosity Verbosity level to convert.
+   * @param[in] indicator Fluid indicator to convert.
    *
    * @return The parameter-file string ("quiet", "verbose" or "extra verbose").
+   *
+   * TODO: Replace with a Magic Enum
    */
   std::string
   to_string(const Parameters::FluidIndicator indicator);

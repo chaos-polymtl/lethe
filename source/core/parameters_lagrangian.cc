@@ -711,26 +711,13 @@ namespace Parameters
           Patterns::List(Patterns::Double()),
           "List of initial temperatures");
         // Volume:
-        if constexpr (dim == 2)
-          {
-            prm.declare_entry(
-              "insertion direction sequence",
-              Patterns::Tools::Convert<std::vector<unsigned int>>::to_string(
-                defaults.direction_sequence),
-              Patterns::List(Patterns::Integer(0, 1), 2, 2),
-              "Direction of particle insertion for the volume "
-              "insertion method.");
-          }
-        else
-          {
-            prm.declare_entry(
-              "insertion direction sequence",
-              Patterns::Tools::Convert<std::vector<unsigned int>>::to_string(
-                defaults.direction_sequence),
-              Patterns::List(Patterns::Integer(0, 2), 3, 3),
-              "Direction of particle insertion for the volume "
-              "insertion method.");
-          }
+        prm.declare_entry(
+          "insertion direction sequence",
+          Patterns::Tools::Convert<std::vector<unsigned int>>::to_string(
+            defaults.direction_sequence),
+          Patterns::List(Patterns::Integer(0, dim - 1), dim, dim),
+          "Direction of particle insertion for the volume "
+          "insertion method.");
         prm.declare_entry(
           "insertion box points coordinates",
           Patterns::Tools::Convert<Point<3>>::to_string(
@@ -1260,7 +1247,7 @@ namespace Parameters
           Patterns::Selection(
             "none|no_resistance|constant|constant_resistance|viscous|viscous_resistance|epsd|epsd_resistance"),
           "Choosing rolling resistance torque model"
-          "Choices are <no_resistance|constant_resistance|viscous_resistance|epsd_resistance>.");
+          "Choices are <none|constant|viscous|epsd>.");
 
         prm.declare_entry(
           "f coefficient",
@@ -1287,7 +1274,7 @@ namespace Parameters
             "enable adaptive sparse contacts",
             Patterns::Tools::Convert<bool>::to_string(
               defaults.sparse_particle_contacts),
-            Patterns::Selection("true|false"),
+            Patterns::Bool(),
             "Enable the dynamic search for sparse particle contacts"
             "Choices are <true|false>.");
 
@@ -1295,7 +1282,7 @@ namespace Parameters
             "enable particle advection",
             Patterns::Tools::Convert<bool>::to_string(
               defaults.advect_particles),
-            Patterns::Selection("true|false"),
+            Patterns::Bool(),
             "Enable the advection of particles with hydrodynamic forces"
             "Choices are <true|false>.");
 
@@ -1319,7 +1306,7 @@ namespace Parameters
         prm.declare_entry("disable position integration",
                           Patterns::Tools::Convert<bool>::to_string(
                             defaults.disable_position_integration),
-                          Patterns::Selection("true|false"),
+                          Patterns::Bool(),
                           "Disable the integration of position and velocity"
                           "Choices are <true|false>.");
       }
@@ -2004,13 +1991,11 @@ namespace Parameters
       const GridMotion<dim> defaults;
       prm.enter_subsection("grid motion");
       {
-        prm.declare_entry(
-          "motion type",
-          to_string<dim>(defaults.motion_type),
-          Patterns::Selection(
-            "none|translational|rotational|translational_rotational"),
-          "Choosing grid motion type. "
-          "Choices are <none|translational|rotational|translational_rotational>.");
+        prm.declare_entry("motion type",
+                          to_string<dim>(defaults.motion_type),
+                          Patterns::Selection("none|translational|rotational"),
+                          "Choosing grid motion type. "
+                          "Choices are <none|translational|rotational>.");
 
         prm.declare_entry("grid translational velocity x",
                           Patterns::Tools::Convert<double>::to_string(
@@ -2104,14 +2089,14 @@ namespace Parameters
             "enable particle wall collision statistics",
             Patterns::Tools::Convert<bool>::to_string(
               defaults.particle_wall_collision_statistics),
-            Patterns::Selection("true|false"),
+            Patterns::Bool(),
             "Enable the logging of particle-wall collision statistics"
             "Choices are <true|false>.");
           prm.declare_entry(
             "log collisions with all walls",
             Patterns::Tools::Convert<bool>::to_string(
               defaults.log_collisions_with_all_walls),
-            Patterns::Selection("true|false"),
+            Patterns::Bool(),
             "State whether collisions with all walls should be logged"
             "Choices are <true|false>.");
           prm.declare_entry(
