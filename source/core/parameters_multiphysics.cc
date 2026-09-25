@@ -325,7 +325,7 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
     prm.declare_entry(
       "frequency",
       Patterns::Tools::Convert<int>::to_string(frequency),
-      Patterns::Integer(),
+      Patterns::Integer(0),
       "Reinitialization frequency (number of time steps) at which the "
       "interface reinitialization process will be applied to the CLS "
       "phase indicator field.");

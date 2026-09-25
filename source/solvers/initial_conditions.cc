@@ -10,8 +10,6 @@ namespace
   {
     switch (type)
       {
-        case Parameters::FluidDynamicsInitialConditionType::none:
-          return "none";
         case Parameters::FluidDynamicsInitialConditionType::L2projection:
           return "L2projection";
         case Parameters::FluidDynamicsInitialConditionType::viscous:
@@ -61,7 +59,7 @@ namespace Parameters
       prm.declare_entry(
         "iterations",
         Patterns::Tools::Convert<int>::to_string(n_iter),
-        Patterns::Integer(),
+        Patterns::Integer(0),
         "Number of iterations used in the ramp before reaching the final n value");
 
       prm.declare_entry("alpha",

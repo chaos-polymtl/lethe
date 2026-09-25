@@ -15,7 +15,6 @@ namespace Parameters
   // Type of initial conditions for fluid dynamics
   enum class FluidDynamicsInitialConditionType
   {
-    none,
     L2projection,
     viscous,
     nodal,
