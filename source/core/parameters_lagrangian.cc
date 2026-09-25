@@ -20,7 +20,7 @@ namespace Parameters
       prm.enter_subsection("lagrangian physical properties");
       {
         prm.declare_entry("g",
-                          "0., 0., 0.",
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(g),
                           Patterns::List(Patterns::Double(), 2, 3),
                           "Gravitational acceleration vector");
 
@@ -2208,25 +2208,40 @@ namespace Parameters
 
         // In which direction will the photons be inserted  relative to the
         // first photon.
+        // The ":"-separated defaults are generated with the same patterns as
+        // the ones used to declare the entries.
+        const Patterns::List insertion_unit_tensors_pattern(
+          Patterns::List(Patterns::Double(), 3, 3, ","), 3, 3, ":");
         prm.declare_entry(
           "insertion unit tensors",
-          "1.,0.,0. : 0., 1., 0. : 0., 0., 1.",
-          Patterns::List(
-            Patterns::List(Patterns::Double(), 3, 3, ","), 3, 3, ":"),
+          Patterns::Tools::Convert<std::vector<Tensor<1, 3>>>::to_string(
+            defaults.insertion_directions_units_vector,
+            insertion_unit_tensors_pattern),
+          insertion_unit_tensors_pattern,
           "Directions used to insert photons.");
 
         // How many photon will be inserted in each of those directions.
-        prm.declare_entry("number of inserted photons per direction",
-                          "1 : 1 : 1",
-                          Patterns::List(Patterns::Integer(), 3, 3, ":"),
-                          "Number of inserted photon in each direction.");
+        const Patterns::List n_photons_pattern(Patterns::Integer(), 3, 3, ":");
+        prm.declare_entry(
+          "number of inserted photons per direction",
+          Patterns::Tools::Convert<std::vector<unsigned int>>::to_string(
+            defaults.n_photons_each_directions, n_photons_pattern),
+          n_photons_pattern,
+          "Number of inserted photon in each direction.");
 
         // What is the distance between each photon in each of those directions
         // considering an offset equal to 0.
-        prm.declare_entry("distance between photons on insertion per direction",
-                          "1. :  1. : 1.",
-                          Patterns::List(Patterns::Double(), 3, 3, ":"),
-                          "Number of inserted photon in each direction.");
+        const Patterns::List step_between_photons_pattern(Patterns::Double(),
+                                                          3,
+                                                          3,
+                                                          ":");
+        prm.declare_entry(
+          "distance between photons on insertion per direction",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.step_between_photons_each_directions,
+            step_between_photons_pattern),
+          step_between_photons_pattern,
+          "Number of inserted photon in each direction.");
 
         // In which direction photons will move considering a photon maximum
         // angle offset equal to 0.
@@ -2312,7 +2327,11 @@ namespace Parameters
             "direction\" all need to have a number of dimension equal to the "
             "\"dimension\" parameter."));
 
-        // Always of size 3.
+        // Always of size 3. The in-class defaults are cleared first, otherwise
+        // the parsed values would be appended after them.
+        insertion_directions_units_vector.clear();
+        n_photons_each_directions.clear();
+        step_between_photons_each_directions.clear();
         insertion_directions_units_vector.reserve(3);
         n_photons_each_directions.reserve(3);
         step_between_photons_each_directions.reserve(3);

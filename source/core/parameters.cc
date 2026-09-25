@@ -1754,7 +1754,8 @@ namespace Parameters
 
       prm.declare_entry(
         "electric conductivity polynomial coefficients",
-        "0",
+        Patterns::Tools::Convert<std::vector<double>>::to_string(
+          electric_conductivity_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the electric conductivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
@@ -1780,7 +1781,8 @@ namespace Parameters
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "electric permittivity real part polynomial coefficients",
-        "1",
+        Patterns::Tools::Convert<std::vector<double>>::to_string(
+          electric_permittivity_real_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
@@ -1788,7 +1790,8 @@ namespace Parameters
 
       prm.declare_entry(
         "electric permittivity imag part polynomial coefficients",
-        "0",
+        Patterns::Tools::Convert<std::vector<double>>::to_string(
+          electric_permittivity_imag_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
@@ -1814,14 +1817,16 @@ namespace Parameters
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
         "magnetic permeability real part polynomial coefficients",
-        "1",
+        Patterns::Tools::Convert<std::vector<double>>::to_string(
+          magnetic_permeability_real_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
       prm.declare_entry(
         "magnetic permeability imag part polynomial coefficients",
-        "0",
+        Patterns::Tools::Convert<std::vector<double>>::to_string(
+          magnetic_permeability_imag_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
         "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
@@ -2002,6 +2007,8 @@ namespace Parameters
               Utilities::split_string_list(
                 electric_conductivity_coefficients_string);
 
+          // Clear the in-class default before filling from the file
+          electric_conductivity_polynomial_coefficients.clear();
           for (const std::string &coefficient :
                electric_conductivity_coefficients_vec)
             {
@@ -2030,6 +2037,8 @@ namespace Parameters
               Utilities::split_string_list(
                 electric_permittivity_real_coefficients_string);
 
+          // Clear the in-class default before filling from the file
+          electric_permittivity_real_polynomial_coefficients.clear();
           for (const std::string &coefficient :
                electric_permittivity_real_coefficients_vec)
             {
@@ -2044,6 +2053,8 @@ namespace Parameters
               Utilities::split_string_list(
                 electric_permittivity_imag_coefficients_string);
 
+          // Clear the in-class default before filling from the file
+          electric_permittivity_imag_polynomial_coefficients.clear();
           for (const std::string &coefficient :
                electric_permittivity_imag_coefficients_vec)
             {
@@ -2070,6 +2081,8 @@ namespace Parameters
             magnetic_permeability_real_coefficients_vec =
               Utilities::split_string_list(
                 magnetic_permeability_real_coefficients_string);
+          // Clear the in-class default before filling from the file
+          magnetic_permeability_real_polynomial_coefficients.clear();
           for (const std::string &coefficient :
                magnetic_permeability_real_coefficients_vec)
             {
@@ -2083,6 +2096,8 @@ namespace Parameters
             magnetic_permeability_imag_coefficients_vec =
               Utilities::split_string_list(
                 magnetic_permeability_imag_coefficients_string);
+          // Clear the in-class default before filling from the file
+          magnetic_permeability_imag_polynomial_coefficients.clear();
           for (const std::string &coefficient :
                magnetic_permeability_imag_coefficients_vec)
             {
@@ -2653,8 +2668,9 @@ namespace Parameters
                         Patterns::Double(),
                         "End time of laser");
 
-      // Not derived from a member default: see the comments on
-      // beam_orientation and rotation_axis in the header (dim-dependent).
+      // Not derived from a member default: the beam orientation token is not
+      // stored as such, but through beam_orientation_coordinate,
+      // beam_direction and beam_axis, whose defaults correspond to "z-".
       prm.declare_entry("beam orientation",
                         "z-",
                         Patterns::Selection("x+|x-|y+|y-|z+|z-"),
@@ -2667,6 +2683,8 @@ namespace Parameters
         Patterns::Double(),
         "Angle of rotation in rad of the beam axis with respect to the axis defined by the beam orientation parameter");
 
+      // Always three components, whereas rotation_axis is a Tensor<1, dim>
+      // (only used in 3D, where its default matches this string).
       prm.declare_entry(
         "beam rotation axis",
         "0.0, 0.0, 1.0",
@@ -2723,7 +2741,6 @@ namespace Parameters
       if (op == "x+")
         {
           beam_direction                     = true;
-          beam_orientation                   = BeamOrientation::x_plus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
           beam_axis[0]                       = 1;
@@ -2737,7 +2754,6 @@ namespace Parameters
       else if (op == "x-")
         {
           beam_direction                     = false;
-          beam_orientation                   = BeamOrientation::x_minus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
           beam_axis[0]                       = -1;
@@ -2751,7 +2767,6 @@ namespace Parameters
       else if (op == "y+")
         {
           beam_direction                     = true;
-          beam_orientation                   = BeamOrientation::y_plus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
           beam_axis[0]                       = 0;
@@ -2765,7 +2780,6 @@ namespace Parameters
       else if (op == "y-")
         {
           beam_direction                     = false;
-          beam_orientation                   = BeamOrientation::y_minus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
           beam_axis[0]                       = 0;
@@ -2781,7 +2795,6 @@ namespace Parameters
           if constexpr (dim == 3)
             {
               beam_direction                     = true;
-              beam_orientation                   = BeamOrientation::z_plus;
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
               beam_orientation_coordinate        = 2;
@@ -2797,7 +2810,6 @@ namespace Parameters
           if constexpr (dim == 3)
             {
               beam_direction                     = false;
-              beam_orientation                   = BeamOrientation::z_minus;
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
               beam_orientation_coordinate        = 2;
@@ -3284,15 +3296,6 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output for the heat flux");
 
-      prm.declare_entry("convective flux name",
-                        "convective_flux",
-                        Patterns::FileName(),
-                        "File name output for the convective flux");
-
-      prm.declare_entry("nitsche flux name",
-                        "nitsche_heat_flux",
-                        Patterns::FileName(),
-                        "File name output for the convective flux");
 
       prm.declare_entry("postprocessed fluid",
                         to_string(postprocessed_fluid),
@@ -4578,6 +4581,20 @@ namespace Parameters
       Assert(false, ExcInternalError());
       return "";
     }
+
+    std::string
+    to_string(const MeshAdaptation::FractionType type)
+    {
+      switch (type)
+        {
+          case MeshAdaptation::FractionType::number:
+            return "number";
+          case MeshAdaptation::FractionType::fraction:
+            return "fraction";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
   } // namespace
 
   void
@@ -4637,7 +4654,7 @@ namespace Parameters
 
       prm.declare_entry(
         "fraction type",
-        defaults.fractionType == FractionType::number ? "number" : "fraction",
+        to_string(defaults.fractionType),
         Patterns::Selection("number|fraction"),
         "How the fraction of refinement/coarsening are interpreted"
         "Choices are <number|fraction>.");
@@ -5018,13 +5035,15 @@ namespace Parameters
 
       prm.declare_entry(
         "Carman-Kozeny division tolerance",
-        "1e-3",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.carman_kozeny_tolerance[0]),
         Patterns::List(Patterns::Double()),
         "This tolerance avoids a division by zero in the Carman-Kozeny source term. For multiple fluids with phase change, separate values with a comma.");
 
       prm.declare_entry(
         "Carman-Kozeny permeability area",
-        "1e-3",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.carman_kozeny_permeability_area[0]),
         Patterns::List(Patterns::Double()),
         "This represents the permeability area of the pseudo-porous bed in the Carman-Kozeny source term. For multiple fluids with phase change, separate values with a comma.");
     }
@@ -5101,10 +5120,7 @@ namespace Parameters
             Utilities::string_to_double(carman_kozeny_permeability_area_vec[0]);
           carman_kozeny_tolerance[0] =
             Utilities::string_to_double(carman_kozeny_tolerance_vec[0]);
-
-          // Assign default values to fluid 1
-          carman_kozeny_permeability_area[1] = 1e-3;
-          carman_kozeny_tolerance[1]         = 1e-3;
+          // Fluid 1 keeps the in-class default values
         }
       else if (fluid_with_phase_change == FluidIndicator::fluid1)
         {
@@ -5121,10 +5137,7 @@ namespace Parameters
             Utilities::string_to_double(carman_kozeny_permeability_area_vec[0]);
           carman_kozeny_tolerance[1] =
             Utilities::string_to_double(carman_kozeny_tolerance_vec[0]);
-
-          // Assign default values to fluid 0
-          carman_kozeny_permeability_area[0] = 1e-3;
-          carman_kozeny_tolerance[0]         = 1e-3;
+          // Fluid 0 keeps the in-class default values
         }
       else if (fluid_with_phase_change == FluidIndicator::both)
         {
@@ -6053,6 +6066,24 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  namespace
+  {
+    template <int dim>
+    std::string
+    to_string(const typename Mortar<dim>::InterfaceType type)
+    {
+      switch (type)
+        {
+          case Mortar<dim>::InterfaceType::circular:
+            return "circular";
+          case Mortar<dim>::InterfaceType::linear:
+            return "linear";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
+  } // namespace
+
   template <int dim>
   void
   Mortar<dim>::declare_parameters(ParameterHandler &prm)
@@ -6064,8 +6095,7 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable mortar interface <true|false>");
       prm.declare_entry("interface type",
-                        interface_type == InterfaceType::circular ? "circular" :
-                                                                    "linear",
+                        to_string<dim>(interface_type),
                         Patterns::Selection("circular|linear"),
                         "Type of mortar interface"
                         "Choices are <circular|linear>.");

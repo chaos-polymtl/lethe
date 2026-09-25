@@ -17,7 +17,7 @@ namespace AnalyticalSolutions
       "Enable the calculation of the analytical solution and L2 error");
     prm.declare_entry(
       "verbosity",
-      verbosity == Parameters::Verbosity::verbose ? "verbose" : "quiet",
+      Parameters::to_string(verbosity),
       Patterns::Selection("quiet|verbose"),
       "State whether from the post-processing values should be printed "
       "Choices are <quiet|verbose>.");

@@ -98,15 +98,6 @@ namespace Parameters
       sdirk43
     } method = TimeSteppingMethod::steady;
 
-    // Method used for DEM time progression
-    enum class LagrangianTimeSteppingMethod : std::uint8_t
-    {
-      /// Explicit Euler time integration scheme
-      explicit_euler,
-      /// Velocity Verlet time integration scheme
-      velocity_verlet
-    } lagrangian_method = LagrangianTimeSteppingMethod::explicit_euler;
-
     // Initial time step
     double dt = 1.;
 
@@ -625,19 +616,19 @@ namespace Parameters
 
     /// Electric_conductivity
     double              electric_conductivity = 0.;
-    std::vector<double> electric_conductivity_polynomial_coefficients;
+    std::vector<double> electric_conductivity_polynomial_coefficients{0.};
 
     /// Magnetic_permeability
     double              magnetic_permeability_real = 1.;
     double              magnetic_permeability_imag = 0.;
-    std::vector<double> magnetic_permeability_real_polynomial_coefficients;
-    std::vector<double> magnetic_permeability_imag_polynomial_coefficients;
+    std::vector<double> magnetic_permeability_real_polynomial_coefficients{1.};
+    std::vector<double> magnetic_permeability_imag_polynomial_coefficients{0.};
 
     /// Electric_permittivity
     double              electric_permittivity_real = 1.;
     double              electric_permittivity_imag = 0.;
-    std::vector<double> electric_permittivity_real_polynomial_coefficients;
-    std::vector<double> electric_permittivity_imag_polynomial_coefficients;
+    std::vector<double> electric_permittivity_real_polynomial_coefficients{1.};
+    std::vector<double> electric_permittivity_imag_polynomial_coefficients{0.};
   };
 
   /**
@@ -1017,49 +1008,46 @@ namespace Parameters
     // Laser beam radius on the melt pool surface
     double beam_radius = 0.0;
 
-    // Beam orientation shows the orientation of the laser beam. For instance,
-    // if a laser beam is emitted perpendicular on a plane in x-y coordinates,
-    // the orientation of the laser beam will be in the z direction. Note that
-    // this parameter cannot be equal to z in two-dimensional simulations.
-    // Plus and minus shows the direction of the laser beam
-    enum class BeamOrientation : std::int8_t
-    {
-      x_plus,
-      y_plus,
-      z_plus,
-      x_minus,
-      y_minus,
-      z_minus,
-    } beam_orientation; // Not given a default: its default token ("z-") is
-                        // only valid for dim == 3, so no single value works
-                        // for both instantiations of this templated class
-                        // (see rotation_axis below for the same issue).
+    // The beam orientation parameter (x+, x-, y+, y-, z+ or z-) gives the
+    // orientation of the laser beam. For instance, if a laser beam is emitted
+    // perpendicular on a plane in x-y coordinates, the orientation of the laser
+    // beam will be in the z direction. Note that this parameter cannot be equal
+    // to z in two-dimensional simulations. It is not stored as such, but
+    // through the members below. Their defaults correspond to the "z-"
+    // default orientation in 3D (and to "y-" in 2D).
 
     // beam_orientation_coordinate parameter stores the integer (x = 0, y = 1,
-    // z =2) value of the beam_orientation parameter
-    unsigned int beam_orientation_coordinate;
+    // z =2) value of the beam orientation parameter
+    unsigned int beam_orientation_coordinate = dim - 1;
 
     // beam_direction shows the direction of laser beam (either in positive
     // (true) or negative (false) direction
-    bool beam_direction;
+    bool beam_direction = false;
 
     // Based on the laser beam orientation, the integer values of a
     // perpendicular plane to the laser beam orientation are stored in the
     // following parameters (x = 0, y = 1, z = 2)
-    unsigned int perpendicular_plane_coordinate_one;
+    unsigned int perpendicular_plane_coordinate_one = 0;
 
     // Beam axis
-    Tensor<1, dim> beam_axis;
+    Tensor<1, dim> beam_axis = [] {
+      Tensor<1, dim> axis;
+      axis[dim - 1] = -1.;
+      return axis;
+    }();
 
-    unsigned int perpendicular_plane_coordinate_two;
+    unsigned int perpendicular_plane_coordinate_two = 1;
 
     // rotation angle of the laser axis in rad
     double rotation_angle = 0.0;
 
-    // rotation axis: not given a default here, its declare_entry default
-    // "0.0, 0.0, 1.0" is dim == 3 specific and only used in 3D (see
-    // beam_orientation above for the same templated-dim issue)
-    Tensor<1, dim> rotation_axis;
+    // rotation axis of the laser beam, only used in 3D where it matches the
+    // "0.0, 0.0, 1.0" default of the beam rotation axis parameter
+    Tensor<1, dim> rotation_axis = [] {
+      Tensor<1, dim> axis;
+      axis[dim - 1] = 1.;
+      return axis;
+    }();
 
     // rotation matrix
     Tensor<2, dim> rotation_matrix;
@@ -2022,10 +2010,10 @@ namespace Parameters
     bool enable_darcy_multiply_by_density = false;
 
     /// Permeability area of the pseudo-porous bed (solid phase).
-    std::vector<double> carman_kozeny_permeability_area;
+    std::vector<double> carman_kozeny_permeability_area{1e-3, 1e-3};
 
     /// Tolerance in the Carman-Kozeny source term that avoids division by zero.
-    std::vector<double> carman_kozeny_tolerance;
+    std::vector<double> carman_kozeny_tolerance{1e-3, 1e-3};
 
     static void
     declare_parameters(ParameterHandler &prm);

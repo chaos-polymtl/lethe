@@ -1018,14 +1018,17 @@ namespace Parameters
 
       /// Unit direction vectors along which photons are inserted relative to
       /// the starting point.
-      std::vector<Tensor<1, 3>> insertion_directions_units_vector;
+      std::vector<Tensor<1, 3>> insertion_directions_units_vector{
+        Tensor<1, 3>{{1., 0., 0.}},
+        Tensor<1, 3>{{0., 1., 0.}},
+        Tensor<1, 3>{{0., 0., 1.}}};
 
       /// Number of photons to insert along each direction.
-      std::vector<unsigned int> n_photons_each_directions;
+      std::vector<unsigned int> n_photons_each_directions{1, 1, 1};
 
       /// Spacing between consecutive photons along each direction (at zero
       /// offset).
-      std::vector<double> step_between_photons_each_directions;
+      std::vector<double> step_between_photons_each_directions{1., 1., 1.};
 
       /// Reference unit tensor defining the photon displacement direction.
       Tensor<1, 3> ref_displacement_tensor_unit{{0., 0., 1.}};
