@@ -113,6 +113,9 @@ test_mesh()
   check("boundaries_to_refine",
         actual.boundaries_to_refine,
         expected.boundaries_to_refine);
+  check("boundaries_to_refine",
+        actual.boundaries_to_refine,
+        expected.boundaries_to_refine);
   check("refine_until_target_size",
         actual.refine_until_target_size,
         expected.refine_until_target_size);
@@ -175,6 +178,19 @@ test_linear_solver()
   check("amg_aggregation_threshold",
         actual.amg_aggregation_threshold,
         expected.amg_aggregation_threshold);
+  check("ilu_precond_rtol", actual.ilu_precond_rtol, expected.ilu_precond_rtol);
+  check("amg_precond_ilu_fill",
+        actual.amg_precond_ilu_fill,
+        expected.amg_precond_ilu_fill);
+  check("amg_precond_ilu_atol",
+        actual.amg_precond_ilu_atol,
+        expected.amg_precond_ilu_atol);
+  check("amg_precond_ilu_rtol",
+        actual.amg_precond_ilu_rtol,
+        expected.amg_precond_ilu_rtol);
+  check("amg_aggregation_threshold",
+        actual.amg_aggregation_threshold,
+        expected.amg_aggregation_threshold);
   check("amg_n_cycles", actual.amg_n_cycles, expected.amg_n_cycles);
   check("amg_w_cycles", actual.amg_w_cycles, expected.amg_w_cycles);
   check("amg_smoother_sweeps",
@@ -224,6 +240,57 @@ test_linear_solver()
   check("mg_p_min_coarsening_degree",
         actual.mg_p_min_coarsening_degree,
         expected.mg_p_min_coarsening_degree);
+  check("amg_w_cycles", actual.amg_w_cycles, expected.amg_w_cycles);
+  check("amg_smoother_sweeps",
+        actual.amg_smoother_sweeps,
+        expected.amg_smoother_sweeps);
+  check("amg_smoother_overlap",
+        actual.amg_smoother_overlap,
+        expected.amg_smoother_overlap);
+  check("force_linear_solver_continuation",
+        actual.force_linear_solver_continuation,
+        expected.force_linear_solver_continuation);
+  check("mg_min_level", actual.mg_min_level, expected.mg_min_level);
+  check("mg_level_min_cells",
+        actual.mg_level_min_cells,
+        expected.mg_level_min_cells);
+  check("mg_int_level", actual.mg_int_level, expected.mg_int_level);
+  check("mg_enable_hessians_jacobian",
+        actual.mg_enable_hessians_jacobian,
+        expected.mg_enable_hessians_jacobian);
+  check("mg_smoother_iterations",
+        actual.mg_smoother_iterations,
+        expected.mg_smoother_iterations);
+  check("mg_smoother_relaxation",
+        actual.mg_smoother_relaxation,
+        expected.mg_smoother_relaxation);
+  check("mg_smoother_chebyshev_degree",
+        actual.mg_smoother_chebyshev_degree,
+        expected.mg_smoother_chebyshev_degree);
+  check("mg_smoother_chebyshev_smoothing_range",
+        actual.mg_smoother_chebyshev_smoothing_range,
+        expected.mg_smoother_chebyshev_smoothing_range);
+    check("mg_smoother_chebyshev_eig_cg_n_iterations",  
+        actual.mg_smoother_chebyshev_eig_cg_n_iterations,  
+        expected.mg_smoother_chebyshev_eig_cg_n_iterations); 
+  check("mg_smoother_eig_estimation",
+        actual.mg_smoother_eig_estimation,
+        expected.mg_smoother_eig_estimation);
+  check("eig_estimation_smoothing_range",
+        actual.eig_estimation_smoothing_range,
+        expected.eig_estimation_smoothing_range);
+  check("eig_estimation_cg_n_iterations",
+        actual.eig_estimation_cg_n_iterations,
+        expected.eig_estimation_cg_n_iterations);
+  check("eig_estimation_verbose",
+        actual.eig_estimation_verbose,
+        expected.eig_estimation_verbose);
+  check("mg_use_fe_q_iso_q1",
+        actual.mg_use_fe_q_iso_q1,
+        expected.mg_use_fe_q_iso_q1);
+  check("mg_p_min_coarsening_degree",
+        actual.mg_p_min_coarsening_degree,
+        expected.mg_p_min_coarsening_degree);
   check("mg_coarsening_type",
         actual.mg_coarsening_type,
         expected.mg_coarsening_type);
@@ -236,6 +303,19 @@ test_linear_solver()
   check("mg_coarse_grid_solver",
         actual.mg_coarse_grid_solver,
         expected.mg_coarse_grid_solver);
+  check("mg_gmres_max_iterations",
+        actual.mg_gmres_max_iterations,
+        expected.mg_gmres_max_iterations);
+  check("mg_gmres_tolerance",
+        actual.mg_gmres_tolerance,
+        expected.mg_gmres_tolerance);
+  check("mg_gmres_reduce", actual.mg_gmres_reduce, expected.mg_gmres_reduce);
+  check("mg_gmres_max_krylov_vectors",
+        actual.mg_gmres_max_krylov_vectors,
+        expected.mg_gmres_max_krylov_vectors);
+  check("mg_amg_use_default_parameters",
+        actual.mg_amg_use_default_parameters,
+        expected.mg_amg_use_default_parameters);
   check("mg_gmres_max_iterations",
         actual.mg_gmres_max_iterations,
         expected.mg_gmres_max_iterations);
@@ -301,6 +381,9 @@ test_mesh_box_refinement()
   check("number_of_refinement_boxes",
         actual.number_of_refinement_boxes,
         expected.number_of_refinement_boxes);
+    check("max_number_of_refinement_boxes",
+        actual.max_number_of_refinement_boxes,
+        expected.max_number_of_refinement_boxes);
 }
 
 void
@@ -336,8 +419,33 @@ test_cfddem()
   check("vortical_viscous_torque",
         actual.vortical_viscous_torque,
         expected.vortical_viscous_torque);
+  check("void_fraction_time_derivative",
+        actual.void_fraction_time_derivative,
+        expected.void_fraction_time_derivative);
+  check("interpolated_void_fraction",
+        actual.interpolated_void_fraction,
+        expected.interpolated_void_fraction);
+  check("drag_force", actual.drag_force, expected.drag_force);
+  check("buoyancy_force", actual.buoyancy_force, expected.buoyancy_force);
+  check("shear_force", actual.shear_force, expected.shear_force);
+  check("pressure_force", actual.pressure_force, expected.pressure_force);
+  check("saffman_lift_force",
+        actual.saffman_lift_force,
+        expected.saffman_lift_force);
+  check("magnus_lift_force",
+        actual.magnus_lift_force,
+        expected.magnus_lift_force);
+  check("rotational_viscous_torque",
+        actual.rotational_viscous_torque,
+        expected.rotational_viscous_torque);
+  check("vortical_viscous_torque",
+        actual.vortical_viscous_torque,
+        expected.vortical_viscous_torque);
   check("drag_model", actual.drag_model, expected.drag_model);
   check("drag_coupling", actual.drag_coupling, expected.drag_coupling);
+  check("dem_iteration_control",
+        actual.dem_iteration_control,
+        expected.dem_iteration_control);
   check("dem_iteration_control",
         actual.dem_iteration_control,
         expected.dem_iteration_control);
@@ -352,9 +460,15 @@ test_cfddem()
   check("implicit_stabilization",
         actual.implicit_stabilization,
         expected.implicit_stabilization);
+  check("implicit_stabilization",
+        actual.implicit_stabilization,
+        expected.implicit_stabilization);
   check("particle_statistics",
         actual.particle_statistics,
         expected.particle_statistics);
+  check("project_particle_forces",
+        actual.project_particle_forces,
+        expected.project_particle_forces);
   check("project_particle_forces",
         actual.project_particle_forces,
         expected.project_particle_forces);
