@@ -1,0 +1,303 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This test is a version of the "time_harmonic_maxwell_waveguide_robin" test case
+# but adapted so it runs with the "lethe-fluid-particles" (CFD-DEM) solver, which
+# is the solver actually used for coupled electromagnetics-DEM simulations (e.g.
+# microwave heating of a packed bed). It solves the time-harmonic Maxwell
+# equations for the TM12 mode of a waveguide with perfectly conducting walls, a
+# waveguide port excitation at the inlet and an absorbing impedance boundary at
+# the outlet.
+#
+# It verifies that the time-harmonic Maxwell auxiliary physics is solved within
+# the CFD-DEM solver. The fluid dynamics is disabled and the simulation contains
+# no particle, and the void fraction is set to 1 everywhere, so the
+# electromagnetic problem is identical to the one solved by lethe-fluid and the
+# L2 errors with respect to the analytical solution must match those of the
+# lethe-fluid time_harmonic_maxwell_waveguide_robin tests, as well as those of
+# the equivalent lethe-fluid-vans/time_harmonic_maxwell_waveguide test, which
+# exercises the same physics through the plain VANS solver instead of the
+# CFD-DEM one.
+#
+# The case is run with bdf1 rather than steady because the CFD-DEM solver does
+# not support steady simulations. To reproduce the same mesh convergence
+# behaviour as the equivalent steady lethe-fluid-vans test (which solves twice,
+# once per mesh adaptation cycle), the mesh is uniformly refined once between
+# the two time steps, and the time-harmonic Maxwell time coupling strategy is
+# set to "iteration" (with a coupling iteration of 1) so the electromagnetic
+# fields are resolved at every time step, not just the first one.
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time step        = 1
+  set time end         = 2
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics   = false
+  set electromagnetics = true
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+
+  set electromagnetics trial degree = 1
+  set electromagnetics test degree  = 2
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set electric conductivity model = constant
+    set electric conductivity       = 0.
+
+    set electric permittivity model     = constant
+    set electric permittivity real part = 1.
+    set electric permittivity imag part = 0.
+
+    set magnetic permeability model     = constant
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type           = dealii
+  set grid type      = subdivided_hyper_rectangle
+  set grid arguments = 1, 2, 2 : 0, 0, 0 : 0.25, 0.5, 0.5 : true
+end
+
+#---------------------------------------------------
+# Void Fraction
+#---------------------------------------------------
+
+subsection void fraction
+  set mode = function
+  subsection function
+    set Function expression = 1
+  end
+end
+
+#---------------------------------------------------
+# CFD-DEM
+#---------------------------------------------------
+
+subsection cfd-dem
+  set drag force         = false
+  set buoyancy force     = false
+  set shear force        = false
+  set pressure force     = false
+  set coupling frequency = 1
+
+  # There is no particle in this case, so the granular statistics would average
+  # over an empty particle handler and report NaN at every time step.
+  set particle statistics = false
+end
+
+#---------------------------------------------------
+# Time Harmonic Maxwell
+#---------------------------------------------------
+
+subsection time harmonic maxwell
+  set electromagnetic frequency  = 8.99377374e8
+  set number of waveguide inlets = 1
+
+  subsection time coupling strategy
+    set type = iteration
+  end
+
+  subsection waveguide inlet 0
+    set port boundary id = 2
+
+    set corner 0 = 0,0,0
+    set corner 1 = 0.25,0,0
+    set corner 2 = 0, 0, 0.5
+    set corner 3 = 0.25, 0, 0.5
+
+    subsection waveguide mode
+      set mode type    = TM
+      set mode order m = 1
+      set mode order n = 2
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id   = 0, 1, 2, 3, 4, 5
+    set type = noslip
+  end
+end
+
+subsection boundary conditions time harmonic maxwell
+  set number = 3
+  subsection bc 0
+    set id   = 0, 1, 4, 5
+    set type = pec
+  end
+  subsection bc 1
+    set id   = 2
+    set type = waveguide port
+  end
+  subsection bc 2
+    set id   = 3
+    set type = impedance boundary
+    subsection excitation x real part
+      set Function expression = 0
+    end
+    subsection excitation x imag part
+      set Function expression = 0
+    end
+    subsection excitation y real part
+      set Function expression = 0
+    end
+    subsection excitation y imag part
+      set Function expression = 0
+    end
+    subsection excitation z real part
+      set Function expression = 0
+    end
+    subsection excitation z imag part
+      set Function expression = 0
+    end
+    subsection surface admittance real part
+      set Function expression = 3.
+    end
+    subsection surface admittance imag part
+      set Function expression = 0.
+    end
+  end
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = constant
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set solver type                            = dem
+end
+
+#---------------------------------------------------
+# Lagrangian Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0.0, 0.0, 0.0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.01
+    set number of particles               = 0
+    set density particles                 = 2500
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.3
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0.3
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection electromagnetics
+    set Function expression = -1/4 * cos(4*pi*x) * sin(4*pi*z) * sin(2*pi*y); sin(4*pi*x) * sin(4*pi*z) * cos(2*pi*y);    -1/4 * sin(4*pi*x) * cos(4*pi*z) * sin(2*pi*y);    1/4 * cos(4*pi*x) * sin(4*pi*z) * cos(2*pi*y);    sin(4*pi*x) * sin(4*pi*z) * sin(2*pi*y);    1/4 * sin(4*pi*x) * cos(4*pi*z) * cos(2*pi*y);   -3/4 * sin(4*pi*x) * cos(4*pi*z) * sin(2*pi*y);    0.;    3/4 * cos(4*pi*x) * sin(4*pi*z) * sin(2*pi*y);    3/4 * sin(4*pi*x) * cos(4*pi*z) * cos(2*pi*y);    0.;    -3/4 * cos(4*pi*x) * sin(4*pi*z) * cos(2*pi*y)
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection electromagnetics
+    set verbosity         = quiet
+    set relative residual = 1e-8
+    set minimum residual  = 1e-12
+    set preconditioner    = none
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+end

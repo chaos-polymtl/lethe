@@ -9,6 +9,8 @@
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/particle_projector.h>
 
+#include <deal.II/numerics/solution_transfer.h>
+
 
 /**
  * @brief A geometric multigrid preconditioner implementation for
@@ -252,6 +254,32 @@ protected:
   void
   evaluate_time_derivative_void_fraction();
 
+  /**
+   * @brief Refine or coarsen the mesh, keeping the particle handler and the
+   * void fraction solution consistent with the new triangulation.
+   *
+   * This function is needed because NavierStokesBase::refine_mesh() has no
+   * knowledge of the particle handler or of the void fraction solution. This
+   * function therefore wraps that call with the particle-handler/void-fraction
+   * prepare-and-unpack sequence for coarsening and refinement when necessary.
+   */
+  void
+  refine_mesh_and_synchronize_particles();
+
+  /**
+   * @brief Prepare the particle handler and the void fraction solution for
+   * an upcoming triangulation change (mesh refinement or coarsening).
+   */
+  void
+  prepare_VANS_for_mesh_adaptation();
+
+  /**
+   * @brief Restore the particle handler and the void fraction solution
+   * after a triangulation change, and rebuild the vertex-to-cell map.
+   */
+  void
+  restore_VANS_after_mesh_adaptation();
+
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
@@ -272,5 +300,9 @@ protected:
 
   /// Vector to store the time derivative of the void fraction
   VectorType time_derivative_void_fraction;
+
+  /// Void fraction solution transfer object for mesh adaptation
+  std::unique_ptr<SolutionTransfer<dim, VectorType>>
+    void_fraction_solution_transfer;
 };
 #endif

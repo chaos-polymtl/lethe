@@ -15,7 +15,7 @@
 template <int dim, typename PropertiesIndex>
 FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
   CFDDEMSimulationParameters<dim> &nsparam)
-  : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters)
+  : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters, /* p_is_vans */ true)
   , cfd_dem_simulation_parameters(nsparam)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
@@ -187,6 +187,118 @@ FluidDynamicsVANS<dim, PropertiesIndex>::vertices_cell_mapping()
       this->particle_projector.dof_handler, vertices_to_periodic_cell);
 }
 
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANS<dim, PropertiesIndex>::prepare_VANS_for_mesh_adaptation()
+{
+  // Void Fraction
+  std::vector<const GlobalVectorType *> vf_set_transfer;
+  vf_set_transfer.push_back(
+    &this->particle_projector.void_fraction_locally_relevant);
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      vf_set_transfer.push_back(
+        &this->particle_projector.previous_void_fraction[i]);
+    }
+
+  // Prepare for Serialization
+  void_fraction_solution_transfer =
+    std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(
+      particle_projector.dof_handler);
+  void_fraction_solution_transfer->prepare_for_coarsening_and_refinement(
+    vf_set_transfer);
+
+  // Prepare particle handle for serialization
+  this->particle_handler.prepare_for_coarsening_and_refinement();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANS<dim, PropertiesIndex>::restore_VANS_after_mesh_adaptation()
+{
+  // Void Fraction Vectors
+  std::vector<GlobalVectorType *> vf_system(
+    1 + this->particle_projector.previous_void_fraction.size());
+
+  GlobalVectorType vf_distributed_system(
+    this->particle_projector.locally_owned_dofs, this->mpi_communicator);
+
+  vf_system[0] = &(vf_distributed_system);
+
+  std::vector<GlobalVectorType> vf_distributed_previous_solutions;
+
+  vf_distributed_previous_solutions.reserve(
+    this->particle_projector.previous_void_fraction.size());
+
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      vf_distributed_previous_solutions.emplace_back(
+        GlobalVectorType(this->particle_projector.locally_owned_dofs,
+                         this->mpi_communicator));
+      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
+    }
+
+  void_fraction_solution_transfer->interpolate(vf_system);
+
+  this->particle_projector.void_fraction_locally_relevant =
+    vf_distributed_system;
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      this->particle_projector.previous_void_fraction[i] =
+        vf_distributed_previous_solutions[i];
+    }
+
+  void_fraction_solution_transfer.reset();
+
+  // Unpack particle handler after load balancing step
+  this->particle_handler.unpack_after_coarsening_and_refinement();
+
+  // Regenerate vertex to cell map
+  this->vertices_cell_mapping();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANS<dim, PropertiesIndex>::refine_mesh_and_synchronize_particles()
+{
+  // The mesh adaptation logic is not owned by the VANS solver, but by the base
+  // class. However, the VANS solver needs to know whether a refinement step
+  // will be performed so that it can prepare the particle handler and the void
+  // fraction solution for the mesh adaptation. The logic below checks whether a
+  // refinement step will be performed based on the simulation parameters and
+  // the current state of the simulation control. If the logic in the base class
+  // changes, this code may need to be updated accordingly.
+  const Parameters::MeshAdaptation &mesh_adaptation =
+    this->simulation_parameters.mesh_adaptation;
+
+  const bool is_refinement_step =
+    this->simulation_control->is_refinement_step(mesh_adaptation);
+  const bool uniform_under_max_level =
+    mesh_adaptation.type == Parameters::MeshAdaptation::Type::uniform &&
+    this->triangulation->n_global_levels() <=
+      mesh_adaptation.maximum_refinement_level;
+  const bool is_adaptive =
+    mesh_adaptation.type == Parameters::MeshAdaptation::Type::adaptive;
+
+  const bool will_refine =
+    mesh_adaptation.type != Parameters::MeshAdaptation::Type::none &&
+    is_refinement_step && (uniform_under_max_level || is_adaptive);
+
+  if (will_refine)
+    prepare_VANS_for_mesh_adaptation();
+
+  this->refine_mesh();
+
+  if (will_refine)
+    restore_VANS_after_mesh_adaptation();
+}
+
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial conditions
@@ -196,12 +308,27 @@ FluidDynamicsVANS<dim, PropertiesIndex>::iterate()
 {
   announce_string(this->pcout, "Volume-Averaged Fluid Dynamics");
 
+  // Solve and percolate the auxiliary physics that should be treated BEFORE
+  // the fluid dynamics
+  this->multiphysics->solve(
+    false, this->simulation_parameters.simulation_control.method);
+  this->multiphysics->percolate_time_vectors(false);
+
   if (this->simulation_parameters.multiphysics.fluid_dynamics)
     {
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
 
       PhysicsSolver<GlobalVectorType>::solve_governing_system();
+
+      // If the auxiliary physics need to be solved after the fluid dynamics,
+      // the matrix free  solver requires to update the value here. This is due
+      // to the different type of vectors. This is copied from the
+      // navier_stokes_base.cc file.
+      if (this->multiphysics->get_active_physics().size() > 1)
+        {
+          this->update_solutions_for_multiphysics();
+        }
     }
   else
     {
@@ -209,6 +336,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::iterate()
       // the velocity and the pressure fields and move on.
       this->set_specified_fluid_dynamics_solution();
     }
+
+  // Solve and percolate the auxiliary physics that should be treated AFTER
+  // the fluid dynamics
+  this->multiphysics->solve(
+    true, this->simulation_parameters.simulation_control.method);
+  this->multiphysics->percolate_time_vectors(true);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1164,6 +1297,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
 
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
+
   particle_handler.exchange_ghost_particles(true);
 
   while (this->simulation_control->integrate())
@@ -1186,8 +1323,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
         }
       else
         {
-          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-          vertices_cell_mapping();
+          refine_mesh_and_synchronize_particles();
           calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }

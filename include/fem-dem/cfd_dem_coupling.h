@@ -210,6 +210,14 @@ protected:
   load_balance();
 
   /**
+   * @brief Rebuild the DEM contact-detection caches (cell neighbor lists,
+   * boundary cells, adaptive sparse contacts local/ghost cell set, periodic
+   * cell remap) from the current triangulation.
+   */
+  void
+  rebuild_dem_caches_after_triangulation_change();
+
+  /**
    * @brief Check if particles need to be inserted and perform insertion.
    *
    * Determines if new particles should be inserted into the simulation

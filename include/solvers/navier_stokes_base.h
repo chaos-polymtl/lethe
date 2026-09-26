@@ -119,7 +119,17 @@ template <int dim, typename VectorType, typename DofsType>
 class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
-  NavierStokesBase(SimulationParameters<dim> &nsparam);
+  /**
+   * @brief Construct the Navier-Stokes base and the multiphysics interface.
+   * @param[in] nsparam Relevant parameters for the solver.
+   * @param[in] p_is_vans Whether the solver solves the volume-averaged
+   * Navier-Stokes (VANS) equations, as opposed to the standard
+   * Navier-Stokes equations. Forwarded to the MultiphysicsInterface so it
+   * can refuse to instantiate an auxiliary physics that has no
+   * volume-averaged form yet.
+   */
+  NavierStokesBase(SimulationParameters<dim> &nsparam,
+                   const bool                 p_is_vans = false);
 
   virtual ~NavierStokesBase()
   {}

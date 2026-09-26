@@ -1,0 +1,78 @@
+Running on 3 MPI rank(s)...
+The particle size distribution of particle type 0 is uniform.
+DEM time step is 7.308259e+04% of Rayleigh time step
+   Number of active cells:       4
+   Number of degrees of freedom: 72
+   Volume of triangulation:      6.250000e-02
+  DPG system for Time-Harmonic Maxwell Equations:
+   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 680
+   Number of interior degrees of freedom for Time-Harmonic Maxwell: 384
+Minimum vertex distance between cell vertices: 2.500000e-01
+Minimum cell size to maximum particle diameter ratio: 2.500000e+01
+-------------------------------------------------------------------
+Initializing DEM parameters
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with convex boundaries. 
+Finished initializing DEM parameters
+DEM time step is 1.000000e+00 s
+--------------
+Void Fraction
+--------------
+
+*******************************************************************************
+Transient iteration: 1        Time: 1        Time step: 1        CFL: 0       
+*******************************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+DEM contact search at dem step 1
+Finished 1 DEM iterations
+L2 error velocity: 0.000000e+00
+---------------------------------------------------------------
+L2 error E real: 8.631365e-02
+L2 error E imag: 9.611845e-02
+L2 error H real: 9.351336e-02
+L2 error H imag: 8.562457e-02
+Global continuity equation error: 0.000000e+00 s^-1
+Max local continuity error: 0.000000e+00 s^-1
+
+*******************************************************************************
+Transient iteration: 2        Time: 2        Time step: 1        CFL: 0       
+*******************************************************************************
+   Number of active cells:       32
+   Number of degrees of freedom: 300
+   Volume of triangulation:      6.250000e-02
+  DPG system for Time-Harmonic Maxwell Equations:
+   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 4176
+   Number of interior degrees of freedom for Time-Harmonic Maxwell: 3072
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+DEM contact search at dem step 1
+Finished 1 DEM iterations
+L2 error velocity: 0.000000e+00
+---------------------------------------------------------------
+L2 error E real: 2.115071e-02
+L2 error E imag: 2.437166e-02
+L2 error H real: 2.252773e-02
+L2 error H imag: 2.192158e-02
+Global continuity equation error: 0.000000e+00 s^-1
+Max local continuity error: 0.000000e+00 s^-1
+ time  error_velocity 
+1.0000   0.000000e+00 
+2.0000   0.000000e+00 
+cells   error_E_real      error_E_imag      error_H_real      error_H_imag    
+    4 8.631365e-02    - 9.611845e-02    - 9.351336e-02    - 8.562457e-02    - 
+   32 2.115071e-02 2.03 2.437166e-02 1.98 2.252773e-02 2.05 2.192158e-02 1.97 

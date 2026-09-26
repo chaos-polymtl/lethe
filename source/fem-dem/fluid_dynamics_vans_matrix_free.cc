@@ -7,6 +7,7 @@
 #include <core/manifolds.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
+#include <core/vector.h>
 
 #include <dem/particle_handler_conversion.h>
 #include <fem-dem/fluid_dynamics_vans_matrix_free.h>
@@ -549,7 +550,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 template <int dim, typename PropertiesIndex>
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)
-  : FluidDynamicsMatrixFree<dim>(param.cfd_parameters)
+  : FluidDynamicsMatrixFree<dim>(param.cfd_parameters, /* p_is_vans */ true)
   , cfd_dem_simulation_parameters(param)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
@@ -928,6 +929,169 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
 
 template <int dim, typename PropertiesIndex>
 void
+FluidDynamicsVANSMatrixFree<dim,
+                            PropertiesIndex>::prepare_VANS_for_mesh_adaptation()
+{
+  // Void Fraction
+  std::vector<const VectorType *> vf_set_transfer;
+  vf_set_transfer.push_back(&this->particle_projector.void_fraction_solution);
+  this->particle_projector.void_fraction_solution.update_ghost_values();
+
+  for (unsigned int i = 0;
+       i < this->particle_projector.void_fraction_previous_solution.size();
+       ++i)
+    {
+      this->particle_projector.void_fraction_previous_solution[i]
+        .update_ghost_values();
+      vf_set_transfer.push_back(
+        &this->particle_projector.void_fraction_previous_solution[i]);
+    }
+
+  void_fraction_solution_transfer =
+    std::make_unique<SolutionTransfer<dim, VectorType>>(
+      particle_projector.dof_handler);
+  void_fraction_solution_transfer->prepare_for_coarsening_and_refinement(
+    vf_set_transfer);
+
+  // The particle handler must also be prepared before the triangulation
+  // changes, so particles are correctly relocated to their new cells.
+  particle_handler.prepare_for_coarsening_and_refinement();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
+  restore_VANS_after_mesh_adaptation()
+{
+  // Void Fraction Vectors
+  std::vector<VectorType *> vf_system(
+    1 + this->particle_projector.previous_void_fraction.size());
+
+  VectorType vf_distributed_system(
+    this->particle_projector.locally_owned_dofs,
+    this->particle_projector.locally_relevant_dofs,
+    this->mpi_communicator);
+
+  vf_system[0] = &(vf_distributed_system);
+
+  std::vector<VectorType> vf_distributed_previous_solutions;
+
+  vf_distributed_previous_solutions.reserve(
+    this->particle_projector.previous_void_fraction.size());
+
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      vf_distributed_previous_solutions.emplace_back(
+        VectorType(this->particle_projector.locally_owned_dofs,
+                   this->particle_projector.locally_relevant_dofs,
+                   this->mpi_communicator));
+      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
+    }
+
+  void_fraction_solution_transfer->interpolate(vf_system);
+
+  // From here on, the void fraction vectors are interpolated and we can safely
+  // delete the solution transfer object.
+  void_fraction_solution_transfer.reset();
+
+  // Refresh the ghost values of the freshly interpolated void fraction vectors,
+  // exactly as is done for the fluid vectors above. interpolate() only fills
+  // locally owned entries, leaving stale ghosts. If these are not refreshed,
+  // the stale ghosts are later propagated by percolate_void_fraction (which
+  // copies whole vectors) and, when a checkpoint is written on a load balance
+  // step, packed into the checkpoint by prepare_for_serialization (which reads
+  // ghost values to serialize the dofs of locally owned cells sitting on a
+  // subdomain boundary). This would store wrong void fractions on those dofs
+  // and, since the BDF void fraction time derivative amplifies them by ~1/dt,
+  // cause an abnormally high residual on the restarted step.
+  vf_distributed_system.update_ghost_values();
+
+  // Store the interpolated void fraction before converting it to a Trilinos
+  // vector, otherwise the conversion below would pick up the stale (post
+  // setup_dofs, zeroed) content of void_fraction_solution instead of the
+  // freshly interpolated field.
+  this->particle_projector.void_fraction_solution = vf_distributed_system;
+
+#ifndef LETHE_USE_LDV
+  // We also wish the Trilinos solution to be updated.
+  convert_vector_dealii_to_trilinos(
+    this->particle_projector.void_fraction_locally_owned,
+    this->particle_projector.void_fraction_solution);
+
+  this->particle_projector.void_fraction_locally_relevant =
+    this->particle_projector.void_fraction_locally_owned;
+#endif
+
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      // Refresh the ghost values before storing, for the same reason as the
+      // void_fraction_solution above: interpolate() leaves stale ghosts, which
+      // would otherwise be propagated by percolation and serialized into the
+      // checkpoint on a load balance step.
+      vf_distributed_previous_solutions[i].update_ghost_values();
+
+      this->particle_projector.void_fraction_previous_solution[i] =
+        vf_distributed_previous_solutions[i];
+
+#ifndef LETHE_USE_LDV
+      // We also wish the Trilinos solution to be updated.
+      convert_vector_dealii_to_trilinos(
+        this->particle_projector.void_fraction_locally_owned,
+        this->particle_projector.void_fraction_previous_solution[i]);
+      this->particle_projector.previous_void_fraction[i] =
+        this->particle_projector.void_fraction_locally_owned;
+#endif
+    }
+
+  vf_system.clear();
+
+  // Unpack particle handler after load balancing step
+  this->particle_handler.unpack_after_coarsening_and_refinement();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
+  refine_mesh_and_synchronize_particles()
+{
+  // The mesh adaptation logic is not owned by the VANS solver, but by the base
+  // class. However, the VANS solver needs to know whether a refinement step
+  // will be performed so that it can prepare the particle handler and the void
+  // fraction solution for the mesh adaptation. The logic below checks whether a
+  // refinement step will be performed based on the simulation parameters and
+  // the current state of the simulation control. If the logic in the base class
+  // changes, this code may need to be updated accordingly.
+  const Parameters::MeshAdaptation &mesh_adaptation =
+    this->simulation_parameters.mesh_adaptation;
+
+  const bool is_refinement_step =
+    this->simulation_control->is_refinement_step(mesh_adaptation);
+  const bool uniform_under_max_level =
+    mesh_adaptation.type == Parameters::MeshAdaptation::Type::uniform &&
+    this->triangulation->n_global_levels() <=
+      mesh_adaptation.maximum_refinement_level;
+  const bool is_adaptive =
+    mesh_adaptation.type == Parameters::MeshAdaptation::Type::adaptive;
+
+  const bool will_refine =
+    mesh_adaptation.type != Parameters::MeshAdaptation::Type::none &&
+    is_refinement_step && (uniform_under_max_level || is_adaptive);
+
+  if (will_refine)
+    prepare_VANS_for_mesh_adaptation();
+
+  this->refine_mesh();
+
+  if (will_refine)
+    restore_VANS_after_mesh_adaptation();
+}
+
+template <int dim, typename PropertiesIndex>
+void
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
@@ -981,7 +1145,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 
       if (!this->simulation_control->is_at_start())
         {
-          this->refine_mesh();
+          this->refine_mesh_and_synchronize_particles();
         }
 
       if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
