@@ -16,6 +16,7 @@
 
 #include <core/parameters.h>
 #include <core/periodic_boundary.h>
+#include <core/solid_objects_parameters.h>
 
 #include <deal.II/base/parameter_handler.h>
 
@@ -778,10 +779,13 @@ namespace Parameters
     /**
      * @brief Boundary conditions for DEM simulations.
      *
-     * This structure stores the motion parameters and periodic boundary
-     * information for each boundary of the DEM domain. A boundary's type is
-     * encoded by which container holds it (see outlet_boundaries below); fixed
-     * walls are the default and are not stored in any container.
+     * This structure stores the motion parameters, the thermal parameters and
+     * the periodic boundary information for each boundary of the DEM domain. A
+     * boundary's type is encoded by which container holds it (see
+     * outlet_boundaries below); fixed walls are the default and are not stored
+     * in any container. As for the solid objects, each wall also has a thermal
+     * boundary type (adiabatic by default) and, if it is isothermal, a
+     * temperature function.
      */
     struct BCDEM
     {
@@ -812,6 +816,19 @@ namespace Parameters
       /// Point on the rotational axis of each rotational boundary, keyed by the
       /// mesh boundary id. Only rotational boundaries have an entry.
       std::map<types::boundary_id, Point<3>> point_on_rotation_axis;
+
+      /// Type of thermal boundary condition of each wall, keyed by the mesh
+      /// boundary id. Only the walls (fixed_wall, translational and rotational
+      /// boundaries) declared in the DEM boundary conditions have an entry. It
+      /// is only used in multiphysic DEM. The boundaries without an entry are
+      /// adiabatic.
+      std::map<types::boundary_id, ThermalBoundaryType> thermal_boundary_type;
+
+      /// Temperature function of each isothermal wall, keyed by the mesh
+      /// boundary id. It is evaluated at the particle-wall contact points, so
+      /// it can vary in space and time.
+      std::map<types::boundary_id, std::shared_ptr<Function<3>>>
+        boundary_temperature;
 
       /// Periodic boundary pairs, keyed by the principal periodic boundary id
       /// (periodic id 0).
@@ -845,10 +862,10 @@ namespace Parameters
       /**
        * @brief Parse boundary condition parameters for a single boundary.
        *
-       * @param[in] prm The parameter handler.
+       * @param[in,out] prm The parameter handler.
        */
       void
-      parse_boundary_conditions(const ParameterHandler &prm);
+      parse_boundary_conditions(ParameterHandler &prm);
 
     private:
       /// Maximum number of boundary condition subsections declared in the

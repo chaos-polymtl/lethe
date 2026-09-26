@@ -15,9 +15,12 @@
 #include <dem/particle_interaction_outcomes.h>
 #include <dem/particle_wall_rolling_resistance_torque.h>
 
+#include <deal.II/base/function.h>
+
 #include <boost/math/special_functions.hpp>
 
 #include <map>
+#include <memory>
 #include <vector>
 
 using namespace dealii;
@@ -71,6 +74,18 @@ public:
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
+  /**
+   * @brief Update the temperature of the isothermal walls of the grid by
+   * setting the time of their temperature function. The functions are then
+   * evaluated at the contact points in calculate_particle_wall_contact, so the
+   * temperature of a wall can vary in space. It does nothing if there is no
+   * isothermal wall.
+   *
+   * @param[in] time Time at which the temperature of the walls is evaluated.
+   * It is the time of the particle positions used in the contact calculation.
+   */
+  virtual void
+  update_boundary_temperature(const double time) = 0;
 
   /**
    * @brief Return the number of contacts that occurred in the
@@ -150,6 +165,19 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
+
+  /**
+   * @brief Update the temperature of the isothermal walls of the grid by
+   * setting the time of their temperature function. The functions are then
+   * evaluated at the contact points in calculate_particle_wall_contact, so the
+   * temperature of a wall can vary in space. It does nothing if there is no
+   * isothermal wall.
+   *
+   * @param[in] time Time at which the temperature of the walls is evaluated.
+   * It is the time of the particle positions used in the contact calculation.
+   */
+  virtual void
+  update_boundary_temperature(const double time) override;
 
 protected:
   /**
@@ -1148,6 +1176,44 @@ private:
   set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
+   * @brief Return the thermal boundary type of a wall of the grid, as
+   * SerialSolid::get_thermal_boundary_type does for a solid object. The walls
+   * without a thermal boundary type are adiabatic.
+   *
+   * @param[in] boundary_id Boundary id of the wall.
+   *
+   * @return The thermal boundary type of the wall.
+   */
+  inline Parameters::ThermalBoundaryType
+  get_thermal_boundary_type(const types::boundary_id boundary_id) const
+  {
+    const auto thermal_type_it =
+      this->boundary_thermal_type_map.find(boundary_id);
+
+    // If the boundary id is not found in the map, return adiabatic as the default
+    return (thermal_type_it != this->boundary_thermal_type_map.end()) ?
+             thermal_type_it->second :
+             Parameters::ThermalBoundaryType::adiabatic;
+  }
+
+  /**
+   * @brief Return the temperature of an isothermal wall of the grid at a point,
+   * as SerialSolid::get_temperature does for a solid object. The temperature is
+   * evaluated at the time set by update_boundary_temperature.
+   *
+   * @param[in] boundary_id Boundary id of the isothermal wall.
+   * @param[in] point Point of the wall where the temperature is evaluated.
+   *
+   * @return The temperature of the wall at the point.
+   */
+  inline double
+  get_boundary_temperature(const types::boundary_id boundary_id,
+                           const Point<3>          &point) const
+  {
+    return this->boundary_temperature_function.at(boundary_id)->value(point);
+  }
+
+  /**
    * @brief Clears the tangential displacement and rolling resistance spring torque
    * from a contact info structure.
    *
@@ -1187,8 +1253,16 @@ private:
     boundary_translational_velocity_map;
   std::map<types::boundary_id, Tensor<1, 3>> boundary_rotational_vector;
   std::map<types::boundary_id, Point<3>>     point_on_rotation_vector;
-  const unsigned int                         vertices_per_triangle = 3;
-  Point<3>                                   center_mass_container;
+
+  // Thermal boundary type of the walls of the grid and temperature function
+  // of the isothermal ones, keyed by boundary id.
+  std::map<types::boundary_id, Parameters::ThermalBoundaryType>
+    boundary_thermal_type_map;
+  std::map<types::boundary_id, std::shared_ptr<Function<3>>>
+    boundary_temperature_function;
+
+  const unsigned int vertices_per_triangle = 3;
+  Point<3>           center_mass_container;
 
   /**
    * @brief Contact candidate between a particle and a triangle

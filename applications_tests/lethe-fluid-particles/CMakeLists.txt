@@ -114,6 +114,8 @@ file(COPY restart_fluidized_bed_files/pressure_drop.checkpoint DESTINATION      
 
 file(COPY heat_transfer_in_aligned_particles_files/particles-equilibrium.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_in_aligned_particles.${_build_type}/serial/")
 
+file(COPY heat_transfer_in_aligned_particles_02_files/particles-wall-heating.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_in_aligned_particles_02.${_build_type}/serial/")
+
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

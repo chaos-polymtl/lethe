@@ -135,8 +135,9 @@ calculate_interstitial_gas_macrogap_resistance(
  * resistance_gas_macrogap differ from particle-particle contacts to
  * particle-wall contacts.
  *
- * @tparam contact_type Type of contact. Only particle-particle and
- * particle-floating-mesh contacts are accepted for now.
+ * @tparam contact_type Type of contact. Only particle-particle,
+ * particle-floating-mesh (solid objects) and particle-wall (walls of the grid)
+ * contacts are accepted for now.
  *
  * @param[in] radius_one Radius of particle one.
  * @param[in] radius_two Radius of particle two for particle-particle contacts.

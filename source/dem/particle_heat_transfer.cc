@@ -150,13 +150,19 @@ calculate_contact_thermal_conductance(
   const double                  normal_force_norm,
   double                       &thermal_conductance)
 {
+  // Particle-wall contacts are either contacts with a wall of the grid or with
+  // a solid object. The thermal conductance is calculated the same way for
+  // both.
+  constexpr bool is_particle_wall_contact =
+    (contact_type == ContactType::particle_wall) ||
+    (contact_type == ContactType::particle_floating_mesh);
+
   const double harmonic_conductivity =
     harmonic_mean(thermal_conductivity_one, thermal_conductivity_two);
   // For particle-wall contacts, it is as if the radius of the wall is infinite.
-  const double harmonic_radius =
-    (contact_type == ContactType::particle_floating_mesh) ?
-      2. * radius_one :
-      harmonic_mean(radius_one, radius_two);
+  const double harmonic_radius = is_particle_wall_contact ?
+                                   2. * radius_one :
+                                   harmonic_mean(radius_one, radius_two);
 
   // Calculation of contact radius
   // Hertz contact radius
@@ -178,7 +184,7 @@ calculate_contact_thermal_conductance(
   // The following lines can be uncommented to use the geometric contact radius
   // instead of the hertz one used currently.
   // const double contact_radius = [&]() {
-  //   if constexpr (contact_type == ContactType::particle_floating_mesh)
+  //   if constexpr (is_particle_wall_contact)
   //     return sqrt(corrected_normal_overlap *
   //                 (2. * radius_one - corrected_normal_overlap));
   //   else
@@ -202,7 +208,7 @@ calculate_contact_thermal_conductance(
   // For particle-wall contacts, only the macrocontact resistance of the
   // particle is considered.
   const double resistance_macrocontact = [&]() {
-    if constexpr (contact_type == ContactType::particle_floating_mesh)
+    if constexpr (is_particle_wall_contact)
       return calculate_macrocontact_resistance(2. * thermal_conductivity_one,
                                                contact_radius);
     else
@@ -224,7 +230,7 @@ calculate_contact_thermal_conductance(
                                         contact_radius_squared);
   // For particle-wall contacts, only the solid macrogap resistance of the
   // particle is considered.
-  if constexpr (contact_type != ContactType::particle_floating_mesh)
+  if constexpr (!is_particle_wall_contact)
     resistance_solid_macrogap +=
       calculate_solid_macrogap_resistance(radius_two,
                                           thermal_conductivity_two,
@@ -246,7 +252,7 @@ calculate_contact_thermal_conductance(
 
   // For particle-wall contacts, there is only a macrogap around the particle
   // and not the wall, so only half of the resistance is kept.
-  if constexpr (contact_type == ContactType::particle_floating_mesh)
+  if constexpr (is_particle_wall_contact)
     resistance_gas_macrogap *= 0.5;
 
   // Calculation of the final thermal conductance (1 / total resistance)
@@ -282,7 +288,7 @@ apply_heat_transfer_on_single_local_particle(
     thermal_conductance * (temperature_two - temperature_one);
 }
 
-// only particle-particle and particle-floating-mesh contacts
+// only particle-particle, particle-floating-mesh and particle-wall contacts
 template void
 calculate_contact_thermal_conductance<ContactType::local_particle_particle>(
   const double                  radius_one,
@@ -374,6 +380,23 @@ calculate_contact_thermal_conductance<
 
 template void
 calculate_contact_thermal_conductance<ContactType::particle_floating_mesh>(
+  const double                  radius_one,
+  [[maybe_unused]] const double radius_two,
+  const double                  effective_youngs_modulus,
+  const double                  effective_real_youngs_modulus,
+  const double                  equivalent_surface_roughness,
+  const double                  equivalent_surface_slope,
+  const double                  effective_microhardness,
+  const double                  thermal_conductivity_one,
+  const double                  thermal_conductivity_two,
+  const double                  thermal_conductivity_gas,
+  const double                  gas_parameter_m,
+  const double                  normal_overlap,
+  const double                  normal_force_norm,
+  double                       &thermal_conductance);
+
+template void
+calculate_contact_thermal_conductance<ContactType::particle_wall>(
   const double                  radius_one,
   [[maybe_unused]] const double radius_two,
   const double                  effective_youngs_modulus,

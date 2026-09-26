@@ -654,6 +654,18 @@ DEMSolver<dim, PropertiesIndex>::update_temperature_solid_objects()
 
 template <int dim, typename PropertiesIndex>
 void
+DEMSolver<dim, PropertiesIndex>::update_temperature_walls()
+{
+  // As for the solid objects, the previous time must be used here instead of
+  // the current time, since the contact outcomes are calculated with the
+  // particle positions of the previous time step.
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    particle_wall_contact_force_object->update_boundary_temperature(
+      simulation_control->get_previous_time());
+}
+
+template <int dim, typename PropertiesIndex>
+void
 DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
 {
   // Check for contact search according to the contact detection method
@@ -1206,6 +1218,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Update solid objects temperatures
       update_temperature_solid_objects();
+
+      // Update walls temperatures
+      update_temperature_walls();
 
       // Particle-particle and particle-wall contact forces
       compute_contact_forces();

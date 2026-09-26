@@ -180,6 +180,12 @@ private:
   update_temperature_solid_objects();
 
   /**
+   * @brief Update the temperatures of the walls of the grid.
+   */
+  void
+  update_temperature_walls();
+
+  /**
    * @brief Check if a contact detection is required at the current iteration and,
    * if it is, map the solid objects in the background triangulation, sort the
    * particles into subdomains and cells and execute the particle-particle and

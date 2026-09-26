@@ -1390,6 +1390,11 @@ CFDDEMSolver<dim, PropertiesIndex>::dem_iterator()
   // particles yet.
   if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
     {
+      //Update the temperature of the walls of the grid.
+      particle_wall_contact_force_object->update_boundary_temperature(
+      this->simulation_control->get_previous_time() +
+      (counter - 1) * dem_time_step);
+
       integrate_temperature<dim, PropertiesIndex>(
         this->particle_handler,
         dem_time_step,
