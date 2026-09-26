@@ -298,10 +298,11 @@ namespace Parameters
                           defaults.adaptative_time_step_scaling),
                         Patterns::Double(),
                         "Adaptative time step scaling");
-      prm.declare_entry("output path",
-                        defaults.output_folder,
-                        Patterns::FileName(),
-                        "File output prefix");
+      prm.declare_entry(
+        "output path",
+        defaults.output_folder,
+        Patterns::FileName(),
+        "Path of the folder where the output files are written");
 
       prm.declare_entry("output name",
                         defaults.output_name,
@@ -359,7 +360,7 @@ namespace Parameters
         "output control",
         to_string(defaults.output_control),
         Patterns::Selection("iteration|time"),
-        "The control for the output of the simulation results"
+        "The control for the output of the simulation results. "
         "Results can be either outputted at constant iteration frequency or at constant time");
 
       prm.declare_entry(
@@ -1096,7 +1097,7 @@ namespace Parameters
         "stabilization",
         to_string(defaults.stabilization),
         Patterns::Selection("pspg_supg|gls|grad_div"),
-        "Type of stabilization used for the Navier-Stokes equations"
+        "Type of stabilization used for the Navier-Stokes equations. "
         "Choices are <pspg_supg|gls|grad_div>.");
 
       prm.declare_entry(
@@ -1601,7 +1602,7 @@ namespace Parameters
         to_string(tracer_diffusivity_model),
         Patterns::Selection(
           "constant|immersed solid tanh|immersed solid gaussian"),
-        "Model used for the calculation of the tracer diffusivity"
+        "Model used for the calculation of the tracer diffusivity. "
         "Choices are <constant|immersed solid tanh|immersed solid gaussian>.");
 
       prm.declare_entry(
@@ -1616,7 +1617,7 @@ namespace Parameters
         to_string(tracer_reaction_prefactor_model),
         Patterns::Selection(
           "none|constant|immersed solid tanh|immersed solid gaussian"),
-        "Model used for the calculation of the tracer reaction constant"
+        "Model used for the calculation of the tracer reaction constant. "
         "Choices are <none|constant|immersed solid tanh|immersed solid gaussian>.");
 
       prm.declare_entry(
@@ -1658,7 +1659,7 @@ namespace Parameters
       prm.declare_entry("density model",
                         to_string(density_model),
                         Patterns::Selection("constant|isothermal_ideal_gas"),
-                        "Model used for the calculation of the density"
+                        "Model used for the calculation of the density. "
                         "Choices are <constant|isothermal_ideal_gas>.");
 
       isothermal_ideal_gas_density_parameters.declare_parameters(prm);
@@ -1666,7 +1667,7 @@ namespace Parameters
       prm.declare_entry("specific heat model",
                         to_string(specific_heat_model),
                         Patterns::Selection("constant|phase_change"),
-                        "Model used for the calculation of the specific heat"
+                        "Model used for the calculation of the specific heat. "
                         "Choices are <constant|phase_change>.");
 
       phase_change_parameters.declare_parameters(prm);
@@ -1675,14 +1676,14 @@ namespace Parameters
         "thermal conductivity model",
         to_string(thermal_conductivity_model),
         Patterns::Selection("constant|linear|phase_change"),
-        "Model used for the calculation of the thermal conductivity"
+        "Model used for the calculation of the thermal conductivity. "
         "Choices are <constant|linear|phase_change>.");
 
       prm.declare_entry(
         "thermal expansion model",
         to_string(thermal_expansion_model),
         Patterns::Selection("constant|phase_change"),
-        "Model used for the calculation of the thermal expansion coefficient"
+        "Model used for the calculation of the thermal expansion coefficient. "
         "Choices are <constant|phase_change>.");
 
       prm.declare_entry("k_A0",
@@ -1702,7 +1703,7 @@ namespace Parameters
         "electric conductivity model",
         to_string(electric_conductivity_model),
         Patterns::Selection("constant|polynomial"),
-        "Model used for the calculation of the electric conductivity"
+        "Model used for the calculation of the electric conductivity. "
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "electric conductivity",
@@ -1724,7 +1725,7 @@ namespace Parameters
         "electric permittivity model",
         to_string(electric_permittivity_model),
         Patterns::Selection("constant|polynomial"),
-        "Model used for the calculation of the electric permittivity"
+        "Model used for the calculation of the electric permittivity. "
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "electric permittivity real part",
@@ -1743,7 +1744,7 @@ namespace Parameters
         Patterns::Tools::Convert<std::vector<double>>::to_string(
           electric_permittivity_real_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
-        "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
+        "Coefficients of the polynomial model for the real part of the electric permittivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
 
@@ -1752,7 +1753,7 @@ namespace Parameters
         Patterns::Tools::Convert<std::vector<double>>::to_string(
           electric_permittivity_imag_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
-        "Coefficients of the polynomial model for the electric permittivity of the material corresponding to: " +
+        "Coefficients of the polynomial model for the imaginary part of the electric permittivity of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
 
@@ -1760,7 +1761,7 @@ namespace Parameters
         "magnetic permeability model",
         to_string(magnetic_permeability_model),
         Patterns::Selection("constant|polynomial"),
-        "Model used for the calculation of the magnetic permeability"
+        "Model used for the calculation of the magnetic permeability. "
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
         "magnetic permeability real part",
@@ -1779,7 +1780,7 @@ namespace Parameters
         Patterns::Tools::Convert<std::vector<double>>::to_string(
           magnetic_permeability_real_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
-        "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
+        "Coefficients of the polynomial model for the real part of the magnetic permeability of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
       prm.declare_entry(
@@ -1787,7 +1788,7 @@ namespace Parameters
         Patterns::Tools::Convert<std::vector<double>>::to_string(
           magnetic_permeability_imag_polynomial_coefficients),
         Patterns::List(Patterns::Double(), 1),
-        "Coefficients of the polynomial model for the magnetic permeability of the material corresponding to: " +
+        "Coefficients of the polynomial model for the imaginary part of the magnetic permeability of the material corresponding to: " +
           material_prefix + " " + Utilities::int_to_string(id, 1) +
           ". The coefficients are given in decreasing order of the polynomial degree and need to be separated by commas.");
     }
@@ -1959,21 +1960,9 @@ namespace Parameters
         {
           electric_conductivity_model = ElectricConductivityModel::polynomial;
 
-          const std::string electric_conductivity_coefficients_string =
-            prm.get("electric conductivity polynomial coefficients");
-          const std::vector<std::string>
-            electric_conductivity_coefficients_vec =
-              Utilities::split_string_list(
-                electric_conductivity_coefficients_string);
-
-          // Clear the in-class default before filling from the file
-          electric_conductivity_polynomial_coefficients.clear();
-          for (const std::string &coefficient :
-               electric_conductivity_coefficients_vec)
-            {
-              electric_conductivity_polynomial_coefficients.push_back(
-                std::stod(coefficient));
-            }
+          electric_conductivity_polynomial_coefficients =
+            convert_string_to_vector<double>(
+              prm, "electric conductivity polynomial coefficients");
         }
 
       op = prm.get("electric permittivity model");
@@ -1989,37 +1978,13 @@ namespace Parameters
         {
           electric_permittivity_model = ElectricPermittivityModel::polynomial;
 
-          const std::string electric_permittivity_real_coefficients_string =
-            prm.get("electric permittivity real part polynomial coefficients");
-          const std::vector<std::string>
-            electric_permittivity_real_coefficients_vec =
-              Utilities::split_string_list(
-                electric_permittivity_real_coefficients_string);
+          electric_permittivity_real_polynomial_coefficients =
+            convert_string_to_vector<double>(
+              prm, "electric permittivity real part polynomial coefficients");
 
-          // Clear the in-class default before filling from the file
-          electric_permittivity_real_polynomial_coefficients.clear();
-          for (const std::string &coefficient :
-               electric_permittivity_real_coefficients_vec)
-            {
-              electric_permittivity_real_polynomial_coefficients.push_back(
-                std::stod(coefficient));
-            }
-
-          const std::string electric_permittivity_imag_coefficients_string =
-            prm.get("electric permittivity imag part polynomial coefficients");
-          const std::vector<std::string>
-            electric_permittivity_imag_coefficients_vec =
-              Utilities::split_string_list(
-                electric_permittivity_imag_coefficients_string);
-
-          // Clear the in-class default before filling from the file
-          electric_permittivity_imag_polynomial_coefficients.clear();
-          for (const std::string &coefficient :
-               electric_permittivity_imag_coefficients_vec)
-            {
-              electric_permittivity_imag_polynomial_coefficients.push_back(
-                std::stod(coefficient));
-            }
+          electric_permittivity_imag_polynomial_coefficients =
+            convert_string_to_vector<double>(
+              prm, "electric permittivity imag part polynomial coefficients");
         }
       op = prm.get("magnetic permeability model");
       if (op == "constant")
@@ -2034,35 +1999,13 @@ namespace Parameters
         {
           magnetic_permeability_model = MagneticPermeabilityModel::polynomial;
 
-          const std::string magnetic_permeability_real_coefficients_string =
-            prm.get("magnetic permeability real part polynomial coefficients");
-          const std::vector<std::string>
-            magnetic_permeability_real_coefficients_vec =
-              Utilities::split_string_list(
-                magnetic_permeability_real_coefficients_string);
-          // Clear the in-class default before filling from the file
-          magnetic_permeability_real_polynomial_coefficients.clear();
-          for (const std::string &coefficient :
-               magnetic_permeability_real_coefficients_vec)
-            {
-              magnetic_permeability_real_polynomial_coefficients.push_back(
-                std::stod(coefficient));
-            }
+          magnetic_permeability_real_polynomial_coefficients =
+            convert_string_to_vector<double>(
+              prm, "magnetic permeability real part polynomial coefficients");
 
-          const std::string magnetic_permeability_imag_coefficients_string =
-            prm.get("magnetic permeability imag part polynomial coefficients");
-          const std::vector<std::string>
-            magnetic_permeability_imag_coefficients_vec =
-              Utilities::split_string_list(
-                magnetic_permeability_imag_coefficients_string);
-          // Clear the in-class default before filling from the file
-          magnetic_permeability_imag_polynomial_coefficients.clear();
-          for (const std::string &coefficient :
-               magnetic_permeability_imag_coefficients_vec)
-            {
-              magnetic_permeability_imag_polynomial_coefficients.push_back(
-                std::stod(coefficient));
-            }
+          magnetic_permeability_imag_polynomial_coefficients =
+            convert_string_to_vector<double>(
+              prm, "magnetic permeability imag part polynomial coefficients");
         }
     }
     prm.leave_subsection();
@@ -2458,7 +2401,7 @@ namespace Parameters
       prm.declare_entry("torque name",
                         defaults.torque_output_name,
                         Patterns::FileName(),
-                        "File output force prefix");
+                        "File output torque prefix");
       prm.declare_entry("output precision",
                         Patterns::Tools::Convert<unsigned int>::to_string(
                           defaults.output_precision),
@@ -2578,7 +2521,7 @@ namespace Parameters
         to_string<dim>(laser_type),
         Patterns::Selection(
           "exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface"),
-        "Type of laser model used."
+        "Type of laser model used. "
         "Choices are <exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface>.");
       prm.declare_entry(
         "enable angle of incidence dependence",
@@ -3230,7 +3173,7 @@ namespace Parameters
           calculate_geometric_melt_volume),
         Patterns::Bool(),
         "Enable calculation of the geometric melt volume. "
-        "The melt volume is computed as the volume of fluid over the 'melting temperature'."
+        "The melt volume is computed as the volume of fluid over the 'melting temperature'. "
         "In the case of CLS simulations, the volume is the geometrical volume within the 'monitored fluid with phase change.'");
 
       prm.declare_entry("geometric melt volume name",
@@ -3495,10 +3438,10 @@ namespace Parameters
           Patterns::Selection("newton|kinsol_newton|inexact_newton"),
           "Non-linear solver that will be used "
           "Choices are <newton|kinsol_newton|inexact_newton>."
-          " The newton solver is a traditional newton solver with"
-          "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
-          "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
-          "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm"
+          " The newton solver is a traditional newton solver with "
+          "an analytical jacobian formulation. The jacobian matrix and the preconditioner "
+          "are assembled every iteration. In the kinsol_newton method, the nonlinear solver "
+          "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm "
           "that decides whether to reassemble the Jacobian matrix or not.");
 
         prm.declare_entry(
@@ -3532,7 +3475,7 @@ namespace Parameters
           Patterns::Tools::Convert<double>::to_string(
             defaults.matrix_tolerance),
           Patterns::Double(),
-          "This parameter controls the frequency at which the matrix is refreshed in the inexact Newton solvers"
+          "This parameter controls the frequency at which the matrix is refreshed in the inexact Newton solvers. "
           "If the residual after a newton step < previous residual * matrix tolerance, the matrix is not re-assembled");
 
         prm.declare_entry(
@@ -3540,9 +3483,9 @@ namespace Parameters
           Patterns::Tools::Convert<bool>::to_string(
             defaults.force_rhs_calculation),
           Patterns::Bool(),
-          "This is required if there is a fixed point component to the non-linear"
-          "solver that is changed at the beginning of every newton iteration."
-          "This is notably the case of the sharp edge method."
+          "This is required if there is a fixed point component to the non-linear "
+          "solver that is changed at the beginning of every newton iteration. "
+          "This is notably the case of the sharp edge method. "
           "The default value of this parameter is false.");
 
 
@@ -3705,7 +3648,7 @@ namespace Parameters
         Patterns::Tools::Convert<bool>::to_string(
           defaults.expand_particle_wall_contact_search),
         Patterns::Bool(),
-        "Enables adding the boundary neighbor cells of boundary cells to the"
+        "Enables adding the boundary neighbor cells of boundary cells to the "
         "particle-wall contact search list. This feature should only be "
         "activated in geometries with concave boundaries. (For example, for "
         "particles flow inside a cylinder or sphere). In geometries with "
@@ -4054,7 +3997,7 @@ namespace Parameters
         prm.declare_entry("preconditioner",
                           to_string(defaults.preconditioner),
                           Patterns::Selection("amg|ilu|lsmg|gcmg|none"),
-                          "The preconditioner for the linear solver."
+                          "The preconditioner for the linear solver. "
                           "Choices are <amg|ilu|lsmg|gcmg|none>.");
 
 
@@ -4210,16 +4153,17 @@ namespace Parameters
                           Patterns::Integer(),
                           "cg iterations performed to find eigenvalue");
 
-        prm.declare_entry("eig estimation verbosity",
-                          to_string(defaults.eig_estimation_verbose),
-                          Patterns::Selection("quiet|verbose"),
-                          "State whether MG should print max and min eigenvalue"
-                          "Choices are <quiet|verbose>.");
+        prm.declare_entry(
+          "eig estimation verbosity",
+          to_string(defaults.eig_estimation_verbose),
+          Patterns::Selection("quiet|verbose"),
+          "State whether MG should print max and min eigenvalue. "
+          "Choices are <quiet|verbose>.");
 
         prm.declare_entry("mg coarse grid solver",
                           to_string(defaults.mg_coarse_grid_solver),
                           Patterns::Selection("gmres|amg|ilu|direct"),
-                          "The coarse grid solver for lsmg or gcmg"
+                          "The coarse grid solver for lsmg or gcmg. "
                           "Choices are <gmres|amg|ilu|direct>.");
 
         prm.declare_entry(
@@ -4273,7 +4217,7 @@ namespace Parameters
         prm.declare_entry("mg gmres preconditioner",
                           to_string(defaults.mg_gmres_preconditioner),
                           Patterns::Selection("amg|ilu"),
-                          "The preconditioner for the mg gmres solver"
+                          "The preconditioner for the mg gmres solver. "
                           "Choices are <amg|ilu>.");
 
         prm.declare_entry("mg amg use default parameters",
@@ -4573,14 +4517,14 @@ namespace Parameters
       prm.declare_entry("type",
                         to_string(defaults.type),
                         Patterns::Selection("none|uniform|adaptive"),
-                        "Type of mesh adaptation"
+                        "Type of mesh adaptation. "
                         "Choices are <none|uniform|adaptive>.");
 
       prm.declare_entry(
         "error estimator",
         to_string(variable_defaults.error_estimator),
         Patterns::List(Patterns::Selection("kelly|dpg")),
-        "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter."
+        "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter. "
         "Choices are <kelly|dpg>.");
 
       prm.declare_entry(
@@ -4588,7 +4532,7 @@ namespace Parameters
         Patterns::Tools::Convert<double>::to_string(
           variable_defaults.refinement_fraction),
         Patterns::List(Patterns::Double()),
-        "Fraction of refined elements"
+        "Fraction of refined elements. "
         "For multi-variables refinement, separate the different fractions with a comma "
         "(ex/ 'set fraction refinement = 0.1,0.1')");
 
@@ -4597,7 +4541,7 @@ namespace Parameters
         Patterns::Tools::Convert<double>::to_string(
           variable_defaults.coarsening_fraction),
         Patterns::List(Patterns::Double()),
-        "Fraction of coarsened elements"
+        "Fraction of coarsened elements. "
         "For multi-variables refinement, separate the different fractions with a comma "
         "(ex/ 'set fraction coarsening = 0.05,0.05')");
 
@@ -4606,8 +4550,8 @@ namespace Parameters
         get_variable_string(defaults.vars),
         Patterns::List(Patterns::Selection(
           "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic fields")),
-        "Variable(s) for error estimation"
-        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic_fields>."
+        "Variable(s) for error estimation. "
+        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic_fields>. "
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variable = velocity,temperature')");
 
@@ -4615,7 +4559,7 @@ namespace Parameters
         "fraction type",
         to_string(defaults.fractionType),
         Patterns::Selection("number|fraction"),
-        "How the fraction of refinement/coarsening are interpreted"
+        "How the fraction of refinement/coarsening are interpreted. "
         "Choices are <number|fraction>.");
       prm.declare_entry("max number elements",
                         Patterns::Tools::Convert<unsigned int>::to_string(
@@ -4642,7 +4586,6 @@ namespace Parameters
         Patterns::Tools::Convert<bool>::to_string(
           defaults.mesh_controller_is_enabled),
         Patterns::Bool(),
-        "Fraction of refined elements"
         "Enable a controller that will target a specific number of elements in the mesh equal to the maximum number of elements");
       prm.declare_entry("fix boundary refinement",
                         Patterns::Tools::Convert<bool>::to_string(
@@ -4823,8 +4766,8 @@ namespace Parameters
         "enable",
         Patterns::Tools::Convert<bool>::to_string(defaults.enabled),
         Patterns::Bool(),
-        "Enable testing mode of a solver. Some solvers have a specific"
-        "testing mode which enables the output of debug variables. This"
+        "Enable testing mode of a solver. Some solvers have a specific "
+        "testing mode which enables the output of debug variables. This "
         "testing mode is generally used only for the automatic testing bench using ctest.");
       prm.declare_entry(
         "type",
@@ -4871,16 +4814,16 @@ namespace Parameters
                         defaults.filename,
                         Patterns::FileName(),
                         "Prefix for the filename of checkpoints");
-      prm.declare_entry("restart",
-                        Patterns::Tools::Convert<bool>::to_string(
-                          defaults.restart),
-                        Patterns::Bool(),
-                        "Frequency for checkpointing");
+      prm.declare_entry(
+        "restart",
+        Patterns::Tools::Convert<bool>::to_string(defaults.restart),
+        Patterns::Bool(),
+        "Restart the simulation from the last checkpoint <true|false>");
       prm.declare_entry(
         "checkpoint",
         Patterns::Tools::Convert<bool>::to_string(defaults.checkpoint),
         Patterns::Bool(),
-        "Enable checkpointing. Checkpointing creates a restart"
+        "Enable checkpointing. Checkpointing creates a restart "
         "point from which the simulation can be restarted from.");
 
       prm.declare_entry("frequency",
@@ -4948,9 +4891,9 @@ namespace Parameters
         "rotating frame type",
         to_string(defaults.rotating_frame_type),
         Patterns::Selection("none|srf"),
-        "Rotating frame velocity-dependent source terms"
-        "Choices are <none|srf>. The srf stands"
-        "for single rotating frame and adds"
+        "Rotating frame velocity-dependent source terms. "
+        "Choices are <none|srf>. The srf stands "
+        "for single rotating frame and adds "
         "the coriolis and the centrifugal force to the Navier-Stokes equations");
 
       prm.declare_entry(
@@ -4983,13 +4926,13 @@ namespace Parameters
         to_string(defaults.permeability_model),
         Patterns::Selection(
           "none|darcy phase change|carman-kozeny phase change"),
-        "Permeability models for phase change modelling."
+        "Permeability models for phase change modelling. "
         "Choices are <none|darcy phase change|carman-kozeny phase change>.");
 
       prm.declare_entry("Carman-Kozeny fluid with phase change",
                         to_string(defaults.fluid_with_phase_change),
                         Patterns::Selection("fluid 0|fluid 1|both"),
-                        "Select which fluids have phase change"
+                        "Select which fluids have phase change. "
                         "Choices are <fluid 0|fluid 1|both>.");
 
       prm.declare_entry(
@@ -5045,80 +4988,39 @@ namespace Parameters
         throw std::logic_error(
           "Error, invalid fluid with phase change. Options are <fluid 0|fluid 1|both>.");
 
-      carman_kozeny_permeability_area.resize(2);
-      carman_kozeny_tolerance.resize(2);
-      const std::string carman_kozeny_permeability_area_list =
-        prm.get("Carman-Kozeny permeability area");
-      std::vector<std::string> carman_kozeny_permeability_area_vec =
-        Utilities::split_string_list(carman_kozeny_permeability_area_list);
-
-      const std::string carman_kozeny_tolerance_list =
-        prm.get("Carman-Kozeny division tolerance");
-      std::vector<std::string> carman_kozeny_tolerance_vec =
-        Utilities::split_string_list(carman_kozeny_tolerance_list);
+      const std::vector<double> permeability_area_values =
+        convert_string_to_vector<double>(prm,
+                                         "Carman-Kozeny permeability area");
+      const std::vector<double> tolerance_values =
+        convert_string_to_vector<double>(prm,
+                                         "Carman-Kozeny division tolerance");
 
       // Check that dimensions agree
-      AssertThrow(carman_kozeny_permeability_area_vec.size() ==
-                    carman_kozeny_tolerance_vec.size(),
-                  dealii::ExcDimensionMismatch(
-                    (carman_kozeny_permeability_area_vec.size()),
-                    (carman_kozeny_tolerance_vec.size())));
+      AssertThrow(permeability_area_values.size() == tolerance_values.size(),
+                  dealii::ExcDimensionMismatch(permeability_area_values.size(),
+                                               tolerance_values.size()));
 
-      if (fluid_with_phase_change == FluidIndicator::fluid0)
+      // One value per fluid with phase change, starting at fluid 0 unless only
+      // fluid 1 changes phase. The other fluid keeps the in-class defaults.
+      const unsigned int expected_size =
+        (fluid_with_phase_change == FluidIndicator::both) ? 2 : 1;
+      const unsigned int first_fluid =
+        (fluid_with_phase_change == FluidIndicator::fluid1) ? 1 : 0;
+      AssertThrow(
+        permeability_area_values.size() == expected_size,
+        ExcMessage(
+          "The expected size of the 'Carman-Kozeny permeability area' list of " +
+          std::to_string(expected_size) + " is not met."));
+      AssertThrow(
+        tolerance_values.size() == expected_size,
+        ExcMessage(
+          "The expected size of the 'Carman-Kozeny division tolerance' list of " +
+          std::to_string(expected_size) + " is not met."));
+      for (unsigned int i = 0; i < expected_size; ++i)
         {
-          AssertThrow(
-            carman_kozeny_permeability_area_vec.size() == 1,
-            ExcMessage(
-              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
-          AssertThrow(
-            carman_kozeny_tolerance_vec.size() == 1,
-            ExcMessage(
-              "The expected size of the 'Carman-Kozeny division tolerance' list of 1 is not met."));
-
-          carman_kozeny_permeability_area[0] =
-            Utilities::string_to_double(carman_kozeny_permeability_area_vec[0]);
-          carman_kozeny_tolerance[0] =
-            Utilities::string_to_double(carman_kozeny_tolerance_vec[0]);
-          // Fluid 1 keeps the in-class default values
-        }
-      else if (fluid_with_phase_change == FluidIndicator::fluid1)
-        {
-          AssertThrow(
-            carman_kozeny_permeability_area_vec.size() == 1,
-            ExcMessage(
-              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
-          AssertThrow(
-            carman_kozeny_tolerance_vec.size() == 1,
-            ExcMessage(
-              "The expected size of the 'Carman-Kozeny division tolerance' list of 1 is not met."));
-
-          carman_kozeny_permeability_area[1] =
-            Utilities::string_to_double(carman_kozeny_permeability_area_vec[0]);
-          carman_kozeny_tolerance[1] =
-            Utilities::string_to_double(carman_kozeny_tolerance_vec[0]);
-          // Fluid 0 keeps the in-class default values
-        }
-      else if (fluid_with_phase_change == FluidIndicator::both)
-        {
-          AssertThrow(
-            carman_kozeny_permeability_area_vec.size() ==
-              carman_kozeny_permeability_area.size(),
-            ExcMessage(
-              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
-          AssertThrow(
-            carman_kozeny_tolerance_vec.size() ==
-              carman_kozeny_tolerance.size(),
-            ExcMessage(
-              "The expected size of the 'Carman-Kozeny division tolerance' list of 2 is not met."));
-
-          for (unsigned int i = 0; i < carman_kozeny_permeability_area.size();
-               ++i)
-            {
-              carman_kozeny_permeability_area[i] = Utilities::string_to_double(
-                carman_kozeny_permeability_area_vec[i]);
-              carman_kozeny_tolerance[i] =
-                Utilities::string_to_double(carman_kozeny_tolerance_vec[i]);
-            }
+          carman_kozeny_permeability_area[first_fluid + i] =
+            permeability_area_values[i];
+          carman_kozeny_tolerance[first_fluid + i] = tolerance_values[i];
         }
 
       // Check that all values are strictly positive
@@ -5196,34 +5098,34 @@ namespace Parameters
       "sphere",
       Patterns::Selection(
         "sphere|hyper rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|superquadric|rbf|opencascade|plane|composite"),
-      "The type of shape considered."
-      "Choices are <sphere|hyper rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|superquadric|rbf|opencascade|composite>."
+      "The type of shape considered. "
+      "Choices are <sphere|hyper rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|superquadric|rbf|opencascade|composite>. "
       "The parameter for a sphere is: radius. "
-      "The parameters for a hyper rectangle are, in order: x half length,"
-      "y half length, z half length."
-      "The parameters for an ellipsoid are, in order: x radius,"
+      "The parameters for a hyper rectangle are, in order: x half length, "
+      "y half length, z half length. "
+      "The parameters for an ellipsoid are, in order: x radius, "
       "y radius, z radius. "
-      "The parameters for a torus are, in order: torus radius,"
+      "The parameters for a torus are, in order: torus radius, "
       "torus thickness radius. "
       "The parameters for a cone are, in order: tan(base angle),"
       " height. "
-      "The parameters for a cylinder are, in order: radius, half-length."
-      "It is aligned to the z axis by default."
-      "The parameters for a cylindrical tube are, in order: inside radius,"
-      "outside radius, half-length. It is aligned to the z axis by default."
-      "The parameters for a cylindrical helix are, in order: helix radius,"
+      "The parameters for a cylinder are, in order: radius, half-length. "
+      "It is aligned to the z axis by default. "
+      "The parameters for a cylindrical tube are, in order: inside radius, "
+      "outside radius, half-length. It is aligned to the z axis by default. "
+      "The parameters for a cylindrical helix are, in order: helix radius, "
       "tube radius, helix total height, pitch (height between two consecutive "
-      "loops)."
-      "The parameters for a cut hollow sphere are, in order: sphere radius,"
+      "loops). "
+      "The parameters for a cut hollow sphere are, in order: sphere radius, "
       "cut thickness, wall thickness. "
-      "The parameters for a death star are, in order: sphere radius,"
-      "smaller sphere radius, distance between centers."
+      "The parameters for a death star are, in order: sphere radius, "
+      "smaller sphere radius, distance between centers. "
       "The parameters for a superquadric are, in order: "
       "a, b, c, r, s, t, epsilon. "
-      "The first three are half-lengths in x, y, and z."
-      "The next three are the blockiness in the x, y, and z directions."
-      "The last is the tolerance of the found surface."
-      "The parameter for an rbf is the file name."
+      "The first three are half-lengths in x, y, and z. "
+      "The next three are the blockiness in the x, y, and z directions. "
+      "The last is the tolerance of the found surface. "
+      "The parameter for an rbf is the file name. "
       "The parameter for a composite is the file name.");
 
     prm.declare_entry("shape arguments",
@@ -5235,7 +5137,7 @@ namespace Parameters
       "layer thickening",
       "0",
       Patterns::Double(),
-      "Thickness (positive or negative) of uniform additional layer of solid on particle."
+      "Thickness (positive or negative) of uniform additional layer of solid on particle. "
       "A negative value will decrease the particle's thickness by subtracting a layer of specified width.");
 
     prm.declare_entry(
@@ -5841,11 +5743,11 @@ namespace Parameters
                           defaults.enable_beta_particle),
                         Patterns::Bool(),
                         "Enable beta force for particles");
-      prm.declare_entry("beta threshold",
-                        Patterns::Tools::Convert<double>::to_string(
-                          defaults.beta_threshold),
-                        Patterns::Double(),
-                        "Enable beta force for particles");
+      prm.declare_entry(
+        "beta threshold",
+        Patterns::Tools::Convert<double>::to_string(defaults.beta_threshold),
+        Patterns::Double(),
+        "Relative threshold on the change of the beta force below which the previous beta force is kept");
       prm.declare_entry(
         "verbosity",
         to_string(defaults.verbosity),
@@ -5915,7 +5817,7 @@ namespace Parameters
         "evaporation mass flux model",
         to_string(defaults.evaporative_mass_flux_model_type),
         Patterns::Selection("constant|temperature_dependent"),
-        "Model used for the calculation of the evaporative mass flux"
+        "Model used for the calculation of the evaporative mass flux. "
         "Choices are <constant|temperature_dependent>.");
       prm.declare_entry(
         "enable evaporative cooling",
@@ -6056,7 +5958,7 @@ namespace Parameters
       prm.declare_entry("interface type",
                         to_string<dim>(interface_type),
                         Patterns::Selection("circular|linear"),
-                        "Type of mortar interface"
+                        "Type of mortar interface. "
                         "Choices are <circular|linear>.");
       rotor_mesh = std::make_shared<Mesh<dim>>();
       rotor_mesh->declare_parameters(prm);
