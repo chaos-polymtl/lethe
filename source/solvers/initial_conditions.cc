@@ -152,7 +152,7 @@ namespace Parameters
         to_string(type),
         Patterns::Selection(
           "L2projection|viscous|nodal|ramp|average_velocity_profile"),
-        "Type of initial condition"
+        "Type of initial condition. "
         "Choices are <L2projection|viscous|nodal|ramp|average_velocity_profile>.");
       prm.enter_subsection("uvwp");
       uvwp.declare_parameters(prm, dim + 1);

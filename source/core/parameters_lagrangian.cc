@@ -235,7 +235,7 @@ namespace Parameters
       prm.declare_entry("size distribution type",
                         "uniform",
                         Patterns::Selection("uniform|normal|lognormal|custom"),
-                        "Particle size distribution"
+                        "Particle size distribution. "
                         "Choices are <uniform|normal|lognormal|custom>.");
 
       // Normal and lognormal distributions
@@ -264,7 +264,7 @@ namespace Parameters
       prm.declare_entry("custom distribution probability function type",
                         "PDF",
                         Patterns::Selection("PDF|CDF"),
-                        "Particle size distribution"
+                        "Particle size distribution. "
                         "Choices are <PDF|CDF>.");
       prm.declare_entry("custom distribution interpolation",
                         "false",
@@ -303,7 +303,7 @@ namespace Parameters
       prm.declare_entry("minimum diameter cutoff",
                         "-1.",
                         Patterns::Double(),
-                        "Minimum cutoff value when sampling a distribution."
+                        "Minimum cutoff value when sampling a distribution. "
                         "If equal to -1., the cutoff will be fixed at "
                         "0.1% of the cumulative density function of the "
                         "distribution.");
@@ -895,18 +895,10 @@ namespace Parameters
         list_T = convert_string_to_vector<double>(prm, "list temperatures");
 
         // Volume:
-        std::vector<int> axis_order =
+        // The declare_entry pattern guarantees dim axes in [0, dim - 1].
+        const std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion direction sequence");
-
-        // We don't need to check the size of the array, since the declare_entry
-        // takes care of this check. The member carries an in-class default
-        // sequence, so it has to be emptied before being refilled from the
-        // parameter file, otherwise the parsed axes would be appended after
-        // the default ones and never read back.
-        direction_sequence.clear();
-        direction_sequence.reserve(dim);
-        for (int i = 0; i < dim; ++i)
-          direction_sequence.push_back(axis_order.at(i));
+        direction_sequence.assign(axis_order.begin(), axis_order.end());
 
         // Check if the insertion directions are valid: direction_sequence must
         // be a permutation of {0, ..., dim-1}, i.e. each axis appears exactly
@@ -1125,7 +1117,7 @@ namespace Parameters
             to_string<dim>(defaults.load_balance_method),
             Patterns::Selection(
               "none|once|frequent|dynamic|dynamic_with_sparse_contacts"),
-            "Choosing load-balance method"
+            "Choosing load-balance method. "
             "Choices are <none|once|frequent|dynamic|dynamic_with_sparse_contacts>.");
 
           prm.declare_entry(
@@ -1193,7 +1185,7 @@ namespace Parameters
           prm.declare_entry("contact detection method",
                             to_string<dim>(defaults.contact_detection_method),
                             Patterns::Selection("constant|dynamic"),
-                            "Choosing contact detection method"
+                            "Choosing contact detection method. "
                             "Choices are <constant|dynamic>.");
 
           prm.declare_entry("frequency",
@@ -1223,14 +1215,14 @@ namespace Parameters
           to_string(defaults.particle_particle_contact_force_model),
           Patterns::Selection(
             "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT"),
-          "Choosing particle-particle contact force model"
+          "Choosing particle-particle contact force model. "
           "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
         prm.declare_entry("particle wall contact force method",
                           to_string(
                             defaults.particle_wall_contact_force_method),
                           Patterns::Selection("linear|nonlinear|JKR|DMT"),
-                          "Choosing particle-wall contact force model"
+                          "Choosing particle-wall contact force model. "
                           "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
@@ -1246,7 +1238,7 @@ namespace Parameters
           to_string(defaults.rolling_resistance_method),
           Patterns::Selection(
             "none|no_resistance|constant|constant_resistance|viscous|viscous_resistance|epsd|epsd_resistance"),
-          "Choosing rolling resistance torque model"
+          "Choosing rolling resistance torque model. "
           "Choices are <none|constant|viscous|epsd>.");
 
         prm.declare_entry(
@@ -1259,13 +1251,13 @@ namespace Parameters
         prm.declare_entry("integration method",
                           to_string<dim>(defaults.integration_method),
                           Patterns::Selection("velocity_verlet|explicit_euler"),
-                          "Choosing integration method"
+                          "Choosing integration method. "
                           "Choices are <velocity_verlet|explicit_euler>.");
 
         prm.declare_entry("solver type",
                           to_string(defaults.solver_type),
                           Patterns::Selection("dem|dem_mp"),
-                          "Choosing solver type"
+                          "Choosing solver type. "
                           "Choices are <dem|dem_mp>.");
 
         prm.enter_subsection("adaptive sparse contacts");
@@ -1275,7 +1267,7 @@ namespace Parameters
             Patterns::Tools::Convert<bool>::to_string(
               defaults.sparse_particle_contacts),
             Patterns::Bool(),
-            "Enable the dynamic search for sparse particle contacts"
+            "Enable the dynamic search for sparse particle contacts. "
             "Choices are <true|false>.");
 
           prm.declare_entry(
@@ -1283,7 +1275,7 @@ namespace Parameters
             Patterns::Tools::Convert<bool>::to_string(
               defaults.advect_particles),
             Patterns::Bool(),
-            "Enable the advection of particles with hydrodynamic forces"
+            "Enable the advection of particles with hydrodynamic forces. "
             "Choices are <true|false>.");
 
           prm.declare_entry(
@@ -1307,7 +1299,7 @@ namespace Parameters
                           Patterns::Tools::Convert<bool>::to_string(
                             defaults.disable_position_integration),
                           Patterns::Bool(),
-                          "Disable the integration of position and velocity"
+                          "Disable the integration of position and velocity. "
                           "Choices are <true|false>.");
       }
       prm.leave_subsection();
@@ -1751,7 +1743,7 @@ namespace Parameters
       prm.declare_entry("normal vector",
                         "1., 0., 0.",
                         Patterns::List(Patterns::Double(), 2, 3),
-                        "Point on wall");
+                        "Normal vector of the wall");
 
       prm.enter_subsection("point on wall");
       prm.declare_entry("x", "0.", Patterns::Double(), "X Point on wall");
@@ -1853,7 +1845,7 @@ namespace Parameters
         "fixed_wall",
         Patterns::Selection(
           "fixed_wall|outlet|translational|rotational|periodic"),
-        "Type of boundary condition"
+        "Type of boundary condition. "
         "Choices are <fixed_wall|outlet|translational|rotational|periodic>.");
 
       prm.declare_entry("speed x",
@@ -2090,14 +2082,14 @@ namespace Parameters
             Patterns::Tools::Convert<bool>::to_string(
               defaults.particle_wall_collision_statistics),
             Patterns::Bool(),
-            "Enable the logging of particle-wall collision statistics"
+            "Enable the logging of particle-wall collision statistics. "
             "Choices are <true|false>.");
           prm.declare_entry(
             "log collisions with all walls",
             Patterns::Tools::Convert<bool>::to_string(
               defaults.log_collisions_with_all_walls),
             Patterns::Bool(),
-            "State whether collisions with all walls should be logged"
+            "State whether collisions with all walls should be logged. "
             "Choices are <true|false>.");
           prm.declare_entry(
             "wall boundary ids",
@@ -2241,7 +2233,7 @@ namespace Parameters
             defaults.step_between_photons_each_directions,
             step_between_photons_pattern),
           step_between_photons_pattern,
-          "Number of inserted photon in each direction.");
+          "Distance between inserted photons in each direction.");
 
         // In which direction photons will move considering a photon maximum
         // angle offset equal to 0.
@@ -2258,8 +2250,8 @@ namespace Parameters
             defaults.max_insertion_offset),
           Patterns::Double(),
           "Set the maximum offset applied on each photon position during their "
-          "insertion. If set to 0., photons will be perfectly aligned."
-          "respectively to the insertion unit tensors ");
+          "insertion, respectively to the insertion unit tensors. If set to 0., "
+          "photons will be perfectly aligned.");
 
         prm.declare_entry(
           "photon insertion prn seed",
@@ -2279,12 +2271,13 @@ namespace Parameters
           "photon. This parameter defines the maximum angle between a given "
           "photon displacement vector and the prescribed displacement vector "
           "parameter. If set to zero, every photon will move in the same "
-          "direction defined by the prescribed displacement vector parameter."
+          "direction defined by the prescribed displacement vector parameter. "
           "Otherwise, the offset is applied in a random orientation relative to "
           "the reference displacement vector parameter.");
 
         prm.declare_entry("photon angular offset prn seed",
-                          "1",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.prn_seed_photon_displacement),
                           Patterns::Integer(),
                           "Pseudo random seed used to generated the angle "
                           "offset and the random orientation.");
@@ -2316,10 +2309,10 @@ namespace Parameters
 
         // We always use 3d tensor even in a dim=2 simulation. Still, we want to
         // make sure the user write 2d tensor in the prm when the simulation is
-        // in 2d. Those tensors will be but in 3d afterward.
+        // in 2d. They are put in 3D afterward.
         AssertThrow(
           insertion_unit_tensors_string.size() == dim &&
-            step_between_photon_per_direction_strings.size() == dim &&
+            n_photons_per_directions_strings.size() == dim &&
             step_between_photon_per_direction_strings.size() == dim,
           dealii::ExcMessage(
             "The \"insertion unit tensors\", \"distance between photons on"
@@ -2327,8 +2320,9 @@ namespace Parameters
             "direction\" all need to have a number of dimension equal to the "
             "\"dimension\" parameter."));
 
-        // Always of size 3. The in-class defaults are cleared first, otherwise
-        // the parsed values would be appended after them.
+        // One entry per direction (dim entries), each stored as a 3D quantity.
+        // The in-class defaults are cleared first, otherwise the parsed values
+        // would be appended after them.
         insertion_directions_units_vector.clear();
         n_photons_each_directions.clear();
         step_between_photons_each_directions.clear();
@@ -2344,8 +2338,8 @@ namespace Parameters
             insertion_directions_units_vector.emplace_back(
               tensor_nd_to_3d(temp_direction_tensor));
 
-            n_photons_each_directions.emplace_back(Utilities::string_to_double(
-              n_photons_per_directions_strings.at(i)));
+            n_photons_each_directions.emplace_back(
+              Utilities::string_to_int(n_photons_per_directions_strings.at(i)));
 
             step_between_photons_each_directions.emplace_back(
               Utilities::string_to_double(
@@ -2367,7 +2361,7 @@ namespace Parameters
         // Displacement direction offset
         max_angular_offset = prm.get_double("photon maximum angular offset");
         prn_seed_photon_displacement =
-          prm.get_integer("photon insertion prn seed");
+          prm.get_integer("photon angular offset prn seed");
       }
       prm.leave_subsection();
     }

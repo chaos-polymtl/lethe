@@ -334,7 +334,7 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
       to_string(verbosity),
       Patterns::Selection("quiet|verbose|extra verbose"),
       "States whether the output from the interface reinitialization method "
-      "should be printed."
+      "should be printed. "
       "Choices are <quiet|verbose|extra verbose>.");
 
     sharpening.declare_parameters(prm);
@@ -594,7 +594,7 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
       to_string(defaults.type),
       Patterns::Selection("none|tanh"),
       "CLS phase indicator filtration type, "
-      "if <none> is selected, the phase won't be filtered"
+      "if <none> is selected, the phase won't be filtered; "
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = 0.5 \\tanh(\\beta(\\alpha-0.5)) + 0.5; "
       "where \\beta is a parameter influencing the interface thickness that "
@@ -780,8 +780,8 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
       to_string(defaults.type),
       Patterns::Selection("none|clip|tanh"),
       "CahnHilliard phase filtration type, "
-      "if <none> is selected, the phase won't be filtered"
-      "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1)"
+      "if <none> is selected, the phase won't be filtered; "
+      "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1); "
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = \\tanh(\\beta\\alpha); "
       "where beta is a parameter influencing the interface thickness that "

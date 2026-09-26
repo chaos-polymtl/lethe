@@ -1042,12 +1042,8 @@ namespace Parameters
       /// Maximum angular offset applied to the photon displacement direction.
       double max_angular_offset = 0.;
 
-      /// Random seed for photon displacement angular offset. Note: due to a
-      /// pre-existing quirk in parse_parameters(), this is actually parsed
-      /// from the "photon insertion prn seed" entry rather than "photon
-      /// angular offset prn seed", so its effective default is 0, not the
-      /// declared entry's own default of 1.
-      unsigned int prn_seed_photon_displacement = 0;
+      /// Random seed for photon displacement angular offset.
+      unsigned int prn_seed_photon_displacement = 1;
 
       /**
        * @brief Declare the parameters in the parameter handler.
