@@ -47,7 +47,7 @@ namespace SourceTerms
     parse_parameters(ParameterHandler &prm);
 
     /// Enable the Navier-Stokes source term
-    bool enable;
+    bool enable = true;
 
     /// Velocity-pressure components
     std::shared_ptr<Functions::ParsedFunction<dim>> navier_stokes_source;
@@ -70,7 +70,7 @@ namespace SourceTerms
 
     prm.enter_subsection("fluid dynamics");
     prm.declare_entry("enable",
-                      "true",
+                      Patterns::Tools::Convert<bool>::to_string(enable),
                       Patterns::Bool(),
                       "Enable the usage of a source term for the fluid solver");
     navier_stokes_source->declare_parameters(prm, dim + 1);

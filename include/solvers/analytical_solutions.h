@@ -39,12 +39,12 @@ namespace AnalyticalSolutions
      * Establishes if the calculation of the analytical solution is enabled or
      * not
      */
-    bool enable;
+    bool enable = false;
 
     /**
      * Filename used to store the L2 norm of the error
      */
-    std::string filename;
+    std::string filename = "L2Error";
 
 
     /**
@@ -56,8 +56,7 @@ namespace AnalyticalSolutions
      */
   public:
     AnalyticalSolution()
-      : enable(false)
-      , uvwp(dim + 1)
+      : uvwp(dim + 1)
       , temperature(1)
       , tracer(1)
       , cahn_hilliard(2)
@@ -124,7 +123,7 @@ namespace AnalyticalSolutions
      * Controls if the L2 norm of the error is printed to the terminal
      * during the simulation.
      */
-    Parameters::Verbosity verbosity;
+    Parameters::Verbosity verbosity = Parameters::Verbosity::quiet;
 
     /**
      * ParsedFunction that contains  the analytical solution for the velocity

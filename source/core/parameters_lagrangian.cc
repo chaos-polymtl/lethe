@@ -3,6 +3,10 @@
 
 #include <core/parameters_lagrangian.h>
 
+#include <deal.II/base/patterns.h>
+#include <deal.II/base/point.h>
+#include <deal.II/base/tensor.h>
+
 #include <deal.II/grid/grid_in.h>
 
 namespace Parameters
@@ -16,12 +20,13 @@ namespace Parameters
       prm.enter_subsection("lagrangian physical properties");
       {
         prm.declare_entry("g",
-                          "0., 0., 0.",
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(g),
                           Patterns::List(Patterns::Double(), 2, 3),
                           "Gravitational acceleration vector");
 
         prm.declare_entry("number of particle types",
-                          "1",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            particle_type_number),
                           Patterns::Integer(),
                           "Number of particle types");
 
@@ -37,80 +42,99 @@ namespace Parameters
           }
 
         prm.declare_entry("young modulus wall",
-                          "1000000.",
+                          Patterns::Tools::Convert<double>::to_string(
+                            youngs_modulus_wall),
                           Patterns::Double(),
                           "Young's modulus of wall");
         prm.declare_entry("poisson ratio wall",
-                          "0.3",
+                          Patterns::Tools::Convert<double>::to_string(
+                            poisson_ratio_wall),
                           Patterns::Double(),
                           "Poisson's ratio of wall");
         prm.declare_entry("restitution coefficient wall",
-                          "0.1",
+                          Patterns::Tools::Convert<double>::to_string(
+                            restitution_coefficient_wall),
                           Patterns::Double(),
                           "Coefficient of restitution of wall");
         prm.declare_entry("friction coefficient wall",
-                          "0.1",
+                          Patterns::Tools::Convert<double>::to_string(
+                            friction_coefficient_wall),
                           Patterns::Double(),
                           "Friction coefficient of wall");
         prm.declare_entry("rolling friction wall",
-                          "0.1",
+                          Patterns::Tools::Convert<double>::to_string(
+                            rolling_friction_wall),
                           Patterns::Double(),
                           "Rolling friction coefficient of wall");
         prm.declare_entry("rolling viscous damping wall",
-                          "0.1",
+                          Patterns::Tools::Convert<double>::to_string(
+                            rolling_viscous_damping_wall),
                           Patterns::Double(),
                           "Rolling viscous damping wall");
         prm.declare_entry("surface energy wall",
-                          "0.0",
+                          Patterns::Tools::Convert<double>::to_string(
+                            surface_energy_wall),
                           Patterns::Double(),
                           "Surface energy of wall");
         prm.declare_entry("hamaker constant wall",
-                          "4.e-19",
+                          Patterns::Tools::Convert<double>::to_string(
+                            hamaker_constant_wall),
                           Patterns::Double(),
                           "Hamaker constant of wall");
         prm.declare_entry("thermal conductivity wall",
-                          "100",
+                          Patterns::Tools::Convert<double>::to_string(
+                            thermal_conductivity_wall),
                           Patterns::Double(),
                           "Thermal conductivity of wall");
         prm.declare_entry("microhardness wall",
-                          "1.e9",
+                          Patterns::Tools::Convert<double>::to_string(
+                            microhardness_wall),
                           Patterns::Double(),
                           "Microhardness of wall");
         prm.declare_entry("surface slope wall",
-                          "0.1",
+                          Patterns::Tools::Convert<double>::to_string(
+                            surface_slope_wall),
                           Patterns::Double(),
                           "Surface slope of wall");
         prm.declare_entry("surface roughness wall",
-                          "1.e-10",
+                          Patterns::Tools::Convert<double>::to_string(
+                            surface_roughness_wall),
                           Patterns::Double(),
                           "Surface roughness of wall");
         prm.declare_entry("thermal accommodation wall",
-                          "0.7",
+                          Patterns::Tools::Convert<double>::to_string(
+                            thermal_accommodation_wall),
                           Patterns::Double(),
                           "Thermal accommodation of wall");
         prm.declare_entry("real young modulus wall",
-                          "0.",
+                          Patterns::Tools::Convert<double>::to_string(
+                            real_youngs_modulus_wall),
                           Patterns::Double(),
                           "Real Young's modulus of wall");
 
         prm.declare_entry("thermal conductivity gas",
-                          "0.01",
+                          Patterns::Tools::Convert<double>::to_string(
+                            thermal_conductivity_gas),
                           Patterns::Double(),
                           "Thermal conductivity of interstitial gas");
         prm.declare_entry("specific heat gas",
-                          "1000",
+                          Patterns::Tools::Convert<double>::to_string(
+                            specific_heat_gas),
                           Patterns::Double(),
                           "Specific heat of interstitial gas");
         prm.declare_entry("dynamic viscosity gas",
-                          "1.e-5",
+                          Patterns::Tools::Convert<double>::to_string(
+                            dynamic_viscosity_gas),
                           Patterns::Double(),
                           "Dynamic viscosity of interstitial gas");
         prm.declare_entry("specific heats ratio gas",
-                          "1",
+                          Patterns::Tools::Convert<double>::to_string(
+                            specific_heats_ratio_gas),
                           Patterns::Double(),
                           "Specific heats ratio of interstitial gas");
         prm.declare_entry("molecular mean free path gas",
-                          "68.e-9",
+                          Patterns::Tools::Convert<double>::to_string(
+                            molecular_mean_free_path_gas),
                           Patterns::Double(),
                           "Molecular mean free path of interstitial gas");
       }
@@ -211,7 +235,7 @@ namespace Parameters
       prm.declare_entry("size distribution type",
                         "uniform",
                         Patterns::Selection("uniform|normal|lognormal|custom"),
-                        "Particle size distribution"
+                        "Particle size distribution. "
                         "Choices are <uniform|normal|lognormal|custom>.");
 
       // Normal and lognormal distributions
@@ -240,7 +264,7 @@ namespace Parameters
       prm.declare_entry("custom distribution probability function type",
                         "PDF",
                         Patterns::Selection("PDF|CDF"),
-                        "Particle size distribution"
+                        "Particle size distribution. "
                         "Choices are <PDF|CDF>.");
       prm.declare_entry("custom distribution interpolation",
                         "false",
@@ -279,7 +303,7 @@ namespace Parameters
       prm.declare_entry("minimum diameter cutoff",
                         "-1.",
                         Patterns::Double(),
-                        "Minimum cutoff value when sampling a distribution."
+                        "Minimum cutoff value when sampling a distribution. "
                         "If equal to -1., the cutoff will be fixed at "
                         "0.1% of the cumulative density function of the "
                         "distribution.");
@@ -533,131 +557,180 @@ namespace Parameters
       p_real_youngs_modulus.reserve(particle_type_maximum_number);
     }
 
+    namespace
+    {
+      template <int dim>
+      std::string
+      to_string(const typename InsertionInfo<dim>::InsertionMethod method)
+      {
+        switch (method)
+          {
+            case InsertionInfo<dim>::InsertionMethod::file:
+              return "file";
+            case InsertionInfo<dim>::InsertionMethod::list:
+              return "list";
+            case InsertionInfo<dim>::InsertionMethod::plane:
+              return "plane";
+            case InsertionInfo<dim>::InsertionMethod::volume:
+              return "volume";
+            case InsertionInfo<dim>::InsertionMethod::packed:
+              return "packed";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+    } // namespace
+
     template <int dim>
     void
     InsertionInfo<dim>::declare_parameters(ParameterHandler &prm)
     {
+      const InsertionInfo<dim> defaults;
       prm.enter_subsection("insertion info");
       {
         prm.declare_entry("insertion method",
-                          "volume",
+                          to_string<dim>(defaults.insertion_method),
                           Patterns::Selection("file|list|plane|volume|packed"),
                           "Choosing insertion method. "
                           "Choices are <file|plane|list|volume|packed>.");
         prm.declare_entry("inserted number of particles at each time step",
-                          "0",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.inserted_this_step),
                           Patterns::Integer(),
                           "Inserted number of particles at each time step");
         prm.declare_entry("insertion frequency",
-                          "0",
+                          Patterns::Tools::Convert<int>::to_string(
+                            defaults.insertion_frequency),
                           Patterns::Integer(),
                           "Insertion frequency");
 
         // Removal box:
         prm.declare_entry(
           "remove particles",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.removing_particles_in_region),
           Patterns::Bool(),
           "State whether particles should be cleared on insertion.");
 
         prm.declare_entry(
           "removal box points coordinates",
-          "0. , 0. , 0. : 1. , 1. , 1.",
+          Patterns::Tools::Convert<Point<3>>::to_string(
+            defaults.clear_box_point_1) +
+            " : " +
+            Patterns::Tools::Convert<Point<3>>::to_string(
+              defaults.clear_box_point_2),
           Patterns::List(
             Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
           "Coordinates of two points for the removal box (x1, y1, z1 : x2, y2, z2)");
 
         // File:
-        prm.declare_entry("list of input files",
-                          "particles.input",
-                          Patterns::List(Patterns::FileName()),
-                          "The file name from which we load the particles");
+        prm.declare_entry(
+          "list of input files",
+          Patterns::Tools::Convert<std::vector<std::string>>::to_string(
+            defaults.list_of_input_files),
+          Patterns::List(Patterns::FileName()),
+          "The file name from which we load the particles");
 
         // Plane:
         prm.declare_entry("insertion plane point",
-                          "0., 0., 0.",
+                          Patterns::Tools::Convert<Point<3>>::to_string(
+                            defaults.insertion_plane_point),
                           Patterns::List(Patterns::Double()),
                           "Insertion plane point location");
         prm.declare_entry("insertion plane normal vector",
-                          "1., 0., 0.",
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
+                            defaults.insertion_plane_normal_vector),
                           Patterns::List(Patterns::Double()),
                           "Insertion plane normal vector");
-        prm.declare_entry(
-          "insertion plane threshold distance",
-          "0.",
-          Patterns::Double(),
-          "If all the vertices of a cell are closer or equal to this value, than this cell is in the plane");
 
         // List:
-        prm.declare_entry("list x",
-                          "0",
-                          Patterns::List(Patterns::Double()),
-                          "List of particles x positions");
-        prm.declare_entry("list y",
-                          "0",
-                          Patterns::List(Patterns::Double()),
-                          "List of particles y positions");
-        prm.declare_entry("list z",
-                          "0",
-                          Patterns::List(Patterns::Double()),
-                          "List of particles z positions");
-        prm.declare_entry("list velocity x",
-                          "0",
-                          Patterns::List(Patterns::Double()),
-                          "List of initial velocities x");
-        prm.declare_entry("list velocity y",
-                          "0",
-                          Patterns::List(Patterns::Double()),
-                          "List of initial velocities y");
-        prm.declare_entry("list velocity z",
-                          "0",
-                          Patterns::List(Patterns::Double()),
-                          "List of initial velocities z");
-        prm.declare_entry("list omega x",
-                          "0.",
-                          Patterns::List(Patterns::Double()),
-                          "List of initial omega x");
-        prm.declare_entry("list omega y",
-                          "0.",
-                          Patterns::List(Patterns::Double()),
-                          "List of initial omega y");
-        prm.declare_entry("list omega z",
-                          "0.",
-                          Patterns::List(Patterns::Double()),
-                          "List of initial omega z");
-        prm.declare_entry("list diameters",
-                          "-1.0",
-                          Patterns::List(Patterns::Double()),
-                          "List of diameters");
-        prm.declare_entry("list temperatures",
-                          "0.",
-                          Patterns::List(Patterns::Double()),
-                          "List of initial temperatures");
+        prm.declare_entry(
+          "list x",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_x),
+          Patterns::List(Patterns::Double()),
+          "List of particles x positions");
+        prm.declare_entry(
+          "list y",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_y),
+          Patterns::List(Patterns::Double()),
+          "List of particles y positions");
+        prm.declare_entry(
+          "list z",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_z),
+          Patterns::List(Patterns::Double()),
+          "List of particles z positions");
+        prm.declare_entry(
+          "list velocity x",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_vx),
+          Patterns::List(Patterns::Double()),
+          "List of initial velocities x");
+        prm.declare_entry(
+          "list velocity y",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_vy),
+          Patterns::List(Patterns::Double()),
+          "List of initial velocities y");
+        prm.declare_entry(
+          "list velocity z",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_vz),
+          Patterns::List(Patterns::Double()),
+          "List of initial velocities z");
+        prm.declare_entry(
+          "list omega x",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_wx),
+          Patterns::List(Patterns::Double()),
+          "List of initial omega x");
+        prm.declare_entry(
+          "list omega y",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_wy),
+          Patterns::List(Patterns::Double()),
+          "List of initial omega y");
+        prm.declare_entry(
+          "list omega z",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_wz),
+          Patterns::List(Patterns::Double()),
+          "List of initial omega z");
+        prm.declare_entry(
+          "list diameters",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_d),
+          Patterns::List(Patterns::Double()),
+          "List of diameters");
+        prm.declare_entry(
+          "list temperatures",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.list_T),
+          Patterns::List(Patterns::Double()),
+          "List of initial temperatures");
         // Volume:
-        if constexpr (dim == 2)
-          {
-            prm.declare_entry("insertion direction sequence",
-                              "0,1",
-                              Patterns::List(Patterns::Integer(0, 1), 2, 2),
-                              "Direction of particle insertion for the volume "
-                              "insertion method.");
-          }
-        else
-          {
-            prm.declare_entry("insertion direction sequence",
-                              "0,1,2",
-                              Patterns::List(Patterns::Integer(0, 2), 3, 3),
-                              "Direction of particle insertion for the volume "
-                              "insertion method.");
-          }
+        prm.declare_entry(
+          "insertion direction sequence",
+          Patterns::Tools::Convert<std::vector<unsigned int>>::to_string(
+            defaults.direction_sequence),
+          Patterns::List(Patterns::Integer(0, dim - 1), dim, dim),
+          "Direction of particle insertion for the volume "
+          "insertion method.");
         prm.declare_entry(
           "insertion box points coordinates",
-          "0. , 0. , 0. : 1. , 1. , 1.",
+          Patterns::Tools::Convert<Point<3>>::to_string(
+            defaults.insertion_box_point_1) +
+            " : " +
+            Patterns::Tools::Convert<Point<3>>::to_string(
+              defaults.insertion_box_point_2),
           Patterns::List(
             Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
           "Coordinates of two points for the insertion box (x1, y1, z1 : x2, y2, z2)");
         prm.declare_entry("insertion distance threshold",
-                          "1.",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.distance_threshold),
                           Patterns::Double(),
                           "Distance threshold");
 
@@ -675,21 +748,24 @@ namespace Parameters
         // Volume or plane:
         prm.declare_entry(
           "insertion maximum offset",
-          "1.",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.insertion_maximum_offset),
           Patterns::Double(),
           "Maximum position offset when insertion of particles");
 
         prm.declare_entry(
           "insertion prn seed",
-          "1",
+          Patterns::Tools::Convert<int>::to_string(defaults.seed_for_insertion),
           Patterns::Integer(),
           "Pseudo-random number seed used to generate the position offsets");
         prm.declare_entry("initial velocity",
-                          "0.0, 0.0, 0.0",
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
+                            defaults.initial_vel),
                           Patterns::List(Patterns::Double()),
                           "Initial velocity (x, y, z)");
         prm.declare_entry("initial angular velocity",
-                          "0.0, 0.0, 0.0",
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
+                            defaults.initial_omega),
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
 
@@ -819,14 +895,10 @@ namespace Parameters
         list_T = convert_string_to_vector<double>(prm, "list temperatures");
 
         // Volume:
-        std::vector<int> axis_order =
+        // The declare_entry pattern guarantees dim axes in [0, dim - 1].
+        const std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion direction sequence");
-
-        // We don't need to check the size of the array, since the declare_entry
-        // takes care of this check.
-        direction_sequence.reserve(dim);
-        for (int i = 0; i < dim; ++i)
-          direction_sequence.push_back(axis_order.at(i));
+        direction_sequence.assign(axis_order.begin(), axis_order.end());
 
         // Check if the insertion directions are valid: direction_sequence must
         // be a permutation of {0, ..., dim-1}, i.e. each axis appears exactly
@@ -899,43 +971,180 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+    namespace
+    {
+      template <int dim>
+      std::string
+      to_string(const typename ModelParameters<dim>::LoadBalanceMethod method)
+      {
+        switch (method)
+          {
+            case ModelParameters<dim>::LoadBalanceMethod::none:
+              return "none";
+            case ModelParameters<dim>::LoadBalanceMethod::once:
+              return "once";
+            case ModelParameters<dim>::LoadBalanceMethod::frequent:
+              return "frequent";
+            case ModelParameters<dim>::LoadBalanceMethod::dynamic:
+              return "dynamic";
+            case ModelParameters<
+              dim>::LoadBalanceMethod::dynamic_with_sparse_contacts:
+              return "dynamic_with_sparse_contacts";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+
+      template <int dim>
+      std::string
+      to_string(
+        const typename ModelParameters<dim>::ContactDetectionMethod method)
+      {
+        switch (method)
+          {
+            case ModelParameters<dim>::ContactDetectionMethod::constant:
+              return "constant";
+            case ModelParameters<dim>::ContactDetectionMethod::dynamic:
+              return "dynamic";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+
+      template <int dim>
+      std::string
+      to_string(const typename ModelParameters<dim>::IntegrationMethod method)
+      {
+        switch (method)
+          {
+            case ModelParameters<dim>::IntegrationMethod::velocity_verlet:
+              return "velocity_verlet";
+            case ModelParameters<dim>::IntegrationMethod::explicit_euler:
+              return "explicit_euler";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+
+      std::string
+      to_string(const ParticleParticleContactForceModel model)
+      {
+        switch (model)
+          {
+            case ParticleParticleContactForceModel::linear:
+              return "linear";
+            case ParticleParticleContactForceModel::hertz_mindlin_limit_force:
+              return "hertz_mindlin_limit_force";
+            case ParticleParticleContactForceModel::hertz_mindlin_limit_overlap:
+              return "hertz_mindlin_limit_overlap";
+            case ParticleParticleContactForceModel::hertz:
+              return "hertz";
+            case ParticleParticleContactForceModel::hertz_JKR:
+              return "hertz_JKR";
+            case ParticleParticleContactForceModel::DMT:
+              return "DMT";
+            case ParticleParticleContactForceModel::shift:
+              return "shift";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+
+      std::string
+      to_string(const ParticleWallContactForceModel model)
+      {
+        switch (model)
+          {
+            case ParticleWallContactForceModel::linear:
+              return "linear";
+            case ParticleWallContactForceModel::nonlinear:
+              return "nonlinear";
+            case ParticleWallContactForceModel::JKR:
+              return "JKR";
+            case ParticleWallContactForceModel::DMT:
+              return "DMT";
+            case ParticleWallContactForceModel::shift:
+              return "shift";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+
+      std::string
+      to_string(const RollingResistanceMethod method)
+      {
+        switch (method)
+          {
+            case RollingResistanceMethod::none:
+              return "none";
+            case RollingResistanceMethod::constant:
+              return "constant";
+            case RollingResistanceMethod::viscous:
+              return "viscous";
+            case RollingResistanceMethod::epsd:
+              return "epsd";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+
+      std::string
+      to_string(const DEM::SolverType type)
+      {
+        switch (type)
+          {
+            case DEM::SolverType::dem:
+              return "dem";
+            case DEM::SolverType::dem_mp:
+              return "dem_mp";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+    } // namespace
+
     template <int dim>
     void
     ModelParameters<dim>::declare_parameters(ParameterHandler &prm)
     {
+      const ModelParameters<dim> defaults;
       prm.enter_subsection("model parameters");
       {
         prm.enter_subsection("load balancing");
         {
           prm.declare_entry(
             "load balance method",
-            "none",
+            to_string<dim>(defaults.load_balance_method),
             Patterns::Selection(
               "none|once|frequent|dynamic|dynamic_with_sparse_contacts"),
-            "Choosing load-balance method"
+            "Choosing load-balance method. "
             "Choices are <none|once|frequent|dynamic|dynamic_with_sparse_contacts>.");
 
           prm.declare_entry(
             "step",
-            "100000",
+            Patterns::Tools::Convert<unsigned int>::to_string(
+              defaults.load_balance_step),
             Patterns::Integer(),
             "Step at which the triangulation is repartitioned "
             "and load is balanced for single-step load-balancing");
 
           prm.declare_entry(
             "frequency",
-            "100000",
+            Patterns::Tools::Convert<unsigned int>::to_string(
+              defaults.load_balance_frequency),
             Patterns::Integer(),
             "Frequency at which the triangulation is repartitioned "
             "and load is balanced for frequent load-balancing");
 
           prm.declare_entry("threshold",
-                            "0.5",
+                            Patterns::Tools::Convert<double>::to_string(
+                              defaults.load_balance_threshold),
                             Patterns::Double(),
                             "Threshold for dynamic load-balancing");
 
           prm.declare_entry("dynamic check frequency",
-                            "10000",
+                            Patterns::Tools::Convert<unsigned int>::to_string(
+                              defaults.dynamic_load_balance_check_frequency),
                             Patterns::Integer(),
                             "Checking frequency for dynamic load-balancing");
 
@@ -950,19 +1159,22 @@ namespace Parameters
 
           prm.declare_entry(
             "particle weight",
-            "2000",
+            Patterns::Tools::Convert<unsigned int>::to_string(
+              defaults.load_balance_particle_weight),
             Patterns::Integer(),
             "The particle weight based on a default cell weight of 1000");
 
           prm.declare_entry(
             "active weight factor",
-            "1.0",
+            Patterns::Tools::Convert<double>::to_string(
+              defaults.active_load_balancing_factor),
             Patterns::Double(),
             "Factor applied on the particle weight in load balancing if the cell is active");
 
           prm.declare_entry(
             "inactive weight factor",
-            "1.0",
+            Patterns::Tools::Convert<double>::to_string(
+              defaults.inactive_load_balancing_factor),
             Patterns::Double(),
             "Factor applied on the particle weight in load balancing if the cell is inactive");
         }
@@ -971,25 +1183,28 @@ namespace Parameters
         prm.enter_subsection("contact detection");
         {
           prm.declare_entry("contact detection method",
-                            "dynamic",
+                            to_string<dim>(defaults.contact_detection_method),
                             Patterns::Selection("constant|dynamic"),
-                            "Choosing contact detection method"
+                            "Choosing contact detection method. "
                             "Choices are <constant|dynamic>.");
 
           prm.declare_entry("frequency",
-                            "1",
+                            Patterns::Tools::Convert<unsigned int>::to_string(
+                              defaults.contact_detection_frequency),
                             Patterns::Integer(),
                             "Particle-particle contact list");
 
           prm.declare_entry(
             "dynamic contact search size coefficient",
-            "0.8",
+            Patterns::Tools::Convert<double>::to_string(
+              defaults.dynamic_contact_search_factor),
             Patterns::Double(),
             "Security coefficient for dynamic contact detection");
 
           prm.declare_entry(
             "neighborhood threshold",
-            "1.3",
+            Patterns::Tools::Convert<double>::to_string(
+              defaults.neighborhood_threshold),
             Patterns::Double(),
             "Contact search zone diameter to particle diameter ratio");
         }
@@ -997,76 +1212,83 @@ namespace Parameters
 
         prm.declare_entry(
           "particle particle contact force method",
-          "hertz_mindlin_limit_overlap",
+          to_string(defaults.particle_particle_contact_force_model),
           Patterns::Selection(
             "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT"),
-          "Choosing particle-particle contact force model"
+          "Choosing particle-particle contact force model. "
           "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
         prm.declare_entry("particle wall contact force method",
-                          "nonlinear",
+                          to_string(
+                            defaults.particle_wall_contact_force_method),
                           Patterns::Selection("linear|nonlinear|JKR|DMT"),
-                          "Choosing particle-wall contact force model"
+                          "Choosing particle-wall contact force model. "
                           "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
           "dmt cut-off threshold",
-          "0.1",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.dmt_cut_off_threshold),
           Patterns::Double(),
           "Cut-off threshold above which the Van der Waal forces are "
           "ignored for the DMT model relative to the pull-off force");
 
         prm.declare_entry(
           "rolling resistance torque method",
-          "constant",
+          to_string(defaults.rolling_resistance_method),
           Patterns::Selection(
             "none|no_resistance|constant|constant_resistance|viscous|viscous_resistance|epsd|epsd_resistance"),
-          "Choosing rolling resistance torque model"
-          "Choices are <no_resistance|constant_resistance|viscous_resistance|epsd_resistance>.");
+          "Choosing rolling resistance torque model. "
+          "Choices are <none|constant|viscous|epsd>.");
 
         prm.declare_entry(
           "f coefficient",
-          "0.",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.f_coefficient_epsd),
           Patterns::Double(),
           "Model parameter for the EPSD rolling resistance model.");
 
         prm.declare_entry("integration method",
-                          "velocity_verlet",
+                          to_string<dim>(defaults.integration_method),
                           Patterns::Selection("velocity_verlet|explicit_euler"),
-                          "Choosing integration method"
+                          "Choosing integration method. "
                           "Choices are <velocity_verlet|explicit_euler>.");
 
         prm.declare_entry("solver type",
-                          "dem",
+                          to_string(defaults.solver_type),
                           Patterns::Selection("dem|dem_mp"),
-                          "Choosing solver type"
+                          "Choosing solver type. "
                           "Choices are <dem|dem_mp>.");
 
         prm.enter_subsection("adaptive sparse contacts");
         {
           prm.declare_entry(
             "enable adaptive sparse contacts",
-            "false",
-            Patterns::Selection("true|false"),
-            "Enable the dynamic search for sparse particle contacts"
+            Patterns::Tools::Convert<bool>::to_string(
+              defaults.sparse_particle_contacts),
+            Patterns::Bool(),
+            "Enable the dynamic search for sparse particle contacts. "
             "Choices are <true|false>.");
 
           prm.declare_entry(
             "enable particle advection",
-            "false",
-            Patterns::Selection("true|false"),
-            "Enable the advection of particles with hydrodynamic forces"
+            Patterns::Tools::Convert<bool>::to_string(
+              defaults.advect_particles),
+            Patterns::Bool(),
+            "Enable the advection of particles with hydrodynamic forces. "
             "Choices are <true|false>.");
 
           prm.declare_entry(
             "granular temperature threshold",
-            "1e-4",
+            Patterns::Tools::Convert<double>::to_string(
+              defaults.granular_temperature_threshold),
             Patterns::Double(),
             "Minimum granular temperature where particle contacts are considered");
 
           prm.declare_entry(
             "solid fraction threshold",
-            "0.4",
+            Patterns::Tools::Convert<double>::to_string(
+              defaults.solid_fraction_threshold),
             Patterns::Double(),
             "Maximum solid fraction where particle contacts are considered "
             "no matter the granular temperature");
@@ -1074,9 +1296,10 @@ namespace Parameters
         prm.leave_subsection();
 
         prm.declare_entry("disable position integration",
-                          "false",
-                          Patterns::Selection("true|false"),
-                          "Disable the integration of position and velocity"
+                          Patterns::Tools::Convert<bool>::to_string(
+                            defaults.disable_position_integration),
+                          Patterns::Bool(),
+                          "Disable the integration of position and velocity. "
                           "Choices are <true|false>.");
       }
       prm.leave_subsection();
@@ -1319,41 +1542,46 @@ namespace Parameters
       }
       prm.leave_subsection();
     }
-
     template <int dim>
     void
     ForceTorqueOnWall<dim>::declare_parameters(ParameterHandler &prm)
     {
+      const ForceTorqueOnWall<dim> defaults;
       prm.enter_subsection("boundary forces");
       prm.declare_entry("calculation",
-                        "false",
+                        Patterns::Tools::Convert<bool>::to_string(
+                          defaults.calculate_force_torque),
                         Patterns::Bool(),
                         "Enable calculation of forces");
       prm.declare_entry(
         "verbosity",
-        "verbose",
+        to_string(defaults.force_torque_verbosity),
         Patterns::Selection("quiet|verbose"),
         "State whether output from solver runs should be printed. "
         "Choices are <quiet|verbose>.");
       prm.declare_entry("filename",
-                        "force",
+                        defaults.force_torque_output_name,
                         Patterns::FileName(),
                         "File output force prefix");
       prm.declare_entry("output frequency",
-                        "1",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.output_frequency),
                         Patterns::Integer(),
                         "Output frequency");
       prm.enter_subsection("center of mass coordinate");
       prm.declare_entry("x",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.point_center_mass[0]),
                         Patterns::Double(),
                         "X coordinate of center of mass");
       prm.declare_entry("y",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.point_center_mass[1]),
                         Patterns::Double(),
                         "Y coordinate of center of mass");
       prm.declare_entry("z",
-                        "0",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.point_center_mass[2]),
                         Patterns::Double(),
                         "Z coordinate of center of mass");
       prm.leave_subsection();
@@ -1393,7 +1621,8 @@ namespace Parameters
       prm.enter_subsection("floating walls");
       {
         prm.declare_entry("number of floating walls",
-                          "0",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            floating_walls_number),
                           Patterns::Integer(),
                           "Number of floating walls");
 
@@ -1514,7 +1743,7 @@ namespace Parameters
       prm.declare_entry("normal vector",
                         "1., 0., 0.",
                         Patterns::List(Patterns::Double(), 2, 3),
-                        "Point on wall");
+                        "Normal vector of the wall");
 
       prm.enter_subsection("point on wall");
       prm.declare_entry("x", "0.", Patterns::Double(), "X Point on wall");
@@ -1565,7 +1794,8 @@ namespace Parameters
       prm.enter_subsection("DEM boundary conditions");
       {
         prm.declare_entry("number of boundary conditions",
-                          "0",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            number_of_dem_boundary_conditions),
                           Patterns::Integer(),
                           "Number of boundary conditions");
 
@@ -1615,7 +1845,7 @@ namespace Parameters
         "fixed_wall",
         Patterns::Selection(
           "fixed_wall|outlet|translational|rotational|periodic"),
-        "Type of boundary condition"
+        "Type of boundary condition. "
         "Choices are <fixed_wall|outlet|translational|rotational|periodic>.");
 
       prm.declare_entry("speed x",
@@ -1726,40 +1956,66 @@ namespace Parameters
         }
     }
 
+    namespace
+    {
+      template <int dim>
+      std::string
+      to_string(const typename GridMotion<dim>::MotionType type)
+      {
+        switch (type)
+          {
+            case GridMotion<dim>::MotionType::translational:
+              return "translational";
+            case GridMotion<dim>::MotionType::rotational:
+              return "rotational";
+            case GridMotion<dim>::MotionType::none:
+              return "none";
+          }
+        Assert(false, dealii::ExcInternalError());
+        return "";
+      }
+    } // namespace
+
     template <int dim>
     void
     GridMotion<dim>::declare_parameters(ParameterHandler &prm)
     {
+      const GridMotion<dim> defaults;
       prm.enter_subsection("grid motion");
       {
-        prm.declare_entry(
-          "motion type",
-          "none",
-          Patterns::Selection(
-            "none|translational|rotational|translational_rotational"),
-          "Choosing grid motion type. "
-          "Choices are <none|translational|rotational|translational_rotational>.");
+        prm.declare_entry("motion type",
+                          to_string<dim>(defaults.motion_type),
+                          Patterns::Selection("none|translational|rotational"),
+                          "Choosing grid motion type. "
+                          "Choices are <none|translational|rotational>.");
 
         prm.declare_entry("grid translational velocity x",
-                          "0",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.grid_translational_velocity[0]),
                           Patterns::Double(),
                           "grid translational velocity x");
         prm.declare_entry("grid translational velocity y",
-                          "0",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.grid_translational_velocity[1]),
                           Patterns::Double(),
                           "grid translational velocity y");
         prm.declare_entry("grid translational velocity z",
-                          "0",
+                          dim == 3 ?
+                            Patterns::Tools::Convert<double>::to_string(
+                              defaults.grid_translational_velocity[dim - 1]) :
+                            "0",
                           Patterns::Double(),
                           "grid translational velocity z");
 
         prm.declare_entry("grid rotational speed",
-                          "0",
+                          Patterns::Tools::Convert<double>::to_string(
+                            defaults.grid_rotational_speed),
                           Patterns::Double(),
                           "grid rotational speed");
 
         prm.declare_entry("grid rotational axis",
-                          "0",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.grid_rotational_axis),
                           Patterns::Integer(),
                           "grid rotational axis");
       }
@@ -1805,45 +2061,51 @@ namespace Parameters
     void
     LagrangianPostProcessing::declare_parameters(ParameterHandler &prm)
     {
+      const LagrangianPostProcessing defaults;
       prm.enter_subsection("post-processing");
       {
         prm.declare_entry(
           "lagrangian post-processing",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(
+            defaults.lagrangian_post_processing_enabled),
           Patterns::Bool(),
           "State whether lagrangian post-processing should be performed.");
         prm.declare_entry(
           "force chains",
-          "false",
+          Patterns::Tools::Convert<bool>::to_string(defaults.force_chains),
           Patterns::Bool(),
           "State whether force chains visualization should be performed.");
         prm.enter_subsection("particle wall collision statistics");
         {
           prm.declare_entry(
             "enable particle wall collision statistics",
-            "false",
-            Patterns::Selection("true|false"),
-            "Enable the logging of particle-wall collision statistics"
+            Patterns::Tools::Convert<bool>::to_string(
+              defaults.particle_wall_collision_statistics),
+            Patterns::Bool(),
+            "Enable the logging of particle-wall collision statistics. "
             "Choices are <true|false>.");
           prm.declare_entry(
             "log collisions with all walls",
-            "true",
-            Patterns::Selection("true|false"),
-            "State whether collisions with all walls should be logged"
+            Patterns::Tools::Convert<bool>::to_string(
+              defaults.log_collisions_with_all_walls),
+            Patterns::Bool(),
+            "State whether collisions with all walls should be logged. "
             "Choices are <true|false>.");
-          prm.declare_entry("wall boundary ids",
-                            "0",
-                            Patterns::List(Patterns::Integer()),
-                            "Boundary ids of the walls to log collisions with");
+          prm.declare_entry(
+            "wall boundary ids",
+            Patterns::Tools::Convert<std::vector<int>>::to_string(
+              defaults.particle_wall_collision_boundary_ids),
+            Patterns::List(Patterns::Integer()),
+            "Boundary ids of the walls to log collisions with");
           prm.declare_entry(
             "collision statistics file",
-            "collision_statistics.csv",
+            defaults.collision_stats_file_name,
             Patterns::FileName(),
             "Exported particle-wall collision results filename");
 
           prm.declare_entry(
             "verbosity",
-            "quiet",
+            to_string(defaults.collision_verbosity),
             Patterns::Selection("quiet|verbose"),
             "State whether collision starts and ends should be printed. "
             "Choices are <quiet|verbose>.");
@@ -1892,8 +2154,15 @@ namespace Parameters
       {
         mesh.declare_parameters(prm);
         motion.declare_parameters(prm);
-        prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
-        prm.declare_entry("end time", "0.", Patterns::Double(), "End time");
+        prm.declare_entry("start time",
+                          Patterns::Tools::Convert<double>::to_string(
+                            time_start),
+                          Patterns::Double(),
+                          "Start time");
+        prm.declare_entry("end time",
+                          Patterns::Tools::Convert<double>::to_string(time_end),
+                          Patterns::Double(),
+                          "End time");
       }
 
       prm.leave_subsection();
@@ -1919,55 +2188,75 @@ namespace Parameters
     void
     ParticleRayTracing<dim>::declare_parameters(ParameterHandler &prm)
     {
+      const ParticleRayTracing<dim> defaults;
       prm.enter_subsection("particle ray tracing");
       {
         // Location of the first photon to be inserted
         prm.declare_entry("starting photon insertion position",
-                          "0.,0.,0.",
+                          Patterns::Tools::Convert<Point<3>>::to_string(
+                            defaults.starting_point),
                           Patterns::List(Patterns::Double()),
                           "Location of the first photon being inserted.");
 
         // In which direction will the photons be inserted  relative to the
         // first photon.
+        // The ":"-separated defaults are generated with the same patterns as
+        // the ones used to declare the entries.
+        const Patterns::List insertion_unit_tensors_pattern(
+          Patterns::List(Patterns::Double(), 3, 3, ","), 3, 3, ":");
         prm.declare_entry(
           "insertion unit tensors",
-          "1.,0.,0. : 0., 1., 0. : 0., 0., 1.",
-          Patterns::List(
-            Patterns::List(Patterns::Double(), 3, 3, ","), 3, 3, ":"),
+          Patterns::Tools::Convert<std::vector<Tensor<1, 3>>>::to_string(
+            defaults.insertion_directions_units_vector,
+            insertion_unit_tensors_pattern),
+          insertion_unit_tensors_pattern,
           "Directions used to insert photons.");
 
         // How many photon will be inserted in each of those directions.
-        prm.declare_entry("number of inserted photons per direction",
-                          "1 : 1 : 1",
-                          Patterns::List(Patterns::Integer(), 3, 3, ":"),
-                          "Number of inserted photon in each direction.");
+        const Patterns::List n_photons_pattern(Patterns::Integer(), 3, 3, ":");
+        prm.declare_entry(
+          "number of inserted photons per direction",
+          Patterns::Tools::Convert<std::vector<unsigned int>>::to_string(
+            defaults.n_photons_each_directions, n_photons_pattern),
+          n_photons_pattern,
+          "Number of inserted photon in each direction.");
 
         // What is the distance between each photon in each of those directions
         // considering an offset equal to 0.
-        prm.declare_entry("distance between photons on insertion per direction",
-                          "1. :  1. : 1.",
-                          Patterns::List(Patterns::Double(), 3, 3, ":"),
-                          "Number of inserted photon in each direction.");
+        const Patterns::List step_between_photons_pattern(Patterns::Double(),
+                                                          3,
+                                                          3,
+                                                          ":");
+        prm.declare_entry(
+          "distance between photons on insertion per direction",
+          Patterns::Tools::Convert<std::vector<double>>::to_string(
+            defaults.step_between_photons_each_directions,
+            step_between_photons_pattern),
+          step_between_photons_pattern,
+          "Distance between inserted photons in each direction.");
 
         // In which direction photons will move considering a photon maximum
         // angle offset equal to 0.
         prm.declare_entry("reference displacement vector",
-                          "0.,0.,1.",
+                          Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
+                            defaults.ref_displacement_tensor_unit),
                           Patterns::List(Patterns::Double()),
                           "Reference displacement vector of each photons.");
 
         // Insertion location
         prm.declare_entry(
           "photon insertion maximum offset",
-          "0.",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.max_insertion_offset),
           Patterns::Double(),
           "Set the maximum offset applied on each photon position during their "
-          "insertion. If set to 0., photons will be perfectly aligned."
-          "respectively to the insertion unit tensors ");
+          "insertion, respectively to the insertion unit tensors. If set to 0., "
+          "photons will be perfectly aligned.");
 
         prm.declare_entry(
           "photon insertion prn seed",
-          "0",
+          Patterns::Tools::Convert<unsigned int>::to_string(
+            defaults.prn_seed_photon_insertion),
           Patterns::Integer(),
           "Pseudo random seed used to generate the offset for each photon "
           "insertion location.");
@@ -1975,18 +2264,20 @@ namespace Parameters
         // Displacement unit vector
         prm.declare_entry(
           "photon maximum angular offset",
-          "0.",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.max_angular_offset),
           Patterns::Double(),
           "Used to introduce randomness in the displacement direction of each "
           "photon. This parameter defines the maximum angle between a given "
           "photon displacement vector and the prescribed displacement vector "
           "parameter. If set to zero, every photon will move in the same "
-          "direction defined by the prescribed displacement vector parameter."
+          "direction defined by the prescribed displacement vector parameter. "
           "Otherwise, the offset is applied in a random orientation relative to "
           "the reference displacement vector parameter.");
 
         prm.declare_entry("photon angular offset prn seed",
-                          "1",
+                          Patterns::Tools::Convert<unsigned int>::to_string(
+                            defaults.prn_seed_photon_displacement),
                           Patterns::Integer(),
                           "Pseudo random seed used to generated the angle "
                           "offset and the random orientation.");
@@ -2018,10 +2309,10 @@ namespace Parameters
 
         // We always use 3d tensor even in a dim=2 simulation. Still, we want to
         // make sure the user write 2d tensor in the prm when the simulation is
-        // in 2d. Those tensors will be but in 3d afterward.
+        // in 2d. They are put in 3D afterward.
         AssertThrow(
           insertion_unit_tensors_string.size() == dim &&
-            step_between_photon_per_direction_strings.size() == dim &&
+            n_photons_per_directions_strings.size() == dim &&
             step_between_photon_per_direction_strings.size() == dim,
           dealii::ExcMessage(
             "The \"insertion unit tensors\", \"distance between photons on"
@@ -2029,7 +2320,12 @@ namespace Parameters
             "direction\" all need to have a number of dimension equal to the "
             "\"dimension\" parameter."));
 
-        // Always of size 3.
+        // One entry per direction (dim entries), each stored as a 3D quantity.
+        // The in-class defaults are cleared first, otherwise the parsed values
+        // would be appended after them.
+        insertion_directions_units_vector.clear();
+        n_photons_each_directions.clear();
+        step_between_photons_each_directions.clear();
         insertion_directions_units_vector.reserve(3);
         n_photons_each_directions.reserve(3);
         step_between_photons_each_directions.reserve(3);
@@ -2042,8 +2338,8 @@ namespace Parameters
             insertion_directions_units_vector.emplace_back(
               tensor_nd_to_3d(temp_direction_tensor));
 
-            n_photons_each_directions.emplace_back(Utilities::string_to_double(
-              n_photons_per_directions_strings.at(i)));
+            n_photons_each_directions.emplace_back(
+              Utilities::string_to_int(n_photons_per_directions_strings.at(i)));
 
             step_between_photons_each_directions.emplace_back(
               Utilities::string_to_double(
@@ -2065,7 +2361,7 @@ namespace Parameters
         // Displacement direction offset
         max_angular_offset = prm.get_double("photon maximum angular offset");
         prn_seed_photon_displacement =
-          prm.get_integer("photon insertion prn seed");
+          prm.get_integer("photon angular offset prn seed");
       }
       prm.leave_subsection();
     }
