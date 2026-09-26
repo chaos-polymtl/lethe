@@ -783,6 +783,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
   // upcoming triangulation change, exactly as done for an actual mesh
   // refinement.
   this->prepare_void_fraction_for_mesh_adaptation();
+  this->particle_handler.prepare_for_coarsening_and_refinement();
 
   this->pcout << "-->Repartitioning triangulation" << std::endl;
 
@@ -861,6 +862,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
   // rebuild the DEM contact-detection caches, exactly as done for an
   // actual mesh refinement.
   this->restore_void_fraction_after_mesh_adaptation();
+  this->particle_handler.unpack_after_coarsening_and_refinement();
 }
 
 template <int dim, typename PropertiesIndex>
