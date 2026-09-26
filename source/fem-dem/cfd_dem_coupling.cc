@@ -1365,6 +1365,7 @@ template <int dim, typename PropertiesIndex>
 void
 CFDDEMSolver<dim, PropertiesIndex>::dem_iterator()
 {
+  const unsigned int counter       = dem_simulation_control->get_iteration();
   const double dem_time_step = dem_simulation_control->get_time_step();
 
   // dem_contact_build carries out the particle-particle and particle-wall

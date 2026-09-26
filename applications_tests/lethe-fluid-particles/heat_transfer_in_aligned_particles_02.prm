@@ -38,7 +38,7 @@ set dimension = 3
 subsection simulation control
   set method           = bdf1
   set time step        = 0.25
-  set time end         = 1
+  set time end         = 10
   set output frequency = 0
 end
 
@@ -143,7 +143,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 6
+  set number = 1
   subsection bc 0
     set id   = 0,1,2,3,4,5
     set type = slip
