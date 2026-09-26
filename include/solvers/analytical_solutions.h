@@ -39,7 +39,7 @@ namespace AnalyticalSolutions
      * Establishes if the calculation of the analytical solution is enabled or
      * not
      */
-    bool enable;
+    bool enable = false;
 
     /**
      * Filename used to store the L2 norm of the error
@@ -56,8 +56,7 @@ namespace AnalyticalSolutions
      */
   public:
     AnalyticalSolution()
-      : enable(false)
-      , uvwp(dim + 1)
+      : uvwp(dim + 1)
       , temperature(1)
       , tracer(1)
       , cahn_hilliard(2)

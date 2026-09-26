@@ -7,6 +7,7 @@
 #include <deal.II/base/exceptions.h>
 
 #include <algorithm>
+#include <concepts>
 
 DeclException2(
   PhaseChangeIntervalError,
@@ -122,7 +123,7 @@ namespace Parameters
       }
     Assert(false, ExcInternalError());
     return "";
-  } // namespace Parameters
+  }
 
   SizeOfSubsections
   get_size_of_subsections(const std::string &file_name,
@@ -178,28 +179,18 @@ namespace Parameters
       return "";
     }
 
+    // EndControl and OutputControl share the same enumerators.
+    template <typename ControlType>
+      requires std::same_as<ControlType, SimulationControl::EndControl> ||
+               std::same_as<ControlType, SimulationControl::OutputControl>
     std::string
-    to_string(const SimulationControl::EndControl control)
+    to_string(const ControlType control)
     {
       switch (control)
         {
-          case SimulationControl::EndControl::iteration:
+          case ControlType::iteration:
             return "iteration";
-          case SimulationControl::EndControl::time:
-            return "time";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const SimulationControl::OutputControl control)
-    {
-      switch (control)
-        {
-          case SimulationControl::OutputControl::iteration:
-            return "iteration";
-          case SimulationControl::OutputControl::time:
+          case ControlType::time:
             return "time";
         }
       Assert(false, ExcInternalError());
@@ -938,14 +929,15 @@ namespace Parameters
         "Enable/disable (true/false) the definition of a plane for geometrical\n"
         " restrictions on the domain where the solid domain constraining feature\n"
         " is applied.");
-      std::string default_entry_sting = (dim == 2) ? "0., 0." : "0., 0., 0.";
       prm.declare_entry("restriction plane point",
-                        default_entry_sting,
+                        Patterns::Tools::Convert<Point<dim>>::to_string(
+                          this->restriction_plane_point),
                         Patterns::List(Patterns::Double()),
                         "Domain restriction plane point coordinates.");
       prm.declare_entry(
         "restriction plane normal vector",
-        default_entry_sting,
+        Patterns::Tools::Convert<Tensor<1, dim>>::to_string(
+          this->restriction_plane_normal_vector),
         Patterns::List(Patterns::Double()),
         "Domain restriction plane outward pointing normal vector.");
 
@@ -1477,14 +1469,18 @@ namespace Parameters
       return "";
     }
 
+    // SpecificHeatModel and ThermalExpansionModel share the same enumerators.
+    template <typename ModelType>
+      requires std::same_as<ModelType, Material::SpecificHeatModel> ||
+               std::same_as<ModelType, Material::ThermalExpansionModel>
     std::string
-    to_string(const Material::SpecificHeatModel model)
+    to_string(const ModelType model)
     {
       switch (model)
         {
-          case Material::SpecificHeatModel::constant:
+          case ModelType::constant:
             return "constant";
-          case Material::SpecificHeatModel::phase_change:
+          case ModelType::phase_change:
             return "phase_change";
         }
       Assert(false, ExcInternalError());
@@ -1501,20 +1497,6 @@ namespace Parameters
           case Material::ThermalConductivityModel::linear:
             return "linear";
           case Material::ThermalConductivityModel::phase_change:
-            return "phase_change";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Material::ThermalExpansionModel model)
-    {
-      switch (model)
-        {
-          case Material::ThermalExpansionModel::constant:
-            return "constant";
-          case Material::ThermalExpansionModel::phase_change:
             return "phase_change";
         }
       Assert(false, ExcInternalError());
@@ -1556,42 +1538,19 @@ namespace Parameters
       return "";
     }
 
+    // The electromagnetic property models share the same enumerators.
+    template <typename ModelType>
+      requires std::same_as<ModelType, Material::ElectricConductivityModel> ||
+               std::same_as<ModelType, Material::ElectricPermittivityModel> ||
+               std::same_as<ModelType, Material::MagneticPermeabilityModel>
     std::string
-    to_string(const Material::ElectricConductivityModel model)
+    to_string(const ModelType model)
     {
       switch (model)
         {
-          case Material::ElectricConductivityModel::constant:
+          case ModelType::constant:
             return "constant";
-          case Material::ElectricConductivityModel::polynomial:
-            return "polynomial";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Material::ElectricPermittivityModel model)
-    {
-      switch (model)
-        {
-          case Material::ElectricPermittivityModel::constant:
-            return "constant";
-          case Material::ElectricPermittivityModel::polynomial:
-            return "polynomial";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Material::MagneticPermeabilityModel model)
-    {
-      switch (model)
-        {
-          case Material::MagneticPermeabilityModel::constant:
-            return "constant";
-          case Material::MagneticPermeabilityModel::polynomial:
+          case ModelType::polynomial:
             return "polynomial";
         }
       Assert(false, ExcInternalError());
@@ -6111,9 +6070,9 @@ namespace Parameters
         Patterns::Tools::Convert<unsigned int>::to_string(stator_boundary_id),
         Patterns::Integer(),
         "Stator boundary ID # of the mortar matching interface");
-      std::string default_entry_point = (dim == 2) ? "0., 0." : "0., 0., 0.";
       prm.declare_entry("center of rotation",
-                        default_entry_point,
+                        Patterns::Tools::Convert<Point<dim>>::to_string(
+                          center_of_rotation),
                         Patterns::List(Patterns::Double()),
                         "Center of rotation coordinates of rotor domain");
 
