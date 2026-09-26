@@ -550,7 +550,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 template <int dim, typename PropertiesIndex>
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)
-  : FluidDynamicsMatrixFree<dim>(param.cfd_parameters, /* p_is_vans */ true)
+  : FluidDynamicsMatrixFree<dim>(param.cfd_parameters,
+                                 /* fluid_solver_is_vans */ true)
   , cfd_dem_simulation_parameters(param)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
@@ -929,8 +930,8 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
 
 template <int dim, typename PropertiesIndex>
 void
-FluidDynamicsVANSMatrixFree<dim,
-                            PropertiesIndex>::prepare_VANS_for_mesh_adaptation()
+FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
+  prepare_void_fraction_for_mesh_adaptation()
 {
   // Void Fraction
   std::vector<const VectorType *> vf_set_transfer;
@@ -952,16 +953,12 @@ FluidDynamicsVANSMatrixFree<dim,
       particle_projector.dof_handler);
   void_fraction_solution_transfer->prepare_for_coarsening_and_refinement(
     vf_set_transfer);
-
-  // The particle handler must also be prepared before the triangulation
-  // changes, so particles are correctly relocated to their new cells.
-  particle_handler.prepare_for_coarsening_and_refinement();
 }
 
 template <int dim, typename PropertiesIndex>
 void
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
-  restore_VANS_after_mesh_adaptation()
+  restore_void_fraction_after_mesh_adaptation()
 {
   // Void Fraction Vectors
   std::vector<VectorType *> vf_system(
@@ -1048,9 +1045,6 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
     }
 
   vf_system.clear();
-
-  // Unpack particle handler after load balancing step
-  this->particle_handler.unpack_after_coarsening_and_refinement();
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1082,12 +1076,22 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::
     is_refinement_step && (uniform_under_max_level || is_adaptive);
 
   if (will_refine)
-    prepare_VANS_for_mesh_adaptation();
+    {
+      prepare_void_fraction_for_mesh_adaptation();
 
+      // The particle handler must also be prepared before the triangulation
+      // changes, so particles are correctly relocated to their new cells.
+      particle_handler.prepare_for_coarsening_and_refinement();
+    }
   this->refine_mesh();
 
   if (will_refine)
-    restore_VANS_after_mesh_adaptation();
+    {
+      restore_void_fraction_after_mesh_adaptation();
+      // The particle handler must also be prepared after the triangulation
+      // changes, so particles are correctly relocated to their new cells.
+      this->particle_handler.unpack_after_coarsening_and_refinement();
+    }
 }
 
 template <int dim, typename PropertiesIndex>

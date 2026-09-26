@@ -267,18 +267,18 @@ protected:
   refine_mesh_and_synchronize_particles();
 
   /**
-   * @brief Prepare the particle handler and the void fraction solution for
+   * @brief Prepare the void fraction solution for
    * an upcoming triangulation change (mesh refinement or coarsening).
    */
   void
-  prepare_VANS_for_mesh_adaptation();
+  prepare_void_fraction_for_mesh_adaptation();
 
   /**
-   * @brief Restore the particle handler and the void fraction solution
+   * @brief Restore the void fraction solution
    * after a triangulation change, and rebuild the vertex-to-cell map.
    */
   void
-  restore_VANS_after_mesh_adaptation();
+  restore_void_fraction_after_mesh_adaptation();
 
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;

@@ -100,10 +100,10 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control,
   ConditionalOStream                &p_pcout,
-  const bool                         p_is_vans)
+  const bool                         fluid_solver_is_vans)
   : multiphysics_parameters(nsparam.multiphysics)
   , pcout(p_pcout)
-  , is_vans(p_is_vans)
+  , is_vans(fluid_solver_is_vans)
   , probe_postprocessor(p_simulation_control,
                         nsparam.post_processing.probing_points,
                         nsparam.post_processing.output_frequency,
