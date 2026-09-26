@@ -1105,7 +1105,7 @@ namespace Parameters
       struct Isocontour
       {
         /// Isocontour value
-        double isovalue;
+        double isovalue = 0.;
 
         /// Isocontour output filename
         std::string output_name;
@@ -2267,16 +2267,17 @@ namespace Parameters
   to_string(const Verbosity verbosity);
 
   /**
-   * @brief Convert a Verbosity value to the string used in parameter files.
+   * @brief Convert a FluidIndicator value to the string used in parameter
+   * files.
    *
    * @param[in] indicator Fluid indicator to convert.
    *
-   * @return The parameter-file string ("quiet", "verbose" or "extra verbose").
+   * @return The parameter-file string ("fluid 0", "fluid 1" or "both").
    *
    * TODO: Replace with a Magic Enum
    */
   std::string
-  to_string(const Parameters::FluidIndicator indicator);
+  to_string(const FluidIndicator indicator);
 
 } // namespace Parameters
 #endif
