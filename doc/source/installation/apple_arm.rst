@@ -21,7 +21,9 @@ To install the dependencies (mpi, p4est, trilinos and METIS) all together using 
 
 Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/software/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting ``DEAL_II_VERSION=master`` on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
 
-To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. 
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail.
+
+Since September 2026, Lethe requires deal.II to be compiled with `magic_enum <https://github.com/Neargye/magic_enum>`_, which candi does not install. Before launching candi, install it with ``brew install magic_enum`` and set ``DEAL_II_CONFOPTS="-DDEAL_II_WITH_MAGIC_ENUM=ON"`` in the ``candi.cfg`` file.
 
 From the candi folder, the installation of candi can be launched using:
 

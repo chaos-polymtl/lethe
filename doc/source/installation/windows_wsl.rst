@@ -98,12 +98,12 @@ Installing deal.II using apt (Step #1)
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-1. |linux_shell| In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.7.1-backports>`_:
+1. |linux_shell| In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.8.0-backports>`_:
 
 .. code-block:: text
   :class: copy-button
 
-  sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
+  sudo add-apt-repository ppa:ginggs/deal.ii-9.8.0-backports
   sudo apt update
 
 2. |linux_shell| To install deal.II, run:
@@ -120,11 +120,11 @@ To verify if the correct version of deal.II is installed, run:
 
   apt show libdeal.ii-dev
 
-This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.7.1`` is output
+This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.8.0`` is output
 
 .. note::
 
-  If the installed version is other than ``deal.ii-9.7.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
+  If the installed version is other than ``deal.ii-9.8.0``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 .. _install-deal.II candi:
 
@@ -226,7 +226,10 @@ Do not forget the ``.`` at the end of the command, which means "here".
 
   * save and close
   * To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.
-  
+
+.. important::
+  Since September 2026, Lethe requires deal.II to be compiled with `magic_enum <https://github.com/Neargye/magic_enum>`_, which candi does not install. Before running candi, install the magic_enum headers (``sudo apt-get install libmagicenum-dev`` on Ubuntu 24.04 or later) and set ``DEAL_II_CONFOPTS="-DDEAL_II_WITH_MAGIC_ENUM=ON"`` in the ``candi.cfg`` file.
+
 6. |linux_shell| Still in the candi subfolder, run candi installation script:
 
 .. code-block:: text

@@ -8,7 +8,10 @@ Regular Installation on Linux
 .. important::
   Distributions on which compatibility was tested are: Ubuntu 22.04 LTS, Ubuntu 24.04 LTS, Centos 7 and Manjaro.
 
-Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.7`` and ``deal.II 9.8pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/chaos-polymtl/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
+Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.7``, ``deal.II 9.8`` and ``deal.II 9.9pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/chaos-polymtl/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested.
+
+.. important::
+  Since September 2026, Lethe requires deal.II to be compiled with `magic_enum <https://github.com/Neargye/magic_enum>`_ (``DEAL_II_WITH_MAGIC_ENUM=ON``). The configuration of Lethe stops with an error if it is not the case. The deal.II packages installed with ``apt`` and the `deal.II Docker images <https://hub.docker.com/r/dealii/dealii/>`_ already include it. If you install deal.II with candi or manually, see the instructions below.
 
 **Lethe installation steps:**
   
@@ -29,12 +32,12 @@ Installing deal.II using apt
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.7.1-backports>`_:
+In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.8.0-backports>`_:
 
 .. code-block:: text
   :class: copy-button
 
-  sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
+  sudo add-apt-repository ppa:ginggs/deal.ii-9.8.0-backports
   sudo apt update
 
 To install deal.II, run:
@@ -51,11 +54,11 @@ To verify if the correct version of deal.II is installed, run:
 
   apt show libdeal.ii-dev
 
-This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.6.0`` is the output
+This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.8.0`` is the output
 
 .. note::
 
-  If the installed version is other than ``deal.ii-9.7.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
+  If the installed version is other than ``deal.ii-9.8.0``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 
 .. _install-deal.II-candi:
@@ -82,6 +85,8 @@ The following packages (which are specified after line 57) should be installed:
 Other packages can be disabled by simply commenting out the lines (adding a ``#`` at the beginning of the lines)
 
 To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail.
+
+Lethe requires deal.II to be compiled with magic_enum, which candi does not install. Before launching candi, install the magic_enum headers (e.g. ``sudo apt-get install libmagicenum-dev`` on Ubuntu 24.04 or later) and set ``DEAL_II_CONFOPTS="-DDEAL_II_WITH_MAGIC_ENUM=ON"`` in the ``candi.cfg`` file. This way, the configuration of deal.II stops with an error if magic_enum is not found, instead of silently disabling it.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -128,12 +133,12 @@ Configure deal.II in a build folder at the same level as the source code
   mkdir build
   cd build
 
-Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries.
+Depending on how you have installed p4est, Trilinos, METIS and magic_enum, you may need to specify the installation folder of these libraries.
 
 .. code-block:: text
   :class: copy-button
 
-  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
+  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DDEAL_II_WITH_MAGIC_ENUM=ON -DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
 
 Compile deal.II
 

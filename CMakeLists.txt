@@ -47,6 +47,10 @@ if(NOT _had_deal_ii)
     endif()
   endforeach()
 
+  # magic_enum is also required, but it is checked separately below.
+  message(STATUS "Checking required DEAL_II_WITH_MAGIC_ENUM: "
+    ${DEAL_II_WITH_MAGIC_ENUM})
+
   foreach(_feat IN ITEMS
       DEAL_II_WITH_METIS
       DEAL_II_WITH_OPENCASCADE
@@ -65,6 +69,26 @@ if(NOT _had_deal_ii)
   unset(_missing_deal_ii_features)
 endif()
 unset(_had_deal_ii)
+
+# Since September 2026, Lethe requires deal.II to be compiled with magic_enum.
+# This check is done at every configuration, not only the first one, so that
+# re-running CMake after the error below does not silently skip it.
+if(NOT DEFINED DEAL_II_WITH_MAGIC_ENUM OR NOT DEAL_II_WITH_MAGIC_ENUM)
+  message(FATAL_ERROR
+    "\n"
+    "deal.II was compiled without magic_enum (DEAL_II_WITH_MAGIC_ENUM=OFF).\n"
+    "Since September 2026, Lethe requires deal.II to be compiled with "
+    "magic_enum support. To enable it:\n"
+    "  1. Install magic_enum (header-only), e.g. "
+    "\"sudo apt install libmagicenum-dev\" on Ubuntu/Debian, "
+    "\"brew install magic_enum\" on macOS, or download it from "
+    "https://github.com/Neargye/magic_enum\n"
+    "  2. Reconfigure and reinstall deal.II with -DDEAL_II_WITH_MAGIC_ENUM=ON "
+    "(add -DMAGIC_ENUM_DIR=/path/to/magic_enum if it is not installed in a "
+    "standard location).\n"
+    "The deal.II Ubuntu packages and the dealii/dealii Docker images already "
+    "include magic_enum.\n")
+endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(CMAKE_CXX_STANDARD 20 CACHE STRING "The C++ standard to use")
