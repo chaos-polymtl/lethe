@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_lagrangian.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/patterns.h>
 #include <deal.II/base/point.h>
@@ -557,30 +558,6 @@ namespace Parameters
       p_real_youngs_modulus.reserve(particle_type_maximum_number);
     }
 
-    namespace
-    {
-      template <int dim>
-      std::string
-      to_string(const typename InsertionInfo<dim>::InsertionMethod method)
-      {
-        switch (method)
-          {
-            case InsertionInfo<dim>::InsertionMethod::file:
-              return "file";
-            case InsertionInfo<dim>::InsertionMethod::list:
-              return "list";
-            case InsertionInfo<dim>::InsertionMethod::plane:
-              return "plane";
-            case InsertionInfo<dim>::InsertionMethod::volume:
-              return "volume";
-            case InsertionInfo<dim>::InsertionMethod::packed:
-              return "packed";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-    } // namespace
-
     template <int dim>
     void
     InsertionInfo<dim>::declare_parameters(ParameterHandler &prm)
@@ -589,7 +566,7 @@ namespace Parameters
       prm.enter_subsection("insertion info");
       {
         prm.declare_entry("insertion method",
-                          to_string<dim>(defaults.insertion_method),
+                          enum_to_string(defaults.insertion_method),
                           Patterns::Selection("file|list|plane|volume|packed"),
                           "Choosing insertion method. "
                           "Choices are <file|plane|list|volume|packed>.");
@@ -787,21 +764,8 @@ namespace Parameters
     {
       prm.enter_subsection("insertion info");
       {
-        const std::string insertion = prm.get("insertion method");
-        if (insertion == "file")
-          insertion_method = InsertionMethod::file;
-        else if (insertion == "plane")
-          insertion_method = InsertionMethod::plane;
-        else if (insertion == "list")
-          insertion_method = InsertionMethod::list;
-        else if (insertion == "volume")
-          insertion_method = InsertionMethod::volume;
-        else if (insertion == "packed")
-          insertion_method = InsertionMethod::packed;
-        else
-          {
-            throw(std::runtime_error("Invalid insertion method "));
-          }
+        insertion_method =
+          string_to_enum<InsertionMethod>(prm.get("insertion method"));
         inserted_this_step =
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");
@@ -971,138 +935,6 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    namespace
-    {
-      template <int dim>
-      std::string
-      to_string(const typename ModelParameters<dim>::LoadBalanceMethod method)
-      {
-        switch (method)
-          {
-            case ModelParameters<dim>::LoadBalanceMethod::none:
-              return "none";
-            case ModelParameters<dim>::LoadBalanceMethod::once:
-              return "once";
-            case ModelParameters<dim>::LoadBalanceMethod::frequent:
-              return "frequent";
-            case ModelParameters<dim>::LoadBalanceMethod::dynamic:
-              return "dynamic";
-            case ModelParameters<
-              dim>::LoadBalanceMethod::dynamic_with_sparse_contacts:
-              return "dynamic_with_sparse_contacts";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-
-      template <int dim>
-      std::string
-      to_string(
-        const typename ModelParameters<dim>::ContactDetectionMethod method)
-      {
-        switch (method)
-          {
-            case ModelParameters<dim>::ContactDetectionMethod::constant:
-              return "constant";
-            case ModelParameters<dim>::ContactDetectionMethod::dynamic:
-              return "dynamic";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-
-      template <int dim>
-      std::string
-      to_string(const typename ModelParameters<dim>::IntegrationMethod method)
-      {
-        switch (method)
-          {
-            case ModelParameters<dim>::IntegrationMethod::velocity_verlet:
-              return "velocity_verlet";
-            case ModelParameters<dim>::IntegrationMethod::explicit_euler:
-              return "explicit_euler";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-
-      std::string
-      to_string(const ParticleParticleContactForceModel model)
-      {
-        switch (model)
-          {
-            case ParticleParticleContactForceModel::linear:
-              return "linear";
-            case ParticleParticleContactForceModel::hertz_mindlin_limit_force:
-              return "hertz_mindlin_limit_force";
-            case ParticleParticleContactForceModel::hertz_mindlin_limit_overlap:
-              return "hertz_mindlin_limit_overlap";
-            case ParticleParticleContactForceModel::hertz:
-              return "hertz";
-            case ParticleParticleContactForceModel::hertz_JKR:
-              return "hertz_JKR";
-            case ParticleParticleContactForceModel::DMT:
-              return "DMT";
-            case ParticleParticleContactForceModel::shift:
-              return "shift";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-
-      std::string
-      to_string(const ParticleWallContactForceModel model)
-      {
-        switch (model)
-          {
-            case ParticleWallContactForceModel::linear:
-              return "linear";
-            case ParticleWallContactForceModel::nonlinear:
-              return "nonlinear";
-            case ParticleWallContactForceModel::JKR:
-              return "JKR";
-            case ParticleWallContactForceModel::DMT:
-              return "DMT";
-            case ParticleWallContactForceModel::shift:
-              return "shift";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-
-      std::string
-      to_string(const RollingResistanceMethod method)
-      {
-        switch (method)
-          {
-            case RollingResistanceMethod::none:
-              return "none";
-            case RollingResistanceMethod::constant:
-              return "constant";
-            case RollingResistanceMethod::viscous:
-              return "viscous";
-            case RollingResistanceMethod::epsd:
-              return "epsd";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-
-      std::string
-      to_string(const DEM::SolverType type)
-      {
-        switch (type)
-          {
-            case DEM::SolverType::dem:
-              return "dem";
-            case DEM::SolverType::dem_mp:
-              return "dem_mp";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-    } // namespace
-
     template <int dim>
     void
     ModelParameters<dim>::declare_parameters(ParameterHandler &prm)
@@ -1114,7 +946,7 @@ namespace Parameters
         {
           prm.declare_entry(
             "load balance method",
-            to_string<dim>(defaults.load_balance_method),
+            enum_to_string(defaults.load_balance_method),
             Patterns::Selection(
               "none|once|frequent|dynamic|dynamic_with_sparse_contacts"),
             "Choosing load-balance method. "
@@ -1183,7 +1015,7 @@ namespace Parameters
         prm.enter_subsection("contact detection");
         {
           prm.declare_entry("contact detection method",
-                            to_string<dim>(defaults.contact_detection_method),
+                            enum_to_string(defaults.contact_detection_method),
                             Patterns::Selection("constant|dynamic"),
                             "Choosing contact detection method. "
                             "Choices are <constant|dynamic>.");
@@ -1212,14 +1044,14 @@ namespace Parameters
 
         prm.declare_entry(
           "particle particle contact force method",
-          to_string(defaults.particle_particle_contact_force_model),
+          enum_to_string(defaults.particle_particle_contact_force_model),
           Patterns::Selection(
             "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT"),
           "Choosing particle-particle contact force model. "
           "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
         prm.declare_entry("particle wall contact force method",
-                          to_string(
+                          enum_to_string(
                             defaults.particle_wall_contact_force_method),
                           Patterns::Selection("linear|nonlinear|JKR|DMT"),
                           "Choosing particle-wall contact force model. "
@@ -1235,7 +1067,7 @@ namespace Parameters
 
         prm.declare_entry(
           "rolling resistance torque method",
-          to_string(defaults.rolling_resistance_method),
+          enum_to_string(defaults.rolling_resistance_method),
           Patterns::Selection(
             "none|no_resistance|constant|constant_resistance|viscous|viscous_resistance|epsd|epsd_resistance"),
           "Choosing rolling resistance torque model. "
@@ -1249,13 +1081,13 @@ namespace Parameters
           "Model parameter for the EPSD rolling resistance model.");
 
         prm.declare_entry("integration method",
-                          to_string<dim>(defaults.integration_method),
+                          enum_to_string(defaults.integration_method),
                           Patterns::Selection("velocity_verlet|explicit_euler"),
                           "Choosing integration method. "
                           "Choices are <velocity_verlet|explicit_euler>.");
 
         prm.declare_entry("solver type",
-                          to_string(defaults.solver_type),
+                          enum_to_string(defaults.solver_type),
                           Patterns::Selection("dem|dem_mp"),
                           "Choosing solver type. "
                           "Choices are <dem|dem_mp>.");
@@ -1326,26 +1158,25 @@ namespace Parameters
 
         prm.enter_subsection("load balancing");
         {
-          const std::string load_balance = prm.get("load balance method");
+          load_balance_method =
+            string_to_enum<LoadBalanceMethod>(prm.get("load balance method"));
 
-          if (load_balance == "once")
+          if (load_balance_method == LoadBalanceMethod::once)
             {
-              load_balance_method = LoadBalanceMethod::once;
-              load_balance_step   = prm.get_integer("step");
+              load_balance_step = prm.get_integer("step");
             }
-          else if (load_balance == "frequent")
+          else if (load_balance_method == LoadBalanceMethod::frequent)
             {
-              load_balance_method    = LoadBalanceMethod::frequent;
               load_balance_frequency = prm.get_integer("frequency");
             }
-          else if (load_balance == "dynamic")
+          else if (load_balance_method == LoadBalanceMethod::dynamic)
             {
-              load_balance_method    = LoadBalanceMethod::dynamic;
               load_balance_threshold = prm.get_double("threshold");
               dynamic_load_balance_check_frequency =
                 prm.get_integer("dynamic check frequency");
             }
-          else if (load_balance == "dynamic_with_sparse_contacts")
+          else if (load_balance_method ==
+                   LoadBalanceMethod::dynamic_with_sparse_contacts)
             {
               // Check if adaptive sparse contacts is enabled, otherwise
               // throw an error message indicating that the user should use
@@ -1353,8 +1184,6 @@ namespace Parameters
               // contacts
               if (sparse_particle_contacts)
                 {
-                  load_balance_method =
-                    LoadBalanceMethod::dynamic_with_sparse_contacts;
                   load_balance_threshold = prm.get_double("threshold");
                   dynamic_load_balance_check_frequency =
                     prm.get_integer("dynamic check frequency");
@@ -1371,14 +1200,6 @@ namespace Parameters
                     "Invalid contact detection method: adaptive sparse contacts is not enabled "
                     "while dynamic_with_sparse_contacts is selected, use dynamic instead"));
                 }
-            }
-          else if (load_balance == "none")
-            {
-              load_balance_method = LoadBalanceMethod::none;
-            }
-          else
-            {
-              throw(std::runtime_error("Invalid load-balance method "));
             }
           auto cell_weight_function_parsed =
             std::make_shared<Functions::ParsedFunction<dim>>(1);
@@ -1401,62 +1222,18 @@ namespace Parameters
             prm.get_double("dynamic contact search size coefficient");
           neighborhood_threshold = prm.get_double("neighborhood threshold");
 
-          const std::string contact_search =
-            prm.get("contact detection method");
-
-          if (contact_search == "constant")
-            contact_detection_method = ContactDetectionMethod::constant;
-          else if (contact_search == "dynamic")
-            contact_detection_method = ContactDetectionMethod::dynamic;
-          else
-            throw(std::runtime_error("Invalid contact detection method "));
+          contact_detection_method = string_to_enum<ContactDetectionMethod>(
+            prm.get("contact detection method"));
         }
         prm.leave_subsection();
 
-        const std::string ppcf =
-          prm.get("particle particle contact force method");
-        if (ppcf == "linear")
-          particle_particle_contact_force_model =
-            ParticleParticleContactForceModel::linear;
-        else if (ppcf == "hertz_mindlin_limit_force")
-          particle_particle_contact_force_model =
-            ParticleParticleContactForceModel::hertz_mindlin_limit_force;
-        else if (ppcf == "hertz_mindlin_limit_overlap")
-          particle_particle_contact_force_model =
-            ParticleParticleContactForceModel::hertz_mindlin_limit_overlap;
-        else if (ppcf == "hertz")
-          particle_particle_contact_force_model =
-            ParticleParticleContactForceModel::hertz;
-        else if (ppcf == "hertz_JKR")
-          particle_particle_contact_force_model =
-            ParticleParticleContactForceModel::hertz_JKR;
-        else if (ppcf == "DMT")
-          particle_particle_contact_force_model =
-            ParticleParticleContactForceModel::DMT;
-        else
-          {
-            throw(std::runtime_error(
-              "Invalid particle-particle contact force model "));
-          }
+        particle_particle_contact_force_model =
+          string_to_enum<ParticleParticleContactForceModel>(
+            prm.get("particle particle contact force method"));
 
-        const std::string pwcf = prm.get("particle wall contact force method");
-        if (pwcf == "linear")
-          particle_wall_contact_force_method =
-            ParticleWallContactForceModel::linear;
-        else if (pwcf == "nonlinear")
-          particle_wall_contact_force_method =
-            ParticleWallContactForceModel::nonlinear;
-        else if (pwcf == "JKR")
-          particle_wall_contact_force_method =
-            ParticleWallContactForceModel::JKR;
-        else if (pwcf == "DMT")
-          particle_wall_contact_force_method =
-            ParticleWallContactForceModel::DMT;
-        else
-          {
-            throw(
-              std::runtime_error("Invalid particle-wall contact force model "));
-          }
+        particle_wall_contact_force_method =
+          string_to_enum<ParticleWallContactForceModel>(
+            prm.get("particle wall contact force method"));
 
         dmt_cut_off_threshold = prm.get_double("dmt cut-off threshold");
 
@@ -1517,25 +1294,10 @@ namespace Parameters
         // Model parameter for the EPSD rolling resistance model
         f_coefficient_epsd = prm.get_double("f coefficient");
 
-        const std::string integration = prm.get("integration method");
-        if (integration == "velocity_verlet")
-          integration_method = IntegrationMethod::velocity_verlet;
-        else if (integration == "explicit_euler")
-          integration_method = IntegrationMethod::explicit_euler;
-        else
-          {
-            throw(std::runtime_error("Invalid integration method "));
-          }
+        integration_method =
+          string_to_enum<IntegrationMethod>(prm.get("integration method"));
 
-        const std::string solver_type_str = prm.get("solver type");
-        if (solver_type_str == "dem")
-          solver_type = DEM::SolverType::dem;
-        else if (solver_type_str == "dem_mp")
-          solver_type = DEM::SolverType::dem_mp;
-        else
-          {
-            throw(std::runtime_error("Invalid solver type"));
-          }
+        solver_type = string_to_enum<DEM::SolverType>(prm.get("solver type"));
 
         disable_position_integration =
           prm.get_bool("disable position integration");
@@ -2016,26 +1778,6 @@ namespace Parameters
         }
     }
 
-    namespace
-    {
-      template <int dim>
-      std::string
-      to_string(const typename GridMotion<dim>::MotionType type)
-      {
-        switch (type)
-          {
-            case GridMotion<dim>::MotionType::translational:
-              return "translational";
-            case GridMotion<dim>::MotionType::rotational:
-              return "rotational";
-            case GridMotion<dim>::MotionType::none:
-              return "none";
-          }
-        Assert(false, dealii::ExcInternalError());
-        return "";
-      }
-    } // namespace
-
     template <int dim>
     void
     GridMotion<dim>::declare_parameters(ParameterHandler &prm)
@@ -2044,7 +1786,7 @@ namespace Parameters
       prm.enter_subsection("grid motion");
       {
         prm.declare_entry("motion type",
-                          to_string<dim>(defaults.motion_type),
+                          enum_to_string(defaults.motion_type),
                           Patterns::Selection("none|translational|rotational"),
                           "Choosing grid motion type. "
                           "Choices are <none|translational|rotational>.");
@@ -2088,16 +1830,14 @@ namespace Parameters
     {
       prm.enter_subsection("grid motion");
       {
-        const std::string motion = prm.get("motion type");
-        if (motion == "rotational")
+        motion_type = string_to_enum<MotionType>(prm.get("motion type"));
+        if (motion_type == MotionType::rotational)
           {
-            motion_type           = MotionType::rotational;
             grid_rotational_speed = prm.get_double("grid rotational speed");
             grid_rotational_axis  = prm.get_integer("grid rotational axis");
           }
-        else if (motion == "translational")
+        else if (motion_type == MotionType::translational)
           {
-            motion_type = MotionType::translational;
             grid_translational_velocity[0] =
               prm.get_double("grid translational velocity x");
             grid_translational_velocity[1] =
@@ -2105,14 +1845,6 @@ namespace Parameters
             if (dim == 3)
               grid_translational_velocity[2] =
                 prm.get_double("grid translational velocity z");
-          }
-        else if (motion == "none")
-          {
-            motion_type = MotionType::none;
-          }
-        else
-          {
-            throw(std::runtime_error("Invalid grid motion "));
           }
       }
       prm.leave_subsection();

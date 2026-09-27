@@ -7,7 +7,6 @@
 #include <deal.II/base/exceptions.h>
 
 #include <algorithm>
-#include <concepts>
 
 DeclException2(
   PhaseChangeIntervalError,
@@ -140,32 +139,6 @@ namespace Parameters
   namespace
   {
     std::string
-    to_string(const SimulationControl::TimeSteppingMethod method)
-    {
-      switch (method)
-        {
-          case SimulationControl::TimeSteppingMethod::steady:
-            return "steady";
-          case SimulationControl::TimeSteppingMethod::steady_bdf:
-            return "steady_bdf";
-          case SimulationControl::TimeSteppingMethod::bdf1:
-            return "bdf1";
-          case SimulationControl::TimeSteppingMethod::bdf2:
-            return "bdf2";
-          case SimulationControl::TimeSteppingMethod::bdf3:
-            return "bdf3";
-          case SimulationControl::TimeSteppingMethod::sdirk22:
-            return "sdirk22";
-          case SimulationControl::TimeSteppingMethod::sdirk33:
-            return "sdirk33";
-          case SimulationControl::TimeSteppingMethod::sdirk43:
-            return "sdirk43";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
     to_string(const SimulationControl::BDFStartupMethods method)
     {
       switch (method)
@@ -174,24 +147,6 @@ namespace Parameters
             return "multiple step bdf";
           case SimulationControl::BDFStartupMethods::initial_solution:
             return "initial solution";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    // EndControl and OutputControl share the same enumerators.
-    template <typename ControlType>
-      requires std::same_as<ControlType, SimulationControl::EndControl> ||
-               std::same_as<ControlType, SimulationControl::OutputControl>
-    std::string
-    to_string(const ControlType control)
-    {
-      switch (control)
-        {
-          case ControlType::iteration:
-            return "iteration";
-          case ControlType::time:
-            return "time";
         }
       Assert(false, ExcInternalError());
       return "";
@@ -206,7 +161,7 @@ namespace Parameters
     {
       prm.declare_entry(
         "method",
-        to_string(defaults.method),
+        enum_to_string(defaults.method),
         Patterns::Selection(
           "steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33|sdirk43"),
         "The time integration scheme. "
@@ -350,7 +305,7 @@ namespace Parameters
 
       prm.declare_entry(
         "end control",
-        to_string(defaults.end_control),
+        enum_to_string(defaults.end_control),
         Patterns::Selection("iteration|time"),
         "The control for the end of a transient simulation. The end "
         "condition is either a maximum time value (time end) or a maximum "
@@ -358,7 +313,7 @@ namespace Parameters
 
       prm.declare_entry(
         "output control",
-        to_string(defaults.output_control),
+        enum_to_string(defaults.output_control),
         Patterns::Selection("iteration|time"),
         "The control for the output of the simulation results. "
         "Results can be either outputted at constant iteration frequency or at constant time");
@@ -390,27 +345,7 @@ namespace Parameters
   {
     prm.enter_subsection("simulation control");
     {
-      const std::string sv = prm.get("method");
-      if (sv == "steady")
-        method = TimeSteppingMethod::steady;
-      else if (sv == "steady_bdf")
-        method = TimeSteppingMethod::steady_bdf;
-      else if (sv == "bdf1")
-        method = TimeSteppingMethod::bdf1;
-      else if (sv == "bdf2")
-        method = TimeSteppingMethod::bdf2;
-      else if (sv == "bdf3")
-        method = TimeSteppingMethod::bdf3;
-      else if (sv == "sdirk22")
-        method = TimeSteppingMethod::sdirk22;
-      else if (sv == "sdirk33")
-        method = TimeSteppingMethod::sdirk33;
-      else if (sv == "sdirk43")
-        method = TimeSteppingMethod::sdirk43;
-      else
-        {
-          AssertThrow(false, ExcMessage("Invalid time stepping scheme"));
-        }
+      method = string_to_enum<TimeSteppingMethod>(prm.get("method"));
       const std::string bdf_startup_string = prm.get("bdf startup method");
       if (bdf_startup_string == "multiple step bdf")
         bdf_startup_method = BDFStartupMethods::multiple_step_bdf;
@@ -421,25 +356,9 @@ namespace Parameters
           AssertThrow(false, ExcMessage("Invalid bdf startup scheme"));
         }
 
-      const std::string end_control_string = prm.get("end control");
-      if (end_control_string == "iteration")
-        end_control = EndControl::iteration;
-      else if (end_control_string == "time")
-        end_control = EndControl::time;
-      else
-        {
-          AssertThrow(false, ExcMessage("Invalid end control scheme"));
-        }
+      end_control = string_to_enum<EndControl>(prm.get("end control"));
 
-      const std::string osv = prm.get("output control");
-      if (osv == "iteration")
-        output_control = OutputControl::iteration;
-      else if (osv == "time")
-        output_control = OutputControl::time;
-      else
-        {
-          AssertThrow(false, ExcMessage("Invalid output control scheme"));
-        }
+      output_control = string_to_enum<OutputControl>(prm.get("output control"));
       dt             = prm.get_double("time step");
       time_end       = prm.get_double("time end");
       iteration_end  = prm.get_integer("iteration end");
@@ -481,25 +400,6 @@ namespace Parameters
     prm.leave_subsection();
   } // namespace Parameters
 
-  namespace
-  {
-    std::string
-    to_string(const Timer::Type type)
-    {
-      switch (type)
-        {
-          case Timer::Type::none:
-            return "none";
-          case Timer::Type::iteration:
-            return "iteration";
-          case Timer::Type::end:
-            return "end";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   void
   Timer::declare_parameters(ParameterHandler &prm)
   {
@@ -507,7 +407,7 @@ namespace Parameters
     prm.enter_subsection("timer");
     {
       prm.declare_entry("type",
-                        to_string(defaults.type),
+                        enum_to_string(defaults.type),
                         Patterns::Selection("none|iteration|end"),
                         "Clock monitoring methods "
                         "Choices are <none|iteration|end>.");
@@ -526,13 +426,7 @@ namespace Parameters
   {
     prm.enter_subsection("timer");
     {
-      const std::string cl = prm.get("type");
-      if (cl == "none")
-        type = Type::none;
-      else if (cl == "iteration")
-        type = Type::iteration;
-      else if (cl == "end")
-        type = Type::end;
+      type                      = string_to_enum<Type>(prm.get("type"));
       write_time_in_error_table = prm.get_bool("write time in error table");
     }
     prm.leave_subsection();
@@ -1048,39 +942,6 @@ namespace Parameters
       prm.get_double("max temperature");
   }
 
-  namespace
-  {
-    std::string
-    to_string(const Stabilization::NavierStokesStabilization type)
-    {
-      switch (type)
-        {
-          case Stabilization::NavierStokesStabilization::pspg_supg:
-            return "pspg_supg";
-          case Stabilization::NavierStokesStabilization::gls:
-            return "gls";
-          case Stabilization::NavierStokesStabilization::grad_div:
-            return "grad_div";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Stabilization::ScalarLimiters type)
-    {
-      switch (type)
-        {
-          case Stabilization::ScalarLimiters::none:
-            return "none";
-          case Stabilization::ScalarLimiters::moe:
-            return "moe";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   void
   Stabilization::declare_parameters(ParameterHandler &prm)
   {
@@ -1095,7 +956,7 @@ namespace Parameters
         "Use the default stabilization method provided by the solver");
       prm.declare_entry(
         "stabilization",
-        to_string(defaults.stabilization),
+        enum_to_string(defaults.stabilization),
         Patterns::Selection("pspg_supg|gls|grad_div"),
         "Type of stabilization used for the Navier-Stokes equations. "
         "Choices are <pspg_supg|gls|grad_div>.");
@@ -1136,7 +997,7 @@ namespace Parameters
 
       prm.declare_entry(
         "scalar limiter",
-        to_string(defaults.scalar_limiter),
+        enum_to_string(defaults.scalar_limiter),
         Patterns::Selection("none|moe"),
         "Type of scalar limiter. The limiters are only appropriate with the DG versions of the solvers and should only be used for advection-dominated problem.");
     }
@@ -1149,26 +1010,10 @@ namespace Parameters
     prm.enter_subsection("stabilization");
     {
       use_default_stabilization = prm.get_bool("use default stabilization");
-      {
-        std::string op = prm.get("stabilization");
-        if (op == "pspg_supg")
-          stabilization = NavierStokesStabilization::pspg_supg;
-        else if (op == "gls")
-          stabilization = NavierStokesStabilization::gls;
-        else if (op == "grad_div")
-          stabilization = NavierStokesStabilization::grad_div;
-        else
-          throw(std::runtime_error("Invalid stabilization strategy"));
-      }
-      {
-        std::string op = prm.get("scalar limiter");
-        if (op == "none")
-          scalar_limiter = ScalarLimiters::none;
-        else if (op == "moe")
-          scalar_limiter = ScalarLimiters::moe;
-        else
-          throw(std::runtime_error("Invalid scalar limiter"));
-      }
+      stabilization =
+        string_to_enum<NavierStokesStabilization>(prm.get("stabilization"));
+      scalar_limiter =
+        string_to_enum<ScalarLimiters>(prm.get("scalar limiter"));
 
       // DCDD stabilization activation parameters
       heat_transfer_dcdd_stabilization =
@@ -1457,54 +1302,6 @@ namespace Parameters
     }
 
     std::string
-    to_string(const Material::DensityModel model)
-    {
-      switch (model)
-        {
-          case Material::DensityModel::constant:
-            return "constant";
-          case Material::DensityModel::isothermal_ideal_gas:
-            return "isothermal_ideal_gas";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    // SpecificHeatModel and ThermalExpansionModel share the same enumerators.
-    template <typename ModelType>
-      requires std::same_as<ModelType, Material::SpecificHeatModel> ||
-               std::same_as<ModelType, Material::ThermalExpansionModel>
-    std::string
-    to_string(const ModelType model)
-    {
-      switch (model)
-        {
-          case ModelType::constant:
-            return "constant";
-          case ModelType::phase_change:
-            return "phase_change";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Material::ThermalConductivityModel model)
-    {
-      switch (model)
-        {
-          case Material::ThermalConductivityModel::constant:
-            return "constant";
-          case Material::ThermalConductivityModel::linear:
-            return "linear";
-          case Material::ThermalConductivityModel::phase_change:
-            return "phase_change";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
     to_string(const Material::TracerDiffusivityModel model)
     {
       switch (model)
@@ -1534,25 +1331,6 @@ namespace Parameters
           case Material::TracerReactionPrefactorModel::
             immersed_boundary_gaussian:
             return "immersed solid gaussian";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    // The electromagnetic property models share the same enumerators.
-    template <typename ModelType>
-      requires std::same_as<ModelType, Material::ElectricConductivityModel> ||
-               std::same_as<ModelType, Material::ElectricPermittivityModel> ||
-               std::same_as<ModelType, Material::MagneticPermeabilityModel>
-    std::string
-    to_string(const ModelType model)
-    {
-      switch (model)
-        {
-          case ModelType::constant:
-            return "constant";
-          case ModelType::polynomial:
-            return "polynomial";
         }
       Assert(false, ExcInternalError());
       return "";
@@ -1657,7 +1435,7 @@ namespace Parameters
 
 
       prm.declare_entry("density model",
-                        to_string(density_model),
+                        enum_to_string(density_model),
                         Patterns::Selection("constant|isothermal_ideal_gas"),
                         "Model used for the calculation of the density. "
                         "Choices are <constant|isothermal_ideal_gas>.");
@@ -1665,7 +1443,7 @@ namespace Parameters
       isothermal_ideal_gas_density_parameters.declare_parameters(prm);
 
       prm.declare_entry("specific heat model",
-                        to_string(specific_heat_model),
+                        enum_to_string(specific_heat_model),
                         Patterns::Selection("constant|phase_change"),
                         "Model used for the calculation of the specific heat. "
                         "Choices are <constant|phase_change>.");
@@ -1674,14 +1452,14 @@ namespace Parameters
 
       prm.declare_entry(
         "thermal conductivity model",
-        to_string(thermal_conductivity_model),
+        enum_to_string(thermal_conductivity_model),
         Patterns::Selection("constant|linear|phase_change"),
         "Model used for the calculation of the thermal conductivity. "
         "Choices are <constant|linear|phase_change>.");
 
       prm.declare_entry(
         "thermal expansion model",
-        to_string(thermal_expansion_model),
+        enum_to_string(thermal_expansion_model),
         Patterns::Selection("constant|phase_change"),
         "Model used for the calculation of the thermal expansion coefficient. "
         "Choices are <constant|phase_change>.");
@@ -1701,7 +1479,7 @@ namespace Parameters
       // ----------------------------------
       prm.declare_entry(
         "electric conductivity model",
-        to_string(electric_conductivity_model),
+        enum_to_string(electric_conductivity_model),
         Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the electric conductivity. "
         "Choices are <constant|polynomial>.");
@@ -1723,7 +1501,7 @@ namespace Parameters
 
       prm.declare_entry(
         "electric permittivity model",
-        to_string(electric_permittivity_model),
+        enum_to_string(electric_permittivity_model),
         Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the electric permittivity. "
         "Choices are <constant|polynomial>.");
@@ -1759,7 +1537,7 @@ namespace Parameters
 
       prm.declare_entry(
         "magnetic permeability model",
-        to_string(magnetic_permeability_model),
+        enum_to_string(magnetic_permeability_model),
         Patterns::Selection("constant|polynomial"),
         "Model used for the calculation of the magnetic permeability. "
         "Choices are <constant|polynomial>.");
@@ -1810,16 +1588,8 @@ namespace Parameters
       //---------------------------------------------------
       // Density
       //---------------------------------------------------
-      op = prm.get("density model");
-      if (op == "constant")
-        {
-          density_model = DensityModel::constant;
-        }
-      else if (op == "isothermal_ideal_gas")
-        {
-          density_model = DensityModel::isothermal_ideal_gas;
-        }
-      density = prm.get_double("density");
+      density_model = string_to_enum<DensityModel>(prm.get("density model"));
+      density       = prm.get_double("density");
       // Density is in M L^-3, rescale
       density *= dimensions.density_scaling;
       isothermal_ideal_gas_density_parameters.parse_parameters(prm, dimensions);
@@ -1853,11 +1623,8 @@ namespace Parameters
       //--------------
       // Specific heat
       //--------------
-      op = prm.get("specific heat model");
-      if (op == "constant")
-        specific_heat_model = SpecificHeatModel::constant;
-      else if (op == "phase_change")
-        specific_heat_model = SpecificHeatModel::phase_change;
+      specific_heat_model =
+        string_to_enum<SpecificHeatModel>(prm.get("specific heat model"));
       specific_heat = prm.get_double("specific heat");
 
       // specific heat is in L^2 T^-2 theta^-1
@@ -1867,13 +1634,8 @@ namespace Parameters
       //----------------------
       // Thermal conductivity
       //----------------------
-      op = prm.get("thermal conductivity model");
-      if (op == "constant")
-        thermal_conductivity_model = ThermalConductivityModel::constant;
-      else if (op == "linear")
-        thermal_conductivity_model = ThermalConductivityModel::linear;
-      else if (op == "phase_change")
-        thermal_conductivity_model = ThermalConductivityModel::phase_change;
+      thermal_conductivity_model = string_to_enum<ThermalConductivityModel>(
+        prm.get("thermal conductivity model"));
 
       thermal_conductivity = prm.get_double("thermal conductivity");
       // thermal conductivity is in M L T^-3 theta^-1
@@ -1893,11 +1655,8 @@ namespace Parameters
       //------------------
       // Thermal expansion
       //------------------
-      op = prm.get("thermal expansion model");
-      if (op == "constant")
-        thermal_expansion_model = ThermalExpansionModel::constant;
-      else if (op == "phase_change")
-        thermal_expansion_model = ThermalExpansionModel::phase_change;
+      thermal_expansion_model = string_to_enum<ThermalExpansionModel>(
+        prm.get("thermal expansion model"));
 
       thermal_expansion = prm.get_double("thermal expansion");
       // thermal expansion is in theta^-1
@@ -1950,34 +1709,32 @@ namespace Parameters
       //--------------------------------
       // Electromagnetic properties
       //--------------------------------
-      op = prm.get("electric conductivity model");
-      if (op == "constant")
+      electric_conductivity_model = string_to_enum<ElectricConductivityModel>(
+        prm.get("electric conductivity model"));
+      if (electric_conductivity_model == ElectricConductivityModel::constant)
         {
-          electric_conductivity_model = ElectricConductivityModel::constant;
-          electric_conductivity       = prm.get_double("electric conductivity");
+          electric_conductivity = prm.get_double("electric conductivity");
         }
-      else if (op == "polynomial")
+      else if (electric_conductivity_model ==
+               ElectricConductivityModel::polynomial)
         {
-          electric_conductivity_model = ElectricConductivityModel::polynomial;
-
           electric_conductivity_polynomial_coefficients =
             convert_string_to_vector<double>(
               prm, "electric conductivity polynomial coefficients");
         }
 
-      op = prm.get("electric permittivity model");
-      if (op == "constant")
+      electric_permittivity_model = string_to_enum<ElectricPermittivityModel>(
+        prm.get("electric permittivity model"));
+      if (electric_permittivity_model == ElectricPermittivityModel::constant)
         {
-          electric_permittivity_model = ElectricPermittivityModel::constant;
           electric_permittivity_real =
             prm.get_double("electric permittivity real part");
           electric_permittivity_imag =
             prm.get_double("electric permittivity imag part");
         }
-      else if (op == "polynomial")
+      else if (electric_permittivity_model ==
+               ElectricPermittivityModel::polynomial)
         {
-          electric_permittivity_model = ElectricPermittivityModel::polynomial;
-
           electric_permittivity_real_polynomial_coefficients =
             convert_string_to_vector<double>(
               prm, "electric permittivity real part polynomial coefficients");
@@ -1986,19 +1743,18 @@ namespace Parameters
             convert_string_to_vector<double>(
               prm, "electric permittivity imag part polynomial coefficients");
         }
-      op = prm.get("magnetic permeability model");
-      if (op == "constant")
+      magnetic_permeability_model = string_to_enum<MagneticPermeabilityModel>(
+        prm.get("magnetic permeability model"));
+      if (magnetic_permeability_model == MagneticPermeabilityModel::constant)
         {
-          magnetic_permeability_model = MagneticPermeabilityModel::constant;
           magnetic_permeability_real =
             prm.get_double("magnetic permeability real part");
           magnetic_permeability_imag =
             prm.get_double("magnetic permeability imag part");
         }
-      else if (op == "polynomial")
+      else if (magnetic_permeability_model ==
+               MagneticPermeabilityModel::polynomial)
         {
-          magnetic_permeability_model = MagneticPermeabilityModel::polynomial;
-
           magnetic_permeability_real_polynomial_coefficients =
             convert_string_to_vector<double>(
               prm, "magnetic permeability real part polynomial coefficients");
@@ -2038,20 +1794,6 @@ namespace Parameters
             return "linear";
           case MaterialInteractions::SurfaceTensionModel::phase_change:
             return "phase change";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const MaterialInteractions::MobilityCahnHilliardModel model)
-    {
-      switch (model)
-        {
-          case MaterialInteractions::MobilityCahnHilliardModel::constant:
-            return "constant";
-          case MaterialInteractions::MobilityCahnHilliardModel::quartic:
-            return "quartic";
         }
       Assert(false, ExcInternalError());
       return "";
@@ -2097,7 +1839,7 @@ namespace Parameters
         // Cahn-Hilliard mobility
         prm.declare_entry(
           "cahn hilliard mobility model",
-          to_string(mobility_cahn_hilliard_model),
+          enum_to_string(mobility_cahn_hilliard_model),
           Patterns::Selection("constant|quartic"),
           "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
           "\n"
@@ -2130,7 +1872,7 @@ namespace Parameters
         // Cahn-Hilliard mobility
         prm.declare_entry(
           "cahn hilliard mobility model",
-          to_string(mobility_cahn_hilliard_model),
+          enum_to_string(mobility_cahn_hilliard_model),
           Patterns::Selection("constant|quartic"),
           "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
           "\n"
@@ -2195,20 +1937,9 @@ namespace Parameters
                 "Invalid surface tension model. The choices are <constant|linear|phase change>."));
             surface_tension_parameters.parse_parameters(prm, dimensions);
             // Cahn-Hilliard mobility
-            op = prm.get("cahn hilliard mobility model");
-            if (op == "constant")
-              {
-                mobility_cahn_hilliard_model =
-                  MobilityCahnHilliardModel::constant;
-              }
-            else if (op == "quartic")
-              {
-                mobility_cahn_hilliard_model =
-                  MobilityCahnHilliardModel::quartic;
-              }
-            else
-              throw(std::runtime_error(
-                "Invalid mobility model. The choices are <constant|quartic>."));
+            mobility_cahn_hilliard_model =
+              string_to_enum<MobilityCahnHilliardModel>(
+                prm.get("cahn hilliard mobility model"));
 
             mobility_cahn_hilliard_parameters.parse_parameters(prm, dimensions);
           }
@@ -2485,26 +2216,6 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  namespace
-  {
-    template <int dim>
-    std::string
-    to_string(const typename Laser<dim>::LaserType type)
-    {
-      switch (type)
-        {
-          case Laser<dim>::LaserType::exponential_decay:
-            return "exponential_decay";
-          case Laser<dim>::LaserType::gaussian_heat_flux_cls_interface:
-            return "gaussian_heat_flux_cls_interface";
-          case Laser<dim>::LaserType::uniform_heat_flux_cls_interface:
-            return "uniform_heat_flux_cls_interface";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   template <int dim>
   void
   Laser<dim>::declare_parameters(ParameterHandler &prm)
@@ -2518,7 +2229,7 @@ namespace Parameters
                         "Activate laser");
       prm.declare_entry(
         "type",
-        to_string<dim>(laser_type),
+        enum_to_string(laser_type),
         Patterns::Selection(
           "exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface"),
         "Type of laser model used. "
@@ -2602,14 +2313,8 @@ namespace Parameters
   {
     prm.enter_subsection("laser parameters");
     {
-      activate_laser                = prm.get_bool("enable");
-      const std::string type_string = prm.get("type");
-      if (type_string == "exponential_decay")
-        laser_type = LaserType::exponential_decay;
-      else if (type_string == "gaussian_heat_flux_cls_interface")
-        laser_type = LaserType::gaussian_heat_flux_cls_interface;
-      else
-        laser_type = LaserType::uniform_heat_flux_cls_interface;
+      activate_laser = prm.get_bool("enable");
+      laser_type     = string_to_enum<LaserType>(prm.get("type"));
       enable_angle_of_incidence_dependence =
         prm.get_bool("enable angle of incidence dependence");
       concentration_factor = prm.get_double("concentration factor");
@@ -3381,41 +3086,6 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  namespace
-  {
-    std::string
-    to_string(const NonLinearSolver::SolverType type)
-    {
-      switch (type)
-        {
-          case NonLinearSolver::SolverType::newton:
-            return "newton";
-          case NonLinearSolver::SolverType::inexact_newton:
-            return "inexact_newton";
-          case NonLinearSolver::SolverType::kinsol_newton:
-            return "kinsol_newton";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const NonLinearSolver::KinsolStrategy strategy)
-    {
-      switch (strategy)
-        {
-          case NonLinearSolver::KinsolStrategy::normal_newton:
-            return "normal_newton";
-          case NonLinearSolver::KinsolStrategy::line_search:
-            return "line_search";
-          case NonLinearSolver::KinsolStrategy::picard:
-            return "picard";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   void
   NonLinearSolver::declare_parameters(ParameterHandler  &prm,
                                       const std::string &physics_name)
@@ -3434,7 +3104,7 @@ namespace Parameters
 
         prm.declare_entry(
           "solver",
-          to_string(defaults.solver),
+          enum_to_string(defaults.solver),
           Patterns::Selection("newton|kinsol_newton|inexact_newton"),
           "Non-linear solver that will be used "
           "Choices are <newton|kinsol_newton|inexact_newton>."
@@ -3446,7 +3116,7 @@ namespace Parameters
 
         prm.declare_entry(
           "kinsol strategy",
-          to_string(defaults.kinsol_strategy),
+          enum_to_string(defaults.kinsol_strategy),
           Patterns::Selection("normal_newton|line_search|picard"),
           "Strategy that will be used by the kinsol newton solver");
 
@@ -3530,26 +3200,10 @@ namespace Parameters
         else
           throw(std::runtime_error("Invalid verbosity level"));
 
-        const std::string str_solver = prm.get("solver");
-        if (str_solver == "newton")
-          solver = SolverType::newton;
-        else if (str_solver == "kinsol_newton")
-          solver = SolverType::kinsol_newton;
-        else if (str_solver == "inexact_newton")
-          solver = SolverType::inexact_newton;
-        else
-          throw(std::runtime_error("Invalid non-linear solver "));
+        solver = string_to_enum<SolverType>(prm.get("solver"));
 
-        const std::string str_kinsol_strategy = prm.get("kinsol strategy");
-        if (str_kinsol_strategy == "normal_newton")
-          kinsol_strategy = KinsolStrategy::normal_newton;
-        else if (str_kinsol_strategy == "line_search")
-          kinsol_strategy = KinsolStrategy::line_search;
-        else if (str_kinsol_strategy == "picard")
-          kinsol_strategy = KinsolStrategy::picard;
-        else
-          throw(std::runtime_error(
-            "Invalid strategy for kinsol non-linear solver "));
+        kinsol_strategy =
+          string_to_enum<KinsolStrategy>(prm.get("kinsol strategy"));
 
         tolerance             = prm.get_double("tolerance");
         step_tolerance        = prm.get_double("step tolerance");
@@ -3566,26 +3220,6 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  namespace
-  {
-    template <int dim, int spacedim>
-    std::string
-    to_string(const typename Mesh<dim, spacedim>::Type type)
-    {
-      switch (type)
-        {
-          case Mesh<dim, spacedim>::Type::gmsh:
-            return "gmsh";
-          case Mesh<dim, spacedim>::Type::dealii:
-            return "dealii";
-          case Mesh<dim, spacedim>::Type::lethe:
-            return "lethe";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   template <int dim, int spacedim>
   void
   Mesh<dim, spacedim>::declare_parameters(ParameterHandler &prm)
@@ -3594,7 +3228,7 @@ namespace Parameters
     prm.enter_subsection("mesh");
     {
       prm.declare_entry("type",
-                        to_string<dim, spacedim>(defaults.type),
+                        enum_to_string(defaults.type),
                         Patterns::Selection("gmsh|dealii|lethe"),
                         "Type of mesh "
                         "Choices are <gmsh|dealii|lethe>.");
@@ -3700,18 +3334,7 @@ namespace Parameters
   {
     prm.enter_subsection("mesh");
     {
-      {
-        const std::string op = prm.get("type");
-        if (op == "gmsh")
-          type = Type::gmsh;
-        else if (op == "dealii")
-          type = Type::dealii;
-        else if (op == "lethe")
-          type = Type::lethe;
-        else
-          throw std::logic_error(
-            "Error, invalid mesh type. Choices are gmsh and dealii");
-      }
+      type = string_to_enum<Type>(prm.get("type"));
 
       file_name = prm.get("file name");
 
@@ -3818,60 +3441,6 @@ namespace Parameters
   namespace
   {
     std::string
-    to_string(const LinearSolver::SolverType type)
-    {
-      switch (type)
-        {
-          case LinearSolver::SolverType::gmres:
-            return "gmres";
-          case LinearSolver::SolverType::bicgstab:
-            return "bicgstab";
-          case LinearSolver::SolverType::direct:
-            return "direct";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const LinearSolver::PreconditionerType type)
-    {
-      switch (type)
-        {
-          case LinearSolver::PreconditionerType::ilu:
-            return "ilu";
-          case LinearSolver::PreconditionerType::amg:
-            return "amg";
-          case LinearSolver::PreconditionerType::lsmg:
-            return "lsmg";
-          case LinearSolver::PreconditionerType::gcmg:
-            return "gcmg";
-          case LinearSolver::PreconditionerType::none:
-            return "none";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const LinearSolver::MultigridCoarseningSequenceType type)
-    {
-      switch (type)
-        {
-          case LinearSolver::MultigridCoarseningSequenceType::h:
-            return "h";
-          case LinearSolver::MultigridCoarseningSequenceType::p:
-            return "p";
-          case LinearSolver::MultigridCoarseningSequenceType::hp:
-            return "hp";
-          case LinearSolver::MultigridCoarseningSequenceType::ph:
-            return "ph";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
     to_string(
       const MGTransferGlobalCoarseningTools::PolynomialCoarseningSequenceType
         type)
@@ -3910,24 +3479,6 @@ namespace Parameters
       Assert(false, ExcInternalError());
       return "";
     }
-
-    std::string
-    to_string(const LinearSolver::CoarseGridSolverType type)
-    {
-      switch (type)
-        {
-          case LinearSolver::CoarseGridSolverType::gmres:
-            return "gmres";
-          case LinearSolver::CoarseGridSolverType::amg:
-            return "amg";
-          case LinearSolver::CoarseGridSolverType::ilu:
-            return "ilu";
-          case LinearSolver::CoarseGridSolverType::direct:
-            return "direct";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
   } // namespace
 
   void
@@ -3947,7 +3498,7 @@ namespace Parameters
           "Choices are <quiet|verbose|extra verbose>.");
         prm.declare_entry(
           "method",
-          to_string(defaults.solver),
+          enum_to_string(defaults.solver),
           Patterns::Selection("gmres|bicgstab|direct"),
           "The iterative solver for the linear system of equations. "
           "Choices are <gmres|bicgstab|direct>.");
@@ -3995,7 +3546,7 @@ namespace Parameters
           "Turns off the terms involving the hessian in the rhs");
 
         prm.declare_entry("preconditioner",
-                          to_string(defaults.preconditioner),
+                          enum_to_string(defaults.preconditioner),
                           Patterns::Selection("amg|ilu|lsmg|gcmg|none"),
                           "The preconditioner for the linear solver. "
                           "Choices are <amg|ilu|lsmg|gcmg|none>.");
@@ -4161,7 +3712,7 @@ namespace Parameters
           "Choices are <quiet|verbose>.");
 
         prm.declare_entry("mg coarse grid solver",
-                          to_string(defaults.mg_coarse_grid_solver),
+                          enum_to_string(defaults.mg_coarse_grid_solver),
                           Patterns::Selection("gmres|amg|ilu|direct"),
                           "The coarse grid solver for lsmg or gcmg. "
                           "Choices are <gmres|amg|ilu|direct>.");
@@ -4174,7 +3725,7 @@ namespace Parameters
           "use elements with linear interpolation for coarse grid");
 
         prm.declare_entry("mg coarsening type",
-                          to_string(defaults.mg_coarsening_type),
+                          enum_to_string(defaults.mg_coarsening_type),
                           Patterns::Selection("h|p|hp|ph"),
                           "mg coarsening type for gcmg");
 
@@ -4215,7 +3766,7 @@ namespace Parameters
                           "mg gmres max krylov vectors for lsmg or gcmg");
 
         prm.declare_entry("mg gmres preconditioner",
-                          to_string(defaults.mg_gmres_preconditioner),
+                          enum_to_string(defaults.mg_gmres_preconditioner),
                           Patterns::Selection("amg|ilu"),
                           "The preconditioner for the mg gmres solver. "
                           "Choices are <amg|ilu>.");
@@ -4245,16 +3796,7 @@ namespace Parameters
     {
       prm.enter_subsection(physics_name);
       {
-        const std::string sv = prm.get("method");
-        if (sv == "gmres")
-          solver = SolverType::gmres;
-        else if (sv == "bicgstab")
-          solver = SolverType::bicgstab;
-        else if (sv == "direct")
-          solver = SolverType::direct;
-        else
-          throw std::logic_error(
-            "Error, invalid iterative solver type. Choices are amg, gmres, bicgstab or direct");
+        solver = string_to_enum<SolverType>(prm.get("method"));
 
         const std::string op = prm.get("verbosity");
         if (op == "verbose")
@@ -4278,20 +3820,8 @@ namespace Parameters
         Assert(enable_hessians_residual || !enable_hessians_jacobian,
                ExcNotImplemented());
 
-        const std::string precond = prm.get("preconditioner");
-        if (precond == "amg")
-          preconditioner = PreconditionerType::amg;
-        else if (precond == "ilu")
-          preconditioner = PreconditionerType::ilu;
-        else if (precond == "lsmg")
-          preconditioner = PreconditionerType::lsmg;
-        else if (precond == "gcmg")
-          preconditioner = PreconditionerType::gcmg;
-        else if (precond == "none")
-          preconditioner = PreconditionerType::none;
-        else
-          throw std::logic_error(
-            "Error, invalid preconditioner type. Choices are amg, ilu, lsmg, gcmg or none.");
+        preconditioner =
+          string_to_enum<PreconditionerType>(prm.get("preconditioner"));
 
 
         ilu_precond_fill = prm.get_integer("ilu preconditioner fill");
@@ -4363,33 +3893,14 @@ namespace Parameters
           throw(std::runtime_error(
             "Unknown verbosity mode for the eigenvalue estimation"));
 
-        const std::string cg_solver = prm.get("mg coarse grid solver");
-        if (cg_solver == "gmres")
-          mg_coarse_grid_solver = CoarseGridSolverType::gmres;
-        else if (cg_solver == "amg")
-          mg_coarse_grid_solver = CoarseGridSolverType::amg;
-        else if (cg_solver == "ilu")
-          mg_coarse_grid_solver = CoarseGridSolverType::ilu;
-        else if (cg_solver == "direct")
-          mg_coarse_grid_solver = CoarseGridSolverType::direct;
-        else
-          throw std::logic_error(
-            "Error, invalid coarse grid solver type. Choices are gmres, amg, ilu or direct.");
+        mg_coarse_grid_solver = string_to_enum<CoarseGridSolverType>(
+          prm.get("mg coarse grid solver"));
 
         mg_use_fe_q_iso_q1 = prm.get_bool("mg coarse grid use fe q iso q1");
 
-        const std::string mg_coarsening_type_str =
-          prm.get("mg coarsening type");
-        if (mg_coarsening_type_str == "h")
-          this->mg_coarsening_type = MultigridCoarseningSequenceType::h;
-        else if (mg_coarsening_type_str == "p")
-          this->mg_coarsening_type = MultigridCoarseningSequenceType::p;
-        else if (mg_coarsening_type_str == "hp")
-          this->mg_coarsening_type = MultigridCoarseningSequenceType::hp;
-        else if (mg_coarsening_type_str == "ph")
-          this->mg_coarsening_type = MultigridCoarseningSequenceType::ph;
-        else
-          AssertThrow(false, ExcNotImplemented());
+        this->mg_coarsening_type =
+          string_to_enum<MultigridCoarseningSequenceType>(
+            prm.get("mg coarsening type"));
 
         const std::string mg_p_coarsening_type_str =
           prm.get("mg p coarsening type");
@@ -4425,14 +3936,8 @@ namespace Parameters
         mg_gmres_max_krylov_vectors =
           prm.get_integer("mg gmres max krylov vectors");
 
-        const std::string cg_precond = prm.get("mg gmres preconditioner");
-        if (cg_precond == "amg")
-          mg_gmres_preconditioner = PreconditionerType::amg;
-        else if (cg_precond == "ilu")
-          mg_gmres_preconditioner = PreconditionerType::ilu;
-        else
-          throw std::logic_error(
-            "Error, invalid preconditioner type for mg gmres solver. Choices are amg or ilu.");
+        mg_gmres_preconditioner = string_to_enum<PreconditionerType>(
+          prm.get("mg gmres preconditioner"));
 
         mg_amg_use_default_parameters =
           prm.get_bool("mg amg use default parameters");
@@ -4453,53 +3958,6 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  namespace
-  {
-    std::string
-    to_string(const MeshAdaptation::Type type)
-    {
-      switch (type)
-        {
-          case MeshAdaptation::Type::none:
-            return "none";
-          case MeshAdaptation::Type::uniform:
-            return "uniform";
-          case MeshAdaptation::Type::adaptive:
-            return "adaptive";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const MultipleAdaptationParameters::ErrorEstimator estimator)
-    {
-      switch (estimator)
-        {
-          case MultipleAdaptationParameters::ErrorEstimator::kelly:
-            return "kelly";
-          case MultipleAdaptationParameters::ErrorEstimator::dpg:
-            return "dpg";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const MeshAdaptation::FractionType type)
-    {
-      switch (type)
-        {
-          case MeshAdaptation::FractionType::number:
-            return "number";
-          case MeshAdaptation::FractionType::fraction:
-            return "fraction";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   void
   MeshAdaptation::declare_parameters(ParameterHandler &prm)
   {
@@ -4515,14 +3973,14 @@ namespace Parameters
                         "Number of pre-solve adaptive mesh refinement steps");
 
       prm.declare_entry("type",
-                        to_string(defaults.type),
+                        enum_to_string(defaults.type),
                         Patterns::Selection("none|uniform|adaptive"),
                         "Type of mesh adaptation. "
                         "Choices are <none|uniform|adaptive>.");
 
       prm.declare_entry(
         "error estimator",
-        to_string(variable_defaults.error_estimator),
+        enum_to_string(variable_defaults.error_estimator),
         Patterns::List(Patterns::Selection("kelly|dpg")),
         "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter. "
         "Choices are <kelly|dpg>.");
@@ -4557,7 +4015,7 @@ namespace Parameters
 
       prm.declare_entry(
         "fraction type",
-        to_string(defaults.fractionType),
+        enum_to_string(defaults.fractionType),
         Patterns::Selection("number|fraction"),
         "How the fraction of refinement/coarsening are interpreted. "
         "Choices are <number|fraction>.");
@@ -4607,16 +4065,7 @@ namespace Parameters
     {
       initial_refinement = prm.get_integer("initial refinement steps");
 
-      const std::string op = prm.get("type");
-      if (op == "none")
-        type = Type::none;
-      else if (op == "uniform")
-        type = Type::uniform;
-      else if (op == "adaptive")
-        type = Type::adaptive;
-      else
-        throw std::logic_error(
-          "Error, invalid mesh adaptation type. Choices are <none|uniform|adaptive>.");
+      type = string_to_enum<Type>(prm.get("type"));
 
       // Getting multivariables refinement parameters
       const std::string        var_op  = prm.get("variable");
@@ -4674,15 +4123,9 @@ namespace Parameters
               "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, electric field, magnetic field or electromagnetic fields. Note that <electric field> or <magnetic field> and <electromagnetic fields> are mutually exclusive.");
 
           // Parsing strategy for this variable
-          if (strategy_vec[i] == "kelly")
-            var_adaptation_param.error_estimator =
-              MultipleAdaptationParameters::ErrorEstimator::kelly;
-          else if (strategy_vec[i] == "dpg")
-            var_adaptation_param.error_estimator =
-              MultipleAdaptationParameters::ErrorEstimator::dpg;
-          else
-            throw std::logic_error(
-              "Error, invalid mesh adaptation error estimator. Choices are kelly or dpg");
+          var_adaptation_param.error_estimator =
+            string_to_enum<MultipleAdaptationParameters::ErrorEstimator>(
+              strategy_vec[i]);
 
           var_adaptation_param.coarsening_fraction =
             Utilities::string_to_double(coars_vec[i]);
@@ -4709,11 +4152,7 @@ namespace Parameters
                     "electromagnetic_fields is mutually exclusive with "
                     "electric_field and magnetic_field."));
 
-      const std::string fop = prm.get("fraction type");
-      if (fop == "number")
-        fractionType = FractionType::number;
-      if (fop == "fraction")
-        fractionType = FractionType::fraction;
+      fractionType = string_to_enum<FractionType>(prm.get("fraction type"));
       maximum_number_elements      = prm.get_integer("max number elements");
       maximum_refinement_level     = prm.get_integer("max refinement level");
       minimum_refinement_level     = prm.get_integer("min refinement level");
@@ -4737,25 +4176,6 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  namespace
-  {
-    std::string
-    to_string(const Testing::TestType type)
-    {
-      switch (type)
-        {
-          case Testing::TestType::particles:
-            return "particles";
-          case Testing::TestType::mobility_status:
-            return "mobility_status";
-          case Testing::TestType::subdomain:
-            return "subdomain";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   void
   Testing::declare_parameters(ParameterHandler &prm)
   {
@@ -4771,7 +4191,7 @@ namespace Parameters
         "testing mode is generally used only for the automatic testing bench using ctest.");
       prm.declare_entry(
         "type",
-        to_string(defaults.test_type),
+        enum_to_string(defaults.test_type),
         Patterns::Selection("particles|mobility_status|subdomain"),
         "Output type for testing mode. Currently, particles type will output "
         "each particle with some information and mobility_status or subdomain output results "
@@ -4788,17 +4208,7 @@ namespace Parameters
       enabled = prm.get_bool("enable");
       if (enabled)
         {
-          const std::string op = prm.get("type");
-          if (op == "particles")
-            test_type = TestType::particles;
-          else if (op == "mobility_status")
-            test_type = TestType::mobility_status;
-          else if (op == "subdomain")
-            test_type = TestType::subdomain;
-          else
-            throw std::logic_error(
-              "Error, invalid testing type. Current choices are particles, "
-              "mobility_status or subdomain");
+          test_type = string_to_enum<TestType>(prm.get("type"));
         }
     }
     prm.leave_subsection();
@@ -4851,20 +4261,6 @@ namespace Parameters
   namespace
   {
     std::string
-    to_string(const VelocitySource::RotatingFrameType type)
-    {
-      switch (type)
-        {
-          case VelocitySource::RotatingFrameType::none:
-            return "none";
-          case VelocitySource::RotatingFrameType::srf:
-            return "srf";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
     to_string(const VelocitySource::PermeabilityModel model)
     {
       switch (model)
@@ -4889,7 +4285,7 @@ namespace Parameters
     {
       prm.declare_entry(
         "rotating frame type",
-        to_string(defaults.rotating_frame_type),
+        enum_to_string(defaults.rotating_frame_type),
         Patterns::Selection("none|srf"),
         "Rotating frame velocity-dependent source terms. "
         "Choices are <none|srf>. The srf stands "
@@ -4957,13 +4353,8 @@ namespace Parameters
   {
     prm.enter_subsection("velocity source");
     {
-      const std::string op = prm.get("rotating frame type");
-      if (op == "none")
-        rotating_frame_type = RotatingFrameType::none;
-      else if (op == "srf")
-        rotating_frame_type = RotatingFrameType::srf;
-      else
-        throw std::logic_error("Error, invalid velocity source type");
+      rotating_frame_type =
+        string_to_enum<RotatingFrameType>(prm.get("rotating frame type"));
 
       const std::string permeability_model_str = prm.get("permeability model");
       if (permeability_model_str == "none")
@@ -5790,23 +5181,6 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  namespace
-  {
-    std::string
-    to_string(const Evaporation::EvaporativeMassFluxModelType type)
-    {
-      switch (type)
-        {
-          case Evaporation::EvaporativeMassFluxModelType::constant:
-            return "constant";
-          case Evaporation::EvaporativeMassFluxModelType::temperature_dependent:
-            return "temperature_dependent";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   void
   Evaporation::declare_parameters(dealii::ParameterHandler &prm)
   {
@@ -5815,7 +5189,7 @@ namespace Parameters
     {
       prm.declare_entry(
         "evaporation mass flux model",
-        to_string(defaults.evaporative_mass_flux_model_type),
+        enum_to_string(defaults.evaporative_mass_flux_model_type),
         Patterns::Selection("constant|temperature_dependent"),
         "Model used for the calculation of the evaporative mass flux. "
         "Choices are <constant|temperature_dependent>.");
@@ -5893,21 +5267,9 @@ namespace Parameters
   {
     prm.enter_subsection("evaporation");
     {
-      std::string op;
-      op = prm.get("evaporation mass flux model");
-      if (op == "constant")
-        {
-          evaporative_mass_flux_model_type =
-            EvaporativeMassFluxModelType::constant;
-        }
-      else if (op == "temperature_dependent")
-        {
-          evaporative_mass_flux_model_type =
-            EvaporativeMassFluxModelType::temperature_dependent;
-        }
-      else
-        throw(std::runtime_error(
-          "Invalid evaporative mass flux model. The choices are <constant|temperature_dependent>."));
+      evaporative_mass_flux_model_type =
+        string_to_enum<EvaporativeMassFluxModelType>(
+          prm.get("evaporation mass flux model"));
 
       enable_evaporation_cooling = prm.get_bool("enable evaporative cooling");
       enable_recoil_pressure     = prm.get_bool("enable recoil pressure");
@@ -5927,24 +5289,6 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  namespace
-  {
-    template <int dim>
-    std::string
-    to_string(const typename Mortar<dim>::InterfaceType type)
-    {
-      switch (type)
-        {
-          case Mortar<dim>::InterfaceType::circular:
-            return "circular";
-          case Mortar<dim>::InterfaceType::linear:
-            return "linear";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-  } // namespace
-
   template <int dim>
   void
   Mortar<dim>::declare_parameters(ParameterHandler &prm)
@@ -5956,7 +5300,7 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable mortar interface <true|false>");
       prm.declare_entry("interface type",
-                        to_string<dim>(interface_type),
+                        enum_to_string(interface_type),
                         Patterns::Selection("circular|linear"),
                         "Type of mortar interface. "
                         "Choices are <circular|linear>.");
@@ -6030,19 +5374,8 @@ namespace Parameters
   {
     prm.enter_subsection("mortar");
     {
-      enable = prm.get_bool("enable");
-      {
-        const std::string op = prm.get("interface type");
-        if (op == "circular")
-          interface_type = InterfaceType::circular;
-        else if (op == "linear")
-          interface_type = InterfaceType::linear;
-        else
-          AssertThrow(
-            false,
-            ExcMessage(
-              "Error, invalid mortar interface type. Current choices are <circular|linear>."));
-      }
+      enable         = prm.get_bool("enable");
+      interface_type = string_to_enum<InterfaceType>(prm.get("interface type"));
       rotor_mesh->parse_parameters(prm);
       rotor_boundary_id  = prm.get_integer("rotor boundary id");
       stator_boundary_id = prm.get_integer("stator boundary id");
