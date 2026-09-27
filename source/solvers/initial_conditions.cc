@@ -1,47 +1,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2023, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/utilities.h>
+
 #include <solvers/initial_conditions.h>
-
-namespace
-{
-  std::string
-  to_string(const Parameters::FluidDynamicsInitialConditionType type)
-  {
-    switch (type)
-      {
-        case Parameters::FluidDynamicsInitialConditionType::L2projection:
-          return "L2projection";
-        case Parameters::FluidDynamicsInitialConditionType::viscous:
-          return "viscous";
-        case Parameters::FluidDynamicsInitialConditionType::nodal:
-          return "nodal";
-        case Parameters::FluidDynamicsInitialConditionType::ramp:
-          return "ramp";
-        case Parameters::FluidDynamicsInitialConditionType::
-          average_velocity_profile:
-          return "average_velocity_profile";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
-
-  std::string
-  to_string(const Parameters::CLSInitialConditionType type)
-  {
-    switch (type)
-      {
-        case Parameters::CLSInitialConditionType::none:
-          return "none";
-        case Parameters::CLSInitialConditionType::diffusive:
-          return "diffusive";
-        case Parameters::CLSInitialConditionType::geometric:
-          return "geometric";
-      }
-    Assert(false, dealii::ExcInternalError());
-    return "";
-  }
-} // namespace
 
 namespace Parameters
 {
@@ -149,7 +111,7 @@ namespace Parameters
     {
       prm.declare_entry(
         "type",
-        to_string(type),
+        enum_to_string(type),
         Patterns::Selection(
           "L2projection|viscous|nodal|ramp|average_velocity_profile"),
         "Type of initial condition. "
@@ -177,7 +139,7 @@ namespace Parameters
       CLS.declare_parameters(prm);
       prm.declare_entry(
         "smoothing type",
-        to_string(cls_initial_condition_smoothing),
+        enum_to_string(cls_initial_condition_smoothing),
         Patterns::Selection("none|diffusive|geometric"),
         "Apply a projection step with diffusion to smooth the CLS initial condition");
 
@@ -220,17 +182,7 @@ namespace Parameters
   {
     prm.enter_subsection("initial conditions");
     {
-      const std::string op = prm.get("type");
-      if (op == "L2projection")
-        type = FluidDynamicsInitialConditionType::L2projection;
-      else if (op == "viscous")
-        type = FluidDynamicsInitialConditionType::viscous;
-      else if (op == "nodal")
-        type = FluidDynamicsInitialConditionType::nodal;
-      else if (op == "ramp")
-        type = FluidDynamicsInitialConditionType::ramp;
-      else if (op == "average_velocity_profile")
-        type = FluidDynamicsInitialConditionType::average_velocity_profile;
+      type = string_to_enum<FluidDynamicsInitialConditionType>(prm.get("type"));
 
       kinematic_viscosity = prm.get_double("kinematic viscosity");
       prm.enter_subsection("uvwp");
@@ -248,16 +200,8 @@ namespace Parameters
       prm.enter_subsection("CLS");
       {
         CLS.parse_parameters(prm);
-        const std::string op = prm.get("smoothing type");
-        if (op == "none")
-          cls_initial_condition_smoothing = CLSInitialConditionType::none;
-        else if (op == "diffusive")
-          cls_initial_condition_smoothing = CLSInitialConditionType::diffusive;
-        else if (op == "geometric")
-          cls_initial_condition_smoothing = CLSInitialConditionType::geometric;
-        else
-          throw(
-            std::runtime_error("Unknown CLS initial condition smoothing type"));
+        cls_initial_condition_smoothing =
+          string_to_enum<CLSInitialConditionType>(prm.get("smoothing type"));
 
         projection_step_diffusion_factor = prm.get_double("diffusion factor");
       }

@@ -7,6 +7,7 @@
 #include <core/output_struct.h>
 
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/mpi_remote_point_evaluation.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
@@ -24,10 +25,15 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
+#include <magic_enum.hpp>
+
 #include <fstream>
 #include <map>
+#include <optional>
 #include <string>
+#include <string_view>
 #include <tuple>
+#include <type_traits>
 #include <vector>
 
 using namespace dealii;
@@ -672,6 +678,76 @@ get_dimension(const std::string &file_name);
 int
 get_max_subsection_size(const std::string &file_name,
                         const bool         require_subsection_size = true);
+
+/**
+ * @brief Return the name of an enumerator, e.g. to derive the default value
+ * string of a parameter entry from the in-class default of its enum member.
+ *
+ * This is only valid for parameters whose accepted strings are exactly the
+ * enumerator identifiers (e.g. "bdf1" for TimeSteppingMethod::bdf1).
+ *
+ * @note Patterns::Tools::Convert<EnumType> is not used, because it treats
+ * enums as bit-flag sets: for a non-zero value, it also returns the name of
+ * the zero-valued enumerator (e.g. "pspg_supg| gls" for gls).
+ *
+ * @tparam EnumType Enumeration type.
+ *
+ * @param[in] value Enumerator whose name is returned.
+ *
+ * @return The identifier of @p value.
+ */
+template <typename EnumType>
+  requires std::is_enum_v<EnumType>
+inline std::string
+enum_to_string(const EnumType value)
+{
+  const std::string_view name = magic_enum::enum_name(value);
+  Assert(!name.empty(), ExcInternalError());
+  return std::string(name);
+}
+
+/**
+ * @brief Return the enumerator whose identifier is @p name, e.g. to parse the
+ * value of a parameter entry into its enum member. This is the inverse of
+ * enum_to_string().
+ *
+ * This is only valid for parameters whose accepted strings are exactly the
+ * enumerator identifiers (e.g. "bdf1" for TimeSteppingMethod::bdf1). The
+ * comparison is case-sensitive.
+ *
+ * @note Patterns::Tools::Convert<EnumType> is not used, because it treats
+ * enums as bit-flag sets (see enum_to_string()).
+ *
+ * @tparam EnumType Enumeration type.
+ *
+ * @param[in] name Identifier of the enumerator.
+ *
+ * @return The enumerator of @p EnumType named @p name. An exception is thrown
+ * if @p EnumType has no enumerator named @p name.
+ */
+template <typename EnumType>
+  requires std::is_enum_v<EnumType>
+inline EnumType
+string_to_enum(const std::string &name)
+{
+  const std::optional<EnumType> value = magic_enum::enum_cast<EnumType>(name);
+  if (!value.has_value())
+    {
+      std::string choices;
+      for (const std::string_view choice : magic_enum::enum_names<EnumType>())
+        {
+          if (!choices.empty())
+            choices += "|";
+          choices += choice;
+        }
+      AssertThrow(false,
+                  ExcMessage(
+                    "Invalid value \"" + name + "\" for " +
+                    std::string(magic_enum::enum_type_name<EnumType>()) +
+                    ". The choices are <" + choices + ">."));
+    }
+  return *value;
+}
 
 /**
  * @brief Return the tensor corresponding to the @p value_string. If the

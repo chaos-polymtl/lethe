@@ -38,6 +38,7 @@ if(NOT _had_deal_ii)
   foreach(_feat IN ITEMS
       # MPI is required for p4est and Trilinos, but leave it here as
       # additional documentation.
+      DEAL_II_WITH_MAGIC_ENUM
       DEAL_II_WITH_MPI
       DEAL_II_WITH_P4EST
       DEAL_II_WITH_TRILINOS)

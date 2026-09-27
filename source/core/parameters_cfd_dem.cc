@@ -2,43 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_cfd_dem.h>
+#include <core/utilities.h>
 
 namespace Parameters
 {
   namespace
   {
-    std::string
-    to_string(const VoidFractionMode mode)
-    {
-      switch (mode)
-        {
-          case VoidFractionMode::function:
-            return "function";
-          case VoidFractionMode::pcm:
-            return "pcm";
-          case VoidFractionMode::qcm:
-            return "qcm";
-          case VoidFractionMode::spm:
-            return "spm";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const QCMFilterType type)
-    {
-      switch (type)
-        {
-          case QCMFilterType::spherical:
-            return "spherical";
-          case QCMFilterType::gaussian:
-            return "gaussian";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
     std::string
     to_string(const VoidFractionQuadratureRule rule)
     {
@@ -48,28 +17,6 @@ namespace Parameters
             return "gauss";
           case VoidFractionQuadratureRule::gauss_lobatto:
             return "gauss-lobatto";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const DragModel model)
-    {
-      switch (model)
-        {
-          case DragModel::difelice:
-            return "difelice";
-          case DragModel::rong:
-            return "rong";
-          case DragModel::dallavalle:
-            return "dallavalle";
-          case DragModel::kochhill:
-            return "kochhill";
-          case DragModel::beetstra:
-            return "beetstra";
-          case DragModel::gidaspow:
-            return "gidaspow";
         }
       Assert(false, ExcInternalError());
       return "";
@@ -86,20 +33,6 @@ namespace Parameters
             return "semi-implicit";
           case DragCoupling::fully_explicit:
             return "explicit";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const VANSModel model)
-    {
-      switch (model)
-        {
-          case VANSModel::modelA:
-            return "modelA";
-          case VANSModel::modelB:
-            return "modelB";
         }
       Assert(false, ExcInternalError());
       return "";
@@ -129,7 +62,7 @@ namespace Parameters
     prm.enter_subsection("void fraction");
     prm.declare_entry(
       "mode",
-      to_string(mode),
+      enum_to_string(mode),
       Patterns::Selection("function|pcm|qcm|spm"),
       "Choose the method for the calculation of the void fraction");
     prm.enter_subsection("function");
@@ -166,7 +99,7 @@ namespace Parameters
       "Specify whether the virtual sphere has the same volume as the mesh element");
     prm.declare_entry(
       "qcm filter type",
-      to_string(qcm_filter_type),
+      enum_to_string(qcm_filter_type),
       Patterns::Selection("spherical|gaussian"),
       "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm smoothing length' is the averaging-sphere radius. With 'gaussian', half of 'qcm smoothing length' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
     prm.declare_entry(
@@ -193,17 +126,7 @@ namespace Parameters
   VoidFractionParameters<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("void fraction");
-    const std::string op = prm.get("mode");
-    if (op == "function")
-      mode = Parameters::VoidFractionMode::function;
-    else if (op == "pcm")
-      mode = Parameters::VoidFractionMode::pcm;
-    else if (op == "qcm")
-      mode = Parameters::VoidFractionMode::qcm;
-    else if (op == "spm")
-      mode = Parameters::VoidFractionMode::spm;
-    else
-      throw(std::runtime_error("Invalid void fraction calculation scheme"));
+    mode = string_to_enum<Parameters::VoidFractionMode>(prm.get("mode"));
     prm.enter_subsection("function");
     void_fraction.parse_parameters(prm);
     prm.leave_subsection();
@@ -215,14 +138,8 @@ namespace Parameters
     qcm_smoothing_length       = prm.get_double("qcm smoothing length");
     qcm_sphere_equal_cell_volume = prm.get_bool("qcm sphere equal cell volume");
 
-    const std::string qcm_filter_type_op = prm.get("qcm filter type");
-    if (qcm_filter_type_op == "spherical")
-      qcm_filter_type = Parameters::QCMFilterType::spherical;
-    else if (qcm_filter_type_op == "gaussian")
-      qcm_filter_type = Parameters::QCMFilterType::gaussian;
-    else
-      throw(std::runtime_error(
-        "Invalid QCM filter type. Options are 'spherical' or 'gaussian'"));
+    qcm_filter_type =
+      string_to_enum<Parameters::QCMFilterType>(prm.get("qcm filter type"));
 
     const std::string quadrature_rule_op = prm.get("quadrature rule");
 
@@ -305,7 +222,7 @@ namespace Parameters
       Patterns::Bool(),
       "Choose whether or not to apply vortical viscous torque on particles");
     prm.declare_entry("drag model",
-                      to_string(defaults.drag_model),
+                      enum_to_string(defaults.drag_model),
                       Patterns::Selection(
                         "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
                       "The drag model used to determine the drag coefficient");
@@ -326,7 +243,7 @@ namespace Parameters
       Patterns::Double(0., 1.),
       "Fraction of Rayleigh time used to control the DEM iterations.");
     prm.declare_entry("vans model",
-                      to_string(defaults.vans_model),
+                      enum_to_string(defaults.vans_model),
                       Patterns::Selection("modelA|modelB"),
                       "The volume averaged Navier Stokes model to be solved.");
     prm.declare_entry(
@@ -399,21 +316,7 @@ namespace Parameters
         ExcMessage(
           "An invalid dem iteration control strategy was parsed. Simulation will now stop."));
 
-    const std::string op = prm.get("drag model");
-    if (op == "difelice")
-      drag_model = Parameters::DragModel::difelice;
-    else if (op == "rong")
-      drag_model = Parameters::DragModel::rong;
-    else if (op == "dallavalle")
-      drag_model = Parameters::DragModel::dallavalle;
-    else if (op == "kochhill")
-      drag_model = Parameters::DragModel::kochhill;
-    else if (op == "beetstra")
-      drag_model = Parameters::DragModel::beetstra;
-    else if (op == "gidaspow")
-      drag_model = Parameters::DragModel::gidaspow;
-    else
-      AssertThrow(false, ExcMessage("Invalid drag model"));
+    drag_model = string_to_enum<Parameters::DragModel>(prm.get("drag model"));
 
     const std::string drag_coupling_str = prm.get("drag coupling");
     if (drag_coupling_str == "implicit")
@@ -425,14 +328,7 @@ namespace Parameters
     else
       AssertThrow(false, ExcMessage("Drag coupling formulation"));
 
-    const std::string op1 = prm.get("vans model");
-    if (op1 == "modelA")
-      vans_model = Parameters::VANSModel::modelA;
-    else if (op1 == "modelB")
-      vans_model = Parameters::VANSModel::modelB;
-    else
-      throw(std::runtime_error(
-        "Invalid vans model. Valid choices are modelA and modelB."));
+    vans_model = string_to_enum<Parameters::VANSModel>(prm.get("vans model"));
     prm.leave_subsection();
   }
 } // namespace Parameters
