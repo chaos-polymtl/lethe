@@ -27,7 +27,6 @@ In this subsection, the insertion methods ``volume``, ``plane``, ``list`` and ``
     set insertion method                               = plane
     set insertion plane point                          = 0, 0, 0
     set insertion plane normal vector                  = 1, 0, 0
-    set insertion plane threshold distance             = 0.
 
     # If method = volume or packed
     set insertion box points coordinates               = 0., 0., 0. : 1., 1., 1.
@@ -128,8 +127,6 @@ The ``plane`` insertion method inserts particles at the centroid of insertion ce
 * ``insert plane point`` defines the point coordinates for the plane. The components of this parameter represent the x, y and z directions, respectively.
 
 * ``insertion plane normal vector`` defines the normal vector component for the plane. The components of the parameter represent the x, y and z directions, respectively.
-
-* ``insertion plane threshold distance`` defines the threshold distance for the plane insertion.
 
 * ``initial velocity`` determines the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
 
