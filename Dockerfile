@@ -1,4 +1,4 @@
-ARG DEALII_IMAGE_VERSION="v9.8.0"
+ARG DEALII_IMAGE_VERSION="v9.7.1"
 
 FROM dealii/dealii:${DEALII_IMAGE_VERSION}-noble as builder
 
