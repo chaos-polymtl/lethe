@@ -5,7 +5,7 @@ Installation on Apple ARM
 .. figure:: ./images/apple.png
    :height: 100px
 
-Lethe can be now be deployed on Apple ARM chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture. 
+Lethe can be now be deployed on Apple ARM chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture.
 
 The installation of Lethe consists in two steps:
 1. Installation of deal.II using the Candi toolset
@@ -22,8 +22,6 @@ To install the dependencies (mpi, p4est, trilinos and METIS) all together using 
 Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/software/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting ``DEAL_II_VERSION=master``. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
 
 To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. Since candi installs a more recent version of p4est by default, select version 2.3.6 in the ``deal.II-toolchain/packages/p4est.package`` file of candi: uncomment its ``VERSION=2.3.6`` line and the ``CHECKSUM`` line that follows it, and comment the ``VERSION`` and ``CHECKSUM`` lines of the default version.
-
-Since September 2026, Lethe requires deal.II to be compiled with `magic_enum <https://github.com/Neargye/magic_enum>`_. candi installs deal.II 9.8 by default, which ships a bundled copy of magic_enum and enables it by default, so no action is required.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -119,5 +117,5 @@ Finally, you can install Lethe:
 
   make install
 
-.. warning:: 
+.. warning::
   Tests and application tests (``ctest``) may fail. However, we have tested it extensively and the library itself should work fine.

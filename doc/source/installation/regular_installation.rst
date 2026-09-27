@@ -14,20 +14,20 @@ Lethe requires a modern version of the `deal.II library <https://www.dealii.org/
   Since September 2026, Lethe requires deal.II to be compiled with `magic_enum <https://github.com/Neargye/magic_enum>`_ (``DEAL_II_WITH_MAGIC_ENUM=ON``). The configuration of Lethe stops with an error if it is not the case. deal.II 9.8 and newer ship a bundled copy of magic_enum and enable it by default, so no action is required with these versions, including when deal.II is installed with candi or manually. The deal.II 9.7.1 packages installed with ``apt`` and the `deal.II Docker images <https://hub.docker.com/r/dealii/dealii/>`_ also include it. Only a deal.II 9.7 installation compiled from source requires a separate installation of magic_enum (see :ref:`install-deal.II-manually`).
 
 **Lethe installation steps:**
-  
-1. Installing deal.II  
+
+1. Installing deal.II
 2. :ref:`install-lethe`
 
 **Installing deal.II and its dependencies:**
-  
+
 1. :ref:`install-deal.II-apt` (recommended for users)
-2. :ref:`install-deal.II-candi` (recommended for developers) 
+2. :ref:`install-deal.II-candi` (recommended for developers)
 3. :ref:`install-deal.II-manually` (recommended for experienced developers)
 
 
 .. _install-deal.II-apt:
 
-Installing deal.II using apt 
+Installing deal.II using apt
 -----------------------------------------
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
@@ -63,7 +63,7 @@ The ``Version`` field of the output should start with ``9.7.1``.
 
 .. _install-deal.II-candi:
 
-Installing deal.II using Candi 
+Installing deal.II using Candi
 -----------------------------------------
 
 To install the dependencies (MPI, p4est, trilinos and METIS) all together using candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
@@ -71,9 +71,9 @@ To install the dependencies (MPI, p4est, trilinos and METIS) all together using 
 Clone the candi git repository in a folder of your choice  (e.g. ``/home/username/software``). Edit the ``candi.cfg`` file to alter which dependencies are compiled. This file should notably be used to force the installation of the deal.II master version directly instead of the current stable version by setting ``DEAL_II_VERSION=master``.
 
 The following packages (which are specified by the ``PACKAGES`` lines) should be installed:
-  
+
   .. code-block:: text
-    
+
     PACKAGES="load:dealii-prepare"
     PACKAGES="${PACKAGES} once:numdiff"
     PACKAGES="${PACKAGES} once:opencascade"
@@ -86,8 +86,6 @@ Other packages can be disabled by simply commenting out the lines (adding a ``#`
 
 To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. Since candi installs a more recent version of p4est by default, select version 2.3.6 in the ``deal.II-toolchain/packages/p4est.package`` file of candi: uncomment its ``VERSION=2.3.6`` line and the ``CHECKSUM`` line that follows it, and comment the ``VERSION`` and ``CHECKSUM`` lines of the default version.
 
-Lethe requires deal.II to be compiled with magic_enum. candi installs deal.II 9.8 by default, which ships a bundled copy of magic_enum and enables it by default, so no action is required.
-
 From the candi folder, the installation of candi can be launched using:
 
 .. code-block:: text
@@ -98,7 +96,7 @@ From the candi folder, the installation of candi can be launched using:
 
 where ``$numproc`` is the number of threads you want to use to compile deal.II and ``$path`` the installation prefix that is desired (e.g. ``/home/username/software/candi``).
 
-.. tip:: 
+.. tip::
   For a computer with 8Gb of RAM, 1 thread (``numproc=1``) should be used. For 16 Gb, 4 threads is reasonable. For 32 Gb, 16 threads or more can be used.
 
 
@@ -108,14 +106,14 @@ After installation, add the following lines variable to your ``.bashrc`` :
 
 .. code-block:: text
   :class: copy-button
-    
+
     source candi/install/prefix/configuration/enable.sh
     export DEAL_II_DIR=candi/install/prefix/deal.II-<version>
 
 
 .. _install-deal.II-manually:
 
-Installing deal.II manually 
+Installing deal.II manually
 -----------------------------------------
 
 Clone deal.II from the `deal.ii official repository <https://github.com/dealii/dealii>`_
@@ -123,7 +121,7 @@ Clone deal.II from the `deal.ii official repository <https://github.com/dealii/d
 .. code-block:: text
   :class: copy-button
 
-  git clone https://github.com/dealii/dealii 
+  git clone https://github.com/dealii/dealii
 
 Configure deal.II in a build folder at the same level as the source code
 
@@ -166,7 +164,7 @@ It is generally recommended to add the variable to your bashrc so it is always l
 
 .. _install-lethe:
 
-Installing Lethe 
+Installing Lethe
 -------------------------------
 
 Clone Lethe from the `Lethe official repository <https://github.com/chaos-polymtl/lethe>`_.
@@ -214,7 +212,7 @@ This will install lethe to the installation folder you provided in the previous 
 
 to add the Lethe executables to your path.
 
-.. warning:: 
+.. warning::
   Hyper-threading will result in poor performance when running Lethe. Make sure that it is not turned on for your machine if you have more logical CPU(s) than the number of Core(s). To obtain this information, you can run the following command in a linux terminal:
 
   .. code-block:: text
@@ -229,7 +227,7 @@ to add the Lethe executables to your path.
 
     export OMP_NUM_THREADS=1
 
-Testing Your Installation 
+Testing Your Installation
 -------------------------------------
 
 Lethe comes pre-packaged with an extensive test suit for all of its modules. It can be used to test the validity of your installation. Within the build folder, the test suite can be launched with the following command:
@@ -241,7 +239,7 @@ Lethe comes pre-packaged with an extensive test suit for all of its modules. It 
 
 where $numprocs can be the number of physical cores on your machine. Do not be afraid if some tests fail on your machine, they are not always as portable as we would like them to be.
 
-.. warning:: 
+.. warning::
   The lethe test suites requires that deal.II be configured with p4est 2.3.6 otherwise the tests that include restart files or that use the ``lethe-fluid-vans`` or ``lethe-fluid-particles`` executables will fail. Even if the tests fail, the application should work as expected on your machine(including the restart capabilities).
 
 .. _update-dealii:
