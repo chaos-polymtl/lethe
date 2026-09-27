@@ -150,7 +150,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <a class="code hl_function" href="classSourceTerms_1_1SourceTerm.html#a9daacd5f949cf89baaeef43d50cb8861">parse_parameters</a>(ParameterHandler &amp;prm);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment"></span> </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">    /// Enable the Navier-Stokes source term</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classSourceTerms_1_1SourceTerm.html#a4d99dba0421b80c9bb29b10cef2f8218">   50</a></span><span class="comment"></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="classSourceTerms_1_1SourceTerm.html#a4d99dba0421b80c9bb29b10cef2f8218">enable</a>;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classSourceTerms_1_1SourceTerm.html#a4d99dba0421b80c9bb29b10cef2f8218">   50</a></span><span class="comment"></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="classSourceTerms_1_1SourceTerm.html#a4d99dba0421b80c9bb29b10cef2f8218">enable</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment"></span> </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment">    /// Velocity-pressure components</span></div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="classSourceTerms_1_1SourceTerm.html#a4a8f0e88e27e3617d6ca9293dc37eadd">   53</a></span><span class="comment"></span>    std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt;&gt; <a class="code hl_variable" href="classSourceTerms_1_1SourceTerm.html#a4a8f0e88e27e3617d6ca9293dc37eadd">navier_stokes_source</a>;</div>
@@ -175,7 +175,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    prm.enter_subsection(<span class="stringliteral">&quot;fluid dynamics&quot;</span>);</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    prm.declare_entry(<span class="stringliteral">&quot;enable&quot;</span>,</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                      <span class="stringliteral">&quot;true&quot;</span>,</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                      Patterns::Tools::Convert&lt;bool&gt;::to_string(enable),</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                      Patterns::Bool(),</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                      <span class="stringliteral">&quot;Enable the usage of a source term for the fluid solver&quot;</span>);</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    navier_stokes_source-&gt;declare_parameters(prm, dim + 1);</div>

@@ -117,7 +117,7 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a10ba7632f1e08db631a7ac43d319b1d3" id="r_a10ba7632f1e08db631a7ac43d319b1d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Parameters::Verbosity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#a10ba7632f1e08db631a7ac43d319b1d3">verbosity</a></td></tr>
+<tr class="memitem:a10ba7632f1e08db631a7ac43d319b1d3" id="r_a10ba7632f1e08db631a7ac43d319b1d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Parameters::Verbosity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#a10ba7632f1e08db631a7ac43d319b1d3">verbosity</a> = <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a></td></tr>
 <tr class="separator:a10ba7632f1e08db631a7ac43d319b1d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8586757b26238fa4162535b689000e2e" id="r_a8586757b26238fa4162535b689000e2e"><td class="memItemLeft" align="right" valign="top">Functions::ParsedFunction&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#a8586757b26238fa4162535b689000e2e">uvwp</a></td></tr>
 <tr class="separator:a8586757b26238fa4162535b689000e2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,9 +134,9 @@ Public Attributes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:af9215a7772b163c607e0380b79f20744" id="r_af9215a7772b163c607e0380b79f20744"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#af9215a7772b163c607e0380b79f20744">enable</a></td></tr>
+<tr class="memitem:af9215a7772b163c607e0380b79f20744" id="r_af9215a7772b163c607e0380b79f20744"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#af9215a7772b163c607e0380b79f20744">enable</a> = false</td></tr>
 <tr class="separator:af9215a7772b163c607e0380b79f20744"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96b10c2bc9cdeae76f91734929ed90d2" id="r_a96b10c2bc9cdeae76f91734929ed90d2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#a96b10c2bc9cdeae76f91734929ed90d2">filename</a></td></tr>
+<tr class="memitem:a96b10c2bc9cdeae76f91734929ed90d2" id="r_a96b10c2bc9cdeae76f91734929ed90d2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#a96b10c2bc9cdeae76f91734929ed90d2">filename</a> = &quot;L2Error&quot;</td></tr>
 <tr class="separator:a96b10c2bc9cdeae76f91734929ed90d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -212,7 +212,7 @@ template&lt;int dim&gt; </div>
 
 <p>Checks if the calculation of the error using the analytical solution is enabled. This option is there to prevent unnecessary calculations when no analytical solutions are required. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00094">94</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00093">93</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 <p class="reference">References <a class="el" href="analytical__solutions_8h_source.html#l00042">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;::enable</a>.</p>
 
@@ -254,7 +254,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="analytical__solutions_8cc_source.html#l00010">10</a> of file <a class="el" href="analytical__solutions_8cc_source.html">analytical_solutions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00038">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00042">electromagnetics</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">tracer</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00038">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00042">electromagnetics</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="parameters_8cc_source.html#l00097">Parameters::to_string()</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">tracer</a>.</p>
 
 </div>
 </div>
@@ -286,7 +286,7 @@ template&lt;int dim&gt; </div>
 <p>Get the file name associated with the output of the L2 norm of the error calculated using the analytical solution. </p>
 <dl class="section return"><dt>Returns</dt><dd>filename A string that contains the filename used to output the L2 norm of the error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00117">117</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00116">116</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 <p class="reference">References <a class="el" href="analytical__solutions_8h_source.html#l00047">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;::filename</a>.</p>
 
@@ -360,7 +360,7 @@ template&lt;int dim&gt; </div>
 
 <p>Enables the usage of the analytical solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00104">104</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00103">103</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 <p class="reference">References <a class="el" href="analytical__solutions_8h_source.html#l00042">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;::enable</a>.</p>
 
@@ -382,7 +382,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the phase order and the chemical potential. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00154">154</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00153">153</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -401,7 +401,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the electric and magnetic fields (real and imaginary parts). </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00160">160</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00159">159</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -417,7 +417,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html">AnalyticalSolutions::AnalyticalSolution</a>&lt; dim &gt;::enable</td>
+          <td class="memname">bool <a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html">AnalyticalSolutions::AnalyticalSolution</a>&lt; dim &gt;::enable = false</td>
         </tr>
       </table>
   </td>
@@ -444,7 +444,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string <a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html">AnalyticalSolutions::AnalyticalSolution</a>&lt; dim &gt;::filename</td>
+          <td class="memname">std::string <a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html">AnalyticalSolutions::AnalyticalSolution</a>&lt; dim &gt;::filename = &quot;L2Error&quot;</td>
         </tr>
       </table>
   </td>
@@ -474,7 +474,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the phase. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00148">148</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00147">147</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -493,7 +493,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the temperature. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00138">138</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00137">137</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -512,7 +512,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the tracer. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00143">143</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00142">142</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -531,7 +531,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the velocity components and the pressure. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00133">133</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00132">132</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -544,13 +544,13 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Parameters::Verbosity</a> <a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html">AnalyticalSolutions::AnalyticalSolution</a>&lt; dim &gt;::verbosity</td>
+          <td class="memname"><a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Parameters::Verbosity</a> <a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html">AnalyticalSolutions::AnalyticalSolution</a>&lt; dim &gt;::verbosity = <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Controls if the L2 norm of the error is printed to the terminal during the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00127">127</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00126">126</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>

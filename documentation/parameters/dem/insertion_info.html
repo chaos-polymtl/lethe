@@ -476,7 +476,6 @@
   set insertion method                               = plane
   set insertion plane point                          = 0, 0, 0
   set insertion plane normal vector                  = 1, 0, 0
-  set insertion plane threshold distance             = 0.
 
   # If method = volume or packed
   set insertion box points coordinates               = 0., 0., 0. : 1., 1., 1.
@@ -572,7 +571,6 @@ The distance between the inserted particles is equal to:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">frequency</span></code> defines the frequency of the check for particle insertion. The insertion method will check if the cell is empty, and will only insert a particle if so. The frequency should be small so that particles are being inserted as soon as a cell is empty.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">insert</span> <span class="pre">plane</span> <span class="pre">point</span></code> defines the point coordinates for the plane. The components of this parameter represent the x, y and z directions, respectively.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">plane</span> <span class="pre">normal</span> <span class="pre">vector</span></code> defines the normal vector component for the plane. The components of the parameter represent the x, y and z directions, respectively.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">plane</span> <span class="pre">threshold</span> <span class="pre">distance</span></code> defines the threshold distance for the plane insertion.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">velocity</span></code> determines the initial translational velocity (in <span class="math notranslate nohighlight">\(\frac{m}{s}\)</span>) at which particles are inserted in the x, y, and z directions.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">angular</span> <span class="pre">velocity</span></code> determines the initial rotational velocity (in <span class="math notranslate nohighlight">\(\frac{rad}{s}\)</span>) at which particles are inserted in the x, y, and z directions.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">maximum</span> <span class="pre">offset</span></code> defines the maximum value of the offset in relation to centroid of the cell. The insertion locations of particles are randomly selected if the offset is not equal to zero, otherwise, the particles will be inserted at the centroid.</p></li>

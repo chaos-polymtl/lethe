@@ -112,19 +112,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    prm.enter_subsection(<span class="stringliteral">&quot;analytical solution&quot;</span>);</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    prm.declare_entry(</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>      <span class="stringliteral">&quot;enable&quot;</span>,</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>      <span class="stringliteral">&quot;false&quot;</span>,</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>      Patterns::Tools::Convert&lt;bool&gt;::to_string(enable),</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>      Patterns::Bool(),</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>      <span class="stringliteral">&quot;Enable the calculation of the analytical solution and L2 error&quot;</span>);</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    prm.declare_entry(</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>      <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>      <span class="stringliteral">&quot;quiet&quot;</span>,</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>      <a class="code hl_function" href="namespaceParameters.html#affece42c27cfd0a07a65568a1f5efd85">Parameters::to_string</a>(verbosity),</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>      Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose&quot;</span>),</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>      <span class="stringliteral">&quot;State whether from the post-processing values should be printed &quot;</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>      <span class="stringliteral">&quot;Choices are &lt;quiet|verbose&gt;.&quot;</span>);</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    prm.declare_entry(</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>      <span class="stringliteral">&quot;filename&quot;</span>,</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      <span class="stringliteral">&quot;L2Error&quot;</span>,</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      filename,</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>      Patterns::FileName(),</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>      <span class="stringliteral">&quot;File name for the output for the L2Error table with respect to time or mesh &quot;</span>);</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
@@ -237,6 +237,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceAnalyticalSolutions_html"><div class="ttname"><a href="namespaceAnalyticalSolutions.html">AnalyticalSolutions</a></div><div class="ttdoc">Contains all the classes related to the calculation of the analytical solutions for the various physi...</div><div class="ttdef"><b>Definition</b> <a href="analytical__solutions_8h_source.html#l00020">analytical_solutions.h:21</a></div></div>
 <div class="ttc" id="anamespaceParameters_html_a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0"><div class="ttname"><a href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a></div><div class="ttdeci">@ verbose</div></div>
 <div class="ttc" id="anamespaceParameters_html_a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d"><div class="ttname"><a href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a></div><div class="ttdeci">@ quiet</div></div>
+<div class="ttc" id="anamespaceParameters_html_affece42c27cfd0a07a65568a1f5efd85"><div class="ttname"><a href="namespaceParameters.html#affece42c27cfd0a07a65568a1f5efd85">Parameters::to_string</a></div><div class="ttdeci">std::string to_string(const Verbosity verbosity)</div><div class="ttdoc">Convert a Verbosity value to the string used in parameter files.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l00097">parameters.cc:97</a></div></div>
 <div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a></div><div class="ttdeci">@ temperature</div><div class="ttdef"><b>Definition</b> <a href="physical__property__model_8h_source.html#l00040">physical_property_model.h:40</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!--

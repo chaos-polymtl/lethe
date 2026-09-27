@@ -324,13 +324,12 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="separator:a4ececd73effa2abc7b6af12a2a10c960"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87f2367892b0cda4800d7fac3b21fc12" id="r_a87f2367892b0cda4800d7fac3b21fc12"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">FluidDynamicsInitialConditionType</a> { <br />
-&#160;&#160;<a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
-, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee">L2projection</a>
+&#160;&#160;<a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee">L2projection</a>
 , <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a2ac1ff5ff990bc0a4b3afa2286b9e55f">viscous</a>
 , <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a2e69977b7c3df8d5c77016255b4006f2">nodal</a>
+, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9">ramp</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9">ramp</a>
-, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427">average_velocity_profile</a>
+&#160;&#160;<a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427">average_velocity_profile</a>
 <br />
  }</td></tr>
 <tr class="separator:a87f2367892b0cda4800d7fac3b21fc12"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -344,6 +343,10 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:aadc75cfb32da341b9f4ead7b2846b351" id="r_aadc75cfb32da341b9f4ead7b2846b351"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1SizeOfSubsections.html">SizeOfSubsections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#aadc75cfb32da341b9f4ead7b2846b351">get_size_of_subsections</a> (const std::string &amp;file_name, const bool require_subsection_size=true)</td></tr>
 <tr class="separator:aadc75cfb32da341b9f4ead7b2846b351"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affece42c27cfd0a07a65568a1f5efd85" id="r_affece42c27cfd0a07a65568a1f5efd85"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#affece42c27cfd0a07a65568a1f5efd85">to_string</a> (const <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Verbosity</a> verbosity)</td></tr>
+<tr class="separator:affece42c27cfd0a07a65568a1f5efd85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2651760259b421babb203e85cee33f88" id="r_a2651760259b421babb203e85cee33f88"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a2651760259b421babb203e85cee33f88">to_string</a> (const <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">FluidIndicator</a> indicator)</td></tr>
+<tr class="separator:a2651760259b421babb203e85cee33f88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Drift velocity that is added to the tracer velocity to account for simplified multiphase simulations using drift-flux modeling. </p>
@@ -393,7 +396,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a3afa4d0c12c6c995b8b6978a4e413c3ba65a383f3960a0cb2b8b0ace54817d575" name="a3afa4d0c12c6c995b8b6978a4e413c3ba65a383f3960a0cb2b8b0ace54817d575"></a>geometric&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00027">27</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00026">26</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -630,8 +633,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a87f2367892b0cda4800d7fac3b21fc12a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a87f2367892b0cda4800d7fac3b21fc12a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee" name="a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee"></a>L2projection&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee" name="a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee"></a>L2projection&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a87f2367892b0cda4800d7fac3b21fc12a2ac1ff5ff990bc0a4b3afa2286b9e55f" name="a87f2367892b0cda4800d7fac3b21fc12a2ac1ff5ff990bc0a4b3afa2286b9e55f"></a>viscous&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a87f2367892b0cda4800d7fac3b21fc12a2e69977b7c3df8d5c77016255b4006f2" name="a87f2367892b0cda4800d7fac3b21fc12a2e69977b7c3df8d5c77016255b4006f2"></a>nodal&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9" name="a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9"></a>ramp&#160;</td><td class="fielddoc"></td></tr>
@@ -672,7 +674,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00072">72</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00074">74</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -942,7 +944,7 @@ iteration".</li>
 <tr><td class="fieldname"><a id="a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52" name="a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52"></a>extra_verbose&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00059">59</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00061">61</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -1089,9 +1091,73 @@ conditions" entry, set this to false and consequently obtain a size of zero for 
 <p>//TODO make the size of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundary conditions parsed instead.</p>
 <dl class="section return"><dt>Returns</dt><dd>The size of the variable size subsections of the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00090">90</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00129">129</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l00032">Parameters::SizeOfSubsections::boundary_conditions</a>, <a class="el" href="utilities_8cc_source.html#l00734">get_max_subsection_size()</a>, and <a class="el" href="parameters_8h_source.html#l00033">Parameters::SizeOfSubsections::manifolds</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00034">Parameters::SizeOfSubsections::boundary_conditions</a>, <a class="el" href="utilities_8cc_source.html#l00734">get_max_subsection_size()</a>, and <a class="el" href="parameters_8h_source.html#l00035">Parameters::SizeOfSubsections::manifolds</a>.</p>
+
+</div>
+</div>
+<a id="a2651760259b421babb203e85cee33f88" name="a2651760259b421babb203e85cee33f88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2651760259b421babb203e85cee33f88">&#9670;&#160;</a></span>to_string() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Parameters::to_string </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">FluidIndicator</a>&#160;</td>
+          <td class="paramname"><em>indicator</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert a FluidIndicator value to the string used in parameter files. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">indicator</td><td>Fluid indicator to convert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The parameter-file string ("fluid 0", "fluid 1" or "both").</dd></dl>
+<p>TODO: Replace with a Magic Enum </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00113">113</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2faf6cb3e816496528d4187db53bc66567f">both</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">fluid0</a>, and <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">fluid1</a>.</p>
+
+</div>
+</div>
+<a id="affece42c27cfd0a07a65568a1f5efd85" name="affece42c27cfd0a07a65568a1f5efd85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#affece42c27cfd0a07a65568a1f5efd85">&#9670;&#160;</a></span>to_string() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Parameters::to_string </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Verbosity</a>&#160;</td>
+          <td class="paramname"><em>verbosity</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert a Verbosity value to the string used in parameter files. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">verbosity</td><td>Verbosity level to convert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The parameter-file string ("quiet", "verbose" or "extra verbose").</dd></dl>
+<p>TODO: Replace with a Magic Enum </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00097">97</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">extra_verbose</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">quiet</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">verbose</a>.</p>
 
 </div>
 </div>

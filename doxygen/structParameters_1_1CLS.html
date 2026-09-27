@@ -116,15 +116,15 @@ Public Attributes</h2></td></tr>
 <tr class="separator:abbbb72a3d6d63ab9f6e5fd69b2b91767"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a17a8fc715f41ab160c342f67b827a4" id="r_a0a17a8fc715f41ab160c342f67b827a4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">Parameters::FluidIndicator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS.html#a0a17a8fc715f41ab160c342f67b827a4">viscous_dissipative_fluid</a></td></tr>
 <tr class="separator:a0a17a8fc715f41ab160c342f67b827a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0605f3488f7ba7d65cf795f4e3d63fef" id="r_a0605f3488f7ba7d65cf795f4e3d63fef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS.html#a0605f3488f7ba7d65cf795f4e3d63fef">diffusivity</a></td></tr>
+<tr class="memitem:a0605f3488f7ba7d65cf795f4e3d63fef" id="r_a0605f3488f7ba7d65cf795f4e3d63fef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS.html#a0605f3488f7ba7d65cf795f4e3d63fef">diffusivity</a> = 0</td></tr>
 <tr class="separator:a0605f3488f7ba7d65cf795f4e3d63fef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3211fda984ab3cb17098a72ab1d549b" id="r_aa3211fda984ab3cb17098a72ab1d549b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS.html#aa3211fda984ab3cb17098a72ab1d549b">compressible</a></td></tr>
+<tr class="memitem:aa3211fda984ab3cb17098a72ab1d549b" id="r_aa3211fda984ab3cb17098a72ab1d549b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS.html#aa3211fda984ab3cb17098a72ab1d549b">compressible</a> = false</td></tr>
 <tr class="separator:aa3211fda984ab3cb17098a72ab1d549b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1CLS.html" title="CLS - Defines the parameters for free surface simulations using the CLS method. Has to be declared be...">CLS</a> - Defines the parameters for free surface simulations using the <a class="el" href="structParameters_1_1CLS.html" title="CLS - Defines the parameters for free surface simulations using the CLS method. Has to be declared be...">CLS</a> method. Has to be declared before member creation in <a class="el" href="structParameters_1_1Multiphysics.html" title="Multiphysics - the parameters for multiphysics simulations and handles sub-physics parameters.">Multiphysics</a> structure. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00405">405</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00408">408</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a869ef2ca9264202eaf345ca12281fd2f" name="a869ef2ca9264202eaf345ca12281fd2f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a869ef2ca9264202eaf345ca12281fd2f">&#9670;&#160;</a></span>declare_parameters()</h2>
@@ -142,9 +142,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00117">117</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00253">253</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__multiphysics_8cc_source.html#l00375">Parameters::CLS_SurfaceTensionForce::declare_parameters()</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00443">Parameters::CLS_PhaseFilter::declare_parameters()</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00177">Parameters::CLS_ReinitializationMethod::declare_parameters()</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00408">phase_filter</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00409">reinitialization_method</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00407">surface_tension_force</a>.</p>
+<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00423">compressible</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00513">Parameters::CLS_SurfaceTensionForce::declare_parameters()</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00587">Parameters::CLS_PhaseFilter::declare_parameters()</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00313">Parameters::CLS_ReinitializationMethod::declare_parameters()</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00421">diffusivity</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00411">phase_filter</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00412">reinitialization_method</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00410">surface_tension_force</a>, <a class="el" href="parameters_8cc_source.html#l00097">Parameters::to_string()</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00414">viscous_dissipative_fluid</a>.</p>
 
 </div>
 </div>
@@ -164,7 +164,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00149">149</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00285">285</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2faf6cb3e816496528d4187db53bc66567f">Parameters::both</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, and <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>.</p>
 
@@ -178,12 +178,12 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool Parameters::CLS::compressible</td>
+          <td class="memname">bool Parameters::CLS::compressible = false</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00419">419</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00423">423</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -194,12 +194,12 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double Parameters::CLS::diffusivity</td>
+          <td class="memname">double Parameters::CLS::diffusivity = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00417">417</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00421">421</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -215,7 +215,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00408">408</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00411">411</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -231,7 +231,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00409">409</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00412">412</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -247,7 +247,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00407">407</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00410">410</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -262,8 +262,11 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00411">411</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">      <a class="code hl_enumvalue" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::FluidIndicator::fluid1</a></div>
+<div class="ttc" id="anamespaceParameters_html_af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13"><div class="ttname"><a href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::FluidIndicator::fluid1</a></div><div class="ttdeci">@ fluid1</div><div class="ttdoc">fluid 1 only</div></div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00414">414</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
