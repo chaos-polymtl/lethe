@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 # Add dealii backport repository
-RUN add-apt-repository ppa:ginggs/deal.ii-9.8.0-backports && \
+RUN add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports && \
     apt-get update
 
 # Install development and analysis tools

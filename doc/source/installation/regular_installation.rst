@@ -11,7 +11,7 @@ Regular Installation on Linux
 Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.7``, ``deal.II 9.8`` and ``deal.II 9.9pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/chaos-polymtl/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested.
 
 .. important::
-  Since September 2026, Lethe requires deal.II to be compiled with `magic_enum <https://github.com/Neargye/magic_enum>`_ (``DEAL_II_WITH_MAGIC_ENUM=ON``). The configuration of Lethe stops with an error if it is not the case. The deal.II packages installed with ``apt`` and the `deal.II Docker images <https://hub.docker.com/r/dealii/dealii/>`_ already include it. If you install deal.II with candi or manually, see the instructions below.
+  Since September 2026, Lethe requires deal.II to be compiled with `magic_enum <https://github.com/Neargye/magic_enum>`_ (``DEAL_II_WITH_MAGIC_ENUM=ON``). The configuration of Lethe stops with an error if it is not the case. deal.II 9.8 and newer ship a bundled copy of magic_enum and enable it by default, so no action is required with these versions, including when deal.II is installed with candi or manually. The deal.II 9.7.1 packages installed with ``apt`` and the `deal.II Docker images <https://hub.docker.com/r/dealii/dealii/>`_ also include it. Only a deal.II 9.7 installation compiled from source requires a separate installation of magic_enum (see :ref:`install-deal.II-manually`).
 
 **Lethe installation steps:**
   
@@ -32,12 +32,12 @@ Installing deal.II using apt
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.8.0-backports>`_:
+In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.7.1-backports>`_:
 
 .. code-block:: text
   :class: copy-button
 
-  sudo add-apt-repository ppa:ginggs/deal.ii-9.8.0-backports
+  sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
   sudo apt update
 
 To install deal.II, run:
@@ -54,11 +54,11 @@ To verify if the correct version of deal.II is installed, run:
 
   apt show libdeal.ii-dev
 
-This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.8.0`` is the output
+The ``Version`` field of the output should start with ``9.7.1``.
 
 .. note::
 
-  If the installed version is other than ``deal.ii-9.8.0``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
+  If the installed version is other than ``9.7.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 
 .. _install-deal.II-candi:
@@ -68,9 +68,9 @@ Installing deal.II using Candi
 
 To install the dependencies (MPI, p4est, trilinos and METIS) all together using candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
 
-Clone the candi git repository in a folder of your choice  (e.g. ``/home/username/software``). Edit the ``candi.cfg`` file to alter which dependencies are compiled. This file should notably be used to force the installation of the deal.II master version directly instead of the current stable version by setting ``DEAL_II_VERSION=master`` on line 97.
+Clone the candi git repository in a folder of your choice  (e.g. ``/home/username/software``). Edit the ``candi.cfg`` file to alter which dependencies are compiled. This file should notably be used to force the installation of the deal.II master version directly instead of the current stable version by setting ``DEAL_II_VERSION=master``.
 
-The following packages (which are specified after line 57) should be installed:
+The following packages (which are specified by the ``PACKAGES`` lines) should be installed:
   
   .. code-block:: text
     
@@ -84,9 +84,9 @@ The following packages (which are specified after line 57) should be installed:
 
 Other packages can be disabled by simply commenting out the lines (adding a ``#`` at the beginning of the lines)
 
-To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail.
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. Since candi installs a more recent version of p4est by default, select version 2.3.6 in the ``deal.II-toolchain/packages/p4est.package`` file of candi: uncomment its ``VERSION=2.3.6`` line and the ``CHECKSUM`` line that follows it, and comment the ``VERSION`` and ``CHECKSUM`` lines of the default version.
 
-Lethe requires deal.II to be compiled with magic_enum, which candi does not install. Before launching candi, install the magic_enum headers (e.g. ``sudo apt-get install libmagicenum-dev`` on Ubuntu 24.04 or later) and set ``DEAL_II_CONFOPTS="-DDEAL_II_WITH_MAGIC_ENUM=ON"`` in the ``candi.cfg`` file. This way, the configuration of deal.II stops with an error if magic_enum is not found, instead of silently disabling it.
+Lethe requires deal.II to be compiled with magic_enum. candi installs deal.II 9.8 by default, which ships a bundled copy of magic_enum and enables it by default, so no action is required.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -110,7 +110,7 @@ After installation, add the following lines variable to your ``.bashrc`` :
   :class: copy-button
     
     source candi/install/prefix/configuration/enable.sh
-    export DEAL_II_DIR=candi/install/prefix/deal.II-v.<version>
+    export DEAL_II_DIR=candi/install/prefix/deal.II-<version>
 
 
 .. _install-deal.II-manually:
@@ -133,12 +133,15 @@ Configure deal.II in a build folder at the same level as the source code
   mkdir build
   cd build
 
-Depending on how you have installed p4est, Trilinos, METIS and magic_enum, you may need to specify the installation folder of these libraries.
+Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries.
 
 .. code-block:: text
   :class: copy-button
 
-  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DDEAL_II_WITH_MAGIC_ENUM=ON -DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
+  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DDEAL_II_WITH_MAGIC_ENUM=ON -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
+
+.. note::
+  deal.II 9.8 and newer ship a bundled copy of magic_enum, which is used if magic_enum is not found on your system. deal.II 9.7 does not: install `magic_enum <https://github.com/Neargye/magic_enum>`_ first (e.g. ``sudo apt-get install libmagicenum-dev`` on Ubuntu 24.04 or later) and add ``-DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation`` to the command above if it is not installed in a standard location.
 
 Compile deal.II
 
@@ -263,12 +266,12 @@ The deal.II version supported by Lethe is updated and tested every week or so, s
 
 With Candi
 ~~~~~~~~~~~~~
-In the candi folder (for instance, ``/home/username/software/candi``), modify the ``candi.cfg`` to get the latest dealii version, by changing the ``DEAL_II_VERSION`` variable in the case of an official release with its number (e.g. ``v9.6.0``), or by changing it to ``master`` in the case of a development release. The ``candi.cfg`` file should contain on lines 96-97:
+In the candi folder (for instance, ``/home/username/software/candi``), modify the ``candi.cfg`` to get the latest dealii version, by changing the ``DEAL_II_VERSION`` variable in the case of an official release with its number (e.g. ``v9.8.0``), or by changing it to ``master`` in the case of a development release. The ``candi.cfg`` file should contain:
 
 .. code-block:: text
   :class: copy-button
 
-  # Install the following deal.II version (choose master, v9.6.0, ...)
+  # Install the following deal.II version (choose master, v9.8.0, ...)
   DEAL_II_VERSION=master
 
 Run the command ``./candi.sh`` to install the new version of dealii.
