@@ -198,7 +198,7 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 
   You can exit the installation at any time hitting ``Ctrl+C`` 2-3 times.
 
-5. |win_shell| At the end of the installation, check that you have deal.II and its dependencies installed: in the ``/home/<user_name>/dealii-candi`` folder, you should have a ``deal.II-v9.8.0`` folder (named after the installed deal.II version), as well as folders for the dependencies, namely: p4est, parmetis, petsc and trilinos.
+5. |win_shell| At the end of the installation, check that you have deal.II and its dependencies installed: in the ``/home/<user_name>/dealii-candi`` folder: you should have a ``deal.II-v9.8.0`` folder (named after the installed deal.II version), as well as folders for the dependencies, namely: p4est, parmetis, petsc and trilinos.
 
 6. |linux_shell| Load the environment of candi, which notably defines the ``DEAL_II_DIR`` variable used by Lethe to find deal.II, every time you open a terminal:
 

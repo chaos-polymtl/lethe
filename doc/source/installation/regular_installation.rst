@@ -87,7 +87,7 @@ Other packages can be disabled by simply commenting out the lines (adding a ``#`
 To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. Since candi installs a more recent version of p4est by default, select version 2.3.6 in the ``deal.II-toolchain/packages/p4est.package`` file of candi: uncomment its ``VERSION=2.3.6`` line and the ``CHECKSUM`` line that follows it, and comment the ``VERSION`` and ``CHECKSUM`` lines of the default version.
 
 .. note::
-  deal.II 9.8 and newer ship a bundled copy of magic_enum, which is used if magic_enum is not found on your system. deal.II 9.7 does not: install `magic_enum <https://github.com/Neargye/magic_enum>`_ first (e.g. ``sudo apt-get install libmagicenum-dev`` on Ubuntu 24.04 or later) and modify the following line in the ``candi.cfg`` file: ``DEAL_II_CONFOPTS="-DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation"``.
+  deal.II 9.8 and newer ship a bundled copy of magic_enum, which is used if magic_enum is not found on your system. deal.II 9.7 does not. To do so, install `magic_enum <https://github.com/Neargye/magic_enum>`_ first (e.g. ``sudo apt-get install libmagicenum-dev`` on Ubuntu 24.04 or later). Then, modify the following line in the ``candi.cfg`` file: ``DEAL_II_CONFOPTS="-DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation"``.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -142,7 +142,7 @@ Depending on how you have installed p4est, Trilinos and METIS, you may need to s
   cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DDEAL_II_WITH_MAGIC_ENUM=ON -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
 
 .. note::
-  deal.II 9.8 and newer ship a bundled copy of magic_enum, which is used if magic_enum is not found on your system. deal.II 9.7 does not: install `magic_enum <https://github.com/Neargye/magic_enum>`_ first (e.g. ``sudo apt-get install libmagicenum-dev`` on Ubuntu 24.04 or later) and add ``-DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation`` to the command above if it is not installed in a standard location.
+  deal.II 9.8 and newer ship a bundled copy of magic_enum, which is used if magic_enum is not found on your system. However, deal.II 9.7 does not. To do so, install `magic_enum <https://github.com/Neargye/magic_enum>`_ first (e.g. ``sudo apt-get install libmagicenum-dev`` on Ubuntu 24.04 or later). Then, add ``-DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation`` to the command above if it is not installed in a standard location.
 
 Compile deal.II
 
