@@ -5,7 +5,7 @@ Installation on Apple ARM
 .. figure:: ./images/apple.png
    :height: 100px
 
-Lethe can be now be deployed on Apple ARM chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture.
+Lethe can be deployed on Apple ARM chips.
 
 The installation of Lethe consists in two steps:
 1. Installation of deal.II using the Candi toolset
