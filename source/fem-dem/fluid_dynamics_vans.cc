@@ -16,7 +16,7 @@ template <int dim, typename PropertiesIndex>
 FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
   CFDDEMSimulationParameters<dim> &nsparam)
   : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters,
-                                  /* fluid_solver_is_vans */ true)
+                                  FluidDynamicsFormulation::VANS)
   , cfd_dem_simulation_parameters(nsparam)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,

@@ -5,6 +5,7 @@
 #define lethe_fluid_dynamics_matrix_free_h
 
 #include <core/exceptions.h>
+#include <core/multiphysics.h>
 
 #include <solvers/fluid_dynamics_matrix_free_operators.h>
 #include <solvers/navier_stokes_base.h>
@@ -419,12 +420,14 @@ public:
    * according to simulation parameters.
    *
    * @param[in] nsparam Relevant parameters for the solver.
-   * @param[in] fluid_solver_is_vans Whether the solver solves the
-   * volume-averaged Navier-Stokes (VANS) equations, as opposed to the standard
-   * Navier-Stokes equations.
+   * @param[in] fluid_dynamics_formulation The formulation of the fluid dynamics
+   * equations. Whether the solver solves the volume-averaged Navier-Stokes
+   * (VANS) equations or the standard Navier-Stokes equations.
    */
-  FluidDynamicsMatrixFree(SimulationParameters<dim> &nsparam,
-                          const bool fluid_solver_is_vans = false);
+  FluidDynamicsMatrixFree(
+    SimulationParameters<dim>     &nsparam,
+    const FluidDynamicsFormulation fluid_dynamics_formulation =
+      FluidDynamicsFormulation::standard);
 
   /**
    * @brief Destructor.

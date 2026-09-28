@@ -44,8 +44,7 @@ public:
    * Depending on which multiphysics element is enabled, the appropriate
    * auxiliary physics is instantiated. Auxiliary physics that have no
    * volume-averaged (VANS) form yet throw at construction time when
-   * @p p_is_vans is true, instead of silently solving their standard,
-   * non-volume-averaged governing equation on top of a VANS simulation.
+   * @p p_fluid_dynamics_formulation is FluidDynamicsFormulation::VANS.
    *
    * @param[in] nsparam Simulation parameters.
    * @param[in] p_triangulation Distributed triangulation shared by all
@@ -53,9 +52,9 @@ public:
    * @param[in] p_simulation_control Simulation control shared by all
    * physics.
    * @param[in] p_pcout Parallel output stream.
-   * @param[in] p_is_vans Whether the fluid dynamics solver driving this
-   * interface solves the volume-averaged Navier-Stokes (VANS) equations,
-   * as opposed to the standard Navier-Stokes equations.
+   * @param[in] p_fluid_dynamics_formulation The formulation of the fluid dynamics
+   * equations. Whether the solver solves the volume-averaged Navier-Stokes
+   * (VANS) equations or the standard Navier-Stokes equations.
    */
   MultiphysicsInterface(
     const SimulationParameters<dim> &nsparam,
@@ -63,7 +62,8 @@ public:
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control,
     ConditionalOStream                &p_pcout,
-    const bool                         p_is_vans = false);
+    const FluidDynamicsFormulation     p_fluid_dynamics_formulation =
+      FluidDynamicsFormulation::standard);
 
   /**
    * @brief Default destructor.
@@ -77,13 +77,13 @@ public:
   }
 
   /**
-   * @brief Whether the fluid dynamics solver driving this interface solves
-   * the volume-averaged Navier-Stokes (VANS) equations.
+   * @brief Get the formulation of the fluid dynamics solver driving this interface.
+   * @return The formulation of the fluid dynamics solver.
    */
-  bool
-  is_vans_simulation() const
+  FluidDynamicsFormulation
+  get_fluid_dynamics_formulation() const
   {
-    return is_vans;
+    return fluid_dynamics_formulation;
   }
 
   /**
@@ -1012,7 +1012,7 @@ private:
   const Parameters::Multiphysics<dim>        multiphysics_parameters;
   std::map<PhysicsID, Parameters::Verbosity> verbosity;
   ConditionalOStream                         pcout;
-  const bool                                 is_vans;
+  const FluidDynamicsFormulation             fluid_dynamics_formulation;
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;

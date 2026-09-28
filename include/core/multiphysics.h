@@ -43,6 +43,18 @@ enum PhysicsID : unsigned int
 };
 
 /**
+ * @brief Formulation of the fluid dynamics equations solved by a Navier-Stokes
+ * solver.
+ */
+enum class FluidDynamicsFormulation
+{
+  /// Standard Navier-Stokes equations
+  standard,
+  /// Volume-averaged Navier-Stokes (VANS) equations
+  VANS
+};
+
+/**
  * @brief Solution fields of the different physics that are used as an indicator
  * for multiple purposes (e.g. adaptive mesh refinement, solid domain
  * constraints).

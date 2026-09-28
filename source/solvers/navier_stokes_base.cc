@@ -46,8 +46,8 @@
  */
 template <int dim, typename VectorType, typename DofsType>
 NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
-  SimulationParameters<dim> &p_nsparam,
-  const bool                 fluid_solver_is_vans)
+  SimulationParameters<dim>     &p_nsparam,
+  const FluidDynamicsFormulation fluid_dynamics_formulation)
   : PhysicsSolver<VectorType>(
       p_nsparam.physics_solving_strategy.at(PhysicsID::fluid_dynamics))
   , mpi_communicator(MPI_COMM_WORLD)
@@ -172,7 +172,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                                                  triangulation,
                                                  simulation_control,
                                                  this->pcout,
-                                                 fluid_solver_is_vans);
+                                                 fluid_dynamics_formulation);
 
   // If mortar is enabled, we need to change one default parameter of the
   // function that computes normal vectors. In this case, we cannot use the

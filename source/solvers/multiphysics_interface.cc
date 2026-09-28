@@ -100,10 +100,10 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control,
   ConditionalOStream                &p_pcout,
-  const bool                         fluid_solver_is_vans)
+  const FluidDynamicsFormulation     p_fluid_dynamics_formulation)
   : multiphysics_parameters(nsparam.multiphysics)
   , pcout(p_pcout)
-  , is_vans(fluid_solver_is_vans)
+  , fluid_dynamics_formulation(p_fluid_dynamics_formulation)
   , probe_postprocessor(p_simulation_control,
                         nsparam.post_processing.probing_points,
                         nsparam.post_processing.output_frequency,
@@ -120,7 +120,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   }
   if (multiphysics_parameters.heat_transfer)
     {
-      AssertThrow(!is_vans,
+      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
                   PhysicsVANSFormNotImplementedError("Heat transfer"));
       verbosity[PhysicsID::heat_transfer] =
         (nsparam.physics_solving_strategy.at(PhysicsID::heat_transfer)
@@ -135,7 +135,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     }
   if (multiphysics_parameters.tracer)
     {
-      AssertThrow(!is_vans, PhysicsVANSFormNotImplementedError("Tracer"));
+      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("Tracer"));
       verbosity[PhysicsID::tracer] =
         (nsparam.physics_solving_strategy.at(PhysicsID::tracer).verbosity !=
            Parameters::Verbosity::quiet ||
@@ -149,7 +150,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     }
   if (multiphysics_parameters.CLS)
     {
-      AssertThrow(!is_vans, PhysicsVANSFormNotImplementedError("CLS"));
+      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("CLS"));
       verbosity[PhysicsID::CLS] =
         (nsparam.physics_solving_strategy.at(PhysicsID::CLS).verbosity !=
            Parameters::Verbosity::quiet ||
@@ -164,7 +166,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 
   if (multiphysics_parameters.cahn_hilliard)
     {
-      AssertThrow(!is_vans,
+      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
                   PhysicsVANSFormNotImplementedError("Cahn-Hilliard"));
       verbosity[PhysicsID::cahn_hilliard] =
         (nsparam.physics_solving_strategy.at(PhysicsID::cahn_hilliard)

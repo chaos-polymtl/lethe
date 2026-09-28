@@ -111,9 +111,9 @@ test()
   }
 
   // From here on, every check is done with the fluid dynamics solver
-  // flagged as VANS (is_vans = true), to test how MultiphysicsInterface
-  // reacts when it is driven by a volume-averaged (VANS/CFD-DEM) fluid
-  // solver instead of a standard one.
+  // flagged as VANS (FluidDynamicsFormulation::VANS), to test how
+  // MultiphysicsInterface reacts when it is driven by a volume-averaged
+  // (VANS/CFD-DEM) fluid solver instead of a standard one.
   solver_parameters.multiphysics.fluid_dynamics = true;
 
   // Electromagnetics does not depend on the fluid velocity or the void
@@ -129,7 +129,7 @@ test()
                                                 tria,
                                                 simulation_control,
                                                 pcout,
-                                                /* is_vans */ true);
+                                                FluidDynamicsFormulation::VANS);
         std::vector<PhysicsID>     active_physics =
           multiphysics.get_active_physics();
 
@@ -148,12 +148,13 @@ test()
   // velocity to assemble their advection term, but none of them has a
   // volume-averaged (VANS) form implemented yet. MultiphysicsInterface's
   // constructor guards each of these four with
-  // AssertThrow(!is_vans, PhysicsVANSFormNotImplementedError(...)), so
-  // enabling any one of them together with a VANS fluid dynamics solver
-  // must throw instead of silently solving the wrong, non-averaged
-  // equation. This checks all four guarded physics, one at a time, so that
-  // a future physics added to that guarded set without a matching test
-  // here would be caught by this test failing to compile/find the flag.
+  // AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+  // PhysicsVANSFormNotImplementedError(...)), so enabling any one of them
+  // together with a VANS fluid dynamics solver must throw instead of
+  // silently solving the wrong, non-averaged equation. This checks all four
+  // guarded physics, one at a time, so that a future physics added to that
+  // guarded set without a matching test here would be caught by this test
+  // failing to compile/find the flag.
   const auto check_throws_under_vans = [&](bool              &physics_flag,
                                            const std::string &name) {
     physics_flag = true;
@@ -163,7 +164,7 @@ test()
                                                 tria,
                                                 simulation_control,
                                                 pcout,
-                                                /* is_vans */ true);
+                                                FluidDynamicsFormulation::VANS);
         deallog << name << " did NOT throw under VANS (unexpected)"
                 << std::endl;
       }

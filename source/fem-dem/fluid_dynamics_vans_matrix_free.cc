@@ -550,7 +550,7 @@ template <int dim, typename PropertiesIndex>
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)
   : FluidDynamicsMatrixFree<dim>(param.cfd_parameters,
-                                 /* fluid_solver_is_vans */ true)
+                                 FluidDynamicsFormulation::VANS)
   , cfd_dem_simulation_parameters(param)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,

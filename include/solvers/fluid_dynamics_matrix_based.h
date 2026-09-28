@@ -5,6 +5,7 @@
 #define lethe_fluid_dynamics_matrix_based_h
 
 #include <core/exceptions.h>
+#include <core/multiphysics.h>
 #include <core/vector.h>
 
 #include <solvers/copy_data.h>
@@ -36,12 +37,14 @@ public:
   /**
    * @brief Construct the matrix-based Navier-Stokes solver.
    * @param[in] nsparam Relevant parameters for the solver.
-   * @param[in] fluid_solver_is_vans Whether the solver solves the
-   * volume-averaged Navier-Stokes (VANS) equations, as opposed to the standard
-   * Navier-Stokes equations.
+   * @param[in] fluid_dynamics_formulation The formulation of the fluid dynamics
+   * equations. Whether the solver solves the volume-averaged Navier-Stokes
+   * (VANS) equations or the standard Navier-Stokes equations.
    */
-  FluidDynamicsMatrixBased(SimulationParameters<dim> &nsparam,
-                           const bool fluid_solver_is_vans = false);
+  FluidDynamicsMatrixBased(
+    SimulationParameters<dim>     &nsparam,
+    const FluidDynamicsFormulation fluid_dynamics_formulation =
+      FluidDynamicsFormulation::standard);
   ~FluidDynamicsMatrixBased();
 
   /**
