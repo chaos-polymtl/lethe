@@ -118,6 +118,56 @@ struct StasisConstraintWithTemperature
 template <int dim, typename VectorType, typename DofsType>
 class NavierStokesBase : public PhysicsSolver<VectorType>
 {
+public:
+  /**
+   * @brief Return the DoFHandler of the velocity-pressure solution. This
+   * read-only access is meant for post-processing tools.
+   *
+   * @return Constant reference to the fluid dynamics DoFHandler.
+   */
+  const DoFHandler<dim> &
+  get_dof_handler() const
+  {
+    return *dof_handler;
+  }
+
+  /**
+   * @brief Return the mapping used by the fluid dynamics. When the mortar
+   * method is enabled, this is the rotated MappingQCache (see get_mapping()).
+   *
+   * @return Constant reference to the fluid dynamics mapping.
+   */
+  const Mapping<dim> &
+  get_fluid_mapping() const
+  {
+    if (!simulation_parameters.mortar_parameters.enable)
+      return *mapping;
+    return *mapping_cache;
+  }
+
+  /**
+   * @brief Return the present velocity-pressure solution, ghost values
+   * included. This read-only access is meant for post-processing tools.
+   *
+   * @return Constant reference to the present solution.
+   */
+  const VectorType &
+  get_fluid_solution() const
+  {
+    return *present_solution;
+  }
+
+  /**
+   * @brief Return the current simulation time.
+   *
+   * @return Current simulation time.
+   */
+  double
+  get_current_time() const
+  {
+    return simulation_control->get_current_time();
+  }
+
 protected:
   NavierStokesBase(SimulationParameters<dim> &nsparam);
 

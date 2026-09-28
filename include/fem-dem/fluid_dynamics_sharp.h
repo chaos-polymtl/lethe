@@ -46,6 +46,28 @@ public:
   solve() override;
 
   /**
+   * @brief Restore the simulation state without entering the time loop. The
+   * mesh, the degrees of freedom, the velocity-pressure solution and the
+   * immersed-boundary particles are restored from the checkpoint when the
+   * simulation is restarted, and are otherwise established from the initial
+   * conditions, exactly as solve() does before its first time step. This is
+   * meant for post-processing applications that consume a Sharp-IB snapshot.
+   */
+  void
+  initialize_for_postprocessing();
+
+  /**
+   * @brief Return the immersed-boundary particles in their current state.
+   *
+   * @return Constant reference to the vector of immersed-boundary particles.
+   */
+  const std::vector<IBParticle<dim>> &
+  get_particles() const
+  {
+    return particles;
+  }
+
+  /**
    * @brief Call for the assembly of the matrix
    */
   void
@@ -66,6 +88,15 @@ public:
 
 
 private:
+  /**
+   * @brief Initialize the simulation up to, but excluding, the time loop. The
+   * mesh is read, the particles are defined, the degrees of freedom are set up
+   * and the initial condition is set (or the checkpoint is read). This is
+   * shared by solve() and initialize_for_postprocessing().
+   */
+  void
+  initialize_simulation();
+
   /**
    * @brief Assemble the local matrix for a given cell.
    *

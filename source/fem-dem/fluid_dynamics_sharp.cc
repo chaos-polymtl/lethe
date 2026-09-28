@@ -5111,7 +5111,7 @@ FluidDynamicsSharp<dim>::update_precalculations_for_ib()
 
 template <int dim>
 void
-FluidDynamicsSharp<dim>::solve()
+FluidDynamicsSharp<dim>::initialize_simulation()
 {
   AssertThrow(
     !cfd_dem_parameters.dem_parameters.post_processing
@@ -5152,6 +5152,20 @@ FluidDynamicsSharp<dim>::solve()
       // on step 0 whenever the current iteration is an output iteration.
       handle_dem_particle_output_and_postprocessing();
     }
+}
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::initialize_for_postprocessing()
+{
+  initialize_simulation();
+}
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::solve()
+{
+  initialize_simulation();
 
   while (this->simulation_control->integrate())
     {
