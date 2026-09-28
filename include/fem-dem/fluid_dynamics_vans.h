@@ -16,8 +16,6 @@
 
 #include <deal.II/fe/mapping_q.h>
 
-#include <deal.II/numerics/solution_transfer.h>
-
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
 
@@ -140,32 +138,6 @@ protected:
    */
   void
   vertices_cell_mapping();
-
-  /**
-   * @brief Refine or coarsen the mesh, keeping the particle handler and the
-   * void fraction solution consistent with the new triangulation.
-   *
-   * This function is needed because NavierStokesBase::refine_mesh() has no
-   * knowledge of the particle handler or of the void fraction solution. This
-   * function therefore wraps that call with the particle-handler/void-fraction
-   * prepare-and-unpack sequence for coarsening and refinement when necessary.
-   */
-  void
-  refine_mesh_and_synchronize_particles();
-
-  /**
-   * @brief Prepare the void fraction solution for
-   * an upcoming triangulation change (mesh refinement or coarsening).
-   */
-  void
-  prepare_void_fraction_for_mesh_adaptation();
-
-  /**
-   * @brief Restore the void fraction solution
-   * after a triangulation change, and rebuild the vertex-to-cell map.
-   */
-  void
-  restore_void_fraction_after_mesh_adaptation();
 
   /**
    * @brief Monitor mass conservation in the VANS system.
@@ -337,10 +309,6 @@ protected:
 
   /// Particle projector for calculating void fraction and particle effects
   ParticleProjector<dim, PropertiesIndex> particle_projector;
-
-  /// Void fraction solution transfer object for mesh adaptation
-  std::unique_ptr<SolutionTransfer<dim, GlobalVectorType>>
-    void_fraction_solution_transfer;
 
   /// Flag indicating whether the domain has periodic boundary conditions
   bool has_periodic_boundaries;

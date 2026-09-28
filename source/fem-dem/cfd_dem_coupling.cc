@@ -712,10 +712,25 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
   if (this->average_velocities_are_enabled())
     this->average_velocities->prepare_for_mesh_adaptation();
 
-  // Prepare the void fraction solution and the particle handler for the
-  // upcoming triangulation change, exactly as done for an actual mesh
-  // refinement.
-  this->prepare_void_fraction_for_mesh_adaptation();
+  // Void Fraction
+  std::vector<const GlobalVectorType *> vf_set_transfer;
+  vf_set_transfer.push_back(
+    &this->particle_projector.void_fraction_locally_relevant);
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      vf_set_transfer.push_back(
+        &this->particle_projector.previous_void_fraction[i]);
+    }
+
+  // Prepare for Serialization
+  SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
+    this->particle_projector.dof_handler);
+  vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
+    vf_set_transfer);
+
+  // Prepare particle handle for serialization
   this->particle_handler.prepare_for_coarsening_and_refinement();
 
   this->pcout << "-->Repartitioning triangulation" << std::endl;
@@ -726,6 +741,24 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
 
   parallel_triangulation->repartition();
 
+  // If PBC are enabled remap periodic cells
+  periodic_boundaries_object.map_periodic_cells(
+    *parallel_triangulation, periodic_boundaries_cells_information);
+
+  // Update cell neighbors
+  contact_manager.update_cell_neighbors(*parallel_triangulation,
+                                        periodic_boundaries_cells_information);
+
+  boundary_cell_object.build(
+    *parallel_triangulation,
+    dem_parameters.floating_walls,
+    dem_parameters.boundary_conditions.outlet_boundaries,
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
+      .check_for_diamond_cells,
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
+      .expand_particle_wall_contact_search,
+    this->pcout);
+  
   const auto average_minimum_maximum_cells =
     Utilities::MPI::min_max_avg(parallel_triangulation->n_active_cells(),
                                 this->mpi_communicator);
@@ -747,7 +780,18 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
   this->pcout << "Setup DOFs" << std::endl;
   this->setup_dofs();
 
-  build_dem_data_structures();
+  // TODO BB
+  // Remap periodic nodes after setup of dofs
+  if (dem_action_manager->check_periodic_boundaries_enabled() &&
+      dem_action_manager->check_sparse_contacts_enabled())
+    {
+      sparse_contacts_object.map_periodic_nodes(
+        this->particle_projector.void_fraction_constraints);
+    }
+
+  // Update the local and ghost cells (if ASC enabled)
+  sparse_contacts_object.update_local_and_ghost_cell_set(
+    this->particle_projector.dof_handler);
 
   // Velocity Vectors
   std::vector<GlobalVectorType *> x_system(1 +
@@ -785,53 +829,50 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
 
   x_system.clear();
 
-  // Restore the void fraction solution, unpack the particle handler,
-  // rebuild the vertex-to-cell map and the DEM contact-detection caches,
-  // exactly as done for an actual mesh refinement.
-  this->restore_void_fraction_after_mesh_adaptation();
-  this->particle_handler.unpack_after_coarsening_and_refinement();
-}
+// Void Fraction Vectors
+  std::vector<GlobalVectorType *> vf_system(
+    1 + this->particle_projector.previous_void_fraction.size());
 
-template <int dim, typename PropertiesIndex>
-void
-CFDDEMSolver<dim, PropertiesIndex>::build_dem_data_structures()
-{
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
+  GlobalVectorType vf_distributed_system(
+    this->particle_projector.locally_owned_dofs, this->mpi_communicator);
 
-  // If PBC are enabled remap periodic cells
-  periodic_boundaries_object.map_periodic_cells(
-    *parallel_triangulation, periodic_boundaries_cells_information);
+  vf_system[0] = &(vf_distributed_system);
 
-  // Update cell neighbors
-  contact_manager.update_cell_neighbors(*parallel_triangulation,
-                                        periodic_boundaries_cells_information);
+  std::vector<GlobalVectorType> vf_distributed_previous_solutions;
 
-  boundary_cell_object.build(
-    *parallel_triangulation,
-    dem_parameters.floating_walls,
-    dem_parameters.boundary_conditions.outlet_boundaries,
-    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
-      .check_for_diamond_cells,
-    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
-      .expand_particle_wall_contact_search,
-    this->pcout);
+  vf_distributed_previous_solutions.reserve(
+    this->particle_projector.previous_void_fraction.size());
 
-  // Remap periodic nodes (needs the void fraction DoFHandler, so this must
-  // run after setup_dofs())
-  if (dem_action_manager->check_periodic_boundaries_enabled() &&
-      dem_action_manager->check_sparse_contacts_enabled())
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
     {
-      sparse_contacts_object.map_periodic_nodes(
-        this->particle_projector.void_fraction_constraints);
+      vf_distributed_previous_solutions.emplace_back(
+        GlobalVectorType(this->particle_projector.locally_owned_dofs,
+                         this->mpi_communicator));
+      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
 
-  // Update the local and ghost cells (if ASC enabled)
-  sparse_contacts_object.update_local_and_ghost_cell_set(
-    this->particle_projector.dof_handler);
-}
+  vf_system_trans_vectors.interpolate(vf_system);
 
+  this->particle_projector.void_fraction_locally_relevant =
+    vf_distributed_system;
+  for (unsigned int i = 0;
+       i < this->particle_projector.previous_void_fraction.size();
+       ++i)
+    {
+      this->particle_projector.previous_void_fraction[i] =
+        vf_distributed_previous_solutions[i];
+    }
+
+  vf_system.clear();
+
+  // Unpack particle handler after load balancing step
+  this->particle_handler.unpack_after_coarsening_and_refinement();
+
+  // Regenerate vertex to cell map
+  this->vertices_cell_mapping();
+}
 
 template <int dim, typename PropertiesIndex>
 void
@@ -1649,8 +1690,8 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
 
       if (!this->simulation_control->is_at_start())
         {
-          this->refine_mesh_and_synchronize_particles();
-          build_dem_data_structures();
+          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+          this->vertices_cell_mapping();
         }
 
       this->calculate_void_fraction(
