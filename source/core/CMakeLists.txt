@@ -8,6 +8,7 @@ add_library(lethe-core
   electric_conductivity_model.cc
   electric_permittivity_model.cc
   evaporation_model.cc
+  filter_kernels.cc
   grid_birmingham_fluidized_bed.cc
   grid_cube_merged.cc
   grid_cylinder.cc
@@ -20,6 +21,7 @@ add_library(lethe-core
   grids.cc
   ib_particle.cc
   ib_stencil.cc
+  immersed_solid_classifier.cc
   interface_tools.cc
   lethe_grid_tools.cc
   magnetic_permeability_model.cc
@@ -63,6 +65,7 @@ add_library(lethe-core
   ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
+  ../../include/core/filter_kernels.h
   ../../include/core/grid_birmingham_fluidized_bed.h
   ../../include/core/grid_cube_merged.h
   ../../include/core/grid_cylinder.h
@@ -74,6 +77,7 @@ add_library(lethe-core
   ../../include/core/grids.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
+  ../../include/core/immersed_solid_classifier.h
   ../../include/core/inexact_newton_non_linear_solver_strategy.h
   ../../include/core/interface_property_model.h
   ../../include/core/interface_tools.h

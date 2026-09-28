@@ -1,0 +1,42 @@
+DEAL::Single sphere, dim = 2
+DEAL::  unbounded solids of the spheres        : 0
+DEAL::  unbounded solids of the unbounded ones : 1
+DEAL::  fluid cells                            : 168
+DEAL::  solid cells                            : 52
+DEAL::  cut cells                              : 36
+DEAL::  vertices consistent with the phases    : true
+DEAL::  identical without bounding boxes       : true
+DEAL::Two touching spheres, dim = 2
+DEAL::  unbounded solids of the spheres        : 0
+DEAL::  unbounded solids of the unbounded ones : 2
+DEAL::  fluid cells                            : 160
+DEAL::  solid cells                            : 36
+DEAL::  cut cells                              : 60
+DEAL::  vertices consistent with the phases    : true
+DEAL::  identical without bounding boxes       : true
+DEAL::Convergence of the solid volume, dim = 2
+DEAL::  subdivisions 1, mean relative error : 3.860e-03
+DEAL::  subdivisions 2, mean relative error : 1.536e-03, rate : 1.33
+DEAL::  subdivisions 4, mean relative error : 7.843e-04, rate : 0.97
+DEAL::  subdivisions 8, mean relative error : 3.373e-04, rate : 1.22
+DEAL::Single sphere, dim = 3
+DEAL::  unbounded solids of the spheres        : 0
+DEAL::  unbounded solids of the unbounded ones : 1
+DEAL::  fluid cells                            : 3376
+DEAL::  solid cells                            : 280
+DEAL::  cut cells                              : 440
+DEAL::  vertices consistent with the phases    : true
+DEAL::  identical without bounding boxes       : true
+DEAL::Two touching spheres, dim = 3
+DEAL::  unbounded solids of the spheres        : 0
+DEAL::  unbounded solids of the unbounded ones : 2
+DEAL::  fluid cells                            : 3536
+DEAL::  solid cells                            : 112
+DEAL::  cut cells                              : 448
+DEAL::  vertices consistent with the phases    : true
+DEAL::  identical without bounding boxes       : true
+DEAL::Convergence of the solid volume, dim = 3
+DEAL::  subdivisions 1, mean relative error : 1.182e-03
+DEAL::  subdivisions 2, mean relative error : 3.819e-04, rate : 1.63
+DEAL::  subdivisions 4, mean relative error : 8.222e-05, rate : 2.22
+DEAL::  subdivisions 8, mean relative error : 2.221e-05, rate : 1.89

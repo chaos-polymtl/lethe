@@ -1,0 +1,22 @@
+DEAL::dim = 2, number of translations: 2
+DEAL::  boundary id 0, direction 0
+DEAL::    offset               : (3.000000, 0.000000)
+DEAL::    principal coordinate : -1.000000
+DEAL::    neighbor coordinate  : 2.000000
+DEAL::    identical on all processes : true
+DEAL::  boundary id 2, direction 1
+DEAL::    offset               : (0.000000, 1.000000)
+DEAL::    principal coordinate : 0.500000
+DEAL::    neighbor coordinate  : 1.500000
+DEAL::    identical on all processes : true
+DEAL::dim = 3, number of translations: 2
+DEAL::  boundary id 0, direction 0
+DEAL::    offset               : (1.000000, 0.000000, 0.000000)
+DEAL::    principal coordinate : 0.000000
+DEAL::    neighbor coordinate  : 1.000000
+DEAL::    identical on all processes : true
+DEAL::  boundary id 4, direction 2
+DEAL::    offset               : (0.000000, 0.000000, 3.000000)
+DEAL::    principal coordinate : 0.000000
+DEAL::    neighbor coordinate  : 3.000000
+DEAL::    identical on all processes : true

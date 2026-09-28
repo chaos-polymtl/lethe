@@ -1,0 +1,64 @@
+DEAL::Gaussian kernel, dim = 2, standard deviation = 5.000000e-01, cutoff = 3.000000e+00
+DEAL::  support radius                  : 1.500000e+00
+DEAL::  squared support radius matches  : true
+DEAL::  value at the center             : 6.437714e-01
+DEAL::  positive just inside support    : true
+DEAL::  zero on the support radius      : true
+DEAL::  zero beyond the support radius  : true
+DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::  retained mass fraction          : 9.888910e-01
+DEAL::  retained mass fraction matches  : true
+DEAL::Gaussian kernel, dim = 3, standard deviation = 5.000000e-01, cutoff = 3.000000e+00
+DEAL::  support radius                  : 1.500000e+00
+DEAL::  squared support radius matches  : true
+DEAL::  value at the center             : 5.232763e-01
+DEAL::  positive just inside support    : true
+DEAL::  zero on the support radius      : true
+DEAL::  zero beyond the support radius  : true
+DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::  retained mass fraction          : 9.707091e-01
+DEAL::  retained mass fraction matches  : true
+DEAL::Gaussian kernel, dim = 2, standard deviation = 2.000000e+00, cutoff = 1.500000e+00
+DEAL::  support radius                  : 3.000000e+00
+DEAL::  squared support radius matches  : true
+DEAL::  value at the center             : 5.891594e-02
+DEAL::  positive just inside support    : true
+DEAL::  zero on the support radius      : true
+DEAL::  zero beyond the support radius  : true
+DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::  retained mass fraction          : 6.753475e-01
+DEAL::  retained mass fraction matches  : true
+DEAL::Gaussian kernel, dim = 3, standard deviation = 2.000000e+00, cutoff = 1.500000e+00
+DEAL::  support radius                  : 3.000000e+00
+DEAL::  squared support radius matches  : true
+DEAL::  value at the center             : 1.660979e-02
+DEAL::  positive just inside support    : true
+DEAL::  zero on the support radius      : true
+DEAL::  zero beyond the support radius  : true
+DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::  retained mass fraction          : 4.778328e-01
+DEAL::  retained mass fraction matches  : true
+DEAL::Top-hat kernel, dim = 2, radius = 7.000000e-01
+DEAL::  support radius                  : 7.000000e-01
+DEAL::  squared support radius matches  : true
+DEAL::  value at the center             : 6.496120e-01
+DEAL::  positive just inside support    : true
+DEAL::  zero on the support radius      : true
+DEAL::  zero beyond the support radius  : true
+DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::Top-hat kernel, dim = 3, radius = 7.000000e-01
+DEAL::  support radius                  : 7.000000e-01
+DEAL::  squared support radius matches  : true
+DEAL::  value at the center             : 6.960129e-01
+DEAL::  positive just inside support    : true
+DEAL::  zero on the support radius      : true
+DEAL::  zero beyond the support radius  : true
+DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::Invalid kernels, dim = 2
+DEAL::  zero standard deviation throws  : true
+DEAL::  zero cutoff throws              : true
+DEAL::  negative top-hat radius throws  : true
+DEAL::Invalid kernels, dim = 3
+DEAL::  zero standard deviation throws  : true
+DEAL::  zero cutoff throws              : true
+DEAL::  negative top-hat radius throws  : true

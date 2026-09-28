@@ -120,6 +120,20 @@ namespace Parameters
       Assert(false, ExcInternalError());
       return "";
     }
+
+    std::string
+    to_string(const FilterKernelType type)
+    {
+      switch (type)
+        {
+          case FilterKernelType::gaussian:
+            return "gaussian";
+          case FilterKernelType::top_hat:
+            return "top-hat";
+        }
+      Assert(false, ExcInternalError());
+      return "";
+    }
   } // namespace
 
   template <int dim>
@@ -434,6 +448,135 @@ namespace Parameters
       throw(std::runtime_error(
         "Invalid vans model. Valid choices are modelA and modelB."));
     prm.leave_subsection();
+  }
+
+  void
+  AndersonJacksonFilter::declare_parameters(ParameterHandler &prm)
+  {
+    const AndersonJacksonFilter defaults;
+    prm.enter_subsection("anderson jackson filter");
+    prm.declare_entry("kernel type",
+                      to_string(defaults.kernel_type),
+                      Patterns::Selection("gaussian|top-hat"),
+                      "Kernel of the filter. Choices are <gaussian|top-hat>.");
+    prm.declare_entry(
+      "filter width",
+      Patterns::Tools::Convert<double>::to_string(defaults.filter_width),
+      Patterns::Double(0.),
+      "Width of the filter. This is the standard deviation of the gaussian "
+      "kernel or the radius of the top-hat kernel.");
+    prm.declare_entry(
+      "gaussian cutoff",
+      Patterns::Tools::Convert<double>::to_string(defaults.gaussian_cutoff),
+      Patterns::Double(0.),
+      "Truncation radius of the gaussian kernel, expressed in number of "
+      "standard deviations. The truncated kernel is renormalized to unit "
+      "mass.");
+    prm.declare_entry("output polynomial degree",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.output_degree),
+                      Patterns::Integer(0),
+                      "Polynomial degree of the FE_Q space on which the "
+                      "filtered fields are computed. If 0, the velocity "
+                      "degree of the fluid is used.");
+    prm.declare_entry("quadrature points",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.n_quadrature_points),
+                      Patterns::Integer(0),
+                      "Number of Gauss quadrature points per direction used "
+                      "to integrate the source cells. If 0, the velocity "
+                      "degree of the fluid plus one is used.");
+    prm.declare_entry("cut cell subdivisions",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.cut_cell_subdivisions),
+                      Patterns::Integer(1),
+                      "Number of subdivisions per direction of the "
+                      "quadrature used on the cells cut by an immersed "
+                      "solid.");
+    prm.declare_entry("filter pressure",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.filter_pressure),
+                      Patterns::Bool(),
+                      "Filter the pressure in addition to the velocity.");
+    prm.declare_entry("minimum fluid fraction",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.minimum_fluid_fraction),
+                      Patterns::Double(0., 1.),
+                      "Fluid volume fraction, relative to the kernel mass, "
+                      "below which the phase-averaged velocity and pressure "
+                      "are not defined and are set to zero.");
+    prm.declare_entry("normalize at domain boundaries",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.normalize_at_domain_boundaries),
+                      Patterns::Bool(),
+                      "Divide the fluid and solid volume fractions by the "
+                      "kernel mass. This renormalizes the kernel where it is "
+                      "truncated by a domain boundary, which changes the "
+                      "definition of the filter near the boundaries.");
+    prm.declare_entry("output folder",
+                      defaults.output_folder,
+                      Patterns::FileName(),
+                      "Folder in which the filtered fields are written.");
+    prm.declare_entry("output name",
+                      defaults.output_name,
+                      Patterns::FileName(),
+                      "Prefix of the files in which the filtered fields are "
+                      "written.");
+    prm.declare_entry("verbosity",
+                      to_string(defaults.verbosity),
+                      Patterns::Selection("quiet|verbose|extra verbose"),
+                      "Verbosity of the filter diagnostics. Choices are "
+                      "<quiet|verbose|extra verbose>.");
+    prm.leave_subsection();
+  }
+
+  void
+  AndersonJacksonFilter::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("anderson jackson filter");
+    const std::string kernel = prm.get("kernel type");
+    if (kernel == "gaussian")
+      kernel_type = FilterKernelType::gaussian;
+    else if (kernel == "top-hat")
+      kernel_type = FilterKernelType::top_hat;
+    else
+      AssertThrow(false,
+                  ExcMessage("Invalid kernel type for the Anderson-Jackson "
+                             "filter. Choices are <gaussian|top-hat>."));
+
+    filter_width           = prm.get_double("filter width");
+    gaussian_cutoff        = prm.get_double("gaussian cutoff");
+    output_degree          = prm.get_integer("output polynomial degree");
+    n_quadrature_points    = prm.get_integer("quadrature points");
+    cut_cell_subdivisions  = prm.get_integer("cut cell subdivisions");
+    filter_pressure        = prm.get_bool("filter pressure");
+    minimum_fluid_fraction = prm.get_double("minimum fluid fraction");
+    normalize_at_domain_boundaries =
+      prm.get_bool("normalize at domain boundaries");
+    output_folder = prm.get("output folder");
+    output_name   = prm.get("output name");
+
+    const std::string op = prm.get("verbosity");
+    if (op == "quiet")
+      verbosity = Verbosity::quiet;
+    else if (op == "verbose")
+      verbosity = Verbosity::verbose;
+    else if (op == "extra verbose")
+      verbosity = Verbosity::extra_verbose;
+    else
+      AssertThrow(false,
+                  ExcMessage("Invalid verbosity for the Anderson-Jackson "
+                             "filter. Choices are <quiet|verbose|extra "
+                             "verbose>."));
+    prm.leave_subsection();
+
+    AssertThrow(filter_width > 0.,
+                ExcMessage("The filter width of the Anderson-Jackson filter "
+                           "must be strictly positive."));
+    AssertThrow(kernel_type != FilterKernelType::gaussian ||
+                  gaussian_cutoff > 0.,
+                ExcMessage("The gaussian cutoff of the Anderson-Jackson filter "
+                           "must be strictly positive."));
   }
 } // namespace Parameters
 // Pre-compile the 2D and 3D

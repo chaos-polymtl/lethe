@@ -6,6 +6,8 @@
 #include <core/serial_solid.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include <deal.II/base/exceptions.h>
+
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_manifold.h>
 #include <deal.II/fe/mapping_q1.h>
@@ -14,7 +16,9 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <cmath>
+#include <string>
 #include <utility>
+#include <vector>
 
 template <int dim>
 void
@@ -2057,3 +2061,68 @@ template void
 LetheGridTools::flag_cells_in_refinement_box(
   const DoFHandler<3>    &dof_handler,
   const Triangulation<3> &box_triangulation);
+
+template <int dim>
+std::vector<LetheGridTools::PeriodicTranslation<dim>>
+LetheGridTools::compute_periodic_translations(
+  const Triangulation<dim>             &triangulation,
+  const Parameters::PeriodicBoundaries &periodic_boundaries)
+{
+  std::vector<PeriodicTranslation<dim>> translations;
+  translations.reserve(periodic_boundaries.size());
+
+  for (const auto &[boundary_id, periodic_boundary] : periodic_boundaries)
+    {
+      // The faces are matched on the coarse mesh, which is identical on every
+      // process of a distributed triangulation.
+      std::vector<
+        GridTools::PeriodicFacePair<typename Triangulation<dim>::cell_iterator>>
+        face_pairs;
+      GridTools::collect_periodic_faces(triangulation,
+                                        boundary_id,
+                                        periodic_boundary.neighbor_id,
+                                        periodic_boundary.direction,
+                                        face_pairs);
+
+      AssertThrow(!face_pairs.empty(),
+                  ExcMessage("No pair of periodic faces was found between "
+                             "boundaries " +
+                             std::to_string(boundary_id) + " and " +
+                             std::to_string(periodic_boundary.neighbor_id) +
+                             " along direction " +
+                             std::to_string(periodic_boundary.direction) +
+                             "."));
+
+      // All the pairs share the same translation since only translational
+      // periodicity along a Cartesian direction is supported. The first pair
+      // is thus sufficient.
+      const auto      &face_pair = face_pairs.front();
+      const Point<dim> principal_face_center =
+        face_pair.cell[0]->face(face_pair.face_idx[0])->center();
+      const Point<dim> neighbor_face_center =
+        face_pair.cell[1]->face(face_pair.face_idx[1])->center();
+
+      PeriodicTranslation<dim> translation;
+      translation.boundary_id = boundary_id;
+      translation.direction   = periodic_boundary.direction;
+      translation.principal_coordinate =
+        principal_face_center[periodic_boundary.direction];
+      translation.neighbor_coordinate =
+        neighbor_face_center[periodic_boundary.direction];
+      translation.offset[periodic_boundary.direction] =
+        translation.neighbor_coordinate - translation.principal_coordinate;
+
+      translations.push_back(translation);
+    }
+
+  return translations;
+}
+
+template std::vector<LetheGridTools::PeriodicTranslation<2>>
+LetheGridTools::compute_periodic_translations(
+  const Triangulation<2>               &triangulation,
+  const Parameters::PeriodicBoundaries &periodic_boundaries);
+template std::vector<LetheGridTools::PeriodicTranslation<3>>
+LetheGridTools::compute_periodic_translations(
+  const Triangulation<3>               &triangulation,
+  const Parameters::PeriodicBoundaries &periodic_boundaries);

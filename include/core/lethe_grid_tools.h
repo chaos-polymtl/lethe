@@ -4,13 +4,19 @@
 #ifndef lethe_lethe_grid_tools_h
 #define lethe_lethe_grid_tools_h
 
+#include <core/periodic_boundary.h>
 #include <core/serial_solid.h>
 
 #include <deal.II/base/tensor.h>
+#include <deal.II/base/types.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/mapping_q_cache.h>
+
+#include <deal.II/grid/tria.h>
+
+#include <vector>
 
 using namespace dealii;
 namespace LetheGridTools
@@ -574,6 +580,60 @@ namespace LetheGridTools
       std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
       &vertices_cell_map,
     const typename Triangulation<dim, spacedim>::active_cell_iterator &cell);
+
+  /**
+   * @brief Translation relating the two boundaries of a pair of periodic
+   * boundaries. Only translational periodicity along the axis of a Cartesian
+   * direction is supported, as in the rest of Lethe.
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
+  template <int dim>
+  struct PeriodicTranslation
+  {
+    /// Principal boundary id of the periodic pair.
+    types::boundary_id boundary_id;
+
+    /// Direction of periodicity, normal to the periodic boundaries.
+    unsigned int direction;
+
+    /// Translation from the principal boundary to its neighbor boundary. Only
+    /// the component along the direction of periodicity is non-zero.
+    Tensor<1, dim> offset;
+
+    /// Coordinate of the principal boundary along the direction of
+    /// periodicity.
+    double principal_coordinate;
+
+    /// Coordinate of the neighbor boundary along the direction of
+    /// periodicity.
+    double neighbor_coordinate;
+  };
+
+  /**
+   * @brief Compute the translation of every pair of periodic boundaries.
+   *
+   * The translations are computed from the faces of the coarse mesh with
+   * GridTools::collect_periodic_faces(). Since every process of a distributed
+   * triangulation stores the whole coarse mesh, the result is identical on
+   * every process without any communication. This is not the case for
+   * translations deduced from the locally owned or ghost cells, which are
+   * unknown on the processes that do not own cells at the periodic boundaries.
+   *
+   * @param[in] triangulation Triangulation whose coarse mesh contains the
+   * periodic boundaries.
+   *
+   * @param[in] periodic_boundaries Pairs of periodic boundaries, keyed by
+   * their principal boundary id.
+   *
+   * @return One translation per pair of periodic boundaries, ordered by
+   * principal boundary id.
+   */
+  template <int dim>
+  std::vector<PeriodicTranslation<dim>>
+  compute_periodic_translations(
+    const Triangulation<dim>             &triangulation,
+    const Parameters::PeriodicBoundaries &periodic_boundaries);
 
 } // namespace LetheGridTools
 #endif // lethe_lethegridtools_h

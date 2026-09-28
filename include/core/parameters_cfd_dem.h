@@ -4,10 +4,14 @@
 #ifndef lethe_parameters_cfd_dem_h
 #define lethe_parameters_cfd_dem_h
 
+#include <core/parameters.h>
 #include <core/sub_simulation_control.h>
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+
+#include <cstdint>
+#include <string>
 
 using namespace dealii;
 
@@ -303,6 +307,91 @@ namespace Parameters
 
     /// Project particle forces onto the fluid mesh.
     bool project_particle_forces = false;
+
+    /**
+     * @brief Declare the parameters in the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
+    static void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters from the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Kernel of the Anderson-Jackson filter.
+   */
+  enum class FilterKernelType : std::uint8_t
+  {
+    /// Gaussian kernel truncated at a finite radius and renormalized to unit
+    /// mass.
+    gaussian,
+    /// Top-hat kernel, i.e. the normalized indicator function of a ball.
+    top_hat
+  };
+
+  /**
+   * @brief Parameters of the Anderson-Jackson filter used to compute
+   * phase-averaged fields from a resolved CFD-DEM simulation.
+   *
+   * For a filter centered at \f$\mathbf{x}\f$, the fluid volume fraction is
+   * \f$\epsilon_f(\mathbf{x}) = \int_\Omega I_f(\mathbf{y})
+   * g(|\mathbf{x}-\mathbf{y}|) \mathrm{d}V_{\mathbf{y}}\f$ and the
+   * phase-averaged fluid velocity is \f$\bar{\mathbf{u}}_f(\mathbf{x}) =
+   * \int_\Omega I_f \mathbf{u} g \mathrm{d}V / \epsilon_f(\mathbf{x})\f$, where
+   * \f$I_f\f$ is the fluid indicator and \f$g\f$ is a kernel of unit mass.
+   */
+  struct AndersonJacksonFilter
+  {
+    /// Kernel of the filter.
+    FilterKernelType kernel_type = FilterKernelType::gaussian;
+
+    /// Width of the filter. This is the standard deviation of the Gaussian
+    /// kernel or the radius of the top-hat kernel.
+    double filter_width = 1.;
+
+    /// Truncation radius of the Gaussian kernel, expressed in number of
+    /// standard deviations.
+    double gaussian_cutoff = 3.;
+
+    /// Polynomial degree of the FE_Q space on which the filtered fields are
+    /// computed. A value of 0 uses the velocity degree of the fluid.
+    unsigned int output_degree = 0;
+
+    /// Number of Gauss quadrature points per direction used to integrate the
+    /// source cells. A value of 0 uses the velocity degree plus one.
+    unsigned int n_quadrature_points = 0;
+
+    /// Number of subdivisions per direction of the quadrature used on the
+    /// cells cut by an immersed solid.
+    unsigned int cut_cell_subdivisions = 4;
+
+    /// Filter the pressure in addition to the velocity.
+    bool filter_pressure = true;
+
+    /// Fluid volume fraction, relative to the kernel mass, below which the
+    /// phase-averaged fields are not defined.
+    double minimum_fluid_fraction = 1e-12;
+
+    /// Divide the fluid and solid volume fractions by the kernel mass, which
+    /// renormalizes the kernel where it is truncated by a domain boundary.
+    bool normalize_at_domain_boundaries = false;
+
+    /// Folder in which the filtered fields are written.
+    std::string output_folder = "./filter_output/";
+
+    /// Prefix of the files in which the filtered fields are written.
+    std::string output_name = "filtered";
+
+    /// Verbosity of the filter diagnostics.
+    Verbosity verbosity = Verbosity::quiet;
 
     /**
      * @brief Declare the parameters in the parameter handler.
