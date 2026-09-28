@@ -779,7 +779,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
   if (this->average_velocities_are_enabled())
     this->average_velocities->prepare_for_mesh_adaptation();
 
- // Now do the same process for the void fractgion
+  // Now do the same process for the void fraction
   // Void Fraction
   std::vector<const VectorType *> vf_set_transfer;
   vf_set_transfer.push_back(&this->particle_projector.void_fraction_solution);
@@ -813,7 +813,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
 
   parallel_triangulation->repartition();
 
-    // If PBC are enabled remap periodic cells
+  // If PBC are enabled remap periodic cells
   periodic_boundaries_object.map_periodic_cells(
     *parallel_triangulation, periodic_boundaries_cells_information);
 
@@ -902,7 +902,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
 
   x_system.clear();
 
-// Void Fraction Vectors
+  // Void Fraction Vectors
   std::vector<VectorType *> vf_system(
     1 + this->particle_projector.previous_void_fraction.size());
 
@@ -1704,7 +1704,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
 
       if (!this->simulation_control->is_at_start())
         {
-this->refine_mesh();
+          this->refine_mesh();
         }
 
       // We calculate the void fraction and the particle-fluid interaction using

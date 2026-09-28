@@ -758,7 +758,7 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh
       .expand_particle_wall_contact_search,
     this->pcout);
-  
+
   const auto average_minimum_maximum_cells =
     Utilities::MPI::min_max_avg(parallel_triangulation->n_active_cells(),
                                 this->mpi_communicator);
@@ -829,7 +829,7 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
 
   x_system.clear();
 
-// Void Fraction Vectors
+  // Void Fraction Vectors
   std::vector<GlobalVectorType *> vf_system(
     1 + this->particle_projector.previous_void_fraction.size());
 
