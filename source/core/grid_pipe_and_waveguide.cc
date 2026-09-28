@@ -11,6 +11,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <numbers>
 
 using namespace dealii;
 
@@ -170,9 +171,9 @@ GridPipeAndWaveguide<dim, spacedim>::GridPipeAndWaveguide(
   bottom_height     = std::stod(arguments[4]);
   middle_height     = std::stod(arguments[5]);
   top_height        = std::stod(arguments[6]);
-  bottom_resolution = std::stod(arguments[7]);
-  middle_resolution = std::stod(arguments[8]);
-  top_resolution    = std::stod(arguments[9]);
+  bottom_resolution = std::stoi(arguments[7]);
+  middle_resolution = std::stoi(arguments[8]);
+  top_resolution    = std::stoi(arguments[9]);
   inner_circle      = (arguments[10] == "true");
 }
 
