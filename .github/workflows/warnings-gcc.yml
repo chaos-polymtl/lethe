@@ -1,6 +1,6 @@
 name: CI-Warnings
 
-on: 
+on:
   push:
     # Runs on every push on master branch
     branches:
@@ -18,8 +18,8 @@ concurrency:
   cancel-in-progress: ${{github.event_name == 'pull_request'}}
 
 env:
-  COMPILE_JOBS: 18
-  TEST_JOBS: 12
+  COMPILE_JOBS: 40
+  TEST_JOBS: 40
 
 jobs:
   build:
@@ -31,7 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         dealii_version: ["master-noble"]
-    
+
     # Run steps in container of dealii's master branch
     container:
       image: dealii/dealii:${{ matrix.dealii_version }}
