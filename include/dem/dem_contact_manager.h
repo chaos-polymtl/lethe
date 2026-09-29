@@ -188,10 +188,10 @@ public:
     const double                                      neighborhood_threshold);
 
   /**
-   * @brief Set the periodic offset (signed period) for every direction.
+   * @brief Set the signed periodic offset for every direction.
    *
-   * @param[in] offset_per_direction Signed period of the domain along every
-   * direction, used for determining periodic contacts.
+   * @param[in] offset_per_direction Signed periodic offsets of the domain along
+   * every direction, used for determining periodic contacts.
    */
   void
   set_periodic_offset_per_direction(
@@ -383,8 +383,8 @@ private:
 
 private:
   /**
-   * @brief Signed period of the domain along every direction, used by the
-   * particle-particle fine search to find the nearest periodic image of a
+   * @brief Signed periodic offset of the domain along every direction, used by
+   * the particle-particle fine search to find the nearest periodic image of a
    * particle (minimum image convention). Component d is 0 if direction d is
    * not periodic. Zero-initialized by default for compatibility with
    * non-periodic geometry.

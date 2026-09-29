@@ -92,23 +92,22 @@ particle_particle_fine_search(
                 adjacent_particles_list_iterator->second;
               auto &particle_two = adjacent_pair_information.particle_two;
 
-              // Finding the properties of particles 2.
+              // Finding the properties of particle 2.
               Point<dim, double> particle_two_real_location =
                 particle_two->get_location();
 
               // Reuse the periodic offset found on a previous call: for a
               // persisting contact this translation practically never
-              // changes between fine search calls. This avoids the
-              // minimum periodic image search with the signed periodic
-              // distance.
+              // changes between fine search calls. This avoids computing the
+              // minimum periodic offset twice, which is costly.
               Tensor<1, dim> cached_translation =
                 adjacent_pair_information.periodic_offset;
               const double cached_square_distance =
                 particle_one_location.distance_square(
                   particle_two_real_location + cached_translation);
 
-              // Using the caches periodic offset, if the shared distance
-              // respect the neighborhood threshold, this means that the
+              // Using the cached periodic offset, if the shared distance
+              // respects the neighborhood threshold, this means that the
               // particles stayed on their respective side of the PBC.
               if (cached_square_distance <= neighborhood_threshold)
                 ++adjacent_particles_list_iterator;
@@ -130,7 +129,7 @@ particle_particle_fine_search(
                       periodic_offset_per_direction);
 
                   // If a periodic offset was found, the min_square_distance is
-                  // computed. Otherwise, we know that the particle are far
+                  // computed. Otherwise, we know that the particles are far
                   // apart, thus we impose the min_square_distance to a high
                   // value (max())
                   const double min_square_distance =
@@ -147,8 +146,8 @@ particle_particle_fine_search(
                     adjacent_particles_list_iterator =
                       second_particles.erase(adjacent_particles_list_iterator);
 
-                  // Otherwise, this means that one or both particle crossed the
-                  // PBC. We update the periodic_offset in the periodic
+                  // Otherwise, this means that one or both particle(s) crossed
+                  // the PBC. We update the periodic_offset in the periodic
                   // contact_info.
                   else
                     {
@@ -210,16 +209,16 @@ particle_particle_fine_search(
               Point<dim, double> particle_two_real_location =
                 particle_two->get_location();
 
-              // nearest_periodic_translation returns periodic translation that
-              // brings two particle the closest together. (if they are close
-              // enough)
+              // nearest_periodic_translation returns the periodic translation
+              // that brings two particles the closest together. (if they are
+              // close enough)
               const auto [nearest_translation, found_periodic_translation] =
                 nearest_periodic_translation<dim>(
                   particle_one_location,
                   particle_two_real_location,
                   periodic_offset_per_direction);
 
-              // If is possible that the two particle moved far appart so much
+              // It is possible that the two particle moved far apart so much
               // that the round operation in the nearest_periodic_translation
               // function return a 0. In this case, found_periodic_translation
               // will be at false. Thus, we need to make sure that this isn't
@@ -231,7 +230,7 @@ particle_particle_fine_search(
                   std::numeric_limits<double>::max();
 
               // If the neighborhood_threshold is respected, we add particle 2
-              // to particle 1 potential contact list. Otherwise, we do nothing.
+              // to particle's 1 potential contact list. Otherwise, we do nothing.
               if (min_square_distance < neighborhood_threshold)
                 {
                   auto &particle_one_contact_list =
