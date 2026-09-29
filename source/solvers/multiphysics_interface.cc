@@ -120,7 +120,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   }
   if (multiphysics_parameters.heat_transfer)
     {
-      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
                   PhysicsVANSFormNotImplementedError("Heat transfer"));
       verbosity[PhysicsID::heat_transfer] =
         (nsparam.physics_solving_strategy.at(PhysicsID::heat_transfer)
@@ -135,7 +136,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     }
   if (multiphysics_parameters.tracer)
     {
-      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
                   PhysicsVANSFormNotImplementedError("Tracer"));
       verbosity[PhysicsID::tracer] =
         (nsparam.physics_solving_strategy.at(PhysicsID::tracer).verbosity !=
@@ -150,7 +152,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     }
   if (multiphysics_parameters.CLS)
     {
-      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
                   PhysicsVANSFormNotImplementedError("CLS"));
       verbosity[PhysicsID::CLS] =
         (nsparam.physics_solving_strategy.at(PhysicsID::CLS).verbosity !=
@@ -166,7 +169,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 
   if (multiphysics_parameters.cahn_hilliard)
     {
-      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
                   PhysicsVANSFormNotImplementedError("Cahn-Hilliard"));
       verbosity[PhysicsID::cahn_hilliard] =
         (nsparam.physics_solving_strategy.at(PhysicsID::cahn_hilliard)

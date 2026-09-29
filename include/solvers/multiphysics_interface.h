@@ -52,9 +52,9 @@ public:
    * @param[in] p_simulation_control Simulation control shared by all
    * physics.
    * @param[in] p_pcout Parallel output stream.
-   * @param[in] p_fluid_dynamics_formulation The formulation of the fluid dynamics
-   * equations. Whether the solver solves the volume-averaged Navier-Stokes
-   * (VANS) equations or the standard Navier-Stokes equations.
+   * @param[in] p_fluid_dynamics_formulation The formulation of the fluid
+   * dynamics equations. Whether the solver solves the volume-averaged
+   * Navier-Stokes (VANS) equations or the standard Navier-Stokes equations.
    */
   MultiphysicsInterface(
     const SimulationParameters<dim> &nsparam,

@@ -148,7 +148,8 @@ test()
   // velocity to assemble their advection term, but none of them has a
   // volume-averaged (VANS) form implemented yet. MultiphysicsInterface's
   // constructor guards each of these four with
-  // AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+  // AssertThrow(fluid_dynamics_formulation ==
+  // FluidDynamicsFormulation::standard,
   // PhysicsVANSFormNotImplementedError(...)), so enabling any one of them
   // together with a VANS fluid dynamics solver must throw instead of
   // silently solving the wrong, non-averaged equation. This checks all four
