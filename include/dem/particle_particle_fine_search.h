@@ -46,8 +46,8 @@ using adjacent_pairs_for_contact_t = std::conditional_t<
  * contact pair candidates.
  * @param neighborhood_threshold A value which defines the neighbor particles.
  * @param periodic_offset_per_direction An array whose component d holds the
- * signed distance associated with each periodic directions. If the given d
- * direction is not periodic, the signed distance is 0.
+ * signed periodic offsets associated with each periodic directions. If the
+ * given d direction is not periodic, the signed distance is 0.
  *
  */
 template <int dim, ContactType contact_type>
@@ -66,14 +66,13 @@ particle_particle_fine_search(
  * @brief Find the translation that brings the nearest periodic image of
  * particle two to particle one. Since periodic directions are axis-aligned
  * and independent, this translation is found directly, one direction at a
- * time (minimum image convention), instead of searching over every
- * combination of periodic offsets.
+ * time.
  *
  * @param particle_one_location Location of particle one.
  * @param particle_two_real_location Real (non-translated) location of
  * particle two.
  * @param periodic_offset_per_direction An array whose component d holds
- * the signed period of the domain along direction d (0 if d is not
+ * the signed periodic offset of the domain along direction d (0 if d is not
  * periodic).
  *
  * @return The nearest translation, and whether any periodic direction

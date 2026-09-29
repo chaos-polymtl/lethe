@@ -118,10 +118,10 @@ public:
   }
 
   /**
-   * @brief Return the periodic offset (signed period) for every direction.
+   * @brief Return the signed periodic offset for every direction.
    *
-   * @return Array whose component d is the signed period of the domain
-   * along direction d if d is periodic, or 0 otherwise.
+   * @return Array whose component d is the signed periodic offsets of the
+   * domain along direction d if d is periodic, or 0 otherwise.
    */
   inline const std::array<double, dim> &
   get_periodic_offset_per_direction() const
@@ -168,8 +168,8 @@ private:
     bool &particle_has_been_moved);
 
   /**
-   * @brief Compute the periodic offset (signed period) for every direction
-   * and store it in periodic_offset_per_direction.
+   * @brief Compute the signed periodic offset for every direction and store it
+   * in periodic_offset_per_direction.
    */
   void
   compute_periodic_offset_per_direction();
@@ -197,9 +197,9 @@ private:
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 
   /**
-   * @brief Signed distance (or period) associated with each periodic boundary
-   * pairs. The component d of this array return the distance (in absolute
-   * value) between the two boundaries facing in that d direction (x,y,z). If
+   * @brief Signed periodic distance associated with each periodic boundary
+   * pairs. The component d of this array return the distance, in absolute
+   * value, between the two boundaries facing in that d direction (x,y,z). If
    * the associated d direction is not periodic, the array returns a 0. This
    * array is used by the particle-particle fine search to find the nearest
    * periodic image of a particle.
