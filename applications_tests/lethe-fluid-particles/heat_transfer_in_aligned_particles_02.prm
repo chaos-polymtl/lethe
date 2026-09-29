@@ -9,20 +9,16 @@
 # same setup as the heat_transfer_in_aligned_particles test. Ten aligned
 # particles at 0 C are held in compression between two walls with an imposed
 # temperature and exchange heat by conduction with them and between
-# themselves.
+# themselves. It verifies the DEM boundary conditions with an imposed temperature
+# within the CFD-DEM solver. The end time is chosen so the temperature inside the
+# particles fit the expected equilibrium linear profile.
 #
-# The CFD-DEM solver does not simulate solid objects, so the two plates of the
-# DEM case are replaced by the two walls of the grid normal to the x axis,
+# The two plates of the DEM example case are replaced by two walls of the grid,
 # placed where the plates come to rest (x = +-0.049). As in the DEM case, the
 # left wall stays at 0 C and the right wall is switched from 0 C to 50 C. Since
 # the chain is inserted already compressed, the switch occurs at t = 0.3
 # instead of t = 8. This is in the middle of the second CFD time step, which
 # verifies that the temperature of the walls is updated at every DEM iteration.
-#
-# It verifies the DEM boundary conditions with an imposed temperature within
-# the CFD-DEM solver. The fluid dynamics is disabled and every fluid-particle
-# interaction force is turned off, so the particles obey the same equations as
-# they would in the pure DEM solver.
 
 set dimension = 3
 
@@ -90,9 +86,6 @@ end
 # Physical Properties
 #---------------------------------------------------
 
-# The fluid is never solved and never acts on the particles. These values are
-# only there because the solver requires a fluid to be defined.
-
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity = 1.5e-5
@@ -103,9 +96,6 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
-
-# The boundaries are colorized: boundary 0 is the wall at x = -0.049 and
-# boundary 1 is the wall at x = 0.049. They replace the plates of the DEM case.
 
 subsection mesh
   set type               = dealii
@@ -153,10 +143,6 @@ end
 #---------------------------------------------------
 # DEM Boundary Conditions
 #---------------------------------------------------
-
-# The two walls which hold the chain of particles have an imposed temperature,
-# like the two plates of the DEM case. The other walls are not touched by the
-# particles.
 
 subsection DEM boundary conditions
   set number of boundary conditions = 2

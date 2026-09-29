@@ -31,16 +31,6 @@ ParticleWallContactForce<dim,
     {
       set_multiphysic_properties(dem_parameters);
     }
-  else
-    {
-      AssertThrow(
-        dem_parameters.boundary_conditions.boundary_temperature.empty(),
-        ExcMessage(
-          "DEM boundary conditions with the temperature thermal boundary type "
-          "can only be used in multiphysic DEM. Set the solver type to dem_mp "
-          "in the model parameters subsection or set the thermal boundary "
-          "types to adiabatic."));
-    }
 }
 
 template <int dim,

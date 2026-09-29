@@ -82,7 +82,6 @@ public:
    * an imposed temperature.
    *
    * @param[in] time Time at which the temperature of the walls is evaluated.
-   * It is the time of the particle positions used in the contact calculation.
    */
   virtual void
   update_boundary_temperature(const double time) = 0;
@@ -1176,8 +1175,7 @@ private:
   set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
-   * @brief Return the thermal boundary type of a wall of the grid, as
-   * SerialSolid::get_thermal_boundary_type does for a solid object. The walls
+   * @brief Return the thermal boundary type of a wall of the grid. The walls
    * without a thermal boundary type are adiabatic.
    *
    * @param[in] boundary_id Boundary id of the wall.
@@ -1198,8 +1196,7 @@ private:
   }
 
   /**
-   * @brief Return the temperature of a wall of the grid at a point,
-   * as SerialSolid::get_temperature does for a solid object. The temperature is
+   * @brief Return the temperature of a wall of the grid at a point. The temperature is
    * evaluated at the time set by update_boundary_temperature.
    *
    * @param[in] boundary_id Boundary id of the wall, whose temperature is
@@ -1255,9 +1252,6 @@ private:
     boundary_translational_velocity_map;
   std::map<types::boundary_id, Tensor<1, 3>> boundary_rotational_vector;
   std::map<types::boundary_id, Point<3>>     point_on_rotation_vector;
-
-  // Thermal boundary type of the walls of the grid and temperature function
-  // of the ones with an imposed temperature, keyed by boundary id.
   std::map<types::boundary_id, Parameters::Lagrangian::DEMThermalBoundaryType>
     boundary_thermal_type_map;
   std::map<types::boundary_id, std::shared_ptr<Function<3>>>

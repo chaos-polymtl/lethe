@@ -554,8 +554,6 @@ the interstitial gas macrogap resistance is halved as there is only a macrogap a
 
 As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`R_{\mathrm{e}}` are taken equal to :math:`2r_j` and :math:`r_j` respectively.
 
-These particle-wall resistances are used both for the isothermal solid objects and for the walls of the grid which have an imposed temperature (see the `DEM boundary conditions <../../../parameters/dem/boundary_conditions.html>`_). The imposed temperature :math:`T_w` of a wall of the grid can vary in space and time. It is evaluated at the contact point between particle :math:`j` and the wall, so the heat transfer rate received by particle :math:`j` is :math:`Q_{jw} = (T_w - T_j)/R_{jw}`, and the wall itself is not affected by this heat transfer. Adiabatic walls do not exchange heat with the particles.
-
 .. figure:: images/particle_wall_resistances.png
     :width: 700
     :align: center

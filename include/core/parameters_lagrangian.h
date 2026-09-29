@@ -776,9 +776,7 @@ namespace Parameters
 
 
     /**
-     * @brief Thermal boundary type of a wall of the grid in multiphysic DEM,
-     * which corresponds to the thermal boundary type parameter of the DEM
-     * boundary conditions.
+     * @brief Thermal boundary type of the grid in multiphysic DEM. It is used to define the thermal boundary condition of the walls in DEM simulations.
      */
     enum class DEMThermalBoundaryType
     {
@@ -795,9 +793,9 @@ namespace Parameters
      * the periodic boundary information for each boundary of the DEM domain. A
      * boundary's type is encoded by which container holds it (see
      * outlet_boundaries below); fixed walls are the default and are not stored
-     * in any container. As for the solid objects, each wall also has a thermal
-     * boundary type (adiabatic by default) and, if its temperature is imposed,
-     * a temperature function.
+     * in any container. For multi-physics simulations, each wall also has a
+     * thermal boundary type (adiabatic by default) and, if its temperature is
+     * imposed, a temperature function.
      */
     struct BCDEM
     {

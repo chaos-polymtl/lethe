@@ -1668,7 +1668,6 @@ namespace Parameters
                         "Thermal boundary type used in multiphysic DEM. "
                         "Choices are <adiabatic|temperature>.");
 
-      // Temperature imposed on the boundary, as a function of space and time
       auto wall_temperature_function_parsed =
         std::make_shared<Functions::ParsedFunction<3>>(1);
       prm.enter_subsection("wall temperature");
@@ -1742,10 +1741,7 @@ namespace Parameters
         }
 
       // Thermal boundary type, used only in multiphysic DEM. Only the walls,
-      // which particles can touch, have a thermal boundary type. The outlet and
-      // periodic boundaries are not stored, which also prevents a periodic
-      // boundary condition, whose boundary id is not used, from overwriting
-      // the thermal boundary type of a wall.
+      // which particles can touch, have a thermal boundary type.
       const bool is_wall = boundary_type == "fixed_wall" ||
                            boundary_type == "translational" ||
                            boundary_type == "rotational";
