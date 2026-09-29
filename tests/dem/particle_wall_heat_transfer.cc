@@ -6,15 +6,15 @@
  * the grid is checked. The DEM boundary conditions are parsed from a parameter
  * string. Particles 0 and 2 are in contact with an isothermal wall whose
  * temperature depends on time and space, while particle 1 is in contact with
- * an adiabatic wall.
+ * an adiabatic wall. The transfer of heat between the particles and the walls
+ * is computed at two time steps, and the heat transfer rates are compared with
+ * the expected values.
  *
- * The contact configuration and the physical properties of particles 0 and 2
- * are the same as in the particle_wall_thermal_conductance test, so their
- * thermal conductance H is the one obtained in that test. The temperature of
- * the wall differs from the temperature of the particles by -1 K or 1 K for
- * particle 0, and by 1 K or 3 K for particle 2, which touches a hotter part of
- * the wall. Hence, the heat transfer rates must be -H, H or 3H. The heat
- * transfer rate of particle 1 must be zero.
+ * The temperature of the wall differs from the temperature of the particles by
+ * -1 K or 1 K for particle 0, and by 1 K or 3 K for particle 2, which touches a
+ * hotter part of the wall. Hence, the heat transfer rates must be -H, H or 3H.
+ * The heat transfer rate of particle 1 must be zero as it is in contact with an
+ * adiabatic wall.
  */
 
 // Deal.II
@@ -53,13 +53,14 @@ template <int dim, typename PropertiesIndex>
 void
 test()
 {
-  // Creating the mesh and refinement. The boundaries are colorized: boundary 0
-  // is the wall at x = -1 and boundary 2 is the wall at y = -1.
+  // Creating the mesh and refinement. The mesh is a hypercube with
+  // half-length 1 ([-1,1]^dim). The boundaries are colorized: boundary 0 is the
+  // wall at x = -1 and boundary 2 is the wall at y = -1.
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
-  const int                                 hyper_cube_length = 1;
+  const int                                 hyper_cube_half_length = 1;
   GridGenerator::hyper_cube(tr,
-                            -1 * hyper_cube_length,
-                            hyper_cube_length,
+                            -1 * hyper_cube_half_length,
+                            hyper_cube_half_length,
                             true);
   const int refinement_number = 2;
   tr.refine_global(refinement_number);
@@ -113,7 +114,8 @@ test()
 
   // Parsing the DEM boundary conditions. The wall at x = -1 is isothermal: its
   // temperature is 19 before t = 0.5 and 21 after, and it is 2 degrees higher
-  // where y > 0.1. The wall at y = -1 is adiabatic.
+  // where y > 0.1. The wall at x = 1 is adiabatic set to adiabatic. All other
+  // boundaries are default fixed walls, which are adiabatic.
   ParameterHandler prm;
   dem_parameters.boundary_conditions.declare_parameters(prm);
   prm.parse_input_from_string(R"(
@@ -124,11 +126,11 @@ subsection DEM boundary conditions
     set type                  = fixed_wall
     set thermal boundary type = isothermal
     subsection wall temperature
-      set Function expression = if(t < 0.5, 19, 21) + if(y > 0.1, 2, 0)
+      set Function expression = if(t < 0.5, 19, 21) + if(y > 0, 2, 0)
     end
   end
   subsection boundary condition 1
-    set boundary id           = 2
+    set boundary id           = 1
     set type                  = fixed_wall
     set thermal boundary type = adiabatic
   end
@@ -139,34 +141,32 @@ end
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, PropertiesIndex::n_properties);
 
-  // Inserting particles 0 and 2 in contact with the isothermal wall, at y = 0
-  // and y = 0.25, and particle 1 in contact with the adiabatic wall. The
-  // particles move away from their wall in the normal direction, so that there
-  // is no tangential force.
+  // Inserting particles 0 and 2 in contact with the isothermal wall, at y =
+  // -0.5 and y = 0.5, and particle 1 in contact with the adiabatic wall.
   const double       mass = 1;
   const unsigned int type = 0;
   Tensor<1, dim>     omega{{0, 0, 0}};
 
-  Point<dim>                       position_0 = {-0.998, 0, 0};
+  Point<dim>                       position_0 = {-0.998, -0.5, 0};
   Particles::ParticleIterator<dim> pit_0 =
     construct_particle_iterator<dim>(particle_handler, tr, position_0, 0);
-  Tensor<1, dim> v_0{{0.01, 0, 0}};
+  Tensor<1, dim> v_0{{0, 0, 0}};
   set_particle_properties<dim, PropertiesIndex>(
     pit_0, type, particle_diameter, mass, v_0, omega);
   pit_0->get_properties()[PropertiesIndex::T] = 20;
 
-  Point<dim>                       position_1 = {0.25, -0.998, 0.25};
+  Point<dim>                       position_1 = {0.998, 0, 0};
   Particles::ParticleIterator<dim> pit_1 =
     construct_particle_iterator<dim>(particle_handler, tr, position_1, 1);
-  Tensor<1, dim> v_1{{0, 0.01, 0}};
+  Tensor<1, dim> v_1{{0, 0, 0}};
   set_particle_properties<dim, PropertiesIndex>(
     pit_1, type, particle_diameter, mass, v_1, omega);
   pit_1->get_properties()[PropertiesIndex::T] = 0;
 
-  Point<dim>                       position_2 = {-0.998, 0.25, 0.25};
+  Point<dim>                       position_2 = {-0.998, 0.5, 0};
   Particles::ParticleIterator<dim> pit_2 =
     construct_particle_iterator<dim>(particle_handler, tr, position_2, 2);
-  Tensor<1, dim> v_2{{0.01, 0, 0}};
+  Tensor<1, dim> v_2{{0, 0, 0}};
   set_particle_properties<dim, PropertiesIndex>(
     pit_2, type, particle_diameter, mass, v_2, omega);
   pit_2->get_properties()[PropertiesIndex::T] = 20;
