@@ -36,9 +36,10 @@ ParticleWallContactForce<dim,
       AssertThrow(
         dem_parameters.boundary_conditions.boundary_temperature.empty(),
         ExcMessage(
-          "Isothermal DEM boundary conditions can only be used in multiphysic "
-          "DEM. Set the solver type to dem_mp in the model parameters "
-          "subsection or remove the isothermal thermal boundary types."));
+          "DEM boundary conditions with the temperature thermal boundary type "
+          "can only be used in multiphysic DEM. Set the solver type to dem_mp "
+          "in the model parameters subsection or set the thermal boundary "
+          "types to adiabatic."));
     }
 }
 
@@ -144,11 +145,13 @@ ParticleWallContactForce<dim,
                 {
                   // Multiphysics properties of the wall in contact, as for
                   // the solid objects
-                  const Parameters::ThermalBoundaryType thermal_boundary_type =
-                    this->get_thermal_boundary_type(contact_info.boundary_id);
+                  const Parameters::Lagrangian::DEMThermalBoundaryType
+                    thermal_boundary_type =
+                      this->get_thermal_boundary_type(contact_info.boundary_id);
 
                   if ((thermal_boundary_type !=
-                       Parameters::ThermalBoundaryType::adiabatic) &&
+                       Parameters::Lagrangian::DEMThermalBoundaryType::
+                         adiabatic) &&
                       (normal_overlap > 0))
                     {
                       const unsigned int particle_type =
@@ -857,8 +860,8 @@ ParticleWallContactForce<dim,
     }
 
   // Thermal boundary types of the walls of the grid and temperature functions
-  // of the isothermal ones. The time of the functions is set before every
-  // contact calculation by update_boundary_temperature.
+  // of the ones with an imposed temperature. The time of the functions is set
+  // before every contact calculation by update_boundary_temperature.
   this->boundary_thermal_type_map =
     dem_parameters.boundary_conditions.thermal_boundary_type;
   this->boundary_temperature_function =

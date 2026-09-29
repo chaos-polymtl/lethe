@@ -75,11 +75,11 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   /**
-   * @brief Update the temperature of the isothermal walls of the grid by
+   * @brief Update the temperature of the walls of the grid by
    * setting the time of their temperature function. The functions are then
    * evaluated at the contact points in calculate_particle_wall_contact, so the
-   * temperature of a wall can vary in space. It does nothing if there is no
-   * isothermal wall.
+   * temperature of a wall can vary in space. It does nothing if no wall has
+   * an imposed temperature.
    *
    * @param[in] time Time at which the temperature of the walls is evaluated.
    * It is the time of the particle positions used in the contact calculation.
@@ -167,11 +167,11 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
 
   /**
-   * @brief Update the temperature of the isothermal walls of the grid by
+   * @brief Update the temperature of the walls of the grid by
    * setting the time of their temperature function. The functions are then
    * evaluated at the contact points in calculate_particle_wall_contact, so the
-   * temperature of a wall can vary in space. It does nothing if there is no
-   * isothermal wall.
+   * temperature of a wall can vary in space. It does nothing if no wall has
+   * an imposed temperature.
    *
    * @param[in] time Time at which the temperature of the walls is evaluated.
    * It is the time of the particle positions used in the contact calculation.
@@ -1184,24 +1184,26 @@ private:
    *
    * @return The thermal boundary type of the wall.
    */
-  inline Parameters::ThermalBoundaryType
+  inline Parameters::Lagrangian::DEMThermalBoundaryType
   get_thermal_boundary_type(const types::boundary_id boundary_id) const
   {
     const auto thermal_type_it =
       this->boundary_thermal_type_map.find(boundary_id);
 
-    // If the boundary id is not found in the map, return adiabatic as the default
+    // If the boundary id is not found in the map, return adiabatic as the
+    // default
     return (thermal_type_it != this->boundary_thermal_type_map.end()) ?
              thermal_type_it->second :
-             Parameters::ThermalBoundaryType::adiabatic;
+             Parameters::Lagrangian::DEMThermalBoundaryType::adiabatic;
   }
 
   /**
-   * @brief Return the temperature of an isothermal wall of the grid at a point,
+   * @brief Return the temperature of a wall of the grid at a point,
    * as SerialSolid::get_temperature does for a solid object. The temperature is
    * evaluated at the time set by update_boundary_temperature.
    *
-   * @param[in] boundary_id Boundary id of the isothermal wall.
+   * @param[in] boundary_id Boundary id of the wall, whose temperature is
+   * imposed.
    * @param[in] point Point of the wall where the temperature is evaluated.
    *
    * @return The temperature of the wall at the point.
@@ -1255,8 +1257,8 @@ private:
   std::map<types::boundary_id, Point<3>>     point_on_rotation_vector;
 
   // Thermal boundary type of the walls of the grid and temperature function
-  // of the isothermal ones, keyed by boundary id.
-  std::map<types::boundary_id, Parameters::ThermalBoundaryType>
+  // of the ones with an imposed temperature, keyed by boundary id.
+  std::map<types::boundary_id, Parameters::Lagrangian::DEMThermalBoundaryType>
     boundary_thermal_type_map;
   std::map<types::boundary_id, std::shared_ptr<Function<3>>>
     boundary_temperature_function;

@@ -202,6 +202,11 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::initialize_dem_parameters()
     set_particle_wall_contact_force_model<dim, PropertiesIndex>(
       this->cfd_dem_simulation_parameters.dem_parameters);
 
+  // Set the temperature of the walls of the grid for the first DEM iteration.
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    particle_wall_contact_force_object->update_boundary_temperature(
+      this->simulation_control->get_current_time());
+
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob diameter
   // - 1) *  the largest particle radius). This value is used in
@@ -1424,16 +1429,19 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::dem_iterator()
   // particles yet.
   if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
     {
-      //Update the temperature of the walls of the grid.
-      particle_wall_contact_force_object->update_boundary_temperature(
-      this->simulation_control->get_previous_time() +
-      (counter - 1) * dem_time_step);
-
       integrate_temperature<dim, PropertiesIndex>(
         this->particle_handler,
         dem_time_step,
         contact_outcome.heat_transfer_rate,
         std::vector<double>(contact_outcome.force.size()));
+
+      // Update the temperature of the walls of the grid for the next DEM
+      // iteration. The counter first iteration starts at 1 so the time is given
+      // by the previous time (of the cfd) plus the counter times the DEM time
+      // step.
+      particle_wall_contact_force_object->update_boundary_temperature(
+        this->simulation_control->get_previous_time() +
+        counter * dem_time_step);
     }
 
   // Add fluid-particle interaction force to the force container

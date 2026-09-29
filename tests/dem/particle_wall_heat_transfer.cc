@@ -4,7 +4,7 @@
 /**
  * @brief In this test, the heat transfer between particles and the walls of
  * the grid is checked. The DEM boundary conditions are parsed from a parameter
- * string. Particles 0 and 2 are in contact with an isothermal wall whose
+ * string. Particles 0 and 2 are in contact with a wall whose imposed
  * temperature depends on time and space, while particle 1 is in contact with
  * an adiabatic wall. The transfer of heat between the particles and the walls
  * is computed at two time steps, and the heat transfer rates are compared with
@@ -112,9 +112,9 @@ test()
   properties.specific_heats_ratio_gas          = 1.4;
   properties.molecular_mean_free_path_gas      = 68e-9;
 
-  // Parsing the DEM boundary conditions. The wall at x = -1 is isothermal: its
-  // temperature is 19 before t = 0.5 and 21 after, and it is 2 degrees higher
-  // where y > 0.1. The wall at x = 1 is adiabatic set to adiabatic. All other
+  // Parsing the DEM boundary conditions. The wall at x = -1 has an imposed
+  // temperature: it is 19 before t = 0.5 and 21 after, and it is 2 degrees
+  // higher where y > 0. The wall at x = 1 is set to adiabatic. All other
   // boundaries are default fixed walls, which are adiabatic.
   ParameterHandler prm;
   dem_parameters.boundary_conditions.declare_parameters(prm);
@@ -124,7 +124,7 @@ subsection DEM boundary conditions
   subsection boundary condition 0
     set boundary id           = 0
     set type                  = fixed_wall
-    set thermal boundary type = isothermal
+    set thermal boundary type = temperature
     subsection wall temperature
       set Function expression = if(t < 0.5, 19, 21) + if(y > 0, 2, 0)
     end
@@ -141,8 +141,9 @@ end
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, PropertiesIndex::n_properties);
 
-  // Inserting particles 0 and 2 in contact with the isothermal wall, at y =
-  // -0.5 and y = 0.5, and particle 1 in contact with the adiabatic wall.
+  // Inserting particles 0 and 2 in contact with the wall with an imposed
+  // temperature, at y = -0.5 and y = 0.5, and particle 1 in contact with the
+  // adiabatic wall.
   const double       mass = 1;
   const unsigned int type = 0;
   Tensor<1, dim>     omega{{0, 0, 0}};
@@ -210,7 +211,7 @@ end
     nonlinear_force_object(dem_parameters);
 
   // The particles do not move, so the contact configuration is the same at
-  // both times and only the temperature of the isothermal wall changes.
+  // both times and only the temperature of the wall at x = -1 changes.
   for (const double time : {0., 1.})
     {
       std::ranges::fill(contact_outcome.heat_transfer_rate, 0.);
@@ -229,12 +230,13 @@ end
 
       // Output
       deallog << "Time: " << time << std::endl;
-      deallog << "Heat transfer rate of particle 0 (isothermal wall, y = 0): "
-              << heat_transfer_rates.at(0) << std::endl;
+      deallog
+        << "Heat transfer rate of particle 0 (wall temperature, y = -0.5): "
+        << heat_transfer_rates.at(0) << std::endl;
       deallog << "Heat transfer rate of particle 1 (adiabatic wall): "
               << heat_transfer_rates.at(1) << std::endl;
       deallog
-        << "Heat transfer rate of particle 2 (isothermal wall, y = 0.25): "
+        << "Heat transfer rate of particle 2 (wall temperature, y = 0.5): "
         << heat_transfer_rates.at(2) << std::endl;
     }
 }

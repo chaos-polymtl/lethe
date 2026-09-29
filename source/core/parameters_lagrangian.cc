@@ -1664,11 +1664,11 @@ namespace Parameters
       // Multiphysic DEM
       prm.declare_entry("thermal boundary type",
                         "adiabatic",
-                        Patterns::Selection("adiabatic|isothermal"),
+                        Patterns::Selection("adiabatic|temperature"),
                         "Thermal boundary type used in multiphysic DEM. "
-                        "Choices are <adiabatic|isothermal>.");
+                        "Choices are <adiabatic|temperature>.");
 
-      // Temperature of an isothermal boundary, as a function of space and time
+      // Temperature imposed on the boundary, as a function of space and time
       auto wall_temperature_function_parsed =
         std::make_shared<Functions::ParsedFunction<3>>(1);
       prm.enter_subsection("wall temperature");
@@ -1755,20 +1755,21 @@ namespace Parameters
         {
           if (is_wall)
             this->thermal_boundary_type[boundary_id] =
-              ThermalBoundaryType::adiabatic;
+              DEMThermalBoundaryType::adiabatic;
         }
-      else if (thermal_type == "isothermal")
+      else if (thermal_type == "temperature")
         {
           AssertThrow(
             is_wall,
             ExcMessage(
-              "Invalid isothermal DEM boundary condition. Only the fixed_wall, "
-              "translational and rotational boundary types can be isothermal."));
+              "Invalid DEM boundary condition with an imposed temperature. Only "
+              "the fixed_wall, translational and rotational boundary types can "
+              "have the temperature thermal boundary type."));
 
           this->thermal_boundary_type[boundary_id] =
-            ThermalBoundaryType::isothermal;
+            DEMThermalBoundaryType::temperature;
 
-          // Isothermal boundary
+          // Temperature imposed on the boundary
           auto wall_temperature_function_parsed =
             std::make_shared<Functions::ParsedFunction<3>>(1);
           prm.enter_subsection("wall temperature");

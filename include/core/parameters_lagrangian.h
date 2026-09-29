@@ -16,7 +16,6 @@
 
 #include <core/parameters.h>
 #include <core/periodic_boundary.h>
-#include <core/solid_objects_parameters.h>
 
 #include <deal.II/base/parameter_handler.h>
 
@@ -777,6 +776,19 @@ namespace Parameters
 
 
     /**
+     * @brief Thermal boundary type of a wall of the grid in multiphysic DEM,
+     * which corresponds to the thermal boundary type parameter of the DEM
+     * boundary conditions.
+     */
+    enum class DEMThermalBoundaryType
+    {
+      /// No heat flux through the wall.
+      adiabatic,
+      /// Temperature imposed on the wall. It can vary in space and time.
+      temperature
+    };
+
+    /**
      * @brief Boundary conditions for DEM simulations.
      *
      * This structure stores the motion parameters, the thermal parameters and
@@ -784,8 +796,8 @@ namespace Parameters
      * boundary's type is encoded by which container holds it (see
      * outlet_boundaries below); fixed walls are the default and are not stored
      * in any container. As for the solid objects, each wall also has a thermal
-     * boundary type (adiabatic by default) and, if it is isothermal, a
-     * temperature function.
+     * boundary type (adiabatic by default) and, if its temperature is imposed,
+     * a temperature function.
      */
     struct BCDEM
     {
@@ -822,11 +834,12 @@ namespace Parameters
       /// boundaries) declared in the DEM boundary conditions have an entry. It
       /// is only used in multiphysic DEM. The boundaries without an entry are
       /// adiabatic.
-      std::map<types::boundary_id, ThermalBoundaryType> thermal_boundary_type;
+      std::map<types::boundary_id, DEMThermalBoundaryType>
+        thermal_boundary_type;
 
-      /// Temperature function of each isothermal wall, keyed by the mesh
-      /// boundary id. It is evaluated at the particle-wall contact points, so
-      /// it can vary in space and time.
+      /// Temperature function of each wall with an imposed temperature, keyed
+      /// by the mesh boundary id. It is evaluated at the particle-wall contact
+      /// points, so it can vary in space and time.
       std::map<types::boundary_id, std::shared_ptr<Function<3>>>
         boundary_temperature;
 
