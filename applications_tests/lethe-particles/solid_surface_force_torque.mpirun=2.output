@@ -1,0 +1,158 @@
+
+*********************
+Running on 2 rank(s)
+*********************
+The particle size distribution of particle type 0 is uniform.
+DEM time step is 4.62215% of Rayleigh time step
+Reading triangulation
+
+Finished reading triangulation
+Minimum vertex distance between cell vertices: 0.0125
+Minimum cell size to maximum particle diameter ratio: 2.5
+-------------------------------------------------------------------
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with convex boundaries. 
+*********************************************************************
+6 particles of type 0 were inserted, 0 particles of type 0 remaining
+*********************************************************************
+
+*****************************************************************
+Transient iteration: 1000     Time: 0.01     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 3.0000e+00 | 3.0000e+00 | 
+| Velocity magnitude           | 1.6308e-02 | 1.6398e-01 | 7.8313e-02 | 4.6988e-01 | 
+| Angular velocity magnitude   | 3.6342e+00 | 2.5660e+01 | 1.1756e+01 | 7.0533e+01 | 
+| Translational kinetic energy | 2.1758e-08 | 2.1999e-06 | 7.2394e-07 | 4.3437e-06 | 
+| Rotational kinetic energy    | 5.4028e-09 | 2.6934e-07 | 8.8754e-08 | 5.3252e-07 | 
+
+*****************************************************************
+Transient iteration: 2000     Time: 0.02     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 2.5000e+00 | 5.0000e+00 | 
+| Velocity magnitude           | 1.0808e-02 | 5.7871e-02 | 3.4352e-02 | 2.0611e-01 | 
+| Angular velocity magnitude   | 7.5115e-01 | 2.3369e+01 | 1.2597e+01 | 7.5583e+01 | 
+| Translational kinetic energy | 9.5568e-09 | 2.7399e-07 | 1.2217e-07 | 7.3303e-07 | 
+| Rotational kinetic energy    | 2.3081e-10 | 2.2339e-07 | 8.9620e-08 | 5.3772e-07 | 
+------------------------------------------------
+Force and torque on solid surfaces at time 0.02
+------------------------------------------------
+| Solid ID | f_x           | f_y           | f_z           | T_x           | T_y           | T_z           | 
+| 0        | -8.099224e-05 | -1.329587e-04 | -8.194888e-03 | -1.520339e-05 | -1.789818e-05 | -8.079607e-06 | 
+
+*****************************************************************
+Transient iteration: 3000     Time: 0.03     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 1.6667e+00 | 5.0000e+00 | 
+| Velocity magnitude           | 1.0001e-02 | 5.0864e-02 | 2.8629e-02 | 1.7177e-01 | 
+| Angular velocity magnitude   | 3.6316e-03 | 2.0566e+01 | 1.0229e+01 | 6.1374e+01 | 
+| Translational kinetic energy | 8.1833e-09 | 2.1166e-07 | 8.6867e-08 | 5.2120e-07 | 
+| Rotational kinetic energy    | 5.3948e-15 | 1.7302e-07 | 6.4462e-08 | 3.8677e-07 | 
+
+*****************************************************************
+Transient iteration: 4000     Time: 0.04     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 1.5000e+00 | 6.0000e+00 | 
+| Velocity magnitude           | 9.9942e-03 | 4.3857e-02 | 2.3984e-02 | 1.4390e-01 | 
+| Angular velocity magnitude   | 1.2974e-03 | 1.7763e+01 | 8.0183e+00 | 4.8110e+01 | 
+| Translational kinetic energy | 8.1718e-09 | 1.5736e-07 | 6.0713e-08 | 3.6428e-07 | 
+| Rotational kinetic energy    | 6.8859e-16 | 1.2907e-07 | 4.3648e-08 | 2.6189e-07 | 
+------------------------------------------------
+Force and torque on solid surfaces at time 0.04
+------------------------------------------------
+| Solid ID | f_x          | f_y          | f_z           | T_x           | T_y          | T_z          | 
+| 0        | 2.414660e-05 | 9.654292e-05 | -9.630947e-03 | -2.580591e-06 | 1.613440e-05 | 5.503567e-07 | 
+
+*****************************************************************
+Transient iteration: 5000     Time: 0.05     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 1.4000e+00 | 7.0000e+00 | 
+| Velocity magnitude           | 9.7203e-03 | 3.6850e-02 | 1.9503e-02 | 1.1702e-01 | 
+| Angular velocity magnitude   | 3.6316e-03 | 1.4960e+01 | 6.1492e+00 | 3.6895e+01 | 
+| Translational kinetic energy | 7.7299e-09 | 1.1109e-07 | 4.0012e-08 | 2.4007e-07 | 
+| Rotational kinetic energy    | 5.3948e-15 | 9.1553e-08 | 2.7400e-08 | 1.6440e-07 | 
+
+*****************************************************************
+Transient iteration: 6000     Time: 0.06     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 1.1667e+00 | 7.0000e+00 | 
+| Velocity magnitude           | 6.5483e-03 | 2.9842e-02 | 1.5482e-02 | 9.2892e-02 | 
+| Angular velocity magnitude   | 3.6316e-03 | 1.2157e+01 | 4.2819e+00 | 2.5691e+01 | 
+| Translational kinetic energy | 3.5081e-09 | 7.2860e-08 | 2.4663e-08 | 1.4798e-07 | 
+| Rotational kinetic energy    | 5.3948e-15 | 6.0461e-08 | 1.5448e-08 | 9.2688e-08 | 
+------------------------------------------------
+Force and torque on solid surfaces at time 0.06
+------------------------------------------------
+| Solid ID | f_x          | f_y          | f_z           | T_x           | T_y          | T_z          | 
+| 0        | 2.462394e-05 | 9.887127e-05 | -9.630945e-03 | -3.822577e-06 | 1.601206e-05 | 5.271943e-07 | 
+
+*****************************************************************
+Transient iteration: 7000     Time: 0.07     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 1.1429e+00 | 8.0000e+00 | 
+| Velocity magnitude           | 9.4648e-03 | 2.2835e-02 | 1.2596e-02 | 7.5577e-02 | 
+| Angular velocity magnitude   | 3.7748e-04 | 9.3546e+00 | 2.4647e+00 | 1.4788e+01 | 
+| Translational kinetic energy | 7.3289e-09 | 4.2661e-08 | 1.4836e-08 | 8.9016e-08 | 
+| Rotational kinetic energy    | 5.8288e-17 | 3.5797e-08 | 7.7689e-09 | 4.6613e-08 | 
+
+*****************************************************************
+Transient iteration: 8000     Time: 0.08     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 1.0000e+00 | 8.0000e+00 | 
+| Velocity magnitude           | 6.3807e-03 | 1.5828e-02 | 1.0368e-02 | 6.2209e-02 | 
+| Angular velocity magnitude   | 3.6316e-03 | 6.5518e+00 | 1.4837e+00 | 8.9024e+00 | 
+| Translational kinetic energy | 3.3308e-09 | 2.0496e-08 | 9.4255e-09 | 5.6553e-08 | 
+| Rotational kinetic energy    | 5.3948e-15 | 1.7559e-08 | 3.2971e-09 | 1.9782e-08 | 
+------------------------------------------------
+Force and torque on solid surfaces at time 0.08
+------------------------------------------------
+| Solid ID | f_x           | f_y           | f_z           | T_x           | T_y          | T_z          | 
+| 0        | -5.807720e-06 | -4.524440e-06 | -9.630945e-03 | -2.326979e-06 | 1.596712e-05 | 1.412131e-06 | 
+
+*****************************************************************
+Transient iteration: 9000     Time: 0.09     Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 8.8889e-01 | 8.0000e+00 | 
+| Velocity magnitude           | 6.3487e-04 | 1.0002e-02 | 8.4396e-03 | 5.0638e-02 | 
+| Angular velocity magnitude   | 3.6316e-03 | 3.7489e+00 | 6.2888e-01 | 3.7733e+00 | 
+| Translational kinetic energy | 3.2976e-11 | 8.1852e-09 | 6.8240e-09 | 4.0944e-08 | 
+| Rotational kinetic energy    | 5.3948e-15 | 5.7491e-09 | 9.5819e-10 | 5.7492e-09 | 
+
+*****************************************************************
+Transient iteration: 10000    Time: 0.1      Time step: 1e-05   
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 8.0000e-01 | 8.0000e+00 | 
+| Velocity magnitude           | 7.6350e-03 | 1.0002e-02 | 9.6062e-03 | 5.7637e-02 | 
+| Angular velocity magnitude   | 3.6316e-03 | 9.4606e-01 | 1.6163e-01 | 9.6978e-01 | 
+| Translational kinetic energy | 4.7691e-09 | 8.1842e-09 | 7.6131e-09 | 4.5679e-08 | 
+| Rotational kinetic energy    | 5.3948e-15 | 3.6612e-10 | 6.1028e-11 | 3.6617e-10 | 
+-----------------------------------------------
+Force and torque on solid surfaces at time 0.1
+-----------------------------------------------
+| Solid ID | f_x           | f_y           | f_z           | T_x           | T_y          | T_z          | 
+| 0        | -1.167468e-04 | -4.524440e-06 | -9.630945e-03 | -2.329859e-06 | 1.379336e-05 | 8.574688e-07 | 
+---------------------------------
+Synchronized particle statistics
+---------------------------------
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00 | 8.0000e-01 | 8.0000e+00 | 
+| Velocity magnitude           | 7.6455e-03 | 1.0002e-02 | 9.6080e-03 | 5.7648e-02 | 
+| Angular velocity magnitude   | 6.3577e-04 | 9.4186e-01 | 1.5777e-01 | 9.4660e-01 | 
+| Translational kinetic energy | 4.7822e-09 | 8.1840e-09 | 7.6154e-09 | 4.5692e-08 | 
+| Rotational kinetic energy    | 1.6535e-16 | 3.6287e-10 | 6.0479e-11 | 3.6288e-10 | 
+id, type, dp, x, y, z 
+0 0 0.00500 0.0289 0.0200 0.0125
+1 0 0.00500 0.0594 0.0314 0.0125
+2 0 0.00500 0.0909 0.0244 0.0125
+3 0 0.00500 0.1181 0.0156 0.0125
+4 0 0.00500 0.1421 0.0350 0.0125
+5 0 0.00500 0.1761 0.0247 0.0125

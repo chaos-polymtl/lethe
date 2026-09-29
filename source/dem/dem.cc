@@ -5,6 +5,7 @@
 #include <core/lethe_grid_tools.h>
 #include <core/manifolds.h>
 #include <core/solutions_output.h>
+#include <core/utilities.h>
 
 #include <dem/data_containers.h>
 #include <dem/dem.h>
@@ -29,10 +30,35 @@
 
 #include <sys/stat.h>
 
+#include <iomanip>
 #include <numbers>
 #include <ranges>
 #include <sstream>
+#include <string>
 #include <utility>
+#include <vector>
+
+namespace
+{
+  /**
+   * @brief Return the name of the file of the force and torque exerted by the
+   * particles on a solid surface.
+   *
+   * @param[in] parameters DEM parameters.
+   * @param[in] solid_id ID of the solid surface.
+   *
+   * @return Name of the file, including the output folder.
+   */
+  template <int dim>
+  std::string
+  solid_forces_torques_filename(const DEMSolverParameters<dim> &parameters,
+                                const unsigned int              solid_id)
+  {
+    return parameters.simulation_control.output_folder +
+           parameters.post_processing.solid_forces_torques_output_name + "_" +
+           Utilities::int_to_string(solid_id, 2) + ".dat";
+  }
+} // namespace
 
 template <int dim, typename PropertiesIndex>
 DEMSolver<dim, PropertiesIndex>::DEMSolver(
@@ -195,6 +221,11 @@ DEMSolver<dim, PropertiesIndex>::setup_solid_objects()
   // Resize the mesh info containers
   solid_surfaces_mesh_info.resize(solid_surfaces.size());
   solid_volumes_mesh_info.resize(solid_volumes.size());
+
+  // Resize the containers of the loads exerted by the particles on the solid
+  // surfaces
+  solid_surfaces_force.resize(solid_surfaces.size());
+  solid_surfaces_torque.resize(solid_surfaces.size());
 
   // Simulation has solid objects and resize the container
   if ((solid_surfaces.size() + solid_volumes.size()) > 0)
@@ -584,12 +615,16 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
   // Particle-solid objects contact force
   if (action_manager->check_solid_objects_enabled()) // until refactor
     {
+      // The loads on the solid surfaces are overwritten at every contact force
+      // evaluation, so they are always those of the last evaluation.
       particle_wall_contact_force_object
         ->calculate_particle_solid_object_contact(
           contact_manager.get_particle_floating_mesh_potentially_in_contact(),
           simulation_control->get_time_step(),
           solid_surfaces,
-          contact_outcome);
+          contact_outcome,
+          solid_surfaces_force,
+          solid_surfaces_torque);
     }
 
   particle_point_line_contact_force_object
@@ -956,6 +991,106 @@ DEMSolver<dim, PropertiesIndex>::post_process_results()
         mpi_communicator,
         sparse_contacts_object);
     }
+
+  post_process_solid_forces_torques();
+}
+
+template <int dim, typename PropertiesIndex>
+void
+DEMSolver<dim, PropertiesIndex>::setup_solid_forces_torques_output()
+{
+  if (!parameters.post_processing.calculate_solid_forces_torques ||
+      this_mpi_process != 0)
+    return;
+
+  // The rows of the files are written at iterations, which are one time step
+  // apart. Half a time step is thus a safe tolerance to identify the rows
+  // written after the checkpoint.
+  const double time_tolerance = 0.5 * simulation_control->get_time_step();
+
+  for (const auto &solid_object : solid_surfaces)
+    initialize_solid_forces_torques_file(
+      solid_forces_torques_filename(parameters, solid_object->get_solid_id()),
+      parameters.restart.restart,
+      simulation_control->get_current_time(),
+      time_tolerance);
+}
+
+template <int dim, typename PropertiesIndex>
+void
+DEMSolver<dim, PropertiesIndex>::post_process_solid_forces_torques()
+{
+  const Parameters::Lagrangian::LagrangianPostProcessing &post_processing =
+    parameters.post_processing;
+
+  if (!post_processing.calculate_solid_forces_torques ||
+      solid_surfaces.empty() ||
+      simulation_control->get_iteration_number() %
+          post_processing.solid_forces_torques_output_frequency !=
+        0)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "Solid forces and torques");
+
+  const unsigned int n_solids = solid_surfaces.size();
+
+  // Every process only holds the loads exerted by the particles it owns. The
+  // force and torque components of all the solids are packed in a single
+  // buffer, so that they are summed over the processes with one reduction.
+  constexpr unsigned int n_load_components = 6;
+  std::vector<double>    loads(n_load_components * n_solids);
+  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
+    for (unsigned int d = 0; d < 3; ++d)
+      {
+        loads[n_load_components * i_solid + d] =
+          solid_surfaces_force[i_solid][d];
+        loads[n_load_components * i_solid + 3 + d] =
+          solid_surfaces_torque[i_solid][d];
+      }
+  Utilities::MPI::sum(loads, mpi_communicator, loads);
+
+  if (this_mpi_process != 0)
+    return;
+
+  std::vector<Tensor<1, 3>> forces(n_solids);
+  std::vector<Tensor<1, 3>> torques(n_solids);
+  std::vector<unsigned int> solid_ids(n_solids);
+  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
+    {
+      for (unsigned int d = 0; d < 3; ++d)
+        {
+          forces[i_solid][d]  = loads[n_load_components * i_solid + d];
+          torques[i_solid][d] = loads[n_load_components * i_solid + 3 + d];
+        }
+      solid_ids[i_solid] = solid_surfaces[i_solid]->get_solid_id();
+    }
+
+  const double time = simulation_control->get_current_time();
+  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
+    append_solid_forces_torques_to_file(
+      solid_forces_torques_filename(parameters, solid_ids[i_solid]),
+      time,
+      forces[i_solid],
+      torques[i_solid]);
+
+  if (post_processing.solid_forces_torques_verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      std::ostringstream title;
+      title << "Force and torque on solid surfaces at time "
+            << std::setprecision(parameters.simulation_control.log_precision)
+            << time;
+      announce_string(pcout, title.str());
+
+      TableHandler table = make_table_scalars_tensors(
+        solid_ids,
+        "Solid ID",
+        std::vector<std::vector<Tensor<1, 3>>>{forces, torques},
+        {"f_x", "f_y", "f_z", "T_x", "T_y", "T_z"},
+        parameters.simulation_control.log_precision,
+        true);
+      table.write_text(std::cout, TableHandler::org_mode_table);
+    }
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1152,6 +1287,10 @@ DEMSolver<dim, PropertiesIndex>::solve()
                   insertion_object,
                   solid_surfaces,
                   checkpoint_controller);
+
+  // Prepare the output of the loads on the solid surfaces. This must be done
+  // after reading the checkpoint, whose time is needed to clean up the files.
+  setup_solid_forces_torques_output();
 
   // Refine the background mesh within the user-specified refinement boxes. This
   // must happen before the triangulation-dependent parameters are set up, since

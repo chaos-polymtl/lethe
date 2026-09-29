@@ -54,13 +54,22 @@ public:
 
   /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
-   * using the contact pair information and physical properties.
+   * using the contact pair information and physical properties. The force and
+   * torque exerted by the particles on each solid object are calculated from
+   * the same contact forces as the ones applied on the particles.
    *
    * @param[in] particle_floating_mesh_potentially_in_contact A container that
    * stores the information of particle-floating mesh contact.
    * @param[in] dt DEM time step.
    * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
+   * @param[out] solid_forces Force exerted on each solid object by the
+   * particles owned by this process. It is resized to the number of solids and
+   * overwritten, so that it only holds the contribution of this call.
+   * @param[out] solid_torques Torque exerted on each solid object by the
+   * particles owned by this process, about the center of rotation of the
+   * solid. It is resized to the number of solids and overwritten, so that it
+   * only holds the contribution of this call.
    */
   virtual void
   calculate_particle_solid_object_contact(
@@ -69,7 +78,9 @@ public:
                 &particle_floating_mesh_potentially_in_contact,
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
+    std::vector<Tensor<1, 3>>                    &solid_forces,
+    std::vector<Tensor<1, 3>>                    &solid_torques) = 0;
 
 
   /**
@@ -134,13 +145,26 @@ public:
 
   /**
    * @brief Calculate the contact outcomes for particle-solid objects contacts
-   * using the contact pair information and physical properties.
+   * using the contact pair information and physical properties. The force and
+   * torque exerted by the particles on each solid object are calculated from
+   * the same contact forces as the ones applied on the particles.
+   *
+   * The torque on a solid is calculated about its center of rotation. It is
+   * the opposite of the moment, about that point, of the force and torques
+   * applied on the particles, so that each contact conserves angular momentum.
    *
    * @param[in] particle_floating_mesh_potentially_in_contact A container that
    * stores the information of particle-floating mesh contact.
    * @param[in] dt DEM time step.
    * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
+   * @param[out] solid_forces Force exerted on each solid object by the
+   * particles owned by this process. It is resized to the number of solids and
+   * overwritten, so that it only holds the contribution of this call.
+   * @param[out] solid_torques Torque exerted on each solid object by the
+   * particles owned by this process, about the center of rotation of the
+   * solid. It is resized to the number of solids and overwritten, so that it
+   * only holds the contribution of this call.
    */
   virtual void
   calculate_particle_solid_object_contact(
@@ -149,7 +173,9 @@ public:
                 &particle_floating_mesh_potentially_in_contact,
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
+    std::vector<Tensor<1, 3>>                    &solid_forces,
+    std::vector<Tensor<1, 3>>                    &solid_torques) override;
 
 protected:
   /**

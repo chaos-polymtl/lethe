@@ -227,6 +227,25 @@ private:
   post_process_results();
 
   /**
+   * @brief Prepare the files in which the force and torque exerted by the
+   * particles on the solid surfaces are written, if this post-processing is
+   * enabled. When the simulation is restarted, the rows written after the
+   * checkpoint are removed from the existing files. It must be called once the
+   * checkpoint, if any, has been read.
+   */
+  void
+  setup_solid_forces_torques_output();
+
+  /**
+   * @brief Sum the force and torque exerted by the particles on each solid
+   * surface over all the processes, and write them to the output files and, if
+   * verbose, to the terminal. Nothing is done if this post-processing is
+   * disabled or if this is not one of its output iterations.
+   */
+  void
+  post_process_solid_forces_torques();
+
+  /**
    * @brief Calculate statistics on the particles and report them to the
    * terminal. This function is notably used to monitor the time min, max and
    * total performed contact searches, and the instant min, max, avg and total
@@ -538,6 +557,20 @@ private:
    * @brief The container of the solid volumes.
    */
   std::vector<std::shared_ptr<SerialSolid<dim, dim>>> solid_volumes;
+
+  /**
+   * @brief The force exerted on each solid surface by the particles owned by
+   * this process, from the last contact force evaluation. It is indexed like
+   * solid_surfaces.
+   */
+  std::vector<Tensor<1, 3>> solid_surfaces_force;
+
+  /**
+   * @brief The torque exerted on each solid surface by the particles owned by
+   * this process, about the center of rotation of the solid surface, from the
+   * last contact force evaluation. It is indexed like solid_surfaces.
+   */
+  std::vector<Tensor<1, 3>> solid_surfaces_torque;
 
   /**
    * @brief The container of the distribution objects.

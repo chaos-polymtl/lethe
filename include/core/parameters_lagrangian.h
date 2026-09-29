@@ -948,6 +948,21 @@ namespace Parameters
       /// File name for exporting collision statistics (CSV format).
       std::string collision_stats_file_name = "collision_statistics.csv";
 
+      /// Enable the output of the force and torque exerted by the particles
+      /// on the solid surfaces.
+      bool calculate_solid_forces_torques = false;
+
+      /// Verbosity level for the force and torque on the solid surfaces.
+      Parameters::Verbosity solid_forces_torques_verbosity =
+        Parameters::Verbosity::quiet;
+
+      /// Output frequency (in DEM iterations) of the force and torque on the
+      /// solid surfaces.
+      unsigned int solid_forces_torques_output_frequency = 1;
+
+      /// File name prefix for the force and torque on the solid surfaces.
+      std::string solid_forces_torques_output_name = "solid_forces";
+
       /**
        * @brief Declare the parameters in the parameter handler.
        *

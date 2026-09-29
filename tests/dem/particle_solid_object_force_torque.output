@@ -1,0 +1,55 @@
+
+DEAL::Non-linear contact model and constant rolling resistance
+DEAL::Contact force evaluation 0
+DEAL::Solid 0
+DEAL::  Force on solid: 0.198934 -0.0304900 -1.54611
+DEAL::  Torque on solid: -1.63838 0.782514 -0.195700
+DEAL::  Tangential and rolling resistance torques on particles: 9.88748e-05 0.00464147 -0.00403586
+DEAL::  Action-reaction satisfied: true
+DEAL::  Angular momentum balance satisfied: true
+DEAL::Solid 1
+DEAL::  Force on solid: 6.20148 0.146793 -0.203880
+DEAL::  Torque on solid: 0.0330190 0.771180 1.51882
+DEAL::  Tangential and rolling resistance torques on particles: -0.00113223 -0.00668055 0.00153049
+DEAL::  Action-reaction satisfied: true
+DEAL::  Angular momentum balance satisfied: true
+DEAL::Contact force evaluation 1
+DEAL::Solid 0
+DEAL::  Force on solid: 0.216995 -0.0335242 -1.54611
+DEAL::  Torque on solid: -1.63960 0.775267 -0.211982
+DEAL::  Tangential and rolling resistance torques on particles: 0.000186090 0.00494791 -0.00403586
+DEAL::  Action-reaction satisfied: true
+DEAL::  Angular momentum balance satisfied: true
+DEAL::Solid 1
+DEAL::  Force on solid: 6.20148 0.159671 -0.221766
+DEAL::  Torque on solid: 0.0358164 0.767612 1.51625
+DEAL::  Tangential and rolling resistance torques on particles: -0.00113223 -0.00676998 0.00146610
+DEAL::  Action-reaction satisfied: true
+DEAL::  Angular momentum balance satisfied: true
+DEAL::Linear contact model and viscous rolling resistance
+DEAL::Contact force evaluation 0
+DEAL::Solid 0
+DEAL::  Force on solid: 0.0913229 -0.0119117 -0.843674
+DEAL::  Torque on solid: -1.27029 0.764799 -0.106149
+DEAL::  Tangential and rolling resistance torques on particles: 0.000551767 0.00202246 -6.34290e-05
+DEAL::  Action-reaction satisfied: true
+DEAL::  Angular momentum balance satisfied: true
+DEAL::Solid 1
+DEAL::  Force on solid: 4.21837 0.0714701 -0.0992640
+DEAL::  Torque on solid: 0.0155456 0.528688 1.04029
+DEAL::  Tangential and rolling resistance torques on particles: -2.07373e-05 -0.000600007 -0.000315876
+DEAL::  Action-reaction satisfied: true
+DEAL::  Angular momentum balance satisfied: true
+DEAL::Contact force evaluation 1
+DEAL::Solid 0
+DEAL::  Force on solid: 0.0949264 -0.0123817 -0.843674
+DEAL::  Torque on solid: -1.27048 0.763352 -0.110340
+DEAL::  Tangential and rolling resistance torques on particles: 0.000574485 0.00210158 -6.34290e-05
+DEAL::  Action-reaction satisfied: true
+DEAL::  Angular momentum balance satisfied: true
+DEAL::Solid 1
+DEAL::  Force on solid: 4.21837 0.0742902 -0.103181
+DEAL::  Torque on solid: 0.0161582 0.527907 1.03973
+DEAL::  Tangential and rolling resistance torques on particles: -2.07373e-05 -0.000619591 -0.000329977
+DEAL::  Action-reaction satisfied: true
+DEAL::  Angular momentum balance satisfied: true

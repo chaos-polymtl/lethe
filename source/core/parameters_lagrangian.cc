@@ -2111,6 +2111,37 @@ namespace Parameters
             "Choices are <quiet|verbose>.");
         }
         prm.leave_subsection();
+
+        prm.enter_subsection("solid forces");
+        {
+          prm.declare_entry(
+            "calculation",
+            Patterns::Tools::Convert<bool>::to_string(
+              defaults.calculate_solid_forces_torques),
+            Patterns::Bool(),
+            "Enable the output of the force and torque exerted by the "
+            "particles on the solid surfaces.");
+          prm.declare_entry(
+            "verbosity",
+            to_string(defaults.solid_forces_torques_verbosity),
+            Patterns::Selection("quiet|verbose"),
+            "State whether the force and torque on the solid surfaces should "
+            "be printed. Choices are <quiet|verbose>.");
+          prm.declare_entry(
+            "filename",
+            defaults.solid_forces_torques_output_name,
+            Patterns::FileName(),
+            "Prefix of the output files of the force and torque on the solid "
+            "surfaces.");
+          prm.declare_entry(
+            "output frequency",
+            Patterns::Tools::Convert<unsigned int>::to_string(
+              defaults.solid_forces_torques_output_frequency),
+            Patterns::Integer(1),
+            "Number of DEM iterations between two outputs of the force and "
+            "torque on the solid surfaces.");
+        }
+        prm.leave_subsection();
       }
       prm.leave_subsection();
     }
@@ -2141,6 +2172,24 @@ namespace Parameters
             {
               throw(std::runtime_error("Invalid verbosity choice "));
             }
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("solid forces");
+        {
+          calculate_solid_forces_torques = prm.get_bool("calculation");
+          const std::string verbose      = prm.get("verbosity");
+          if (verbose == "quiet")
+            solid_forces_torques_verbosity = Parameters::Verbosity::quiet;
+          else if (verbose == "verbose")
+            solid_forces_torques_verbosity = Parameters::Verbosity::verbose;
+          else
+            {
+              throw(std::runtime_error("Invalid verbosity choice "));
+            }
+          solid_forces_torques_output_name = prm.get("filename");
+          solid_forces_torques_output_frequency =
+            prm.get_integer("output frequency");
         }
         prm.leave_subsection();
       }

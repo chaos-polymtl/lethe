@@ -112,6 +112,22 @@ subsection solid objects
       subsection angular velocity
         set Function expression = if (t>2,31.42,0) ; 0 ; 0
       end
+
+      # The center of rotation is on the axis of the cylinder (x axis). It is
+      # also the point about which the torque on the bunny is calculated.
+      set center of rotation = 0, 0, 0
     end
+  end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  subsection solid forces
+    set calculation      = true
+    set filename         = bunny_force_torque
+    set output frequency = 100
   end
 end

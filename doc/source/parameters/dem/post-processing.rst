@@ -23,6 +23,14 @@ The post-processing subsection of the ``.prm`` file is according to the followin
        set log collisions with all walls           = true
        set wall boundary ids                       = 0
      end
+
+     # Enable output of the force and torque exerted by the particles on the solid surfaces
+     subsection solid forces
+       set calculation      = false
+       set verbosity        = quiet # Choices are quiet|verbose
+       set filename         = solid_forces
+       set output frequency = 1
+     end
   end
 
 .. note::
@@ -75,3 +83,31 @@ The particle-wall contact statistics logging feature allows to log the statistic
 * ``log collisions with all walls`` is a boolean parameter that controls whether the particle-wall contact statistics will be logged for all walls or only for the walls defined by the ``wall boundary ids`` parameter. If set to ``true``, the statistics will be logged for all walls. If set to ``false``, the statistics will be logged only for the walls defined by the ``wall boundary ids`` parameter.
 
 * ``wall boundary ids`` is the list of the wall boundary IDs where the particle-wall contact statistics will be logged when ``log collisions with all walls`` is set to false. When ``log collisions with all walls`` is set to true, this parameter is ignored. Each wall boundary ID must be separated by a comma.
+
+----------------------------------
+Force and torque on solid surfaces
+----------------------------------
+
+The ``solid forces`` subsection enables the output of the force and torque exerted by the particles on each solid surface defined in the ``solid objects`` subsection (see :doc:`../dem/solid_objects`). The force and torque are the sum of the contributions of all the particle-solid contacts. They are calculated from the same contact forces as the ones applied on the particles, so no additional contact calculation is carried out.
+
+* ``calculation`` enables the feature. When it is set to ``false`` (the default), no file is written.
+
+* ``verbosity`` controls whether the force and torque are also printed in the terminal at every output iteration. The available options are ``quiet`` (the default option) and ``verbose``.
+
+* ``filename`` is the prefix of the output files. One file is written for each solid surface in the output folder (``output path`` parameter of the :doc:`../dem/simulation_control` section). Its name is the prefix followed by the two-digit ID of the solid surface, for instance ``solid_forces_00.dat`` for the solid object 0.
+
+* ``output frequency`` is the number of DEM iterations between two outputs. Since DEM time steps are small, we recommend using a value larger than 1, for instance the ``log frequency`` or the ``output frequency`` of the :doc:`../dem/simulation_control` section.
+
+Every file contains one row per output iteration with the following columns: the time, the three components of the force ``f_x``, ``f_y`` and ``f_z``, and the three components of the torque ``T_x``, ``T_y`` and ``T_z``. All the components are in the global coordinate system.
+
+* The force is the force exerted by the particles on the solid surface. It is exactly the opposite of the sum of the contact forces applied on the particles in contact with the solid surface.
+
+* The torque is calculated about the ``center of rotation`` of the solid surface, which moves with its ``translational velocity``. It is the opposite of the moment, about the same point, of the contact forces and torques applied on the particles in contact with the solid surface. In other words, it includes the moment of the contact forces, calculated with the positions of the particles, and the opposite of the tangential and rolling resistance torques applied on the particles. With this definition, the particle-solid contacts conserve angular momentum.
+
+.. note::
+ The force and torque are instantaneous values: they are the ones used to integrate the motion of the particles during the output iteration. They are neither time-averaged nor accumulated between outputs. Quantities such as the torque about another point or the projection of the force on a given axis can be calculated from the output files during post-processing.
+
+When a simulation is restarted, the rows written after the checkpoint are removed from the existing files, and the new rows are appended to them.
+
+.. warning::
+ The force and torque on solid surfaces are only available in ``lethe-particles``. The CFD-DEM solvers do not support solid objects.

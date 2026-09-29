@@ -156,13 +156,21 @@ ParticleWallContactForce<dim,
                 &particle_floating_mesh_potentially_in_contact,
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
-    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
+    std::vector<Tensor<1, 3>>                    &solid_forces,
+    std::vector<Tensor<1, 3>>                    &solid_torques)
 {
   // Get the threshold distance for contact force, this is
   // useful for non-contact cohesive force models such as
   // the DMT.
   const double force_calculation_threshold_distance =
     get_force_calculation_threshold_distance();
+
+  // The loads on the solid objects are instantaneous: they are reset at every
+  // call, so that they only hold the contribution of the present contact force
+  // evaluation. No memory is allocated once the containers have the right size.
+  solid_forces.assign(solids.size(), Tensor<1, 3>());
+  solid_torques.assign(solids.size(), Tensor<1, 3>());
 
   // Initiate containers
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
@@ -538,6 +546,26 @@ ParticleWallContactForce<dim,
                                       tangential_force,
                                       tangential_torque,
                                       rolling_resistance_torque);
+
+              // The contact model calculates the force acting on the solid,
+              // and apply_force_and_torque() applies the opposite force on the
+              // particle. The same force is thus accumulated here as the
+              // reaction on the solid.
+              // The torque on the solid, about its center of rotation, is the
+              // opposite of the moment about that point of everything applied
+              // on the particle: the force at the particle center, the
+              // tangential torque and the rolling resistance torque. Each
+              // contact thus conserves angular momentum. The moment of the
+              // force must not be taken at point_on_boundary here, since
+              // tangential_torque already is the moment of the tangential
+              // force about the particle center.
+              const Tensor<1, 3> solid_contact_force =
+                normal_force + tangential_force;
+              solid_forces[solid_counter] += solid_contact_force;
+              solid_torques[solid_counter] +=
+                cross_product_3d(particle_location_3d - center_of_rotation,
+                                 solid_contact_force) -
+                tangential_torque - rolling_resistance_torque;
 
               // Applying the calculated forces and torques on the particle
               this->apply_force_and_torque(

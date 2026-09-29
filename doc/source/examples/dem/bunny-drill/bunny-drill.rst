@@ -12,6 +12,7 @@ Features
 - Floating walls
 - `GMSH <https://gmsh.info/>`_ grids
 - Insertion of particles from a plane
+- Post-processing of the force and torque exerted by the particles on a solid object
 
 ----------------------------
 Files Used in this Example
@@ -155,9 +156,32 @@ The bunny is defined using the solid surfaces feature of Lethe. The surface mesh
         subsection angular velocity
           set Function expression = if (t>2,31.42,0) ; 0 ; 0
         end
+
+        # The center of rotation is on the axis of the cylinder (x axis). It is
+        # also the point about which the torque on the bunny is calculated.
+        set center of rotation = 0, 0, 0
       end
     end
   end
+
+The bunny rotates around the ``x`` axis, which is the axis of the cylinder. The ``center of rotation`` is set at the origin, which is on that axis. Since the center of rotation moves with the translational velocity of the bunny, which is along the ``x`` axis, it remains on the axis of the cylinder during the whole simulation.
+
+Post-processing (Drilling)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The force and torque exerted by the particles on the bunny are written in the file ``output/bunny_force_torque_00.dat`` every 100 iterations. The torque is calculated about the center of rotation of the bunny.
+
+.. code-block:: text
+
+  subsection post-processing
+    subsection solid forces
+      set calculation      = true
+      set filename         = bunny_force_torque
+      set output frequency = 100
+    end
+  end
+
+Since the center of rotation is on the axis of rotation of the bunny, the ``f_x`` column is the axial force exerted by the particles on the bunny, and the ``T_x`` column is the torque exerted by the particles about the axis of rotation, that is, the opposite of the torque required to drive the rotation of the bunny. More information on this post-processing is available in the :doc:`../../../parameters/dem/post-processing` section of the parameter guide.
 
 
 ----------------------

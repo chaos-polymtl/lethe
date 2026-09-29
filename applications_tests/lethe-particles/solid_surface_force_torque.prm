@@ -1,0 +1,160 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Test description:
+# Six rotating particles fall on a slowly translating horizontal solid surface,
+# bounce, and then slide or roll on it. The particles are far enough from each
+# other to never collide, and they are spread along the x axis so that they are
+# owned by both processes when the test runs on two processes.
+# The force and torque exerted by the particles on the solid surface are
+# printed every 2000 iterations. The torque is taken about the center of
+# rotation of the surface. Since there is no particle-particle contact, the
+# force and torque must be identical, up to round-off, on one and two
+# processes. Once the particles rest on the surface (t >= 0.06 s), the vertical
+# force on the surface is their weight, directed downward:
+# f_z = -6 * 2500 kg/m^3 * pi * (0.005 m)^3 / 6 * 9.81 m/s^2 = -9.630945e-3 N.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 1e-5
+  set time end         = 0.1
+  set log frequency    = 1000
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model Parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  subsection load balancing
+    set load balance method = none
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = constant
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Lagrangian Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0.0, 0.0, -9.81
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number of particles               = 6
+    set density particles                 = 2500
+    set young modulus particles           = 1e7
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.2
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.1
+  end
+  set young modulus wall           = 1e7
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.2
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0.1
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 10000
+  set list x              = 0.025, 0.06, 0.09, 0.115, 0.145, 0.175
+  set list y              = 0.02, 0.03, 0.025, 0.015, 0.035, 0.025
+  set list z              = 0.013, 0.0135, 0.013, 0.014, 0.013, 0.0135
+  set list velocity x     = 0.1, -0.05, 0., 0.08, -0.1, 0.02
+  set list velocity y     = 0., 0.05, -0.05, 0.02, 0., -0.03
+  set list velocity z     = -0.1, -0.05, -0.1, 0., -0.08, -0.1
+  set list omega x        = 0., 5., -3., 0., 2., 0.
+  set list omega y        = 10., 0., 4., -5., 0., 3.
+  set list omega z        = 0., 2., 0., 1., -4., 0.
+  set list diameters      = 0.005, 0.005, 0.005, 0.005, 0.005, 0.005
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 4,1,1 : 0,0,0 : 0.2,0.05,0.05 : false
+  set initial refinement = 2
+end
+
+#---------------------------------------------------
+# Solid Objects
+#---------------------------------------------------
+
+subsection solid objects
+  subsection solid surfaces
+    set number of solids = 1
+    subsection solid object 0
+      subsection mesh
+        set type                = dealii
+        set grid type           = hyper_rectangle
+        set grid arguments      = 0, 0 : 0.2, 0.05 : false
+        set simplex             = true
+        set initial refinement  = 2
+        set initial translation = 0, 0, 0.01
+      end
+      subsection translational velocity
+        set Function expression = 0.01 ; 0 ; 0
+      end
+      subsection angular velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      set center of rotation = 0.1, 0.025, 0.
+    end
+  end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  subsection solid forces
+    set calculation      = true
+    set verbosity        = verbose
+    set output frequency = 2000
+  end
+end

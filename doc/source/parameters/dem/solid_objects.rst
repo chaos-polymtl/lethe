@@ -58,7 +58,7 @@ This subsection explains the solid objects information. First of all, the ``numb
 
 * In the subsection ``angular velocity``, we define the angular velocity function of the solid object.
 
-* The ``center of rotation`` defines the center of rotation of the solid object (in the case of rotational motion) in the ``x``, ``y`` and ``z`` directions. This center of rotation will move according to the ``translational velocity`` parameter.
+* The ``center of rotation`` defines the center of rotation of the solid object (in the case of rotational motion) in the ``x``, ``y`` and ``z`` directions. This center of rotation will move according to the ``translational velocity`` parameter. It is also the point about which the torque exerted by the particles on the solid object is calculated when the ``solid forces`` post-processing is enabled (see :doc:`../dem/post-processing`).
 
 * The ``output solid object`` defines if we want an output file to be generated for the solid object at every output time step.
 

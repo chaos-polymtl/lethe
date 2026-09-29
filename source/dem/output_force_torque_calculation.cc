@@ -3,7 +3,32 @@
 
 #include <dem/output_force_torque_calculation.h>
 
+#include <array>
+#include <cstdint>
+#include <filesystem>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
+#include <string>
+
+namespace
+{
+  /// Number of digits after the decimal point of the values written in the
+  /// files of the force and torque on the solid objects. It is large enough to
+  /// distinguish the time of consecutive iterations of long DEM simulations.
+  constexpr unsigned int solid_forces_torques_precision = 12;
+
+  /// Width of the columns of the files of the force and torque on the solid
+  /// objects. It fits a signed value in scientific notation with the precision
+  /// above, and leaves at least one blank between two values.
+  constexpr unsigned int solid_forces_torques_column_width =
+    solid_forces_torques_precision + 10;
+
+  /// Names of the columns of the files of the force and torque on the solid
+  /// objects.
+  const std::array<std::string, 7> solid_forces_torques_column_names = {
+    {"time", "f_x", "f_y", "f_z", "T_x", "T_y", "T_z"}};
+} // namespace
 
 void
 write_forces_torques_output_locally(
@@ -84,4 +109,71 @@ write_forces_torques_output_results(
           out_file.close();
         }
     }
+}
+
+void
+initialize_solid_forces_torques_file(const std::string &filename,
+                                     const bool         restart,
+                                     const double       restart_time,
+                                     const double       time_tolerance)
+{
+  if (restart && std::filesystem::exists(filename))
+    {
+      // The rows are written in chronological order after the header. Find the
+      // end of the last row written before the checkpoint, and discard what
+      // follows. A last row without an end of line, which was interrupted
+      // while being written, is also discarded since tellg() fails when the
+      // end of the file is reached.
+      std::ifstream  existing_file(filename);
+      std::string    line;
+      std::streamoff kept_size = 0;
+      bool           is_header = true;
+      while (std::getline(existing_file, line))
+        {
+          if (!is_header)
+            {
+              std::istringstream row(line);
+              double             time;
+              if (!(row >> time) || time > restart_time + time_tolerance)
+                break;
+            }
+
+          const std::streampos end_of_line = existing_file.tellg();
+          if (end_of_line == std::streampos(-1))
+            break;
+
+          kept_size = end_of_line;
+          is_header = false;
+        }
+      existing_file.close();
+
+      std::filesystem::resize_file(filename,
+                                   static_cast<std::uintmax_t>(kept_size));
+
+      // The existing file is kept if it has a header
+      if (kept_size > 0)
+        return;
+    }
+
+  std::ofstream file(filename);
+  for (const auto &column_name : solid_forces_torques_column_names)
+    file << std::setw(solid_forces_torques_column_width) << column_name;
+  file << '\n';
+}
+
+void
+append_solid_forces_torques_to_file(const std::string  &filename,
+                                    const double        time,
+                                    const Tensor<1, 3> &force,
+                                    const Tensor<1, 3> &torque)
+{
+  std::ofstream file(filename, std::ios::app);
+  file << std::scientific << std::setprecision(solid_forces_torques_precision);
+
+  file << std::setw(solid_forces_torques_column_width) << time;
+  for (unsigned int d = 0; d < 3; ++d)
+    file << std::setw(solid_forces_torques_column_width) << force[d];
+  for (unsigned int d = 0; d < 3; ++d)
+    file << std::setw(solid_forces_torques_column_width) << torque[d];
+  file << '\n';
 }
