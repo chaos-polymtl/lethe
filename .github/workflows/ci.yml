@@ -1,0 +1,185 @@
+name: CI
+
+# When commiting, on a pull request, runs the inexpensive checks (indentation,
+# parameter file indentation and documentation) first, and starts the builds
+# and tests only once they pass. This way, a pull request that is not indented
+# properly or that had an error in the documentation will not launch the
+# expensive jobs twice on the same code.
+#
+# Furthermore, on a pull request, only the checks that are relevant to the
+# changed files are run. For example, if only the documentation is changed,
+# only the documentation check runs.
+#
+# Furthermore, on a push on master (a merged pull request), runs everything
+# even if only a specific section of the repository changed.
+#
+
+on:
+  push:
+    # On master, everything runs, whatever the changed files, even if they are
+    branches:
+      - master
+  pull_request:
+
+# Cancels running instances when a pull request is updated by a commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Deciding which actions a pull request needs, replacing the paths-ignore
+  # filters of the called workflows. A job is skipped only when all the changed
+  # files are in the folders it ignores; a single changed file elsewhere runs it.
+  #
+  # What runs on a pull request, depending on where its changed files are
+  # (the first case that matches applies):
+  #   - changes only in doc/
+  #       --> Check_prm_indent, doc
+  #   - changes in doc/ and contrib/
+  #       --> Check_indent, Check_prm_indent, doc
+  #   - changes in doc/, contrib/ and examples/
+  #       --> Check_indent, Check_prm_indent, doc,
+  #           then CI-Clang-tidy-v20, CI-Parameter-files-examples
+  #   - at least one file elsewhere (source/, include/, tests/,
+  #     applications_tests/, CMakeLists.txt, .github/, release_notes/, ...)
+  #       --> Check_indent, Check_prm_indent, doc,
+  #           then CI-Clang-tidy-v20, CI-Parameter-files-examples, CI-Debug,
+  #           CI-Warnings, CI-Release, CI-Lethe-with-dealii-vectors
+  #
+  # "then" means the following jobs only start once Check_indent,
+  # Check_prm_indent and doc pass. If they fail, they won't run.
+  #
+  # On a push on master (a merged pull request), everything runs, whatever the
+  # changed files.
+  changes:
+    name: Detect changed files
+    runs-on: ubuntu-latest
+
+    outputs:
+      indent: ${{ steps.filter.outputs.indent }}
+      tidy: ${{ steps.filter.outputs.tidy }}
+      build: ${{ steps.filter.outputs.build }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Filter changed files
+        id: filter
+        env:
+          GIT_REF: ${{ github.ref }}
+        run: |
+          # A push on master (a merged pull request) runs everything, whatever
+          # the changed files, even if they are only documentation
+          if [ "${GIT_REF}" = "refs/heads/master" ]; then
+            echo "indent=true" >> "${GITHUB_OUTPUT}"
+            echo "tidy=true" >> "${GITHUB_OUTPUT}"
+            echo "build=true" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          # HEAD is the merge commit of the pull request, its first parent is
+          # the tip of the base branch
+          files=$(git diff --name-only HEAD^1 HEAD)
+          echo "${files}"
+
+          # Prints true if a file outside the folders matching the regex $1
+          # changed
+          changed_outside() {
+            if echo "${files}" | grep -qvE "^($1)/"; then echo true; else echo false; fi
+          }
+
+          # Check_indent ignores doc/
+          echo "indent=$(changed_outside 'doc')" >> "${GITHUB_OUTPUT}"
+          # CI-Clang-tidy-v20 and CI-Parameter-files-examples ignore doc/ and
+          # contrib/
+          echo "tidy=$(changed_outside 'doc|contrib')" >> "${GITHUB_OUTPUT}"
+          # CI-Debug, CI-Warnings, CI-Release and CI-Lethe-with-dealii-vectors
+          # ignore doc/, contrib/ and examples/
+          echo "build=$(changed_outside 'doc|contrib|examples')" >> "${GITHUB_OUTPUT}"
+
+  #
+  # Checks
+  #
+  indent:
+    name: Check_indent
+    needs: changes
+    if: needs.changes.outputs.indent == 'true'
+    uses: ./.github/workflows/clang-format.yml
+
+  prm-indent:
+    name: Check_prm_indent
+    uses: ./.github/workflows/prmindent.yml
+
+  doc:
+    name: Publish doc to GitHub Pages
+    uses: ./.github/workflows/doc-github-pages.yml
+
+  #
+  # Builds and tests, which only run if all the checks pass. Whenever one of
+  # them runs, the checks run too, since the "indent" filter is the least
+  # restrictive.
+  #
+  debug:
+    name: CI-Debug
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/debug.yml
+
+  warnings:
+    name: CI-Warnings
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/warnings-gcc.yml
+
+  release:
+    name: CI-Release
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/release.yml
+
+  dealii-vectors:
+    name: CI-Lethe-with-dealii-vectors
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/main_dealii_distributed_vectors.yml
+
+  clang-tidy:
+    name: CI-Clang-tidy-v20
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.tidy == 'true'
+    uses: ./.github/workflows/clang-tidy-v20.yml
+
+  examples-parameter-files:
+    name: CI-Parameter-files-examples
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.tidy == 'true'
+    uses: ./.github/workflows/examples-parameter-files.yml
+
+  # Single status to require in the branch protection. GitHub considers a
+  # skipped required check as passing, so the builds and tests skipped because
+  # a check failed would otherwise not block the pull request.
+  ci-passed:
+    name: CI passed
+    if: ${{ !cancelled() }}
+    needs:
+      - changes
+      - indent
+      - prm-indent
+      - doc
+      - debug
+      - warnings
+      - release
+      - dealii-vectors
+      - clang-tidy
+      - examples-parameter-files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check the results of the other jobs
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "At least one job failed or was cancelled, see the jobs above."
+          exit 1
