@@ -15,6 +15,7 @@
 #include <dem/lagrangian_post_processing.h>
 #include <dem/multiphysics_integrator.h>
 #include <dem/output_force_torque_calculation.h>
+#include <dem/particle_heat_transfer.h>
 #include <dem/read_checkpoint.h>
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
@@ -660,8 +661,8 @@ DEMSolver<dim, PropertiesIndex>::update_temperature_walls()
   // the current time, since the contact outcomes are calculated with the
   // particle positions of the previous time step.
   if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
-    particle_wall_contact_force_object->update_boundary_temperature(
-      simulation_control->get_previous_time());
+    set_wall_temperature_time(parameters.boundary_conditions,
+                              simulation_control->get_previous_time());
 }
 
 template <int dim, typename PropertiesIndex>

@@ -33,6 +33,7 @@
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
+#include <dem/particle_heat_transfer.h>
 #include <dem/particle_interaction_outcomes.h>
 #include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
@@ -216,7 +217,7 @@ end
     {
       std::ranges::fill(contact_outcome.heat_transfer_rate, 0.);
 
-      nonlinear_force_object.update_boundary_temperature(time);
+      set_wall_temperature_time(dem_parameters.boundary_conditions, time);
       nonlinear_force_object.calculate_particle_wall_contact(
         particle_wall_pairs_in_contact, dt, contact_outcome);
 

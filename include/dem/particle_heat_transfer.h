@@ -4,6 +4,8 @@
 #ifndef lethe_particle_heat_transfer_h
 #define lethe_particle_heat_transfer_h
 
+#include <core/parameters_lagrangian.h>
+
 #include <dem/contact_type.h>
 
 
@@ -218,5 +220,19 @@ apply_heat_transfer_on_single_local_particle(
   const double temperature_two,
   const double thermal_conductance,
   double      &particle_one_heat_transfer_rate);
+
+/**
+ * @brief Set the time of the temperature functions of the walls of the grid
+ * with an imposed temperature. It does nothing if no wall has an
+ * imposed temperature.
+ *
+ * @param[in] boundary_conditions DEM boundary conditions, which hold the
+ * temperature functions of the walls.
+ * @param[in] time Time at which the temperature of the walls is evaluated.
+ */
+void
+set_wall_temperature_time(
+  const Parameters::Lagrangian::BCDEM &boundary_conditions,
+  const double                         time);
 
 #endif

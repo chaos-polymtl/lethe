@@ -856,24 +856,6 @@ ParticleWallContactForce<dim,
     dem_parameters.boundary_conditions.boundary_temperature;
 }
 
-template <int dim,
-          typename PropertiesIndex,
-          ParticleWallContactForceModel contact_model,
-          RollingResistanceMethod       rolling_friction_model>
-void
-ParticleWallContactForce<
-  dim,
-  PropertiesIndex,
-  contact_model,
-  rolling_friction_model>::update_boundary_temperature(const double time)
-{
-  // The temperature of a wall can vary in space, so the functions are only
-  // evaluated at the contact points, in calculate_particle_wall_contact.
-  for (const auto &temperature_function :
-       this->boundary_temperature_function | std::views::values)
-    temperature_function->set_time(time);
-}
-
 // dem
 // No resistance
 template class ParticleWallContactForce<2,

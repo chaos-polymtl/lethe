@@ -75,18 +75,6 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   /**
-   * @brief Update the temperature of the walls of the grid by
-   * setting the time of their temperature function. The functions are then
-   * evaluated at the contact points in calculate_particle_wall_contact, so the
-   * temperature of a wall can vary in space. It does nothing if no wall has
-   * an imposed temperature.
-   *
-   * @param[in] time Time at which the temperature of the walls is evaluated.
-   */
-  virtual void
-  update_boundary_temperature(const double time) = 0;
-
-  /**
    * @brief Return the number of contacts that occurred in the
    * present pseudo-time step when using the packed insertion method.
    */
@@ -164,19 +152,6 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
-
-  /**
-   * @brief Update the temperature of the walls of the grid by
-   * setting the time of their temperature function. The functions are then
-   * evaluated at the contact points in calculate_particle_wall_contact, so the
-   * temperature of a wall can vary in space. It does nothing if no wall has
-   * an imposed temperature.
-   *
-   * @param[in] time Time at which the temperature of the walls is evaluated.
-   * It is the time of the particle positions used in the contact calculation.
-   */
-  virtual void
-  update_boundary_temperature(const double time) override;
 
 protected:
   /**
@@ -1196,8 +1171,9 @@ private:
   }
 
   /**
-   * @brief Return the temperature of a wall of the grid at a point. The temperature is
-   * evaluated at the time set by update_boundary_temperature.
+   * @brief Return the temperature of a wall of the grid at a point. The
+   * temperature is evaluated at the time set by the solver with
+   * set_wall_temperature_time (see particle_heat_transfer.h).
    *
    * @param[in] boundary_id Boundary id of the wall, whose temperature is
    * imposed.
@@ -1254,6 +1230,9 @@ private:
   std::map<types::boundary_id, Point<3>>     point_on_rotation_vector;
   std::map<types::boundary_id, Parameters::Lagrangian::WallThermalBoundaryType>
     boundary_thermal_type_map;
+  // The temperature functions are the ones of the DEM boundary conditions
+  // parameters, not copies, so that they are evaluated at the time set by the
+  // solver with set_wall_temperature_time. They must only be evaluated here.
   std::map<types::boundary_id, std::shared_ptr<Function<3>>>
     boundary_temperature_function;
 

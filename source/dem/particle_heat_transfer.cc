@@ -8,6 +8,7 @@
 #include <boost/math/special_functions/erf.hpp>
 
 #include <cmath>
+#include <ranges>
 
 double
 calculate_corrected_contact_radius(const double effective_radius,
@@ -286,6 +287,16 @@ apply_heat_transfer_on_single_local_particle(
 {
   particle_one_heat_transfer_rate +=
     thermal_conductance * (temperature_two - temperature_one);
+}
+
+void
+set_wall_temperature_time(
+  const Parameters::Lagrangian::BCDEM &boundary_conditions,
+  const double                         time)
+{
+  for (const auto &temperature_function :
+       boundary_conditions.boundary_temperature | std::views::values)
+    temperature_function->set_time(time);
 }
 
 // only particle-particle, particle-floating-mesh and particle-wall contacts

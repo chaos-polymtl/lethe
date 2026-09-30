@@ -10,6 +10,7 @@
 #include <dem/find_contact_detection_step.h>
 #include <dem/multiphysics_integrator.h>
 #include <dem/particle_handler_conversion.h>
+#include <dem/particle_heat_transfer.h>
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
@@ -210,7 +211,8 @@ CFDDEMSolver<dim, PropertiesIndex>::initialize_dem_parameters()
 
   // Set the temperature of the walls of the grid for the first DEM iteration.
   if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
-    particle_wall_contact_force_object->update_boundary_temperature(
+    set_wall_temperature_time(
+      this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions,
       this->simulation_control->get_current_time());
 
   // Finding the smallest contact search frequency criterion between (smallest
@@ -1406,9 +1408,10 @@ CFDDEMSolver<dim, PropertiesIndex>::dem_iterator()
       // iteration. The counter first iteration starts at 1 so the time is given
       // by the previous time (of the cfd) plus the counter times the DEM time
       // step.
-      particle_wall_contact_force_object->update_boundary_temperature(
+      set_wall_temperature_time(
+        this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions,
         this->simulation_control->get_previous_time() +
-        counter * dem_time_step);
+          counter * dem_time_step);
     }
 
   // Add fluid-particle interaction force to the force container
