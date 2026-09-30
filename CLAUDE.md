@@ -3,7 +3,7 @@
 Guidance for Claude Code (and other AI assistants) working in the Lethe repository.
 
 Lethe is an open-source CFD / DEM / CFD-DEM solver built on **deal.II** (≥ 9.7,
-with MPI, p4est and Trilinos). Assume an MPI-parallel, template-heavy,
+with MPI, p4est, Trilinos and magic_enum). Assume an MPI-parallel, template-heavy,
 high-performance C++ codebase. Docs: https://chaos-polymtl.github.io/lethe/
 
 ## Layout

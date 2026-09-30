@@ -5,7 +5,7 @@ Installation on Apple ARM
 .. figure:: ./images/apple.png
    :height: 100px
 
-Lethe can be now be deployed on Apple ARM chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture. 
+Lethe can be deployed on Apple ARM chips.
 
 The installation of Lethe consists in two steps:
 1. Installation of deal.II using the Candi toolset
@@ -19,9 +19,9 @@ Installing deal.II Using Candi (Step #1)
 
 To install the dependencies (mpi, p4est, trilinos and METIS) all together using Candi, the following `procedure <https://github.com/dealii/dealii/wiki/Apple-ARM-M1-OSX>`_ on the deal.II wiki can be followed.
 
-Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/software/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting ``DEAL_II_VERSION=master`` on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
+Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/software/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting ``DEAL_II_VERSION=master``. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
 
-To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. 
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. Since candi installs a more recent version of p4est by default, select version 2.3.6 in the ``deal.II-toolchain/packages/p4est.package`` file of candi: uncomment its ``VERSION=2.3.6`` line and the ``CHECKSUM`` line that follows it, and comment the ``VERSION`` and ``CHECKSUM`` lines of the default version.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -117,5 +117,5 @@ Finally, you can install Lethe:
 
   make install
 
-.. warning:: 
+.. warning::
   Tests and application tests (``ctest``) may fail. However, we have tested it extensively and the library itself should work fine.

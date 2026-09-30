@@ -29,6 +29,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # TODO: add "v9.8.0-noble" once the dealii/dealii:v9.8.0-noble image
+        # is published on Docker Hub.
         dealii_version: ["master-noble", "v9.7.1-noble"]
     
     # Run steps in container of dealii's master branch
