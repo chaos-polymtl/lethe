@@ -21,9 +21,30 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Replaces the paths-ignore filters of the called workflows: each output is
-  # true when a file outside the ignored folders changed. Everything runs on
-  # pushes to master.
+  # Deciding which actions a pull request needs, replacing the paths-ignore
+  # filters of the called workflows. A job is skipped only when all the changed
+  # files are in the folders it ignores; a single changed file elsewhere runs it.
+  #
+  # What runs on a pull request, depending on where its changed files are
+  # (the first case that matches applies):
+  #   - changes only in doc/
+  #       --> Check_prm_indent, doc
+  #   - changes in doc/ and contrib/
+  #       --> Check_indent, Check_prm_indent, doc
+  #   - changes in doc/, contrib/ and examples/
+  #       --> Check_indent, Check_prm_indent, doc,
+  #           then CI-Clang-tidy-v20, CI-Parameter-files-examples
+  #   - at least one file elsewhere (source/, include/, tests/,
+  #     applications_tests/, CMakeLists.txt, .github/, release_notes/, ...)
+  #       --> Check_indent, Check_prm_indent, doc,
+  #           then CI-Clang-tidy-v20, CI-Parameter-files-examples, CI-Debug,
+  #           CI-Warnings, CI-Release, CI-Lethe-with-dealii-vectors
+  #
+  # "then" means the following jobs only start once Check_indent,
+  # Check_prm_indent and doc pass. If they fail, they won't run.
+  #
+  # On a push on master (a merged pull request), everything runs, whatever the
+  # changed files.
   changes:
     name: Detect changed files
     runs-on: ubuntu-latest
@@ -42,9 +63,11 @@ jobs:
       - name: Filter changed files
         id: filter
         env:
-          EVENT_NAME: ${{ github.event_name }}
+          GIT_REF: ${{ github.ref }}
         run: |
-          if [ "${EVENT_NAME}" != "pull_request" ]; then
+          # A push on master (a merged pull request) runs everything, whatever
+          # the changed files, even if they are only documentation
+          if [ "${GIT_REF}" = "refs/heads/master" ]; then
             echo "indent=true" >> "${GITHUB_OUTPUT}"
             echo "tidy=true" >> "${GITHUB_OUTPUT}"
             echo "build=true" >> "${GITHUB_OUTPUT}"
@@ -62,8 +85,13 @@ jobs:
             if echo "${files}" | grep -qvE "^($1)/"; then echo true; else echo false; fi
           }
 
+          # Check_indent ignores doc/
           echo "indent=$(changed_outside 'doc')" >> "${GITHUB_OUTPUT}"
+          # CI-Clang-tidy-v20 and CI-Parameter-files-examples ignore doc/ and
+          # contrib/
           echo "tidy=$(changed_outside 'doc|contrib')" >> "${GITHUB_OUTPUT}"
+          # CI-Debug, CI-Warnings, CI-Release and CI-Lethe-with-dealii-vectors
+          # ignore doc/, contrib/ and examples/
           echo "build=$(changed_outside 'doc|contrib|examples')" >> "${GITHUB_OUTPUT}"
 
   #
