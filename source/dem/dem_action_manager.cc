@@ -5,7 +5,7 @@
 
 DEMActionManager *DEMActionManager::instance = nullptr;
 
-DEMActionManager *
+ DEMActionManager *
 DEMActionManager::get_action_manager()
 {
   if (instance == nullptr)
