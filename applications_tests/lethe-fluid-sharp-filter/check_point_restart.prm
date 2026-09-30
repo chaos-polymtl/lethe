@@ -1,0 +1,259 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Anderson-Jackson filter of the checkpoint written by the check_point test of
+# lethe-fluid-sharp. The mesh restored from the checkpoint is adaptively
+# refined around the particle, which exercises the hanging node constraints
+# of the filtered fields. The parameters of the simulation are those of the
+# check_point test.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf1
+  set time step         = 0.0025 # Time step
+  set number mesh adapt = 2      # If steady, nb mesh adaptation
+  set time end          = 0.005  # End time of simulation
+  set output name       = out    # Prefix for VTU outputs
+  set output frequency  = 0      # Frequency of simulation output
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.604166666666667
+    set density             = 0.000960
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5,8,5: 0,0,0 : 10 , 16 ,10 : true
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 6
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 4
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 5
+    set type = noslip
+  end
+  subsection bc 5
+    set id   = 3
+    set type = outlet
+    set beta = 0
+  end
+end
+
+#---------------------------------------------------
+# IB Particles
+#---------------------------------------------------
+
+subsection particles
+  set number of particles                     = 1
+  set assemble Navier-Stokes inside particles = false
+
+  subsection extrapolation function
+    set stencil degree = 6
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 3
+    set refine mesh inside radius factor  = 0.5
+    set refine mesh outside radius factor = 1.5
+  end
+
+  subsection DEM
+    subsection gravity
+      set Function expression = 0;-981;0
+    end
+  end
+
+  subsection particle info 0
+    set integrate motion = true
+    set type             = sphere
+    set shape arguments  = 0.75
+    subsection position
+      set Function expression = 5;12.75;5
+    end
+    subsection velocity
+      set Function expression = 0;0;0
+    end
+    subsection omega
+      set Function expression = 0;0;0
+    end
+
+    subsection physical properties
+      set density = 0.001120
+    end
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  # Fraction of coarsened elements
+  set fraction coarsening = 0.4
+
+  # Fraction of refined elements
+  set fraction refinement = 0.05
+
+  # How the fraction of refinement/coarsening are interepretedChoices are
+  # <number|fraction>.
+  set fraction type = number
+
+  # Frequency of the mesh refinement
+  set frequency = 1
+
+  # Maximum number of elements
+  set max number elements = 75000
+
+  # Maximum refinement level
+  set max refinement level = 4
+  # minimum refinement level
+  set min refinement level = 0
+
+  # Type of mesh adaptation. Choices are <none|uniform|adaptive>.
+  set type            = adaptive
+  set error estimator = kelly
+
+  # Variable for kelly estimationChoices are <velocity|pressure>.
+  set variable = velocity
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
+  set type = nodal
+
+  # Kinematic viscosity for viscous initial conditions
+  set kinematic viscosity = 0.05
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance             = 1e-8
+    set max iterations        = 10
+    set verbosity             = quiet
+    set force rhs calculation = true
+  end
+end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
+subsection forces
+  set verbosity = verbose
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = false
+  set filename   = check_point
+  set frequency  = 1
+  set restart    = true
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method                                = gmres
+    set max iters                             = 1000
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-11
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-20
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = quiet
+    set max krylov vectors                    = 1000
+  end
+end
+
+#---------------------------------------------------
+# Anderson-Jackson filter
+#---------------------------------------------------
+
+subsection anderson jackson filter
+  set kernel type     = gaussian
+  set filter width    = 0.5
+  set gaussian cutoff = 3
+  set verbosity       = quiet
+end

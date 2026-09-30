@@ -1,0 +1,78 @@
+
+DEAL::Sphere and top-hat kernel, dim = 2
+DEAL::  exact solid fraction at the center      : 3.265306e-01
+DEAL::  exact solid fraction off the center     : 2.460507e-01
+DEAL::  cut cell subdivisions 1
+DEAL::    fluid, solid and cut cells            : 204 16 36
+DEAL::    relative error of the solid volume    : 3.637e-02
+DEAL::    center fraction matches solid volume  : true
+DEAL::    solid fraction at the center          : 3.146558e-01
+DEAL::    solid fraction off the center         : 2.385294e-01
+DEAL::    velocity and pressure are recovered   : true
+DEAL::    undefined phase averages              : 0
+DEAL::  cut cell subdivisions 2
+DEAL::    fluid, solid and cut cells            : 204 16 36
+DEAL::    relative error of the solid volume    : 2.490e-03
+DEAL::    center fraction matches solid volume  : true
+DEAL::    solid fraction at the center          : 3.273436e-01
+DEAL::    solid fraction off the center         : 2.486796e-01
+DEAL::    velocity and pressure are recovered   : true
+DEAL::    undefined phase averages              : 0
+DEAL::  cut cell subdivisions 4
+DEAL::    fluid, solid and cut cells            : 204 16 36
+DEAL::    relative error of the solid volume    : 1.396e-03
+DEAL::    center fraction matches solid volume  : true
+DEAL::    solid fraction at the center          : 3.260748e-01
+DEAL::    solid fraction off the center         : 2.461421e-01
+DEAL::    velocity and pressure are recovered   : true
+DEAL::    undefined phase averages              : 0
+DEAL::  cut cell subdivisions 8
+DEAL::    fluid, solid and cut cells            : 204 16 36
+DEAL::    relative error of the solid volume    : 1.518e-03
+DEAL::    center fraction matches solid volume  : true
+DEAL::    solid fraction at the center          : 3.270264e-01
+DEAL::    solid fraction off the center         : 2.470936e-01
+DEAL::    velocity and pressure are recovered   : true
+DEAL::    undefined phase averages              : 0
+DEAL::Sphere and top-hat kernel, dim = 3
+DEAL::  exact solid fraction at the center      : 1.865889e-01
+DEAL::  exact solid fraction off the center     : 1.416910e-01
+DEAL::  cut cell subdivisions 1
+DEAL::    fluid, solid and cut cells            : 456 0 56
+DEAL::    relative error of the solid volume    : 9.167e-03
+DEAL::    center fraction matches solid volume  : true
+DEAL::    solid fraction at the center          : 1.848784e-01
+DEAL::    solid fraction off the center         : 1.359400e-01
+DEAL::    velocity and pressure are recovered   : true
+DEAL::    undefined phase averages              : 0
+DEAL::  cut cell subdivisions 2
+DEAL::    fluid, solid and cut cells            : 456 0 56
+DEAL::    relative error of the solid volume    : 9.167e-03
+DEAL::    center fraction matches solid volume  : true
+DEAL::    solid fraction at the center          : 1.848784e-01
+DEAL::    solid fraction off the center         : 1.413776e-01
+DEAL::    velocity and pressure are recovered   : true
+DEAL::    undefined phase averages              : 0
+DEAL::  cut cell subdivisions 4
+DEAL::    fluid, solid and cut cells            : 456 0 56
+DEAL::    relative error of the solid volume    : 1.882e-03
+DEAL::    center fraction matches solid volume  : true
+DEAL::    solid fraction at the center          : 1.862378e-01
+DEAL::    solid fraction off the center         : 1.415475e-01
+DEAL::    velocity and pressure are recovered   : true
+DEAL::    undefined phase averages              : 0
+DEAL::Sphere and gaussian kernel, dim = 2
+DEAL::  exact solid fraction at the center      : 8.665603e-01
+DEAL::  solid fraction at the center            : 8.661144e-01
+DEAL::  velocity and pressure are recovered     : true
+DEAL::  undefined phase averages                : 0
+DEAL::Sphere and gaussian kernel, dim = 3
+DEAL::  exact solid fraction at the center      : 7.434232e-01
+DEAL::  solid fraction at the center            : 7.428193e-01
+DEAL::  velocity and pressure are recovered     : true
+DEAL::  undefined phase averages                : 0
+DEAL::Large sphere and small top-hat kernel, dim = 2
+DEAL::  fluid, solid and cut cells              : 92 96 68
+DEAL::  undefined phase averages                : 69
+DEAL::  undefined phase averages are zero       : true
+DEAL::  velocity and pressure are recovered     : true

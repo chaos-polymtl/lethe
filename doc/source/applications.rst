@@ -43,6 +43,9 @@ Lethe has several applications that can be used depending on the problem to be s
        * Particle-laden flows
        * Passive tracer  
      - This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.
+   * - ``lethe-fluid-sharp-filter``
+     - * Post-processing of particle-laden flows
+     - This application restores a snapshot of ``lethe-fluid-sharp`` and computes the Anderson-Jackson phase-averaged fields (fluid and solid volume fractions, fluid velocity and pressure) with a gaussian or top-hat filter. See :doc:`parameters/sharp-immersed-boundary/anderson-jackson-filter`.
    * - ``lethe-fluid-nitsche``
      - * Single-phase flows
        * Fluid-fluid flows 

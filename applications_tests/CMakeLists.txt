@@ -1,5 +1,6 @@
 add_subdirectory(lethe-fluid-particles)
 add_subdirectory(lethe-fluid-sharp)
+add_subdirectory(lethe-fluid-sharp-filter)
 add_subdirectory(lethe-particles)
 add_subdirectory(lethe-particles-ray-tracing)
 add_subdirectory(lethe-fluid-block)

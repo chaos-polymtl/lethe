@@ -1,3 +1,4 @@
+
 DEAL::Gaussian kernel, dim = 2, standard deviation = 5.000000e-01, cutoff = 3.000000e+00
 DEAL::  support radius                  : 1.500000e+00
 DEAL::  squared support radius matches  : true

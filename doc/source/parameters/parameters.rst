@@ -17,6 +17,7 @@ Launching an application requires an executable of the required solver, and a pa
     dem/dem
     unresolved-cfd-dem/unresolved-cfd-dem
     sharp-immersed-boundary/sharp-immersed-boundary
+    sharp-immersed-boundary/anderson-jackson-filter
 
 Lethe also has a few head level parameters that are compatible with all applications:
 

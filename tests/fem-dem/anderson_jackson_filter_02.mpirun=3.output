@@ -1,0 +1,39 @@
+
+DEAL::Gaussian kernel, dim = 2
+DEAL::  kernel mass at the middle            : 1.000426e+00
+DEAL::  face to middle kernel mass ratio     : 5.000000e-01
+DEAL::  corner to middle kernel mass ratio   : 2.500000e-01
+DEAL::  velocity is recovered                : true
+DEAL::  pressure is recovered                : true
+DEAL::  undefined phase averages             : 0
+DEAL::  renormalized fluid fraction is one   : true
+DEAL::  renormalized solid fraction is zero  : true
+DEAL::Top-hat kernel, dim = 2
+DEAL::  kernel mass at the middle            : 1.008534e+00
+DEAL::  face to middle kernel mass ratio     : 5.000000e-01
+DEAL::  corner to middle kernel mass ratio   : 2.500000e-01
+DEAL::  velocity is recovered                : true
+DEAL::  pressure is recovered                : true
+DEAL::  undefined phase averages             : 0
+DEAL::  renormalized fluid fraction is one   : true
+DEAL::  renormalized solid fraction is zero  : true
+DEAL::Gaussian kernel, dim = 3
+DEAL::  kernel mass at the middle            : 9.988220e-01
+DEAL::  face to middle kernel mass ratio     : 5.000000e-01
+DEAL::  edge to middle kernel mass ratio     : 2.500000e-01
+DEAL::  corner to middle kernel mass ratio   : 1.250000e-01
+DEAL::  velocity is recovered                : true
+DEAL::  pressure is recovered                : true
+DEAL::  undefined phase averages             : 0
+DEAL::  renormalized fluid fraction is one   : true
+DEAL::  renormalized solid fraction is zero  : true
+DEAL::Top-hat kernel, dim = 3
+DEAL::  kernel mass at the middle            : 1.036165e+00
+DEAL::  face to middle kernel mass ratio     : 5.000000e-01
+DEAL::  edge to middle kernel mass ratio     : 2.500000e-01
+DEAL::  corner to middle kernel mass ratio   : 1.250000e-01
+DEAL::  velocity is recovered                : true
+DEAL::  pressure is recovered                : true
+DEAL::  undefined phase averages             : 0
+DEAL::  renormalized fluid fraction is one   : true
+DEAL::  renormalized solid fraction is zero  : true

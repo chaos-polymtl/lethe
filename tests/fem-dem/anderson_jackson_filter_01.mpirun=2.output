@@ -1,0 +1,48 @@
+
+DEAL::Gaussian kernel, dim = 2, velocity degree = 1
+DEAL::  number of filter centers             : 289
+DEAL::  number of fluid, solid and cut cells : 256 0 0
+DEAL::  minimum kernel mass                  : 1.000426e+00
+DEAL::  maximum kernel mass                  : 1.000426e+00
+DEAL::  kernel mass is uniform               : true
+DEAL::  fluid fraction equals kernel mass    : true
+DEAL::  solid fraction is zero               : true
+DEAL::  velocity is recovered                : true
+DEAL::  pressure is recovered                : true
+DEAL::  undefined phase averages             : 0
+DEAL::  volume of the source cells is one    : true
+DEAL::Gaussian kernel, dim = 2, velocity degree = 2
+DEAL::  number of filter centers             : 289
+DEAL::  number of fluid, solid and cut cells : 64 0 0
+DEAL::  minimum kernel mass                  : 9.983439e-01
+DEAL::  maximum kernel mass                  : 9.996197e-01
+DEAL::  fluid fraction equals kernel mass    : true
+DEAL::  solid fraction is zero               : true
+DEAL::  velocity is recovered                : true
+DEAL::  pressure is recovered                : true
+DEAL::  undefined phase averages             : 0
+DEAL::  volume of the source cells is one    : true
+DEAL::Gaussian kernel, dim = 3, velocity degree = 1
+DEAL::  number of filter centers             : 729
+DEAL::  number of fluid, solid and cut cells : 512 0 0
+DEAL::  minimum kernel mass                  : 9.988220e-01
+DEAL::  maximum kernel mass                  : 9.988220e-01
+DEAL::  kernel mass is uniform               : true
+DEAL::  fluid fraction equals kernel mass    : true
+DEAL::  solid fraction is zero               : true
+DEAL::  velocity is recovered                : true
+DEAL::  pressure is recovered                : true
+DEAL::  undefined phase averages             : 0
+DEAL::  volume of the source cells is one    : true
+DEAL::Top-hat kernel, dim = 3, velocity degree = 1
+DEAL::  number of filter centers             : 729
+DEAL::  number of fluid, solid and cut cells : 512 0 0
+DEAL::  minimum kernel mass                  : 1.036165e+00
+DEAL::  maximum kernel mass                  : 1.036165e+00
+DEAL::  kernel mass is uniform               : true
+DEAL::  fluid fraction equals kernel mass    : true
+DEAL::  solid fraction is zero               : true
+DEAL::  velocity is recovered                : true
+DEAL::  pressure is recovered                : true
+DEAL::  undefined phase averages             : 0
+DEAL::  volume of the source cells is one    : true

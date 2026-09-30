@@ -1,0 +1,10 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       200
+   Number of degrees of freedom: 1296
+   Volume of triangulation:      1.600000e+03
+************************
+---> Simulation Restart 
+************************
+   Number of active cells:       1796
+   Number of degrees of freedom: 9440
+   Volume of triangulation:      1.600000e+03

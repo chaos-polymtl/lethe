@@ -1,0 +1,115 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Anderson-Jackson filter of a uniform velocity-pressure field around an
+# immersed sphere in a periodic domain. The field is set by the initial
+# condition instead of a checkpoint, and the mesh is not refined around the
+# particle, so that the statistics of the filter can be verified
+# independently. The statistics do not depend on the number of processes.
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = steady
+  set output name      = out
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 1 : true
+  set initial refinement = 4
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set id                 = 0
+    set type               = periodic
+    set periodic id        = 1
+    set periodic direction = 0
+  end
+  subsection bc 1
+    set id                 = 2
+    set type               = periodic
+    set periodic id        = 3
+    set periodic direction = 1
+  end
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 2; 4
+  end
+end
+
+#---------------------------------------------------
+# IB Particles
+#---------------------------------------------------
+
+subsection particles
+  set number of particles = 1
+  subsection local mesh refinement
+    set initial refinement = 0
+  end
+  subsection particle info 0
+    set type            = sphere
+    set shape arguments = 0.15
+    subsection position
+      set Function expression = 0.53; 0.47
+    end
+    subsection velocity
+      set Function expression = 0; 0
+    end
+    subsection omega
+      set Function expression = 0; 0; 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Anderson-Jackson filter
+#---------------------------------------------------
+
+subsection anderson jackson filter
+  set kernel type           = gaussian
+  set filter width          = 0.1
+  set gaussian cutoff       = 3
+  set cut cell subdivisions = 4
+  set verbosity             = verbose
+end

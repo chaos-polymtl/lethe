@@ -6,6 +6,7 @@ foreach(_target IN ITEMS
     lethe-fluid
     lethe-fluid-nitsche
     lethe-fluid-sharp
+    lethe-fluid-sharp-filter
     lethe-fluid-vans
     lethe-fluid-matrix-free
     lethe-fluid-vans-matrix-free
