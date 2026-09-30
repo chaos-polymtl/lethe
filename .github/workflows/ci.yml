@@ -1,0 +1,151 @@
+name: CI
+
+# Runs the cheap checks (indentation, parameter file indentation and
+# documentation) first, and starts the builds and tests only once they pass.
+# This way, a pull request that is not indented does not run the expensive
+# jobs twice on the same code.
+#
+# Each job calls one of the other workflows of this folder. Its name is the
+# former name of that workflow.
+
+on:
+  push:
+    # Runs on every push on master branch
+    branches:
+      - master
+  pull_request:
+
+# Cancels running instances when a pull request is updated by a commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Replaces the paths-ignore filters of the called workflows: each output is
+  # true when a file outside the ignored folders changed. Everything runs on
+  # pushes to master.
+  changes:
+    name: Detect changed files
+    runs-on: ubuntu-latest
+
+    outputs:
+      indent: ${{ steps.filter.outputs.indent }}
+      tidy: ${{ steps.filter.outputs.tidy }}
+      build: ${{ steps.filter.outputs.build }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Filter changed files
+        id: filter
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "${EVENT_NAME}" != "pull_request" ]; then
+            echo "indent=true" >> "${GITHUB_OUTPUT}"
+            echo "tidy=true" >> "${GITHUB_OUTPUT}"
+            echo "build=true" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          # HEAD is the merge commit of the pull request, its first parent is
+          # the tip of the base branch
+          files=$(git diff --name-only HEAD^1 HEAD)
+          echo "${files}"
+
+          # Prints true if a file outside the folders matching the regex $1
+          # changed
+          changed_outside() {
+            if echo "${files}" | grep -qvE "^($1)/"; then echo true; else echo false; fi
+          }
+
+          echo "indent=$(changed_outside 'doc')" >> "${GITHUB_OUTPUT}"
+          echo "tidy=$(changed_outside 'doc|contrib')" >> "${GITHUB_OUTPUT}"
+          echo "build=$(changed_outside 'doc|contrib|examples')" >> "${GITHUB_OUTPUT}"
+
+  #
+  # Checks
+  #
+  indent:
+    name: Check_indent
+    needs: changes
+    if: needs.changes.outputs.indent == 'true'
+    uses: ./.github/workflows/clang-format.yml
+
+  prm-indent:
+    name: Check_prm_indent
+    uses: ./.github/workflows/prmindent.yml
+
+  doc:
+    name: Publish doc to GitHub Pages
+    uses: ./.github/workflows/doc-github-pages.yml
+
+  #
+  # Builds and tests, which only run if all the checks pass. Whenever one of
+  # them runs, the checks run too, since the "indent" filter is the least
+  # restrictive.
+  #
+  debug:
+    name: CI-Debug
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/debug.yml
+
+  warnings:
+    name: CI-Warnings
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/warnings-gcc.yml
+
+  release:
+    name: CI-Release
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/release.yml
+
+  dealii-vectors:
+    name: CI-Lethe-with-dealii-vectors
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/main_dealii_distributed_vectors.yml
+
+  clang-tidy:
+    name: CI-Clang-tidy-v20
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.tidy == 'true'
+    uses: ./.github/workflows/clang-tidy-v20.yml
+
+  examples-parameter-files:
+    name: CI-Parameter-files-examples
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.tidy == 'true'
+    uses: ./.github/workflows/examples-parameter-files.yml
+
+  # Single status to require in the branch protection. GitHub considers a
+  # skipped required check as passing, so the builds and tests skipped because
+  # a check failed would otherwise not block the pull request.
+  ci-passed:
+    name: CI passed
+    if: ${{ !cancelled() }}
+    needs:
+      - changes
+      - indent
+      - prm-indent
+      - doc
+      - debug
+      - warnings
+      - release
+      - dealii-vectors
+      - clang-tidy
+      - examples-parameter-files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check the results of the other jobs
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "At least one job failed or was cancelled, see the jobs above."
+          exit 1
