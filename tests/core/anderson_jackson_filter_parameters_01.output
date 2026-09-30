@@ -9,6 +9,7 @@ DEAL::  cut cell subdivisions          : 4
 DEAL::  filter pressure                : true
 DEAL::  minimum fluid fraction         : 1.000000e-12
 DEAL::  normalize at domain boundaries : false
+DEAL::  extend velocity beyond walls   : true
 DEAL::  output folder                  : ./filter_output/
 DEAL::  output name                    : filtered
 DEAL::  verbosity                      : quiet
@@ -22,6 +23,7 @@ DEAL::  cut cell subdivisions          : 8
 DEAL::  filter pressure                : false
 DEAL::  minimum fluid fraction         : 1.000000e-06
 DEAL::  normalize at domain boundaries : true
+DEAL::  extend velocity beyond walls   : false
 DEAL::  output folder                  : ./ajf_output/
 DEAL::  output name                    : ajf
 DEAL::  verbosity                      : extra verbose
@@ -37,6 +39,7 @@ DEAL::  cut cell subdivisions          : 4
 DEAL::  filter pressure                : true
 DEAL::  minimum fluid fraction         : 1.000000e-12
 DEAL::  normalize at domain boundaries : false
+DEAL::  extend velocity beyond walls   : true
 DEAL::  output folder                  : ./filter_output/
 DEAL::  output name                    : filtered
 DEAL::  verbosity                      : quiet

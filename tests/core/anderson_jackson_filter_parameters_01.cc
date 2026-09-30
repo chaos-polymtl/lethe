@@ -121,6 +121,8 @@ namespace
                 << format(p.minimum_fluid_fraction) << std::endl;
         deallog << "  normalize at domain boundaries : "
                 << format(p.normalize_at_domain_boundaries) << std::endl;
+        deallog << "  extend velocity beyond walls   : "
+                << format(p.extend_velocity_beyond_walls) << std::endl;
         deallog << "  output folder                  : " << p.output_folder
                 << std::endl;
         deallog << "  output name                    : " << p.output_name
@@ -155,6 +157,7 @@ main()
             "  set filter pressure                = false\n"
             "  set minimum fluid fraction         = 1e-6\n"
             "  set normalize at domain boundaries = true\n"
+            "  set extend velocity beyond walls   = false\n"
             "  set output folder                  = ./ajf_output/\n"
             "  set output name                    = ajf\n"
             "  set verbosity                      = extra verbose\n");

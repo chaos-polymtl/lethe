@@ -84,12 +84,17 @@ namespace
       shapes.push_back(particle.shape);
     const ShapesImmersedSolidClassifier<dim> classifier(shapes);
 
-    filter.apply(
-      problem.get_dof_handler(),
-      problem.get_fluid_mapping(),
-      problem.get_fluid_solution(),
-      classifier,
-      NSparam.cfd_parameters.boundary_conditions.periodic_boundaries);
+    // Velocity imposed on the walls, at the time of the snapshot.
+    const auto wall_velocities =
+      make_wall_velocities(NSparam.cfd_parameters.boundary_conditions,
+                           problem.get_current_time());
+
+    filter.apply(problem.get_dof_handler(),
+                 problem.get_fluid_mapping(),
+                 problem.get_fluid_solution(),
+                 classifier,
+                 NSparam.cfd_parameters.boundary_conditions.periodic_boundaries,
+                 wall_velocities);
     filter.write_output(problem.get_fluid_mapping(),
                         problem.get_current_time(),
                         simulation_control.group_files);

@@ -384,6 +384,11 @@ namespace Parameters
     /// renormalizes the kernel where it is truncated by a domain boundary.
     bool normalize_at_domain_boundaries = false;
 
+    /// Fill the part of the kernel outside of the domain, beyond the walls
+    /// where the velocity is imposed, with fluid moving at the velocity of the
+    /// wall when computing the phase-averaged velocity.
+    bool extend_velocity_beyond_walls = true;
+
     /// Folder in which the filtered fields are written.
     std::string output_folder = "./filter_output/";
 

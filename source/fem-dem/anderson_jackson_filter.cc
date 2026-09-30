@@ -6,10 +6,13 @@
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 
+#include <solvers/postprocessors.h>
+
 #include <fem-dem/anderson_jackson_filter.h>
 
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/exceptions.h>
+#include <deal.II/base/function.h>
 #include <deal.II/base/quadrature.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/utilities.h>
@@ -150,6 +153,15 @@ namespace
     /// pressure.
     double pressure_moment;
 
+    /// Partial integral of the kernel over the non-periodic boundaries.
+    double boundary_weight;
+
+    /// Partial integral of the kernel over the walls.
+    double wall_weight;
+
+    /// Partial integral of the kernel times the velocity imposed on the walls.
+    std::array<double, dim> wall_velocity_moment;
+
     /**
      * @brief Serialize the contribution. The contributions are trivially
      * copyable and are sent bit for bit by Utilities::MPI::some_to_some(), but
@@ -171,8 +183,76 @@ namespace
       for (double &component : velocity_moment)
         archive &component;
       archive &pressure_moment;
+      archive &boundary_weight;
+      archive &wall_weight;
+      for (double &component : wall_velocity_moment)
+        archive &component;
     }
   };
+
+  /**
+   * @brief Pack the partial moments of a filter center to return them to its
+   * owner.
+   *
+   * @tparam dim Number of spatial dimensions.
+   *
+   * @tparam MomentsType Type of the moments of the filter.
+   *
+   * @param[in] owner_index Index of the filter center among the filter
+   * centers of its owner.
+   *
+   * @param[in] moments Partial moments of the filter center.
+   *
+   * @return Contribution sent to the owner.
+   */
+  template <int dim, typename MomentsType>
+  FilterTargetContribution<dim>
+  make_contribution(const unsigned int owner_index, const MomentsType &moments)
+  {
+    FilterTargetContribution<dim> contribution;
+    contribution.owner_index     = owner_index;
+    contribution.kernel_mass     = moments.kernel_mass;
+    contribution.fluid_volume    = moments.fluid_volume;
+    contribution.pressure_moment = moments.pressure_moment;
+    contribution.boundary_weight = moments.boundary_weight;
+    contribution.wall_weight     = moments.wall_weight;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        contribution.velocity_moment[d]      = moments.velocity_moment[d];
+        contribution.wall_velocity_moment[d] = moments.wall_velocity_moment[d];
+      }
+    return contribution;
+  }
+
+  /**
+   * @brief Unpack the partial moments of a filter center received from
+   * another process.
+   *
+   * @tparam dim Number of spatial dimensions.
+   *
+   * @tparam MomentsType Type of the moments of the filter.
+   *
+   * @param[in] contribution Contribution received from another process.
+   *
+   * @return Partial moments of the filter center.
+   */
+  template <typename MomentsType, int dim>
+  MomentsType
+  unpack_contribution(const FilterTargetContribution<dim> &contribution)
+  {
+    MomentsType moments;
+    moments.kernel_mass     = contribution.kernel_mass;
+    moments.fluid_volume    = contribution.fluid_volume;
+    moments.pressure_moment = contribution.pressure_moment;
+    moments.boundary_weight = contribution.boundary_weight;
+    moments.wall_weight     = contribution.wall_weight;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        moments.velocity_moment[d]      = contribution.velocity_moment[d];
+        moments.wall_velocity_moment[d] = contribution.wall_velocity_moment[d];
+      }
+    return moments;
+  }
 
   /**
    * @brief Return the squared distance between a point and an axis-aligned
@@ -320,6 +400,9 @@ AndersonJacksonFilter<dim>::FilterMoments::operator+=(
   fluid_volume += other.fluid_volume;
   velocity_moment += other.velocity_moment;
   pressure_moment += other.pressure_moment;
+  boundary_weight += other.boundary_weight;
+  wall_weight += other.wall_weight;
+  wall_velocity_moment += other.wall_velocity_moment;
   return *this;
 }
 
@@ -359,7 +442,8 @@ AndersonJacksonFilter<dim>::apply(
   const Mapping<dim>                   &mapping,
   const GlobalVectorType               &fluid_solution,
   const ImmersedSolidClassifier<dim>   &classifier,
-  const Parameters::PeriodicBoundaries &periodic_boundaries)
+  const Parameters::PeriodicBoundaries &periodic_boundaries,
+  const WallVelocities                 &wall_velocities)
 {
   // The kernel is a template argument of the stages that evaluate it, so that
   // the kernel evaluation in the innermost loop is not a runtime dispatch.
@@ -373,7 +457,8 @@ AndersonJacksonFilter<dim>::apply(
                    mapping,
                    fluid_solution,
                    classifier,
-                   periodic_boundaries);
+                   periodic_boundaries,
+                   wall_velocities);
     }
   else
     {
@@ -384,7 +469,8 @@ AndersonJacksonFilter<dim>::apply(
                    mapping,
                    fluid_solution,
                    classifier,
-                   periodic_boundaries);
+                   periodic_boundaries,
+                   wall_velocities);
     }
 }
 
@@ -397,7 +483,8 @@ AndersonJacksonFilter<dim>::apply_kernel(
   const Mapping<dim>                   &mapping,
   const GlobalVectorType               &fluid_solution,
   const ImmersedSolidClassifier<dim>   &classifier,
-  const Parameters::PeriodicBoundaries &periodic_boundaries)
+  const Parameters::PeriodicBoundaries &periodic_boundaries,
+  const WallVelocities                 &wall_velocities)
 {
   support_radius = kernel.support_radius();
 
@@ -429,7 +516,8 @@ AndersonJacksonFilter<dim>::apply_kernel(
                            fluid_dof_handler,
                            mapping,
                            fluid_solution,
-                           classifier);
+                           classifier,
+                           wall_velocities);
   }
 
   {
@@ -711,7 +799,8 @@ AndersonJacksonFilter<dim>::integrate_source_cells(
   const DoFHandler<dim>              &fluid_dof_handler,
   const Mapping<dim>                 &mapping,
   const GlobalVectorType             &fluid_solution,
-  const ImmersedSolidClassifier<dim> &classifier)
+  const ImmersedSolidClassifier<dim> &classifier,
+  const WallVelocities               &wall_velocities)
 {
   const FiniteElement<dim> &fluid_fe = fluid_dof_handler.get_fe();
 
@@ -731,6 +820,16 @@ AndersonJacksonFilter<dim>::integrate_source_cells(
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
+
+  // The boundary faces are integrated to extend the velocity beyond the walls.
+  const bool extend_velocity_beyond_walls =
+    filter_parameters.extend_velocity_beyond_walls && !wall_velocities.empty();
+  FEFaceValues<dim>           face_fe_values(mapping,
+                                   fluid_fe,
+                                   QGauss<dim - 1>(n_quadrature_points),
+                                   update_quadrature_points |
+                                     update_JxW_values);
+  std::vector<Tensor<1, dim>> wall_velocity_values;
 
   // The values are zero-initialized, so that the moments of the solid cells,
   // whose values are not evaluated, are zero.
@@ -865,9 +964,98 @@ AndersonJacksonFilter<dim>::integrate_source_cells(
           local_source_volume += JxW[q];
           local_source_solid_volume += JxW[q] - fluid_weight;
         }
+
+      if (!extend_velocity_beyond_walls || !cell->at_boundary())
+        continue;
+
+      // The faces on the periodic boundaries are interior faces of the
+      // periodic domain and do not truncate the kernel.
+      for (const unsigned int f : cell->face_indices())
+        {
+          if (!cell->at_boundary(f) || cell->has_periodic_neighbor(f))
+            continue;
+
+          face_fe_values.reinit(cell, f);
+          const std::vector<Point<dim>> &face_points =
+            face_fe_values.get_quadrature_points();
+
+          wall_velocity_values.clear();
+          const auto wall = wall_velocities.find(cell->face(f)->boundary_id());
+          if (wall != wall_velocities.end())
+            {
+              wall_velocity_values.resize(face_points.size());
+              for (unsigned int q = 0; q < face_points.size(); ++q)
+                for (unsigned int d = 0; d < dim; ++d)
+                  wall_velocity_values[q][d] =
+                    wall->second->value(face_points[q], d);
+            }
+
+          accumulate_boundary_face(kernel,
+                                   target_tree,
+                                   face_points,
+                                   face_fe_values.get_JxW_values(),
+                                   wall_velocity_values);
+        }
     }
 
   accumulate_batch(kernel, target_tree, batch);
+}
+
+template <int dim>
+template <typename KernelType>
+void
+AndersonJacksonFilter<dim>::accumulate_boundary_face(
+  const KernelType                  &kernel,
+  const TargetTree                  &target_tree,
+  const std::vector<Point<dim>>     &points,
+  const std::vector<double>         &weights,
+  const std::vector<Tensor<1, dim>> &wall_velocity_values)
+{
+  const bool   is_wall                = !wall_velocity_values.empty();
+  const double support_radius_squared = kernel.support_radius_squared();
+
+  Point<dim> lower_corner = points[0];
+  Point<dim> upper_corner = points[0];
+  for (const Point<dim> &point : points)
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        lower_corner[d] = std::min(lower_corner[d], point[d]);
+        upper_corner[d] = std::max(upper_corner[d], point[d]);
+      }
+
+  // Accumulate the integrals of the kernel over the face at a filter center.
+  const auto accumulate_target =
+    [&](const std::pair<Point<dim>, unsigned int> &target) {
+      const Point<dim> &center = target.first;
+      if (squared_distance_to_box(center, lower_corner, upper_corner) >=
+          support_radius_squared)
+        return;
+
+      double         boundary_weight = 0.;
+      Tensor<1, dim> wall_velocity_moment;
+      for (unsigned int q = 0; q < points.size(); ++q)
+        {
+          const double weight = kernel.value_from_squared_distance(
+                                  center.distance_square(points[q])) *
+                                weights[q];
+          boundary_weight += weight;
+          if (is_wall)
+            wall_velocity_moment += weight * wall_velocity_values[q];
+        }
+
+      FilterMoments &moments = integration_target_moments[target.second];
+      moments.boundary_weight += boundary_weight;
+      if (is_wall)
+        {
+          moments.wall_weight += boundary_weight;
+          moments.wall_velocity_moment += wall_velocity_moment;
+        }
+    };
+
+  BoundingBox<dim> search_box(std::make_pair(lower_corner, upper_corner));
+  search_box.extend(kernel.support_radius());
+  target_tree.query(boost::geometry::index::intersects(search_box),
+                    boost::make_function_output_iterator(accumulate_target));
 }
 
 template <int dim>
@@ -960,23 +1148,15 @@ AndersonJacksonFilter<dim>::exchange_partial_integrals()
         // A filter center that received no contribution lies beyond the
         // support of the kernel of every source point of this process.
         const FilterMoments &moments = integration_target_moments[i];
-        if (moments.kernel_mass <= 0.)
+        if (moments.kernel_mass <= 0. && moments.boundary_weight <= 0.)
           continue;
 
         const unsigned int owner_index = integration_target_owner_indices[i];
         if (block.process == this_process)
           owned_target_moments[owner_index] += moments;
         else
-          {
-            FilterTargetContribution<dim> contribution;
-            contribution.owner_index  = owner_index;
-            contribution.kernel_mass  = moments.kernel_mass;
-            contribution.fluid_volume = moments.fluid_volume;
-            for (unsigned int d = 0; d < dim; ++d)
-              contribution.velocity_moment[d] = moments.velocity_moment[d];
-            contribution.pressure_moment = moments.pressure_moment;
-            contributions[block.process].push_back(contribution);
-          }
+          contributions[block.process].push_back(
+            make_contribution<dim>(owner_index, moments));
       }
 
   for (const auto &process_contributions : contributions)
@@ -993,13 +1173,8 @@ AndersonJacksonFilter<dim>::exchange_partial_integrals()
          process_contributions.second)
       {
         AssertIndexRange(contribution.owner_index, owned_target_moments.size());
-        FilterMoments moments;
-        moments.kernel_mass  = contribution.kernel_mass;
-        moments.fluid_volume = contribution.fluid_volume;
-        for (unsigned int d = 0; d < dim; ++d)
-          moments.velocity_moment[d] = contribution.velocity_moment[d];
-        moments.pressure_moment = contribution.pressure_moment;
-        owned_target_moments[contribution.owner_index] += moments;
+        owned_target_moments[contribution.owner_index] +=
+          unpack_contribution<FilterMoments>(contribution);
       }
 }
 
@@ -1053,9 +1228,27 @@ AndersonJacksonFilter<dim>::normalize_filtered_fields()
         fluid_volume >= filter_parameters.minimum_fluid_fraction * kernel_mass;
       if (is_defined)
         {
+          // The part of the kernel outside of the domain, of mass 1 - M, is
+          // attributed to the walls in proportion to the integral of the
+          // kernel over the walls and over all the non-periodic boundaries,
+          // and it is filled with fluid moving at the kernel-weighted average
+          // of the wall velocity. The wall integrals are only accumulated if
+          // the velocity is extended beyond the walls.
+          double         velocity_weight = fluid_volume;
+          Tensor<1, dim> velocity_moment = moments.velocity_moment;
+          if (moments.wall_weight > 0.)
+            {
+              const double exterior_mass = std::max(0., 1. - kernel_mass) *
+                                           moments.wall_weight /
+                                           moments.boundary_weight;
+              velocity_moment += (exterior_mass / moments.wall_weight) *
+                                 moments.wall_velocity_moment;
+              velocity_weight += exterior_mass;
+            }
+
           for (unsigned int d = 0; d < dim; ++d)
             filtered_fields.velocity[d](dof) =
-              moments.velocity_moment[d] / fluid_volume;
+              velocity_moment[d] / velocity_weight;
           if (filter_parameters.filter_pressure)
             filtered_fields.pressure(dof) =
               moments.pressure_moment / fluid_volume;
@@ -1266,6 +1459,12 @@ AndersonJacksonFilter<dim>::write_output(const Mapping<dim> &mapping,
     }
   velocity.update_ghost_values();
 
+  // The gradient of the filtered velocity is the gradient of its finite
+  // element interpolant. The postprocessor is declared before the DataOut
+  // object, which refers to it until it is destroyed.
+  const GradientPostprocessor<dim> velocity_gradient(
+    "filtered_velocity_gradient");
+
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(filtered_fields.fluid_volume_fraction,
@@ -1282,6 +1481,7 @@ AndersonJacksonFilter<dim>::write_output(const Mapping<dim> &mapping,
     std::vector<std::string>(dim, "filtered_velocity"),
     std::vector<DataComponentInterpretation::DataComponentInterpretation>(
       dim, DataComponentInterpretation::component_is_part_of_vector));
+  data_out.add_data_vector(velocity_dof_handler, velocity, velocity_gradient);
   data_out.build_patches(mapping,
                          output_degree,
                          DataOut<dim>::curved_inner_cells);
@@ -1317,5 +1517,43 @@ AndersonJacksonFilter<dim>::print_timer_summary() const
   pcout << std::scientific;
 }
 
+template <int dim>
+typename AndersonJacksonFilter<dim>::WallVelocities
+make_wall_velocities(
+  BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+  const double                                   time)
+{
+  typename AndersonJacksonFilter<dim>::WallVelocities wall_velocities;
+  for (const auto &[id, type] : boundary_conditions.type)
+    {
+      if (type == BoundaryConditions::BoundaryType::noslip)
+        wall_velocities[id] =
+          std::make_shared<Functions::ZeroFunction<dim>>(dim);
+      else if (type == BoundaryConditions::BoundaryType::function ||
+               type == BoundaryConditions::BoundaryType::function_weak)
+        {
+          BoundaryConditions::NSBoundaryFunctions<dim> &functions =
+            *boundary_conditions.navier_stokes_functions.at(id);
+          functions.u.set_time(time);
+          functions.v.set_time(time);
+          functions.w.set_time(time);
+          wall_velocities[id] =
+            std::make_shared<NavierStokesFunctionDefined<dim>>(&functions.u,
+                                                               &functions.v,
+                                                               &functions.w);
+        }
+    }
+  return wall_velocities;
+}
+
 template class AndersonJacksonFilter<2>;
 template class AndersonJacksonFilter<3>;
+
+template AndersonJacksonFilter<2>::WallVelocities
+make_wall_velocities(
+  BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
+  const double                                 time);
+template AndersonJacksonFilter<3>::WallVelocities
+make_wall_velocities(
+  BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
+  const double                                 time);

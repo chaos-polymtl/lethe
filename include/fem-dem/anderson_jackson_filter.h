@@ -4,6 +4,7 @@
 #ifndef lethe_anderson_jackson_filter_h
 #define lethe_anderson_jackson_filter_h
 
+#include <core/boundary_conditions.h>
 #include <core/immersed_solid_classifier.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
@@ -12,6 +13,7 @@
 #include <core/vector.h>
 
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/function.h>
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/mpi.h>
 #include <deal.II/base/point.h>
@@ -30,6 +32,7 @@
 #include <deal.II/numerics/rtree.h>
 
 #include <array>
+#include <map>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -53,6 +56,16 @@
  * the boundaries of the domain. Optionally, both volume fractions are divided
  * by the kernel mass \f$M\f$, which renormalizes the kernel where it is
  * truncated by a boundary of the domain.
+ *
+ * Optionally, the part of the kernel outside of the domain, beyond the walls
+ * where the velocity is imposed, is filled with fluid moving at the velocity
+ * of the wall when the phase-averaged velocity is computed. The mass of this
+ * exterior part is \f$1 - M\f$, attributed to the walls in proportion to the
+ * integral of the kernel over the walls and over the other non-periodic
+ * boundaries, and its velocity is the average of the wall velocity weighted by
+ * the kernel. The integrals over the walls are accumulated by the same sweep
+ * as the integrals over the cells, from the boundary faces of the locally
+ * owned cells.
  *
  * The convolution is source-centric: every process integrates its locally
  * owned cells (the sources) once, and adds the contribution of each batch of
@@ -90,6 +103,11 @@ class AndersonJacksonFilter
 public:
   /// Type of the vectors that store the filtered fields.
   using FieldVectorType = dealii::LinearAlgebra::distributed::Vector<double>;
+
+  /// Velocity imposed on the walls, keyed by boundary id. Each function has at
+  /// least dim components, the first dim of which are the velocity.
+  using WallVelocities = std::map<dealii::types::boundary_id,
+                                  std::shared_ptr<const dealii::Function<dim>>>;
 
   /**
    * @brief Filtered fields, defined on the FE_Q space returned by
@@ -196,13 +214,18 @@ public:
    * @param[in] periodic_boundaries Pairs of periodic boundaries of the
    * triangulation. The support radius of the kernel must not exceed half of
    * the period in each periodic direction.
+   *
+   * @param[in] wall_velocities Velocity imposed on the walls, used to fill the
+   * part of the kernel beyond the walls when the parameters request it. The
+   * boundaries that are not listed truncate the kernel.
    */
   void
   apply(const dealii::DoFHandler<dim>        &fluid_dof_handler,
         const dealii::Mapping<dim>           &mapping,
         const GlobalVectorType               &fluid_solution,
         const ImmersedSolidClassifier<dim>   &classifier,
-        const Parameters::PeriodicBoundaries &periodic_boundaries);
+        const Parameters::PeriodicBoundaries &periodic_boundaries,
+        const WallVelocities                 &wall_velocities = {});
 
   /**
    * @brief Write the filtered fields in the output folder, as vtu files and a
@@ -287,6 +310,15 @@ private:
 
     /// Integral of the kernel times the fluid indicator times the pressure.
     double pressure_moment = 0.;
+
+    /// Integral of the kernel over the non-periodic boundaries.
+    double boundary_weight = 0.;
+
+    /// Integral of the kernel over the walls where the velocity is imposed.
+    double wall_weight = 0.;
+
+    /// Integral of the kernel times the imposed velocity over the walls.
+    dealii::Tensor<1, dim> wall_velocity_moment;
 
     /**
      * @brief Add the moments of another contribution.
@@ -383,6 +415,8 @@ private:
    * @param[in] classifier Description of the immersed solids.
    *
    * @param[in] periodic_boundaries Pairs of periodic boundaries.
+   *
+   * @param[in] wall_velocities Velocity imposed on the walls.
    */
   template <typename KernelType>
   void
@@ -391,7 +425,8 @@ private:
                const dealii::Mapping<dim>           &mapping,
                const GlobalVectorType               &fluid_solution,
                const ImmersedSolidClassifier<dim>   &classifier,
-               const Parameters::PeriodicBoundaries &periodic_boundaries);
+               const Parameters::PeriodicBoundaries &periodic_boundaries,
+               const WallVelocities                 &wall_velocities);
 
   /**
    * @brief Set up the FE_Q space of the filtered fields, its hanging node
@@ -449,6 +484,10 @@ private:
    * values.
    *
    * @param[in] classifier Description of the immersed solids.
+   *
+   * @param[in] wall_velocities Velocity imposed on the walls. The boundary
+   * faces are only integrated if the parameters request the extension of the
+   * velocity beyond the walls.
    */
   template <typename KernelType>
   void
@@ -457,7 +496,35 @@ private:
                          const dealii::DoFHandler<dim>      &fluid_dof_handler,
                          const dealii::Mapping<dim>         &mapping,
                          const GlobalVectorType             &fluid_solution,
-                         const ImmersedSolidClassifier<dim> &classifier);
+                         const ImmersedSolidClassifier<dim> &classifier,
+                         const WallVelocities               &wall_velocities);
+
+  /**
+   * @brief Accumulate the integrals of the kernel over a boundary face at the
+   * filter centers within the support of the kernel.
+   *
+   * @tparam KernelType Type of the kernel.
+   *
+   * @param[in] kernel Kernel of the filter.
+   *
+   * @param[in] target_tree R-tree of the filter centers.
+   *
+   * @param[in] points Quadrature points of the face.
+   *
+   * @param[in] weights Quadrature weights of the face times the surface
+   * element.
+   *
+   * @param[in] wall_velocity_values Velocity imposed at the quadrature points
+   * if the face belongs to a wall, empty otherwise.
+   */
+  template <typename KernelType>
+  void
+  accumulate_boundary_face(
+    const KernelType                          &kernel,
+    const TargetTree                          &target_tree,
+    const std::vector<dealii::Point<dim>>     &points,
+    const std::vector<double>                 &weights,
+    const std::vector<dealii::Tensor<1, dim>> &wall_velocity_values);
 
   /**
    * @brief Accumulate the contribution of a batch of source points to the
@@ -620,5 +687,28 @@ private:
   /// Number of outputs written.
   unsigned int n_outputs = 0;
 };
+
+/**
+ * @brief Build the velocity imposed on the walls of a fluid dynamics
+ * simulation, for the extension of the filtered velocity beyond the walls. The
+ * walls are the boundaries with a noslip, function or function weak boundary
+ * condition. The other boundaries (e.g. slip, outlets and periodic
+ * boundaries) are not walls.
+ *
+ * @tparam dim Number of spatial dimensions.
+ *
+ * @param[in,out] boundary_conditions Boundary conditions of the fluid
+ * dynamics. The time of their functions is set, and the returned functions
+ * refer to them, so they must outlive the returned functions.
+ *
+ * @param[in] time Time at which the imposed velocity is evaluated.
+ *
+ * @return Velocity imposed on each wall, keyed by boundary id.
+ */
+template <int dim>
+typename AndersonJacksonFilter<dim>::WallVelocities
+make_wall_velocities(
+  BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+  const double                                   time);
 
 #endif

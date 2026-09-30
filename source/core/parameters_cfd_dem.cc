@@ -513,6 +513,16 @@ namespace Parameters
                       "kernel mass. This renormalizes the kernel where it is "
                       "truncated by a domain boundary, which changes the "
                       "definition of the filter near the boundaries.");
+    prm.declare_entry("extend velocity beyond walls",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.extend_velocity_beyond_walls),
+                      Patterns::Bool(),
+                      "Fill the part of the kernel outside of the domain, "
+                      "beyond the walls where the velocity is imposed "
+                      "(noslip, function and function weak boundary "
+                      "conditions), with fluid moving at the velocity of the "
+                      "wall when computing the phase-averaged velocity. If "
+                      "false, the kernel is truncated by the walls.");
     prm.declare_entry("output folder",
                       defaults.output_folder,
                       Patterns::FileName(),
@@ -553,8 +563,9 @@ namespace Parameters
     minimum_fluid_fraction = prm.get_double("minimum fluid fraction");
     normalize_at_domain_boundaries =
       prm.get_bool("normalize at domain boundaries");
-    output_folder = prm.get("output folder");
-    output_name   = prm.get("output name");
+    extend_velocity_beyond_walls = prm.get_bool("extend velocity beyond walls");
+    output_folder                = prm.get("output folder");
+    output_name                  = prm.get("output name");
 
     const std::string op = prm.get("verbosity");
     if (op == "quiet")

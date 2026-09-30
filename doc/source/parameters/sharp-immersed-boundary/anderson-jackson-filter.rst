@@ -8,6 +8,8 @@ Anderson-Jackson Filter
 
 The ``lethe-fluid-sharp-filter`` application computes the phase-averaged fields of Anderson and Jackson [#anderson1967]_ from a resolved CFD-DEM snapshot of ``lethe-fluid-sharp``. These fields are the fluid and solid volume fractions and the fluid velocity and pressure averaged over a filter of finite width. They are the fields that an unresolved (volume-averaged) CFD-DEM model describes, and can thus be used to develop and verify such models.
 
+The theory of the filter and its parallel algorithm are described in :doc:`../../theory/multiphase/cfd_dem/filtering_resolved_cfd-dem`.
+
 The application reads the same parameter file as ``lethe-fluid-sharp``, extended with the ``anderson jackson filter`` subsection. It restores the mesh, the velocity-pressure solution and the particles from the checkpoint of the simulation when ``restart = true`` in the ``restart`` subsection (see :doc:`../cfd/restart`), filters them, and writes the filtered fields. It does not advance the simulation in time. When ``restart = false``, the initial condition of the simulation is filtered instead.
 
 .. code-block:: text
@@ -62,6 +64,7 @@ Parameters
     set filter pressure                = true
     set minimum fluid fraction         = 1e-12
     set normalize at domain boundaries = false
+    set extend velocity beyond walls   = true
     set output folder                  = ./filter_output/
     set output name                    = filtered
     set verbosity                      = quiet
@@ -85,6 +88,8 @@ Parameters
 
 * The ``normalize at domain boundaries`` parameter divides the fluid and solid volume fractions by the kernel mass :math:`M`, which renormalizes the kernel where it is truncated by a wall. With this option, :math:`\epsilon_f + \epsilon_s = 1` everywhere, but the filter is no longer a convolution near the walls. The phase-averaged velocity and pressure are not affected, since they are ratios of integrals of the same kernel.
 
+* The ``extend velocity beyond walls`` parameter fills the part of the kernel located outside of the domain, beyond the walls where the velocity is imposed (``noslip``, ``function`` and ``function weak`` boundary conditions), with fluid moving at the velocity of the wall when the phase-averaged velocity is computed. The velocity of the wall is evaluated at the time of the snapshot. Without this extension, the kernel is truncated by the walls, and the averaged velocity near a wall is the velocity at the centroid of the truncated kernel, which lies inside the domain. For a linear velocity profile, the extension halves the deviation of the averaged velocity from the exact one at the wall, and raises the gradient of the averaged velocity on the wall from about a third to one half of the exact gradient (see :doc:`../../theory/multiphase/cfd_dem/filtering_resolved_cfd-dem`). The volume fractions and the averaged pressure are not affected. The other boundaries, such as outlets and slip walls, always truncate the kernel.
+
 * The ``output folder`` and ``output name`` parameters define the location and the prefix of the vtu files and of the pvd file of the filtered fields. They must differ from the ``output folder`` and ``output name`` of the ``simulation control`` subsection, so that the output of the simulation is not overwritten. The number of vtu files is set by the ``group files`` parameter of the ``simulation control`` subsection.
 
 * The ``verbosity`` parameter controls the diagnostics printed by the filter. With ``verbose``, the parameters of the kernel and global statistics of the filtered fields are printed. With ``extra verbose``, the distribution of the filter centers among the processes is printed as well. The choices are ``quiet``, ``verbose`` and ``extra verbose``.
@@ -100,6 +105,7 @@ The following fields are written:
 * ``fluid_volume_fraction`` and ``solid_volume_fraction``: the volume fractions :math:`\epsilon_f` and :math:`\epsilon_s`;
 * ``kernel_mass``: the kernel mass :math:`M`, which is one away from the walls, up to the quadrature error of the kernel;
 * ``filtered_velocity``: the phase-averaged fluid velocity :math:`\bar{\mathbf{u}}_f`;
+* ``filtered_velocity_gradient``: the gradient :math:`\nabla \bar{\mathbf{u}}_f` of the phase-averaged fluid velocity, computed from its finite element interpolant. Its components are numbered as those of the ``velocity_gradient`` of the fluid solvers (0 = xx, 1 = xy, ...), where xy is the derivative of the x component along y. This is the gradient of the averaged velocity, which differs from the phase average of the velocity gradient by the integral of the velocity over the surface of the particles within the kernel. Near the filter centers where the averages are not defined (``valid`` = 0), the averaged velocity drops to zero and its gradient is meaningless. Within the support radius of a wall, the kernel is truncated and off-centered, which underestimates this gradient, down to about a third of the exact gradient on the wall for a gaussian truncated at three standard deviations, or one half with ``extend velocity beyond walls = true`` (see :doc:`../../theory/multiphase/cfd_dem/filtering_resolved_cfd-dem`);
 * ``filtered_pressure``: the phase-averaged fluid pressure :math:`\bar{p}_f`, if the pressure is filtered;
 * ``valid``: one where the phase-averaged velocity and pressure are defined, zero otherwise.
 

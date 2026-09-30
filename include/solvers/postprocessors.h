@@ -4,12 +4,17 @@
 #ifndef lethe_postprocessors_h
 #define lethe_postprocessors_h
 
+#include <core/density_model.h>
 #include <core/rheological_model.h>
+#include <core/thermal_conductivity_model.h>
 
+#include <deal.II/base/function.h>
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/numerics/data_postprocessor.h>
 
+#include <memory>
+#include <string>
 #include <vector>
 
 using namespace dealii;
@@ -210,9 +215,11 @@ class GradientPostprocessor : public DataPostprocessorTensor<dim>
 public:
   /**
    * @brief Constructor of the velocity gradient postprocessor.
+   *
+   * @param[in] name Name of the gradient in the output files.
    */
-  GradientPostprocessor()
-    : DataPostprocessorTensor<dim>("velocity_gradient", update_gradients)
+  GradientPostprocessor(const std::string &name = "velocity_gradient")
+    : DataPostprocessorTensor<dim>(name, update_gradients)
   {}
 
   /**
