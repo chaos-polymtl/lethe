@@ -1,0 +1,194 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+# This test is the solid-object case for the 3d-heat-transfer-in-aligned-particles
+# example of the dem-mp folder. Ten aligned particles at 0 C are held in compression
+# between two static plates, which are isothermal solid objects, and exchange heat
+# by conduction with them and between themselves. It verifies the solid object with
+# an imposed temperature with the isothermal boundary condition. The end time of
+# the simulation is chosen so the temperature inside the particles fit the expected
+# equilibrium linear profile. It also validate conjointly the
+# heat_transfer_in_aligned_particles_01 test of the lethe-fluid-particles solver
+# has both test represent the same physic.
+#
+# The chain is inserted already compressed and the plates are placed where the
+# plates of the example come to rest (x = +-0.049), which is also where the
+# walls of the grid are in the heat_transfer_in_aligned_particles_01 test. The
+# left plate stays at 0 C and the right plate is switched from 0 C to 50 C at
+# t = 0.3, as the walls of that test.
+#
+# The contact force and the thermal conductance of a particle-solid object
+# contact are the same as for a particle-wall contact, and the
+# heat_transfer_in_aligned_particles_01 test has no fluid-particle force. The
+# temperatures should therefore be the temperatures of that
+# test for the final time (t=10).
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 5e-5
+  set time end         = 10
+  set log frequency    = 1000000
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = constant
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set solver type                            = dem_mp
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0.0, 0.0, 0.0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.01
+    set number of particles               = 10
+    set density particles                 = 2500
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.3
+    set thermal conductivity particles    = 3000
+    set specific heat particles           = 300
+    set microhardness particles           = 1.e9
+    set surface slope particles           = 0.1
+    set surface roughness particles       = 1.e-9
+    set thermal accommodation particles   = 0.7
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0.3
+  set thermal conductivity wall    = 100
+  set microhardness wall           = 1.e9
+  set surface slope wall           = 0.1
+  set surface roughness wall       = 1.e-10
+  set thermal accommodation wall   = 0.7
+  set thermal conductivity gas     = 0.2
+  set specific heat gas            = 10000
+  set dynamic viscosity gas        = 9.e-6
+  set specific heats ratio gas     = 1.4
+  set molecular mean free path gas = 68.e-9
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method    = file
+  set insertion frequency = 10000
+  set list of input files = particles-wall-heating.input
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -0.15 , -0.025 , -0.025 : 0.15 , 0.025 , 0.025 : false
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Solid Objects
+#---------------------------------------------------
+
+# Each plate is a square of the plane z = 0, of side 0.04, rotated by pi/2
+# around the y axis to be normal to the x axis, and translated to x = +-0.049.
+
+subsection solid objects
+  subsection solid surfaces
+    set number of solids = 2
+    subsection solid object 0
+      subsection mesh
+        set type                   = dealii
+        set grid type              = hyper_rectangle
+        set grid arguments         = -0.02, -0.02 : 0.02, 0.02 : false
+        set simplex                = true
+        set initial refinement     = 0
+        set initial rotation axis  = 0, 1, 0
+        set initial rotation angle = 1.5707963267948966
+        set initial translation    = -0.049, 0, 0
+      end
+      subsection translational velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      subsection angular velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      set center of rotation    = -0.049 , 0 , 0
+      set thermal boundary type = isothermal
+      subsection temperature
+        set Function expression = 0
+      end
+    end
+    subsection solid object 1
+      subsection mesh
+        set type                   = dealii
+        set grid type              = hyper_rectangle
+        set grid arguments         = -0.02, -0.02 : 0.02, 0.02 : false
+        set simplex                = true
+        set initial refinement     = 0
+        set initial rotation axis  = 0, 1, 0
+        set initial rotation angle = 1.5707963267948966
+        set initial translation    = 0.049, 0, 0
+      end
+      subsection translational velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      subsection angular velocity
+        set Function expression = 0 ; 0 ; 0
+      end
+      set center of rotation    = 0.049 , 0 , 0
+      set thermal boundary type = isothermal
+      subsection temperature
+        set Function expression = if(t > 0.3, 50, 0)
+      end
+    end
+  end
+end
