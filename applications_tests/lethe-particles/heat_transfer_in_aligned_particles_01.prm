@@ -24,7 +24,7 @@
 # contact are the same as for a particle-wall contact, and the
 # heat_transfer_in_aligned_particles_01 test has no fluid-particle force. The
 # temperatures should therefore be the temperatures of that
-# test at the final time (t = 9.75), which is also the time of the last
+# test at the final time (t = 9), which is also the time of the last
 # particle summary of that test since it prints the value.
 
 set dimension = 3
@@ -35,7 +35,7 @@ set dimension = 3
 
 subsection simulation control
   set time step        = 5e-5
-  set time end         = 9.75
+  set time end         = 9
   set log frequency    = 1000000
   set output frequency = 0
 end
