@@ -456,7 +456,7 @@
 <figure class="align-default">
 <a class="reference internal image-reference" href="../_images/apple.png"><img alt="../_images/apple.png" src="../_images/apple.png" style="height: 100px;" /></a>
 </figure>
-<p>Lethe can be now be deployed on Apple ARM chips. The support for these chips is experimental, but all Lethe solvers can be deployed for this type of architecture. So far, we have found that Lethe performs very efficiently on Apple ARM architecture.</p>
+<p>Lethe can be deployed on Apple ARM chips.</p>
 <p>The installation of Lethe consists in two steps:
 1. Installation of deal.II using the Candi toolset
 2. Installation of Lethe</p>
@@ -464,8 +464,8 @@
 <section id="installing-deal-ii-using-candi-step-1">
 <h2>Installing deal.II Using Candi (Step #1)<a class="headerlink" href="#installing-deal-ii-using-candi-step-1" title="Link to this heading">#</a></h2>
 <p>To install the dependencies (mpi, p4est, trilinos and METIS) all together using Candi, the following <a class="reference external" href="https://github.com/dealii/dealii/wiki/Apple-ARM-M1-OSX">procedure</a> on the deal.II wiki can be followed.</p>
-<p>Clone the candi git repository in a folder of your choice  (e.g. <code class="docutils literal notranslate"><span class="pre">$HOME/software/</span></code>). You can edit the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file if you want to force the installation of the deal.II master version instead of the current stable version by setting <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code> on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.</p>
-<p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail.</p>
+<p>Clone the candi git repository in a folder of your choice  (e.g. <code class="docutils literal notranslate"><span class="pre">$HOME/software/</span></code>). You can edit the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file if you want to force the installation of the deal.II master version instead of the current stable version by setting <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code>. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.</p>
+<p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. Since candi installs a more recent version of p4est by default, select version 2.3.6 in the <code class="docutils literal notranslate"><span class="pre">deal.II-toolchain/packages/p4est.package</span></code> file of candi: uncomment its <code class="docutils literal notranslate"><span class="pre">VERSION=2.3.6</span></code> line and the <code class="docutils literal notranslate"><span class="pre">CHECKSUM</span></code> line that follows it, and comment the <code class="docutils literal notranslate"><span class="pre">VERSION</span></code> and <code class="docutils literal notranslate"><span class="pre">CHECKSUM</span></code> lines of the default version.</p>
 <p>From the candi folder, the installation of candi can be launched using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./candi.sh -j $num_proc --prefix=$path --packages="parmetis p4est trilinos dealii"
 </pre></div>

@@ -460,7 +460,11 @@
 <p class="admonition-title">Important</p>
 <p>Distributions on which compatibility was tested are: Ubuntu 22.04 LTS, Ubuntu 24.04 LTS, Centos 7 and Manjaro.</p>
 </div>
-<p>Lethe requires a modern version of the <a class="reference external" href="https://www.dealii.org/">deal.II library</a> and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.7</span></code> and <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.8pre</span></code> (the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch version) are supported. A <a class="reference external" href="https://github.com/chaos-polymtl/dealii">dealii fork</a> is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested.</p>
+<p>Lethe requires a modern version of the <a class="reference external" href="https://www.dealii.org/">deal.II library</a> and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.7</span></code>, <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.8</span></code> and <code class="docutils literal notranslate"><span class="pre">deal.II</span> <span class="pre">9.9pre</span></code> (the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch version) are supported. A <a class="reference external" href="https://github.com/chaos-polymtl/dealii">dealii fork</a> is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Since September 2026, Lethe requires deal.II to be compiled with <a class="reference external" href="https://github.com/Neargye/magic_enum">magic_enum</a> (<code class="docutils literal notranslate"><span class="pre">DEAL_II_WITH_MAGIC_ENUM=ON</span></code>). The configuration of Lethe stops with an error if it is not the case. deal.II 9.8 and newer ship a bundled copy of magic_enum and enable it by default, so no action is required with these versions, including when deal.II is installed with candi or manually. The deal.II 9.7.1 packages installed with <code class="docutils literal notranslate"><span class="pre">apt</span></code> and the <a class="reference external" href="https://hub.docker.com/r/dealii/dealii/">deal.II Docker images</a> also include it. Only a deal.II 9.7 installation compiled from source requires a separate installation of magic_enum (see <a class="reference internal" href="#install-deal-ii-manually"><span class="std std-ref">Installing deal.II manually</span></a>).</p>
+</div>
 <p><strong>Lethe installation steps:</strong></p>
 <ol class="arabic simple">
 <li><p>Installing deal.II</p></li>
@@ -488,19 +492,18 @@ sudo apt update
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>apt show libdeal.ii-dev
 </pre></div>
 </div>
-<p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.6.0</span></code> is the output</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Version</span></code> field of the output should start with <code class="docutils literal notranslate"><span class="pre">9.7.1</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.7.1</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
+<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">9.7.1</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
 </div>
 </section>
 <section id="installing-deal-ii-using-candi">
 <span id="install-deal-ii-candi"></span><h2>Installing deal.II using Candi<a class="headerlink" href="#installing-deal-ii-using-candi" title="Link to this heading">#</a></h2>
 <p>To install the dependencies (MPI, p4est, trilinos and METIS) all together using candi, the <a class="reference external" href="https://github.com/dealii/candi.git">procedure</a> on the candi repository can be followed.</p>
-<p>Clone the candi git repository in a folder of your choice  (e.g. <code class="docutils literal notranslate"><span class="pre">/home/username/software</span></code>). Edit the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file to alter which dependencies are compiled. This file should notably be used to force the installation of the deal.II master version directly instead of the current stable version by setting <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code> on line 97.</p>
-<p>The following packages (which are specified after line 57) should be installed:</p>
-<blockquote>
-<div><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>PACKAGES="load:dealii-prepare"
+<p>Clone the candi git repository in a folder of your choice  (e.g. <code class="docutils literal notranslate"><span class="pre">/home/username/software</span></code>). Edit the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file to alter which dependencies are compiled. This file should notably be used to force the installation of the deal.II master version directly instead of the current stable version by setting <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code>.</p>
+<p>The following packages (which are specified by the <code class="docutils literal notranslate"><span class="pre">PACKAGES</span></code> lines) should be installed:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>PACKAGES="load:dealii-prepare"
 PACKAGES="${PACKAGES} once:numdiff"
 PACKAGES="${PACKAGES} once:opencascade"
 PACKAGES="${PACKAGES} once:parmetis"
@@ -509,9 +512,12 @@ PACKAGES="${PACKAGES} once:trilinos"
 PACKAGES="${PACKAGES} dealii"
 </pre></div>
 </div>
-</div></blockquote>
 <p>Other packages can be disabled by simply commenting out the lines (adding a <code class="docutils literal notranslate"><span class="pre">#</span></code> at the beginning of the lines)</p>
-<p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail.</p>
+<p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail. Since candi installs a more recent version of p4est by default, select version 2.3.6 in the <code class="docutils literal notranslate"><span class="pre">deal.II-toolchain/packages/p4est.package</span></code> file of candi: uncomment its <code class="docutils literal notranslate"><span class="pre">VERSION=2.3.6</span></code> line and the <code class="docutils literal notranslate"><span class="pre">CHECKSUM</span></code> line that follows it, and comment the <code class="docutils literal notranslate"><span class="pre">VERSION</span></code> and <code class="docutils literal notranslate"><span class="pre">CHECKSUM</span></code> lines of the default version.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>deal.II 9.8 and newer ship a bundled copy of magic_enum, which is used if magic_enum is not found on your system. deal.II 9.7 does not. To do so, install <a class="reference external" href="https://github.com/Neargye/magic_enum">magic_enum</a> first (e.g. <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">libmagicenum-dev</span></code> on Ubuntu 24.04 or later). Then, modify the following line in the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file: <code class="docutils literal notranslate"><span class="pre">DEAL_II_CONFOPTS=&quot;-DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation&quot;</span></code>.</p>
+</div>
 <p>From the candi folder, the installation of candi can be launched using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./candi.sh -j$numproc --prefix=$path
 </pre></div>
@@ -524,7 +530,7 @@ PACKAGES="${PACKAGES} dealii"
 <p>After installation, you should have a <code class="docutils literal notranslate"><span class="pre">deal.II-candi</span></code> folder in the installation prefix directory, with the dealii folder of the desired version (see section <a class="reference internal" href="#update-dealii"><span class="std std-ref">Updating deal.II</span></a>), as well as the required dependencies (p4est, trilinos, etc.).</p>
 <p>After installation, add the following lines variable to your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> :</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>  source candi/install/prefix/configuration/enable.sh
-  export DEAL_II_DIR=candi/install/prefix/deal.II-v.&lt;version&gt;
+  export DEAL_II_DIR=candi/install/prefix/deal.II-&lt;version&gt;
 </pre></div>
 </div>
 </section>
@@ -540,8 +546,12 @@ cd build
 </pre></div>
 </div>
 <p>Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries.</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DDEAL_II_WITH_MAGIC_ENUM=ON -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>deal.II 9.8 and newer ship a bundled copy of magic_enum, which is used if magic_enum is not found on your system. However, deal.II 9.7 does not. To do so, install <a class="reference external" href="https://github.com/Neargye/magic_enum">magic_enum</a> first (e.g. <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">libmagicenum-dev</span></code> on Ubuntu 24.04 or later). Then, add <code class="docutils literal notranslate"><span class="pre">-DMAGIC_ENUM_DIR=path/to/your/magic_enum/installation</span></code> to the command above if it is not installed in a standard location.</p>
 </div>
 <p>Compile deal.II</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j$numprocs install
@@ -624,8 +634,8 @@ sudo apt upgrade -y
 </section>
 <section id="with-candi">
 <h3>With Candi<a class="headerlink" href="#with-candi" title="Link to this heading">#</a></h3>
-<p>In the candi folder (for instance, <code class="docutils literal notranslate"><span class="pre">/home/username/software/candi</span></code>), modify the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> to get the latest dealii version, by changing the <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION</span></code> variable in the case of an official release with its number (e.g. <code class="docutils literal notranslate"><span class="pre">v9.6.0</span></code>), or by changing it to <code class="docutils literal notranslate"><span class="pre">master</span></code> in the case of a development release. The <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file should contain on lines 96-97:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span># Install the following deal.II version (choose master, v9.6.0, ...)
+<p>In the candi folder (for instance, <code class="docutils literal notranslate"><span class="pre">/home/username/software/candi</span></code>), modify the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> to get the latest dealii version, by changing the <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION</span></code> variable in the case of an official release with its number (e.g. <code class="docutils literal notranslate"><span class="pre">v9.8.0</span></code>), or by changing it to <code class="docutils literal notranslate"><span class="pre">master</span></code> in the case of a development release. The <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file should contain:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span># Install the following deal.II version (choose master, v9.8.0, ...)
 DEAL_II_VERSION=master
 </pre></div>
 </div>

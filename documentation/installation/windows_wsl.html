@@ -462,7 +462,7 @@
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>This tutorial is aimed at Windows users who have no prior knowledge of Linux. To keep it simple, all dependencies are installed using candi. Installation options given in this tutorial are well suited for lethe users. If you are a developer or need more options, see <a class="reference internal" href="regular_installation.html"><span class="doc">Regular Installation on Linux</span></a>.</p>
+<p>This tutorial is aimed at Windows users who have no prior knowledge of Linux. It installs Lethe in Ubuntu 24.04 LTS, running in the Windows Subsystem for Linux (WSL). If you are a developer or need more options, see <a class="reference internal" href="regular_installation.html"><span class="doc">Regular Installation on Linux</span></a>.</p>
 </div>
 <dl class="simple">
 <dt>Throughout this tutorial:</dt><dd><ul class="simple">
@@ -478,24 +478,21 @@
 <section id="installing-wsl-and-ubuntu-step-0">
 <h2>Installing WSL and Ubuntu (Step #0)<a class="headerlink" href="#installing-wsl-and-ubuntu-step-0" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> Install WSL (Windows Subsystem for Linux). Open PowerShell or Windows Command Prompt in administrator mode by right-clicking and selecting “Run as administrator”, enter the wsl –install command, then restart your machine.</p></li>
+<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> Install WSL (Windows Subsystem for Linux) and Ubuntu 24.04 LTS. Open PowerShell or the Windows Command Prompt in administrator mode by right-clicking on it and selecting “Run as administrator”, enter the following command, then restart your computer:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>wsl --install
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>wsl --install -d Ubuntu-24.04
 </pre></div>
 </div>
-<ol class="arabic simple" start="2">
-<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> Enable WSL and Ubuntu 22.04 LTS from the microsoft store, following the steps indicated <a class="reference external" href="https://linuxconfig.org/ubuntu-22-04-on-wsl-windows-subsystem-for-linux">in this tutorial</a></p></li>
-</ol>
 <div class="admonition-verify-the-installed-version-of-wsl admonition">
 <p class="admonition-title">Verify the installed version of WSL</p>
-<p>In the windows command prompt (Start menu &gt; <code class="docutils literal notranslate"><span class="pre">cmd</span></code>):</p>
+<p>In the Windows command prompt (Start menu &gt; <code class="docutils literal notranslate"><span class="pre">cmd</span></code>):</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>wsl -l -v
 </pre></div>
 </div>
-<p>should indicate <code class="docutils literal notranslate"><span class="pre">version</span> <span class="pre">2</span></code>. If not, follow this to update WSL: <a class="reference external" href="https://docs.microsoft.com/fr-fr/windows/wsl/install#upgrade-version-from-wsl-1-to-wsl-2">https://docs.microsoft.com/fr-fr/windows/wsl/install#upgrade-version-from-wsl-1-to-wsl-2</a></p>
+<p>should indicate <code class="docutils literal notranslate"><span class="pre">2</span></code> in the <code class="docutils literal notranslate"><span class="pre">VERSION</span></code> column. If not, follow <a class="reference external" href="https://learn.microsoft.com/en-us/windows/wsl/install#upgrade-version-from-wsl-1-to-wsl-2">these instructions</a> to upgrade to WSL 2.</p>
 </div>
-<ol class="arabic simple" start="3">
-<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> Launch Ubuntu (from the start menu) and <a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> update Ubuntu:</p></li>
+<ol class="arabic simple" start="2">
+<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> Launch Ubuntu 24.04 LTS from the Start menu. The first time, you will be asked to choose a username and a password for Ubuntu. Then, <a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> update Ubuntu:</p></li>
 </ol>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt update
 sudo apt upgrade
@@ -503,29 +500,12 @@ sudo apt upgrade
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">sudo</span></code> command will ask you to type your user password, as defined during Ubuntu installation. Note that Linux does not show any symbol while typing a password, contrary to Windows with <code class="docutils literal notranslate"><span class="pre">*</span></code>: simply type your password and press <code class="docutils literal notranslate"><span class="pre">Enter</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sudo</span></code> command will ask you to type your Ubuntu password. Note that Linux does not show any symbol while typing a password, contrary to Windows with <code class="docutils literal notranslate"><span class="pre">*</span></code>: simply type your password and press <code class="docutils literal notranslate"><span class="pre">Enter</span></code>.</p>
 </div>
-<p>When prompted “do you want to continue?”, proceed by typing <code class="docutils literal notranslate"><span class="pre">y</span></code> and hitting <code class="docutils literal notranslate"><span class="pre">Enter</span></code>.</p>
-<ol class="arabic simple" start="4">
-<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> (optional) To activate copy/paste in the Linux sub-terminal (<a class="reference external" href="https://defragged.org/2020/10/29/how-to-copy-paste-in-windows-subsystem-for-linux-wsl/">tutorial with screenshots</a>):</p></li>
+<p>When prompted “Do you want to continue?”, proceed by typing <code class="docutils literal notranslate"><span class="pre">y</span></code> and hitting <code class="docutils literal notranslate"><span class="pre">Enter</span></code>.</p>
+<ol class="arabic simple" start="3">
+<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> (optional) For better ease in the Linux terminal (better coloring, multiple tabs), use <code class="docutils literal notranslate"><span class="pre">Windows</span> <span class="pre">Terminal</span></code> to launch Ubuntu. It is installed by default on Windows 11 and can be downloaded from the Microsoft Store on Windows 10. In its settings, you can select the Ubuntu profile as the default profile. In the terminal, use <code class="docutils literal notranslate"><span class="pre">Ctrl+Shift+C</span></code> and <code class="docutils literal notranslate"><span class="pre">Ctrl+Shift+V</span></code> to copy and paste text or commands.</p></li>
 </ol>
-<blockquote>
-<div><ul class="simple">
-<li><p>right-click on the Ubuntu Window pane header</p></li>
-<li><p>in <code class="docutils literal notranslate"><span class="pre">Properties</span></code>, select <code class="docutils literal notranslate"><span class="pre">Use</span> <span class="pre">Ctrl+Shift+C/V</span> <span class="pre">as</span> <span class="pre">Copy/Paste</span></code></p></li>
-<li><p>you can then use <code class="docutils literal notranslate"><span class="pre">Ctrl+Shift+V</span></code> to paste text or commands in the Linux sub-terminal</p></li>
-</ul>
-</div></blockquote>
-<ol class="arabic simple" start="5">
-<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> (optional) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:</p></li>
-</ol>
-<blockquote>
-<div><ul class="simple">
-<li><p>in the microsoft store, download <code class="docutils literal notranslate"><span class="pre">Windows</span> <span class="pre">Terminal</span></code></p></li>
-<li><p>in the <code class="docutils literal notranslate"><span class="pre">parameters</span></code> of <code class="docutils literal notranslate"><span class="pre">Windows</span> <span class="pre">Terminal</span></code>, select on the left panel “start”: change default profile with <code class="docutils literal notranslate"><span class="pre">Ubuntu-22.04</span></code></p></li>
-<li><p>from now on, you can use this application instead to launch Ubuntu terminal</p></li>
-</ul>
-</div></blockquote>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <dl class="simple">
@@ -535,59 +515,65 @@ sudo apt upgrade
 <li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">..</span></code>: move up to the parent directory</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pwd</span></code>: (print working directory) return the directory you are in</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">$HOME</span></code>: move to your home directory (<code class="docutils literal notranslate"><span class="pre">/home/&lt;user_name&gt;/</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">explorer.exe</span> <span class="pre">.</span></code>: open the directory you are in with the Windows File Explorer</p></li>
 </ul>
 </dd>
 </dl>
 <p>You can find <a class="reference external" href="https://linuxconfig.org/linux-commands">here</a> a thorough guide for the most basic Linux commands.</p>
 </div>
-<p>The following step is to install deal.II. This can be done through</p>
+<p>The following step is to install deal.II, the finite element library on which Lethe is built. This can be done through</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>Advanced Packaging Tool (apt) (<strong>this is by far the easiest way to proceed</strong>) : <a class="reference internal" href="#install-deal-ii-apt"><span class="std std-ref">Installing deal.II using apt (Step #1)</span></a> (recommended for users)</p></li>
-<li><p>Candi shell script (<a class="reference external" href="https://github.com/dealii/candi">candi github page</a>): <a class="reference internal" href="#install-deal-ii-candi"><span class="std std-ref">Installing deal.II using Candi (Step #1)</span></a> (recommended for developers)</p></li>
+<li><p>Candi shell script (<a class="reference external" href="https://github.com/dealii/candi">candi github page</a>), which compiles deal.II and its dependencies from source: <a class="reference internal" href="#install-deal-ii-candi"><span class="std std-ref">Installing deal.II using Candi (Step #1)</span></a> (recommended for developers)</p></li>
 </ol>
 </div></blockquote>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Since September 2026, Lethe requires deal.II to be compiled with <a class="reference external" href="https://github.com/Neargye/magic_enum">magic_enum</a>. The deal.II package installed with apt already includes it, and deal.II 9.8, installed by candi, ships a bundled copy of it: no action is required.</p>
+</div>
 </section>
 <section id="installing-deal-ii-using-apt-step-1">
 <span id="install-deal-ii-apt"></span><h2>Installing deal.II using apt (Step #1)<a class="headerlink" href="#installing-deal-ii-using-apt-step-1" title="Link to this heading">#</a></h2>
 <p>This is done following <a class="reference external" href="https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux">this procedure</a>.</p>
 <ol class="arabic simple">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> In case you are using Ubuntu, you will need to <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.7.1-backports">update the backports</a>:</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> The deal.II version provided by Ubuntu 24.04 is too old for Lethe. Add the <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.7.1-backports">deal.II backports</a>, which provide a more recent version:</p></li>
 </ol>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
 sudo apt update
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> To install deal.II, run:</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Install deal.II, along with the tools required to compile and test Lethe:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt-get install libdeal.ii-dev
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt install libdeal.ii-dev build-essential cmake git numdiff
 </pre></div>
 </div>
 <p>To verify if the correct version of deal.II is installed, run:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>apt show libdeal.ii-dev
 </pre></div>
 </div>
-<p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.7.1</span></code> is output</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Version</span></code> field of the output should start with <code class="docutils literal notranslate"><span class="pre">9.7.1</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.7.1</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
+<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">9.7.1</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
 </div>
+<p>You can now proceed to <a class="reference internal" href="#install-lethe-wsl"><span class="std std-ref">Installing Lethe (Step #2)</span></a>.</p>
 </section>
 <section id="installing-deal-ii-using-candi-step-1">
 <span id="install-deal-ii-candi"></span><h2>Installing deal.II using Candi (Step #1)<a class="headerlink" href="#installing-deal-ii-using-candi-step-1" title="Link to this heading">#</a></h2>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>This step is by far the most troublesome in all Lethe installation. Read and follow each step carefully.</p>
+<p>Candi compiles deal.II and all its dependencies from source, which takes from 1 to 3 hours. Read and follow each step carefully.</p>
 </div>
 <ol class="arabic simple">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Install candi required packages:</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Install the packages required by candi and Lethe:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt-get install lsb-release git subversion wget \
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt install lsb-release git subversion wget \
 bc libgmp-dev build-essential autoconf automake cmake \
 libtool gfortran libboost-all-dev zlib1g-dev openmpi-bin \
 openmpi-common libopenmpi-dev libblas3 libblas-dev \
-liblapack3 liblapack-dev libsuitesparse-dev
+liblapack3 liblapack-dev libsuitesparse-dev numdiff
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -595,117 +581,45 @@ liblapack3 liblapack-dev libsuitesparse-dev
 <p>The symbols <code class="docutils literal notranslate"><span class="pre">\</span></code> indicate that this a single command written on multiple lines.</p>
 </div>
 <ol class="arabic simple" start="2">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Install compilers:</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Create a <code class="docutils literal notranslate"><span class="pre">Software</span></code> folder and download candi in it:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt-get install gcc-10 g++-10 gfortran-10
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir -p $HOME/Software; cd $HOME/Software
+git clone https://github.com/dealii/candi.git
+cd candi
 </pre></div>
 </div>
-<div class="admonition-check-the-default-version-of-the-compilers admonition">
-<p class="admonition-title">Check the default version of the compilers</p>
-<p>In the Ubuntu terminal:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>gcc --version
-</pre></div>
-</div>
-<p>should return <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">(Ubuntu</span> <span class="pre">10.X.X...)</span> <span class="pre">10.X.X</span></code> or higher. If not, go to <a class="reference internal" href="#change-compiler-default-version"><span class="std std-ref">Change Compiler Default Version</span></a>.</p>
-</div>
+<p>Note the use of <code class="docutils literal notranslate"><span class="pre">;</span></code> which enables to serialize operations on a single execution line.</p>
 <ol class="arabic simple" start="3">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Create folders (suggested structure):</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Open the candi folder with the Windows File Explorer:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir Software; cd Software
-mkdir candi; cd candi
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>explorer.exe .
 </pre></div>
 </div>
-<p>Note the use of <code class="docutils literal notranslate"><span class="pre">;</span></code> which enable to serialize operations on a single execution line.</p>
-<ol class="arabic simple" start="4">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Download candi:</p></li>
-</ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/dealii/candi.git .
-</pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the Windows File Explorer does not open, you can modify the files below directly in the Ubuntu terminal: <a class="reference internal" href="#modify-candi-installation-parameters-with-nano"><span class="std std-ref">Modify Candi Installation Parameters with Nano</span></a>.</p>
 </div>
-<p>Do not forget the <code class="docutils literal notranslate"><span class="pre">.</span></code> at the end of the command, which means “here”.</p>
-<ol class="arabic simple" start="5">
-<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> Modify installation parameters (deal.II version and trilinos version):</p></li>
-</ol>
+<p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> Then, modify the installation parameters with Notepad (or any other text editor):</p>
 <blockquote>
-<div><ul class="simple">
-<li><p>open Windows file manager, and on the left panel (along with <code class="docutils literal notranslate"><span class="pre">Files</span></code>, <code class="docutils literal notranslate"><span class="pre">Computer</span></code> etc.) click on the <code class="docutils literal notranslate"><span class="pre">Ubuntu</span></code> mount.</p></li>
-</ul>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>If you do not see any <code class="docutils literal notranslate"><span class="pre">Ubuntu</span></code> mount, use this alternative method: <a class="reference internal" href="#modify-candi-installation-parameters-with-nano"><span class="std std-ref">Modify Candi Installation Parameters with Nano</span></a>.</p>
+<div><ul>
+<li><p>open the <code class="docutils literal notranslate"><span class="pre">deal.II-toolchain/packages/p4est.package</span></code> file. To ensure that the Lethe test suite works, deal.II must be configured with p4est 2.3.6, whereas candi installs a more recent version by default. Uncomment (remove the leading <code class="docutils literal notranslate"><span class="pre">#</span></code>) the <code class="docutils literal notranslate"><span class="pre">VERSION=2.3.6</span></code> line and the <code class="docutils literal notranslate"><span class="pre">CHECKSUM</span></code> line that follows it, and comment (add a leading <code class="docutils literal notranslate"><span class="pre">#</span></code>) the <code class="docutils literal notranslate"><span class="pre">VERSION=2.8.7</span></code> line and the <code class="docutils literal notranslate"><span class="pre">CHECKSUM</span></code> line that follows it. These lines should then read:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>VERSION=2.3.6
+CHECKSUM=4b35d9cc374e3b05cd29c552070940124f04af8f8e5e01ff046e39833de5e153
+
+#VERSION=2.8.7
+#CHECKSUM=0a1e912f3529999ca6d62fee335d51f24b5650b586e95a03ef39ebf73936d7f4
+</pre></div>
 </div>
-<ul class="simple">
-<li><p>navigate to reach the candi folder, in: <code class="docutils literal notranslate"><span class="pre">/home/&lt;user_name&gt;/Software/candi</span></code></p></li>
-<li><p>open the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file with notepad (or other text editor) and change the following lines:</p></li>
-</ul>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>line #</p></th>
-<th class="head"><p>initial line</p></th>
-<th class="head"><p>changed line</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>7</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">CLEAN_BUILD=OFF</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">CLEAN_BUILD=ON</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>86</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">PACKAGES=&quot;${PACKAGES}</span> <span class="pre">once:netcdf&quot;</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">PACKAGES=&quot;${PACKAGES}</span> <span class="pre">once:netcdf&quot;</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>97</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=v9.6.0</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION=master</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<ul class="simple">
+</li>
 <li><p>save and close</p></li>
-<li><p>navigate to reach the following subfolder: <code class="docutils literal notranslate"><span class="pre">deal.II-toolchain/packages/</span></code></p></li>
-<li><p>open the <code class="docutils literal notranslate"><span class="pre">trilinos.package</span></code> file with notepad and change the following lines:</p></li>
-</ul>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>The prefix <code class="docutils literal notranslate"><span class="pre">#</span></code> is used to comment a line. Here we are simply commenting lines 44 and 45, and uncommenting lines 50 and 51, to change the trilinos version.</p>
-</div>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>line #</p></th>
-<th class="head"><p>initial line</p></th>
-<th class="head"><p>changed line</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>44</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">VERSION=12-18-1</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">#VERSION=12-18-1</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>45</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">CHECKSUM=9c1d151169949bca6cf203831e4d6aee</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">#CHECKSUM=9c1d151169949bca6cf203831e4d6aee</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>50</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">#VERSION=12-12-1</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">VERSION=12-12-1</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>51</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">#CHECKSUM=ecd4606fa332212433c98bf950a69cc7</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">CHECKSUM=ecd4606fa332212433c98bf950a69cc7</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<ul class="simple">
-<li><p>save and close</p></li>
-<li><p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.</p></li>
 </ul>
 </div></blockquote>
-<ol class="arabic simple" start="6">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Still in the candi subfolder, run candi installation script:</p></li>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION</span></code> variable of the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file sets the version of deal.II that is installed. Keep its default value, which is the latest deal.II release (<code class="docutils literal notranslate"><span class="pre">v9.8.0</span></code> at the time of writing).</p>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Still in the candi folder, run candi installation script:</p></li>
 </ol>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./candi.sh -j$numprocs
 </pre></div>
@@ -719,85 +633,69 @@ mkdir candi; cd candi
 </dl>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Candi will print messages asking you if you installed the dependency. Hit <code class="docutils literal notranslate"><span class="pre">Enter</span></code> two times to validate and the installation will launch. If new lines are written in the console, this means the installation is going on correctly. The installation will take from 1 to 3 hours depending on your hardware.</p>
+<p>Candi will print messages asking you if you installed the dependency. Hit <code class="docutils literal notranslate"><span class="pre">Enter</span></code> two times to validate and the installation will launch. If new lines are written in the console, this means the installation is going on correctly.</p>
 <p>If the installation is stuck (no change on the console for a few minutes), hitting <code class="docutils literal notranslate"><span class="pre">Enter</span></code> can unstuck it.</p>
 <p>You can exit the installation at any time hitting <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> 2-3 times.</p>
 </div>
-<ol class="arabic simple" start="7">
-<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> At the end of the installation, check that you have deal.II and its dependencies installed:</p></li>
+<ol class="arabic simple" start="5">
+<li><p><a class="reference internal" href="../_images/windows.png"><img alt="win_shell" src="../_images/windows.png" style="height: 15px;" /></a> At the end of the installation, check that you have deal.II and its dependencies installed: in the <code class="docutils literal notranslate"><span class="pre">/home/&lt;user_name&gt;/dealii-candi</span></code> folder: you should have a <code class="docutils literal notranslate"><span class="pre">deal.II-v9.8.0</span></code> folder (named after the installed deal.II version), as well as folders for the dependencies, namely: p4est, parmetis, petsc and trilinos.</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Load the environment of candi, which notably defines the <code class="docutils literal notranslate"><span class="pre">DEAL_II_DIR</span></code> variable used by Lethe to find deal.II, every time you open a terminal:</p></li>
 </ol>
-<blockquote>
-<div><ul class="simple">
-<li><p>on Windows file manager, go to the Ubuntu mount</p></li>
-<li><p>in <code class="docutils literal notranslate"><span class="pre">home/&lt;user_name&gt;</span></code> you should have a folder <code class="docutils literal notranslate"><span class="pre">deal.ii-candi</span></code>, or <code class="docutils literal notranslate"><span class="pre">dealii-candi</span></code></p></li>
-<li><p>inside this folder, you should have folders for the dependencies, namely: p4est, petsc, parmetis, trilinos</p></li>
-<li><p>you should also see this folder: <code class="docutils literal notranslate"><span class="pre">deal.II-master</span></code></p></li>
-</ul>
-</div></blockquote>
-<ol class="arabic simple" start="8">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Add a deal.II environment variable in Ubuntu through the following command:</p></li>
-</ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo "export DEAL_II_DIR=$HOME/dealii-candi/deal.II-master" &gt;&gt; ~/.bashrc
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo "source $HOME/dealii-candi/configuration/enable.sh" &gt;&gt; ~/.bashrc
+source ~/.bashrc
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Even if we use a <code class="docutils literal notranslate"><span class="pre">echo</span></code> command, nothing will be outputted in the terminal: the text is written directly at the end the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>For this change to be effective, you may need to restart your Ubuntu terminal.</p>
+<p>Even if we use a <code class="docutils literal notranslate"><span class="pre">echo</span></code> command, nothing will be outputted in the terminal: the text is written directly at the end the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file, which is executed every time a terminal is opened.</p>
 </div>
 </section>
 <section id="installing-lethe-step-2">
-<h2>Installing Lethe (Step #2)<a class="headerlink" href="#installing-lethe-step-2" title="Link to this heading">#</a></h2>
+<span id="install-lethe-wsl"></span><h2>Installing Lethe (Step #2)<a class="headerlink" href="#installing-lethe-step-2" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Set-up the folder structure. Create the <code class="docutils literal notranslate"><span class="pre">Software</span></code> folder (if you are doing the candi installation, this folder should already exist from Step #1).</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Create the folder structure and download Lethe:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir Software; cd Software
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir -p $HOME/Software/lethe; cd $HOME/Software/lethe
+git clone https://github.com/chaos-polymtl/lethe --single-branch git
+mkdir build inst
 </pre></div>
 </div>
-<p>In the <code class="docutils literal notranslate"><span class="pre">Software</span></code> folder created (if you are in the candi folder, type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">..</span></code>), type:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir -p lethe/{git,build,inst}
-</pre></div>
-</div>
-<p>After installation is complete, the folder structure will be:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">lethe</span></code> folder then contains:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">lethe/git</span></code> with lethe downloaded files (git),</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lethe/build</span></code> for compilation files (<code class="docutils literal notranslate"><span class="pre">cmake</span></code> command),</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lethe/inst</span></code> for installation files (<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> command).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span></code> with the source code of Lethe,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build</span></code> for the compilation files (<code class="docutils literal notranslate"><span class="pre">cmake</span></code> and <code class="docutils literal notranslate"><span class="pre">make</span></code> commands),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inst</span></code> for the installed executables (<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> command).</p></li>
 </ul>
 <ol class="arabic simple" start="2">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Download lethe:</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Configure Lethe:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd lethe
-git clone https://github.com/chaos-polymtl/lethe --single-branch
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd build
+cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Build lethe:</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Compile and install Lethe:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd build
-cmake ../lethe -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
-</pre></div>
-</div>
-<ol class="arabic simple" start="4">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Compile lethe:</p></li>
-</ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j$numprocs
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j$numprocs install
 </pre></div>
 </div>
 <dl class="simple">
 <dt>Where <code class="docutils literal notranslate"><span class="pre">$numprocs</span></code> corresponds to the number of processors used for the compilation:</dt><dd><ul class="simple">
-<li><p>if you have less than 8Gb of RAM, use 1 to 2 procs: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-j1</span></code> or <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-j2</span></code></p></li>
-<li><p>if you have 16Gb of RAM and above, <code class="docutils literal notranslate"><span class="pre">$numprocs</span></code> can be the number of physical cores minus 1. For instance, for a computer with 6 physical cores: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-j5</span></code></p></li>
+<li><p>if you have less than 8Gb of RAM, use 1 to 2 procs: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-j1</span> <span class="pre">install</span></code> or <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-j2</span> <span class="pre">install</span></code></p></li>
+<li><p>if you have 16Gb of RAM and above, <code class="docutils literal notranslate"><span class="pre">$numprocs</span></code> can be the number of physical cores minus 1. For instance, for a computer with 6 physical cores: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-j5</span> <span class="pre">install</span></code></p></li>
 </ul>
 </dd>
 </dl>
-<ol class="arabic simple" start="5">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> (optional) Finally, it is recommended to test your installation:</p></li>
+<ol class="arabic simple" start="4">
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Add the Lethe executables to your <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, so that they can be launched from any folder:</p></li>
 </ol>
-<p>Run the tests in the build folder:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>echo 'export PATH=$PATH:$HOME/Software/lethe/inst/bin' &gt;&gt; ~/.bashrc
+source ~/.bashrc
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> (optional) Finally, it is recommended to test your installation. In the <code class="docutils literal notranslate"><span class="pre">build</span></code> folder, run:</p></li>
+</ol>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>ctest -j$numprocs
 </pre></div>
 </div>
@@ -807,89 +705,50 @@ cmake ../lethe -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
 </pre></div>
 </div>
 </div></blockquote>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you are running these tests for the first time, install <code class="docutils literal notranslate"><span class="pre">numdiff</span></code> (if you need superuser privilege, use sudo):</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>apt-get numdiff
-</pre></div>
-</div>
-<p>or</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>apt install numdiff
-</pre></div>
-</div>
-</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The lethe test suites requires that deal.II be configured with p4est 2.2, otherwise the test which include restart files will fail.  Even if the tests fail, the application should work as expected (including the restart capabilities).</p>
+<p>The Lethe test suite requires that deal.II be configured with p4est 2.3.6, otherwise the tests that include restart files or that use the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code> or <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> executables will fail. This is the case if you installed deal.II with apt, or with candi following the instructions above. Even if the tests fail, Lethe should work as expected (including the restart capabilities).</p>
 </div>
-<p>Congratulations, you are now ready to use lethe! For instance, proceed to <a class="reference internal" href="../first_simulation.html"><span class="doc">Launching Your First Simulation</span></a>.</p>
+<p>Congratulations, you are now ready to use Lethe! For instance, proceed to <a class="reference internal" href="../first_simulation.html"><span class="doc">Launching Your First Simulation</span></a>.</p>
 </section>
 <section id="updating-deal-ii-and-lethe">
 <h2>Updating deal.II and Lethe<a class="headerlink" href="#updating-deal-ii-and-lethe" title="Link to this heading">#</a></h2>
-<p>If you have already installed deal.II and lethe, you can update them without doing the entire installation from scratch:</p>
-<section id="through-apt">
-<h3>Through apt<a class="headerlink" href="#through-apt" title="Link to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> As all other <code class="docutils literal notranslate"><span class="pre">apt</span></code> packages, run:</p></li>
-</ol>
+<p>If you have already installed deal.II and Lethe, you can update them without doing the entire installation from scratch.</p>
+<section id="updating-deal-ii-through-apt">
+<h3>Updating deal.II through apt<a class="headerlink" href="#updating-deal-ii-through-apt" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> As all other <code class="docutils literal notranslate"><span class="pre">apt</span></code> packages, run:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt update
 sudo apt upgrade -y
 </pre></div>
 </div>
-<ol class="arabic simple" start="2">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Then, update lethe:</p></li>
-</ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd ../lethe/git
-git pull
-cd ../build
-cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
-make -j$numprocs
-</pre></div>
-</div>
 </section>
-<section id="with-candi">
-<h3>With Candi<a class="headerlink" href="#with-candi" title="Link to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Update deal.ii by typing, from your home directory:</p></li>
-</ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd Software/candi
+<section id="updating-deal-ii-with-candi">
+<h3>Updating deal.II with Candi<a class="headerlink" href="#updating-deal-ii-with-candi" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Set <code class="docutils literal notranslate"><span class="pre">DEAL_II_VERSION</span></code> to the desired deal.II version in the <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code> file, then run candi again:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd $HOME/Software/candi
 ./candi.sh -j$numprocs
 </pre></div>
 </div>
-<ol class="arabic simple" start="2">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Then, update lethe:</p></li>
-</ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd ../lethe/git
+<p>The new version is installed in a new <code class="docutils literal notranslate"><span class="pre">deal.II-&lt;version&gt;</span></code> folder. Remove the configuration file of the previous version (<code class="docutils literal notranslate"><span class="pre">$HOME/dealii-candi/configuration/deal.II-&lt;previous</span> <span class="pre">version&gt;</span></code>) so that <code class="docutils literal notranslate"><span class="pre">DEAL_II_DIR</span></code> points to the new version, and open a new terminal.</p>
+</section>
+<section id="updating-lethe">
+<h3>Updating Lethe<a class="headerlink" href="#updating-lethe" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> Download the latest version of Lethe, then compile and install it:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd $HOME/Software/lethe/git
 git pull
 cd ../build
-cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
-make -j$numprocs
+cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst
+make -j$numprocs install
 </pre></div>
 </div>
+<p>If deal.II was updated, you might need to empty the <code class="docutils literal notranslate"><span class="pre">build</span></code> folder (<code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">$HOME/Software/lethe/build/*</span></code>) and run these commands again, but this is rarely the case.</p>
 </section>
 </section>
 <section id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h2>
-<section id="change-compiler-default-version">
-<span id="id1"></span><h3>Change Compiler Default Version<a class="headerlink" href="#change-compiler-default-version" title="Link to this heading">#</a></h3>
-<p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> After you installed <code class="docutils literal notranslate"><span class="pre">gcc-10</span></code>, <code class="docutils literal notranslate"><span class="pre">g++-10</span></code> and <code class="docutils literal notranslate"><span class="pre">gfortran-10</span></code>, manually update default versions in the terminal:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sudo update-alternatives --remove-all gcc
-sudo update-alternatives --remove-all g++
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
-sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
-sudo update-alternatives --set cc /usr/bin/gcc
-sudo update-alternatives --set c++ /usr/bin/g++
-</pre></div>
-</div>
-<p>Then, check again the version used:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>gcc --version
-</pre></div>
-</div>
-<p>Should return <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">(Ubuntu</span> <span class="pre">10.X.X...)</span> <span class="pre">10.X.X</span></code>.</p>
-</section>
 <section id="modify-candi-installation-parameters-with-nano">
-<span id="id2"></span><h3>Modify Candi Installation Parameters with Nano<a class="headerlink" href="#modify-candi-installation-parameters-with-nano" title="Link to this heading">#</a></h3>
-<p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> If you do not see the Ubuntu mount in the Windows file manager, you can modify the candi parameter files in the Ubuntu terminal directly.</p>
+<span id="id1"></span><h3>Modify Candi Installation Parameters with Nano<a class="headerlink" href="#modify-candi-installation-parameters-with-nano" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> If the Windows File Explorer does not open, you can modify the candi parameter files in the Ubuntu terminal directly.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You cannot click, so use the keyboard arrows to move inside the text.</p>
@@ -901,10 +760,10 @@ sudo update-alternatives --set c++ /usr/bin/g++
 nano &lt;file_name&gt;
 </pre></div>
 </div>
-<div class="admonition-example-for-the-candi-cfg admonition">
-<p class="admonition-title">Example for the candi.cfg</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cd /home/&lt;user_name&gt;/Software/candi
-nano candi.cfg
+<div class="admonition-example-for-the-p4est-package admonition">
+<p class="admonition-title">Example for the p4est.package</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cd $HOME/Software/candi/deal.II-toolchain/packages
+nano p4est.package
 </pre></div>
 </div>
 </div>
@@ -987,12 +846,12 @@ nano candi.cfg
 <li><a class="reference internal" href="#installing-deal-ii-using-candi-step-1">Installing deal.II using Candi (Step #1)</a></li>
 <li><a class="reference internal" href="#installing-lethe-step-2">Installing Lethe (Step #2)</a></li>
 <li><a class="reference internal" href="#updating-deal-ii-and-lethe">Updating deal.II and Lethe</a><ul>
-<li><a class="reference internal" href="#through-apt">Through apt</a></li>
-<li><a class="reference internal" href="#with-candi">With Candi</a></li>
+<li><a class="reference internal" href="#updating-deal-ii-through-apt">Updating deal.II through apt</a></li>
+<li><a class="reference internal" href="#updating-deal-ii-with-candi">Updating deal.II with Candi</a></li>
+<li><a class="reference internal" href="#updating-lethe">Updating Lethe</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
-<li><a class="reference internal" href="#change-compiler-default-version">Change Compiler Default Version</a></li>
 <li><a class="reference internal" href="#modify-candi-installation-parameters-with-nano">Modify Candi Installation Parameters with Nano</a></li>
 </ul>
 </li>
