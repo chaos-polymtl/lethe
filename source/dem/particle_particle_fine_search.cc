@@ -230,7 +230,8 @@ particle_particle_fine_search(
                   std::numeric_limits<double>::max();
 
               // If the neighborhood_threshold is respected, we add particle 2
-              // to particle's 1 potential contact list. Otherwise, we do nothing.
+              // to particle's 1 potential contact list. Otherwise, we do
+              // nothing.
               if (min_square_distance < neighborhood_threshold)
                 {
                   auto &particle_one_contact_list =
