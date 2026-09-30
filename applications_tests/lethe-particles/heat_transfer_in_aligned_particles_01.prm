@@ -24,7 +24,8 @@
 # contact are the same as for a particle-wall contact, and the
 # heat_transfer_in_aligned_particles_01 test has no fluid-particle force. The
 # temperatures should therefore be the temperatures of that
-# test for the final time (t=10).
+# test at the final time (t = 9.75), which is also the time of the last
+# particle summary of that test since it prints the value.
 
 set dimension = 3
 
@@ -34,7 +35,7 @@ set dimension = 3
 
 subsection simulation control
   set time step        = 5e-5
-  set time end         = 10
+  set time end         = 9.75
   set log frequency    = 1000000
   set output frequency = 0
 end
@@ -140,6 +141,11 @@ end
 
 # Each plate is a square of the plane z = 0, of side 0.04, rotated by pi/2
 # around the y axis to be normal to the x axis, and translated to x = +-0.049.
+# The square is split into 8 triangles, whose internal edges join its center to
+# its corners and to the middle of its sides. The plates are also translated by
+# 0.004 in y so that the particles, at y = 0, do not touch the plates on an
+# edge shared by two triangles. Otherwise, each particle would be in contact
+# with both triangles, which would double the contact force and heat transfer.
 
 subsection solid objects
   subsection solid surfaces
@@ -153,7 +159,7 @@ subsection solid objects
         set initial refinement     = 0
         set initial rotation axis  = 0, 1, 0
         set initial rotation angle = 1.5707963267948966
-        set initial translation    = -0.049, 0, 0
+        set initial translation    = -0.049, 0.004, 0
       end
       subsection translational velocity
         set Function expression = 0 ; 0 ; 0
@@ -161,7 +167,7 @@ subsection solid objects
       subsection angular velocity
         set Function expression = 0 ; 0 ; 0
       end
-      set center of rotation    = -0.049 , 0 , 0
+      set center of rotation    = -0.049 , 0.004 , 0
       set thermal boundary type = isothermal
       subsection temperature
         set Function expression = 0
@@ -176,7 +182,7 @@ subsection solid objects
         set initial refinement     = 0
         set initial rotation axis  = 0, 1, 0
         set initial rotation angle = 1.5707963267948966
-        set initial translation    = 0.049, 0, 0
+        set initial translation    = 0.049, 0.004, 0
       end
       subsection translational velocity
         set Function expression = 0 ; 0 ; 0
@@ -184,7 +190,7 @@ subsection solid objects
       subsection angular velocity
         set Function expression = 0 ; 0 ; 0
       end
-      set center of rotation    = 0.049 , 0 , 0
+      set center of rotation    = 0.049 , 0.004 , 0
       set thermal boundary type = isothermal
       subsection temperature
         set Function expression = if(t > 0.3, 50, 0)
