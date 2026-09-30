@@ -1,6 +1,6 @@
 name: CI-Debug
 
-on: 
+on:
 # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   push:
     # Runs on every push on master branch
@@ -11,7 +11,7 @@ on:
       - 'doc/**'
       - 'contrib/**'
       - 'examples/**'
-    
+
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
@@ -19,8 +19,8 @@ concurrency:
 
 
 env:
-  COMPILE_JOBS: 18
-  TEST_JOBS: 12
+  COMPILE_JOBS: 40
+  TEST_JOBS: 40
 
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
       fail-fast: false
       matrix:
         dealii_version: ["master-noble"]
-    
+
     # Run steps in container of dealii's master branch
     container:
       image: dealii/dealii:${{ matrix.dealii_version }}
@@ -72,4 +72,4 @@ jobs:
           cd build-debug
 
           # Run in parallel
-          ctest --output-on-failure -j${{ env.TEST_JOBS }} 
+          ctest --output-on-failure -j${{ env.TEST_JOBS }}

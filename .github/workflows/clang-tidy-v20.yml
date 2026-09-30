@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  COMPILE_JOBS: 12
+  COMPILE_JOBS: 40
 
 jobs:
   tidy:
@@ -35,6 +35,6 @@ jobs:
           apt-get update && apt-get install -y --no-install-recommends build-essential
           update-alternatives --install /usr/bin/cc cc /usr/bin/clang-20 100  && update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-20 100
           apt-get install -y mold
-          export PATH=/usr/lib/llvm-20/share/clang/:$PATH 
+          export PATH=/usr/lib/llvm-20/share/clang/:$PATH
           export PATH=/usr/lib/llvm-20/bin:$PATH
           ../contrib/utilities/run_clang_tidy.sh ..
