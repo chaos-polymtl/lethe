@@ -778,7 +778,7 @@ namespace Parameters
     /**
      * @brief Thermal boundary type of the grid in multiphysic DEM. It is used to define the thermal boundary condition of the walls in DEM simulations.
      */
-    enum class DEMThermalBoundaryType
+    enum class WallThermalBoundaryType
     {
       /// No heat flux through the wall.
       adiabatic,
@@ -832,7 +832,7 @@ namespace Parameters
       /// boundaries) declared in the DEM boundary conditions have an entry. It
       /// is only used in multiphysic DEM. The boundaries without an entry are
       /// adiabatic.
-      std::map<types::boundary_id, DEMThermalBoundaryType>
+      std::map<types::boundary_id, WallThermalBoundaryType>
         thermal_boundary_type;
 
       /// Temperature function of each wall with an imposed temperature, keyed

@@ -133,14 +133,13 @@ ParticleWallContactForce<dim,
 
               if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
                 {
-                  // Multiphysics properties of the wall in contact, as for
-                  // the solid objects
-                  const Parameters::Lagrangian::DEMThermalBoundaryType
+                  // Multiphysics properties of the wall in contact
+                  const Parameters::Lagrangian::WallThermalBoundaryType
                     thermal_boundary_type =
                       this->get_thermal_boundary_type(contact_info.boundary_id);
 
                   if ((thermal_boundary_type !=
-                       Parameters::Lagrangian::DEMThermalBoundaryType::
+                       Parameters::Lagrangian::WallThermalBoundaryType::
                          adiabatic) &&
                       (normal_overlap > 0))
                     {
@@ -550,7 +549,7 @@ ParticleWallContactForce<dim,
             solids[solid_counter]->get_center_of_rotation();
 
           // Multiphysics properties
-          const Parameters::ThermalBoundaryType thermal_boundary_type =
+          const Parameters::ObjectThermalBoundaryType thermal_boundary_type =
             solids[solid_counter]->get_thermal_boundary_type();
 
           for (auto contact = this_contact_record.begin();
@@ -608,7 +607,7 @@ ParticleWallContactForce<dim,
               if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
                 {
                   if ((thermal_boundary_type !=
-                       Parameters::ThermalBoundaryType::adiabatic) &&
+                       Parameters::ObjectThermalBoundaryType::adiabatic) &&
                       (normal_overlap > 0))
                     {
                       const unsigned int particle_type =
@@ -850,8 +849,7 @@ ParticleWallContactForce<dim,
     }
 
   // Thermal boundary types of the walls of the grid and temperature functions
-  // of the ones with an imposed temperature. The time of the functions is set
-  // before every contact calculation by update_boundary_temperature.
+  // of the ones with an imposed temperature.
   this->boundary_thermal_type_map =
     dem_parameters.boundary_conditions.thermal_boundary_type;
   this->boundary_temperature_function =

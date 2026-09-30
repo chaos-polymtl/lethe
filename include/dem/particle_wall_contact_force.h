@@ -1182,7 +1182,7 @@ private:
    *
    * @return The thermal boundary type of the wall.
    */
-  inline Parameters::Lagrangian::DEMThermalBoundaryType
+  inline Parameters::Lagrangian::WallThermalBoundaryType
   get_thermal_boundary_type(const types::boundary_id boundary_id) const
   {
     const auto thermal_type_it =
@@ -1192,7 +1192,7 @@ private:
     // default
     return (thermal_type_it != this->boundary_thermal_type_map.end()) ?
              thermal_type_it->second :
-             Parameters::Lagrangian::DEMThermalBoundaryType::adiabatic;
+             Parameters::Lagrangian::WallThermalBoundaryType::adiabatic;
   }
 
   /**
@@ -1252,7 +1252,7 @@ private:
     boundary_translational_velocity_map;
   std::map<types::boundary_id, Tensor<1, 3>> boundary_rotational_vector;
   std::map<types::boundary_id, Point<3>>     point_on_rotation_vector;
-  std::map<types::boundary_id, Parameters::Lagrangian::DEMThermalBoundaryType>
+  std::map<types::boundary_id, Parameters::Lagrangian::WallThermalBoundaryType>
     boundary_thermal_type_map;
   std::map<types::boundary_id, std::shared_ptr<Function<3>>>
     boundary_temperature_function;

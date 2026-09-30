@@ -1751,7 +1751,7 @@ namespace Parameters
         {
           if (is_wall)
             this->thermal_boundary_type[boundary_id] =
-              DEMThermalBoundaryType::adiabatic;
+              WallThermalBoundaryType::adiabatic;
         }
       else if (thermal_type == "temperature")
         {
@@ -1763,7 +1763,7 @@ namespace Parameters
               "have the temperature thermal boundary type."));
 
           this->thermal_boundary_type[boundary_id] =
-            DEMThermalBoundaryType::temperature;
+            WallThermalBoundaryType::temperature;
 
           // Temperature imposed on the boundary
           auto wall_temperature_function_parsed =
