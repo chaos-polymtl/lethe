@@ -1,21 +1,9 @@
 name: CI-Lethe-with-dealii-vectors
 
-on: 
-  push:
-    # Runs on every push on master branch
-    branches:
-      - master
-  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
-  pull_request:
-    paths-ignore:
-      - 'doc/**'
-      - 'contrib/**'
-      - 'examples/**'
-
-# Cancels running instances when a pull request is updated by a commit
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
-  cancel-in-progress: true
+# Called by ci.yml, which sets the triggers and concurrency, once the
+# indentation and documentation checks pass
+on:
+  workflow_call:
 
 env:
   COMPILE_JOBS: 4
@@ -56,7 +44,7 @@ jobs:
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ccache-${{ github.workflow }}-${{ matrix.dealii_version }}
+          key: ccache-CI-Lethe-with-dealii-vectors-${{ matrix.dealii_version }}
           max-size: 2G
 
       #
