@@ -1,0 +1,28 @@
+
+*********************
+Running on 1 rank(s)
+*********************
+The particle size distribution of particle type 0 is uniform.
+DEM time step is 3.65413% of Rayleigh time step
+Reading triangulation
+
+Finished reading triangulation
+Minimum vertex distance between cell vertices: 0.025
+Minimum cell size to maximum particle diameter ratio: 2.5
+-------------------------------------------------------------------
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with convex boundaries. 
+**********************************************************************
+10 particles of type 0 were inserted, 0 particles of type 0 remaining
+**********************************************************************
+id, type, dp, x, y, z, T 
+0 0 0.01000 -0.0441 0.0000 0.0100 3.8812
+1 0 0.01000 -0.0343 0.0000 0.0100 8.5721
+2 0 0.01000 -0.0245 0.0000 0.0100 13.2633
+3 0 0.01000 -0.0147 0.0000 0.0100 17.9549
+4 0 0.01000 -0.0049 0.0000 0.0100 22.6471
+5 0 0.01000 0.0049 0.0000 0.0100 27.3398
+6 0 0.01000 0.0147 0.0000 0.0100 32.0331
+7 0 0.01000 0.0245 0.0000 0.0100 36.7269
+8 0 0.01000 0.0343 0.0000 0.0100 41.4211
+9 0 0.01000 0.0441 0.0000 0.0100 46.1156
