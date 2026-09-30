@@ -1161,46 +1161,27 @@ namespace Parameters
           load_balance_method =
             string_to_enum<LoadBalanceMethod>(prm.get("load balance method"));
 
-          if (load_balance_method == LoadBalanceMethod::once)
-            {
-              load_balance_step = prm.get_integer("step");
-            }
-          else if (load_balance_method == LoadBalanceMethod::frequent)
-            {
-              load_balance_frequency = prm.get_integer("frequency");
-            }
-          else if (load_balance_method == LoadBalanceMethod::dynamic)
-            {
-              load_balance_threshold = prm.get_double("threshold");
-              dynamic_load_balance_check_frequency =
-                prm.get_integer("dynamic check frequency");
-            }
-          else if (load_balance_method ==
-                   LoadBalanceMethod::dynamic_with_sparse_contacts)
-            {
-              // Check if adaptive sparse contacts is enabled, otherwise
-              // throw an error message indicating that the user should use
-              // dynamic load balancing instead or enable adaptive sparse
-              // contacts
-              if (sparse_particle_contacts)
-                {
-                  load_balance_threshold = prm.get_double("threshold");
-                  dynamic_load_balance_check_frequency =
-                    prm.get_integer("dynamic check frequency");
+          // Dynamic load balancing with sparse contacts relies on the mobility
+          // status of the cells, which requires adaptive sparse contacts
+          AssertThrow(
+            load_balance_method !=
+                LoadBalanceMethod::dynamic_with_sparse_contacts ||
+              sparse_particle_contacts,
+            ExcMessage(
+              "The load balance method dynamic_with_sparse_contacts requires "
+              "adaptive sparse contacts to be enabled. Enable adaptive sparse "
+              "contacts or use the dynamic load balance method instead."));
 
-                  // Weights for load balancing of active and inactive cells
-                  active_load_balancing_factor =
-                    prm.get_double("active weight factor");
-                  inactive_load_balancing_factor =
-                    prm.get_double("inactive weight factor");
-                }
-              else
-                {
-                  throw(std::runtime_error(
-                    "Invalid contact detection method: adaptive sparse contacts is not enabled "
-                    "while dynamic_with_sparse_contacts is selected, use dynamic instead"));
-                }
-            }
+          load_balance_step      = prm.get_integer("step");
+          load_balance_frequency = prm.get_integer("frequency");
+          load_balance_threshold = prm.get_double("threshold");
+          dynamic_load_balance_check_frequency =
+            prm.get_integer("dynamic check frequency");
+
+          // Weights for load balancing of active and inactive cells
+          active_load_balancing_factor = prm.get_double("active weight factor");
+          inactive_load_balancing_factor =
+            prm.get_double("inactive weight factor");
           auto cell_weight_function_parsed =
             std::make_shared<Functions::ParsedFunction<dim>>(1);
 
@@ -1831,21 +1812,17 @@ namespace Parameters
       prm.enter_subsection("grid motion");
       {
         motion_type = string_to_enum<MotionType>(prm.get("motion type"));
-        if (motion_type == MotionType::rotational)
-          {
-            grid_rotational_speed = prm.get_double("grid rotational speed");
-            grid_rotational_axis  = prm.get_integer("grid rotational axis");
-          }
-        else if (motion_type == MotionType::translational)
-          {
-            grid_translational_velocity[0] =
-              prm.get_double("grid translational velocity x");
-            grid_translational_velocity[1] =
-              prm.get_double("grid translational velocity y");
-            if (dim == 3)
-              grid_translational_velocity[2] =
-                prm.get_double("grid translational velocity z");
-          }
+
+        grid_rotational_speed = prm.get_double("grid rotational speed");
+        grid_rotational_axis  = prm.get_integer("grid rotational axis");
+
+        grid_translational_velocity[0] =
+          prm.get_double("grid translational velocity x");
+        grid_translational_velocity[1] =
+          prm.get_double("grid translational velocity y");
+        if (dim == 3)
+          grid_translational_velocity[2] =
+            prm.get_double("grid translational velocity z");
       }
       prm.leave_subsection();
     }
