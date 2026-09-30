@@ -1,16 +1,22 @@
 name: CI
 
-# Runs the cheap checks (indentation, parameter file indentation and
-# documentation) first, and starts the builds and tests only once they pass.
-# This way, a pull request that is not indented does not run the expensive
-# jobs twice on the same code.
+# When commiting, on a pull request, runs the inexpensive checks (indentation,
+# parameter file indentation and documentation) first, and starts the builds
+# and tests only once they pass. This way, a pull request that is not indented
+# properly or that had an error in the documentation will not launch the
+# expensive jobs twice on the same code.
 #
-# Each job calls one of the other workflows of this folder. Its name is the
-# former name of that workflow.
+# Furthermore, on a pull request, only the checks that are relevant to the
+# changed files are run. For example, if only the documentation is changed,
+# only the documentation check runs.
+#
+# Furthermore, on a push on master (a merged pull request), runs everything
+# even if only a specific section of the repository changed.
+#
 
 on:
   push:
-    # Runs on every push on master branch
+    # On master, everything runs, whatever the changed files, even if they are
     branches:
       - master
   pull_request:
