@@ -5,6 +5,7 @@
 #define lethe_copy_data_h
 
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/lapack_full_matrix.h>
 #include <deal.II/lac/vector.h>
 
 #include <vector>
@@ -212,6 +213,125 @@ public:
   // if it should indeed copy or not.
   bool cell_is_local;
   bool cell_is_cut;
+};
+
+
+/**
+ * @brief Class responsible for storing the local system of the Discontinuous
+ * Petrov-Galerkin (DPG) discretization of the time-harmonic Maxwell (THM)
+ * equations. The assemblers fill the uncondensed local system: the Gram matrix
+ * of the test space \f$G\f$, the matrices of the bilinear form in the cell
+ * interior \f$B\f$ and on the skeleton \f$\hat{B}\f$, and the load vector
+ * \f$l\f$. The solver then condenses this system on the skeleton unknowns using
+ * the operators
+ * \f$M_1 = B^\dagger G^{-1} B\f$, \f$M_2 = B^\dagger G^{-1} \hat{B}\f$,
+ * \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$, \f$M_4 = B^\dagger G^{-1}\f$ and
+ * \f$M_5 = \hat{B}^\dagger G^{-1}\f$, and stores either the condensed skeleton
+ * system (assembly) or the reconstructed interior solution and the DPG
+ * residual (interior reconstruction).
+ **/
+class THMCopyData
+{
+public:
+  /**
+   * @brief Constructor. Allocates the memory of all the local matrices and
+   * vectors from the number of degrees of freedom per cell of each finite
+   * element space.
+   *
+   * @param[in] n_dofs_test Number of degrees of freedom per cell of the test
+   * space.
+   *
+   * @param[in] n_dofs_trial_interior Number of degrees of freedom per cell of
+   * the interior trial space.
+   *
+   * @param[in] n_dofs_trial_skeleton Number of degrees of freedom per cell of
+   * the skeleton trial space.
+   */
+  THMCopyData(const unsigned int n_dofs_test,
+              const unsigned int n_dofs_trial_interior,
+              const unsigned int n_dofs_trial_skeleton)
+    : G_matrix(n_dofs_test, n_dofs_test)
+    , B_matrix(n_dofs_test, n_dofs_trial_interior)
+    , B_hat_matrix(n_dofs_test, n_dofs_trial_skeleton)
+    , l_vector(n_dofs_test)
+    , M1_matrix(n_dofs_trial_interior, n_dofs_trial_interior)
+    , M2_matrix(n_dofs_trial_interior, n_dofs_trial_skeleton)
+    , M3_matrix(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
+    , M4_matrix(n_dofs_trial_interior, n_dofs_test)
+    , M5_matrix(n_dofs_trial_skeleton, n_dofs_test)
+    , tmp_matrix_M2M1(n_dofs_trial_skeleton, n_dofs_trial_interior)
+    , tmp_matrix_M2M1M2(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
+    , tmp_matrix_M2M1M4(n_dofs_trial_skeleton, n_dofs_test)
+    , local_matrix(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
+    , local_rhs(n_dofs_trial_skeleton)
+    , local_dof_indices(n_dofs_trial_skeleton)
+    , local_skeleton_solution(n_dofs_trial_skeleton)
+    , local_interior_rhs(n_dofs_trial_interior)
+    , local_interior_solution(n_dofs_trial_interior)
+    , tmp_vector_interior(n_dofs_trial_interior)
+    , tmp_vector_test(n_dofs_test)
+    , local_residual(n_dofs_test)
+    , local_dof_indices_trial_interior(n_dofs_trial_interior)
+    , local_dof_indices_test(n_dofs_test)
+    , local_residual_norm_squared(0.)
+    , active_cell_index(0)
+    , cell_is_local(false){};
+
+  /**
+   * @brief Resets the uncondensed local system to zero. The \f$M_1\f$ matrix
+   * is also reset since LAPACKFullMatrix keeps track of its inverse status and
+   * forbids to invert it again if it has already been inverted.
+   */
+  void
+  reset()
+  {
+    G_matrix     = 0;
+    B_matrix     = 0;
+    B_hat_matrix = 0;
+    l_vector     = 0;
+    M1_matrix    = 0;
+  }
+
+  // Uncondensed local DPG system filled by the assemblers
+  LAPACKFullMatrix<double> G_matrix;
+  LAPACKFullMatrix<double> B_matrix;
+  LAPACKFullMatrix<double> B_hat_matrix;
+  Vector<double>           l_vector;
+
+  // Operators of the static condensation and temporary matrices used for the
+  // matrix products: tmp_matrix_M2M1 = M_2^\dagger M_1^{-1},
+  // tmp_matrix_M2M1M2 = M_2^\dagger M_1^{-1} M_2 and
+  // tmp_matrix_M2M1M4 = M_2^\dagger M_1^{-1} M_4
+  LAPACKFullMatrix<double> M1_matrix;
+  LAPACKFullMatrix<double> M2_matrix;
+  LAPACKFullMatrix<double> M3_matrix;
+  LAPACKFullMatrix<double> M4_matrix;
+  LAPACKFullMatrix<double> M5_matrix;
+  LAPACKFullMatrix<double> tmp_matrix_M2M1;
+  LAPACKFullMatrix<double> tmp_matrix_M2M1M2;
+  LAPACKFullMatrix<double> tmp_matrix_M2M1M4;
+
+  // Condensed skeleton system distributed in the global system
+  FullMatrix<double>                   local_matrix;
+  Vector<double>                       local_rhs;
+  std::vector<types::global_dof_index> local_dof_indices;
+
+  // Interior reconstruction and DPG residual
+  Vector<double>                       local_skeleton_solution;
+  Vector<double>                       local_interior_rhs;
+  Vector<double>                       local_interior_solution;
+  Vector<double>                       tmp_vector_interior;
+  Vector<double>                       tmp_vector_test;
+  Vector<double>                       local_residual;
+  std::vector<types::global_dof_index> local_dof_indices_trial_interior;
+  std::vector<types::global_dof_index> local_dof_indices_test;
+  double                               local_residual_norm_squared;
+  unsigned int                         active_cell_index;
+
+  // Boolean used to indicate if the cell being assembled is local or not
+  // This information is used to indicate to the copy_local_to_global function
+  // if it should indeed copy or not.
+  bool cell_is_local;
 };
 
 
