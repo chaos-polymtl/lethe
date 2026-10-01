@@ -2314,11 +2314,11 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
                             copy_data.local_interior_rhs);
 
   // We can also compute the error indicator on this cell.
-  copy_data.B_matrix.vmult(copy_data.tmp_vector_test,
+  copy_data.B_matrix.vmult(copy_data.tmp_vector_error_indicator,
                            copy_data.local_interior_solution);
-  copy_data.B_hat_matrix.vmult_add(copy_data.tmp_vector_test,
+  copy_data.B_hat_matrix.vmult_add(copy_data.tmp_vector_error_indicator,
                                    copy_data.local_skeleton_solution);
-  copy_data.l_vector -= copy_data.tmp_vector_test;
+  copy_data.l_vector -= copy_data.tmp_vector_error_indicator;
   copy_data.G_matrix.vmult(copy_data.local_residual, copy_data.l_vector);
 
   // ||R||^2_V = R^T G^-1 R = R^T Psi

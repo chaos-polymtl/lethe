@@ -509,7 +509,7 @@ private:
   assemble_local_dpg_system(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-    THMCopyData                                          &copy_data);
+    DPGCopyData                                          &copy_data);
 
   /**
    * @brief Assemble the local DPG system of a cell and condense it on the
@@ -528,7 +528,7 @@ private:
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-    THMCopyData                                          &copy_data);
+    DPGCopyData                                          &copy_data);
 
   /**
    * @brief Distribute the condensed skeleton system of a cell in the global
@@ -537,7 +537,7 @@ private:
    * @param[in] copy_data Copy data containing the condensed skeleton system.
    */
   void
-  copy_local_matrix_to_global_matrix(const THMCopyData &copy_data);
+  copy_local_matrix_to_global_matrix(const DPGCopyData &copy_data);
 
   /**
    * @brief Assemble the local DPG system of a cell and reconstruct the
@@ -556,7 +556,7 @@ private:
   reconstruct_local_interior_solution(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-    THMCopyData                                          &copy_data);
+    DPGCopyData                                          &copy_data);
 
   /**
    * This helper function helps to compute the memory consumption of different
