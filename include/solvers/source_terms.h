@@ -39,10 +39,6 @@ namespace SourceTerms
       tracer_source = std::make_shared<Functions::ParsedFunction<dim>>(1);
       cahn_hilliard_source =
         std::make_shared<Functions::ParsedFunction<dim>>(2);
-      electromagnetics_current_density =
-        std::make_shared<Functions::ParsedFunction<dim>>(2 * dim);
-      electromagnetics_surface_current_density =
-        std::make_shared<Functions::ParsedFunction<dim>>(2 * dim);
     }
 
     virtual void
@@ -64,18 +60,6 @@ namespace SourceTerms
 
     /// Cahn-Hilliard source
     std::shared_ptr<Functions::ParsedFunction<dim>> cahn_hilliard_source;
-
-    /// Time-harmonic Maxwell source: imposed electric current density
-    /// (phasor) with components (J_x_real, J_y_real, J_z_real, J_x_imag,
-    /// J_y_imag, J_z_imag)
-    std::shared_ptr<Functions::ParsedFunction<dim>>
-      electromagnetics_current_density;
-
-    /// Time-harmonic Maxwell source: imposed electric surface current density
-    /// (phasor) on the interior faces of the mesh with components (K_x_real,
-    /// K_y_real, K_z_real, K_x_imag, K_y_imag, K_z_imag)
-    std::shared_ptr<Functions::ParsedFunction<dim>>
-      electromagnetics_surface_current_density;
   };
 
   template <int dim>
@@ -104,15 +88,6 @@ namespace SourceTerms
     cahn_hilliard_source->declare_parameters(prm, 2);
     prm.leave_subsection();
 
-    prm.enter_subsection("electromagnetics");
-    prm.enter_subsection("current density");
-    electromagnetics_current_density->declare_parameters(prm, 2 * dim);
-    prm.leave_subsection();
-    prm.enter_subsection("surface current density");
-    electromagnetics_surface_current_density->declare_parameters(prm, 2 * dim);
-    prm.leave_subsection();
-    prm.leave_subsection();
-
     prm.leave_subsection();
   }
 
@@ -137,15 +112,6 @@ namespace SourceTerms
 
     prm.enter_subsection("cahn hilliard");
     cahn_hilliard_source->parse_parameters(prm);
-    prm.leave_subsection();
-
-    prm.enter_subsection("electromagnetics");
-    prm.enter_subsection("current density");
-    electromagnetics_current_density->parse_parameters(prm);
-    prm.leave_subsection();
-    prm.enter_subsection("surface current density");
-    electromagnetics_surface_current_density->parse_parameters(prm);
-    prm.leave_subsection();
     prm.leave_subsection();
 
     prm.leave_subsection();

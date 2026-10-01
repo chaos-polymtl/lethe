@@ -2085,13 +2085,6 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   this->system_rhs    = 0;
 
-  // Update the time of the imposed volume and surface current densities
-  this->simulation_parameters.source_term.electromagnetics_current_density
-    ->set_time(this->simulation_control->get_current_time());
-  this->simulation_parameters.source_term
-    .electromagnetics_surface_current_density->set_time(
-      this->simulation_control->get_current_time());
-
   setup_assemblers();
 
   auto scratch_data = TimeHarmonicMaxwellScratchData<dim>(
@@ -2143,10 +2136,7 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
   const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
     cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
 
-  scratch_data.reinit(
-    cell,
-    cell_test,
-    *this->simulation_parameters.source_term.electromagnetics_current_density);
+  scratch_data.reinit(cell, cell_test);
 
   // The temperature field is only evaluated at the quadrature points if the
   // physical properties of the cell material depend on it.
@@ -2177,11 +2167,7 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
   // belong to the skeleton.
   for (const unsigned int face_no : cell->face_indices())
     {
-      scratch_data.reinit_face(cell_skeleton,
-                               cell_test,
-                               face_no,
-                               *this->simulation_parameters.source_term
-                                  .electromagnetics_surface_current_density);
+      scratch_data.reinit_face(cell_skeleton, cell_test, face_no);
       if (scratch_data.cell_material_needs_temperature)
         scratch_data.reinit_face_temperature(cell_temperature,
                                              face_no,
@@ -2252,7 +2238,8 @@ TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
   copy_data.M5_matrix.add(-1.0, copy_data.tmp_matrix_M2M1M4);
   copy_data.M5_matrix.vmult(copy_data.local_rhs, copy_data.l_vector);
 
-  // Map to the global skeleton system
+  // Get the local dof indices for the skeleton trial space to be able to distribute
+  // the local matrix and RHS to the global system. Cannot use cell->get_dof_indices() because the skeleton trial space is not the same as the interior trial space so we need to use the as_dof_handler_iterator() function to change the cell iterator to the skeleton trial space and then get the dof indices from that.
   cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton)
     ->get_dof_indices(copy_data.local_dof_indices);
 }
