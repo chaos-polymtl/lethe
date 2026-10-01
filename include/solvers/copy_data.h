@@ -217,20 +217,19 @@ public:
 
 
 /**
- * @brief Class responsible for storing the local system of the Discontinuous
- * Petrov-Galerkin (DPG) discretization of the time-harmonic Maxwell (THM)
- * equations. The assemblers fill the uncondensed local system: the Gram matrix
- * of the test space \f$G\f$, the matrices of the bilinear form in the cell
- * interior \f$B\f$ and on the skeleton \f$\hat{B}\f$, and the load vector
- * \f$l\f$. The solver then condenses this system on the skeleton unknowns using
- * the operators
+ * @brief Class responsible for storing the local system of an ultraweak Discontinuous
+ * Petrov-Galerkin (DPG) discretization. The assemblers fill the uncondensed
+ * local system: the Gram matrix of the test space \f$G\f$, the matrices of the
+ * bilinear form in the cell interior \f$B\f$ and on the skeleton \f$\hat{B}\f$,
+ * and the load vector \f$l\f$. The solver then condenses this system on the
+ * skeleton unknowns using the operators
  * \f$M_1 = B^\dagger G^{-1} B\f$, \f$M_2 = B^\dagger G^{-1} \hat{B}\f$,
  * \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$, \f$M_4 = B^\dagger G^{-1}\f$ and
  * \f$M_5 = \hat{B}^\dagger G^{-1}\f$, and stores either the condensed skeleton
  * system (assembly) or the reconstructed interior solution and the DPG
  * residual (interior reconstruction).
  **/
-class THMCopyData
+class DPGCopyData
 {
 public:
   /**
@@ -247,7 +246,7 @@ public:
    * @param[in] n_dofs_trial_skeleton Number of degrees of freedom per cell of
    * the skeleton trial space.
    */
-  THMCopyData(const unsigned int n_dofs_test,
+  DPGCopyData(const unsigned int n_dofs_test,
               const unsigned int n_dofs_trial_interior,
               const unsigned int n_dofs_trial_skeleton)
     : G_matrix(n_dofs_test, n_dofs_test)
@@ -269,7 +268,7 @@ public:
     , local_interior_rhs(n_dofs_trial_interior)
     , local_interior_solution(n_dofs_trial_interior)
     , tmp_vector_interior(n_dofs_trial_interior)
-    , tmp_vector_test(n_dofs_test)
+    , tmp_vector_error_indicator(n_dofs_test)
     , local_residual(n_dofs_test)
     , local_dof_indices_trial_interior(n_dofs_trial_interior)
     , local_dof_indices_test(n_dofs_test)
@@ -316,12 +315,15 @@ public:
   Vector<double>                       local_rhs;
   std::vector<types::global_dof_index> local_dof_indices;
 
-  // Interior reconstruction and DPG residual
+  // Interior reconstruction and DPG residual. The temporary vectors are
+  // tmp_vector_interior = M_2 * x_skeleton, used when reconstructing the
+  // interior solution, and tmp_vector_error_indicator = B * x_interior +
+  // B_hat * x_skeleton, used when computing the error indicator.
   Vector<double>                       local_skeleton_solution;
   Vector<double>                       local_interior_rhs;
   Vector<double>                       local_interior_solution;
   Vector<double>                       tmp_vector_interior;
-  Vector<double>                       tmp_vector_test;
+  Vector<double>                       tmp_vector_error_indicator;
   Vector<double>                       local_residual;
   std::vector<types::global_dof_index> local_dof_indices_trial_interior;
   std::vector<types::global_dof_index> local_dof_indices_test;
@@ -330,7 +332,8 @@ public:
 
   // Boolean used to indicate if the cell being assembled is local or not
   // This information is used to indicate to the copy_local_to_global function
-  // if it should indeed copy or not.
+  // if it should indeed copy or not. It replace the call to the function
+  // cell->is_locally_owned().
   bool cell_is_local;
 };
 
