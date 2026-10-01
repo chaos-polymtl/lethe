@@ -91,8 +91,10 @@ DeclException1(
   << "The \"" << arg1
   << "\" auxiliary physics is enabled together with the VANS "
      "(volume-averaged Navier-Stokes) fluid dynamics solver, but a "
-     "volume-averaged form of this physics is not yet implemented in "
-     "Lethe.");
+     "volume-averaged form of this physics is not yet implemented "
+     "in Lethe. Disable this physics in the multiphysics subsection, "
+     "or use a solver of the standard Navier-Stokes equations "
+     "(e.g. lethe-fluid).");
 
 template <int dim>
 MultiphysicsInterface<dim>::MultiphysicsInterface(
@@ -186,8 +188,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 
   if (multiphysics_parameters.electromagnetics)
     {
-      // The volume-averaged form of the time-harmonic Maxwell equations are the
-      // same as the standard form, but using the volume-averaged material
+      // The volume-averaged form of the time-harmonic Maxwell equations is the
+      // same as the standard form, but uses the volume-averaged material
       // properties (to be implemented in the future).
       verbosity[PhysicsID::electromagnetics] =
         (nsparam.linear_solver.at(PhysicsID::electromagnetics).verbosity !=
