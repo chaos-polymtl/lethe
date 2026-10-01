@@ -328,7 +328,7 @@ template <int dim>
 void
 TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
   const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-  THMCopyData                               &copy_data)
+  DPGCopyData                               &copy_data)
 {
   static constexpr std::complex<double> imag{0., 1.};
 
@@ -431,7 +431,7 @@ template <int dim>
 void
 TimeHarmonicMaxwellAssemblerCore<dim>::assemble_rhs(
   const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-  THMCopyData                               &copy_data)
+  DPGCopyData                               &copy_data)
 {
   Vector<double> &l_vector = copy_data.l_vector;
 
@@ -456,7 +456,7 @@ template <int dim>
 void
 TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_matrix(
   const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-  THMCopyData                               &copy_data)
+  DPGCopyData                               &copy_data)
 {
   // On the faces where a Robin boundary condition is applied, the magnetic
   // trace term is replaced by the Robin boundary condition.
@@ -504,7 +504,7 @@ template <int dim>
 void
 TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_rhs(
   const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-  THMCopyData                               &copy_data)
+  DPGCopyData                               &copy_data)
 {
   // The surface current density is only imposed on the interior faces
   if (scratch_data.face_at_boundary)
@@ -613,7 +613,7 @@ template <int dim>
 void
 TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
   const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-  THMCopyData                               &copy_data)
+  DPGCopyData                               &copy_data)
 {
   if (!scratch_data.face_at_boundary)
     return;
@@ -700,7 +700,7 @@ template <int dim>
 void
 TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_rhs(
   const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-  THMCopyData                               &copy_data)
+  DPGCopyData                               &copy_data)
 {
   if (!scratch_data.face_at_boundary)
     return;
