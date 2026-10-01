@@ -435,19 +435,15 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_rhs(
 {
   Vector<double> &l_vector = copy_data.l_vector;
 
-  // Loop over the quadrature points of the cell. Note that in its simplest
-  // form, the time-harmonic Maxwell equations do not have a magnetic source
-  // term, so there is no contribution from the I test functions.
+  // Loop over the quadrature points of the cell. No volume source term is
+  // considered at the moment, so the interior load vector is zero. Note that
+  // in its simplest form, the time-harmonic Maxwell equations do not have a
+  // magnetic source term, so there is no contribution from the I test
+  // functions.
   for (unsigned int q = 0; q < scratch_data.n_q_points; ++q)
     {
-      const double &JxW = scratch_data.JxW[q];
-
-      const Tensor<1, dim, std::complex<double>> &J =
-        scratch_data.current_density_values[q];
-      const auto F_conj = scratch_data.phi_F_conj[q];
-
       for (const unsigned int i : scratch_data.test_dofs_electric)
-        l_vector[i] += (J * F_conj[i] * JxW).real();
+        l_vector[i] += 0.0;
     }
 }
 
@@ -503,30 +499,9 @@ TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_matrix(
 template <int dim>
 void
 TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_rhs(
-  const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-  DPGCopyData                               &copy_data)
-{
-  // The surface current density is only imposed on the interior faces
-  if (scratch_data.face_at_boundary)
-    return;
-
-  Vector<double> &l_vector = copy_data.l_vector;
-
-  // Loop over the quadrature points of the face. Each of the two cells sharing
-  // the face receives half of the surface current density (see the class
-  // documentation).
-  for (unsigned int q = 0; q < scratch_data.n_face_q_points; ++q)
-    {
-      const double JxW_face = scratch_data.face_JxW[q];
-
-      const Tensor<1, dim, std::complex<double>> &K_t =
-        scratch_data.face_surface_current_density_values[q];
-      const auto F_face_conj = scratch_data.phi_F_face_conj[q];
-
-      for (const unsigned int i : scratch_data.test_dofs_electric)
-        l_vector[i] += 0.5 * (K_t * F_face_conj[i] * JxW_face).real();
-    }
-}
+  const TimeHarmonicMaxwellScratchData<dim> & /*scratch_data*/,
+  DPGCopyData & /*copy_data*/)
+{}
 
 
 template <int dim>
