@@ -10,7 +10,6 @@
 #include <solvers/physics_scratch_data.h>
 
 #include <deal.II/base/exceptions.h>
-#include <deal.II/base/function.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/quadrature.h>
 #include <deal.II/base/table.h>
@@ -23,8 +22,6 @@
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/fe_values_extractors.h>
 #include <deal.II/fe/mapping.h>
-
-#include <deal.II/lac/vector.h>
 
 #include <complex>
 #include <map>
@@ -113,8 +110,8 @@ compute_effective_electromagnetic_properties(
  * shape functions of the test space (\f$\mathbf{F}\f$ for the electric test
  * functions and \f$\mathbf{I}\f$ for the magnetic ones, with their curls and
  * complex conjugates) and of the interior trial space (\f$\mathbf{E}\f$ and
- * \f$\mathbf{H}\f$), the imposed current density and the effective material
- * properties at the quadrature points. For each face of the cell, it evaluates
+ * \f$\mathbf{H}\f$) and the effective material properties at the quadrature
+ * points. For each face of the cell, it evaluates
  * the test functions and the tangential traces of the skeleton trial space
  * (\f$\hat{\mathbf{E}}\f$ and \f$\hat{\mathbf{H}}\f$) at the face quadrature
  * points. The complex values are stored with their complex conjugates because
@@ -270,33 +267,26 @@ public:
 
   /**
    * @brief Reinitialize the content of the scratch for a cell. It evaluates
-   * the shape functions of the test and interior trial spaces and the imposed
-   * current density at the quadrature points. The temperature values are set
-   * to zero and are only overwritten by reinit_temperature when the material
-   * of the cell depends on the temperature.
+   * the shape functions of the test and interior trial spaces at the
+   * quadrature points. The temperature values are set to zero and are only
+   * overwritten by reinit_temperature when the material of the cell depends on
+   * the temperature.
    *
    * @param[in] cell The cell of the interior trial space DoFHandler over which
    * the assembly is carried out.
    *
    * @param[in] cell_test The same cell, but for the test space DoFHandler.
-   *
-   * @param[in] current_density_function Function of the imposed current
-   * density phasor with components (J_x_real, J_y_real, J_z_real, J_x_imag,
-   * J_y_imag, J_z_imag).
    */
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const typename DoFHandler<dim>::active_cell_iterator &cell_test,
-         const Function<dim> &current_density_function);
+         const typename DoFHandler<dim>::active_cell_iterator &cell_test);
 
   /**
    * @brief Reinitialize the content of the scratch for a face of the current
    * cell. It evaluates the test functions and the tangential traces of the
-   * skeleton trial space at the face quadrature points. On interior faces, it
-   * also evaluates the tangential part of the imposed surface current density,
-   * which is set to zero on boundary faces. The face temperature values are
-   * set to zero and are only overwritten by reinit_face_temperature when the
-   * material of the cell depends on the temperature.
+   * skeleton trial space at the face quadrature points. The face temperature
+   * values are set to zero and are only overwritten by reinit_face_temperature
+   * when the material of the cell depends on the temperature.
    *
    * @param[in] cell_skeleton The current cell, for the skeleton trial space
    * DoFHandler.
@@ -304,17 +294,12 @@ public:
    * @param[in] cell_test The current cell, for the test space DoFHandler.
    *
    * @param[in] face_no Index of the face within the cell.
-   *
-   * @param[in] surface_current_density_function Function of the imposed
-   * surface current density phasor with components (K_x_real, K_y_real,
-   * K_z_real, K_x_imag, K_y_imag, K_z_imag).
    */
   void
   reinit_face(
     const typename DoFHandler<dim>::active_cell_iterator &cell_skeleton,
     const typename DoFHandler<dim>::active_cell_iterator &cell_test,
-    const unsigned int                                    face_no,
-    const Function<dim> &surface_current_density_function);
+    const unsigned int                                    face_no);
 
   /**
    * @brief Evaluate the temperature field at the cell quadrature points.
@@ -424,10 +409,6 @@ public:
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
 
-  // Imposed current density (J_real + i J_imag) at the cell quadrature points
-  std::vector<Vector<double>> current_density_function_values;
-  std::vector<Tensor<1, dim, std::complex<double>>> current_density_values;
-
   // Temperature and effective properties at the cell quadrature points
   std::vector<double>                  temperature_values;
   std::map<field, std::vector<double>> fields;
@@ -456,12 +437,6 @@ public:
   std::vector<double>         face_JxW;
   std::vector<Point<dim>>     face_quadrature_points;
   std::vector<Tensor<1, dim>> face_normals;
-
-  // Tangential part of the imposed surface current density (K_real + i K_imag)
-  // at the face quadrature points. It is only non-zero on interior faces.
-  std::vector<Vector<double>> face_surface_current_density_function_values;
-  std::vector<Tensor<1, dim, std::complex<double>>>
-    face_surface_current_density_values;
 
   // Temperature and effective properties at the face quadrature points
   std::vector<double>                  face_temperature_values;

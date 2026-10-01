@@ -125,12 +125,6 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->JxW               = std::vector<double>(n_q_points);
   this->quadrature_points = std::vector<Point<dim>>(n_q_points);
 
-  // Imposed current density
-  this->current_density_function_values =
-    std::vector<Vector<double>>(n_q_points, Vector<double>(2 * dim));
-  this->current_density_values =
-    std::vector<Tensor<1, dim, std::complex<double>>>(n_q_points);
-
   // Temperature and effective properties at the cell quadrature points. The
   // temperature is the only field on which the electromagnetic properties can
   // depend.
@@ -161,12 +155,6 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->face_JxW               = std::vector<double>(n_face_q_points);
   this->face_quadrature_points = std::vector<Point<dim>>(n_face_q_points);
   this->face_normals           = std::vector<Tensor<1, dim>>(n_face_q_points);
-
-  // Imposed surface current density
-  this->face_surface_current_density_function_values =
-    std::vector<Vector<double>>(n_face_q_points, Vector<double>(2 * dim));
-  this->face_surface_current_density_values =
-    std::vector<Tensor<1, dim, std::complex<double>>>(n_face_q_points);
 
   // Temperature and effective properties at the face quadrature points
   this->face_temperature_values = std::vector<double>(n_face_q_points, 0.);
@@ -215,8 +203,7 @@ template <int dim>
 void
 TimeHarmonicMaxwellScratchData<dim>::reinit(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_test,
-  const Function<dim> &current_density_function)
+  const typename DoFHandler<dim>::active_cell_iterator &cell_test)
 {
   // The curl of the test functions and the cross products are only defined in
   // 3D. The dimension is checked at compile time so the 3D operations are not
@@ -225,7 +212,6 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
     {
       (void)cell;
       (void)cell_test;
-      (void)current_density_function;
       AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
     }
   else
@@ -256,18 +242,9 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
       this->quadrature_points =
         this->fe_values_trial_interior.get_quadrature_points();
 
-      // Imposed current density
-      current_density_function.vector_value_list(
-        this->quadrature_points, this->current_density_function_values);
-
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
           this->JxW[q] = this->fe_values_trial_interior.JxW(q);
-
-          for (unsigned int d = 0; d < dim; ++d)
-            this->current_density_values[q][d] = {
-              this->current_density_function_values[q][d],
-              this->current_density_function_values[q][d + dim]};
 
           // Electric test functions F
           for (const unsigned int k : this->test_dofs_electric)
@@ -325,15 +302,13 @@ void
 TimeHarmonicMaxwellScratchData<dim>::reinit_face(
   const typename DoFHandler<dim>::active_cell_iterator &cell_skeleton,
   const typename DoFHandler<dim>::active_cell_iterator &cell_test,
-  const unsigned int                                    face_no,
-  const Function<dim> &surface_current_density_function)
+  const unsigned int                                    face_no)
 {
   if constexpr (dim != 3)
     {
       (void)cell_skeleton;
       (void)cell_test;
       (void)face_no;
-      (void)surface_current_density_function;
       AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
     }
   else
@@ -350,33 +325,10 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
       this->fe_face_values_test.reinit(cell_test, face_no);
       this->fe_face_values_trial_skeleton.reinit(cell_skeleton, face_no);
 
-      // The imposed surface current density is only applied on the interior
-      // faces of the mesh, so it is not evaluated on the boundary faces.
-      if (!this->face_at_boundary)
-        surface_current_density_function.vector_value_list(
-          this->fe_face_values_trial_skeleton.get_quadrature_points(),
-          this->face_surface_current_density_function_values);
-
       for (unsigned int q = 0; q < n_face_q_points; ++q)
         {
           const Tensor<1, dim> &normal =
             this->fe_face_values_trial_skeleton.normal_vector(q);
-
-          // Only the tangential part of the surface current density is kept,
-          // since a surface current flows along the face.
-          if (this->face_at_boundary)
-            this->face_surface_current_density_values[q] = 0.;
-          else
-            {
-              Tensor<1, dim, std::complex<double>> surface_current_density;
-              for (unsigned int d = 0; d < dim; ++d)
-                surface_current_density[d] = {
-                  this->face_surface_current_density_function_values[q][d],
-                  this
-                    ->face_surface_current_density_function_values[q][d + dim]};
-              this->face_surface_current_density_values[q] =
-                map_H12(surface_current_density, normal);
-            }
 
           this->face_JxW[q] = this->fe_face_values_trial_skeleton.JxW(q);
           this->face_quadrature_points[q] =
