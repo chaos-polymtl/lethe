@@ -159,16 +159,8 @@ compute_waveguide_port_excitation(
  *   \f$(i\omega\varepsilon \mathbf{E}, \mathbf{F}) + (\mathbf{H}, \nabla
  *   \times \mathbf{F}) + (\mathbf{E}, \nabla \times \mathbf{I}) -
  *   (i\omega\mu \mathbf{H}, \mathbf{I})\f$;
- * - the imposed current density in the load vector \f$l\f$:
- *   \f$(\mathbf{J}, \mathbf{F})\f$.
- *
- * The current density is a phasor: the physical current is
- * \f$\mathbf{j}(\mathbf{x},t) = \Re(\mathbf{J}(\mathbf{x}) e^{-i\omega t})\f$,
- * so its imaginary part sets its phase relative to the other sources. The
- * sign of the current density follows from the \f$e^{-i\omega t}\f$ time
- * convention implied by the bilinear form, for which the Ampère law reads
- * \f$\nabla \times \mathbf{H} + i\omega\varepsilon\mathbf{E} = \mathbf{J}\f$.
- * The current density is imposed in the non-dimensional system as given.
+ * - the interior load vector \f$l\f$, which is zero since no volume source
+ *   term is considered at the moment.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -200,7 +192,8 @@ public:
                   DPGCopyData &copy_data) override;
 
   /**
-   * @brief Assemble the imposed current density in the load vector.
+   * @brief Assemble the interior load vector, which is zero since no volume
+   * source term is considered at the moment.
    *
    * @param[in] scratch_data (see base class)
    *
@@ -232,21 +225,6 @@ private:
  * assembled here: the Dirichlet-type conditions (pec, pmc, electric field and
  * magnetic field) are imposed on the traces through the constraints, and the
  * Robin excitations are assembled by TimeHarmonicMaxwellAssemblerRobinBC.
- *
- * The load vector only receives the imposed surface current density
- * \f$\mathbf{K}\f$ on the interior faces. Across a current sheet, with
- * \f$\hat{\mathbf{n}}\f$ pointing from cell 1 to cell 2, the tangential
- * magnetic field jumps as \f$\hat{\mathbf{n}} \times (\mathbf{H}_2 -
- * \mathbf{H}_1) = \mathbf{K}\f$. Since the trace \f$\hat{\mathbf{H}}\f$ is
- * single-valued, it is defined as the average \f$\hat{\mathbf{H}} =
- * (\mathbf{H}_1 + \mathbf{H}_2)/2\f$, which gives
- * \f$\mathbf{n}_i \times \mathbf{H}_i = \mathbf{n}_i \times
- * \hat{\mathbf{H}} - \mathbf{K}/2\f$ for the outward normal of both cells.
- * Each cell adjacent to the face therefore receives
- * \f$\frac{1}{2}\langle \mathbf{K}_t, \mathbf{F} \rangle\f$ in its load
- * vector, where \f$\mathbf{K}_t\f$ is the tangential part of
- * \f$\mathbf{K}\f$. This contribution does not depend on the orientation of
- * the face.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -281,8 +259,9 @@ public:
                   DPGCopyData &copy_data) override;
 
   /**
-   * @brief Assemble the imposed surface current density in the load vector on
-   * the interior faces.
+   * @brief There is no skeleton term in the load vector, since the boundary
+   * data is imposed through the constraints or by
+   * TimeHarmonicMaxwellAssemblerRobinBC.
    *
    * @param[in] scratch_data (see base class)
    *
