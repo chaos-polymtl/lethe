@@ -22,7 +22,7 @@
 /**
  * @brief A pure virtual class that serves as an interface for all the cell
  * assemblers of the time-harmonic Maxwell equations. The assemblers fill the
- * uncondensed local DPG system stored in the THMCopyData.
+ * uncondensed local DPG system stored in the DPGCopyData.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -30,7 +30,7 @@
  */
 template <int dim>
 using TimeHarmonicMaxwellAssemblerBase =
-  PhysicsAssemblerBase<TimeHarmonicMaxwellScratchData<dim>, THMCopyData>;
+  PhysicsAssemblerBase<TimeHarmonicMaxwellScratchData<dim>, DPGCopyData>;
 
 /**
  * @brief A pure virtual class that serves as an interface for all the face
@@ -45,7 +45,7 @@ using TimeHarmonicMaxwellAssemblerBase =
  */
 template <int dim>
 using TimeHarmonicMaxwellFaceAssemblerBase =
-  PhysicsFaceAssemblerBase<TimeHarmonicMaxwellScratchData<dim>, THMCopyData>;
+  PhysicsFaceAssemblerBase<TimeHarmonicMaxwellScratchData<dim>, DPGCopyData>;
 
 /**
  * @brief Check if a boundary condition type of the time-harmonic Maxwell
@@ -197,7 +197,7 @@ public:
    */
   void
   assemble_matrix(const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-                  THMCopyData &copy_data) override;
+                  DPGCopyData &copy_data) override;
 
   /**
    * @brief Assemble the imposed current density in the load vector.
@@ -208,7 +208,7 @@ public:
    */
   void
   assemble_rhs(const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-               THMCopyData                               &copy_data) override;
+               DPGCopyData                               &copy_data) override;
 
 private:
   /**
@@ -278,7 +278,7 @@ public:
    */
   void
   assemble_matrix(const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-                  THMCopyData &copy_data) override;
+                  DPGCopyData &copy_data) override;
 
   /**
    * @brief Assemble the imposed surface current density in the load vector on
@@ -290,7 +290,7 @@ public:
    */
   void
   assemble_rhs(const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-               THMCopyData                               &copy_data) override;
+               DPGCopyData                               &copy_data) override;
 
 private:
   /**
@@ -355,7 +355,7 @@ public:
    */
   void
   assemble_matrix(const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-                  THMCopyData &copy_data) override;
+                  DPGCopyData &copy_data) override;
 
   /**
    * @brief Assemble the excitation of the Robin boundary conditions in the
@@ -367,7 +367,7 @@ public:
    */
   void
   assemble_rhs(const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-               THMCopyData                               &copy_data) override;
+               DPGCopyData                               &copy_data) override;
 
 private:
   /**
