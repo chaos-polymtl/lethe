@@ -540,17 +540,25 @@ private:
   copy_local_matrix_to_global_matrix(const DPGCopyData &copy_data);
 
   /**
-   * @brief Assemble the local DPG system of a cell and reconstruct the
-   * interior solution of the cell from the skeleton solution. It also
-   * computes the local DPG residual and its squared norm
-   * \f$\|R\|^2_V = R^\dagger G^{-1} R\f$.
+   * @brief WorkStream worker of the interior reconstruction. It assembles the
+   * local DPG system of a cell with assemble_local_dpg_system() and uses the
+   * skeleton solution of the cell \f$\hat{u}_h\f$ to compute:
+   * - the interior solution of the cell
+   *   \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$;
+   * - if the dpg error estimator is activated, the DPG residual of the cell
+   *   (Riesz representation of the residual)
+   *   \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ and the squared
+   *   energy norm of the residual
+   *   \f$\|R\|^2_V = (l - B u_h - \hat{B}\hat{u}_h)^\dagger \Psi\f$, which is
+   *   the DPG error indicator of the cell.
    *
    * @param[in] cell The cell of the interior trial space DoFHandler.
    *
    * @param[in,out] scratch_data (see assemble_local_dpg_system)
    *
-   * @param[out] copy_data Copy data in which the interior solution and the
-   * DPG residual of the cell are stored.
+   * @param[out] copy_data Copy data in which the interior solution, the
+   * squared norm of the DPG residual and the dof indices of the cell are
+   * stored.
    */
   void
   reconstruct_local_interior_solution(
@@ -559,7 +567,26 @@ private:
     DPGCopyData                                          &copy_data);
 
   /**
-   * This helper function helps to compute the memory consumption of different
+   * @brief WorkStream copier of the interior reconstruction. It adds the
+   * interior solution of a cell, computed by
+   * reconstruct_local_interior_solution_and_residual(), in the global vector
+   * locally_owned_solution_interior. This is done with the dof indices of the
+   * cell stored in the copy data, which is
+   * equivalent to cell->distribute_local_to_global(local_vector,
+   * global_vector), since the copier does not have access to the cell. If the
+   * dpg error estimator is activated, it also stores the error indicator of
+   * the cell in local_estimated_error_per_cell and adds its squared norm to
+   * squared_residual_L2_norm.
+   *
+   * @param[in] copy_data Copy data containing the interior solution, the
+   * squared norm of the DPG residual and the dof indices of the cell.
+   */
+  void
+  copy_local_interior_solution_to_global(
+    const DPGCopyData &copy_data);
+
+  /**
+   * @brief This helper function helps to compute the memory consumption of different
    * objects on each rank and print it out. It is useful to debug memory issues
    * and understand the memory distribution across ranks.
    *
@@ -792,16 +819,6 @@ private:
   IndexSet locally_relevant_dofs_trial_skeleton;
 
   /**
-   * IndexSet of the owned degrees of freedom for the test space.
-   */
-  IndexSet locally_owned_dofs_test;
-
-  /**
-   * IndexSet of the relevant degrees of freedom for the test space.
-   */
-  IndexSet locally_relevant_dofs_test;
-
-  /**
    * The system matrix.
    */
   TrilinosWrappers::SparseMatrix system_matrix;
@@ -819,17 +836,27 @@ private:
   std::shared_ptr<GlobalVectorType> present_solution_skeleton;
 
   /**
-   * A vector containing all the values of the DPG built-in a-posteriori error
-   * indicator.
-   */
-  std::shared_ptr<GlobalVectorType> present_DPG_error_indicator;
-
-  /**
    * A vector containing the values of the dpg error estimator for each cell of
    * the triangulation. This is used for mesh adaptation based on the DPG error
    * estimator.
    */
   Vector<float> local_estimated_error_per_cell;
+
+  /**
+   * Non-ghosted vector in which the interior solution is assembled cell by
+   * cell during the reconstruction. It is needed because present_solution is
+   * a ghosted vector, which can only be read. It is a class member so the
+   * WorkStream copier can access it, but it is only allocated during
+   * reconstruct_interior_solution() to avoid keeping it in memory between the
+   * solves.
+   */
+  GlobalVectorType locally_owned_solution_interior;
+
+  /**
+   * Squared L2 norm of the DPG residual, accumulated over the locally owned
+   * cells during the reconstruction when the dpg error estimator is activated.
+   */
+  double squared_residual_L2_norm;
 
   /**
    * The right hand side vector.
