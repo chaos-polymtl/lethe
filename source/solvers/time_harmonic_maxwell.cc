@@ -2119,7 +2119,7 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
                   &TimeHarmonicMaxwell::assemble_local_system_matrix,
                   &TimeHarmonicMaxwell::copy_local_matrix_to_global_matrix,
                   scratch_data,
-                  THMCopyData(this->fe_test->n_dofs_per_cell(),
+                  DPGCopyData(this->fe_test->n_dofs_per_cell(),
                               this->fe_trial_interior->n_dofs_per_cell(),
                               this->fe_trial_skeleton->n_dofs_per_cell()));
 
@@ -2134,7 +2134,7 @@ void
 TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-  THMCopyData                                          &copy_data)
+  DPGCopyData                                          &copy_data)
 {
   // We get the same cell for the test and skeleton trial spaces to make sure
   // that all the FEValues objects are reinitialized on the same physical cell.
@@ -2219,7 +2219,7 @@ void
 TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-  THMCopyData                                          &copy_data)
+  DPGCopyData                                          &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -2260,7 +2260,7 @@ TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::copy_local_matrix_to_global_matrix(
-  const THMCopyData &copy_data)
+  const DPGCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
     return;
@@ -2287,7 +2287,7 @@ void
 TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-  THMCopyData                                          &copy_data)
+  DPGCopyData                                          &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -2371,14 +2371,14 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
   const auto worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-        THMCopyData                                          &copy_data) {
+        DPGCopyData                                          &copy_data) {
       this->reconstruct_local_interior_solution(cell, scratch_data, copy_data);
     };
 
   // The copier maps the cell interior solution and error indicator to the
   // global vectors. Since it is called sequentially in the order of the cells,
   // the accumulation of the residual norm is deterministic.
-  const auto copier = [&](const THMCopyData &copy_data) {
+  const auto copier = [&](const DPGCopyData &copy_data) {
     if (!copy_data.cell_is_local)
       return;
 
@@ -2404,7 +2404,7 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
                   worker,
                   copier,
                   scratch_data,
-                  THMCopyData(this->fe_test->n_dofs_per_cell(),
+                  DPGCopyData(this->fe_test->n_dofs_per_cell(),
                               this->fe_trial_interior->n_dofs_per_cell(),
                               this->fe_trial_skeleton->n_dofs_per_cell()));
 
