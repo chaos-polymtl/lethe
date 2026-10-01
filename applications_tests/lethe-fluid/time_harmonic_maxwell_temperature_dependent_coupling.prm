@@ -1,0 +1,237 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This test case verifies that the time-harmonic Maxwell system is assembled
+# from scratch every time it is solved, i.e., at each coupling step. The
+# waveguide of the time_harmonic_maxwell_waveguide_robin_dissipative test is
+# heated by a uniform heat source with adiabatic walls, so the temperature is
+# uniform and increases by 100 at each time step. Since the electric
+# conductivity depends on the temperature (0.07 + 1e-4 T), the time-harmonic
+# Maxwell system changes between coupling steps and is solved again at each
+# time step with a conductivity of 0.07, 0.08 and 0.09. The L2 errors are
+# computed against the analytical solution for a conductivity of 0.07, so they
+# only match the time_harmonic_maxwell_waveguide_robin_dissipative test at the
+# first coupling step and serve to monitor the solution of the other steps.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time step        = 0.1
+  set time end         = 0.3
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set temperature degree            = 1
+  set electromagnetics trial degree = 1
+  set electromagnetics test degree  = 2
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set density              = 1
+    set specific heat        = 1
+    set thermal conductivity = 1
+
+    set electric conductivity model                   = polynomial
+    set electric conductivity polynomial coefficients = 1e-4, 0.07
+
+    set electric permittivity model     = constant
+    set electric permittivity real part = 1.
+    set electric permittivity imag part = 0.01
+
+    set magnetic permeability model     = constant
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.02
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type           = dealii
+  set grid type      = subdivided_hyper_rectangle
+  set grid arguments = 1, 2, 1 : 1, 1, 1 : 1.25, 1.5, 1.25 : true
+end
+
+#---------------------------------------------------
+# Dimensionality
+#---------------------------------------------------
+
+subsection dimensionality
+  set length = 0.01
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics   = false
+  set heat transfer    = true
+  set electromagnetics = true
+end
+
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
+subsection source term
+  subsection heat transfer
+    set Function expression = 10
+  end
+end
+
+#---------------------------------------------------
+# Time Harmonic Maxwell
+#---------------------------------------------------
+
+subsection time harmonic maxwell
+  set electromagnetic frequency  = 8.99377374e10
+  set number of waveguide inlets = 1
+
+  subsection time coupling strategy
+    set type               = iteration
+    set coupling iteration = 1
+  end
+
+  subsection waveguide inlet 0
+    set port boundary id = 4
+
+    set corner 0 = 1,1,1
+    set corner 1 = 1.25,1,1
+    set corner 2 = 1, 1.5, 1
+    set corner 3 = 1.25, 1.5, 1
+
+    subsection waveguide mode
+      set mode type    = TE
+      set mode order m = 1
+      set mode order n = 2
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id   = 0, 1, 2, 3, 4, 5
+    set type = noslip
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
+
+subsection boundary conditions heat transfer
+  set number = 1
+  subsection bc 0
+    set id   = 0, 1, 2, 3, 4, 5
+    set type = noflux
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions Time Harmonic Maxwell
+#---------------------------------------------------
+
+subsection boundary conditions time harmonic maxwell
+  set number = 3
+  subsection bc 0
+    set id   = 0, 1, 2, 3
+    set type = pec
+  end
+  subsection bc 1
+    set id   = 4
+    set type = waveguide port
+  end
+  subsection bc 2
+    set id   = 5
+    set type = impedance boundary
+    subsection excitation x real part
+      set Function expression = 0
+    end
+    subsection excitation x imag part
+      set Function expression = 0
+    end
+    subsection excitation y real part
+      set Function expression = 0
+    end
+    subsection excitation y imag part
+      set Function expression = 0
+    end
+    subsection excitation z real part
+      set Function expression = 0
+    end
+    subsection excitation z imag part
+      set Function expression = 0
+    end
+    subsection surface admittance real part
+      set Function expression = 0.360746
+    end
+    subsection surface admittance imag part
+      set Function expression = 0.132856
+    end
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection electromagnetics
+    set Function expression = cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.014987*cos(6.767844*(z-1)) + 0.750154*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.014987*cos(6.767844*(z-1)) - 0.750154*sin(6.767844*(z-1)));    0.;    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.750154*cos(6.767844*(z-1)) + 0.014987*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.750154*cos(6.767844*(z-1)) - 0.014987*sin(6.767844*(z-1)));    0.;    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * cos(6.767844*(z-1));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * sin(6.767844*(z-1))
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection electromagnetics
+    set verbosity         = quiet
+    set preconditioner    = none
+    set relative residual = 1e-8
+    set minimum residual  = 1e-12
+  end
+  subsection heat transfer
+    set verbosity = quiet
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection heat transfer
+    set verbosity = quiet
+  end
+end
