@@ -97,10 +97,9 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
     }
 
-  // Initialize solutions and DPG error indicator shared_ptr
-  present_solution            = std::make_shared<GlobalVectorType>();
-  present_solution_skeleton   = std::make_shared<GlobalVectorType>();
-  present_DPG_error_indicator = std::make_shared<GlobalVectorType>();
+  // Initialize solutions shared_ptr
+  present_solution          = std::make_shared<GlobalVectorType>();
+  present_solution_skeleton = std::make_shared<GlobalVectorType>();
 
   // Allocate solution transfer
   solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
@@ -167,8 +166,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     this->present_solution->memory_consumption() * bytes_to_gb;
   const auto present_solution_skeleton_memory =
     this->present_solution_skeleton->memory_consumption() * bytes_to_gb;
-  const auto present_dpg_error_indicator_memory =
-    this->present_DPG_error_indicator->memory_consumption() * bytes_to_gb;
   const auto system_rhs_memory =
     this->system_rhs.memory_consumption() * bytes_to_gb;
   const auto sparsity_pattern_memory =
@@ -196,10 +193,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     Utilities::MPI::gather(mpi_communicator,
                            present_solution_skeleton_memory,
                            0);
-  const auto present_dpg_error_indicator_memory_by_rank =
-    Utilities::MPI::gather(mpi_communicator,
-                           present_dpg_error_indicator_memory,
-                           0);
   const auto system_rhs_memory_by_rank =
     Utilities::MPI::gather(mpi_communicator, system_rhs_memory, 0);
   const auto sparsity_pattern_memory_by_rank =
@@ -222,8 +215,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     Utilities::MPI::sum(present_solution_memory, mpi_communicator);
   const auto present_solution_skeleton_memory_total =
     Utilities::MPI::sum(present_solution_skeleton_memory, mpi_communicator);
-  const auto present_dpg_error_indicator_memory_total =
-    Utilities::MPI::sum(present_dpg_error_indicator_memory, mpi_communicator);
   const auto system_rhs_memory_total =
     Utilities::MPI::sum(system_rhs_memory, mpi_communicator);
   const auto sparsity_pattern_memory_total =
@@ -242,9 +233,8 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     {
       const auto total_memory =
         present_solution_memory_total + present_solution_skeleton_memory_total +
-        present_dpg_error_indicator_memory_total + system_rhs_memory_total +
-        sparsity_pattern_memory_total + system_matrix_memory_total +
-        dof_handler_trial_interior_memory_total +
+        system_rhs_memory_total + sparsity_pattern_memory_total +
+        system_matrix_memory_total + dof_handler_trial_interior_memory_total +
         dof_handler_trial_skeleton_memory_total + dof_handler_test_memory_total;
 
       announce_string(this->pcout,
@@ -270,11 +260,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
             "present_solution_skeleton",
             present_solution_skeleton_memory_by_rank.size(),
             present_solution_skeleton_memory_by_rank);
-          print_memory_consumption(
-            this->pcout,
-            "present_DPG_error_indicator",
-            present_dpg_error_indicator_memory_by_rank.size(),
-            present_dpg_error_indicator_memory_by_rank);
           print_memory_consumption(this->pcout,
                                    "system_rhs",
                                    system_rhs_memory_by_rank.size(),
@@ -313,8 +298,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
                   << std::endl;
       this->pcout << "  present_solution_skeleton : "
                   << present_solution_skeleton_memory_total << std::endl;
-      this->pcout << "  present_DPG_error_indicator : "
-                  << present_dpg_error_indicator_memory_total << std::endl;
       this->pcout << "  system_rhs : " << system_rhs_memory_total << std::endl;
       this->pcout << "  sparsity_pattern : " << sparsity_pattern_memory_total
                   << std::endl;
@@ -1303,17 +1286,14 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     this->dof_handler_trial_interior->locally_owned_dofs();
   this->locally_owned_dofs_trial_skeleton =
     this->dof_handler_trial_skeleton->locally_owned_dofs();
-  this->locally_owned_dofs_test = this->dof_handler_test->locally_owned_dofs();
 
   // Get the locally relevant dofs
   this->locally_relevant_dofs_trial_interior =
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler_trial_interior);
   this->locally_relevant_dofs_trial_skeleton =
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler_trial_skeleton);
-  this->locally_relevant_dofs_test =
-    DoFTools::extract_locally_relevant_dofs(*this->dof_handler_test);
 
-  // Initialize the solution vectors and error indicator
+  // Initialize the solution vectors and the error estimate per cell
   this->present_solution->reinit(this->locally_owned_dofs_trial_interior,
                                  this->locally_relevant_dofs_trial_interior,
                                  mpi_communicator);
@@ -1321,9 +1301,6 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     this->locally_owned_dofs_trial_skeleton,
     this->locally_relevant_dofs_trial_skeleton,
     mpi_communicator);
-  this->present_DPG_error_indicator->reinit(this->locally_owned_dofs_test,
-                                            this->locally_relevant_dofs_test,
-                                            mpi_communicator);
   this->local_estimated_error_per_cell.reinit(triangulation->n_active_cells());
 
   // We reinitialize the system rhs with the skeleton dofs because we have
@@ -2285,7 +2262,8 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
   // Now, we already have the solution on the skeleton and only need to
   // perform $u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)$ on each cell. When this
   // is obtained, we can compute at the same time the error indicator
-  // $\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)$.
+  // $\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)$ if the dpg error estimator
+  // is activated.
 
   // We first get the skeleton solution vector for this cell.
   cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton)
@@ -2300,22 +2278,58 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
   copy_data.M1_matrix.vmult(copy_data.local_interior_solution,
                             copy_data.local_interior_rhs);
 
-  // We can also compute the error indicator on this cell.
-  copy_data.B_matrix.vmult(copy_data.tmp_vector_error_indicator,
-                           copy_data.local_interior_solution);
-  copy_data.B_hat_matrix.vmult_add(copy_data.tmp_vector_error_indicator,
-                                   copy_data.local_skeleton_solution);
-  copy_data.l_vector -= copy_data.tmp_vector_error_indicator;
-  copy_data.G_matrix.vmult(copy_data.local_residual, copy_data.l_vector);
+  // We can also compute the error indicator on this cell if the dpg error
+  // estimator is activated. The residual R = l - B u_h - \hat{B}\hat{u}_h is
+  // stored in l_vector, its Riesz representation Psi = G^{-1} R in
+  // local_residual, and the squared energy norm of the residual is
+  // ||R||^2_V = R^T G^-1 R = R^T Psi.
+  if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
+        .error_estimator ==
+      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+    {
+      copy_data.B_matrix.vmult(copy_data.tmp_vector_error_indicator,
+                               copy_data.local_interior_solution);
+      copy_data.B_hat_matrix.vmult_add(copy_data.tmp_vector_error_indicator,
+                                       copy_data.local_skeleton_solution);
+      copy_data.l_vector -= copy_data.tmp_vector_error_indicator;
+      copy_data.G_matrix.vmult(copy_data.local_residual, copy_data.l_vector);
 
-  // ||R||^2_V = R^T G^-1 R = R^T Psi
-  copy_data.local_residual_norm_squared =
-    copy_data.l_vector * copy_data.local_residual;
+      copy_data.local_residual_norm_squared =
+        copy_data.l_vector * copy_data.local_residual;
+    }
   copy_data.active_cell_index = cell->active_cell_index();
 
   cell->get_dof_indices(copy_data.local_dof_indices_trial_interior);
-  cell->as_dof_handler_iterator(*this->dof_handler_test)
-    ->get_dof_indices(copy_data.local_dof_indices_test);
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::copy_local_interior_solution_to_global(
+  const DPGCopyData &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  // We map the cell interior solution to the global interior solution. Adding
+  // the values at the dof indices of the cell is what
+  // cell->distribute_local_to_global(local_vector, global_vector) does, which
+  // cannot be used here since the copier does not have access to the cell.
+  // Since the interior trial space is discontinuous, each dof belongs to a
+  // single cell and adding the value is equivalent to setting it.
+  this->locally_owned_solution_interior.add(
+    copy_data.local_dof_indices_trial_interior,
+    copy_data.local_interior_solution);
+
+  // Store the error indicator of the cell if the dpg error estimator is
+  // activated
+  if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
+        .error_estimator ==
+      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+    {
+      this->local_estimated_error_per_cell(copy_data.active_cell_index) =
+        std::sqrt(copy_data.local_residual_norm_squared);
+      this->squared_residual_L2_norm += copy_data.local_residual_norm_squared;
+    }
 }
 
 template <int dim>
@@ -2329,15 +2343,22 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
       .error_estimator ==
     Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg;
 
-  // We initialize vectors to store the locally owned solution and the error
-  // indicator.
-  GlobalVectorType locally_owned_solution_interior(
+  // The interior solution is assembled cell by cell. However,
+  // present_solution is a ghosted vector (it also stores the locally relevant
+  // dofs owned by the other processes, which are needed by the other physics
+  // and the output) and a ghosted vector can only be read. Therefore, the
+  // contributions of the locally owned cells are first added to the following
+  // vector, which only stores the locally owned dofs. After the loop on the
+  // cells, compress(VectorOperation::add) finalizes it, and the assignment to
+  // the ghosted vector updates its ghost values. This vector is only needed
+  // during the reconstruction, so it is allocated here and released at the end
+  // of the function to avoid keeping it in memory between the solves.
+  this->locally_owned_solution_interior.reinit(
     this->locally_owned_dofs_trial_interior, mpi_communicator);
-  GlobalVectorType locally_owned_error_indicator(this->locally_owned_dofs_test,
-                                                 mpi_communicator);
 
-  // L2 norm of the residual for the dpg error indicator
-  double residual_L2_norm = 0.0;
+  // Squared L2 norm of the residual for the dpg error indicator, accumulated
+  // over the locally owned cells
+  this->squared_residual_L2_norm = 0.0;
 
   auto scratch_data = TimeHarmonicMaxwellScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
@@ -2355,53 +2376,26 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
       *this->face_quadrature,
       *this->mapping);
 
-  const auto worker =
-    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
-        TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-        DPGCopyData                                          &copy_data) {
-      this->reconstruct_local_interior_solution(cell, scratch_data, copy_data);
-    };
 
-  // The copier maps the cell interior solution and error indicator to the
-  // global vectors. Since it is called sequentially in the order of the cells,
-  // the accumulation of the residual norm is deterministic.
-  const auto copier = [&](const DPGCopyData &copy_data) {
-    if (!copy_data.cell_is_local)
-      return;
-
-    locally_owned_solution_interior.add(
-      copy_data.local_dof_indices_trial_interior,
-      copy_data.local_interior_solution);
-
-    // Compute the error indicator on the cell if the dpg error_indicator
-    // is activated
-    if (dpg_error_estimator_enabled)
-      {
-        this->local_estimated_error_per_cell(copy_data.active_cell_index) =
-          std::sqrt(copy_data.local_residual_norm_squared);
-        residual_L2_norm += copy_data.local_residual_norm_squared;
-      }
-
-    locally_owned_error_indicator.add(copy_data.local_dof_indices_test,
-                                      copy_data.local_residual);
-  };
-
-  WorkStream::run(this->dof_handler_trial_interior->begin_active(),
-                  this->dof_handler_trial_interior->end(),
-                  worker,
-                  copier,
-                  scratch_data,
-                  DPGCopyData(this->fe_test->n_dofs_per_cell(),
-                              this->fe_trial_interior->n_dofs_per_cell(),
-                              this->fe_trial_skeleton->n_dofs_per_cell()));
+  WorkStream::run(
+    this->dof_handler_trial_interior->begin_active(),
+    this->dof_handler_trial_interior->end(),
+    *this,
+    &TimeHarmonicMaxwell::reconstruct_local_interior_solution,
+    &TimeHarmonicMaxwell::copy_local_interior_solution_to_global,
+    scratch_data,
+    DPGCopyData(this->fe_test->n_dofs_per_cell(),
+                this->fe_trial_interior->n_dofs_per_cell(),
+                this->fe_trial_skeleton->n_dofs_per_cell()));
 
   // After the loop over the cells, we finalize the assembly by compressing
-  // the vectors because of the MPI parallelization.
-  locally_owned_solution_interior.compress(VectorOperation::add);
-  locally_owned_error_indicator.compress(VectorOperation::add);
+  // the vector because of the MPI parallelization.
+  this->locally_owned_solution_interior.compress(VectorOperation::add);
 
-  *this->present_solution            = locally_owned_solution_interior;
-  *this->present_DPG_error_indicator = locally_owned_error_indicator;
+  *this->present_solution = this->locally_owned_solution_interior;
+
+  // The non-ghosted vector is not needed anymore, so we release its memory.
+  this->locally_owned_solution_interior.clear();
 
   // We also output the global error indicator if the dpg error estimator is
   // activated and in verbose mode
@@ -2411,7 +2405,8 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
     {
       this->pcout << "   Time-Harmonic Maxwell DPG residual: "
                   << std::sqrt(
-                       Utilities::MPI::sum(residual_L2_norm, mpi_communicator))
+                       Utilities::MPI::sum(this->squared_residual_L2_norm,
+                                           mpi_communicator))
                   << std::endl;
     }
 }

@@ -271,7 +271,6 @@ public:
     , tmp_vector_error_indicator(n_dofs_test)
     , local_residual(n_dofs_test)
     , local_dof_indices_trial_interior(n_dofs_trial_interior)
-    , local_dof_indices_test(n_dofs_test)
     , local_residual_norm_squared(0.)
     , active_cell_index(0)
     , cell_is_local(false){};
@@ -326,7 +325,6 @@ public:
   Vector<double>                       tmp_vector_error_indicator;
   Vector<double>                       local_residual;
   std::vector<types::global_dof_index> local_dof_indices_trial_interior;
-  std::vector<types::global_dof_index> local_dof_indices_test;
   double                               local_residual_norm_squared;
   unsigned int                         active_cell_index;
 
