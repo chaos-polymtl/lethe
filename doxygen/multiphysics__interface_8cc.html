@@ -102,10 +102,11 @@ $(function() {
 <code>#include &lt;<a class="el" href="multiphysics__interface_8h_source.html">solvers/multiphysics_interface.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="tracer_8h_source.html">solvers/tracer.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/exceptions.h&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for multiphysics_interface.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="multiphysics__interface_8cc__incl.svg" width="6232" height="652"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="multiphysics__interface_8cc__incl.svg" width="6555" height="652"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="multiphysics__interface_8cc_source.html">Go to the source code of this file.</a></p>
@@ -139,6 +140,8 @@ Functions</h2></td></tr>
 <tr class="separator:a7095870df5cba31e830254c3b6f6d491"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a722db97bd326310875fc81a3959cdab0" id="r_a722db97bd326310875fc81a3959cdab0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#a722db97bd326310875fc81a3959cdab0">DeclExceptionMsg</a> (CahnHilliardWithThermalBuoyancyForceError, &quot;Cahn-Hilliard and thermal buoyancy force are both activated. &quot; &quot;This combination is not currently supported.&quot;)</td></tr>
 <tr class="separator:a722db97bd326310875fc81a3959cdab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2104b482a05234661b340f67cbcedada" id="r_a2104b482a05234661b340f67cbcedada"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#a2104b482a05234661b340f67cbcedada">DeclException1</a> (PhysicsVANSFormNotImplementedError, std::string,&lt;&lt; &quot;The \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; auxiliary physics is enabled together with the <a class="el" href="multiphysics_8h.html#a2e64db3af4eb5ce13914ce8be125c2c2a5019894890e1c313f5117a321561468d">VANS</a> &quot; &quot;(volume-averaged Navier-Stokes) fluid dynamics solver, but a &quot; &quot;volume-averaged form of this physics is not yet implemented &quot; &quot;in Lethe. Disable this physics in the multiphysics subsection, &quot; &quot;or use a solver of the <a class="el" href="multiphysics_8h.html#a2e64db3af4eb5ce13914ce8be125c2c2ac00f0c4675b91fb8b918e4079a0b1bac">standard</a> Navier-Stokes equations &quot; &quot;(e.g. lethe-fluid).&quot;)</td></tr>
+<tr class="separator:a2104b482a05234661b340f67cbcedada"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a0d638fe48e408fa87f9b8f86164d38b1" name="a0d638fe48e408fa87f9b8f86164d38b1"></a>
@@ -157,13 +160,13 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00012">12</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00015">15</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="affde6ac540ef8702fd039c9edd28258c" name="affde6ac540ef8702fd039c9edd28258c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affde6ac540ef8702fd039c9edd28258c">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#affde6ac540ef8702fd039c9edd28258c">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -203,7 +206,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a8d6c2a362eca56a1fa2c9555e11d9268" name="a8d6c2a362eca56a1fa2c9555e11d9268"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d6c2a362eca56a1fa2c9555e11d9268">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d6c2a362eca56a1fa2c9555e11d9268">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,7 +246,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a50850b326eacb0b537fab2629ae66a09" name="a50850b326eacb0b537fab2629ae66a09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50850b326eacb0b537fab2629ae66a09">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a50850b326eacb0b537fab2629ae66a09">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -283,7 +286,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="aac9822a56d7a718d6157e80fcb942d30" name="aac9822a56d7a718d6157e80fcb942d30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac9822a56d7a718d6157e80fcb942d30">&#9670;&#160;</a></span>DeclException1() <span class="overload">[4/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aac9822a56d7a718d6157e80fcb942d30">&#9670;&#160;</a></span>DeclException1() <span class="overload">[4/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -323,7 +326,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a80a796fd22ef0b3db56609db0a2d8bec" name="a80a796fd22ef0b3db56609db0a2d8bec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80a796fd22ef0b3db56609db0a2d8bec">&#9670;&#160;</a></span>DeclException1() <span class="overload">[5/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a80a796fd22ef0b3db56609db0a2d8bec">&#9670;&#160;</a></span>DeclException1() <span class="overload">[5/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -363,7 +366,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a510f5fe3c04f30eb26ef1a3b98484243" name="a510f5fe3c04f30eb26ef1a3b98484243"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a510f5fe3c04f30eb26ef1a3b98484243">&#9670;&#160;</a></span>DeclException1() <span class="overload">[6/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a510f5fe3c04f30eb26ef1a3b98484243">&#9670;&#160;</a></span>DeclException1() <span class="overload">[6/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -402,8 +405,54 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a2104b482a05234661b340f67cbcedada" name="a2104b482a05234661b340f67cbcedada"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2104b482a05234661b340f67cbcedada">&#9670;&#160;</a></span>DeclException1() <span class="overload">[7/10]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">PhysicsVANSFormNotImplementedError&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;The \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; auxiliary physics is enabled together with the <a class="el" href="multiphysics_8h.html#a2e64db3af4eb5ce13914ce8be125c2c2a5019894890e1c313f5117a321561468d">VANS</a> &quot; &quot;(volume-averaged Navier-Stokes) fluid dynamics&#160;</td>
+          <td class="paramname"><em>solver</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">but a &quot; &quot;volume-averaged form of this physics is not yet implemented &quot; &quot;in Lethe. Disable this physics in the multiphysics&#160;</td>
+          <td class="paramname"><em>subsection</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot; &quot;or use a solver of the <a class="el" href="multiphysics_8h.html#a2e64db3af4eb5ce13914ce8be125c2c2ac00f0c4675b91fb8b918e4079a0b1bac">standard</a> Navier-Stokes equations &quot; &quot;(e.g. lethe-fluid).&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a0c44722ad392a744ffae5a214e5c2a7f" name="a0c44722ad392a744ffae5a214e5c2a7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c44722ad392a744ffae5a214e5c2a7f">&#9670;&#160;</a></span>DeclException1() <span class="overload">[7/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c44722ad392a744ffae5a214e5c2a7f">&#9670;&#160;</a></span>DeclException1() <span class="overload">[8/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -443,7 +492,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a8fe5fda3f2d5614a32a07d5ea0e45ff5" name="a8fe5fda3f2d5614a32a07d5ea0e45ff5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8fe5fda3f2d5614a32a07d5ea0e45ff5">&#9670;&#160;</a></span>DeclException1() <span class="overload">[8/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fe5fda3f2d5614a32a07d5ea0e45ff5">&#9670;&#160;</a></span>DeclException1() <span class="overload">[9/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -483,7 +532,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="aa1d4632d4aba43d296d54afa97e9afc0" name="aa1d4632d4aba43d296d54afa97e9afc0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1d4632d4aba43d296d54afa97e9afc0">&#9670;&#160;</a></span>DeclException1() <span class="overload">[9/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1d4632d4aba43d296d54afa97e9afc0">&#9670;&#160;</a></span>DeclException1() <span class="overload">[10/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
