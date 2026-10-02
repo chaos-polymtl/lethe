@@ -89,8 +89,9 @@ is_robin_boundary_type(const BoundaryConditions::BoundaryType type)
  * the waveguide port parameters. The default value is 0, which can be used
  * when there is only one waveguide port defined in the input file.
  *
- * @return A pair containing the incident electric and magnetic fields at the
- * point p.
+ * @return This function returns a std::pair containing the electric field
+ * Tensor<1, dim, std::complex<double>> and the magnetic field Tensor<1, dim,
+ * std::complex<double>> computed at the given position.
  */
 template <int dim>
 std::pair<Tensor<1, dim, std::complex<double>>,
@@ -220,11 +221,6 @@ private:
  * \f$\langle \mathbf{n} \times \hat{\mathbf{H}}, \mathbf{F} \rangle\f$. On
  * Robin faces, the latter term is replaced by the Robin boundary condition
  * (see TimeHarmonicMaxwellAssemblerRobinBC).
- *
- * These terms are bilinear in the traces, so the boundary data is not
- * assembled here: the Dirichlet-type conditions (pec, pmc, electric field and
- * magnetic field) are imposed on the traces through the constraints, and the
- * Robin excitations are assembled by TimeHarmonicMaxwellAssemblerRobinBC.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
