@@ -1642,6 +1642,10 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
                                               this->pcout,
                                               this->mpi_communicator);
 
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
+
   // In the case the simulation is being restarted from a checkpoint file, the
   // restart_simulation parameter is set to true. This allows to perform all
   // operations related to restarting a simulation. Once all operations have

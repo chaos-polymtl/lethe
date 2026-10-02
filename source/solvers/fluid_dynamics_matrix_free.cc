@@ -2781,8 +2781,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
 
 template <int dim>
 FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
-  SimulationParameters<dim> &nsparam)
-  : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
+  SimulationParameters<dim>     &nsparam,
+  const FluidDynamicsFormulation fluid_dynamics_formulation)
+  : NavierStokesBase<dim, VectorType, IndexSet>(nsparam,
+                                                fluid_dynamics_formulation)
 {
   AssertThrow(
     nsparam.fem_parameters.velocity_degree ==

@@ -779,7 +779,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
   if (this->average_velocities_are_enabled())
     this->average_velocities->prepare_for_mesh_adaptation();
 
-  // Now do the same process for the void fractgion
+  // Now do the same process for the void fraction
   // Void Fraction
   std::vector<const VectorType *> vf_set_transfer;
   vf_set_transfer.push_back(&this->particle_projector.void_fraction_solution);
@@ -1661,6 +1661,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
                                               maximum_particle_diameter,
                                               this->pcout,
                                               this->mpi_communicator);
+
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
 
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart)

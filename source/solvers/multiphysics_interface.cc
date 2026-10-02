@@ -9,6 +9,9 @@
 #include <solvers/tracer.h>
 
 #include <deal.II/base/exceptions.h>
+
+#include <string>
+
 #define _unused(x) ((void)(x))
 
 DeclException1(
@@ -82,14 +85,27 @@ DeclExceptionMsg(CahnHilliardWithThermalBuoyancyForceError,
                  "Cahn-Hilliard and thermal buoyancy force are both activated. "
                  "This combination is not currently supported.");
 
+DeclException1(
+  PhysicsVANSFormNotImplementedError,
+  std::string,
+  << "The \"" << arg1
+  << "\" auxiliary physics is enabled together with the VANS "
+     "(volume-averaged Navier-Stokes) fluid dynamics solver, but a "
+     "volume-averaged form of this physics is not yet implemented "
+     "in Lethe. Disable this physics in the multiphysics subsection, "
+     "or use a solver of the standard Navier-Stokes equations "
+     "(e.g. lethe-fluid).");
+
 template <int dim>
 MultiphysicsInterface<dim>::MultiphysicsInterface(
   const SimulationParameters<dim>                             &nsparam,
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control,
-  ConditionalOStream                &p_pcout)
+  ConditionalOStream                &p_pcout,
+  const FluidDynamicsFormulation     p_fluid_dynamics_formulation)
   : multiphysics_parameters(nsparam.multiphysics)
   , pcout(p_pcout)
+  , fluid_dynamics_formulation(p_fluid_dynamics_formulation)
   , probe_postprocessor(p_simulation_control,
                         nsparam.post_processing.probing_points,
                         nsparam.post_processing.output_frequency,
@@ -106,6 +122,9 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   }
   if (multiphysics_parameters.heat_transfer)
     {
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("Heat transfer"));
       verbosity[PhysicsID::heat_transfer] =
         (nsparam.physics_solving_strategy.at(PhysicsID::heat_transfer)
              .verbosity != Parameters::Verbosity::quiet ||
@@ -119,6 +138,9 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     }
   if (multiphysics_parameters.tracer)
     {
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("Tracer"));
       verbosity[PhysicsID::tracer] =
         (nsparam.physics_solving_strategy.at(PhysicsID::tracer).verbosity !=
            Parameters::Verbosity::quiet ||
@@ -132,6 +154,9 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     }
   if (multiphysics_parameters.CLS)
     {
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("CLS"));
       verbosity[PhysicsID::CLS] =
         (nsparam.physics_solving_strategy.at(PhysicsID::CLS).verbosity !=
            Parameters::Verbosity::quiet ||
@@ -146,6 +171,9 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 
   if (multiphysics_parameters.cahn_hilliard)
     {
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("Cahn-Hilliard"));
       verbosity[PhysicsID::cahn_hilliard] =
         (nsparam.physics_solving_strategy.at(PhysicsID::cahn_hilliard)
              .verbosity != Parameters::Verbosity::quiet ||
@@ -160,6 +188,9 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 
   if (multiphysics_parameters.electromagnetics)
     {
+      // The volume-averaged form of the time-harmonic Maxwell equations is the
+      // same as the standard form, but uses the volume-averaged material
+      // properties (to be implemented in the future).
       verbosity[PhysicsID::electromagnetics] =
         (nsparam.linear_solver.at(PhysicsID::electromagnetics).verbosity !=
          Parameters::Verbosity::quiet) ?

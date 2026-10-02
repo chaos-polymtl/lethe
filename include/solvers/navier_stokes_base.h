@@ -6,6 +6,7 @@
 
 #include <core/mesh_controller.h>
 #include <core/mortar_coupling_manager.h>
+#include <core/multiphysics.h>
 #include <core/output_struct.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
@@ -119,7 +120,16 @@ template <int dim, typename VectorType, typename DofsType>
 class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
-  NavierStokesBase(SimulationParameters<dim> &nsparam);
+  /**
+   * @brief Construct the Navier-Stokes base and the multiphysics interface.
+   * @param[in] nsparam Relevant parameters for the solver.
+   * @param[in] fluid_dynamics_formulation The formulation of the fluid dynamics
+   * equations. Whether the solver solves the volume-averaged Navier-Stokes
+   * (VANS) equations or the standard Navier-Stokes equations.
+   */
+  NavierStokesBase(SimulationParameters<dim>     &nsparam,
+                   const FluidDynamicsFormulation fluid_dynamics_formulation =
+                     FluidDynamicsFormulation::standard);
 
   virtual ~NavierStokesBase()
   {}

@@ -15,7 +15,8 @@
 template <int dim, typename PropertiesIndex>
 FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
   CFDDEMSimulationParameters<dim> &nsparam)
-  : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters)
+  : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters,
+                                  FluidDynamicsFormulation::VANS)
   , cfd_dem_simulation_parameters(nsparam)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
@@ -186,7 +187,6 @@ FluidDynamicsVANS<dim, PropertiesIndex>::vertices_cell_mapping()
     LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
       this->particle_projector.dof_handler, vertices_to_periodic_cell);
 }
-
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial conditions
@@ -196,12 +196,27 @@ FluidDynamicsVANS<dim, PropertiesIndex>::iterate()
 {
   announce_string(this->pcout, "Volume-Averaged Fluid Dynamics");
 
+  // Solve and percolate the auxiliary physics that should be treated BEFORE
+  // the fluid dynamics
+  this->multiphysics->solve(
+    false, this->simulation_parameters.simulation_control.method);
+  this->multiphysics->percolate_time_vectors(false);
+
   if (this->simulation_parameters.multiphysics.fluid_dynamics)
     {
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
 
       PhysicsSolver<GlobalVectorType>::solve_governing_system();
+
+      // If the auxiliary physics need to be solved after the fluid dynamics,
+      // the vans solver requires to update the value here. This is due
+      // to the different type of vectors. This is copied from the
+      // navier_stokes_base.cc file logic.
+      if (this->multiphysics->get_active_physics().size() > 1)
+        {
+          this->update_solutions_for_multiphysics();
+        }
     }
   else
     {
@@ -209,6 +224,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::iterate()
       // the velocity and the pressure fields and move on.
       this->set_specified_fluid_dynamics_solution();
     }
+
+  // Solve and percolate the auxiliary physics that should be treated AFTER
+  // the fluid dynamics
+  this->multiphysics->solve(
+    true, this->simulation_parameters.simulation_control.method);
+  this->multiphysics->percolate_time_vectors(true);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -1163,6 +1184,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
+
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
 
   particle_handler.exchange_ghost_particles(true);
 

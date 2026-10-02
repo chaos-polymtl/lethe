@@ -5,7 +5,10 @@
  * This class provides an interface for multiphysics simulations by enabling
  * the solution of multiple auxiliary physics on top of a computational
  * fluid dynamics simulation. The auxiliary physics are stored in a map
- * whose keys are the Parameters::PhysicsID int enum.
+ * whose keys are the Parameters::PhysicsID int enum. The interface also
+ * knows whether the driving fluid dynamics solver solves the standard or
+ * the volume-averaged (VANS) Navier-Stokes equations, and refuses to
+ * instantiate an auxiliary physics that has no volume-averaged form yet.
  */
 
 #ifndef lethe_multiphysics_interface_h
@@ -39,15 +42,28 @@ class MultiphysicsInterface
 public:
   /** @brief Construct the Multiphysics interface from the simulation parameters.
    * Depending on which multiphysics element is enabled, the appropriate
-   * auxiliary physics is instantiated.
+   * auxiliary physics is instantiated. Auxiliary physics that have no
+   * volume-averaged (VANS) form yet throw at construction time when
+   * @p p_fluid_dynamics_formulation is FluidDynamicsFormulation::VANS.
    *
+   * @param[in] nsparam Simulation parameters.
+   * @param[in] p_triangulation Distributed triangulation shared by all
+   * physics.
+   * @param[in] p_simulation_control Simulation control shared by all
+   * physics.
+   * @param[in] p_pcout Parallel output stream.
+   * @param[in] p_fluid_dynamics_formulation The formulation of the fluid
+   * dynamics equations. Whether the solver solves the volume-averaged
+   * Navier-Stokes (VANS) equations or the standard Navier-Stokes equations.
    */
   MultiphysicsInterface(
     const SimulationParameters<dim> &nsparam,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control,
-    ConditionalOStream                &p_pcout);
+    ConditionalOStream                &p_pcout,
+    const FluidDynamicsFormulation     p_fluid_dynamics_formulation =
+      FluidDynamicsFormulation::standard);
 
   /**
    * @brief Default destructor.
@@ -58,6 +74,16 @@ public:
   get_active_physics()
   {
     return active_physics;
+  }
+
+  /**
+   * @brief Get the formulation of the fluid dynamics solver driving this interface.
+   * @return The formulation of the fluid dynamics solver.
+   */
+  FluidDynamicsFormulation
+  get_fluid_dynamics_formulation() const
+  {
+    return fluid_dynamics_formulation;
   }
 
   /**
@@ -986,6 +1012,7 @@ private:
   const Parameters::Multiphysics<dim>        multiphysics_parameters;
   std::map<PhysicsID, Parameters::Verbosity> verbosity;
   ConditionalOStream                         pcout;
+  const FluidDynamicsFormulation             fluid_dynamics_formulation;
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;

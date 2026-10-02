@@ -6,6 +6,10 @@ DEAL::Active physics (expected: fluid)
 DEAL::0
 DEAL::Active physics (expected: fluid, which should always be on)
 DEAL::0
+DEAL::Heat transfer correctly threw under VANS
+DEAL::Tracer correctly threw under VANS
+DEAL::CLS correctly threw under VANS
+DEAL::Cahn-Hilliard correctly threw under VANS
 DEAL::Active physics (expected: fluid, heat)
 DEAL::0
 DEAL::1
@@ -13,3 +17,10 @@ DEAL::Active physics (expected: fluid)
 DEAL::0
 DEAL::Active physics (expected: fluid, which should always be on)
 DEAL::0
+DEAL::Active physics under VANS (expected: fluid, electromagnetics)
+DEAL::0
+DEAL::6
+DEAL::Heat transfer correctly threw under VANS
+DEAL::Tracer correctly threw under VANS
+DEAL::CLS correctly threw under VANS
+DEAL::Cahn-Hilliard correctly threw under VANS

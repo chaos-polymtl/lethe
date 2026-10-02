@@ -39,8 +39,11 @@
 // Constructor for class FluidDynamicsMatrixBased
 template <int dim>
 FluidDynamicsMatrixBased<dim>::FluidDynamicsMatrixBased(
-  SimulationParameters<dim> &p_nsparam)
-  : NavierStokesBase<dim, GlobalVectorType, IndexSet>(p_nsparam)
+  SimulationParameters<dim>     &p_nsparam,
+  const FluidDynamicsFormulation fluid_dynamics_formulation)
+  : NavierStokesBase<dim, GlobalVectorType, IndexSet>(
+      p_nsparam,
+      fluid_dynamics_formulation)
 {
   initial_preconditioner_fill_level =
     ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
