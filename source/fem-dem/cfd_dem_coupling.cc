@@ -223,12 +223,10 @@ CFDDEMSolver<dim, PropertiesIndex>::initialize_dem_parameters()
   periodic_boundaries_object.map_periodic_cells(
     *parallel_triangulation, periodic_boundaries_cells_information);
 
-  // Set the combined_periodic_offsets to contact managers and particles contact
-  // forces for periodic contact detection (if PBC enabled)
-  contact_manager.set_combined_periodic_offsets(
-    periodic_boundaries_object.get_combined_periodic_offsets());
-  particle_particle_contact_force_object->set_combined_periodic_offsets(
-    periodic_boundaries_object.get_combined_periodic_offsets());
+  // Set the periodic offset per direction to the contact manager for
+  // periodic contact detection (if PBC enabled)
+  contact_manager.set_periodic_offset_per_direction(
+    periodic_boundaries_object.get_periodic_offset_per_direction());
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
   for (const auto &pb_id :

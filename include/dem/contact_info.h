@@ -34,12 +34,18 @@ struct particle_particle_contact_info
  * @brief Derived struct of the base struct particle_particle_contact_info for
  * periodic particle-particle contacts. Adds a translation vector that brings
  * particle_two into contact with particle_one.
+ *
+ * periodic_offset is also reused by particle_particle_fine_search as a
+ * cache of the nearest periodic image found on a previous call: for a
+ * persisting contact this translation is re-validated against the pair's
+ * current positions rather than recomputed from scratch on every call, since
+ * it practically never changes between fine search calls.
  */
 template <int dim>
 struct periodic_particle_particle_contact_info
   : particle_particle_contact_info<dim>
 {
-  Tensor<1, 3> periodic_offset;
+  Tensor<1, dim> periodic_offset;
 };
 
 /**
