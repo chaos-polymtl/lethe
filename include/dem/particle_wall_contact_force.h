@@ -15,9 +15,12 @@
 #include <dem/particle_interaction_outcomes.h>
 #include <dem/particle_wall_rolling_resistance_torque.h>
 
+#include <deal.II/base/function.h>
+
 #include <boost/math/special_functions.hpp>
 
 #include <map>
+#include <memory>
 #include <vector>
 
 using namespace dealii;
@@ -70,7 +73,6 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
-
 
   /**
    * @brief Return the number of contacts that occurred in the
@@ -1148,6 +1150,45 @@ private:
   set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
+   * @brief Return the thermal boundary type of a wall of the grid. The walls
+   * without a thermal boundary type are adiabatic.
+   *
+   * @param[in] boundary_id Boundary id of the wall.
+   *
+   * @return The thermal boundary type of the wall.
+   */
+  inline Parameters::Lagrangian::WallThermalBoundaryType
+  get_thermal_boundary_type(const types::boundary_id boundary_id) const
+  {
+    const auto thermal_type_it =
+      this->boundary_thermal_type_map.find(boundary_id);
+
+    // If the boundary id is not found in the map, return adiabatic as the
+    // default
+    return (thermal_type_it != this->boundary_thermal_type_map.end()) ?
+             thermal_type_it->second :
+             Parameters::Lagrangian::WallThermalBoundaryType::adiabatic;
+  }
+
+  /**
+   * @brief Return the temperature of a wall of the grid at a point. The
+   * temperature is evaluated at the time set by the solver with
+   * set_wall_temperature_time (see particle_heat_transfer.h).
+   *
+   * @param[in] boundary_id Boundary id of the wall, whose temperature is
+   * imposed.
+   * @param[in] point Point of the wall where the temperature is evaluated.
+   *
+   * @return The temperature of the wall at the point.
+   */
+  inline double
+  get_boundary_temperature(const types::boundary_id boundary_id,
+                           const Point<3>          &point) const
+  {
+    return this->boundary_temperature_function.at(boundary_id)->value(point);
+  }
+
+  /**
    * @brief Clears the tangential displacement and rolling resistance spring torque
    * from a contact info structure.
    *
@@ -1187,8 +1228,16 @@ private:
     boundary_translational_velocity_map;
   std::map<types::boundary_id, Tensor<1, 3>> boundary_rotational_vector;
   std::map<types::boundary_id, Point<3>>     point_on_rotation_vector;
-  const unsigned int                         vertices_per_triangle = 3;
-  Point<3>                                   center_mass_container;
+  std::map<types::boundary_id, Parameters::Lagrangian::WallThermalBoundaryType>
+    boundary_thermal_type_map;
+  // The temperature functions are the ones of the DEM boundary conditions
+  // parameters, not copies, so that they are evaluated at the time set by the
+  // solver with set_wall_temperature_time. They must only be evaluated here.
+  std::map<types::boundary_id, std::shared_ptr<Function<3>>>
+    boundary_temperature_function;
+
+  const unsigned int vertices_per_triangle = 3;
+  Point<3>           center_mass_container;
 
   /**
    * @brief Contact candidate between a particle and a triangle

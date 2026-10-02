@@ -4,6 +4,7 @@
 #ifndef lethe_dem_solver_parameters_h
 #define lethe_dem_solver_parameters_h
 
+#include <core/dem_properties.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
@@ -112,6 +113,16 @@ public:
     grid_motion.parse_parameters(prm);
     post_processing.parse_parameters(prm);
     solid_objects->parse_parameters(prm);
+
+    // The walls with an imposed temperature exchange heat with the particles
+    // only in multiphysic DEM.
+    AssertThrow(boundary_conditions.boundary_temperature.empty() ||
+                  model_parameters.solver_type == DEM::SolverType::dem_mp,
+                ExcMessage(
+                  "DEM boundary conditions with the temperature thermal "
+                  "boundary type can only be used in multiphysic DEM. Set the "
+                  "solver type to dem_mp in the model parameters subsection or "
+                  "set the thermal boundary types to adiabatic."));
   }
 };
 

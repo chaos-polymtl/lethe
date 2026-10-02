@@ -1,0 +1,9 @@
+
+DEAL::Time: 0.00000
+DEAL::Heat transfer rate of particle 0 (wall temperature, y = -0.5): -7.98427
+DEAL::Heat transfer rate of particle 1 (adiabatic wall): 0.00000
+DEAL::Heat transfer rate of particle 2 (wall temperature, y = 0.5): 7.98427
+DEAL::Time: 1.00000
+DEAL::Heat transfer rate of particle 0 (wall temperature, y = -0.5): 7.98427
+DEAL::Heat transfer rate of particle 1 (adiabatic wall): 0.00000
+DEAL::Heat transfer rate of particle 2 (wall temperature, y = 0.5): 23.9528
