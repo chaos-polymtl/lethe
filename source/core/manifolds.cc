@@ -17,9 +17,10 @@ namespace Parameters
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|spherical|cylindrical|iges"),
+                      Patterns::Selection(
+                        "none|spherical|cylindrical|iges|step"),
                       "Type of manifold description"
-                      "Choices are <none|spherical|cylindrical|iges>.");
+                      "Choices are <none|spherical|cylindrical|iges|step>.");
 
     prm.declare_entry(
       "id",
@@ -30,7 +31,13 @@ namespace Parameters
     prm.declare_entry("cad file",
                       "none",
                       Patterns::FileName(),
-                      "IGES file name");
+                      "CAD file name (IGES or STEP)");
+    prm.declare_entry(
+      "cad scale factor",
+      "1e-3",
+      Patterns::Double(),
+      "Scale factor applied to the CAD file once read. OpenCASCADE reads CAD "
+      "files in millimeters, so the default (1e-3) yields meters");
     prm.declare_entry(
       "point coordinates",
       "0,0,0",
@@ -60,11 +67,15 @@ namespace Parameters
           this->types.emplace_back(ManifoldType::cylindrical);
         else if (op == "iges")
           this->types.emplace_back(ManifoldType::iges);
+        else if (op == "step")
+          this->types.emplace_back(ManifoldType::step);
 
         this->ids.emplace_back(id);
         this->manifold_point.emplace_back(prm.get("point coordinates"));
         this->manifold_direction.emplace_back(prm.get("direction vector"));
         this->cad_files.emplace_back(prm.get("cad file"));
+        this->cad_scale_factors.emplace_back(
+          prm.get_double("cad scale factor"));
       }
   }
 
@@ -147,11 +158,15 @@ attach_manifolds_to_triangulation(
             throw std::runtime_error(
               "Cylindrical manifolds are not supported in 2D");
         }
-      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
+      else if (manifolds.types[i] ==
+                 Parameters::Manifolds::ManifoldType::iges ||
+               manifolds.types[i] == Parameters::Manifolds::ManifoldType::step)
         {
           attach_cad_to_manifold(triangulation,
                                  manifolds.cad_files[i],
-                                 manifolds.ids[i]);
+                                 manifolds.ids[i],
+                                 manifolds.types[i],
+                                 manifolds.cad_scale_factors[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
         {
@@ -164,26 +179,35 @@ attach_manifolds_to_triangulation(
 void
 attach_cad_to_manifold(parallel::DistributedTriangulationBase<2> &,
                        const std::string &,
-                       const unsigned int)
+                       const unsigned int,
+                       const Parameters::Manifolds::ManifoldType,
+                       const double)
 {
-  throw std::runtime_error("IGES manifolds are not supported in 2D");
+  throw std::runtime_error("CAD manifolds are not supported in 2D");
 }
 
 void
 attach_cad_to_manifold(parallel::DistributedTriangulationBase<2, 3> &,
                        const std::string &,
-                       const unsigned int)
+                       const unsigned int,
+                       const Parameters::Manifolds::ManifoldType,
+                       const double)
 {
-  throw std::runtime_error("IGES manifolds are not supported in 2D/3D");
+  throw std::runtime_error("CAD manifolds are not supported in 2D/3D");
 }
 
 #ifdef DEAL_II_WITH_OPENCASCADE
 void
 attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &triangulation,
                        const std::string                         &cad_name,
-                       const unsigned int                         manifold_id)
+                       const unsigned int                         manifold_id,
+                       const Parameters::Manifolds::ManifoldType  cad_type,
+                       const double cad_scale_factor)
 {
-  TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(cad_name, 1e-3);
+  TopoDS_Shape cad_surface =
+    (cad_type == Parameters::Manifolds::ManifoldType::step) ?
+      OpenCASCADE::read_STEP(cad_name, cad_scale_factor) :
+      OpenCASCADE::read_IGES(cad_name, cad_scale_factor);
 
   // Enforce manifold over boundary ID
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -211,10 +235,12 @@ attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &triangulation,
 void
 attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &,
                        const std::string &,
-                       const unsigned int)
+                       const unsigned int,
+                       const Parameters::Manifolds::ManifoldType,
+                       const double)
 {
   throw std::runtime_error(
-    "IGES manifolds require DEAL_II to be compiled with OPENCASCADE");
+    "CAD manifolds require DEAL_II to be compiled with OPENCASCADE");
 }
 #endif // DEAL_II_WITH_OPENCASCADE
 
