@@ -73,41 +73,6 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   // is only done once since it only depends on the finite elements. Since the
   // three spaces are [E_real, E_imag, H_real, H_imag] finite element systems,
   // every shape function belongs to exactly one field.
-  const auto classify_shape_functions =
-    [&](const FiniteElement<dim>   &fe,
-        std::vector<unsigned char> &shape_function_type,
-        std::vector<unsigned int>  &electric_dofs,
-        std::vector<unsigned int>  &magnetic_dofs) {
-      shape_function_type.assign(fe.n_dofs_per_cell(), 0);
-      electric_dofs.clear();
-      magnetic_dofs.clear();
-
-      for (unsigned int k = 0; k < fe.n_dofs_per_cell(); ++k)
-        {
-          if (fe.shape_function_belongs_to(k, extractor_E_real))
-            shape_function_type[k] |= electric_real;
-          if (fe.shape_function_belongs_to(k, extractor_E_imag))
-            shape_function_type[k] |= electric_imag;
-          if (fe.shape_function_belongs_to(k, extractor_H_real))
-            shape_function_type[k] |= magnetic_real;
-          if (fe.shape_function_belongs_to(k, extractor_H_imag))
-            shape_function_type[k] |= magnetic_imag;
-
-          Assert(shape_function_type[k] == electric_real ||
-                   shape_function_type[k] == electric_imag ||
-                   shape_function_type[k] == magnetic_real ||
-                   shape_function_type[k] == magnetic_imag,
-                 ExcMessage("Each shape function of the time-harmonic Maxwell "
-                            "finite element systems must belong to exactly "
-                            "one field."));
-
-          if (shape_function_type[k] & is_electric)
-            electric_dofs.emplace_back(k);
-          else if (shape_function_type[k] & is_magnetic)
-            magnetic_dofs.emplace_back(k);
-        }
-    };
-
   classify_shape_functions(fe_test,
                            this->shape_function_type_test,
                            this->test_dofs_electric,
@@ -175,6 +140,36 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->phi_E_hat.reinit(n_face_q_points, n_dofs_trial_skeleton);
   this->n_cross_phi_E_hat.reinit(n_face_q_points, n_dofs_trial_skeleton);
   this->n_cross_phi_H_hat.reinit(n_face_q_points, n_dofs_trial_skeleton);
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwellScratchData<dim>::classify_shape_functions(
+  const FiniteElement<dim>   &fe,
+  std::vector<unsigned char> &shape_function_type,
+  std::vector<unsigned int>  &electric_dofs,
+  std::vector<unsigned int>  &magnetic_dofs) const
+{
+  shape_function_type.assign(fe.n_dofs_per_cell(), 0);
+  electric_dofs.clear();
+  magnetic_dofs.clear();
+
+  for (unsigned int k = 0; k < fe.n_dofs_per_cell(); ++k)
+    {
+      if (fe.shape_function_belongs_to(k, extractor_E_real))
+        shape_function_type[k] |= electric_real;
+      if (fe.shape_function_belongs_to(k, extractor_E_imag))
+        shape_function_type[k] |= electric_imag;
+      if (fe.shape_function_belongs_to(k, extractor_H_real))
+        shape_function_type[k] |= magnetic_real;
+      if (fe.shape_function_belongs_to(k, extractor_H_imag))
+        shape_function_type[k] |= magnetic_imag;
+
+      if (shape_function_type[k] & is_electric)
+        electric_dofs.emplace_back(k);
+      else if (shape_function_type[k] & is_magnetic)
+        magnetic_dofs.emplace_back(k);
+    }
 }
 
 template <int dim>

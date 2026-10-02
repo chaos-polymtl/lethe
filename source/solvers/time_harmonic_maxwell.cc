@@ -2032,10 +2032,10 @@ TimeHarmonicMaxwell<dim>::setup_assemblers()
 
   // Robin boundary conditions. The waveguide port amplitudes must have been
   // computed by compute_electromagnetic_scaling before this call.
-  const bool has_robin_boundary =
-    std::ranges::any_of(boundary_conditions.type, [](const auto &bc) {
-      return is_robin_boundary_type(bc.second);
-    });
+  bool has_robin_boundary = false;
+  for (const auto &bc : boundary_conditions.type)
+    if (is_robin_boundary_type(bc.second))
+      has_robin_boundary = true;
   if (has_robin_boundary)
     this->face_assemblers.emplace_back(
       std::make_shared<TimeHarmonicMaxwellAssemblerRobinBC<dim>>(
@@ -2215,8 +2215,12 @@ TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
   copy_data.M5_matrix.add(-1.0, copy_data.tmp_matrix_M2M1M4);
   copy_data.M5_matrix.vmult(copy_data.local_rhs, copy_data.l_vector);
 
-  // Get the local dof indices for the skeleton trial space to be able to distribute
-  // the local matrix and RHS to the global system. Cannot use cell->get_dof_indices() because the skeleton trial space is not the same as the interior trial space so we need to use the as_dof_handler_iterator() function to change the cell iterator to the skeleton trial space and then get the dof indices from that.
+  // Get the local dof indices for the skeleton trial space to be able to
+  // distribute the local matrix and RHS to the global system. Cannot use
+  // cell->get_dof_indices() because the skeleton trial space is not the same as
+  // the interior trial space so we need to use the as_dof_handler_iterator()
+  // function to change the cell iterator to the skeleton trial space and then
+  // get the dof indices from that.
   cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton)
     ->get_dof_indices(copy_data.local_dof_indices);
 }
@@ -2377,16 +2381,15 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
       *this->mapping);
 
 
-  WorkStream::run(
-    this->dof_handler_trial_interior->begin_active(),
-    this->dof_handler_trial_interior->end(),
-    *this,
-    &TimeHarmonicMaxwell::reconstruct_local_interior_solution,
-    &TimeHarmonicMaxwell::copy_local_interior_solution_to_global,
-    scratch_data,
-    DPGCopyData(this->fe_test->n_dofs_per_cell(),
-                this->fe_trial_interior->n_dofs_per_cell(),
-                this->fe_trial_skeleton->n_dofs_per_cell()));
+  WorkStream::run(this->dof_handler_trial_interior->begin_active(),
+                  this->dof_handler_trial_interior->end(),
+                  *this,
+                  &TimeHarmonicMaxwell::reconstruct_local_interior_solution,
+                  &TimeHarmonicMaxwell::copy_local_interior_solution_to_global,
+                  scratch_data,
+                  DPGCopyData(this->fe_test->n_dofs_per_cell(),
+                              this->fe_trial_interior->n_dofs_per_cell(),
+                              this->fe_trial_skeleton->n_dofs_per_cell()));
 
   // After the loop over the cells, we finalize the assembly by compressing
   // the vector because of the MPI parallelization.
