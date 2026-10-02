@@ -582,8 +582,7 @@ private:
    * squared norm of the DPG residual and the dof indices of the cell.
    */
   void
-  copy_local_interior_solution_to_global(
-    const DPGCopyData &copy_data);
+  copy_local_interior_solution_to_global(const DPGCopyData &copy_data);
 
   /**
    * @brief This helper function helps to compute the memory consumption of different

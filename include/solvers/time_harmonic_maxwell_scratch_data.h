@@ -35,24 +35,23 @@ DeclException1(
   << ". Currently, only 3D problems are supported as the 2D version of curls and cross products have completely different definitions than their 3D counterparts.");
 
 /**
- * @brief Project a complex vector onto the tangential plane defined by a
- * normal vector. Mathematically, it computes
+ * This helper function projects a 3D tensor onto the tangential plane
+ * defined by the given normal vector. Mathematically, it computes:
  * \f[
  * \mathbf{t} = \mathbf{n} \times (\mathbf{v} \times \mathbf{n})
  * \f]
- * which removes the normal component of the vector \f$\mathbf{v}\f$ and keeps
- * only its tangential part. This operation is used to obtain traces in
- * \f$H^{-1/2}(\mathrm{curl})\f$ spaces, where only the tangential components
- * are continuous across interfaces. The function is forced inline because it
- * is called frequently during the assembly.
+ * which removes the normal component of the vector \f$\mathbf{v}\f$,
+ * keeping only the tangential part.
  *
  * @tparam dim Spatial dimension.
- *
- * @param[in] tensor Input vector (field value) to be projected.
- *
- * @param[in] normal Unit normal vector defining the face orientation.
- *
+ * @param tensor Input vector (field value) to be projected.
+ * @param normal Unit normal vector defining the face orientation.
  * @return The tangential component of the input vector.
+ *
+ * @note This operation is used to obtain traces in H^{-1/2}(curl) spaces,
+ * where only tangential components are continuous across interfaces. The
+ * inline keyword is enforced to make sure that the tensor operations are
+ * efficient as they are called frequently during assembly.
  */
 template <int dim>
 DEAL_II_ALWAYS_INLINE inline Tensor<1, dim, std::complex<double>>
@@ -77,22 +76,23 @@ map_H12(const Tensor<1, dim, std::complex<double>> &tensor,
  * the physical property models of the material.
  *
  * @note The time-harmonic Maxwell equations do not support multiple fluids, so
- * the properties only depend on the material id of the cell.
+ * the properties only depend on the material id of the cell since the interface
+ * between two materials is conformed to the mesh.
  *
- * @param[in] physical_properties_manager Manager of the physical property
- * models of the simulation.
- *
- * @param[in] field_values_vectors Values of the fields on which the properties
- * can depend at each point. The temperature field must be present since it
- * sets the number of points.
- *
- * @param[in] material_id Material id used to select the property models.
- *
- * @param[out] effective_electric_permittivities Effective electric
- * permittivity at each point. The vector is resized to the number of points.
- *
- * @param[out] effective_magnetic_permeabilities Effective magnetic
- * permeability at each point. The vector is resized to the number of points.
+ *  @param[in] physical_properties_manager The object that manages the
+ * physical properties of the problem and provides them at any given position
+ * of the domain.
+ * @param[in] field_values A map containing the values of the fields at the
+ * current position. This is used to compute the material properties that
+ * depend on the fields.
+ *  @param[in] material_id The material id of the current position, used to
+ * determine the appropriate material properties from the input parameters.
+ *  @param[out] effective_electric_permittivity Effective electric
+ * permittivity at the current position. This value is updated in place by the
+ * function.
+ *  @param[out] effective_magnetic_permeability Effective magnetic
+ * permeability at the current position. This value is updated in place by the
+ * function.
  */
 void
 compute_effective_electromagnetic_properties(
@@ -248,6 +248,33 @@ public:
   allocate() override;
 
   /**
+   * @brief Classify the shape functions of a finite element space of the
+   * time-harmonic Maxwell equations according to the field they belong to.
+   * Each shape function of the [E_real, E_imag, H_real, H_imag] finite element
+   * system receives the ShapeFunctionType flag of its field, which is
+   * determined with FiniteElement::shape_function_belongs_to(). Since every
+   * shape function belongs to exactly one field, the local indices of the
+   * electric and magnetic shape functions are then gathered in two lists.
+   *
+   * @param[in] fe Finite element system of the [E_real, E_imag, H_real,
+   * H_imag] fields (interior trial, skeleton trial or test space).
+   *
+   * @param[out] shape_function_type ShapeFunctionType flag of each shape
+   * function of the finite element.
+   *
+   * @param[out] electric_dofs Local indices of the shape functions that belong
+   * to the electric field (E_real or E_imag).
+   *
+   * @param[out] magnetic_dofs Local indices of the shape functions that belong
+   * to the magnetic field (H_real or H_imag).
+   */
+  void
+  classify_shape_functions(const FiniteElement<dim>   &fe,
+                           std::vector<unsigned char> &shape_function_type,
+                           std::vector<unsigned int>  &electric_dofs,
+                           std::vector<unsigned int>  &magnetic_dofs) const;
+
+  /**
    * @brief Enable the evaluation of the temperature field, on which the
    * electromagnetic properties may depend.
    *
@@ -320,7 +347,7 @@ public:
   {
     fe_values_temperature->reinit(cell_temperature);
     fe_values_temperature->get_function_values(temperature_solution,
-                                               temperature_values);
+                                               this->temperature_values);
   }
 
   /**
@@ -345,8 +372,8 @@ public:
     const VectorType                                     &temperature_solution)
   {
     fe_face_values_temperature->reinit(cell_temperature, face_no);
-    fe_face_values_temperature->get_function_values(temperature_solution,
-                                                    face_temperature_values);
+    fe_face_values_temperature->get_function_values(
+      temperature_solution, this->face_temperature_values);
   }
 
   /**
