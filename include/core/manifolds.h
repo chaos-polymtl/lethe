@@ -29,7 +29,8 @@ namespace Parameters
       none,
       spherical,
       cylindrical,
-      iges
+      iges,
+      step
     };
 
     // IDs of boundaries to which the manifold will be applied. Each manifold
@@ -46,6 +47,9 @@ namespace Parameters
 
     // File names for cad manifolds
     std::vector<std::string> cad_files;
+
+    // Scale factors applied to the cad manifolds when they are read
+    std::vector<double> cad_scale_factors;
 
     // Number of manifolds subsections. Each manifold description (i.e., type
     // and geometric characteristics) can be associated to more than one
@@ -163,31 +167,43 @@ attach_manifolds_to_triangulation(
   const Parameters::Manifolds                            manifolds);
 
 /**
- * @brief Attaches CAD manifolds using IGES files to boundaries of the triangulation
- * This function attaches a CAD manifold to the faces of a triangulation. Note
- * that this only works in 3D.
+ * @brief Attaches CAD manifolds using IGES or STEP files to boundaries of the
+ * triangulation. This function attaches a CAD manifold to the faces of a
+ * triangulation. Note that this only works in 3D.
  *
  * @param triangulation The triangulation to manifolds are attached
  *
  * @param cad_name Filename of the cad file
  *
  * @param manifold_id Identifier of the manifold
+ *
+ * @param cad_type Type of the CAD file (ManifoldType::iges or
+ * ManifoldType::step)
+ *
+ * @param cad_scale_factor Scale factor applied to the CAD geometry once read.
+ * OpenCASCADE reads CAD files in millimeters, hence 1e-3 yields meters.
  */
 void
 attach_cad_to_manifold(parallel::DistributedTriangulationBase<2> &triangulation,
                        const std::string                         &cad_name,
-                       const unsigned int                         manifold_id);
+                       const unsigned int                         manifold_id,
+                       const Parameters::Manifolds::ManifoldType  cad_type,
+                       const double cad_scale_factor);
 
 void
 attach_cad_to_manifold(
   parallel::DistributedTriangulationBase<2, 3> &triangulation,
   const std::string                            &cad_name,
-  const unsigned int                            manifold_id);
+  const unsigned int                            manifold_id,
+  const Parameters::Manifolds::ManifoldType     cad_type,
+  const double                                  cad_scale_factor);
 
 void
 attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &triangulation,
                        const std::string                         &cad_name,
-                       const unsigned int                         manifold_id);
+                       const unsigned int                         manifold_id,
+                       const Parameters::Manifolds::ManifoldType  cad_type,
+                       const double cad_scale_factor);
 
 
 
