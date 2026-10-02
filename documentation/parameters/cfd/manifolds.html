@@ -464,7 +464,7 @@
       # Boundary mesh id specified in the .gmsh file
       set id                 = 0
 
-      # Type of manifold. Choices are &lt;spherical|cylindrical|iges|none&gt;
+      # Type of manifold. Choices are &lt;spherical|cylindrical|iges|step|none&gt;
       set type               = none
 
       # Center of the sphere or a point along the cylinder's axis (x, y, z)
@@ -485,7 +485,7 @@ end
 Hence, <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">number</span></code> refers to the number of <code class="docutils literal notranslate"><span class="pre">manifold</span></code> subsections, and not the total number of manifolds in the mesh.</p>
 </div>
 <ul>
-<li><p>Lethe supports three types of manifolds:</p>
+<li><p>Lethe supports four types of manifolds:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">spherical</span></code> manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires the center of the geometry to set the manifold.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cylindrical</span></code> manifold: Used to describe cylinders in three dimensions. It uses the coordinates of a point and a direction vector located on the axis of the cylinder.</p>
@@ -494,7 +494,16 @@ Hence, <code class="docutils literal notranslate"><span class="pre">set</span> <
 <p>Cylindrical manifolds are not supported in 2D.</p>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">iges</span></code>: manifold corresponding to a CAD geometry: the last two lines of the <code class="docutils literal notranslate"><span class="pre">manifold</span> <span class="pre">0</span></code> subsection are replaced by the following command <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">cad</span> <span class="pre">file</span> <span class="pre">=</span> <span class="pre">file_name.iges</span></code> where the path to the cad file is specified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">iges</span></code> or <code class="docutils literal notranslate"><span class="pre">step</span></code>: manifold corresponding to a CAD geometry stored in an IGES or a STEP file, respectively. The last two lines of the <code class="docutils literal notranslate"><span class="pre">manifold</span> <span class="pre">0</span></code> subsection are replaced by the following command <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">cad</span> <span class="pre">file</span> <span class="pre">=</span> <span class="pre">file_name.iges</span></code> (or <code class="docutils literal notranslate"><span class="pre">file_name.step</span></code>) where the path to the cad file is specified, and optionally by <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">cad</span> <span class="pre">scale</span> <span class="pre">factor</span></code>. The boundary nodes are projected onto the CAD surfaces along the normal of the mesh.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>OpenCASCADE reads the CAD geometry in millimeters. It is then multiplied by <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">cad</span> <span class="pre">scale</span> <span class="pre">factor</span></code> (default <code class="docutils literal notranslate"><span class="pre">1e-3</span></code>), which converts it to meters. The CAD and the mesh must be in the same units: for a mesh in meters (e.g., built in millimeters and read with <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">scale</span> <span class="pre">=</span> <span class="pre">0.001</span></code> in the <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection) keep the default, and for a mesh in millimeters use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">cad</span> <span class="pre">scale</span> <span class="pre">factor</span> <span class="pre">=</span> <span class="pre">1</span></code>. CAD manifolds are only supported in 3D.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>The projection direction is estimated from the CAD normals at the end points of each edge. On edges that lie on a sharp feature of the CAD (e.g., the 90 degree edge between a pipe wall and a flat step), this normal is ambiguous and points can be projected onto the wrong surface. Give the surfaces on each side of a sharp feature different boundary ids, each with its own CAD file containing only its smooth surfaces (flat faces need no manifold).</p>
+</div>
+</li>
 </ul>
 </li>
 </ul>

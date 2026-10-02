@@ -15,7 +15,7 @@ Linking parts of the mesh to manifolds is an interesting way to factor the real 
         # Boundary mesh id specified in the .gmsh file
         set id                 = 0
 
-        # Type of manifold. Choices are <spherical|cylindrical|iges|none>
+        # Type of manifold. Choices are <spherical|cylindrical|iges|step|none>
         set type               = none
 
         # Center of the sphere or a point along the cylinder's axis (x, y, z)
@@ -35,7 +35,7 @@ First the number of manifolds is specified by the ``set number`` command. Then a
     The manifold id will always be the same as the prescribed boundary ``id``. Similar to :doc:`../cfd/boundary_conditions_cfd`, The parameter ``id`` can also take a list of boundary ids.
     Hence, ``set number`` refers to the number of ``manifold`` subsections, and not the total number of manifolds in the mesh.
 
-* Lethe supports three types of manifolds:
+* Lethe supports four types of manifolds:
 
   * ``spherical`` manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires the center of the geometry to set the manifold.
   * ``cylindrical`` manifold: Used to describe cylinders in three dimensions. It uses the coordinates of a point and a direction vector located on the axis of the cylinder.
@@ -43,7 +43,13 @@ First the number of manifolds is specified by the ``set number`` command. Then a
     .. caution::
         Cylindrical manifolds are not supported in 2D.
 
-  * ``iges``: manifold corresponding to a CAD geometry: the last two lines of the ``manifold 0`` subsection are replaced by the following command ``set cad file = file_name.iges`` where the path to the cad file is specified.
+  * ``iges`` or ``step``: manifold corresponding to a CAD geometry stored in an IGES or a STEP file, respectively. The last two lines of the ``manifold 0`` subsection are replaced by the following command ``set cad file = file_name.iges`` (or ``file_name.step``) where the path to the cad file is specified, and optionally by ``set cad scale factor``. The boundary nodes are projected onto the CAD surfaces along the normal of the mesh.
+
+    .. caution::
+        OpenCASCADE reads the CAD geometry in millimeters. It is then multiplied by ``set cad scale factor`` (default ``1e-3``), which converts it to meters. The CAD and the mesh must be in the same units: for a mesh in meters (e.g., built in millimeters and read with ``set scale = 0.001`` in the ``mesh`` subsection) keep the default, and for a mesh in millimeters use ``set cad scale factor = 1``. CAD manifolds are only supported in 3D.
+
+    .. caution::
+        The projection direction is estimated from the CAD normals at the end points of each edge. On edges that lie on a sharp feature of the CAD (e.g., the 90 degree edge between a pipe wall and a flat step), this normal is ambiguous and points can be projected onto the wrong surface. Give the surfaces on each side of a sharp feature different boundary ids, each with its own CAD file containing only its smooth surfaces (flat faces need no manifold).
 
 .. note::
     For more information about manifolds and the reasons behind them, we invite you to read the documentation page of deal.II: `Manifold description for triangulations <https://www.dealii.org/developer/doxygen/deal.II/group__manifold.html>`_.
