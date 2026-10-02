@@ -43,8 +43,6 @@ compute_waveguide_port_incident_fields(
   static constexpr double               PI = numbers::PI;
 
   // Gather the relevant waveguide parameters
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
-    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
   const auto &waveguide_corners =
@@ -265,8 +263,6 @@ compute_waveguide_port_excitation(
                                            boundary_id_index);
 
   // Gather the relevant waveguide parameters
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
-    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
   const auto &waveguide_corners =
@@ -300,8 +296,8 @@ compute_waveguide_port_excitation(
   // We normalize the excitation by the maximum amplitude accross all
   // the waveguide ports to ensure that everything is normalized
   double scaling_factor =
-    this->waveguide_ports_electric_amplitudes[boundary_id_index] /
-    *std::ranges::max_element(this->waveguide_ports_electric_amplitudes);
+    waveguide_ports_electric_amplitudes[boundary_id_index] /
+    *std::ranges::max_element(waveguide_ports_electric_amplitudes);
   const Tensor<1, dim, std::complex<double>> excitation =
     scaling_factor * (cross_product_3d(normal, H_inc) +
                       map_H12(surface_admittance * E_inc, normal));
