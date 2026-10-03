@@ -2397,8 +2397,17 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
 
   *this->present_solution = this->locally_owned_solution_interior;
 
-  // The non-ghosted vector is not needed anymore, so we release its memory.
-  this->locally_owned_solution_interior.clear();
+  // The non-ghosted vector is not needed anymore, so we release its memory by
+  // swapping it with an empty vector, which is deallocated at the end of the
+  // scope. This is used instead of clear(), which is not available for all the
+  // types of GlobalVectorType.
+  {
+    GlobalVectorType empty_vector;
+    this->locally_owned_solution_interior.swap(empty_vector);
+  }
+
+  this->locally_owned_solution_interior.reinit(
+    this->locally_owned_dofs_trial_interior, mpi_communicator);
 
   // We also output the global error indicator if the dpg error estimator is
   // activated and in verbose mode
