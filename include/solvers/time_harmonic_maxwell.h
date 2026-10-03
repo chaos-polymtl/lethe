@@ -11,8 +11,11 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/copy_data.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/simulation_parameters.h>
+#include <solvers/time_harmonic_maxwell_assemblers.h>
+#include <solvers/time_harmonic_maxwell_scratch_data.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/numbers.h>
@@ -27,7 +30,6 @@
 
 #include <deal.II/grid/grid_tools.h>
 
-#include <deal.II/lac/lapack_full_matrix.h>
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_pattern.h>
 #include <deal.II/lac/trilinos_precondition.h>
@@ -66,12 +68,6 @@ DeclException1(
   types::boundary_id,
   << "The boundary id: " << arg1
   << " is defined in the triangulation, but not as a boundary condition for the TimeHarmonicMaxwell physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
-
-DeclException1(
-  TimeHarmonicMaxwellDimensionNotSupported,
-  int,
-  << "The time-harmonic Maxwell solver does not support dimension: " << arg1
-  << ". Currently, only 3D problems are supported as the 2D version of curls and cross products have completely different definitions than their 3D counterparts.");
 
 template <int dim>
 class TimeHarmonicMaxwell : public AuxiliaryPhysics<dim, VectorType>
@@ -478,49 +474,118 @@ private:
 
   /**
    * @brief Reconstruct the interior solution from the skeleton solution after solving
-   * the linear system on the skeleton only.
+   * the linear system on the skeleton only. The local DPG system of each cell
+   * is assembled again to compute the interior solution
+   * \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ and the DPG residual
+   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$.
    */
   void
   reconstruct_interior_solution();
 
-
   /**
-   * This helper function projects a 3D tensor onto the tangential plane
-   * defined by the given normal vector. Mathematically, it computes:
-   * \f[
-   * \mathbf{t} = \mathbf{n} \times (\mathbf{v} \times \mathbf{n})
-   * \f]
-   * which removes the normal component of the vector \f$\mathbf{v}\f$,
-   * keeping only the tangential part.
-   *
-   * @tparam dim Spatial dimension.
-   * @param tensor Input vector (field value) to be projected.
-   * @param normal Unit normal vector defining the face orientation.
-   * @return The tangential component of the input vector.
-   *
-   * @note This operation is used to obtain traces in H^{-1/2}(curl) spaces,
-   * where only tangential components are continuous across interfaces. The
-   * inline keyword is enforced to make sure that the tensor operations are
-   * efficient as they are called frequently during assembly.
+   * @brief Set up the cell and face assemblers of the DPG system according to
+   * the simulation parameters.
    */
-  DEAL_II_ALWAYS_INLINE inline Tensor<1, dim, std::complex<double>>
-  map_H12(const Tensor<1, dim, std::complex<double>> &tensor,
-          const Tensor<1, dim>                       &normal)
-  {
-    if (dim != 3)
-      {
-        AssertThrow(
-          false,
-          ExcMessage(
-            "The map_H12 function is only implemented for 3D problems."));
-      }
-    auto result = cross_product_3d(normal, cross_product_3d(tensor, normal));
-
-    return result;
-  }
+  void
+  setup_assemblers();
 
   /**
-   * This helper function helps to compute the memory consumption of different
+   * @brief Assemble the uncondensed local DPG system (\f$G\f$, \f$B\f$,
+   * \f$\hat{B}\f$ and \f$l\f$) of a cell with the cell and face assemblers,
+   * and compute the condensation operators that are common to the assembly
+   * and to the interior reconstruction: \f$G^{-1}\f$,
+   * \f$M_4 = B^\dagger G^{-1}\f$, \f$M_1^{-1} = (B^\dagger G^{-1}B)^{-1}\f$
+   * and \f$M_2 = B^\dagger G^{-1}\hat{B}\f$.
+   *
+   * @param[in] cell The cell of the interior trial space DoFHandler.
+   *
+   * @param[in,out] scratch_data Scratch data reinitialized on the cell and on
+   * each of its faces.
+   *
+   * @param[out] copy_data Copy data in which the local system and the
+   * condensation operators are stored.
+   */
+  void
+  assemble_local_dpg_system(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
+    DPGCopyData                                          &copy_data);
+
+  /**
+   * @brief Assemble the local DPG system of a cell and condense it on the
+   * skeleton unknowns. The condensed matrix is \f$M_3 - M_2^\dagger M_1^{-1}
+   * M_2\f$ and the condensed right-hand side is \f$(M_5 - M_2^\dagger
+   * M_1^{-1} M_4) l\f$.
+   *
+   * @param[in] cell The cell of the interior trial space DoFHandler.
+   *
+   * @param[in,out] scratch_data (see assemble_local_dpg_system)
+   *
+   * @param[out] copy_data Copy data in which the condensed skeleton system is
+   * stored.
+   */
+  void
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
+    DPGCopyData                                          &copy_data);
+
+  /**
+   * @brief Distribute the condensed skeleton system of a cell in the global
+   * system matrix and right-hand side.
+   *
+   * @param[in] copy_data Copy data containing the condensed skeleton system.
+   */
+  void
+  copy_local_matrix_to_global_matrix(const DPGCopyData &copy_data);
+
+  /**
+   * @brief WorkStream worker of the interior reconstruction. It assembles the
+   * local DPG system of a cell with assemble_local_dpg_system() and uses the
+   * skeleton solution of the cell \f$\hat{u}_h\f$ to compute:
+   * - the interior solution of the cell
+   *   \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$;
+   * - if the dpg error estimator is activated, the DPG residual of the cell
+   *   (Riesz representation of the residual)
+   *   \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ and the squared
+   *   energy norm of the residual
+   *   \f$\|R\|^2_V = (l - B u_h - \hat{B}\hat{u}_h)^\dagger \Psi\f$, which is
+   *   the DPG error indicator of the cell.
+   *
+   * @param[in] cell The cell of the interior trial space DoFHandler.
+   *
+   * @param[in,out] scratch_data (see assemble_local_dpg_system)
+   *
+   * @param[out] copy_data Copy data in which the interior solution, the
+   * squared norm of the DPG residual and the dof indices of the cell are
+   * stored.
+   */
+  void
+  reconstruct_local_interior_solution(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
+    DPGCopyData                                          &copy_data);
+
+  /**
+   * @brief WorkStream copier of the interior reconstruction. It adds the
+   * interior solution of a cell, computed by
+   * reconstruct_local_interior_solution_and_residual(), in the global vector
+   * locally_owned_solution_interior. This is done with the dof indices of the
+   * cell stored in the copy data, which is
+   * equivalent to cell->distribute_local_to_global(local_vector,
+   * global_vector), since the copier does not have access to the cell. If the
+   * dpg error estimator is activated, it also stores the error indicator of
+   * the cell in local_estimated_error_per_cell and adds its squared norm to
+   * squared_residual_L2_norm.
+   *
+   * @param[in] copy_data Copy data containing the interior solution, the
+   * squared norm of the DPG residual and the dof indices of the cell.
+   */
+  void
+  copy_local_interior_solution_to_global(const DPGCopyData &copy_data);
+
+  /**
+   * @brief This helper function helps to compute the memory consumption of different
    * objects on each rank and print it out. It is useful to debug memory issues
    * and understand the memory distribution across ranks.
    *
@@ -552,62 +617,6 @@ private:
 
 
   /**
-   * @brief This helper function computes the incident electromagnetic fields
-   * for a waveguide port dynamically from the input parameters. It is only
-   * implemented for 3D problems.
-   *
-   * @tparam dim Spatial dimension.
-   * @param[in] p Input position where to compute the incident fields.
-   * @param[in] normal Unit normal vector defining the face orientation of the
-   * waveguide port.
-   * @param[in] effective_electric_permittivity Effective electric permittivity
-   * at the point p.
-   * @param[in] effective_magnetic_permeability Effective magnetic permeability
-   * at the point p.
-   * @param[in] boundary_id_index Index to identify to which waveguide port
-   * condition we are applying the excitation. The default value is 0, which
-   * can be used when there is only one waveguide port defined in the input
-   * file.
-   * @return This function returns a std::pair containing the electric field
-   * Tensor<1, dim, std::complex<double>> and the magnetic field Tensor<1, dim,
-   * std::complex<double>> computed at the given position.
-   */
-  std::pair<Tensor<1, dim, std::complex<double>>,
-            Tensor<1, dim, std::complex<double>>>
-  compute_waveguide_port_incident_fields(
-    const Point<dim>           &p,
-    const Tensor<1, dim>       &normal,
-    const std::complex<double> &local_effective_electric_permittivity,
-    const std::complex<double> &local_effective_magnetic_permeability,
-    const types::boundary_id    boundary_id_index = 0);
-
-
-  /**
-   * @brief This helper function compute a waveguide excitation boundary condition dynamically from the input parameters. It is only implemented for 3D problems.
-   *
-   * @tparam dim Spatial dimension.
-   * @param[in] p Input position where to compute the electromagnetic excitation
-   * amplitude.
-   * @param[in] normal Unit normal vector defining the face orientation of the
-   * waveguide port.
-   * @param[in] effective_electric_permittivity Effective electric permittivity
-   * at the point p.
-   * @param[in] effective_magnetic_permeability Effective magnetic permeability
-   * at the point p.
-   * @param[in] boundary_id_index Index to identify to which waveguide port
-   * condition we are applying the excitation. The default value is 0, which can
-   * be used when there is only one waveguide port defined in the input file.
-   * @return This function returns a std::pair containing the waveguide excitation boundary condition Tensor<1, dim, std::complex<double>> and the surface admittance at the given position scaled by the maximum electric field intensity associated with the input power of the waveguide ports condition.
-   */
-  std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
-  compute_waveguide_port_excitation(
-    const Point<dim>           &p,
-    const Tensor<1, dim>       &normal,
-    const std::complex<double> &local_effective_electric_permittivity,
-    const std::complex<double> &local_effective_magnetic_permeability,
-    const types::boundary_id    boundary_id_index = 0);
-
-  /**
    * @brief Updates the material properties during the assembly of the system matrix.
    * @note The time-harmonic Maxwell equations do not support multiple
    * fluids so the fluid_id is not necessary to determine the material
@@ -637,37 +646,6 @@ private:
     const unsigned int               material_id,
     std::complex<double>            &effective_electric_permittivity,
     std::complex<double>            &effective_magnetic_permeability);
-
-  /**
-   * @brief Updates the material properties during the assembly of the system matrix in a vectorized manner. This is an overloaded version of the update_material_properties a single point version.
-   * @note The time-harmonic Maxwell equations do not support multiple
-   * fluids so the fluid_id is not necessary to determine the material
-   * properties. The material properties only depend on the material_id, which
-   * is used to identify the different materials in the input file and assign
-   * them their corresponding properties.
-   *
-   *  @param[in] physical_properties_manager The object that manages the
-   * physical properties of the problem and provides them at any given position
-   * of the domain.
-   * @param[in] field_values_vector A map containing the vector values of the
-   * fields at the current position. This is used to compute the material
-   * properties that depend on the fields.
-   *  @param[in] material_id The material id of the current position, used to
-   * determine the appropriate material properties from the input parameters.
-   *  @param[out] effective_electric_permittivities Effective electric
-   * permittivity at the vectorized current positions. This value is updated in
-   * place by the function.
-   *  @param[out] effective_magnetic_permeabilities Effective magnetic
-   * permeability at the vectorized current positions. This value is updated in
-   * place by the function.
-   */
-  void
-  update_material_properties(
-    const PhysicalPropertiesManager            &physical_properties_manager,
-    const std::map<field, std::vector<double>> &field_values_vector,
-    const unsigned int                          material_id,
-    std::vector<std::complex<double>> &effective_electric_permittivities,
-    std::vector<std::complex<double>> &effective_magnetic_permeabilities);
 
   /**
    * @brief Compute the electromagnetic scaling factor used to non-dimensionalize the time-harmonic Maxwell system from the type of scaling required from the user. This is factor will be based on the electric field and obtained :
@@ -782,6 +760,19 @@ private:
   std::shared_ptr<TrilinosWrappers::PreconditionIdentity> preconditioner;
 
   /**
+   * Cell assemblers of the local DPG system.
+   */
+  std::vector<std::shared_ptr<TimeHarmonicMaxwellAssemblerBase<dim>>>
+    assemblers;
+
+  /**
+   * Face assemblers of the local DPG system. They are called for every face of
+   * every cell since all the faces belong to the skeleton.
+   */
+  std::vector<std::shared_ptr<TimeHarmonicMaxwellFaceAssemblerBase<dim>>>
+    face_assemblers;
+
+  /**
    * Store some convergence data, such as residuals of the cg-method,
    * or some evaluated <i>L<sup>2</sup></i>-errors of discrete solutions.
    * Evaluate convergence rates or orders.
@@ -827,16 +818,6 @@ private:
   IndexSet locally_relevant_dofs_trial_skeleton;
 
   /**
-   * IndexSet of the owned degrees of freedom for the test space.
-   */
-  IndexSet locally_owned_dofs_test;
-
-  /**
-   * IndexSet of the relevant degrees of freedom for the test space.
-   */
-  IndexSet locally_relevant_dofs_test;
-
-  /**
    * The system matrix.
    */
   TrilinosWrappers::SparseMatrix system_matrix;
@@ -854,17 +835,27 @@ private:
   std::shared_ptr<GlobalVectorType> present_solution_skeleton;
 
   /**
-   * A vector containing all the values of the DPG built-in a-posteriori error
-   * indicator.
-   */
-  std::shared_ptr<GlobalVectorType> present_DPG_error_indicator;
-
-  /**
    * A vector containing the values of the dpg error estimator for each cell of
    * the triangulation. This is used for mesh adaptation based on the DPG error
    * estimator.
    */
   Vector<float> local_estimated_error_per_cell;
+
+  /**
+   * Non-ghosted vector in which the interior solution is assembled cell by
+   * cell during the reconstruction. It is needed because present_solution is
+   * a ghosted vector, which can only be read. It is a class member so the
+   * WorkStream copier can access it, but it is only allocated during
+   * reconstruct_interior_solution() to avoid keeping it in memory between the
+   * solves.
+   */
+  GlobalVectorType locally_owned_solution_interior;
+
+  /**
+   * Squared L2 norm of the DPG residual, accumulated over the locally owned
+   * cells during the reconstruction when the dpg error estimator is activated.
+   */
+  double squared_residual_L2_norm;
 
   /**
    * The right hand side vector.
