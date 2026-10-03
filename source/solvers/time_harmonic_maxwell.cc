@@ -2160,21 +2160,35 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
 
   // After having assembled all the matrices and vectors, we compute the
   // condensation operators that are required both for the assembly of the
-  // skeleton system and for the reconstruction of the interior solution.
+  // skeleton system and for the reconstruction of the interior solution. The
+  // Gram matrix $G$ and $M_1$ are symmetric positive definite, so we use their
+  // Cholesky factorization and only apply their inverses through solves,
+  // which is cheaper and more accurate than computing the inverses.
 
-  // We only need the inverse of the Gram matrix $G$, so we invert it.
-  copy_data.G_matrix.invert();
+  // Cholesky factorization of the Gram matrix $G$ and solves for $G^{-1} B$
+  // and $G^{-1} l$.
+  copy_data.G_matrix.set_property(LAPACKSupport::symmetric);
+  copy_data.G_matrix.compute_cholesky_factorization();
+  copy_data.G_inverse_B = copy_data.B_matrix;
+  copy_data.G_matrix.solve(copy_data.G_inverse_B);
+  copy_data.G_inverse_l = copy_data.l_vector;
+  copy_data.G_matrix.solve(copy_data.G_inverse_l);
 
-  // We construct $M_4 = B^\dagger G^{-1}$ with it.
-  copy_data.B_matrix.Tmmult(copy_data.M4_matrix, copy_data.G_matrix);
+  // We compute $M_1 = B^\dagger G^{-1} B$, $M_2 = B^\dagger G^{-1} \hat{B}$,
+  // which is obtained as $(G^{-1} B)^\dagger \hat{B}$ since $G$ is symmetric,
+  // and $M_4 l = B^\dagger G^{-1} l$.
+  copy_data.B_matrix.Tmmult(copy_data.M1_matrix, copy_data.G_inverse_B);
+  copy_data.G_inverse_B.Tmmult(copy_data.M2_matrix, copy_data.B_hat_matrix);
+  copy_data.B_matrix.Tvmult(copy_data.M4_l, copy_data.G_inverse_l);
 
-  // Then using $M_4$ we compute the condensed matrices $M_1 = B^\dagger G^{-1}
-  // B$ and $M_2 = B^\dagger G^{-1} \hat{B}$.
-  copy_data.M4_matrix.mmult(copy_data.M1_matrix, copy_data.B_matrix);
-  copy_data.M4_matrix.mmult(copy_data.M2_matrix, copy_data.B_hat_matrix);
-
-  // Finally, as for the $G$ matrix, we invert the $M_1$ matrix.
-  copy_data.M1_matrix.invert();
+  // Finally, we factorize $M_1$ and compute $M_1^{-1} M_2$ and
+  // $M_1^{-1} M_4 l$.
+  copy_data.M1_matrix.set_property(LAPACKSupport::symmetric);
+  copy_data.M1_matrix.compute_cholesky_factorization();
+  copy_data.M1_inverse_M2 = copy_data.M2_matrix;
+  copy_data.M1_matrix.solve(copy_data.M1_inverse_M2);
+  copy_data.M1_inverse_M4_l = copy_data.M4_l;
+  copy_data.M1_matrix.solve(copy_data.M1_inverse_M4_l);
 }
 
 template <int dim>
@@ -2190,30 +2204,28 @@ TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
 
   assemble_local_dpg_system(cell, scratch_data, copy_data);
 
-  // We construct $M_5 = \hat{B}^\dagger G^{-1}$ and the matrix
-  // $M_3 = \hat{B}^\dagger G^{-1} \hat{B}$.
-  copy_data.B_hat_matrix.Tmmult(copy_data.M5_matrix, copy_data.G_matrix);
-  copy_data.M5_matrix.mmult(copy_data.M3_matrix, copy_data.B_hat_matrix);
+  // We compute $M_3 = \hat{B}^\dagger G^{-1} \hat{B}$ and
+  // $M_5 l = \hat{B}^\dagger G^{-1} l$.
+  copy_data.G_inverse_B_hat = copy_data.B_hat_matrix;
+  copy_data.G_matrix.solve(copy_data.G_inverse_B_hat);
+  copy_data.B_hat_matrix.Tmmult(copy_data.M3_matrix, copy_data.G_inverse_B_hat);
+  copy_data.B_hat_matrix.Tvmult(copy_data.M5_l, copy_data.G_inverse_l);
 
   // Now, we have to compute the local matrix and the local RHS for the
   // condensed system.
 
   // The cell matrix is obtained with the formula $(M_3 -
   // M_2^\dagger M_1^{-1} M_2)$:
-  copy_data.M2_matrix.Tmmult(copy_data.tmp_matrix_M2M1, copy_data.M1_matrix);
-  copy_data.tmp_matrix_M2M1.mmult(copy_data.tmp_matrix_M2M1M2,
-                                  copy_data.M2_matrix);
-  copy_data.tmp_matrix_M2M1M2.add(-1.0, copy_data.M3_matrix);
-  copy_data.tmp_matrix_M2M1M2 *= -1.0;
+  copy_data.M2_matrix.Tmmult(copy_data.tmp_matrix_M2M1M2,
+                             copy_data.M1_inverse_M2);
+  copy_data.M3_matrix.add(-1.0, copy_data.tmp_matrix_M2M1M2);
   // This line is used to convert the LAPACK matrix to a full matrix so we can
   // perform the distribution to the global system.
-  copy_data.local_matrix = copy_data.tmp_matrix_M2M1M2;
+  copy_data.local_matrix = copy_data.M3_matrix;
 
   // Then we compute the cell RHS using $(M_5 - M_2^\dagger M_1^{-1} M_4)l$.
-  copy_data.tmp_matrix_M2M1.mmult(copy_data.tmp_matrix_M2M1M4,
-                                  copy_data.M4_matrix);
-  copy_data.M5_matrix.add(-1.0, copy_data.tmp_matrix_M2M1M4);
-  copy_data.M5_matrix.vmult(copy_data.local_rhs, copy_data.l_vector);
+  copy_data.M2_matrix.Tvmult(copy_data.local_rhs, copy_data.M1_inverse_M4_l);
+  copy_data.local_rhs.sadd(-1.0, 1.0, copy_data.M5_l);
 
   // Get the local dof indices for the skeleton trial space to be able to
   // distribute the local matrix and RHS to the global system. Cannot use
@@ -2274,13 +2286,12 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
     ->get_dof_values(*this->present_solution_skeleton,
                      copy_data.local_skeleton_solution);
 
-  // Then we do the matrix-vector products to obtain the interior unknowns.
-  copy_data.M2_matrix.vmult(copy_data.tmp_vector_interior,
-                            copy_data.local_skeleton_solution);
-  copy_data.M4_matrix.vmult(copy_data.local_interior_rhs, copy_data.l_vector);
-  copy_data.local_interior_rhs -= copy_data.tmp_vector_interior;
-  copy_data.M1_matrix.vmult(copy_data.local_interior_solution,
-                            copy_data.local_interior_rhs);
+  // Then we do the matrix-vector products to obtain the interior unknowns
+  // $u_h = M_1^{-1} M_4 l - M_1^{-1} M_2 \hat{u}_h$.
+  copy_data.M1_inverse_M2.vmult(copy_data.tmp_vector_interior,
+                                copy_data.local_skeleton_solution);
+  copy_data.local_interior_solution = copy_data.M1_inverse_M4_l;
+  copy_data.local_interior_solution -= copy_data.tmp_vector_interior;
 
   // We can also compute the error indicator on this cell if the dpg error
   // estimator is activated. The residual R = l - B u_h - \hat{B}\hat{u}_h is
@@ -2296,7 +2307,8 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
       copy_data.B_hat_matrix.vmult_add(copy_data.tmp_vector_error_indicator,
                                        copy_data.local_skeleton_solution);
       copy_data.l_vector -= copy_data.tmp_vector_error_indicator;
-      copy_data.G_matrix.vmult(copy_data.local_residual, copy_data.l_vector);
+      copy_data.local_residual = copy_data.l_vector;
+      copy_data.G_matrix.solve(copy_data.local_residual);
 
       copy_data.local_residual_norm_squared =
         copy_data.l_vector * copy_data.local_residual;

@@ -493,9 +493,11 @@ private:
    * @brief Assemble the uncondensed local DPG system (\f$G\f$, \f$B\f$,
    * \f$\hat{B}\f$ and \f$l\f$) of a cell with the cell and face assemblers,
    * and compute the condensation operators that are common to the assembly
-   * and to the interior reconstruction: \f$G^{-1}\f$,
-   * \f$M_4 = B^\dagger G^{-1}\f$, \f$M_1^{-1} = (B^\dagger G^{-1}B)^{-1}\f$
-   * and \f$M_2 = B^\dagger G^{-1}\hat{B}\f$.
+   * and to the interior reconstruction: the Cholesky factorizations of the
+   * Gram matrix \f$G\f$ and of \f$M_1 = B^\dagger G^{-1}B\f$,
+   * \f$M_2 = B^\dagger G^{-1}\hat{B}\f$, \f$M_4 l = B^\dagger G^{-1} l\f$,
+   * \f$M_1^{-1} M_2\f$ and \f$M_1^{-1} M_4 l\f$. The inverses are only applied
+   * through solves with the Cholesky factors.
    *
    * @param[in] cell The cell of the interior trial space DoFHandler.
    *

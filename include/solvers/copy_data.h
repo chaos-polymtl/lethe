@@ -224,10 +224,13 @@ public:
  * and the load vector \f$l\f$. The solver then condenses this system on the
  * skeleton unknowns using the operators
  * \f$M_1 = B^\dagger G^{-1} B\f$, \f$M_2 = B^\dagger G^{-1} \hat{B}\f$,
- * \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$, \f$M_4 = B^\dagger G^{-1}\f$ and
- * \f$M_5 = \hat{B}^\dagger G^{-1}\f$, and stores either the condensed skeleton
- * system (assembly) or the reconstructed interior solution and the DPG
- * residual (interior reconstruction).
+ * \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$, \f$M_4 l = B^\dagger G^{-1} l\f$
+ * and \f$M_5 l = \hat{B}^\dagger G^{-1} l\f$. Since \f$G\f$ and \f$M_1\f$ are
+ * symmetric positive definite, they are factorized with a Cholesky
+ * decomposition and their inverses are only applied through solves. The copy
+ * data then stores either the condensed skeleton system (assembly) or the
+ * reconstructed interior solution and the DPG residual (interior
+ * reconstruction).
  **/
 class DPGCopyData
 {
@@ -253,19 +256,21 @@ public:
     , B_matrix(n_dofs_test, n_dofs_trial_interior)
     , B_hat_matrix(n_dofs_test, n_dofs_trial_skeleton)
     , l_vector(n_dofs_test)
+    , G_inverse_B(n_dofs_test, n_dofs_trial_interior)
+    , G_inverse_B_hat(n_dofs_test, n_dofs_trial_skeleton)
+    , G_inverse_l(n_dofs_test)
     , M1_matrix(n_dofs_trial_interior, n_dofs_trial_interior)
     , M2_matrix(n_dofs_trial_interior, n_dofs_trial_skeleton)
     , M3_matrix(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
-    , M4_matrix(n_dofs_trial_interior, n_dofs_test)
-    , M5_matrix(n_dofs_trial_skeleton, n_dofs_test)
-    , tmp_matrix_M2M1(n_dofs_trial_skeleton, n_dofs_trial_interior)
+    , M4_l(n_dofs_trial_interior)
+    , M5_l(n_dofs_trial_skeleton)
+    , M1_inverse_M2(n_dofs_trial_interior, n_dofs_trial_skeleton)
+    , M1_inverse_M4_l(n_dofs_trial_interior)
     , tmp_matrix_M2M1M2(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
-    , tmp_matrix_M2M1M4(n_dofs_trial_skeleton, n_dofs_test)
     , local_matrix(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
     , local_rhs(n_dofs_trial_skeleton)
     , local_dof_indices(n_dofs_trial_skeleton)
     , local_skeleton_solution(n_dofs_trial_skeleton)
-    , local_interior_rhs(n_dofs_trial_interior)
     , local_interior_solution(n_dofs_trial_interior)
     , tmp_vector_interior(n_dofs_trial_interior)
     , tmp_vector_error_indicator(n_dofs_test)
@@ -277,8 +282,9 @@ public:
 
   /**
    * @brief Resets the uncondensed local system to zero. The \f$M_1\f$ matrix
-   * is also reset since LAPACKFullMatrix keeps track of its inverse status and
-   * forbids to invert it again if it has already been inverted.
+   * is also reset since LAPACKFullMatrix keeps track of its factorization
+   * status and forbids to factorize it again if it has already been
+   * factorized.
    */
   void
   reset()
@@ -296,18 +302,21 @@ public:
   LAPACKFullMatrix<double> B_hat_matrix;
   Vector<double>           l_vector;
 
-  // Operators of the static condensation and temporary matrices used for the
-  // matrix products: tmp_matrix_M2M1 = M_2^\dagger M_1^{-1},
-  // tmp_matrix_M2M1M2 = M_2^\dagger M_1^{-1} M_2 and
-  // tmp_matrix_M2M1M4 = M_2^\dagger M_1^{-1} M_4
+  // Solves with the Gram matrix: G^{-1} B, G^{-1} B_hat and G^{-1} l
+  LAPACKFullMatrix<double> G_inverse_B;
+  LAPACKFullMatrix<double> G_inverse_B_hat;
+  Vector<double>           G_inverse_l;
+
+  // Operators of the static condensation, solves with M_1 and temporary
+  // matrix tmp_matrix_M2M1M2 = M_2^\dagger M_1^{-1} M_2
   LAPACKFullMatrix<double> M1_matrix;
   LAPACKFullMatrix<double> M2_matrix;
   LAPACKFullMatrix<double> M3_matrix;
-  LAPACKFullMatrix<double> M4_matrix;
-  LAPACKFullMatrix<double> M5_matrix;
-  LAPACKFullMatrix<double> tmp_matrix_M2M1;
+  Vector<double>           M4_l;
+  Vector<double>           M5_l;
+  LAPACKFullMatrix<double> M1_inverse_M2;
+  Vector<double>           M1_inverse_M4_l;
   LAPACKFullMatrix<double> tmp_matrix_M2M1M2;
-  LAPACKFullMatrix<double> tmp_matrix_M2M1M4;
 
   // Condensed skeleton system distributed in the global system
   FullMatrix<double>                   local_matrix;
@@ -315,11 +324,10 @@ public:
   std::vector<types::global_dof_index> local_dof_indices;
 
   // Interior reconstruction and DPG residual. The temporary vectors are
-  // tmp_vector_interior = M_2 * x_skeleton, used when reconstructing the
-  // interior solution, and tmp_vector_error_indicator = B * x_interior +
+  // tmp_vector_interior = M_1^{-1} M_2 * x_skeleton, used when reconstructing
+  // the interior solution, and tmp_vector_error_indicator = B * x_interior +
   // B_hat * x_skeleton, used when computing the error indicator.
   Vector<double>                       local_skeleton_solution;
-  Vector<double>                       local_interior_rhs;
   Vector<double>                       local_interior_solution;
   Vector<double>                       tmp_vector_interior;
   Vector<double>                       tmp_vector_error_indicator;
