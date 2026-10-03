@@ -727,6 +727,14 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
             }
         }
     }
+  // Since the advection term is weakened, a boundary without contribution
+  // imposes a zero total (advective and diffusive) flux. This is the natural
+  // boundary condition, which is the expected behavior for walls.
+  else if (boundary_conditions_tracer.type[boundary_index] ==
+           BoundaryConditions::BoundaryType::none)
+    {
+      return;
+    }
   else if (boundary_conditions_tracer.type[boundary_index] ==
              BoundaryConditions::BoundaryType::periodic ||
            boundary_conditions_tracer.type[boundary_index] ==
