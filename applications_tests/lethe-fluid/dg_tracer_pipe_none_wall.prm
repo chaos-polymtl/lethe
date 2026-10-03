@@ -1,0 +1,168 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Tests DG approach to tracer for a flow inside a cylindrical pipe with a none
+# boundary condition for the tracer at the wall. Since the velocity is zero at
+# the wall, the results must be identical to those of dg_tracer_pipe.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time step        = 0.025
+  set time end         = 0.4
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+  set tracer degree   = 1
+  set tracer uses dg  = true
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set tracer diffusivity = 0.0
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_cylinder
+  set grid arguments     = 3 : 0.1 : 0.15
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set tracer = true
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id   = 2
+    set type = outlet
+  end
+  subsection bc 1
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = 300*(0.1*0.1-y*y-z*z)
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
+subsection boundary conditions tracer
+  set number = 3
+  subsection bc 0
+    set id   = 0
+    set type = none
+  end
+  subsection bc 1
+    set id   = 1
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = 100*(0.1*0.1-y*y-z*z)
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = outlet
+  end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                   = verbose
+  set output frequency            = 1
+  set calculate tracer statistics = true
+  set calculate tracer flow rate  = true
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-8
+    set max iterations = 10
+  end
+  subsection tracer
+    set verbosity      = quiet
+    set tolerance      = 1e-9
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 300
+    set max krylov vectors                    = 300
+    set relative residual                     = 1e-1
+    set minimum residual                      = 1e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection tracer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 300
+    set max krylov vectors                    = 300
+    set relative residual                     = 1e-1
+    set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end
