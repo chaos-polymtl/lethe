@@ -549,8 +549,9 @@ ParticleWallContactForce<dim,
             solids[solid_counter]->get_center_of_rotation();
 
           // Multiphysics properties
-          const Parameters::SolidObjectThermalBoundaryType thermal_boundary_type =
-            solids[solid_counter]->get_thermal_boundary_type();
+          const Parameters::SolidObjectThermalBoundaryType
+            thermal_boundary_type =
+              solids[solid_counter]->get_thermal_boundary_type();
 
           for (auto contact = this_contact_record.begin();
                contact != this_contact_record.end();
