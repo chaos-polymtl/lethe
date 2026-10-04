@@ -52,19 +52,27 @@ public:
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
+   * @param uses_dg If true, the scratch is used for the discontinuous Galerkin
+   * formulation. The hessians, laplacians and previous gradients, which are
+   * only required by the stabilization of the continuous formulation, are then
+   * not computed.
+   *
    */
   TracerScratchData(const PhysicalPropertiesManager &properties_manager,
                     const FiniteElement<dim>        &fe_tracer,
                     const Quadrature<dim>           &quadrature,
                     const Quadrature<dim - 1>       &face_quadrature,
                     const Mapping<dim>              &mapping,
-                    const FiniteElement<dim>        &fe_fd)
-    : properties_manager(properties_manager)
+                    const FiniteElement<dim>        &fe_fd,
+                    const bool                       uses_dg)
+    : uses_dg(uses_dg)
+    , properties_manager(properties_manager)
     , fe_values_tracer(mapping,
                        fe_tracer,
                        quadrature,
                        update_values | update_quadrature_points |
-                         update_JxW_values | update_gradients | update_hessians)
+                         update_JxW_values | update_gradients |
+                         (uses_dg ? update_default : update_hessians))
     , fe_interface_values_tracer(mapping,
                                  fe_tracer,
                                  face_quadrature,
@@ -91,12 +99,14 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    */
   TracerScratchData(const TracerScratchData<dim> &sd)
-    : properties_manager(sd.properties_manager)
+    : uses_dg(sd.uses_dg)
+    , properties_manager(sd.properties_manager)
     , fe_values_tracer(sd.fe_values_tracer.get_mapping(),
                        sd.fe_values_tracer.get_fe(),
                        sd.fe_values_tracer.get_quadrature(),
                        update_values | update_quadrature_points |
-                         update_JxW_values | update_gradients | update_hessians)
+                         update_JxW_values | update_gradients |
+                         (sd.uses_dg ? update_default : update_hessians))
     , fe_interface_values_tracer(sd.fe_interface_values_tracer.get_mapping(),
                                  sd.fe_interface_values_tracer.get_fe(),
                                  sd.fe_interface_values_tracer.get_quadrature(),
@@ -164,10 +174,16 @@ public:
                                                this->tracer_values);
     this->fe_values_tracer.get_function_gradients(current_solution,
                                                   this->tracer_gradients);
-    this->fe_values_tracer.get_function_laplacians(current_solution,
-                                                   this->tracer_laplacians);
-    this->fe_values_tracer.get_function_gradients(
-      previous_solutions[0], this->previous_tracer_gradients);
+
+    // The laplacian and the previous gradient are only used by the
+    // stabilization of the continuous formulation
+    if (!uses_dg)
+      {
+        this->fe_values_tracer.get_function_laplacians(current_solution,
+                                                       this->tracer_laplacians);
+        this->fe_values_tracer.get_function_gradients(
+          previous_solutions[0], this->previous_tracer_gradients);
+      }
 
     // Gather previous tracer values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
@@ -185,9 +201,14 @@ public:
             // Shape function
             this->phi[q][k]      = this->fe_values_tracer.shape_value(k, q);
             this->grad_phi[q][k] = this->fe_values_tracer.shape_grad(k, q);
-            this->hess_phi[q][k] = this->fe_values_tracer.shape_hessian(k, q);
-            this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
+
+        if (!uses_dg)
+          for (unsigned int k = 0; k < n_dofs; ++k)
+            {
+              this->hess_phi[q][k] = this->fe_values_tracer.shape_hessian(k, q);
+              this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
+            }
       }
 
     boundary_index = 0;
@@ -366,22 +387,37 @@ public:
                                         extent_there);
 
 
-    // BB TODO : Preallocate memory here
-    values_here.resize(face_quadrature_points.size());
-    values_there.resize(face_quadrature_points.size());
-    tracer_value_jump.resize(face_quadrature_points.size());
-    tracer_average_gradient.resize(face_quadrature_points.size());
-
     fe_interface_values_tracer.get_fe_face_values(0).get_function_values(
       current_solution, values_here);
     fe_interface_values_tracer.get_fe_face_values(1).get_function_values(
       current_solution, values_there);
 
-    fe_interface_values_tracer.get_jump_in_function_values(current_solution,
-                                                           tracer_value_jump);
-
     fe_interface_values_tracer.get_average_of_function_gradients(
       current_solution, tracer_average_gradient);
+
+    const std::vector<Tensor<1, dim>> &normals =
+      fe_interface_values_tracer.get_normal_vectors();
+
+    for (unsigned int q = 0; q < face_quadrature_points.size(); ++q)
+      {
+        // The jump is defined as the value on cell 0 minus the value on cell 1
+        tracer_value_jump[q] = values_here[q] - values_there[q];
+
+        // Gather the shape function quantities once per quadrature point
+        // since the FEInterfaceValues accessors map the interface dof to the
+        // cell dofs at every call.
+        for (unsigned int i = 0; i < n_interface_dofs; ++i)
+          {
+            face_phi_here[q][i] =
+              fe_interface_values_tracer.shape_value(true, i, q);
+            face_phi_there[q][i] =
+              fe_interface_values_tracer.shape_value(false, i, q);
+            face_jump_phi[q][i] = face_phi_here[q][i] - face_phi_there[q][i];
+            face_average_grad_phi_dot_n[q][i] =
+              fe_interface_values_tracer.average_of_shape_gradients(i, q) *
+              normals[q];
+          }
+      }
   }
 
 
@@ -406,10 +442,6 @@ public:
     const FEFaceValuesBase<dim> &fe_face =
       fe_interface_values_tracer.get_fe_face_values(0);
     face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
-
-    // BB TODO: These could be pre-allocated
-    values_here.resize(face_quadrature_points.size());
-    gradients_here.resize(face_quadrature_points.size());
 
     fe_face.get_function_values(current_solution, values_here);
     fe_face.get_function_gradients(current_solution, gradients_here);
@@ -442,9 +474,6 @@ public:
     std::shared_ptr<Functions::ParsedFunction<dim>>       drift_velocity)
   {
     fe_face_values_fd.reinit(velocity_cell, face_no);
-
-    // BB note : Array could be pre-allocated
-    face_velocity_values.resize(face_quadrature_points.size());
 
     fe_face_values_fd[velocities].get_function_values(velocity_solution,
                                                       face_velocity_values);
@@ -548,9 +577,6 @@ public:
   {
     const auto diffusivity_model = properties_manager.get_tracer_diffusivity();
 
-    // BB note : Array could be pre-allocated
-    tracer_diffusivity_face.resize(face_quadrature_points.size());
-
     // If the tracer diffusivity depends on the level set, take this into
     // account
     if (properties_manager.field_is_required(field::levelset))
@@ -567,6 +593,9 @@ public:
    */
   void
   calculate_physical_properties();
+
+  // True if the scratch is used for the discontinuous Galerkin formulation
+  const bool uses_dg;
 
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
@@ -609,6 +638,13 @@ public:
   std::vector<double>         tracer_value_jump;
   std::vector<Tensor<1, dim>> gradients_here;
   std::vector<Tensor<1, dim>> tracer_average_gradient;
+
+  // Shape function quantities at the internal faces, indexed by quadrature
+  // point and interface dof
+  Table<2, double> face_phi_here;
+  Table<2, double> face_phi_there;
+  Table<2, double> face_jump_phi;
+  Table<2, double> face_average_grad_phi_dot_n;
 
   // SIPG (interior faces) or Nitsche (boundary) penalization factor
   // The penalty factor is calculated using a measure of the element size. It is

@@ -487,30 +487,39 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
     {
       const double velocity_dot_n =
         scratch_data.face_velocity_values[q] * normals[q];
-      for (unsigned int i = 0; i < n_dofs; ++i)
-        for (unsigned int j = 0; j < n_dofs; ++j)
-          {
-            copy_data_face.face_matrix(i, j) +=
-              fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-              * fe_iv.shape_value((velocity_dot_n > 0.),
-                                  j,
-                                  q) // phi_j^{upwind}
-              * velocity_dot_n       // (u . n)
-              * JxW[q];              // dx
 
-            // Assemble the diffusion term using Nitsche
-            // symmetric interior penalty method. See Larson Chap. 14. P.362
-            copy_data_face.face_matrix(i, j) +=
-              (scratch_data.tracer_diffusivity_face[q] *
-                 (-fe_iv.average_of_shape_gradients(j, q) * normals[q] *
-                    fe_iv.jump_in_shape_values(i, q) -
-                  fe_iv.average_of_shape_gradients(i, q) * normals[q] *
-                    fe_iv.jump_in_shape_values(j, q)) +
-               (scratch_data.tracer_diffusivity_face[q]) * penalty_factor *
-                 fe_iv.jump_in_shape_values(j, q) *
-                 fe_iv.jump_in_shape_values(i, q)) *
-              JxW[q];
-          }
+      // Shape functions of the upwind cell
+      const auto &phi_upwind     = (velocity_dot_n > 0.) ?
+                                     scratch_data.face_phi_here[q] :
+                                     scratch_data.face_phi_there[q];
+      const auto &jump_phi       = scratch_data.face_jump_phi[q];
+      const auto &avg_grad_phi_n = scratch_data.face_average_grad_phi_dot_n[q];
+
+      const double advection_factor = velocity_dot_n * JxW[q];
+      const double diffusion_factor =
+        scratch_data.tracer_diffusivity_face[q] * JxW[q];
+      const double penalty_diffusion_factor = penalty_factor * diffusion_factor;
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const double jump_phi_i       = jump_phi[i];
+          const double avg_grad_phi_n_i = avg_grad_phi_n[i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              // Advection term with upwinding:
+              // [\phi_i] * \phi_j^{upwind} * (u . n)
+              copy_data_face.face_matrix(i, j) +=
+                jump_phi_i * phi_upwind[j] * advection_factor;
+
+              // Assemble the diffusion term using Nitsche
+              // symmetric interior penalty method. See Larson Chap. 14. P.362
+              copy_data_face.face_matrix(i, j) +=
+                diffusion_factor * (-avg_grad_phi_n[j] * jump_phi_i -
+                                    avg_grad_phi_n_i * jump_phi[j]) +
+                penalty_diffusion_factor * jump_phi[j] * jump_phi_i;
+            }
+        }
     }
 }
 
@@ -534,38 +543,34 @@ TracerAssemblerSIPG<dim>::assemble_rhs(
     {
       const double velocity_dot_n =
         scratch_data.face_velocity_values[q] * normals[q];
+
+      // Tracer value of the upwind cell
+      const double upwind_value = (velocity_dot_n > 0) ?
+                                    scratch_data.values_here[q] :
+                                    scratch_data.values_there[q];
+
+      const auto &jump_phi       = scratch_data.face_jump_phi[q];
+      const auto &avg_grad_phi_n = scratch_data.face_average_grad_phi_dot_n[q];
+
+      const double advective_flux = upwind_value * velocity_dot_n * JxW[q];
+      const double diffusion_factor =
+        scratch_data.tracer_diffusivity_face[q] * JxW[q];
+      const double tracer_jump = scratch_data.tracer_value_jump[q];
+      const double tracer_average_gradient_n =
+        scratch_data.tracer_average_gradient[q] * normals[q];
+
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          // Assemble advection terms with upwinding
-          if (velocity_dot_n > 0)
-            {
-              copy_data_face.face_rhs(i) -=
-                fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-                * scratch_data.values_here[q]    // \phi_i^{upwind}
-                * velocity_dot_n                 // (u . n)
-                * JxW[q];                        // dx
-            }
-          else
-            {
-              copy_data_face.face_rhs(i) -=
-                fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-                * scratch_data.values_there[q]   // \phi_i^{upwind}
-                * velocity_dot_n                 // (u . n)
-                * JxW[q];                        // dx
-            }
+          // Assemble advection terms with upwinding:
+          // [\phi_i] * C^{upwind} * (u . n)
+          copy_data_face.face_rhs(i) -= jump_phi[i] * advective_flux;
 
           // Assemble the diffusion term using Nitsche symmetric interior
           // penalty method. See Larson Chap. 14. P.362
           copy_data_face.face_rhs(i) -=
-            (scratch_data.tracer_diffusivity_face[q] *
-               (-scratch_data.tracer_average_gradient[q] * normals[q] *
-                  fe_iv.jump_in_shape_values(i, q) -
-                scratch_data.tracer_value_jump[q] * normals[q] *
-                  fe_iv.average_of_shape_gradients(i, q)) +
-             (scratch_data.tracer_diffusivity_face[q]) * penalty_factor *
-               scratch_data.tracer_value_jump[q] *
-               fe_iv.jump_in_shape_values(i, q)) *
-            JxW[q];
+            diffusion_factor * (-tracer_average_gradient_n * jump_phi[i] -
+                                tracer_jump * avg_grad_phi_n[i] +
+                                penalty_factor * tracer_jump * jump_phi[i]);
         }
     }
 }
@@ -591,42 +596,60 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
   const std::vector<double> &JxW          = fe_face.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
 
+  const auto boundary_type = boundary_conditions_tracer.type[boundary_index];
+
+  // Only outlet and Dirichlet boundaries contribute to the matrix
+  if (boundary_type != BoundaryConditions::BoundaryType::outlet &&
+      boundary_type != BoundaryConditions::BoundaryType::tracer_dirichlet)
+    return;
+
+  const bool is_dirichlet =
+    boundary_type == BoundaryConditions::BoundaryType::tracer_dirichlet;
+
+  // Normal gradient of the shape functions at a quadrature point
+  std::vector<double> grad_phi_n(n_facet_dofs);
+
   for (unsigned int point = 0; point < q_points.size(); ++point)
     {
       const double velocity_dot_n =
         scratch_data.face_velocity_values[point] * normals[point];
+
+      // The advection term is only applied to the outflow part of the boundary
+      const double advection_factor =
+        (velocity_dot_n > 0) ? velocity_dot_n * JxW[point] : 0.;
+
+      if (!is_dirichlet)
+        {
+          if (velocity_dot_n > 0)
+            for (unsigned int i = 0; i < n_facet_dofs; ++i)
+              {
+                const double phi_i = fe_face.shape_value(i, point);
+                for (unsigned int j = 0; j < n_facet_dofs; ++j)
+                  copy_data.local_matrix(i, j) +=
+                    phi_i * fe_face.shape_value(j, point) * advection_factor;
+              }
+          continue;
+        }
+
+      const double diffusion_factor =
+        scratch_data.tracer_diffusivity_face[point] * JxW[point];
+
+      for (unsigned int j = 0; j < n_facet_dofs; ++j)
+        grad_phi_n[j] = fe_face.shape_grad(j, point) * normals[point];
+
       for (unsigned int i = 0; i < n_facet_dofs; ++i)
         {
+          const double phi_i = fe_face.shape_value(i, point);
           for (unsigned int j = 0; j < n_facet_dofs; ++j)
             {
-              if (boundary_conditions_tracer.type[boundary_index] ==
-                  BoundaryConditions::BoundaryType::outlet)
-                {
-                  if (velocity_dot_n > 0)
-                    copy_data.local_matrix(i, j) +=
-                      fe_face.shape_value(i, point) *
-                      fe_face.shape_value(j, point) * velocity_dot_n *
-                      JxW[point];
-                }
-              else if (boundary_conditions_tracer.type[boundary_index] ==
-                       BoundaryConditions::BoundaryType::tracer_dirichlet)
-                {
-                  if (velocity_dot_n > 0)
-                    copy_data.local_matrix(i, j) +=
-                      fe_face.shape_value(i, point) *
-                      fe_face.shape_value(j, point) * velocity_dot_n *
-                      JxW[point];
+              const double phi_j = fe_face.shape_value(j, point);
 
-                  copy_data.local_matrix(i, j) +=
-                    scratch_data.tracer_diffusivity_face[point] *
-                    (-fe_face.shape_value(i, point) *
-                       fe_face.shape_grad(j, point) * normals[point] -
-                     fe_face.shape_value(j, point) *
-                       fe_face.shape_grad(i, point) * normals[point] +
-                     beta * fe_face.shape_value(i, point) *
-                       fe_face.shape_value(j, point)) *
-                    JxW[point];
-                }
+              copy_data.local_matrix(i, j) += phi_i * phi_j * advection_factor;
+
+              copy_data.local_matrix(i, j) +=
+                diffusion_factor *
+                (-phi_i * grad_phi_n[j] - phi_j * grad_phi_n[i] +
+                 beta * phi_i * phi_j);
             }
         }
     }
@@ -703,6 +726,14 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
                 JxW[point];
             }
         }
+    }
+  // Since the advection term is weakened, a boundary without contribution
+  // imposes a zero total (advective and diffusive) flux. This is the natural
+  // boundary condition, which is the expected behavior for walls.
+  else if (boundary_conditions_tracer.type[boundary_index] ==
+           BoundaryConditions::BoundaryType::none)
+    {
+      return;
     }
   else if (boundary_conditions_tracer.type[boundary_index] ==
              BoundaryConditions::BoundaryType::periodic ||

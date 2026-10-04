@@ -112,7 +112,8 @@ Tracer<dim>::assemble_system_matrix_cg()
     *this->cell_quadrature,
     *this->face_quadrature,
     *this->get_mapping(),
-    dof_handler_fluid.get_fe());
+    dof_handler_fluid.get_fe(),
+    /*uses_dg = */ false);
 
   WorkStream::run(this->dof_handler->begin_active(),
                   this->dof_handler->end(),
@@ -149,7 +150,8 @@ Tracer<dim>::assemble_system_matrix_dg()
     *this->cell_quadrature,
     *this->face_quadrature,
     *this->get_mapping(),
-    dof_handler_fluid.get_fe());
+    dof_handler_fluid.get_fe(),
+    /*uses_dg = */ true);
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
                                         this->cell_quadrature->size());
@@ -419,7 +421,8 @@ Tracer<dim>::assemble_system_rhs_cg()
     *this->cell_quadrature,
     *this->face_quadrature,
     *this->get_mapping(),
-    dof_handler_fluid.get_fe());
+    dof_handler_fluid.get_fe(),
+    /*uses_dg = */ false);
 
   WorkStream::run(this->dof_handler->begin_active(),
                   this->dof_handler->end(),
@@ -461,7 +464,8 @@ Tracer<dim>::assemble_system_rhs_dg()
     *this->cell_quadrature,
     *this->face_quadrature,
     *this->get_mapping(),
-    dof_handler_fluid.get_fe());
+    dof_handler_fluid.get_fe(),
+    /*uses_dg = */ true);
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
                                         this->cell_quadrature->size());
@@ -588,13 +592,11 @@ Tracer<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  auto source_term = simulation_parameters.source_term.tracer_source;
-  source_term->set_time(simulation_control->get_current_time());
-
+  // The time of the source term is set in assemble_system_rhs
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       *this->previous_solutions,
-                      &(*source_term));
+                      &(*simulation_parameters.source_term.tracer_source));
 
   scratch_data.reinit_signed_distance(
     cell, this->multiphysics->get_immersed_solid_shape());

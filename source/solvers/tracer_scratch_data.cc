@@ -32,11 +32,27 @@ TracerScratchData<dim>::allocate()
     std::vector<Tensor<1, dim>>(this->n_q_points);
   this->tracer_laplacians              = std::vector<double>(n_q_points);
   this->tracer_diffusivity             = std::vector<double>(n_q_points);
-  this->tracer_diffusivity_face        = std::vector<double>(n_q_points);
   this->tracer_diffusivity_0           = std::vector<double>(n_q_points);
   this->tracer_diffusivity_1           = std::vector<double>(n_q_points);
   this->tracer_reaction_prefactor      = std::vector<double>(n_q_points);
   this->grad_tracer_reaction_prefactor = std::vector<double>(n_q_points);
+
+  // Arrays related to the faces, which are only used by the DG assemblers
+  const unsigned int n_face_q_points =
+    fe_interface_values_tracer.get_quadrature().size();
+  const unsigned int max_n_interface_dofs = 2 * n_dofs;
+  this->tracer_diffusivity_face = std::vector<double>(n_face_q_points);
+  this->face_velocity_values    = std::vector<Tensor<1, dim>>(n_face_q_points);
+  this->values_here             = std::vector<double>(n_face_q_points);
+  this->values_there            = std::vector<double>(n_face_q_points);
+  this->tracer_value_jump       = std::vector<double>(n_face_q_points);
+  this->gradients_here          = std::vector<Tensor<1, dim>>(n_face_q_points);
+  this->tracer_average_gradient = std::vector<Tensor<1, dim>>(n_face_q_points);
+  this->face_phi_here.reinit(n_face_q_points, max_n_interface_dofs);
+  this->face_phi_there.reinit(n_face_q_points, max_n_interface_dofs);
+  this->face_jump_phi.reinit(n_face_q_points, max_n_interface_dofs);
+  this->face_average_grad_phi_dot_n.reinit(n_face_q_points,
+                                           max_n_interface_dofs);
 
   // Solid signed distance function
   if (properties_manager.field_is_required(field::levelset))
@@ -51,8 +67,11 @@ TracerScratchData<dim>::allocate()
   // Velocity shape functions
   this->phi.reinit(n_q_points, n_dofs);
   this->grad_phi.reinit(n_q_points, n_dofs);
-  this->hess_phi.reinit(n_q_points, n_dofs);
-  this->laplacian_phi.reinit(n_q_points, n_dofs);
+  if (!uses_dg)
+    {
+      this->hess_phi.reinit(n_q_points, n_dofs);
+      this->laplacian_phi.reinit(n_q_points, n_dofs);
+    }
 
   if (properties_manager.field_is_required(field::levelset))
     fields.insert(
