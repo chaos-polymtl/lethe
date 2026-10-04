@@ -440,6 +440,12 @@ CFDDEMSolver<dim, PropertiesIndex>::write_checkpoint()
   // Prepare particle handler for serialization
   this->particle_handler.prepare_for_serialization();
 
+  // Prepare the insertion object for checkpointing
+  std::string insertion_object_filename = prefix + ".insertion_object";
+  std::ofstream oss_insertion_obj(insertion_object_filename);
+  boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj, boost::archive::no_header);
+  insertion_object->serialize(oa_insertion_obj);
+
   // Void Fraction
   std::vector<const GlobalVectorType *> vf_set_transfer;
   vf_set_transfer.push_back(
@@ -511,6 +517,15 @@ CFDDEMSolver<dim, PropertiesIndex>::read_checkpoint()
   boost::archive::text_iarchive ia(iss, boost::archive::no_header);
 
   ia >> this->particle_handler;
+
+  // Load the insertion object
+  std::string insertion_object_filename = prefix + ".insertion_object";
+  check_file_exists(insertion_object_filename, 
+                    "checkpoint file of the insertion object, given by " 
+                    "'subsection restart' - 'set filename'");
+  std::ifstream iss_insertion_obj(insertion_object_filename);
+  boost::archive::text_iarchive ia_insertion_obj(iss_insertion_obj, boost::archive::no_header);
+  insertion_object->deserialize(ia_insertion_obj);
 
   const std::string filename = prefix + ".triangulation";
   check_file_exists(filename,
