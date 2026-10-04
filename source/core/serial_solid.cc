@@ -291,7 +291,7 @@ void
 SerialSolid<dim, spacedim>::update_solid_temperature(const double initial_time)
 {
   if (thermal_boundary_type ==
-      Parameters::SolidObjectThermalBoundaryType::adiabatic)
+      Parameters::SolidSolidObjectThermalBoundaryType::adiabatic)
     return;
 
   solid_temperature->set_time(initial_time);

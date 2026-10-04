@@ -549,7 +549,7 @@ ParticleWallContactForce<dim,
             solids[solid_counter]->get_center_of_rotation();
 
           // Multiphysics properties
-          const Parameters::ObjectThermalBoundaryType thermal_boundary_type =
+          const Parameters::SolidObjectThermalBoundaryType thermal_boundary_type =
             solids[solid_counter]->get_thermal_boundary_type();
 
           for (auto contact = this_contact_record.begin();
@@ -607,7 +607,7 @@ ParticleWallContactForce<dim,
               if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
                 {
                   if ((thermal_boundary_type !=
-                       Parameters::ObjectThermalBoundaryType::adiabatic) &&
+                       Parameters::SolidObjectThermalBoundaryType::adiabatic) &&
                       (normal_overlap > 0))
                     {
                       const unsigned int particle_type =
