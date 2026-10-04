@@ -4,28 +4,16 @@
 # Listing of Parameters
 #----------------------
 
-# This test is the solid-object case for the 3d-heat-transfer-in-aligned-particles
-# example of the dem-mp folder. Ten aligned particles at 0 C are held in compression
-# between two static plates, which are isothermal solid objects, and exchange heat
-# by conduction with them and between themselves. It verifies the solid object with
-# an imposed temperature with the isothermal boundary condition. The end time of
-# the simulation is chosen so the temperature inside the particles fit the expected
-# equilibrium linear profile. It also validate conjointly the
-# heat_transfer_in_aligned_particles_01 test of the lethe-fluid-particles solver
-# has both test represent the same physic.
+# The test verifies the heat transfer between the particles and isothermal solid object.
+# It uses ten aligned particles at 0 C held in compression between two two static
+# plates normal to the x axis (x = +-0.049), which are isothermal solid objects. 
+# The solid object are held at an imposed temperature, and exchange heat by 
+# conduction with the particles. The fluid dynamics is disabled and every 
+# fluid-particle interaction force is turned off.
 #
-# The chain is inserted already compressed and the plates are placed where the
-# plates of the example come to rest (x = +-0.049), which is also where the
-# walls of the grid are in the heat_transfer_in_aligned_particles_01 test. The
-# left plate stays at 0 C and the right plate is switched from 0 C to 50 C at
-# t = 0.3, as the walls of that test.
-#
-# The contact force and the thermal conductance of a particle-solid object
-# contact are the same as for a particle-wall contact, and the
-# heat_transfer_in_aligned_particles_01 test has no fluid-particle force. The
-# temperatures should therefore be the temperatures of that
-# test at the final time (t = 9), which is also the time of the last
-# particle summary of that test since it prints the value.
+# The left plate stays at 0 C and the right plate is switched from 0 C to 50 C at
+# t = 0.3. The end time is chosen so that the temperature of the particles 
+# approaches its steady linear profile.
 
 set dimension = 3
 

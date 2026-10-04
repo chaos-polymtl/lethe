@@ -167,7 +167,7 @@ public:
    *
    * @return The thermal boundary type of the solid object
    */
-  inline Parameters::ObjectThermalBoundaryType
+  inline Parameters::SolidObjectThermalBoundaryType
   get_thermal_boundary_type() const
   {
     return this->thermal_boundary_type;
@@ -331,14 +331,14 @@ private:
   const bool output_bool;
 
   // Elements used to store the velocity of the solid object
-  std::shared_ptr<Function<spacedim>>   translational_velocity;
-  std::shared_ptr<Function<spacedim>>   angular_velocity;
-  Point<spacedim>                       center_of_rotation;
-  Tensor<1, spacedim>                   current_translational_velocity;
-  Tensor<1, 3>                          current_angular_velocity;
-  std::shared_ptr<Function<spacedim>>   solid_temperature;
-  Parameters::ObjectThermalBoundaryType thermal_boundary_type;
-  double                                current_solid_temperature;
+  std::shared_ptr<Function<spacedim>>        translational_velocity;
+  std::shared_ptr<Function<spacedim>>        angular_velocity;
+  Point<spacedim>                            center_of_rotation;
+  Tensor<1, spacedim>                        current_translational_velocity;
+  Tensor<1, 3>                               current_angular_velocity;
+  std::shared_ptr<Function<spacedim>>        solid_temperature;
+  Parameters::SolidObjectThermalBoundaryType thermal_boundary_type;
+  double                                     current_solid_temperature;
 
   // Neighboring cells maps
   // ES : edge-sharing

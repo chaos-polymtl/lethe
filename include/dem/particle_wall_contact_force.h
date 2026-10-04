@@ -1171,9 +1171,9 @@ private:
   }
 
   /**
-   * @brief Return the temperature of a wall of the grid at a point. The
-   * temperature is evaluated at the time set by the solver with
-   * set_wall_temperature_time (see particle_heat_transfer.h).
+   * @brief Return the temperature at a given point of a wall of the background
+   * triangulation. The temperature is evaluated at the time set by the solver
+   * with set_wall_temperature_time (see particle_heat_transfer.h).
    *
    * @param[in] boundary_id Boundary id of the wall, whose temperature is
    * imposed.
@@ -1230,9 +1230,6 @@ private:
   std::map<types::boundary_id, Point<3>>     point_on_rotation_vector;
   std::map<types::boundary_id, Parameters::Lagrangian::WallThermalBoundaryType>
     boundary_thermal_type_map;
-  // The temperature functions are the ones of the DEM boundary conditions
-  // parameters, not copies, so that they are evaluated at the time set by the
-  // solver with set_wall_temperature_time. They must only be evaluated here.
   std::map<types::boundary_id, std::shared_ptr<Function<3>>>
     boundary_temperature_function;
 

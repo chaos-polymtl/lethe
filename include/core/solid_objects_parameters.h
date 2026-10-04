@@ -31,7 +31,7 @@ namespace Parameters
   /**
    * @brief Thermal boundary condition type applied on a solid object surface.
    */
-  enum class ObjectThermalBoundaryType
+  enum class SolidObjectThermalBoundaryType
   {
     /// No heat flux through the solid boundary.
     adiabatic,
@@ -405,7 +405,7 @@ namespace Parameters
     std::shared_ptr<Function<spacedim>> solid_temperature;
 
     /// Type of thermal boundary condition applied on the solid surface.
-    ObjectThermalBoundaryType thermal_boundary_type;
+    SolidObjectThermalBoundaryType thermal_boundary_type;
   };
 
 
@@ -511,9 +511,9 @@ namespace Parameters
 
       const std::string thermal_type = prm.get("thermal boundary type");
       if (thermal_type == "adiabatic")
-        thermal_boundary_type = ObjectThermalBoundaryType::adiabatic;
+        thermal_boundary_type = SolidObjectThermalBoundaryType::adiabatic;
       else if (thermal_type == "isothermal")
-        thermal_boundary_type = ObjectThermalBoundaryType::isothermal;
+        thermal_boundary_type = SolidObjectThermalBoundaryType::isothermal;
       else
         {
           throw(std::runtime_error("Invalid thermal boundary type"));

@@ -4,21 +4,18 @@
 # Listing of Parameters
 #----------------------
 
-# This test is the CFD-DEM counterpart of the wall-heating case of the
-# 3d-heat-transfer-in-aligned-particles example of the dem-mp folder, with the
-# same setup as the heat_transfer_in_aligned_particles test. Ten aligned
-# particles at 0 C are held in compression between two walls with an imposed
-# temperature and exchange heat by conduction with them and between
-# themselves. It verifies the DEM boundary conditions with an imposed temperature
-# within the CFD-DEM solver. The end time is chosen so the temperature inside the
-# particles fit the expected equilibrium linear profile.
+# The test verifies the DEM imposed temperature boundary conditions. It uses
+# ten aligned particles at 0 C held in compression between the two walls
+# of the background triangulation. The wall that compress the particals are the 
+# ones with a normal aligned with the x axis (x = +-0.049). They are held at an imposed
+# temperature, and exchange heat by conduction with the particles. The fluid 
+# dynamics is disabled and every fluid-particle interaction force is turned off.
 #
-# The two plates of the DEM example case are replaced by two walls of the grid,
-# placed where the plates come to rest (x = +-0.049). As in the DEM case, the
-# left wall stays at 0 C and the right wall is switched from 0 C to 50 C. Since
-# the chain is inserted already compressed, the switch occurs at t = 0.3
-# instead of t = 8. This is in the middle of the first CFD time step, which
-# verifies that the temperature of the walls is updated at every DEM iteration.
+# The left wall stays at 0 C and the right wall is switched from 0 C to 50 C at
+# t = 0.3, in the middle of the first CFD time step, to verifies that the
+# temperature of the walls is updated inside the DEM iteration loop. The end time is
+# chosen so that the temperature of the particles approaches its steady linear
+# profile.
 
 set dimension = 3
 

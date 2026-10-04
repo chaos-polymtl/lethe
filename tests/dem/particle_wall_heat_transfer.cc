@@ -93,8 +93,9 @@ test()
   properties.density_particle[0]                             = 2500;
 
   // Defining parameters for thermal DEM. They are chosen such that the
-  // effective particle-wall properties are the same as in the
-  // particle_wall_thermal_conductance test.
+  // equivalent surface roughness is 1e-9, the equivalent surface slope is 0.08,
+  // the effective microhardness is 9e9 and the real Young's modulus is the
+  // Young's modulus.
   properties.real_youngs_modulus_particle[0]   = youngs_modulus;
   properties.real_youngs_modulus_wall          = youngs_modulus;
   properties.surface_roughness_particle[0]     = 1.e-9;
