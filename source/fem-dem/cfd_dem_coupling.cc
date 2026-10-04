@@ -21,6 +21,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
+#include <filesystem>
 #include <fstream>
 #include <ranges>
 #include <sstream>
@@ -522,15 +523,17 @@ CFDDEMSolver<dim, PropertiesIndex>::read_checkpoint()
 
   ia >> this->particle_handler;
 
-  // Load the insertion object
+  // Load the insertion object. Checkpoints written before the insertion object
+  // was checkpointed in CFD-DEM simulations do not contain this file. In that
+  // case, the insertion object keeps the state it was initialized with.
   std::string insertion_object_filename = prefix + ".insertion_object";
-  check_file_exists(insertion_object_filename,
-                    "checkpoint file of the insertion object, given by "
-                    "'subsection restart' - 'set filename'");
-  std::ifstream                 iss_insertion_obj(insertion_object_filename);
-  boost::archive::text_iarchive ia_insertion_obj(iss_insertion_obj,
-                                                 boost::archive::no_header);
-  insertion_object->deserialize(ia_insertion_obj);
+  if (std::filesystem::exists(insertion_object_filename))
+    {
+      std::ifstream iss_insertion_obj(insertion_object_filename);
+      boost::archive::text_iarchive ia_insertion_obj(iss_insertion_obj,
+                                                     boost::archive::no_header);
+      insertion_object->deserialize(ia_insertion_obj);
+    }
 
   const std::string filename = prefix + ".triangulation";
   check_file_exists(filename,
