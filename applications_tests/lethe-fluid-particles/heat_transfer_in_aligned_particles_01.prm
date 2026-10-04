@@ -227,9 +227,12 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method    = file
+  set insertion method    = list
   set insertion frequency = 10000
-  set list of input files = particles-wall-heating.input
+  set list x              = -0.044000, -0.034222, -0.024444, -0.014667, -0.004889, 0.004889, 0.014667, 0.024444, 0.034222, 0.044000
+  set list y              = 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.
+  set list z              = 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01
+  set list temperatures   = 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.
 end
 
 #---------------------------------------------------

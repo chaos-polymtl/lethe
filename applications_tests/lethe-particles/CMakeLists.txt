@@ -72,8 +72,6 @@ file(COPY restart_file_insertion_files/restart_file_insertion_1.triangulation_fi
 file(COPY restart_file_insertion_files/restart_file_insertion_1.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
 file(COPY restart_file_insertion_files/particles_01.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
 
-file(COPY heat_transfer_in_aligned_particles_01_files/particles-wall-heating.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_in_aligned_particles_01.${_build_type}/serial/")
-
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
