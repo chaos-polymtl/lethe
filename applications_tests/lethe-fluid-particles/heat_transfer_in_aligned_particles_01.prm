@@ -6,9 +6,9 @@
 
 # The test verifies the DEM imposed temperature boundary conditions. It uses
 # ten aligned particles at 0 C held in compression between the two walls
-# of the background triangulation. The wall that compress the particals are the 
+# of the background triangulation. The wall that compress the particals are the
 # ones with a normal aligned with the x axis (x = +-0.049). They are held at an imposed
-# temperature, and exchange heat by conduction with the particles. The fluid 
+# temperature, and exchange heat by conduction with the particles. The fluid
 # dynamics is disabled and every fluid-particle interaction force is turned off.
 #
 # The left wall stays at 0 C and the right wall is switched from 0 C to 50 C at

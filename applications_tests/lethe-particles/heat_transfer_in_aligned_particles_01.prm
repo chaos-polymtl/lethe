@@ -6,13 +6,13 @@
 
 # The test verifies the heat transfer between the particles and isothermal solid object.
 # It uses ten aligned particles at 0 C held in compression between two two static
-# plates normal to the x axis (x = +-0.049), which are isothermal solid objects. 
-# The solid object are held at an imposed temperature, and exchange heat by 
-# conduction with the particles. The fluid dynamics is disabled and every 
+# plates normal to the x axis (x = +-0.049), which are isothermal solid objects.
+# The solid object are held at an imposed temperature, and exchange heat by
+# conduction with the particles. The fluid dynamics is disabled and every
 # fluid-particle interaction force is turned off.
 #
 # The left plate stays at 0 C and the right plate is switched from 0 C to 50 C at
-# t = 0.3. The end time is chosen so that the temperature of the particles 
+# t = 0.3. The end time is chosen so that the temperature of the particles
 # approaches its steady linear profile.
 
 set dimension = 3
