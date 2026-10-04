@@ -151,9 +151,9 @@ calculate_contact_thermal_conductance(
   const double                  normal_force_norm,
   double                       &thermal_conductance)
 {
-  // Particle-wall contacts are either contacts with a wall of the grid or with
-  // a solid object. The thermal conductance is calculated the same way for
-  // both.
+  // Particle-wall contacts are either contacts with a wall of the background
+  // triangulation or with a solid object. The thermal conductance is calculated
+  // the same way for both.
   constexpr bool is_particle_wall_contact =
     (contact_type == ContactType::particle_wall) ||
     (contact_type == ContactType::particle_floating_mesh);

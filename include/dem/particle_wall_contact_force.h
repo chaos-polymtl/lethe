@@ -1150,8 +1150,9 @@ private:
   set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
-   * @brief Return the thermal boundary type of a wall of the grid. The walls
-   * without a thermal boundary type are adiabatic.
+   * @brief Return the thermal boundary type of a wall of the background
+   * triangulation. The walls without a thermal boundary type are adiabatic by
+   * default.
    *
    * @param[in] boundary_id Boundary id of the wall.
    *

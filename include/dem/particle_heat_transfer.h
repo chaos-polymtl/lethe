@@ -223,8 +223,8 @@ apply_heat_transfer_on_single_local_particle(
 
 /**
  * @brief Set the time of the temperature functions of the walls of the grid
- * with an imposed temperature. It does nothing if no wall has an
- * imposed temperature.
+ * with a temperature boundary condition. It does nothing if no wall has a
+ * temperature boundary condition.
  *
  * @param[in] boundary_conditions DEM boundary conditions, which hold the
  * temperature functions of the walls.
