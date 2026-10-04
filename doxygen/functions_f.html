@@ -94,12 +94,14 @@ $(function() {
 <li>f_orientation&#160;:&#160;<a class="el" href="classIBParticle.html#adacff17cf002838f41ff300e03310cd7">IBParticle&lt; dim &gt;</a></li>
 <li>f_position&#160;:&#160;<a class="el" href="classIBParticle.html#ad996a7a9ce9e3f9b0f695c4f8231bf0f">IBParticle&lt; dim &gt;</a></li>
 <li>f_velocity&#160;:&#160;<a class="el" href="classIBParticle.html#ac4076869d53bd0457f549553db66c0ad">IBParticle&lt; dim &gt;</a></li>
+<li>face_average_grad_phi_dot_n&#160;:&#160;<a class="el" href="classTracerScratchData.html#a252840ec7ba888e9d6dd02021255f9f1">TracerScratchData&lt; dim &gt;</a></li>
 <li>face_data&#160;:&#160;<a class="el" href="classStabilizedDGMethodsCopyData.html#a640d8d13ddb024540d51a17c8677ac8c">StabilizedDGMethodsCopyData</a></li>
 <li>face_div_phi_u&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a8d7c491f60dacd4d624b3665e4e4372c">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>face_dofs_map&#160;:&#160;<a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a5f5a6ef89c95af8d3cae2cea8b2a8d95">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;</a></li>
 <li>face_grad_phi_p&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#adbd62f1711f3edcf392271e9d0b4e6e6">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>face_grad_phi_u&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a2a341602a56ab835dd59c54126be6734">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>face_hess_phi_u&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a6fb8903e517afdf6ae84667e6dc118ff">NavierStokesScratchData&lt; dim &gt;</a></li>
+<li>face_jump_phi&#160;:&#160;<a class="el" href="classTracerScratchData.html#ab6f0f17817c4943e40abfe6bb5889fdc">TracerScratchData&lt; dim &gt;</a></li>
 <li>face_JxW&#160;:&#160;<a class="el" href="classCahnHilliardScratchData.html#af83b8383ef1d801e9bcb80c8d1f63c63">CahnHilliardScratchData&lt; dim &gt;</a>, <a class="el" href="classHeatTransferScratchData.html#a8d7083e83b2b3f64332874d9226933f2">HeatTransferScratchData&lt; dim &gt;</a>, <a class="el" href="classNavierStokesScratchData.html#a1800b777a5f6ee949f4bd19632f8dbd9">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>face_laplacian_phi_u&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ae20f109ee3fd7a5ed525a1ba76a4e759">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>face_matrix&#160;:&#160;<a class="el" href="structStabilizedDGMethodsCopyData_1_1CopyDataFace.html#a6730bf4d679add5ec7cb99dbdcc67e56">StabilizedDGMethodsCopyData::CopyDataFace</a></li>
@@ -108,7 +110,9 @@ $(function() {
 <li>face_normal&#160;:&#160;<a class="el" href="classCahnHilliardScratchData.html#a5a672e140d6fdd08c8f1da1afe800e7d">CahnHilliardScratchData&lt; dim &gt;</a>, <a class="el" href="classNavierStokesScratchData.html#a0a08bcb3a530d7517edf64c72dbdc28a">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>face_opposite_dofs_map&#160;:&#160;<a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a0d3bdfd32806ede6556a7d755dad1529">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;</a></li>
 <li>face_phase_grad_values&#160;:&#160;<a class="el" href="classCahnHilliardScratchData.html#ab77d11ab736d21945235067782a30b5a">CahnHilliardScratchData&lt; dim &gt;</a></li>
+<li>face_phi_here&#160;:&#160;<a class="el" href="classTracerScratchData.html#acf0ac9caa9b92c9387f75459b5760f71">TracerScratchData&lt; dim &gt;</a></li>
 <li>face_phi_p&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a14f88c10c2002a41a49cda82e5575d25">NavierStokesScratchData&lt; dim &gt;</a></li>
+<li>face_phi_there&#160;:&#160;<a class="el" href="classTracerScratchData.html#abcf5bf09b825523be73c0a59ee6af3c9">TracerScratchData&lt; dim &gt;</a></li>
 <li>face_phi_u&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#abd334c0baa72b939278f4b2869371414">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>face_pressure_gradients&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ab6df2938e916f981c39c1deaacbe4d03">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>face_pressure_values&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#aebfc11a2eade6b515242a0f09275fac0">NavierStokesScratchData&lt; dim &gt;</a></li>
@@ -254,8 +258,8 @@ $(function() {
 <li>forcing_terms&#160;:&#160;<a class="el" href="classNavierStokesOperatorBase.html#a27ba098a2179adfe34e5e4530e29b0a8">NavierStokesOperatorBase&lt; dim, number &gt;</a></li>
 <li>fraction_of_rayleigh_characteristic_time&#160;:&#160;<a class="el" href="classSubSimulationControlDEM.html#a934b7477053ce536bf3ef6c6d4721021">SubSimulationControlDEM</a></li>
 <li>fraction_of_rayleigh_time&#160;:&#160;<a class="el" href="structParameters_1_1CFDDEM.html#a4aa657293d5c1d24b6f6b1f783bd9c53">Parameters::CFDDEM</a></li>
-<li>fractionType&#160;:&#160;<a class="el" href="structParameters_1_1MeshAdaptation.html#aa56d4d71eb38f6d12483c64dc54ae074">Parameters::MeshAdaptation</a></li>
 <li>FractionType&#160;:&#160;<a class="el" href="structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45">Parameters::MeshAdaptation</a></li>
+<li>fractionType&#160;:&#160;<a class="el" href="structParameters_1_1MeshAdaptation.html#aa56d4d71eb38f6d12483c64dc54ae074">Parameters::MeshAdaptation</a></li>
 <li>frequency&#160;:&#160;<a class="el" href="structParameters_1_1CLS__ReinitializationMethod.html#ab021d34fbd3fe1b8dbe5dba84bad6351">Parameters::CLS_ReinitializationMethod</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#aa611e9850b5ea3402cd20e157f129c21">Parameters::MeshAdaptation</a>, <a class="el" href="structParameters_1_1Restart.html#a1d5f927419e83fb00ac44c5ae5d146ae">Parameters::Restart</a></li>
 <li>friction_coefficient&#160;:&#160;<a class="el" href="classIBParticle.html#adddec01292ea0e889516e7f871a94b4b">IBParticle&lt; dim &gt;</a></li>
 <li>friction_coefficient_particle&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a1664b87f013cddfb7324d62685a2ee68">Parameters::Lagrangian::LagrangianPhysicalProperties</a></li>
