@@ -125,6 +125,23 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
   // Initialize filtered solution shared_ptr
   filtered_solution = std::make_shared<GlobalVectorType>();
 
+  // When the CLS equation is solved with a DG formulation, a continuous
+  // representation of the phase indicator is provided to the other physics and
+  // to the subequations. The continuous finite element has to be at least Q1.
+  if (simulation_parameters.fem_parameters.CLS_uses_dg &&
+      !simulation_parameters.mesh.simplex)
+    {
+      fe_continuous =
+        std::make_shared<FE_Q<dim>>(std::max(fe->degree, uint(1)));
+      dof_handler_continuous =
+        std::make_shared<DoFHandler<dim>>(*triangulation);
+      present_solution_continuous  = std::make_shared<GlobalVectorType>();
+      filtered_solution_continuous = std::make_shared<GlobalVectorType>();
+      previous_solutions_continuous =
+        std::make_shared<std::vector<GlobalVectorType>>(
+          maximum_number_of_previous_solutions());
+    }
+
   // Check the value of interface sharpness
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .sharpening.interface_sharpness < 1.0)
@@ -1412,6 +1429,20 @@ ConservativeLevelSet<dim>::percolate_time_vectors()
       (*this->previous_solutions)[i] = (*this->previous_solutions)[i - 1];
     }
   (*this->previous_solutions)[0] = *this->present_solution;
+
+  // Percolate the continuous representation of the phase indicator
+  if (uses_continuous_representation())
+    {
+      for (unsigned int i = this->previous_solutions_continuous->size() - 1;
+           i > 0;
+           --i)
+        {
+          (*this->previous_solutions_continuous)[i] =
+            (*this->previous_solutions_continuous)[i - 1];
+        }
+      (*this->previous_solutions_continuous)[0] =
+        *this->present_solution_continuous;
+    }
 }
 
 template <int dim>
@@ -2068,12 +2099,20 @@ ConservativeLevelSet<dim>::modify_solution()
   // Apply filter to phase indicator values
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
+  // Update the continuous representation of the phase indicator
+  const bool continuous_representation = uses_continuous_representation();
+  if (continuous_representation)
+    update_continuous_solutions(false);
+
   // Solve phase indicator gradient and curvature projections
   if (simulation_parameters.multiphysics.cls_parameters.surface_tension_force
         .enable)
     {
       this->cls_subequations_interface->set_cls_solution_and_dof_handler(
-        *this->present_solution, *this->dof_handler);
+        continuous_representation ? *this->present_solution_continuous :
+                                    *this->present_solution,
+        continuous_representation ? *this->dof_handler_continuous :
+                                    *this->dof_handler);
       this->cls_subequations_interface->solve_specific_subequation(
         CLSSubequationsID::phase_gradient_projection);
       this->cls_subequations_interface->solve_specific_subequation(
@@ -2528,6 +2567,11 @@ ConservativeLevelSet<dim>::post_mesh_adaptation()
 
   // Apply filter to phase indicator
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
+
+  // Update the continuous representation of the phase indicator on the new
+  // mesh, including the previous solutions
+  if (uses_continuous_representation())
+    update_continuous_solutions(true);
 }
 
 template <int dim>
@@ -2686,6 +2730,11 @@ ConservativeLevelSet<dim>::read_checkpoint()
   // Apply filter to phase indicator
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
+  // Update the continuous representation of the phase indicator, including
+  // the previous solutions, since it is not stored in the checkpoint
+  if (uses_continuous_representation())
+    update_continuous_solutions(true);
+
   // Deserialize all post-processing tables that are currently used with the CLS
   // solver
   std::vector<OutputStructTableHandler> table_output_structs =
@@ -2822,13 +2871,32 @@ ConservativeLevelSet<dim>::setup_dofs()
               << this->dof_handler->n_dofs() << std::endl;
 
   // Provide the CLS dof_handler and solution pointers to the
-  // multiphysics interface
-  multiphysics->set_dof_handler(PhysicsID::CLS, this->dof_handler);
+  // multiphysics interface. When the CLS equation is solved with a DG
+  // formulation, the continuous representation of the phase indicator is
+  // provided instead, since the other physics require a continuous field.
   multiphysics->set_mapping(PhysicsID::CLS, this->mapping);
-  multiphysics->set_solution(PhysicsID::CLS, this->present_solution);
-  multiphysics->set_filtered_solution(PhysicsID::CLS, this->filtered_solution);
-  multiphysics->set_previous_solutions(PhysicsID::CLS,
-                                       this->previous_solutions);
+  if (uses_continuous_representation())
+    {
+      setup_continuous_projection();
+
+      multiphysics->set_dof_handler(PhysicsID::CLS,
+                                    this->dof_handler_continuous);
+      multiphysics->set_solution(PhysicsID::CLS,
+                                 this->present_solution_continuous);
+      multiphysics->set_filtered_solution(PhysicsID::CLS,
+                                          this->filtered_solution_continuous);
+      multiphysics->set_previous_solutions(PhysicsID::CLS,
+                                           this->previous_solutions_continuous);
+    }
+  else
+    {
+      multiphysics->set_dof_handler(PhysicsID::CLS, this->dof_handler);
+      multiphysics->set_solution(PhysicsID::CLS, this->present_solution);
+      multiphysics->set_filtered_solution(PhysicsID::CLS,
+                                          this->filtered_solution);
+      multiphysics->set_previous_solutions(PhysicsID::CLS,
+                                           this->previous_solutions);
+    }
 
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .geometric_interface_reinitialization.enable)
@@ -2972,6 +3040,11 @@ ConservativeLevelSet<dim>::set_initial_conditions()
 
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
+  // Update the continuous representation of the phase indicator
+  const bool continuous_representation = uses_continuous_representation();
+  if (continuous_representation)
+    update_continuous_solutions(false);
+
   if (this->simulation_parameters.multiphysics.cls_parameters
         .reinitialization_method.sharpening.type ==
       Parameters::SharpeningType::adaptive)
@@ -2996,7 +3069,10 @@ ConservativeLevelSet<dim>::set_initial_conditions()
         .pde_based_interface_reinitialization.enable)
     {
       this->cls_subequations_interface->set_cls_solution_and_dof_handler(
-        *this->present_solution, *this->dof_handler);
+        continuous_representation ? *this->present_solution_continuous :
+                                    *this->present_solution,
+        continuous_representation ? *this->dof_handler_continuous :
+                                    *this->dof_handler);
       this->cls_subequations_interface->solve_specific_subequation(
         CLSSubequationsID::phase_gradient_projection);
       this->cls_subequations_interface->solve_specific_subequation(
@@ -3505,9 +3581,13 @@ ConservativeLevelSet<dim>::apply_phase_filter(
   const GlobalVectorType &original_solution,
   GlobalVectorType       &filtered_solution)
 {
-  // Initializations
-  auto mpi_communicator = this->triangulation->get_mpi_communicator();
-  GlobalVectorType filtered_solution_owned(this->locally_owned_dofs,
+  // Initializations. The locally owned degrees of freedom are obtained from
+  // the solution vector, since the filter is applied to solutions of both the
+  // CLS finite element space and its continuous representation.
+  auto           mpi_communicator = this->triangulation->get_mpi_communicator();
+  const IndexSet locally_owned_elements =
+    original_solution.locally_owned_elements();
+  GlobalVectorType filtered_solution_owned(locally_owned_elements,
                                            mpi_communicator);
   filtered_solution_owned = original_solution;
   filtered_solution.reinit(original_solution);
@@ -3517,7 +3597,7 @@ ConservativeLevelSet<dim>::apply_phase_filter(
     this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
 
   // Apply filter to the solution
-  for (auto p : this->locally_owned_dofs)
+  for (auto p : locally_owned_elements)
     {
       filtered_solution_owned[p] =
         filter->filter_phase(filtered_solution_owned[p]);
@@ -3531,6 +3611,212 @@ ConservativeLevelSet<dim>::apply_phase_filter(
       for (const double filtered_phase : filtered_solution)
         {
           this->pcout << filtered_phase << std::endl;
+        }
+    }
+}
+
+template <int dim>
+void
+ConservativeLevelSet<dim>::setup_continuous_projection()
+{
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  // Distribute the degrees of freedom of the continuous finite element space
+  this->dof_handler_continuous->distribute_dofs(*this->fe_continuous);
+
+  this->locally_owned_dofs_continuous =
+    this->dof_handler_continuous->locally_owned_dofs();
+  this->locally_relevant_dofs_continuous =
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler_continuous);
+
+  // Constraints of the continuous space: hanging nodes and periodic boundary
+  // conditions
+  this->constraints_continuous.clear();
+  this->constraints_continuous.reinit(this->locally_owned_dofs_continuous,
+                                      this->locally_relevant_dofs_continuous);
+  DoFTools::make_hanging_node_constraints(*this->dof_handler_continuous,
+                                          this->constraints_continuous);
+
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_cls.type)
+    {
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          const auto &periodic_boundary =
+            this->simulation_parameters.boundary_conditions_cls
+              .periodic_boundaries.at(id);
+          DoFTools::make_periodicity_constraints(*this->dof_handler_continuous,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 this->constraints_continuous);
+        }
+    }
+  this->constraints_continuous.close();
+
+  // Solution vectors
+  this->present_solution_continuous->reinit(
+    this->locally_owned_dofs_continuous,
+    this->locally_relevant_dofs_continuous,
+    mpi_communicator);
+  this->filtered_solution_continuous->reinit(
+    this->locally_owned_dofs_continuous,
+    this->locally_relevant_dofs_continuous,
+    mpi_communicator);
+  for (auto &solution : *this->previous_solutions_continuous)
+    {
+      solution.reinit(this->locally_owned_dofs_continuous,
+                      this->locally_relevant_dofs_continuous,
+                      mpi_communicator);
+    }
+
+  // Assemble the lumped mass vector, which is the integral of the shape
+  // function associated with each degree of freedom
+  this->lumped_mass_continuous.reinit(this->locally_owned_dofs_continuous,
+                                      mpi_communicator);
+
+  FEValues<dim> fe_values_continuous(*this->mapping,
+                                     *this->fe_continuous,
+                                     *this->cell_quadrature,
+                                     update_values | update_JxW_values);
+
+  const unsigned int n_q_points      = this->cell_quadrature->size();
+  const unsigned int n_dofs_per_cell = this->fe_continuous->n_dofs_per_cell();
+
+  Vector<double>                       local_lumped_mass(n_dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
+
+  for (const auto &cell : this->dof_handler_continuous->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_continuous.reinit(cell);
+          local_lumped_mass = 0;
+
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              const double JxW = fe_values_continuous.JxW(q);
+              for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+                {
+                  local_lumped_mass(i) +=
+                    fe_values_continuous.shape_value(i, q) * JxW;
+                }
+            }
+
+          cell->get_dof_indices(local_dof_indices);
+          this->constraints_continuous.distribute_local_to_global(
+            local_lumped_mass, local_dof_indices, this->lumped_mass_continuous);
+        }
+    }
+  this->lumped_mass_continuous.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+ConservativeLevelSet<dim>::project_to_continuous_space(
+  const GlobalVectorType &dg_solution,
+  GlobalVectorType       &continuous_solution)
+{
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  FEValues<dim> fe_values_cls(*this->mapping,
+                              *this->fe,
+                              *this->cell_quadrature,
+                              update_values);
+  FEValues<dim> fe_values_continuous(*this->mapping,
+                                     *this->fe_continuous,
+                                     *this->cell_quadrature,
+                                     update_values | update_JxW_values);
+
+  const unsigned int n_q_points      = this->cell_quadrature->size();
+  const unsigned int n_dofs_per_cell = this->fe_continuous->n_dofs_per_cell();
+
+  Vector<double>                       local_rhs(n_dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
+  std::vector<double>                  phase_values(n_q_points);
+
+  // Right-hand side of the projection, which is the integral of the DG phase
+  // indicator multiplied by the continuous shape functions
+  GlobalVectorType projection_rhs(this->locally_owned_dofs_continuous,
+                                  mpi_communicator);
+
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Get the cell of the continuous space
+          typename DoFHandler<dim>::active_cell_iterator continuous_cell(
+            &(*this->triangulation),
+            cell->level(),
+            cell->index(),
+            this->dof_handler_continuous.get());
+
+          fe_values_cls.reinit(cell);
+          fe_values_continuous.reinit(continuous_cell);
+
+          fe_values_cls.get_function_values(dg_solution, phase_values);
+
+          local_rhs = 0;
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              const double JxW = fe_values_continuous.JxW(q);
+              for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+                {
+                  local_rhs(i) += fe_values_continuous.shape_value(i, q) *
+                                  phase_values[q] * JxW;
+                }
+            }
+
+          continuous_cell->get_dof_indices(local_dof_indices);
+          this->constraints_continuous.distribute_local_to_global(
+            local_rhs, local_dof_indices, projection_rhs);
+        }
+    }
+  projection_rhs.compress(VectorOperation::add);
+
+  // Divide by the lumped mass. The constrained degrees of freedom are set
+  // afterward by the constraints.
+  GlobalVectorType continuous_solution_owned(
+    this->locally_owned_dofs_continuous, mpi_communicator);
+
+  for (const auto p : this->locally_owned_dofs_continuous)
+    {
+      if (this->constraints_continuous.is_constrained(p))
+        continue;
+
+      // The lumped mass of an unconstrained degree of freedom is the integral
+      // of its shape function, which is strictly positive
+      const double lumped_mass = this->lumped_mass_continuous[p];
+      Assert(lumped_mass > 0., ExcInternalError());
+
+      const double rhs_value       = projection_rhs[p];
+      continuous_solution_owned[p] = rhs_value / lumped_mass;
+    }
+  continuous_solution_owned.compress(VectorOperation::insert);
+
+  this->constraints_continuous.distribute(continuous_solution_owned);
+
+  continuous_solution = continuous_solution_owned;
+}
+
+template <int dim>
+void
+ConservativeLevelSet<dim>::update_continuous_solutions(
+  const bool update_previous_solutions)
+{
+  project_to_continuous_space(*this->present_solution,
+                              *this->present_solution_continuous);
+
+  apply_phase_filter(*this->present_solution_continuous,
+                     *this->filtered_solution_continuous);
+
+  if (update_previous_solutions)
+    {
+      for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
+        {
+          project_to_continuous_space(
+            (*this->previous_solutions)[i],
+            (*this->previous_solutions_continuous)[i]);
         }
     }
 }

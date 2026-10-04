@@ -55,7 +55,7 @@ This subsection specifies the characteristics of the finite element method used 
 
 * ``CLS degree`` specifies the polynomial degree for the CLS phase indicator. It is not recommended to use higher polynomial degrees for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.
 
-* ``cls uses dg`` specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the CLS physics. The phase indicator is advected with an upwind flux, without any stabilization. With this formulation, the boundary conditions of the CLS are weakly imposed (see :doc:`boundary_conditions_multiphysics`).
+* ``cls uses dg`` specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the CLS physics. The phase indicator is advected with an upwind flux, without any stabilization. With this formulation, the boundary conditions of the CLS are weakly imposed (see :doc:`boundary_conditions_multiphysics`). The other physics and the projections of the phase indicator gradient and of the curvature, which are used for the surface tension force, do not use the discontinuous phase indicator directly. They use a continuous projection of it, obtained with a lumped-mass :math:`\mathcal{L}^2` projection, which preserves the integral of the phase indicator.
 
 .. warning::
 

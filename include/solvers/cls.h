@@ -688,6 +688,61 @@ private:
                      GlobalVectorType       &filtered_solution);
 
   /**
+   * @brief Indicate if a continuous representation of the phase indicator is
+   * maintained. This is the case when the CLS equation is solved with a DG
+   * formulation.
+   *
+   * @return true if the continuous representation of the phase indicator is
+   * used, false otherwise.
+   */
+  inline bool
+  uses_continuous_representation() const
+  {
+    return dof_handler_continuous != nullptr;
+  }
+
+  /**
+   * @brief Set up the continuous representation of the phase indicator, which
+   * is used when the CLS equation is solved with a DG formulation. Distribute
+   * the degrees of freedom of the continuous finite element space, define its
+   * constraints, allocate its solution vectors and assemble its lumped mass
+   * vector.
+   */
+  void
+  setup_continuous_projection();
+
+  /**
+   * @brief Project a discontinuous phase indicator onto the continuous finite
+   * element space using a lumped-mass L2 projection. The value at a degree of
+   * freedom \f$i\f$ of the continuous space is
+   * \f$\int \psi_i \phi_{DG} \mathrm{d}\Omega / \int \psi_i
+   * \mathrm{d}\Omega\f$, with \f$\psi_i\f$ the continuous shape function.
+   * This projection does not require the solution of a linear system and
+   * it preserves the integral of the phase indicator.
+   *
+   * @param[in] dg_solution Phase indicator solution vector in the
+   * discontinuous finite element space of the CLS.
+   *
+   * @param[out] continuous_solution Projected phase indicator solution vector
+   * in the continuous finite element space.
+   */
+  void
+  project_to_continuous_space(const GlobalVectorType &dg_solution,
+                              GlobalVectorType       &continuous_solution);
+
+  /**
+   * @brief Update the continuous representation of the phase indicator from
+   * the DG solutions. The present solution is projected and filtered.
+   *
+   * @param[in] update_previous_solutions If true, the previous solutions are
+   * also projected. This is required when the previous continuous solutions
+   * cannot be obtained by percolating the time vectors, that is after a mesh
+   * adaptation or when a checkpoint is read.
+   */
+  void
+  update_continuous_solutions(const bool update_previous_solutions);
+
+  /**
    * @brief Reinitialize the interface between fluids using the PDE-based
    * approach.
    */
@@ -811,6 +866,20 @@ private:
 
   // Previous solutions vectors
   std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions;
+
+  // Continuous representation of the phase indicator. It is only used when the
+  // CLS equation is solved with a DG formulation. It is obtained from a
+  // lumped-mass L2 projection of the DG solutions and it is what is provided
+  // to the other physics and to the CLS subequations.
+  std::shared_ptr<FiniteElement<dim>> fe_continuous;
+  std::shared_ptr<DoFHandler<dim>>    dof_handler_continuous;
+  IndexSet                            locally_owned_dofs_continuous;
+  IndexSet                            locally_relevant_dofs_continuous;
+  AffineConstraints<double>           constraints_continuous;
+  GlobalVectorType                    lumped_mass_continuous;
+  std::shared_ptr<GlobalVectorType>   present_solution_continuous;
+  std::shared_ptr<GlobalVectorType>   filtered_solution_continuous;
+  std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions_continuous;
 
   // Solution transfer classes
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
