@@ -203,9 +203,12 @@ ConservativeLevelSet<dim>::setup_assemblers()
   // If the CLS solver uses DG, a different set of assemblers is used
   if (simulation_parameters.fem_parameters.CLS_uses_dg)
     {
-      this->assemblers.emplace_back(
-        std::make_shared<CLSAssemblerDGCore<dim>>());
+      this->assemblers.emplace_back(std::make_shared<CLSAssemblerDGCore<dim>>(
+        this->simulation_parameters.multiphysics.cls_parameters));
       this->inner_face_assembler = std::make_shared<CLSAssemblerSIPG<dim>>();
+      this->boundary_face_assembler =
+        std::make_shared<CLSAssemblerBoundaryUpwind<dim>>(
+          this->simulation_parameters.boundary_conditions_cls);
     }
   else
     {
@@ -299,11 +302,27 @@ ConservativeLevelSet<dim>::assemble_system_matrix_dg()
     };
 
   const auto boundary_worker =
-    [&]([[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator
-                                                     &cell,
-        [[maybe_unused]] const unsigned int          &face_no,
-        [[maybe_unused]] CLSScratchData<dim>         &scratch_data,
-        [[maybe_unused]] StabilizedDGMethodsCopyData &copy_data) {};
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        CLSScratchData<dim>                                  &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      scratch_data.reinit_boundary_face(cell,
+                                        face_no,
+                                        cell->face(face_no)->boundary_id(),
+                                        this->evaluation_point);
+
+      // Gather velocity information at the face to advect properly
+      // Get the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
+
+      // Reinit the boundary face velocity within the scratch data
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
+
+      this->boundary_face_assembler->assemble_matrix(scratch_data, copy_data);
+    };
 
   const auto face_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -545,11 +564,27 @@ ConservativeLevelSet<dim>::assemble_system_rhs_dg()
     };
 
   const auto boundary_worker =
-    [&]([[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator
-                                                     &cell,
-        [[maybe_unused]] const unsigned int          &face_no,
-        [[maybe_unused]] CLSScratchData<dim>         &scratch_data,
-        [[maybe_unused]] StabilizedDGMethodsCopyData &copy_data) {};
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        CLSScratchData<dim>                                  &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      scratch_data.reinit_boundary_face(cell,
+                                        face_no,
+                                        cell->face(face_no)->boundary_id(),
+                                        this->evaluation_point);
+
+      // Gather velocity information at the face to advect properly.
+      // Get the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
+
+      // Reinit the boundary face velocity within the scratch data
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
+
+      this->boundary_face_assembler->assemble_rhs(scratch_data, copy_data);
+    };
 
   const auto face_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,

@@ -26,6 +26,15 @@ CLSScratchData<dim>::allocate()
   this->velocity_gradient_values =
     std::vector<Tensor<2, dim>>(this->n_q_points);
   this->velocity_divergences = std::vector<double>(n_q_points);
+  this->previous_velocity_divergences =
+    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(this->n_q_points));
+
+  // Velocity at the faces, which is only used by the DG assemblers. The inner
+  // vectors are resized when the face is reinitialized.
+  this->previous_face_velocity_values =
+    std::vector<std::vector<Tensor<1, dim>>>(
+      maximum_number_of_previous_solutions());
 
   this->present_phase_values = std::vector<double>(this->n_q_points);
   this->phase_gradients      = std::vector<Tensor<1, dim>>(this->n_q_points);

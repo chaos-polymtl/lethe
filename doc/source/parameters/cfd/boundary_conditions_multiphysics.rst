@@ -171,6 +171,12 @@ For CLS boundary conditions (multiphase flow), the possible ``types`` are ``none
     * ``dirichlet`` for inlet and outlet boundary conditions, to specify which fluid should be at the selected boundary;
     * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``.
 
+.. note::
+    When the CLS is solved with the Discontinuous Galerkin (DG) formulation (``cls uses dg = true`` in the :doc:`fem` subsection), the boundary conditions are imposed weakly through the advective flux at the boundary:
+
+    * with ``none``, the phase indicator leaves freely where the flow exits the domain and no value is imposed where the flow enters the domain;
+    * with ``dirichlet``, the prescribed value is imposed only where the flow enters the domain. An inlet thus requires a ``dirichlet`` boundary condition.
+
     
 Cahn-Hilliard
 ^^^^^^^^^^^^^^

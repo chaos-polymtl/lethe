@@ -730,8 +730,9 @@ private:
    * @brief Helper function to reinit the face velocity with the adequate solution.
    * This prevents code duplication throughout the CLS class. The function looks
    * at the multiphysics interface to decide if the velocity is a block velocity
-   * or a regular velocity. Furthermore, it also checks if a time-averaged
-   * solution is required. Otherwise, the code here would be copied four times.
+   * or a regular velocity. The present and the previous fluid dynamics
+   * solutions are both provided, since the face velocity is extrapolated in
+   * time in the same way as the cell velocity.
    *
    * @param[in] velocity_cell the iterator of the cell where the velocity is to
    * be reinitialized.
@@ -750,19 +751,21 @@ private:
   {
     if (multiphysics->fluid_dynamics_is_block())
       {
-        scratch_data.reinit_face_velocity(velocity_cell,
-                                          face_no,
-                                          multiphysics->get_block_solution(
-                                            PhysicsID::fluid_dynamics),
-                                          this->simulation_parameters.ale);
+        scratch_data.reinit_face_velocity(
+          velocity_cell,
+          face_no,
+          multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+          multiphysics->get_block_previous_solutions(PhysicsID::fluid_dynamics),
+          this->simulation_parameters.ale);
       }
     else
       {
-        scratch_data.reinit_face_velocity(velocity_cell,
-                                          face_no,
-                                          multiphysics->get_solution(
-                                            PhysicsID::fluid_dynamics),
-                                          this->simulation_parameters.ale);
+        scratch_data.reinit_face_velocity(
+          velocity_cell,
+          face_no,
+          multiphysics->get_solution(PhysicsID::fluid_dynamics),
+          multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+          this->simulation_parameters.ale);
       }
   }
 
@@ -857,7 +860,8 @@ private:
   std::vector<std::shared_ptr<CLSAssemblerBase<dim>>> assemblers;
 
   // Face assemblers, used only for DG methods
-  std::shared_ptr<CLSAssemblerSIPG<dim>> inner_face_assembler;
+  std::shared_ptr<CLSAssemblerSIPG<dim>>           inner_face_assembler;
+  std::shared_ptr<CLSAssemblerBoundaryUpwind<dim>> boundary_face_assembler;
 
   // Phase indicator filter
   std::shared_ptr<ConservativeLevelSetFilterBase> filter;

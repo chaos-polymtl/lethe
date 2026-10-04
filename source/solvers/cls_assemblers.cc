@@ -477,13 +477,15 @@ CLSAssemblerDGCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const auto phi_phase_i      = scratch_data.phi[q][i];
           const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
@@ -495,6 +497,14 @@ CLSAssemblerDGCore<dim>::assemble_matrix(
               // explicitly in the weak form as a boundary term.
               local_matrix(i, j) +=
                 (-grad_phi_phase_i * velocity * phi_phase_j) * JxW;
+
+              // The weakened advection term corresponds to div(u * phi). This
+              // term is added to recover u * grad(phi), since the velocity
+              // field is not exactly divergence-free. It is not assembled if
+              // the CLS equation is compressible.
+              if (!compressible)
+                local_matrix(i, j) +=
+                  -phi_phase_i * velocity_divergence * phi_phase_j * JxW;
             }
         }
     } // end loop on quadrature points
@@ -520,18 +530,28 @@ CLSAssemblerDGCore<dim>::assemble_rhs(const CLSScratchData<dim> &scratch_data,
       // Gather into local variables the relevant fields
       const double         phase_value = scratch_data.present_phase_values[q];
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const auto phi_phase_i      = scratch_data.phi[q][i];
           const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
 
           // Linearized weak form of the strong problem u * grad(phi) =0
           // Note that the advection term has been weakened for it to appear
           // explicitly in the weak form as a boundary term.
           local_rhs(i) -= (-grad_phi_phase_i * velocity * phase_value) * JxW;
+
+          // The weakened advection term corresponds to div(u * phi). This
+          // term is added to recover u * grad(phi), since the velocity field
+          // is not exactly divergence-free. It is not assembled if the CLS
+          // equation is compressible.
+          if (!compressible)
+            local_rhs(i) -=
+              -phi_phase_i * velocity_divergence * phase_value * JxW;
         }
     } // end loop on quadrature points
 }
@@ -620,3 +640,107 @@ CLSAssemblerSIPG<dim>::assemble_rhs(const CLSScratchData<dim>   &scratch_data,
 
 template class CLSAssemblerSIPG<2>;
 template class CLSAssemblerSIPG<3>;
+
+
+template <int dim>
+void
+CLSAssemblerBoundaryUpwind<dim>::assemble_matrix(
+  const CLSScratchData<dim>   &scratch_data,
+  StabilizedDGMethodsCopyData &copy_data)
+{
+  const BoundaryConditions::BoundaryType boundary_type =
+    boundary_conditions_cls.type.at(scratch_data.boundary_index);
+
+  // Periodic faces are assembled as internal faces
+  if (boundary_type == BoundaryConditions::BoundaryType::periodic ||
+      boundary_type == BoundaryConditions::BoundaryType::periodic_neighbor)
+    return;
+
+  const FEFaceValuesBase<dim> &fe_face =
+    scratch_data.fe_interface_values_cls.get_fe_face_values(0);
+
+  const unsigned int         n_dofs     = fe_face.get_fe().n_dofs_per_cell();
+  const unsigned int         n_q_points = fe_face.n_quadrature_points;
+  const std::vector<double> &JxW        = fe_face.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[q] * normals[q];
+
+      // Where the flow enters the domain through a Dirichlet boundary, the
+      // upwind value is the prescribed one. It only contributes to the rhs.
+      if (boundary_type == BoundaryConditions::BoundaryType::cls_dirichlet &&
+          velocity_dot_n < 0.)
+        continue;
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        for (unsigned int j = 0; j < n_dofs; ++j)
+          {
+            // ( φ_i , u·n φ_j )
+            copy_data.local_matrix(i, j) += fe_face.shape_value(i, q) *
+                                            fe_face.shape_value(j, q) *
+                                            velocity_dot_n * JxW[q];
+          }
+    }
+}
+
+template <int dim>
+void
+CLSAssemblerBoundaryUpwind<dim>::assemble_rhs(
+  const CLSScratchData<dim>   &scratch_data,
+  StabilizedDGMethodsCopyData &copy_data)
+{
+  const types::boundary_id boundary_index = scratch_data.boundary_index;
+  const BoundaryConditions::BoundaryType boundary_type =
+    boundary_conditions_cls.type.at(boundary_index);
+
+  // Periodic faces are assembled as internal faces
+  if (boundary_type == BoundaryConditions::BoundaryType::periodic ||
+      boundary_type == BoundaryConditions::BoundaryType::periodic_neighbor)
+    return;
+
+  const FEFaceValuesBase<dim> &fe_face =
+    scratch_data.fe_interface_values_cls.get_fe_face_values(0);
+
+  const unsigned int         n_dofs     = fe_face.get_fe().n_dofs_per_cell();
+  const unsigned int         n_q_points = fe_face.n_quadrature_points;
+  const std::vector<double> &JxW        = fe_face.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+
+  // Evaluate the prescribed phase indicator if the boundary is a Dirichlet
+  const bool is_dirichlet =
+    boundary_type == BoundaryConditions::BoundaryType::cls_dirichlet;
+  std::vector<double> dirichlet_values;
+  if (is_dirichlet)
+    {
+      dirichlet_values.resize(n_q_points);
+      boundary_conditions_cls.phase_indicator.at(boundary_index)
+        ->value_list(fe_face.get_quadrature_points(), dirichlet_values);
+    }
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[q] * normals[q];
+
+      // Upwind value of the phase indicator. It is the value inside the
+      // domain, except where the flow enters the domain through a Dirichlet
+      // boundary.
+      const double upwind_phase_value = (is_dirichlet && velocity_dot_n < 0.) ?
+                                          dirichlet_values[q] :
+                                          scratch_data.values_here[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          copy_data.local_rhs(i) -= fe_face.shape_value(i, q) // φ_i
+                                    * upwind_phase_value      // φ^{upwind}
+                                    * velocity_dot_n          // (u . n)
+                                    * JxW[q];                 // dx
+        }
+    }
+}
+
+template class CLSAssemblerBoundaryUpwind<2>;
+template class CLSAssemblerBoundaryUpwind<3>;

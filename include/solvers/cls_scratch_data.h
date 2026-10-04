@@ -4,10 +4,13 @@
 #ifndef lethe_cls_scratch_data_h
 #define lethe_cls_scratch_data_h
 
+#include <core/bdf.h>
 #include <core/time_integration_utilities.h>
 
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_scratch_data.h>
+
+#include <deal.II/base/types.h>
 
 #include <deal.II/fe/fe_interface_values.h>
 #include <deal.II/fe/fe_system.h>
@@ -283,17 +286,21 @@ public:
           trace(this->velocity_gradient_values[q]);
       }
 
-    // Gather previous velocity values
+    // Gather previous velocity values and divergences
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         fe_values_fd[velocities_fd].get_function_values(
           previous_solutions[p], this->previous_velocity_values[p]);
+        fe_values_fd[velocities_fd].get_function_divergences(
+          previous_solutions[p], this->previous_velocity_divergences[p]);
       }
 
     if (ale.enabled())
       {
         // ALE enabled, so extract the ALE velocity and subtract it from the
-        // velocity obtained from the fluid dynamics
+        // velocity obtained from the fluid dynamics. The ALE velocity is
+        // assumed to be divergence-free, hence the velocity divergence is not
+        // modified.
         Tensor<1, dim>                                  velocity_ale;
         std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
           ale.velocity;
@@ -327,18 +334,69 @@ public:
                         this->previous_velocity_values,
                         number_of_previous_solutions(method),
                         this->velocity_values);
+
+        // Extrapolate the velocity divergence in the same way, so that it
+        // remains the divergence of the extrapolated velocity.
+        bdf_extrapolate(time_vector,
+                        this->previous_velocity_divergences,
+                        number_of_previous_solutions(method),
+                        this->velocity_divergences);
       }
   }
 
-
-  /** @brief Reinitialize the content of the scratch regarding the velocity for internal/boundary faces.
-   *  The velocity is inherently assumed to have been solved using a CG scheme.
+  /** @brief Reinitialize the content of the scratch for the boundary faces. This is only used for the DG assemblers.
+   *
+   * @tparam VectorType The Vector type used for the solvers
    *
    * @param[in] cell The cell over which the assembly is being carried.
    *
    * @param[in] face_no The face index associated with the cell
    *
+   * @param[in] boundary_index The boundary id of the face
+   *
+   * @param[in] current_solution The present value of the solution.
+   */
+  template <typename VectorType>
+  void
+  reinit_boundary_face(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                   &face_no,
+    const types::boundary_id                             &boundary_index,
+    const VectorType                                     &current_solution)
+  {
+    fe_interface_values_cls.reinit(cell, face_no);
+    face_quadrature_points = fe_interface_values_cls.get_quadrature_points();
+
+    // BB TODO : Preallocate memory here
+    values_here.resize(face_quadrature_points.size());
+
+    fe_interface_values_cls.get_fe_face_values(0).get_function_values(
+      current_solution, values_here);
+
+    this->boundary_index = boundary_index;
+  }
+
+  /** @brief Reinitialize the content of the scratch regarding the velocity for internal/boundary faces.
+   *  The velocity is inherently assumed to have been solved using a CG scheme.
+   *  For transient simulations, the face velocity is extrapolated to t+dt
+   *  using the BDF scheme, exactly as the cell velocity in reinit_velocity().
+   *  The cell and face terms of the DG formulation must be assembled with
+   *  the same velocity field.
+   *
+   * @tparam VectorType The Vector type used for the solvers
+   *
+   * @param[in] velocity_cell The cell over which the assembly is being
+   * carried. This cell must be compatible with the Fluid Dynamics FE.
+   *
+   * @param[in] face_no The face index associated with the cell
+   *
    * @param[in] velocity_solution The present value of the velocity solution.
+   *
+   * @param[in] previous_velocity_solutions Vector of \f$n\f$ @p VectorType
+   * containers of previous fluid dynamic solutions (\f$[u,p]\f$). \f$n\f$
+   * depends on the BDF scheme selected for time-stepping.
+   *
+   * @param[in] ale ALE parameters
    */
   template <typename VectorType>
   void
@@ -346,34 +404,65 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const unsigned int                                   &face_no,
     const VectorType                                     &velocity_solution,
-    const Parameters::ALE<dim>                           &ale)
+    const std::vector<VectorType> &previous_velocity_solutions,
+    const Parameters::ALE<dim>    &ale)
   {
     fe_face_values_fd.reinit(velocity_cell, face_no);
 
+    const unsigned int n_face_q_points = face_quadrature_points.size();
+
     // BB note : Array could be pre-allocated
-    face_velocity_values.resize(face_quadrature_points.size());
+    face_velocity_values.resize(n_face_q_points);
 
     fe_face_values_fd[velocities_fd].get_function_values(velocity_solution,
                                                          face_velocity_values);
 
-    if (!ale.enabled())
-      return;
-
-    // ALE enabled, so extract the ALE velocity and subtract it from the
-    // velocity obtained from the fluid dynamics
-    Tensor<1, dim>                                  velocity_ale;
-    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
-      ale.velocity;
-    Vector<double> velocity_ale_vector(dim);
-
-    for (unsigned int q = 0; q < face_quadrature_points.size(); ++q)
+    // Gather previous velocity values at the face
+    for (unsigned int p = 0; p < previous_velocity_solutions.size(); ++p)
       {
-        velocity_ale_function->vector_value(face_quadrature_points[q],
-                                            velocity_ale_vector);
-        for (int d = 0; d < dim; ++d)
-          velocity_ale[d] = velocity_ale_vector[d];
+        this->previous_face_velocity_values[p].resize(n_face_q_points);
+        fe_face_values_fd[velocities_fd].get_function_values(
+          previous_velocity_solutions[p],
+          this->previous_face_velocity_values[p]);
+      }
 
-        face_velocity_values[q] -= velocity_ale;
+    if (ale.enabled())
+      {
+        // ALE enabled, so extract the ALE velocity and subtract it from the
+        // velocity obtained from the fluid dynamics
+        Tensor<1, dim>                                  velocity_ale;
+        std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+          ale.velocity;
+        Vector<double> velocity_ale_vector(dim);
+
+        for (unsigned int q = 0; q < n_face_q_points; ++q)
+          {
+            velocity_ale_function->vector_value(face_quadrature_points[q],
+                                                velocity_ale_vector);
+            for (int d = 0; d < dim; ++d)
+              velocity_ale[d] = velocity_ale_vector[d];
+
+            face_velocity_values[q] -= velocity_ale;
+
+            for (unsigned int p = 0; p < previous_velocity_solutions.size();
+                 ++p)
+              {
+                this->previous_face_velocity_values[p][q] -= velocity_ale;
+              }
+          }
+      }
+
+    // Extrapolate velocity to t+dt using the BDF scheme if the simulation is
+    // transient
+    const auto method = this->simulation_control->get_assembly_method();
+    if (time_stepping_is_bdf(method))
+      {
+        std::vector<double> time_vector =
+          this->simulation_control->get_simulation_times();
+        bdf_extrapolate(time_vector,
+                        this->previous_face_velocity_values,
+                        number_of_previous_solutions(method),
+                        this->face_velocity_values);
       }
   }
 
@@ -410,6 +499,9 @@ public:
   std::vector<double> values_there;
   std::vector<double> phase_value_jump;
 
+  // Boundary id of the boundary face. This is only used for the DG assemblers.
+  types::boundary_id boundary_index;
+
   // Shape functions
   Table<2, double>         phi;
   Table<2, Tensor<1, dim>> grad_phi;
@@ -429,9 +521,11 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
   std::vector<double>                      velocity_divergences;
+  std::vector<std::vector<double>>         previous_velocity_divergences;
 
   // Face velocity value for DG
-  std::vector<Tensor<1, dim>> face_velocity_values;
+  std::vector<Tensor<1, dim>>              face_velocity_values;
+  std::vector<std::vector<Tensor<1, dim>>> previous_face_velocity_values;
 };
 
 #endif

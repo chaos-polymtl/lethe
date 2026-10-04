@@ -4,6 +4,8 @@
 #ifndef lethe_cls_assemblers_h
 #define lethe_cls_assemblers_h
 
+#include <core/boundary_conditions.h>
+#include <core/parameters_multiphysics.h>
 #include <core/simulation_control.h>
 
 #include <solvers/cls_scratch_data.h>
@@ -209,8 +211,19 @@ public:
 
 /**
  * @brief Class that assembles the core (cells) of the CLS equation for DG elements.
- * This class assembles the weak form of:
+ * This class assembles the cell contributions of the weak form of:
  * \f$\mathbf{u} \cdot \nabla \phi = 0 \f$
+ *
+ * The advection term is integrated by parts, which gives the cell term
+ * \f$-(\nabla v, \mathbf{u} \phi)\f$ and face terms assembled by
+ * CLSAssemblerSIPG and CLSAssemblerBoundaryUpwind. Taken alone, these terms
+ * correspond to the conservative form
+ * \f$\nabla \cdot (\mathbf{u} \phi) = 0 \f$. Since the discrete velocity
+ * field is not exactly divergence-free, the term
+ * \f$-(v, \phi \nabla \cdot \mathbf{u})\f$ is added to recover the advective
+ * form, which preserves a uniform phase indicator. This term is not assembled
+ * when the CLS equation is compressible, since the conservative form is then
+ * the one that must be solved.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -220,7 +233,14 @@ template <int dim>
 class CLSAssemblerDGCore : public CLSAssemblerBase<dim>
 {
 public:
-  CLSAssemblerDGCore()
+  /**
+   * @brief Constructor.
+   *
+   * @param[in] cls_parameters CLS parameters. They are used to know if the
+   * CLS equation is compressible.
+   */
+  CLSAssemblerDGCore(const Parameters::CLS &cls_parameters)
+    : compressible(cls_parameters.compressible)
   {}
 
   /**
@@ -241,6 +261,9 @@ public:
   virtual void
   assemble_rhs(const CLSScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
+
+  // Controls if the compressibility term is assembled in the CLS equation
+  const bool compressible;
 };
 
 
@@ -285,6 +308,69 @@ public:
   virtual void
   assemble_rhs(const CLSScratchData<dim>   &scratch_data,
                StabilizedDGMethodsCopyData &copy_data) override;
+};
+
+
+/**
+ * @brief Assembles the upwinded advective flux on boundary faces. This
+ * assembler is only required when solving the CLS equation using a
+ * discontinuous Galerkin discretization, since the advection term is
+ * integrated by parts and the boundary conditions have to be weakly imposed.
+ *
+ * The term assembled is \f$(v, (\mathbf{u} \cdot \mathbf{n}) \hat{\phi})\f$
+ * where \f$\hat{\phi}\f$ is the upwind value of the phase indicator:
+ * - For a none boundary condition, \f$\hat{\phi}\f$ is the value inside
+ * the domain. The boundary then has no influence on the solution.
+ * - For a dirichlet boundary condition, \f$\hat{\phi}\f$ is the value inside
+ * the domain where the flow leaves the domain and the prescribed value where
+ * the flow enters the domain.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class CLSAssemblerBoundaryUpwind : public CLSFaceAssemblerBase<dim>
+{
+public:
+  /**
+   * @brief Constructor.
+   *
+   * @param[in] p_boundary_conditions_cls Boundary conditions of the CLS
+   * physics.
+   */
+  CLSAssemblerBoundaryUpwind(
+    const BoundaryConditions::CLSBoundaryConditions<dim>
+      &p_boundary_conditions_cls)
+    : boundary_conditions_cls(p_boundary_conditions_cls)
+  {}
+
+  /**
+   * @brief Interface to call the matrix assembly
+   * @param[in]  scratch_data Scratch data containing the CLS
+   * information. It is important to note that the scratch data has to have been
+   * re-inited on the boundary face before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied.
+   */
+  virtual void
+  assemble_matrix(const CLSScratchData<dim>   &scratch_data,
+                  StabilizedDGMethodsCopyData &copy_data) override;
+
+
+  /**
+   * @brief Interface for the call to rhs
+   * @param[in]  scratch_data Scratch data containing the CLS
+   * information. It is important to note that the scratch data has to have been
+   * re-inited on the boundary face before calling for rhs assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied.
+   */
+  virtual void
+  assemble_rhs(const CLSScratchData<dim>   &scratch_data,
+               StabilizedDGMethodsCopyData &copy_data) override;
+
+  const BoundaryConditions::CLSBoundaryConditions<dim> &boundary_conditions_cls;
 };
 
 
