@@ -5,16 +5,9 @@
 #
 # Two stationary particles overlap across the y-z edge of a fully periodic
 # unit cube: their nearest image requires a translation on BOTH the y and z
-# directions simultaneously (0, +/-y, +/-z), i.e. crossings of the second AND
-# third registered periodic pairs at once, with no x-crossing involved. This
-# exercises the minimum image convention's per-direction independence
-# (see particle_particle_fine_search): each periodic axis must produce its
-# own nonzero translation for this corner/edge case to be detected.
+# directions simultaneously (0, +/-y, +/-z),
 #
 # The Hertzian repulsion separates them along the y-z diagonal.
-#
-# Together with the single-axis test (which checks a lone periodic
-# direction) this covers both single- and multi-direction periodic images.
 
 # Listing of Parameters
 #----------------------

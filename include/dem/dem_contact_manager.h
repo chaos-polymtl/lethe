@@ -385,9 +385,7 @@ private:
   /**
    * @brief Signed periodic offset of the domain along every direction, used by
    * the particle-particle fine search to find the nearest periodic image of a
-   * particle (minimum image convention). Component d is 0 if direction d is
-   * not periodic. Zero-initialized by default for compatibility with
-   * non-periodic geometry.
+   * particle. Component d is 0 if direction d is not periodic. 
    */
   std::array<double, dim> periodic_offset_per_direction{};
 };
