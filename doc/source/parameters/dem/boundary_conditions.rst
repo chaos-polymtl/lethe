@@ -96,7 +96,7 @@ In multiphysic DEM (``solver type = dem_mp`` in the :doc:`model_parameters` subs
 
 * The ``thermal boundary type`` parameter defines whether the boundary is ``adiabatic`` or has an imposed ``temperature`` in a multiphysic DEM simulation. Only ``fixed_wall``, ``translational`` and ``rotational`` boundaries can have an imposed ``temperature``, since particles cannot be in contact with ``outlet`` or ``periodic`` boundaries. The ``temperature`` thermal boundary type can only be used when the ``solver type`` is ``dem_mp``.
 
-* In the subsection ``wall temperature``, we define the imposed temperature of the boundary as a function of space and time (:math:`x`, :math:`y`, :math:`z` and :math:`t`). The function is evaluated at the contact point between each particle and the wall, which is the projection of the center of the particle on the wall, so the temperature of the wall can be non-uniform.
+* In the subsection ``wall temperature``, we define the imposed temperature of the boundary as a function of space and time (:math:`x`, :math:`y`, :math:`z` and :math:`t`). The function is evaluated at the contact point between each particle and the wall.
 
 .. note::
     The temperature field of a ``rotational`` or ``translational`` wall is defined in the fixed frame of reference of the background triangulation, since the grid does not move: the wall only transmits its velocity to the particles. For a temperature pattern that moves with the wall, write the function in the frame of the wall. For instance, for a wall translating at the ``speed`` :math:`\mathbf{v}`, use the position :math:`\mathbf{x} \pm \mathbf{v} t` instead of the only :math:`\mathbf{x}`. This way the temperature pattern moves with the wall.

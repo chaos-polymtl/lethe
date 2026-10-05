@@ -657,7 +657,7 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::update_temperature_walls()
 {
-  // As for the solid objects, the previous time must be used here instead of
+  // The previous time must be used here instead of
   // the current time, since the contact outcomes are calculated with the
   // particle positions of the previous time step.
   if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
