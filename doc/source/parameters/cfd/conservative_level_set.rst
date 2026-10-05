@@ -149,6 +149,9 @@ Geometric Interface Reinitialization
 
 The ``type = geometric interface reinitialization`` reinitializes the phase indicator field by computing the signed distance from the interface. The latter is then converted back to a phase indicator using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Conservative Level-Set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
 
+.. note::
+    This is the only reinitialization method that can be used when the CLS is solved with the Discontinuous Galerkin (DG) formulation (``cls uses dg = true`` in the :doc:`fem` subsection). In this case, the signed distance is computed from the continuous projection of the phase indicator, which is the one that is also provided to the other physics, and it is then interpolated back to the discontinuous space.
+
 * ``max reinitialization distance``: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the ``max reinitialization distance``.
 
 * ``transformation type``: type of the transformation function used to convert the signed distance to a phase indicator. The choices are: ``tanh`` and ``piecewise polynomial``.

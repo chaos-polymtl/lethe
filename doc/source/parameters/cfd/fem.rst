@@ -55,11 +55,11 @@ This subsection specifies the characteristics of the finite element method used 
 
 * ``CLS degree`` specifies the polynomial degree for the CLS phase indicator. It is not recommended to use higher polynomial degrees for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.
 
-* ``cls uses dg`` specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the CLS physics. The phase indicator is advected with an upwind flux, without any stabilization. With this formulation, the boundary conditions of the CLS are weakly imposed (see :doc:`boundary_conditions_multiphysics`). The other physics and the projections of the phase indicator gradient and of the curvature, which are used for the surface tension force, do not use the discontinuous phase indicator directly. They use a continuous projection of it, obtained with a lumped-mass :math:`\mathcal{L}^2` projection, which preserves the integral of the phase indicator.
+* ``cls uses dg`` specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the CLS physics. The phase indicator is advected with an upwind flux, without any stabilization. With this formulation, the boundary conditions of the CLS are weakly imposed (see :doc:`boundary_conditions_multiphysics`). The other physics and the projections of the phase indicator gradient and of the curvature, which are used for the surface tension force, do not use the discontinuous phase indicator directly. They use a continuous projection of it, obtained with a lumped-mass :math:`\mathcal{L}^2` projection: the value at each degree of freedom is a weighted average of the values of the discontinuous phase indicator in the cells that share it. This projection preserves the integral of the phase indicator and it does not modify a phase indicator that is already continuous.
 
 .. warning::
 
-    The DG formulation of the CLS does not support the interface reinitialization methods, nor the geometric computation of the volume and of the surface of the fluids.
+    The only interface reinitialization method supported by the DG formulation of the CLS is the ``geometric interface reinitialization`` (see :doc:`conservative_level_set`). The geometric computation of the volume and of the surface of the fluids is not supported.
 
 * ``phase cahn hilliard degree`` and ``potential cahn hilliard degree`` specify the polynomial degree for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The degrees chosen should be equal. They are left as two separate parameters for debugging purposes.
 

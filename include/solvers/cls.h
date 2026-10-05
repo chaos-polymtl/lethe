@@ -47,7 +47,7 @@ DeclException1(
 
 DeclExceptionMsg(
   UnsupportedReinitialization,
-  "The CLS physics has been set to use DG and the latter implementation currently does not support any interface reinitialization mechanism.");
+  "The CLS physics has been set to use DG and the latter implementation currently only supports the geometric interface reinitialization mechanism.");
 
 DeclExceptionMsg(
   UnsupportedReinitializationWithSimplex,
@@ -717,8 +717,13 @@ private:
    * freedom \f$i\f$ of the continuous space is
    * \f$\int \psi_i \phi_{DG} \mathrm{d}\Omega / \int \psi_i
    * \mathrm{d}\Omega\f$, with \f$\psi_i\f$ the continuous shape function.
-   * This projection does not require the solution of a linear system and
-   * it preserves the integral of the phase indicator.
+   * The integrals are computed with a Gauss-Lobatto quadrature, whose points
+   * are the support points of the continuous finite element. The projection
+   * is thus the average of the values of the discontinuous phase indicator
+   * at the degree of freedom, weighted by the quadrature weights of the cells
+   * that share it. It does not require the solution of a linear system, it
+   * preserves the integral of the phase indicator and it leaves a phase
+   * indicator that is already continuous at the degrees of freedom unchanged.
    *
    * @param[in] dg_solution Phase indicator solution vector in the
    * discontinuous finite element space of the CLS.
@@ -741,6 +746,19 @@ private:
    */
   void
   update_continuous_solutions(const bool update_previous_solutions);
+
+  /**
+   * @brief Set the level-set field of the signed distance solver from a phase
+   * indicator solution of the CLS. When the CLS equation is solved with a DG
+   * formulation, the signed distance solver, which requires a continuous
+   * field, is provided with the projection of the solution onto the
+   * continuous finite element space.
+   *
+   * @param[in] solution Phase indicator solution vector of the CLS, with its
+   * ghost values.
+   */
+  void
+  set_signed_distance_solver_level_set(const GlobalVectorType &solution);
 
   /**
    * @brief Reinitialize the interface between fluids using the PDE-based
@@ -870,8 +888,10 @@ private:
   // Continuous representation of the phase indicator. It is only used when the
   // CLS equation is solved with a DG formulation. It is obtained from a
   // lumped-mass L2 projection of the DG solutions and it is what is provided
-  // to the other physics and to the CLS subequations.
+  // to the other physics, to the CLS subequations and to the signed distance
+  // solver.
   std::shared_ptr<FiniteElement<dim>> fe_continuous;
+  std::shared_ptr<Quadrature<dim>>    quadrature_continuous;
   std::shared_ptr<DoFHandler<dim>>    dof_handler_continuous;
   IndexSet                            locally_owned_dofs_continuous;
   IndexSet                            locally_relevant_dofs_continuous;

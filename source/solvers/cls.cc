@@ -3,9 +3,12 @@
 
 #include <solvers/cls.h>
 
+#include <deal.II/base/quadrature_lib.h>
+
 #include <deal.II/dofs/dof_renumbering.h>
 
 #include <deal.II/fe/fe_simplex_p.h>
+#include <deal.II/fe/fe_tools.h>
 
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
@@ -53,9 +56,12 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
                            .get_number_of_fluids()));
 
   AssertThrow(((simulation_parameters.fem_parameters.CLS_uses_dg &&
-                simulation_parameters.multiphysics.cls_parameters
-                    .reinitialization_method.reinitialization_method_type ==
-                  Parameters::ReinitializationMethodType::none) ||
+                (simulation_parameters.multiphysics.cls_parameters
+                     .reinitialization_method.reinitialization_method_type ==
+                   Parameters::ReinitializationMethodType::none ||
+                 simulation_parameters.multiphysics.cls_parameters
+                     .reinitialization_method.reinitialization_method_type ==
+                   Parameters::ReinitializationMethodType::geometric)) ||
                !simulation_parameters.fem_parameters.CLS_uses_dg),
               UnsupportedReinitialization());
 
@@ -128,11 +134,16 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
   // When the CLS equation is solved with a DG formulation, a continuous
   // representation of the phase indicator is provided to the other physics and
   // to the subequations. The continuous finite element has to be at least Q1.
+  // The quadrature points of the Gauss-Lobatto quadrature are the support
+  // points of this finite element, which makes the projection of the DG
+  // solutions a weighted average of their values at the degrees of freedom.
   if (simulation_parameters.fem_parameters.CLS_uses_dg &&
       !simulation_parameters.mesh.simplex)
     {
       fe_continuous =
         std::make_shared<FE_Q<dim>>(std::max(fe->degree, uint(1)));
+      quadrature_continuous =
+        std::make_shared<QGaussLobatto<dim>>(fe_continuous->degree + 1);
       dof_handler_continuous =
         std::make_shared<DoFHandler<dim>>(*triangulation);
       present_solution_continuous  = std::make_shared<GlobalVectorType>();
@@ -171,11 +182,14 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
          iso-level to 0.5. We also define the inside part of the domain as
          \f$\phi>0.5\f$. Since the SignedDistanceSolver considers the inside
          of the domain as \f$d<0\f$, we scale the phase indicator with a factor
-         of -1.*/
+         of -1.
+         The SignedDistanceSolver requires a continuous finite element. When
+         the CLS equation is solved with a DG formulation, it is built on the
+         continuous representation of the phase indicator.*/
       this->signed_distance_solver = std::make_shared<
         InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
         triangulation,
-        fe,
+        uses_continuous_representation() ? fe_continuous : fe,
         simulation_parameters.multiphysics.cls_parameters
           .reinitialization_method.geometric_interface_reinitialization
           .max_reinitialization_distance,
@@ -854,8 +868,7 @@ ConservativeLevelSet<dim>::gather_output_hook()
 
           signed_distance_solver->setup_dofs();
 
-          signed_distance_solver->set_level_set_from_background_mesh(
-            *dof_handler, *this->present_solution);
+          set_signed_distance_solver_level_set(*this->present_solution);
 
           signed_distance_solver->solve();
         }
@@ -3671,16 +3684,17 @@ ConservativeLevelSet<dim>::setup_continuous_projection()
     }
 
   // Assemble the lumped mass vector, which is the integral of the shape
-  // function associated with each degree of freedom
+  // function associated with each degree of freedom. It is computed with the
+  // same quadrature as the projection.
   this->lumped_mass_continuous.reinit(this->locally_owned_dofs_continuous,
                                       mpi_communicator);
 
   FEValues<dim> fe_values_continuous(*this->mapping,
                                      *this->fe_continuous,
-                                     *this->cell_quadrature,
+                                     *this->quadrature_continuous,
                                      update_values | update_JxW_values);
 
-  const unsigned int n_q_points      = this->cell_quadrature->size();
+  const unsigned int n_q_points      = this->quadrature_continuous->size();
   const unsigned int n_dofs_per_cell = this->fe_continuous->n_dofs_per_cell();
 
   Vector<double>                       local_lumped_mass(n_dofs_per_cell);
@@ -3719,16 +3733,21 @@ ConservativeLevelSet<dim>::project_to_continuous_space(
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
+  // The quadrature points are the support points of the continuous finite
+  // element. Each continuous shape function is thus equal to one at its own
+  // quadrature point and to zero at the others, and the projection reduces to
+  // an average of the values of the DG phase indicator at the degree of
+  // freedom, weighted by the quadrature weights of the cells that share it.
   FEValues<dim> fe_values_cls(*this->mapping,
                               *this->fe,
-                              *this->cell_quadrature,
+                              *this->quadrature_continuous,
                               update_values);
   FEValues<dim> fe_values_continuous(*this->mapping,
                                      *this->fe_continuous,
-                                     *this->cell_quadrature,
+                                     *this->quadrature_continuous,
                                      update_values | update_JxW_values);
 
-  const unsigned int n_q_points      = this->cell_quadrature->size();
+  const unsigned int n_q_points      = this->quadrature_continuous->size();
   const unsigned int n_dofs_per_cell = this->fe_continuous->n_dofs_per_cell();
 
   Vector<double>                       local_rhs(n_dofs_per_cell);
@@ -3818,6 +3837,34 @@ ConservativeLevelSet<dim>::update_continuous_solutions(
             (*this->previous_solutions)[i],
             (*this->previous_solutions_continuous)[i]);
         }
+    }
+}
+
+template <int dim>
+void
+ConservativeLevelSet<dim>::set_signed_distance_solver_level_set(
+  const GlobalVectorType &solution)
+{
+  if (uses_continuous_representation())
+    {
+      // The projection leaves a solution that is continuous at the degrees of
+      // freedom unchanged. This is required here: since the reinitialized
+      // solution is fed back to the CLS, a transfer that smooths the phase
+      // indicator would displace the interface at every reinitialization.
+      GlobalVectorType projected_solution(
+        this->locally_owned_dofs_continuous,
+        this->locally_relevant_dofs_continuous,
+        this->triangulation->get_mpi_communicator());
+
+      project_to_continuous_space(solution, projected_solution);
+
+      signed_distance_solver->set_level_set_from_background_mesh(
+        *this->dof_handler_continuous, projected_solution);
+    }
+  else
+    {
+      signed_distance_solver->set_level_set_from_background_mesh(
+        *this->dof_handler, solution);
     }
 }
 
@@ -3950,8 +3997,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .frequency != 1)
     {
-      signed_distance_solver->set_level_set_from_background_mesh(
-        *dof_handler, (*this->previous_solutions)[0]);
+      set_signed_distance_solver_level_set((*this->previous_solutions)[0]);
 
       signed_distance_solver->solve();
 
@@ -3969,6 +4015,12 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
 
       compute_phase_indicator_from_level_set(previous_level_set,
                                              (*this->previous_solutions)[0]);
+
+      // Update the continuous representation of the reinitialized previous
+      // solution
+      if (uses_continuous_representation())
+        project_to_continuous_space((*this->previous_solutions)[0],
+                                    (*this->previous_solutions_continuous)[0]);
     }
 
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
@@ -3976,8 +4028,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
     this->pcout << "In redistanciation of the present solution ..."
                 << std::endl;
 
-  signed_distance_solver->set_level_set_from_background_mesh(
-    *dof_handler, *this->present_solution);
+  set_signed_distance_solver_level_set(*this->present_solution);
 
   signed_distance_solver->solve();
 
