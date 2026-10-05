@@ -43,6 +43,88 @@ DeclException1(
   << "The boundary id: " << arg1
   << " is defined in the triangulation, but not as a boundary condition for the heat transfer physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
+/**
+ * @brief Contains information required for post-processing the global enthalpy of the system.
+ */
+struct GlobalEnthalpyPostprocessing
+{
+  /// Enthalpy of the system evaluated at the initial condition
+  double initial_enthalpy = 0.;
+
+  /// Console output label for the global enthalpy variation
+  const std::string global_enthalpy_variation_label =
+    "Global enthalpy variation: ";
+
+  /// Global enthalpy variation the simulated domain.
+  TableHandler global_enthalpy_variation_table;
+
+  /// Table column name for the global enthalpy variation
+  const std::string global_enthalpy_variation_column_name =
+    "global_enthalpy_variation";
+
+  /// Table values precision
+  const unsigned int table_precision =
+    8; // TODO change this when issue #2039 will be solved
+
+  /**
+   * @brief Sets-up the table containing the time evolution of the global
+   * enthalpy variation of the simulated system.
+   */
+  void
+  setup_table()
+  {
+    // Setup time column
+    this->global_enthalpy_variation_table.declare_column("time");
+    this->global_enthalpy_variation_table.set_scientific("time",
+                                                         this->table_precision);
+    this->global_enthalpy_variation_table.set_scientific("time", true);
+
+    // Setup enthalpy column
+    this->global_enthalpy_variation_table.declare_column(
+      this->global_enthalpy_variation_column_name);
+    this->global_enthalpy_variation_table.set_scientific(
+      this->global_enthalpy_variation_column_name, this->table_precision);
+    this->global_enthalpy_variation_table.set_scientific(
+      this->global_enthalpy_variation_column_name, true);
+  }
+
+  /**
+   * @brief Saves the initial global enthalpy value for checkpointing purposes.
+   *
+   * @param[in] prefix Name of checkpointed files.
+   */
+  void
+  save_initial_enthalpy(const std::string &prefix)
+  {
+    std::string   filename = prefix + ".global_enthalpy_variation";
+    std::ofstream output(filename.c_str());
+    output << "Global enthalpy variation post-processing" << std::endl;
+    output << "initial_enthalpy: " << std::scientific
+           << std::setprecision(table_precision + 2) << initial_enthalpy
+           << std::endl;
+  }
+
+  /**
+   * @brief Reads the saved initial global enthalpy ensuring consistent
+   * computation of the global enthalpy variation after restart.
+   *
+   * @param[in] prefix Name of checkpointed files.
+   */
+  void
+  read_initial_enthalpy(const std::string &prefix)
+  {
+    std::string filename = prefix + ".global_enthalpy_variation";
+    check_file_exists(
+      filename,
+      "checkpoint file of the global enthalpy variation"
+      " post-processing, given by 'subsection restart' - 'set filename'");
+    std::ifstream input(filename.c_str());
+    std::string   buffer;
+    std::getline(input, buffer);
+    input >> buffer >> initial_enthalpy;
+  }
+};
+
 
 /**
  * @brief Implementation of heat transfer as an auxiliary physics. The heat
@@ -146,6 +228,10 @@ public:
         average_temperature =
           std::make_shared<AverageScalar<dim>>(*this->dof_handler);
       }
+
+    if (this->simulation_parameters.post_processing
+          .calculate_global_enthalpy_variation)
+      global_enthalpy_postprocessing.setup_table();
   }
 
   /**
@@ -619,6 +705,29 @@ private:
   write_geometric_melt_volume();
 
   /**
+   * @brief Computes the global enthalpy variation within the domain as defined
+   * by:
+   *
+   * \f[
+   * \Delta H = \int_\Omega \left[\rho(x,t)h(x,t) - \rho(x,t_0)h(x,t_0)
+   * \right] \mathrm{d}\Omega
+   * \f]
+   *
+   * where \f$\rho\f$ is the local density, \f$h\f$ is the local specific
+   * enthalpy evaluated from a reference temperature \f$0 \mathrm{K}\f$,
+   * \f$t\f$ is the current time, and \f$t_0\f$ is the initial time.
+   */
+  void
+  postprocess_global_enthalpy_variation();
+
+  /**
+   * @brief Writes the global enthalpy variation within the domain to an output
+   * file.
+   */
+  void
+  write_global_enthalpy_variation();
+
+  /**
    * Post-processing. Calculate the heat flux at heat transfer boundary
    * conditions.
    *
@@ -926,6 +1035,8 @@ private:
    * bounding values.
    */
   std::vector<TableHandler> temperature_isocontour_bounding_values_tables;
+
+  GlobalEnthalpyPostprocessing global_enthalpy_postprocessing;
 };
 
 

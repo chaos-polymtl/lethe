@@ -1,6 +1,18 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#-------------------------------------------------------------------------------
+# DESCRIPTION:
+# This test checks exponential decay laser model by simulating the laser
+# following a track along the x-axis.
+# The global enthalpy variation post-processing is also checked here.
+# From the enthalpy variation of the first time we can approximate the net
+# power added to the system with P = \frac{\Delta H}{\alpha \Delta t} f_\mathrm{2D}
+# where f_\mathrm{2D} = \sqrt{\frac{\pi R^2}{\eta}} is the factor taking into
+# account the 2D approximation of the 3D source. We get approximately P = 101 W,
+# very little difference is observed with the inputted power.
+#-------------------------------------------------------------------------------
+
 # Listing of Parameters
 #----------------------
 
@@ -13,7 +25,7 @@ set dimension = 2
 subsection simulation control
   set method                         = bdf1
   set time end                       = 0.05
-  set time step                      = 0.01
+  set time step                      = 0.005
   set adapt time step to respect CFL = false
   set number mesh adapt              = 0
   set output name                    = laser
@@ -45,7 +57,7 @@ subsection laser parameters
   set end time             = 0.05
   set beam orientation     = y-
   subsection path
-    set Function expression = 3 * t; 0.1
+    set Function expression = 2 * t; 0.1
   end
 end
 
@@ -54,8 +66,9 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                        = verbose
-  set calculate temperature statistics = true
+  set verbosity                           = verbose
+  set calculate temperature statistics    = true
+  set calculate global enthalpy variation = true
 end
 
 #---------------------------------------------------
@@ -64,9 +77,6 @@ end
 
 subsection initial conditions
   set type = nodal
-  subsection uvwp
-    set Function expression = 0; 0; 0
-  end
 end
 
 #---------------------------------------------------
@@ -88,7 +98,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 1, 1: 0, 0 : 0.1, 0.1 : true
+  set grid arguments     = 1, 1: 0, 0 : 0.1, 0.1 : false
   set initial refinement = 5
 end
 
@@ -97,21 +107,9 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
+  set number = 1
   subsection bc 0
     set id   = 0
-    set type = noslip
-  end
-  subsection bc 1
-    set id   = 1
-    set type = noslip
-  end
-  subsection bc 2
-    set id   = 2
-    set type = noslip
-  end
-  subsection bc 3
-    set id   = 3
     set type = noslip
   end
 end
@@ -121,48 +119,9 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions heat transfer
-  set number = 4
+  set number = 1
   subsection bc 0
     set id   = 0
-    set type = convection-radiation-flux
-    subsection h
-      set Function expression = 10
-    end
-    subsection Tinf
-      set Function expression = 20
-    end
-    subsection emissivity
-      set Function expression = 0.5
-    end
-  end
-  subsection bc 1
-    set id   = 1
-    set type = convection-radiation-flux
-    subsection h
-      set Function expression = 10
-    end
-    subsection Tinf
-      set Function expression = 20
-    end
-    subsection emissivity
-      set Function expression = 0.5
-    end
-  end
-  subsection bc 2
-    set id   = 2
-    set type = convection-radiation-flux
-    subsection h
-      set Function expression = 10
-    end
-    subsection Tinf
-      set Function expression = 20
-    end
-    subsection emissivity
-      set Function expression = 0.5
-    end
-  end
-  subsection bc 3
-    set id   = 3
     set type = convection-radiation-flux
     subsection h
       set Function expression = 10

@@ -8,48 +8,104 @@ Temperature statistics on fluid:
 	     Max: 0.000000e+00
 	 Average: 0.000000e+00
 	 Std-Dev: 0.000000e+00
+Global enthalpy variation: 0.000000e+00
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
+Transient iteration: 1        Time: 0.005    Time step: 0.005    CFL: 0       
 *******************************************************************************
 Temperature statistics on fluid: 
-	     Min: 1.798911e-04
-	     Max: 1.540477e+03
-	 Average: 2.193434e+01
-	 Std-Dev: 1.141852e+02
+	     Min: 9.785500e-08
+	     Max: 1.209519e+03
+	 Average: 1.208401e+01
+	 Std-Dev: 7.359569e+01
+Global enthalpy variation: 1.208401e+02
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0       
+Transient iteration: 2        Time: 0.01     Time step: 0.005    CFL: 0       
 *******************************************************************************
 Temperature statistics on fluid: 
-	     Min: 1.621231e-02
-	     Max: 1.722857e+03
-	 Average: 4.508850e+01
-	 Std-Dev: 1.497621e+02
+	     Min: 1.858607e-06
+	     Max: 1.124264e+03
+	 Average: 2.323332e+01
+	 Std-Dev: 9.937803e+01
+Global enthalpy variation: 2.323332e+02
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0       
+Transient iteration: 3        Time: 0.015    Time step: 0.005    CFL: 0       
 *******************************************************************************
 Temperature statistics on fluid: 
-	     Min: 9.115362e-02
-	     Max: 1.726806e+03
-	 Average: 6.797976e+01
-	 Std-Dev: 1.679879e+02
+	     Min: 2.236443e-05
+	     Max: 1.104360e+03
+	 Average: 3.431061e+01
+	 Std-Dev: 1.183156e+02
+Global enthalpy variation: 3.431061e+02
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0       
+Transient iteration: 4        Time: 0.02     Time step: 0.005    CFL: 0       
 *******************************************************************************
 Temperature statistics on fluid: 
-	     Min: 1.808361e-01
-	     Max: 1.080519e+03
-	 Average: 6.732164e+01
-	 Std-Dev: 1.405309e+02
+	     Min: 2.156915e-04
+	     Max: 1.269781e+03
+	 Average: 4.613629e+01
+	 Std-Dev: 1.366675e+02
+Global enthalpy variation: 4.613629e+02
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.05     Time step: 0.01     CFL: 0       
+Transient iteration: 5        Time: 0.025    Time step: 0.005    CFL: 0       
 *******************************************************************************
 Temperature statistics on fluid: 
-	     Min: 2.813136e-01
-	     Max: 7.899852e+02
-	 Average: 6.682279e+01
-	 Std-Dev: 1.261674e+02
+	     Min: 1.583851e-03
+	     Max: 1.337287e+03
+	 Average: 5.836730e+01
+	 Std-Dev: 1.529186e+02
+Global enthalpy variation: 5.836730e+02
+
+*******************************************************************************
+Transient iteration: 6        Time: 0.03     Time step: 0.005    CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid: 
+	     Min: 9.872621e-03
+	     Max: 1.267203e+03
+	 Average: 7.003440e+01
+	 Std-Dev: 1.642111e+02
+Global enthalpy variation: 7.003440e+02
+
+*******************************************************************************
+Transient iteration: 7        Time: 0.035    Time step: 0.005    CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid: 
+	     Min: 5.012304e-02
+	     Max: 1.129009e+03
+	 Average: 8.083619e+01
+	 Std-Dev: 1.710155e+02
+Global enthalpy variation: 8.083619e+02
+
+*******************************************************************************
+Transient iteration: 8        Time: 0.04     Time step: 0.005    CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid: 
+	     Min: 2.221436e-01
+	     Max: 1.105050e+03
+	 Average: 9.160940e+01
+	 Std-Dev: 1.768148e+02
+Global enthalpy variation: 9.160940e+02
+
+*******************************************************************************
+Transient iteration: 9        Time: 0.045    Time step: 0.005    CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid: 
+	     Min: 3.555972e-01
+	     Max: 1.270829e+03
+	 Average: 1.031573e+02
+	 Std-Dev: 1.840007e+02
+Global enthalpy variation: 1.031573e+03
+
+*******************************************************************************
+Transient iteration: 10       Time: 0.05     Time step: 0.005    CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid: 
+	     Min: 4.099553e-01
+	     Max: 1.255043e+03
+	 Average: 1.085145e+02
+	 Std-Dev: 1.854759e+02
+Global enthalpy variation: 1.085145e+03

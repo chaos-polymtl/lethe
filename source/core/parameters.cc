@@ -2751,6 +2751,19 @@ namespace Parameters
         Patterns::Double(0),
         "Temperature used to define the melting point of the fluid for volume calculation.");
 
+      prm.declare_entry(
+        "calculate global enthalpy variation",
+        Patterns::Tools::Convert<bool>::to_string(
+          calculate_global_enthalpy_variation),
+        Patterns::Bool(),
+        "Enable calculation of the global enthalpy variation. ");
+
+      prm.declare_entry(
+        "global enthalpy variation name",
+        global_enthalpy_variation_output_name,
+        Patterns::FileName(),
+        "Filename of the global enthalpy variation output file");
+
       prm.declare_entry("calculate heat flux",
                         "false",
                         Patterns::Bool(),
@@ -2917,6 +2930,10 @@ namespace Parameters
         prm.get_bool("calculate geometric melt volume");
       geometric_melt_volume_output_name = prm.get("geometric melt volume name");
       melting_temperature               = prm.get_double("melting temperature");
+      calculate_global_enthalpy_variation =
+        prm.get_bool("calculate global enthalpy variation");
+      global_enthalpy_variation_output_name =
+        prm.get("global enthalpy variation name");
       temperature_output_name     = prm.get("temperature statistics name");
       calculate_heat_flux         = prm.get_bool("calculate heat flux");
       heat_flux_output_name       = prm.get("heat flux name");
