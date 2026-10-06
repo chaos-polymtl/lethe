@@ -1,8 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_heat_transfer_h
 #define lethe_particle_heat_transfer_h
+
+#include <core/parameters_lagrangian.h>
 
 #include <dem/contact_type.h>
 
@@ -131,12 +133,12 @@ calculate_interstitial_gas_macrogap_resistance(
 /**
  * @brief Calculate the total thermal conductance for particle-particle
  * or particle-wall contacts.
+ *
  * The resistance_macrocontact, resistance_solid_macrogap and
  * resistance_gas_macrogap differ from particle-particle contacts to
  * particle-wall contacts.
  *
- * @tparam contact_type Type of contact. Only particle-particle and
- * particle-floating-mesh contacts are accepted for now.
+ * @tparam contact_type Type of contact.
  *
  * @param[in] radius_one Radius of particle one.
  * @param[in] radius_two Radius of particle two for particle-particle contacts.
@@ -218,5 +220,19 @@ apply_heat_transfer_on_single_local_particle(
   const double temperature_two,
   const double thermal_conductance,
   double      &particle_one_heat_transfer_rate);
+
+/**
+ * @brief Set the time of the temperature functions of the walls of the grid
+ * with a temperature boundary condition. It does nothing if no wall has a
+ * temperature boundary condition.
+ *
+ * @param[in] boundary_conditions DEM boundary conditions, which hold the
+ * temperature functions of the walls.
+ * @param[in] time Time at which the temperature of the walls is evaluated.
+ */
+void
+set_wall_temperature_time(
+  const Parameters::Lagrangian::BCDEM &boundary_conditions,
+  const double                         time);
 
 #endif

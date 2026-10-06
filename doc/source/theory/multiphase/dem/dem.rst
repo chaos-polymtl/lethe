@@ -538,6 +538,9 @@ The parameters used to calculate the resistances are summed up in the following 
      - :math:`B`
      - :math:`0` (for simple cubic packing)
 
+
+.. _particle-wall-resistances:
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 Particle-wall Resistances
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

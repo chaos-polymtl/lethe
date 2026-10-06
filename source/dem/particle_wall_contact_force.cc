@@ -130,6 +130,63 @@ ParticleWallContactForce<dim,
                                            rolling_resistance_torque,
                                            particle_torque,
                                            particle_force);
+
+              if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+                {
+                  // Multiphysics properties of the wall in contact
+                  const Parameters::Lagrangian::WallThermalBoundaryType
+                    thermal_boundary_type =
+                      this->get_thermal_boundary_type(contact_info.boundary_id);
+
+                  if ((thermal_boundary_type !=
+                       Parameters::Lagrangian::WallThermalBoundaryType::
+                         adiabatic) &&
+                      (normal_overlap > 0))
+                    {
+                      const unsigned int particle_type =
+                        static_cast<unsigned int>(
+                          particle_properties[PropertiesIndex::type]);
+                      const double temperature_particle =
+                        particle_properties[PropertiesIndex::T];
+                      double &particle_heat_transfer_rate =
+                        contact_outcome
+                          .heat_transfer_rate[particle->get_local_index()];
+                      double thermal_conductance;
+
+                      calculate_contact_thermal_conductance<
+                        ContactType::particle_wall>(
+                        0.5 * particle_properties[PropertiesIndex::dp],
+                        0,
+                        this->effective_youngs_modulus[particle_type],
+                        this->effective_real_youngs_modulus[particle_type],
+                        this->equivalent_surface_roughness[particle_type],
+                        this->equivalent_surface_slope[particle_type],
+                        this->effective_microhardness[particle_type],
+                        this->particle_thermal_conductivity[particle_type],
+                        this->wall_thermal_conductivity,
+                        this->gas_thermal_conductivity,
+                        this->gas_parameter_m[particle_type],
+                        normal_overlap,
+                        normal_force.norm(),
+                        thermal_conductance);
+
+                      // The temperature of the wall is evaluated at the
+                      // contact point, which is the projection of the center
+                      // of the particle on the wall.
+                      const Point<3> contact_point =
+                        particle_location_3d - projected_vector;
+                      const double temperature_wall =
+                        this->get_boundary_temperature(contact_info.boundary_id,
+                                                       contact_point);
+
+                      // Apply the heat transfer to the particle
+                      apply_heat_transfer_on_single_local_particle(
+                        temperature_particle,
+                        temperature_wall,
+                        thermal_conductance,
+                        particle_heat_transfer_rate);
+                    }
+                }
             }
           else // If there is no contact (or interaction), we need to clear the
                // tangential displacement and rolling resistance torque
@@ -492,8 +549,9 @@ ParticleWallContactForce<dim,
             solids[solid_counter]->get_center_of_rotation();
 
           // Multiphysics properties
-          const Parameters::ThermalBoundaryType thermal_boundary_type =
-            solids[solid_counter]->get_thermal_boundary_type();
+          const Parameters::SolidObjectThermalBoundaryType
+            thermal_boundary_type =
+              solids[solid_counter]->get_thermal_boundary_type();
 
           for (auto contact = this_contact_record.begin();
                contact != this_contact_record.end();
@@ -550,7 +608,7 @@ ParticleWallContactForce<dim,
               if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
                 {
                   if ((thermal_boundary_type !=
-                       Parameters::ThermalBoundaryType::adiabatic) &&
+                       Parameters::SolidObjectThermalBoundaryType::adiabatic) &&
                       (normal_overlap > 0))
                     {
                       const unsigned int particle_type =
@@ -790,6 +848,13 @@ ParticleWallContactForce<dim,
         (properties.dynamic_viscosity_gas * properties.specific_heat_gas /
          properties.thermal_conductivity_gas);
     }
+
+  // Thermal boundary types of the walls of the grid and temperature functions
+  // of the ones with an imposed temperature.
+  this->boundary_thermal_type_map =
+    dem_parameters.boundary_conditions.thermal_boundary_type;
+  this->boundary_temperature_function =
+    dem_parameters.boundary_conditions.boundary_temperature;
 }
 
 // dem

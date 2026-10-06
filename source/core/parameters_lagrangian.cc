@@ -1890,10 +1890,25 @@ namespace Parameters
         "0",
         Patterns::Integer(),
         "Periodic direction or normal direction of periodic boundary");
+
+      // Multiphysic DEM
+      prm.declare_entry("thermal boundary type",
+                        "adiabatic",
+                        Patterns::Selection("adiabatic|temperature"),
+                        "Thermal boundary type used in multiphysic DEM. "
+                        "Choices are <adiabatic|temperature>.");
+
+      auto wall_temperature_function_parsed =
+        std::make_shared<Functions::ParsedFunction<3>>(1);
+      prm.enter_subsection("wall temperature");
+      {
+        wall_temperature_function_parsed->declare_parameters(prm, 1);
+      }
+      prm.leave_subsection();
     }
 
     void
-    BCDEM::parse_boundary_conditions(const ParameterHandler &prm)
+    BCDEM::parse_boundary_conditions(ParameterHandler &prm)
     {
       const unsigned int boundary_id   = prm.get_integer("boundary id");
       const std::string  boundary_type = prm.get("type");
@@ -1953,6 +1968,51 @@ namespace Parameters
       else
         {
           AssertThrow(false, ExcMessage("Invalid DEM boundary condition type"));
+        }
+
+      // Thermal boundary type, used only in multiphysic DEM. Only the walls,
+      // which particles can touch, have a thermal boundary type.
+      const bool is_wall = boundary_type == "fixed_wall" ||
+                           boundary_type == "translational" ||
+                           boundary_type == "rotational";
+      const std::string thermal_type = prm.get("thermal boundary type");
+
+      if (is_wall)
+        {
+          if (thermal_type == "adiabatic")
+            this->thermal_boundary_type[boundary_id] =
+              WallThermalBoundaryType::adiabatic;
+
+          else if (thermal_type == "temperature")
+            {
+              this->thermal_boundary_type[boundary_id] =
+                WallThermalBoundaryType::temperature;
+
+              // Temperature imposed on the boundary
+              auto wall_temperature_function_parsed =
+                std::make_shared<Functions::ParsedFunction<3>>(1);
+              prm.enter_subsection("wall temperature");
+              wall_temperature_function_parsed->parse_parameters(prm);
+              prm.leave_subsection();
+
+              this->boundary_temperature[boundary_id] =
+                wall_temperature_function_parsed;
+            }
+          else
+            {
+              throw(std::runtime_error("Invalid thermal boundary type"));
+            }
+        }
+      else
+        {
+          // The outlet and periodic boundaries are not walls: the particles
+          // cannot touch them, so they cannot be something else than adiabatic.
+          AssertThrow(
+            thermal_type == "adiabatic",
+            ExcMessage(
+              "Invalid DEM boundary condition with an imposed temperature. Only "
+              "the fixed_wall, translational and rotational boundary types can "
+              "have the temperature thermal boundary type."));
         }
     }
 
