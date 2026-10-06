@@ -319,10 +319,10 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceParameters.html#aa00157f43a0189c3afc66a469b3e7aaeaf0598264a691a8f62272aca0e79af374">threshold</a>
  }</td></tr>
 <tr class="separator:aa00157f43a0189c3afc66a469b3e7aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ececd73effa2abc7b6af12a2a10c960" id="r_a4ececd73effa2abc7b6af12a2a10c960"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a4ececd73effa2abc7b6af12a2a10c960">ThermalBoundaryType</a> { <a class="el" href="namespaceParameters.html#a4ececd73effa2abc7b6af12a2a10c960a62c6c14d8d0f4dd91221bce9ffdc8b1d">adiabatic</a>
-, <a class="el" href="namespaceParameters.html#a4ececd73effa2abc7b6af12a2a10c960a7dd5f69c3c0085154fe93e890bb26caf">isothermal</a>
+<tr class="memitem:acc63067dec4e97f0c49d400304a75beb" id="r_acc63067dec4e97f0c49d400304a75beb"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#acc63067dec4e97f0c49d400304a75beb">SolidObjectThermalBoundaryType</a> { <a class="el" href="namespaceParameters.html#acc63067dec4e97f0c49d400304a75bebaecc572378821e873d5ada6b243eb2167">adiabatic</a>
+, <a class="el" href="namespaceParameters.html#acc63067dec4e97f0c49d400304a75beba39d29ad6494e2b6e96c691e96977b7ef">isothermal</a>
  }</td></tr>
-<tr class="separator:a4ececd73effa2abc7b6af12a2a10c960"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:acc63067dec4e97f0c49d400304a75beb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87f2367892b0cda4800d7fac3b21fc12" id="r_a87f2367892b0cda4800d7fac3b21fc12"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">FluidDynamicsInitialConditionType</a> { <br />
 &#160;&#160;<a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee">L2projection</a>
 , <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a2ac1ff5ff990bc0a4b3afa2286b9e55f">viscous</a>
@@ -824,23 +824,31 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a4ececd73effa2abc7b6af12a2a10c960" name="a4ececd73effa2abc7b6af12a2a10c960"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ececd73effa2abc7b6af12a2a10c960">&#9670;&#160;</a></span>ThermalBoundaryType</h2>
+<a id="acc63067dec4e97f0c49d400304a75beb" name="acc63067dec4e97f0c49d400304a75beb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc63067dec4e97f0c49d400304a75beb">&#9670;&#160;</a></span>SolidObjectThermalBoundaryType</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="namespaceParameters.html#a4ececd73effa2abc7b6af12a2a10c960">Parameters::ThermalBoundaryType</a></td>
+          <td class="memname">enum class <a class="el" href="namespaceParameters.html#acc63067dec4e97f0c49d400304a75beb">Parameters::SolidObjectThermalBoundaryType</a></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Thermal boundary condition type applied on a solid object surface. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4ececd73effa2abc7b6af12a2a10c960a62c6c14d8d0f4dd91221bce9ffdc8b1d" name="a4ececd73effa2abc7b6af12a2a10c960a62c6c14d8d0f4dd91221bce9ffdc8b1d"></a>adiabatic&#160;</td><td class="fielddoc"><p>No heat flux through the solid boundary. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="acc63067dec4e97f0c49d400304a75bebaecc572378821e873d5ada6b243eb2167" name="acc63067dec4e97f0c49d400304a75bebaecc572378821e873d5ada6b243eb2167"></a>adiabatic&#160;</td><td class="fielddoc"><p>No heat flux through the solid boundary. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4ececd73effa2abc7b6af12a2a10c960a7dd5f69c3c0085154fe93e890bb26caf" name="a4ececd73effa2abc7b6af12a2a10c960a7dd5f69c3c0085154fe93e890bb26caf"></a>isothermal&#160;</td><td class="fielddoc"><p>Fixed temperature imposed on the solid boundary. </p>
+<tr><td class="fieldname"><a id="acc63067dec4e97f0c49d400304a75beba39d29ad6494e2b6e96c691e96977b7ef" name="acc63067dec4e97f0c49d400304a75beba39d29ad6494e2b6e96c691e96977b7ef"></a>isothermal&#160;</td><td class="fielddoc"><p>Fixed temperature imposed on the solid boundary. </p>
 </td></tr>
 </table>
 

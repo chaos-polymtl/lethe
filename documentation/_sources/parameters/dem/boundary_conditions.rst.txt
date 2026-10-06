@@ -6,6 +6,8 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 
 ``fixed_wall`` is a static wall, and particles collide with these static walls upon reaching the wall. The only way to move these walls is to move the entire triangulation. If the ``outlet`` condition is chosen for a boundary, particles can leave the simulation domain via this outlet. Using ``rotational`` and ``translational`` boundary conditions, exerts imaginary rotational and translational velocities to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls receive a rotational or translational velocity from the wall. This feature is used in the rotating drum example.
 
+In multiphysic DEM (``solver type = dem_mp`` in the :doc:`model_parameters` subsection), each wall can also be given a ``thermal boundary type``, independently of its motion. A wall is ``adiabatic`` by default: it does not exchange heat with the particles. A wall with the ``temperature`` thermal boundary type has a temperature imposed by the user, which can vary in space and time, and it exchanges heat with the particles in contact with it via the particle-wall heat transfer model described in the :ref:`theory guide <particle-wall-resistances>`.
+
 .. code-block:: text
 
   subsection DEM boundary conditions
@@ -29,6 +31,15 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 
       # Point on rotational vector
       set point on rotational vector = 0, 0, 0
+
+      # Thermal boundary type ("if solver type == dem_mp")
+      # Choices are adiabatic|temperature
+      set thermal boundary type = adiabatic
+
+      # Temperature of the wall
+      subsection wall temperature
+        set Function expression = 0
+      end
     end
 
     # OR for translational motion
@@ -82,3 +93,13 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 * The ``point on rotational vector`` parameter specifies a point `x, y, z` on the rotating axis.
 
 * The ``speed`` parameter defines the translational speed of the specified boundary.
+
+* The ``thermal boundary type`` parameter defines whether the boundary is ``adiabatic`` or has an imposed ``temperature`` in a multiphysic DEM simulation. Only ``fixed_wall``, ``translational`` and ``rotational`` boundaries can have an imposed ``temperature``, since particles cannot be in contact with ``outlet`` or ``periodic`` boundaries. The ``temperature`` thermal boundary type can only be used when the ``solver type`` is ``dem_mp``.
+
+* In the subsection ``wall temperature``, we define the imposed temperature of the boundary as a function of space and time (:math:`x`, :math:`y`, :math:`z` and :math:`t`). The function is evaluated at the contact point between each particle and the wall.
+
+.. note::
+    The temperature field of a ``rotational`` or ``translational`` wall is defined in the fixed frame of reference of the background triangulation, since the grid does not move: the wall only transmits its velocity to the particles. For a temperature pattern that moves with the wall, write the function in the frame of the wall. For instance, for a wall translating at the ``speed`` :math:`\mathbf{v}`, use the position :math:`\mathbf{x} \pm \mathbf{v} t` instead of the only :math:`\mathbf{x}`. This way the temperature pattern moves with the wall.
+
+.. note::
+    The temperature of the wall is imposed, and the wall behaves like a heat reservoir of infinite heat capacity. The heat transfer rate between a particle :math:`i` and the wall :math:`w` is :math:`Q_{iw} = H_{iw} (T_w - T_i)`, where the thermal conductance :math:`H_{iw}` is computed with the particle-wall model described in the `theory guide <../../theory/multiphase/dem/dem.html#particle-wall-resistances>`_. The model is the same as for the ``isothermal`` solid objects, and it uses the wall properties defined in the :doc:`lagrangian_physical_properties` subsection (``thermal conductivity wall``, ``microhardness wall``, etc.).

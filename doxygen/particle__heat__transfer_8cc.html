@@ -98,10 +98,11 @@ $(function() {
 <code>#include &lt;<a class="el" href="particle__heat__transfer_8h_source.html">dem/particle_heat_transfer.h</a>&gt;</code><br />
 <code>#include &lt;boost/math/special_functions/erf.hpp&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
+<code>#include &lt;ranges&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for particle_heat_transfer.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="particle__heat__transfer_8cc__incl.svg" width="656" height="227"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="particle__heat__transfer_8cc__incl.svg" width="1506" height="652"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="particle__heat__transfer_8cc_source.html">Go to the source code of this file.</a></p>
@@ -127,6 +128,8 @@ Functions</h2></td></tr>
 <tr class="separator:a85aeee87547a4cc6ce2f2f8edcdc6963"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac69c8dac19df3afb6bdd1383792dadfb" id="r_ac69c8dac19df3afb6bdd1383792dadfb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__heat__transfer_8cc.html#ac69c8dac19df3afb6bdd1383792dadfb">apply_heat_transfer_on_single_local_particle</a> (const double temperature_one, const double temperature_two, const double thermal_conductance, double &amp;particle_one_heat_transfer_rate)</td></tr>
 <tr class="separator:ac69c8dac19df3afb6bdd1383792dadfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dcb835def846710b5aec41e7263e180" id="r_a8dcb835def846710b5aec41e7263e180"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__heat__transfer_8cc.html#a8dcb835def846710b5aec41e7263e180">set_wall_temperature_time</a> (const <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html">Parameters::Lagrangian::BCDEM</a> &amp;boundary_conditions, const double time)</td></tr>
+<tr class="separator:a8dcb835def846710b5aec41e7263e180"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea41f2271150768ba803fab236e66781" id="r_aea41f2271150768ba803fab236e66781"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__heat__transfer_8cc.html#aea41f2271150768ba803fab236e66781">calculate_contact_thermal_conductance&lt; ContactType::local_particle_particle &gt;</a> (const double radius_one, const double radius_two, const double effective_youngs_modulus, const double effective_real_youngs_modulus, const double equivalent_surface_roughness, const double equivalent_surface_slope, const double effective_microhardness, const double thermal_conductivity_one, const double thermal_conductivity_two, const double thermal_conductivity_gas, const double gas_parameter_m, const double normal_overlap, const double normal_force_norm, double &amp;thermal_conductance)</td></tr>
 <tr class="separator:aea41f2271150768ba803fab236e66781"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eb07ccbe8e0a1db5850c8a971605400" id="r_a6eb07ccbe8e0a1db5850c8a971605400"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__heat__transfer_8cc.html#a6eb07ccbe8e0a1db5850c8a971605400">calculate_contact_thermal_conductance&lt; ContactType::ghost_particle_particle &gt;</a> (const double radius_one, const double radius_two, const double effective_youngs_modulus, const double effective_real_youngs_modulus, const double equivalent_surface_roughness, const double equivalent_surface_slope, const double effective_microhardness, const double thermal_conductivity_one, const double thermal_conductivity_two, const double thermal_conductivity_gas, const double gas_parameter_m, const double normal_overlap, const double normal_force_norm, double &amp;thermal_conductance)</td></tr>
@@ -139,6 +142,8 @@ Functions</h2></td></tr>
 <tr class="separator:a87aae0341aaddfe7d3022f343de0c99c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac807da2f0f69d59141cb1fce1aaa20e8" id="r_ac807da2f0f69d59141cb1fce1aaa20e8"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__heat__transfer_8cc.html#ac807da2f0f69d59141cb1fce1aaa20e8">calculate_contact_thermal_conductance&lt; ContactType::particle_floating_mesh &gt;</a> (const double radius_one, const double radius_two, const double effective_youngs_modulus, const double effective_real_youngs_modulus, const double equivalent_surface_roughness, const double equivalent_surface_slope, const double effective_microhardness, const double thermal_conductivity_one, const double thermal_conductivity_two, const double thermal_conductivity_gas, const double gas_parameter_m, const double normal_overlap, const double normal_force_norm, double &amp;thermal_conductance)</td></tr>
 <tr class="separator:ac807da2f0f69d59141cb1fce1aaa20e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa80227344b24109aafe80e8e87b0cb58" id="r_aa80227344b24109aafe80e8e87b0cb58"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__heat__transfer_8cc.html#aa80227344b24109aafe80e8e87b0cb58">calculate_contact_thermal_conductance&lt; ContactType::particle_wall &gt;</a> (const double radius_one, const double radius_two, const double effective_youngs_modulus, const double effective_real_youngs_modulus, const double equivalent_surface_roughness, const double equivalent_surface_slope, const double effective_microhardness, const double thermal_conductivity_one, const double thermal_conductivity_two, const double thermal_conductivity_gas, const double gas_parameter_m, const double normal_overlap, const double normal_force_norm, double &amp;thermal_conductance)</td></tr>
+<tr class="separator:aa80227344b24109aafe80e8e87b0cb58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a85aeee87547a4cc6ce2f2f8edcdc6963" name="a85aeee87547a4cc6ce2f2f8edcdc6963"></a>
@@ -197,7 +202,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00262">262</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00269">269</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -250,7 +255,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00275">275</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00282">282</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -354,10 +359,11 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
       </table>
 </div><div class="memdoc">
 
-<p>Calculate the total thermal conductance for particle-particle or particle-wall contacts. The resistance_macrocontact, resistance_solid_macrogap and resistance_gas_macrogap differ from particle-particle contacts to particle-wall contacts. </p>
+<p>Calculate the total thermal conductance for particle-particle or particle-wall contacts. </p>
+<p>The resistance_macrocontact, resistance_solid_macrogap and resistance_gas_macrogap differ from particle-particle contacts to particle-wall contacts.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">contact_type</td><td>Type of contact. Only particle-particle and particle-floating-mesh contacts are accepted for now.</td></tr>
+    <tr><td class="paramname">contact_type</td><td>Type of contact.</td></tr>
   </table>
   </dd>
 </dl>
@@ -381,9 +387,9 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00137">137</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00138">138</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__heat__transfer_8cc_source.html#l00013">calculate_corrected_contact_radius()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00117">calculate_interstitial_gas_macrogap_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00080">calculate_interstitial_gas_microgap_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00033">calculate_macrocontact_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00044">calculate_microcontact_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00063">calculate_solid_macrogap_resistance()</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, and <a class="el" href="contact__type_8h_source.html#l00019">particle_floating_mesh</a>.</p>
+<p class="reference">References <a class="el" href="particle__heat__transfer_8cc_source.html#l00014">calculate_corrected_contact_radius()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00118">calculate_interstitial_gas_macrogap_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00081">calculate_interstitial_gas_microgap_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00034">calculate_macrocontact_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00045">calculate_microcontact_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00064">calculate_solid_macrogap_resistance()</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="contact__type_8h_source.html#l00019">particle_floating_mesh</a>, and <a class="el" href="contact__type_8h_source.html#l00017">particle_wall</a>.</p>
 
 </div>
 </div>
@@ -987,6 +993,106 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 
 </div>
 </div>
+<a id="aa80227344b24109aafe80e8e87b0cb58" name="aa80227344b24109aafe80e8e87b0cb58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa80227344b24109aafe80e8e87b0cb58">&#9670;&#160;</a></span>calculate_contact_thermal_conductance&lt; ContactType::particle_wall &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__heat__transfer_8h.html#abf055c712d60a39128df01bf2405cc0b">calculate_contact_thermal_conductance</a>&lt; <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faac984ec60aac1d6e1892b88a959fa038f">ContactType::particle_wall</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>radius_one</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>radius_two</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>effective_youngs_modulus</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>effective_real_youngs_modulus</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>equivalent_surface_roughness</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>equivalent_surface_slope</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>effective_microhardness</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>thermal_conductivity_one</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>thermal_conductivity_two</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>thermal_conductivity_gas</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>gas_parameter_m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>normal_overlap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>normal_force_norm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>thermal_conductance</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a3dcb4855836b19590f6f343ce5e5089a" name="a3dcb4855836b19590f6f343ce5e5089a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3dcb4855836b19590f6f343ce5e5089a">&#9670;&#160;</a></span>calculate_corrected_contact_radius()</h2>
 
@@ -1037,7 +1143,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Corrected contact radius of the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00013">13</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00014">14</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1091,7 +1197,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Interstitial gas microgap thermal resistance for the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00117">117</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00118">118</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1159,7 +1265,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Interstitial gas microgap thermal resistance for the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00080">80</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00081">81</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1199,7 +1305,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Macrocontact thermal resistance for the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00033">33</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00034">34</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1267,7 +1373,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Microcontact thermal resistance for the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00044">44</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00045">45</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1314,7 +1420,48 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Solid macrogap thermal resistance for one particle. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00063">63</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00064">64</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+
+</div>
+</div>
+<a id="a8dcb835def846710b5aec41e7263e180" name="a8dcb835def846710b5aec41e7263e180"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8dcb835def846710b5aec41e7263e180">&#9670;&#160;</a></span>set_wall_temperature_time()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void set_wall_temperature_time </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html">Parameters::Lagrangian::BCDEM</a> &amp;&#160;</td>
+          <td class="paramname"><em>boundary_conditions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>time</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the time of the temperature functions of the walls of the grid with a temperature boundary condition. It does nothing if no wall has a temperature boundary condition. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">boundary_conditions</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundary conditions, which hold the temperature functions of the walls. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>Time at which the temperature of the walls is evaluated. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00293">293</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00853">Parameters::Lagrangian::BCDEM::boundary_temperature</a>.</p>
 
 </div>
 </div>

@@ -492,10 +492,10 @@ I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij
 <li><p><span class="math notranslate nohighlight">\(\mathbf{v}_{rn}\)</span> relative velocity in the normal direction;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{v}_{tn}\)</span> relative velocity in the tangential direction;</p></li>
 </ul>
-<figure class="align-center" id="id24">
+<figure class="align-center" id="id25">
 <a class="reference internal image-reference" href="../../../_images/collision_particles.png"><img alt="particle-particle_collision" src="../../../_images/collision_particles.png" style="width: 400px;" /></a>
 <figcaption>
-<p><span class="caption-text">Representation of a typical particle-particle contact. <a class="footnote-reference brackets" href="#golshan2023" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></span><a class="headerlink" href="#id24" title="Link to this image">#</a></p>
+<p><span class="caption-text">Representation of a typical particle-particle contact. <a class="footnote-reference brackets" href="#golshan2023" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></span><a class="headerlink" href="#id25" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>The contact normal vector <span class="math notranslate nohighlight">\(\mathbf{n}_{ij}\)</span> is computed as:</p>
@@ -523,9 +523,9 @@ The normal overlap and the tangential displacement are calculated as follows:</p
 <section id="spring-and-damping-constants">
 <h3>Spring and damping constants<a class="headerlink" href="#spring-and-damping-constants" title="Link to this heading">#</a></h3>
 <p>The spring and damping constants for the linear and nonlinear viscoelastic models are calculated as follows:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id25">
-<table class="docutils align-default" id="id25">
-<caption><span class="caption-text">Spring and damping Models used in Lethe.</span><a class="headerlink" href="#id25" title="Link to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id26">
+<table class="docutils align-default" id="id26">
+<caption><span class="caption-text">Spring and damping Models used in Lethe.</span><a class="headerlink" href="#id26" title="Link to this table">#</a></caption>
 <colgroup>
 <col style="width: 40.0%" />
 <col style="width: 30.0%" />
@@ -619,9 +619,9 @@ To do so, the tangential displacement <span class="math notranslate nohighlight"
 <section id="rolling-friction-models">
 <h3>Rolling friction models<a class="headerlink" href="#rolling-friction-models" title="Link to this heading">#</a></h3>
 <p>Rolling friction may be computed through a constant torque model, a viscous torque model or an elastic-plastic spring-dashpot torque model. It is also possible to ignore the rolling resistance by using the no-resistance model. The corresponding models are described by the following equations:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id26">
-<table class="docutils align-center" id="id26" style="width: 70%">
-<caption><span class="caption-text">Rolling Friction Models used in Lethe.</span><a class="headerlink" href="#id26" title="Link to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id27">
+<table class="docutils align-center" id="id27" style="width: 70%">
+<caption><span class="caption-text">Rolling Friction Models used in Lethe.</span><a class="headerlink" href="#id27" title="Link to this table">#</a></caption>
 <colgroup>
 <col style="width: 43.7%" />
 <col style="width: 56.3%" />
@@ -881,10 +881,10 @@ a &amp;= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{\mathrm{2}} + s + \la
 <li><p><span class="math notranslate nohighlight">\(R_c\)</span> resistance of the solid layers of the particles <a class="footnote-reference brackets" href="#beaulieu2020" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a></p></li>
 <li><p><span class="math notranslate nohighlight">\(R_G\)</span> resistance of the interstitial gas macrogap <a class="footnote-reference brackets" href="#bahrami2006" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a></p></li>
 </ul>
-<figure class="align-center" id="id27">
+<figure class="align-center" id="id28">
 <a class="reference internal image-reference" href="../../../_images/particle_particle_resistances.png"><img alt="../../../_images/particle_particle_resistances.png" src="../../../_images/particle_particle_resistances.png" style="width: 700px;" /></a>
 <figcaption>
-<p><span class="caption-text">Modeling Heat transfer between two rough particles in contact. Adapted from <a class="footnote-reference brackets" href="#beaulieu2020" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a>.</span><a class="headerlink" href="#id27" title="Link to this image">#</a></p>
+<p><span class="caption-text">Modeling Heat transfer between two rough particles in contact. Adapted from <a class="footnote-reference brackets" href="#beaulieu2020" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a>.</span><a class="headerlink" href="#id28" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <section id="thermal-resistances">
@@ -1003,7 +1003,7 @@ R_G &amp;= \frac{2}{\pi k_g \left[S \ln\left(\frac{S-B}{S-A}\right) + B - A\righ
 </div>
 </section>
 <section id="particle-wall-resistances">
-<h3>Particle-wall Resistances<a class="headerlink" href="#particle-wall-resistances" title="Link to this heading">#</a></h3>
+<span id="id22"></span><h3>Particle-wall Resistances<a class="headerlink" href="#particle-wall-resistances" title="Link to this heading">#</a></h3>
 <p>For particle-wall contacts, conduction is mostly computed the same way, except for minor differences.
 For the macrocontact and the solid layers resistances, they are only considered for the particle. In the same way,
 the interstitial gas macrogap resistance is halved as there is only a macrogap around the particle and not the wall.</p>
@@ -1014,10 +1014,10 @@ R_c &amp;= R_{c,j} = \frac{L_j}{k_j A_j} \\
 R_G &amp;= \frac{1}{2} \, \frac{2}{\pi k_g \left[S \ln\left(\frac{S-B}{S-A}\right) + B - A\right]} \\\end{split}\]</div>
 </div>
 <p>As the radius of the wall can be seen as infinite, <span class="math notranslate nohighlight">\(r_h\)</span> and <span class="math notranslate nohighlight">\(R_{\mathrm{e}}\)</span> are taken equal to <span class="math notranslate nohighlight">\(2r_j\)</span> and <span class="math notranslate nohighlight">\(r_j\)</span> respectively.</p>
-<figure class="align-center" id="id28">
+<figure class="align-center" id="id29">
 <a class="reference internal image-reference" href="../../../_images/particle_wall_resistances.png"><img alt="../../../_images/particle_wall_resistances.png" src="../../../_images/particle_wall_resistances.png" style="width: 700px;" /></a>
 <figcaption>
-<p><span class="caption-text">Modeling Heat transfer between a rough wall and rough particle in contact.</span><a class="headerlink" href="#id28" title="Link to this image">#</a></p>
+<p><span class="caption-text">Modeling Heat transfer between a rough wall and rough particle in contact.</span><a class="headerlink" href="#id29" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>

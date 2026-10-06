@@ -77,12 +77,10 @@ var menudata={children:[
 {text:"v",url:"namespacemembers_enum.html#index_v"},
 {text:"w",url:"namespacemembers_enum.html#index_w"}]},
 {text:"Enumerator",url:"namespacemembers_eval.html",children:[
-{text:"a",url:"namespacemembers_eval.html#index_a"},
 {text:"c",url:"namespacemembers_eval.html#index_c"},
 {text:"d",url:"namespacemembers_eval.html#index_d"},
 {text:"e",url:"namespacemembers_eval.html#index_e"},
 {text:"f",url:"namespacemembers_eval.html#index_f"},
-{text:"i",url:"namespacemembers_eval.html#index_i"},
 {text:"m",url:"namespacemembers_eval.html#index_m"},
 {text:"n",url:"namespacemembers_eval.html#index_n"},
 {text:"o",url:"namespacemembers_eval.html#index_o"},
