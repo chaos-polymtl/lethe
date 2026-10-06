@@ -1,0 +1,5 @@
+## [Master] - 2026/09/15
+
+### Changed
+
+- MINOR The periodic particle-particle fine search no longer scans a combinatorial list of periodic translations (up to 26 entries in 3D) to find the nearest periodic image of a particle. Since periodic directions are axis-aligned and independent (perpendicular), the nearest image is now computed directly per direction with the minimum image convention, a fixed amount of work instead of a variable-length scan. This closed-form computation is further optimized by reusing, for particle pairs that are already in contact, the periodic image found on the previous fine search call instead of recomputing it every time, falling back to the same closed-form computation whenever that cached image no longer places the pair within the neighborhood threshold. These are internal, behavior-preserving changes with no impact on simulation results. A speed up of ~1–2% was observed with this changes. [#2126](https://github.com/chaos-polymtl/lethe/pull/2126)
