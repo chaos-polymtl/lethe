@@ -110,8 +110,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6467a9f4a069e89bf5adc670d561530f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae88f6c24e4e5b393d3fb5163d6fff220" id="r_ae88f6c24e4e5b393d3fb5163d6fff220"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceParameters.html#a381317ade54e7ed0b8001db41419b5f7">Parameters::PeriodicBoundaries</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#ae88f6c24e4e5b393d3fb5163d6fff220">get_periodic_boundaries</a> () const</td></tr>
 <tr class="separator:ae88f6c24e4e5b393d3fb5163d6fff220"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afae5294cc65948692e585e744018ce7c" id="r_afae5294cc65948692e585e744018ce7c"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#afae5294cc65948692e585e744018ce7c">get_combined_periodic_offsets</a> () const</td></tr>
-<tr class="separator:afae5294cc65948692e585e744018ce7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae99365be1a1c05d43ba0e61e947ac614" id="r_ae99365be1a1c05d43ba0e61e947ac614"><td class="memItemLeft" align="right" valign="top">const std::array&lt; double, dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#ae99365be1a1c05d43ba0e61e947ac614">get_periodic_offset_per_direction</a> () const</td></tr>
+<tr class="separator:ae99365be1a1c05d43ba0e61e947ac614"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -119,8 +119,8 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a6dfded44117aa19d2aa08224c4cf15e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdb5962ff49ead6c6a7540934a604183" id="r_abdb5962ff49ead6c6a7540934a604183"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#abdb5962ff49ead6c6a7540934a604183">check_and_move_particles</a> (const <a class="el" href="structperiodic__boundaries__cells__info__struct.html">periodic_boundaries_cells_info_struct</a>&lt; dim &gt; &amp;boundaries_cells_content, const bool &amp;particles_in_pb0_cell, typename Particles::ParticleHandler&lt; dim &gt;::particle_iterator_range &amp;particles_in_cell, bool &amp;particle_has_been_moved)</td></tr>
 <tr class="separator:abdb5962ff49ead6c6a7540934a604183"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a927fe95b22e2050792ca3218dcf1ceb4" id="r_a927fe95b22e2050792ca3218dcf1ceb4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a927fe95b22e2050792ca3218dcf1ceb4">compute_combined_periodic_offsets</a> ()</td></tr>
-<tr class="separator:a927fe95b22e2050792ca3218dcf1ceb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15580aeca8c0f9d520da36535e64df10" id="r_a15580aeca8c0f9d520da36535e64df10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a15580aeca8c0f9d520da36535e64df10">compute_periodic_offset_per_direction</a> ()</td></tr>
+<tr class="separator:a15580aeca8c0f9d520da36535e64df10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -130,8 +130,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a6b4299fde480651d081b1342072ce299"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b63812588965dc2e38185be54dbf2e7" id="r_a5b63812588965dc2e38185be54dbf2e7"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a5b63812588965dc2e38185be54dbf2e7">periodic_offsets</a></td></tr>
 <tr class="separator:a5b63812588965dc2e38185be54dbf2e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6808ba5e49bd4bd40adad3bb4dffe07d" id="r_a6808ba5e49bd4bd40adad3bb4dffe07d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a6808ba5e49bd4bd40adad3bb4dffe07d">combined_periodic_offsets</a></td></tr>
-<tr class="separator:a6808ba5e49bd4bd40adad3bb4dffe07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12ef11675aec641559aaf65cbd54bfc9" id="r_a12ef11675aec641559aaf65cbd54bfc9"><td class="memItemLeft" align="right" valign="top">std::array&lt; double, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a12ef11675aec641559aaf65cbd54bfc9">periodic_offset_per_direction</a> {}</td></tr>
+<tr class="separator:a12ef11675aec641559aaf65cbd54bfc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -157,7 +157,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00022">22</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00023">23</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
 
 </div>
 </div>
@@ -221,14 +221,14 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00146">146</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00194">194</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00048">periodic_boundaries_cells_info_struct&lt; dim &gt;::boundary_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00051">periodic_boundaries_cells_info_struct&lt; dim &gt;::normal_vector</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00060">periodic_boundaries_cells_info_struct&lt; dim &gt;::periodic_normal_vector</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00054">periodic_boundaries_cells_info_struct&lt; dim &gt;::point_on_face</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00063">periodic_boundaries_cells_info_struct&lt; dim &gt;::point_on_periodic_face</a>.</p>
 
 </div>
 </div>
-<a id="a927fe95b22e2050792ca3218dcf1ceb4" name="a927fe95b22e2050792ca3218dcf1ceb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a927fe95b22e2050792ca3218dcf1ceb4">&#9670;&#160;</a></span>compute_combined_periodic_offsets()</h2>
+<a id="a15580aeca8c0f9d520da36535e64df10" name="a15580aeca8c0f9d520da36535e64df10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15580aeca8c0f9d520da36535e64df10">&#9670;&#160;</a></span>compute_periodic_offset_per_direction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,7 +239,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::compute_combined_periodic_offsets </td>
+          <td class="memname">void <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::compute_periodic_offset_per_direction </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -252,9 +252,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Compute the combined periodic offsets and store them in combined_periodic_offsets. </p>
+<p>Compute the signed periodic offset for every direction and store it in periodic_offset_per_direction. </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00230">230</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00278">278</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
 
 </div>
 </div>
@@ -296,41 +296,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Flag if at least one particle has been moved to the other periodic cell. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00267">267</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
-
-</div>
-</div>
-<a id="afae5294cc65948692e585e744018ce7c" name="afae5294cc65948692e585e744018ce7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afae5294cc65948692e585e744018ce7c">&#9670;&#160;</a></span>get_combined_periodic_offsets()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp; <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::get_combined_periodic_offsets </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Return the combined periodic offsets. </p>
-<dl class="section return"><dt>Returns</dt><dd>Combined periodic offsets. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00141">141</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
-
-<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00217">PeriodicBoundariesManipulator&lt; dim &gt;::combined_periodic_offsets</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00300">300</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
 
 </div>
 </div>
@@ -362,9 +328,9 @@ template&lt;int dim&gt; </div>
 <p>Return the periodic boundary pairs, keyed by the principal periodic boundary id (periodic id 0). </p>
 <dl class="section return"><dt>Returns</dt><dd>Map of periodic boundary pairs keyed by principal periodic boundary id. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00130">130</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00115">115</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
-<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00203">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_boundaries</a>.</p>
+<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00189">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_boundaries</a>.</p>
 
 </div>
 </div>
@@ -420,7 +386,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00028">28</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00075">75</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00048">periodic_boundaries_cells_info_struct&lt; dim &gt;::boundary_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00045">periodic_boundaries_cells_info_struct&lt; dim &gt;::cell</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00051">periodic_boundaries_cells_info_struct&lt; dim &gt;::normal_vector</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00057">periodic_boundaries_cells_info_struct&lt; dim &gt;::periodic_cell</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00060">periodic_boundaries_cells_info_struct&lt; dim &gt;::periodic_normal_vector</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00054">periodic_boundaries_cells_info_struct&lt; dim &gt;::point_on_face</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00063">periodic_boundaries_cells_info_struct&lt; dim &gt;::point_on_periodic_face</a>.</p>
 
@@ -461,9 +427,43 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Offset distance between periodic boundaries. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00110">110</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00095">95</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
-<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00211">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_offsets</a>.</p>
+<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00197">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_offsets</a>.</p>
+
+</div>
+</div>
+<a id="ae99365be1a1c05d43ba0e61e947ac614" name="ae99365be1a1c05d43ba0e61e947ac614"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae99365be1a1c05d43ba0e61e947ac614">&#9670;&#160;</a></span>get_periodic_offset_per_direction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::array&lt; double, dim &gt; &amp; <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::get_periodic_offset_per_direction </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the signed periodic offset for every direction. </p>
+<dl class="section return"><dt>Returns</dt><dd>Array whose component d is the signed periodic offsets of the domain along direction d if d is periodic, or 0 otherwise. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00127">127</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+
+<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00207">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_offset_per_direction</a>.</p>
 
 </div>
 </div>
@@ -504,7 +504,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00068">68</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00115">115</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00045">periodic_boundaries_cells_info_struct&lt; dim &gt;::cell</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00054">periodic_boundaries_cells_info_struct&lt; dim &gt;::point_on_face</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00063">periodic_boundaries_cells_info_struct&lt; dim &gt;::point_on_periodic_face</a>.</p>
 
@@ -517,9 +517,6 @@ template&lt;int dim&gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::set_periodic_boundaries_information </td>
@@ -529,11 +526,6 @@ template&lt;int dim&gt; </div>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Sets the periodic boundaries parameters. </p>
@@ -544,41 +536,13 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00048">48</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00029">29</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00203">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_boundaries</a>, <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00195">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_boundaries_enabled</a>, <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00211">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_offsets</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00081">DEMActionManager::set_periodic_boundaries_enabled()</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00081">DEMActionManager::set_periodic_boundaries_enabled()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a6808ba5e49bd4bd40adad3bb4dffe07d" name="a6808ba5e49bd4bd40adad3bb4dffe07d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6808ba5e49bd4bd40adad3bb4dffe07d">&#9670;&#160;</a></span>combined_periodic_offsets</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;Tensor&lt;1, dim&gt; &gt; <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::combined_periodic_offsets</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Storage for all 9 (2D) or 27 (3D) precomputed periodic translation vectors. Calculated from periodic_offsets. </p>
-
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00217">217</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
-
-</div>
-</div>
 <a id="a6b4299fde480651d081b1342072ce299" name="a6b4299fde480651d081b1342072ce299"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6b4299fde480651d081b1342072ce299">&#9670;&#160;</a></span>periodic_boundaries</h2>
 
@@ -603,7 +567,7 @@ template&lt;int dim&gt; </div>
 
 <p>Periodic boundary pairs of the simulation. Each entry carries the neighbor boundary id of the pair and the direction of periodicity, which is normal to the periodic boundaries. Keys of this map are the principal periodic boundary ids (periodic id 0). </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00203">203</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00189">189</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -631,7 +595,35 @@ template&lt;int dim&gt; </div>
 
 <p>Flag for periodic boundary conditions in simulation. Useful to exit function when there are no periodic boundaries. </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00195">195</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00181">181</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+
+</div>
+</div>
+<a id="a12ef11675aec641559aaf65cbd54bfc9" name="a12ef11675aec641559aaf65cbd54bfc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12ef11675aec641559aaf65cbd54bfc9">&#9670;&#160;</a></span>periodic_offset_per_direction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;double, dim&gt; <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::periodic_offset_per_direction {}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Signed periodic distance associated with each periodic boundary pairs. The component d of this array returns the distance, in absolute value, between the two boundaries facing in that d direction (x,y,z). If the associated d direction is not periodic, the array returns a 0. This array is used by the particle-particle fine search to find the nearest periodic image of a particle. </p>
+
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00207">207</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -659,7 +651,7 @@ template&lt;int dim&gt; </div>
 
 <p>Map storing offset distance between periodic boundaries, keyed by the boundary ID (pb0). It is calculated from the first pair of cells on periodic boundaries, so all pairs of cells on a given peridodic boundary are assumed to have the same offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00211">211</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00197">197</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>

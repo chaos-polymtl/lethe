@@ -113,8 +113,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad7ea1ccc7dcba07d91a5a0d94c687f94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63acfff5b61c976f709fb2fa7e4f0030" id="r_a63acfff5b61c976f709fb2fa7e4f0030"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a63acfff5b61c976f709fb2fa7e4f0030">execute_particle_wall_fine_search</a> (const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &amp;floating_walls, const double simulation_time, const double neighborhood_threshold)</td></tr>
 <tr class="separator:a63acfff5b61c976f709fb2fa7e4f0030"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acedcdfb1eecd37e5b5e01abb8818fac7" id="r_acedcdfb1eecd37e5b5e01abb8818fac7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#acedcdfb1eecd37e5b5e01abb8818fac7">set_combined_periodic_offsets</a> (const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;offsets)</td></tr>
-<tr class="separator:acedcdfb1eecd37e5b5e01abb8818fac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a230ad9f45f653108a3641f33a2904660" id="r_a230ad9f45f653108a3641f33a2904660"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a230ad9f45f653108a3641f33a2904660">set_periodic_offset_per_direction</a> (const std::array&lt; double, dim &gt; &amp;offset_per_direction)</td></tr>
+<tr class="separator:a230ad9f45f653108a3641f33a2904660"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d5de5a67f52833f666c0f3858de5d33" id="r_a0d5de5a67f52833f666c0f3858de5d33"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;<a class="el" href="classDEMContactManager.html#a0754e30ca1134bfbf78c36727061e9e7">::particle_floating_mesh_potentially_in_contact</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a0d5de5a67f52833f666c0f3858de5d33">get_particle_floating_mesh_potentially_in_contact</a> ()</td></tr>
 <tr class="separator:a0d5de5a67f52833f666c0f3858de5d33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad63943c3472d192771a5f6395cfda25" id="r_aad63943c3472d192771a5f6395cfda25"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;<a class="el" href="classDEMContactManager.html#a2a2a0bfc12712080cfbba658127f6fb8">::particle_wall_in_contact</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#aad63943c3472d192771a5f6395cfda25">get_particle_floating_wall_in_contact</a> ()</td></tr>
@@ -200,8 +200,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a8578b385ef05cd7c0082a33e9960409b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45ee4121fc1cd1ce952091d2cf0e48da" id="r_a45ee4121fc1cd1ce952091d2cf0e48da"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::cell_vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a45ee4121fc1cd1ce952091d2cf0e48da">periodic_cells_container</a></td></tr>
 <tr class="separator:a45ee4121fc1cd1ce952091d2cf0e48da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03abc86adc9a70540f04e2377e18e2db" id="r_a03abc86adc9a70540f04e2377e18e2db"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a03abc86adc9a70540f04e2377e18e2db">combined_periodic_offsets</a></td></tr>
-<tr class="separator:a03abc86adc9a70540f04e2377e18e2db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e0a1e1f5022a268f83dc54e777984c7" id="r_a7e0a1e1f5022a268f83dc54e777984c7"><td class="memItemLeft" align="right" valign="top">std::array&lt; double, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a7e0a1e1f5022a268f83dc54e777984c7">periodic_offset_per_direction</a> {}</td></tr>
+<tr class="separator:a7e0a1e1f5022a268f83dc54e777984c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
@@ -332,9 +332,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8cc_source.html#l00398">398</a> of file <a class="el" href="dem__contact__manager_8cc_source.html">dem_contact_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8cc_source.html#l00406">406</a> of file <a class="el" href="dem__contact__manager_8cc_source.html">dem_contact_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, and <a class="el" href="particle__particle__fine__search_8cc_source.html#l00021">particle_particle_fine_search()</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, and <a class="el" href="particle__particle__fine__search_8cc_source.html#l00024">particle_particle_fine_search()</a>.</p>
 
 </div>
 </div>
@@ -395,9 +395,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_handler</td><td>Storage of particles and their accessor functions. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">boundary_cells_object</td><td>Information of the boundary cells and faces. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">boundary_cell_object</td><td>Information of the boundary cells and faces. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">solid_surfaces_mesh_info</td><td>Mapping of solid surfaces meshes. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">floating_wall</td><td>Properties of the floating walls. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">floating_walls</td><td>Properties of the floating walls. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">simulation_time</td><td>Current simulation time. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sparse_particle_contact_object</td><td>Allow to check the mobility status of cells. </td></tr>
   </table>
@@ -448,14 +448,14 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Executes functions that update the particle-wall contacts pairs containers and compute the contact information of the collision particle-wall.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">floating_wall</td><td>Properties of the floating walls. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">floating_walls</td><td>Properties of the floating walls. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">simulation_time</td><td>Current simulation time. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">neighborhood_threshold</td><td>Threshold value of contact detection. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8cc_source.html#l00447">447</a> of file <a class="el" href="dem__contact__manager_8cc_source.html">dem_contact_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8cc_source.html#l00455">455</a> of file <a class="el" href="dem__contact__manager_8cc_source.html">dem_contact_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00738">Parameters::Lagrangian::FloatingWalls&lt; dim &gt;::floating_walls_number</a>, and <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>.</p>
 
@@ -488,9 +488,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the local-ghost particle contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00261">261</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00259">259</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00375">DEMContactManager&lt; dim, PropertiesIndex &gt;::ghost_adjacent_particles</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00373">DEMContactManager&lt; dim, PropertiesIndex &gt;::ghost_adjacent_particles</a>.</p>
 
 </div>
 </div>
@@ -521,9 +521,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the ghost particle-particle contact candidates. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00306">306</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00304">304</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00335">DEMContactManager&lt; dim, PropertiesIndex &gt;::ghost_contact_pair_candidates</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00333">DEMContactManager&lt; dim, PropertiesIndex &gt;::ghost_contact_pair_candidates</a>.</p>
 
 </div>
 </div>
@@ -554,9 +554,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the ghost-local periodic particle contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00288">288</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00286">286</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00381">DEMContactManager&lt; dim, PropertiesIndex &gt;::ghost_local_periodic_adjacent_particles</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00379">DEMContactManager&lt; dim, PropertiesIndex &gt;::ghost_local_periodic_adjacent_particles</a>.</p>
 
 </div>
 </div>
@@ -587,9 +587,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the local-local particle contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00252">252</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00250">250</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00373">DEMContactManager&lt; dim, PropertiesIndex &gt;::local_adjacent_particles</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00371">DEMContactManager&lt; dim, PropertiesIndex &gt;::local_adjacent_particles</a>.</p>
 
 </div>
 </div>
@@ -620,9 +620,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the local particle-particle contact candidates. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00297">297</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00295">295</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00333">DEMContactManager&lt; dim, PropertiesIndex &gt;::local_contact_pair_candidates</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00331">DEMContactManager&lt; dim, PropertiesIndex &gt;::local_contact_pair_candidates</a>.</p>
 
 </div>
 </div>
@@ -653,9 +653,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the local-ghost periodic particle contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00279">279</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00277">277</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00379">DEMContactManager&lt; dim, PropertiesIndex &gt;::local_ghost_periodic_adjacent_particles</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00377">DEMContactManager&lt; dim, PropertiesIndex &gt;::local_ghost_periodic_adjacent_particles</a>.</p>
 
 </div>
 </div>
@@ -686,9 +686,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the local-local periodic particle contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00270">270</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00268">268</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00377">DEMContactManager&lt; dim, PropertiesIndex &gt;::local_local_periodic_adjacent_particles</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00375">DEMContactManager&lt; dim, PropertiesIndex &gt;::local_local_periodic_adjacent_particles</a>.</p>
 
 </div>
 </div>
@@ -719,9 +719,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the particle-floating mesh contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00207">207</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00205">205</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00359">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_floating_mesh_potentially_in_contact</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00357">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_floating_mesh_potentially_in_contact</a>.</p>
 
 </div>
 </div>
@@ -752,9 +752,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the particle-floating wall contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00216">216</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00214">214</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00361">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_floating_wall_in_contact</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00359">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_floating_wall_in_contact</a>.</p>
 
 </div>
 </div>
@@ -785,9 +785,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the particle-line contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00234">234</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00232">232</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00365">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_lines_in_contact</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00363">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_lines_in_contact</a>.</p>
 
 </div>
 </div>
@@ -818,9 +818,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the particle-point contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00243">243</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00241">241</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00367">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_points_in_contact</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00365">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_points_in_contact</a>.</p>
 
 </div>
 </div>
@@ -851,49 +851,39 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Return the particle-wall contact container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00225">225</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00223">223</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00363">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_wall_in_contact</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00361">DEMContactManager&lt; dim, PropertiesIndex &gt;::particle_wall_in_contact</a>.</p>
 
 </div>
 </div>
-<a id="acedcdfb1eecd37e5b5e01abb8818fac7" name="acedcdfb1eecd37e5b5e01abb8818fac7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acedcdfb1eecd37e5b5e01abb8818fac7">&#9670;&#160;</a></span>set_combined_periodic_offsets()</h2>
+<a id="a230ad9f45f653108a3641f33a2904660" name="a230ad9f45f653108a3641f33a2904660"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a230ad9f45f653108a3641f33a2904660">&#9670;&#160;</a></span>set_periodic_offset_per_direction()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim, typename PropertiesIndex &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classDEMContactManager.html">DEMContactManager</a>&lt; dim, PropertiesIndex &gt;::set_combined_periodic_offsets </td>
+          <td class="memname">void <a class="el" href="classDEMContactManager.html">DEMContactManager</a>&lt; dim, PropertiesIndex &gt;::set_periodic_offset_per_direction </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>offsets</em></td><td>)</td>
+          <td class="paramtype">const std::array&lt; double, dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>offset_per_direction</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p>Set the combined offsets for periodic boundaries. </p>
+<p>Set the signed periodic offset for every direction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">offsets</td><td>Combined periodic offsets for periodic boundaries, used for determining periodic contacts. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">offset_per_direction</td><td>Signed periodic offsets of the domain along every direction, used for determining periodic contacts. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00197">197</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
-
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00393">DEMContactManager&lt; dim, PropertiesIndex &gt;::combined_periodic_offsets</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8cc_source.html#l00398">398</a> of file <a class="el" href="dem__contact__manager_8cc_source.html">dem_contact_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -944,7 +934,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00064">64</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00329">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_ghost_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00323">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_ghost_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00327">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_ghost_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00321">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_local_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00325">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8cc_source.html#l00019">DEMContactManager&lt; dim, PropertiesIndex &gt;::execute_cell_neighbors_search()</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00319">DEMContactManager&lt; dim, PropertiesIndex &gt;::total_neighbor_list</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00327">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_ghost_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00321">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_ghost_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00325">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_ghost_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00319">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_local_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00323">DEMContactManager&lt; dim, PropertiesIndex &gt;::cells_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8cc_source.html#l00019">DEMContactManager&lt; dim, PropertiesIndex &gt;::execute_cell_neighbors_search()</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00317">DEMContactManager&lt; dim, PropertiesIndex &gt;::total_neighbor_list</a>.</p>
 
 </div>
 </div>
@@ -1030,7 +1020,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00329">329</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00327">327</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1056,7 +1046,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00323">323</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00321">321</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1082,7 +1072,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00327">327</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00325">325</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1108,7 +1098,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00321">321</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00319">319</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1134,35 +1124,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00325">325</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
-
-</div>
-</div>
-<a id="a03abc86adc9a70540f04e2377e18e2db" name="a03abc86adc9a70540f04e2377e18e2db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03abc86adc9a70540f04e2377e18e2db">&#9670;&#160;</a></span>combined_periodic_offsets</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename PropertiesIndex &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;Tensor&lt;1, dim&gt; &gt; <a class="el" href="classDEMContactManager.html">DEMContactManager</a>&lt; dim, PropertiesIndex &gt;::combined_periodic_offsets</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Storage for all precomputed periodic translation vectors, representing translations between pairs of periodic faces and corners. Initialized to identity (zero offset) for compatibility with non-periodic geometry. </p>
-
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00393">393</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00323">323</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1188,7 +1150,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00375">375</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00373">373</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1214,7 +1176,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00335">335</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00333">333</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1240,7 +1202,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00341">341</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00339">339</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1266,7 +1228,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00337">337</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00335">335</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1292,7 +1254,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00343">343</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00341">341</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1318,7 +1280,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00381">381</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00379">379</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1344,7 +1306,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00373">373</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00371">371</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1370,7 +1332,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00333">333</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00331">331</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1396,7 +1358,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00339">339</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00337">337</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1422,7 +1384,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00379">379</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00377">377</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1448,7 +1410,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00377">377</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00375">375</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1474,7 +1436,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00314">314</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00312">312</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1500,7 +1462,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00345">345</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00343">343</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1526,7 +1488,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00359">359</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00357">357</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1552,7 +1514,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00347">347</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00345">345</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1578,7 +1540,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00361">361</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00359">359</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1604,7 +1566,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00351">351</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00349">349</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1630,7 +1592,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00365">365</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00363">363</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1656,7 +1618,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00349">349</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00347">347</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1682,7 +1644,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00367">367</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00365">365</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1708,7 +1670,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00353">353</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00351">351</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1734,7 +1696,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00363">363</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00361">361</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1760,7 +1722,35 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00384">384</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00382">382</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="a7e0a1e1f5022a268f83dc54e777984c7" name="a7e0a1e1f5022a268f83dc54e777984c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e0a1e1f5022a268f83dc54e777984c7">&#9670;&#160;</a></span>periodic_offset_per_direction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;double, dim&gt; <a class="el" href="classDEMContactManager.html">DEMContactManager</a>&lt; dim, PropertiesIndex &gt;::periodic_offset_per_direction {}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Signed periodic offset of the domain along every direction, used by the particle-particle fine search to find the nearest periodic image of a particle. Component d is 0 if direction d is not periodic. </p>
+
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00390">390</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1786,7 +1776,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00319">319</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00317">317</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 
 </div>
 </div>

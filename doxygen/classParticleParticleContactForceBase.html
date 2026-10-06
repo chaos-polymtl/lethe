@@ -106,8 +106,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:acf6f1d46b26383c7d617d4eda3276389"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab614ad1e21931660b8fbbf5c083d2bac" id="r_ab614ad1e21931660b8fbbf5c083d2bac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#ab614ad1e21931660b8fbbf5c083d2bac">set_periodic_offset</a> (const Tensor&lt; 1, dim &gt; &amp;offset, const types::boundary_id boundary_id)</td></tr>
 <tr class="separator:ab614ad1e21931660b8fbbf5c083d2bac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7704824f6741583a46f7fedc922b885" id="r_af7704824f6741583a46f7fedc922b885"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#af7704824f6741583a46f7fedc922b885">set_combined_periodic_offsets</a> (const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;offsets)</td></tr>
-<tr class="separator:af7704824f6741583a46f7fedc922b885"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a371f1ed6865dc541dbbe1efb8cc90fba" id="r_a371f1ed6865dc541dbbe1efb8cc90fba"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a371f1ed6865dc541dbbe1efb8cc90fba">get_number_of_contacts</a> () const</td></tr>
 <tr class="separator:a371f1ed6865dc541dbbe1efb8cc90fba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41b3da573e24d8346279b81975362af0" id="r_a41b3da573e24d8346279b81975362af0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a41b3da573e24d8346279b81975362af0">reset_number_of_contacts</a> ()</td></tr>
@@ -119,8 +117,6 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a48c4b7e00e22814f7e4c346497f8aae1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae49ada619588946fcd3982b9a04bad20" id="r_ae49ada619588946fcd3982b9a04bad20"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#ae49ada619588946fcd3982b9a04bad20">periodic_offsets</a></td></tr>
 <tr class="separator:ae49ada619588946fcd3982b9a04bad20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4933290fdded9cbe912dce0acdb0ca4c" id="r_a4933290fdded9cbe912dce0acdb0ca4c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a4933290fdded9cbe912dce0acdb0ca4c">combined_periodic_offsets</a></td></tr>
-<tr class="separator:a4933290fdded9cbe912dce0acdb0ca4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
@@ -247,9 +243,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Return the number of contacts that occurred in the present pseudo-time step when using the packed insertion method. </p>
 <dl class="section return"><dt>Returns</dt><dd>The number of contacts that occurred in the present pseudo-time step. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00110">110</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00098">98</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00126">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::n_contacts</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00114">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::n_contacts</a>.</p>
 
 </div>
 </div>
@@ -280,49 +276,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Reset the counter of number of contacts for the next pseudo-time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00119">119</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00107">107</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00126">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::n_contacts</a>.</p>
-
-</div>
-</div>
-<a id="af7704824f6741583a46f7fedc922b885" name="af7704824f6741583a46f7fedc922b885"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7704824f6741583a46f7fedc922b885">&#9670;&#160;</a></span>set_combined_periodic_offsets()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename PropertiesIndex &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::set_combined_periodic_offsets </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>offsets</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set the value of the combined periodic offsets for this class. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">offsets</td><td>Combined periodic offsets from the <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a> class. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00098">98</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
-
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00140">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::combined_periodic_offsets</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00114">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::n_contacts</a>.</p>
 
 </div>
 </div>
@@ -373,39 +329,11 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00085">85</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00134">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::periodic_offsets</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00122">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::periodic_offsets</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a4933290fdded9cbe912dce0acdb0ca4c" name="a4933290fdded9cbe912dce0acdb0ca4c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4933290fdded9cbe912dce0acdb0ca4c">&#9670;&#160;</a></span>combined_periodic_offsets</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename PropertiesIndex &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;Tensor&lt;1, dim&gt; &gt; <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::combined_periodic_offsets</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Storage for all 9 (2D) or 27 (3D) precomputed periodic translation vectors. Calculated from periodic_offsets. </p>
-
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00140">140</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
-
-</div>
-</div>
 <a id="a48c4b7e00e22814f7e4c346497f8aae1" name="a48c4b7e00e22814f7e4c346497f8aae1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a48c4b7e00e22814f7e4c346497f8aae1">&#9670;&#160;</a></span>n_contacts</h2>
 
@@ -428,7 +356,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00126">126</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00114">114</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -456,7 +384,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Map storing offset distance between periodic boundaries, keyed by the boundary ID (pb0). It is calculated from the first pair of cells on periodic boundaries, so all pairs of cells on a given peridodic boundary are assumed to have the same offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00134">134</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00122">122</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
