@@ -1800,7 +1800,8 @@ namespace Parameters
     enum class ErrorEstimator : std::int8_t
     {
       kelly,
-      dpg
+      dpg,
+      threshold
     } error_estimator;
 
     // Coarsening fraction
@@ -1808,6 +1809,12 @@ namespace Parameters
 
     // Refinement fraction
     double refinement_fraction;
+
+    // Coarsening fraction
+    double upper_threshold;
+
+    // Refinement fraction
+    double lower_threshold;
   };
 
   /**

@@ -1020,23 +1020,33 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
           multiphysics->compute_error_estimate(ivar, estimated_error_per_cell);
         }
 
-      if (this->simulation_parameters.mesh_adaptation.fractionType ==
-          Parameters::MeshAdaptation::FractionType::number)
-        parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
-          tria,
-          estimated_error_per_cell,
-          ivar.second.refinement_fraction,
-          ivar_coarsening_factor,
-          maximal_number_of_elements);
+      if (ivar.second.error_estimator !=
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::threshold)
+        {
+          if (this->simulation_parameters.mesh_adaptation.fractionType ==
+              Parameters::MeshAdaptation::FractionType::number)
+            parallel::distributed::GridRefinement::
+              refine_and_coarsen_fixed_number(tria,
+                                              estimated_error_per_cell,
+                                              ivar.second.refinement_fraction,
+                                              ivar_coarsening_factor,
+                                              maximal_number_of_elements);
 
-      else if (this->simulation_parameters.mesh_adaptation.fractionType ==
-               Parameters::MeshAdaptation::FractionType::fraction)
-        parallel::distributed::GridRefinement::
-          refine_and_coarsen_fixed_fraction(tria,
-                                            estimated_error_per_cell,
-                                            ivar.second.refinement_fraction,
-                                            ivar_coarsening_factor);
-
+          else if (this->simulation_parameters.mesh_adaptation.fractionType ==
+                   Parameters::MeshAdaptation::FractionType::fraction)
+            parallel::distributed::GridRefinement::
+              refine_and_coarsen_fixed_fraction(tria,
+                                                estimated_error_per_cell,
+                                                ivar.second.refinement_fraction,
+                                                ivar_coarsening_factor);
+        }
+      else if (ivar.second.error_estimator ==
+               Parameters::MultipleAdaptationParameters::ErrorEstimator::
+                 threshold)
+        {
+          GridRefinement::refine(tria, estimated_error_per_cell, 1e-6);
+          GridRefinement::coarsen(tria, estimated_error_per_cell, 1e-6);
+        }
       // Remove the flags if the cell is at the boundary and is set as do not
       // touch in the parameter file
       if (this->simulation_parameters.mesh_adaptation

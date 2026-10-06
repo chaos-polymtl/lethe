@@ -1319,37 +1319,81 @@ HeatTransfer<dim>::compute_error_estimate(
     {
       AssertThrow(
         ivar.second.error_estimator ==
-          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+            Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly ||
+          ivar.second.error_estimator ==
+            Parameters::MultipleAdaptationParameters::ErrorEstimator::threshold,
         ExcMessage(
-          "Only the Kelly error estimator is currently implemented for the "
+          "Only the Kelly error estimator and therehold strategy are currently implemented for the "
           "<temperature> field."));
 
+      if (ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly)
+        {
+          ComponentMask temperature_mask =
+            fe->component_mask(FEValuesExtractors::Scalar(0));
 
-      ComponentMask temperature_mask =
-        fe->component_mask(FEValuesExtractors::Scalar(0));
-      compute_kelly(estimated_error_per_cell, temperature_mask);
+          compute_kelly(estimated_error_per_cell, temperature_mask);
+        }
+      else if (ivar.second.error_estimator ==
+               Parameters::MultipleAdaptationParameters::ErrorEstimator::
+                 threshold)
+        {
+          for (const auto &cell_tria :
+               this->triangulation->active_cell_iterators())
+            if (cell_tria->is_locally_owned())
+              {
+                const typename DoFHandler<dim>::active_cell_iterator cell =
+                  cell_tria->as_dof_handler_iterator(*this->dof_handler);
+
+                double indicator = 0.0;
+
+                // Get the level set values
+                const unsigned int dofs_per_cell =
+                  cell->get_fe().n_dofs_per_cell();
+
+                Vector<double> cell_dof_values(dofs_per_cell);
+
+                cell->get_dof_values(*this->present_solution,
+                                     cell_dof_values.begin(),
+                                     cell_dof_values.end());
+                for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                  {
+                    if ((cell_dof_values[i] > (ivar.second.lower_threshold)) &&
+                        (cell_dof_values[i] < (ivar.second.upper_threshold)))
+                      {
+                        indicator = 1.0;
+                        break;
+                      }
+                  }
+                estimated_error_per_cell[cell_tria->active_cell_index()] =
+                  indicator;
+              }
+        }
     }
   if (ivar.first == Variable::melt_indicator)
     {
       AssertThrow(
         ivar.second.error_estimator ==
-          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+            Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly ||
+          ivar.second.error_estimator ==
+            Parameters::MultipleAdaptationParameters::ErrorEstimator::threshold,
         ExcMessage(
-          "Only the Kelly error estimator is currently implemented for the "
+          "Only the Kelly error estimator and therehold strategy are currently implemented for the "
           "<liquid_fraction> field."));
 
 
       ComponentMask melt_indicator_mask =
         fe->component_mask(FEValuesExtractors::Scalar(0));
 
-      const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+      const MPI_Comm mpi_communicator =
+        this->dof_handler->get_mpi_communicator();
 
       // Local variable to check if it is a CLS simulation
       const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
 
       AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
-                                      .monitored_fluid_with_phase_change ==
-                                    Parameters::FluidIndicator::fluid1),
+                                       .monitored_fluid_with_phase_change ==
+                                     Parameters::FluidIndicator::fluid1),
                   ExcMessage(
                     "For single-fluid flows only 'fluid 0' can be monitored."));
 
@@ -1364,35 +1408,37 @@ HeatTransfer<dim>::compute_error_estimate(
       // For single fluid flows
       const double melting_temperature =
         this->simulation_parameters.post_processing.melting_temperature;
-      std::cout << melting_temperature << std::endl;
 
       // Initialize CLS related objects
       std::shared_ptr<const DoFHandler<dim>>      dof_handler_cls;
       std::shared_ptr<NonMatching::FEValues<dim>> non_matching_fe_values_cls;
-      std::shared_ptr<GlobalVectorType>           phase_indicator_vector_owned_copy;
-      const double phase_indicator_interface_value = 0.5;
+      std::shared_ptr<GlobalVectorType> phase_indicator_vector_owned_copy;
+      const double                      phase_indicator_interface_value = 0.5;
 
       const auto &physical_properties_parameters =
-      this->simulation_parameters.physical_properties_manager.get_physical_properties_parameters();
+        this->simulation_parameters.physical_properties_manager
+          .get_physical_properties_parameters();
 
       if (gather_cls)
         {
-          // Get liquidus temperature and generate signed phase indicator level set
-          // for intersection operation
+          // Get liquidus temperature and generate signed phase indicator level
+          // set for intersection operation
           dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
             &this->multiphysics->get_dof_handler(PhysicsID::CLS),
             [](const DoFHandler<dim> *) {});
 
           // Local copy to shift phase indicator solution to make the region of
           // interest 'inside' (negative values)
-          phase_indicator_vector_owned_copy = std::make_shared<GlobalVectorType>();
+          phase_indicator_vector_owned_copy =
+            std::make_shared<GlobalVectorType>();
           phase_indicator_vector_owned_copy->reinit(
             this->dof_handler->locally_owned_dofs(), mpi_communicator);
           FETools::interpolate(
             *dof_handler_cls,
             this->multiphysics->get_filtered_solution(PhysicsID::CLS),
             *this->dof_handler,
-            *phase_indicator_vector_owned_copy); // Ensure DoF correspondence for
+            *phase_indicator_vector_owned_copy); // Ensure DoF correspondence
+                                                 // for
           // intersection vector later
           // phase_indicator_vector_owned_copy->add(-phase_indicator_interface_value);
           // if (this->simulation_parameters.post_processing
@@ -1404,35 +1450,80 @@ HeatTransfer<dim>::compute_error_estimate(
           // melting temperature isocurve
           for (const auto dof_id : this->dof_handler->locally_owned_dofs())
             {
-              double liquid_fraction = calculate_liquid_fraction((*this->present_solution)[dof_id], physical_properties_parameters
-                                                .fluids[1]
-                                                .phase_change_parameters);
+              double liquid_fraction =
+                calculate_liquid_fraction((*this->present_solution)[dof_id],
+                                          physical_properties_parameters
+                                            .fluids[1]
+                                            .phase_change_parameters);
               melt_indicator_vector_owned_copy[dof_id] =
                 std::min<double>(liquid_fraction,
-                                (*phase_indicator_vector_owned_copy)[dof_id]);
+                                 (*phase_indicator_vector_owned_copy)[dof_id]);
             }
-          melt_indicator_vector_relevant_copy = melt_indicator_vector_owned_copy;
+          melt_indicator_vector_relevant_copy =
+            melt_indicator_vector_owned_copy;
         }
       else // Single-fluid flow
         {
-          // Transpose temperature to get volume of the region where the temperature
-          // is over the melting temperature
+          // Transpose temperature to get volume of the region where the
+          // temperature is over the melting temperature
           melt_indicator_vector_owned_copy = *this->present_solution;
           melt_indicator_vector_owned_copy.add(-melting_temperature);
           melt_indicator_vector_owned_copy.operator*=(
             -1); // Make the liquid region 'inside' (negative values) for the
-                // NonMatching MeshClassifier.
-          melt_indicator_vector_relevant_copy = melt_indicator_vector_owned_copy;
+                 // NonMatching MeshClassifier.
+          melt_indicator_vector_relevant_copy =
+            melt_indicator_vector_owned_copy;
         }
 
-      KellyErrorEstimator<dim>::estimate(
-        *this->temperature_mapping,
-        *this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        melt_indicator_vector_relevant_copy,
-        estimated_error_per_cell,
-        melt_indicator_mask);
+      if (ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly)
+        {
+          KellyErrorEstimator<dim>::estimate(
+            *this->temperature_mapping,
+            *this->dof_handler,
+            *this->face_quadrature,
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            melt_indicator_vector_relevant_copy,
+            estimated_error_per_cell,
+            melt_indicator_mask);
+        }
+
+      else if (ivar.second.error_estimator ==
+               Parameters::MultipleAdaptationParameters::ErrorEstimator::
+                 threshold)
+        {
+          for (const auto &cell_tria :
+               this->triangulation->active_cell_iterators())
+            if (cell_tria->is_locally_owned())
+              {
+                const typename DoFHandler<dim>::active_cell_iterator cell =
+                  cell_tria->as_dof_handler_iterator(*this->dof_handler);
+
+                double indicator = 0.0;
+
+                // Get the level set values
+                const unsigned int dofs_per_cell =
+                  cell->get_fe().n_dofs_per_cell();
+
+                Vector<double> cell_dof_values(dofs_per_cell);
+
+                cell->get_dof_values(melt_indicator_vector_relevant_copy,
+                                     cell_dof_values.begin(),
+                                     cell_dof_values.end());
+                for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                  {
+                    if ((cell_dof_values[i] > (ivar.second.lower_threshold)) &&
+                        (cell_dof_values[i] < (ivar.second.upper_threshold)))
+                      {
+                        indicator = 1.0;
+                        break;
+                      }
+                  }
+                estimated_error_per_cell[cell_tria->active_cell_index()] =
+                  indicator;
+              }
+        }
     }
 }
 

@@ -2506,15 +2506,55 @@ ConservativeLevelSet<dim>::compute_error_estimate(
     {
       AssertThrow(
         ivar.second.error_estimator ==
-          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+            Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly ||
+          ivar.second.error_estimator ==
+            Parameters::MultipleAdaptationParameters::ErrorEstimator::threshold,
         ExcMessage(
           "Only the Kelly error estimator is currently implemented for the "
           "<phase> CLS field."));
 
+      if (ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly)
+        {
+          ComponentMask phase_mask =
+            fe->component_mask(FEValuesExtractors::Scalar(0));
+          compute_kelly(estimated_error_per_cell, phase_mask);
+        }
+      else if (ivar.second.error_estimator ==
+               Parameters::MultipleAdaptationParameters::ErrorEstimator::
+                 threshold)
+        {
+          for (const auto &cell_tria :
+               this->triangulation->active_cell_iterators())
+            if (cell_tria->is_locally_owned())
+              {
+                const typename DoFHandler<dim>::active_cell_iterator cell =
+                  cell_tria->as_dof_handler_iterator(*this->dof_handler);
 
-      ComponentMask phase_mask =
-        fe->component_mask(FEValuesExtractors::Scalar(0));
-      compute_kelly(estimated_error_per_cell, phase_mask);
+                double indicator = 0.0;
+
+                // Get the level set values
+                const unsigned int dofs_per_cell =
+                  cell->get_fe().n_dofs_per_cell();
+
+                Vector<double> cell_dof_values(dofs_per_cell);
+
+                cell->get_dof_values(*this->present_solution,
+                                     cell_dof_values.begin(),
+                                     cell_dof_values.end());
+                for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                  {
+                    if ((cell_dof_values[i] > (ivar.second.lower_threshold)) &&
+                        (cell_dof_values[i] < (ivar.second.upper_threshold)))
+                      {
+                        indicator = 1.0;
+                        break;
+                      }
+                  }
+                estimated_error_per_cell[cell_tria->active_cell_index()] =
+                  indicator;
+              }
+        }
     }
 }
 

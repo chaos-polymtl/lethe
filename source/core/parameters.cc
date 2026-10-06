@@ -3817,9 +3817,9 @@ namespace Parameters
       prm.declare_entry(
         "error estimator",
         "kelly",
-        Patterns::List(Patterns::Selection("kelly|dpg")),
+        Patterns::List(Patterns::Selection("kelly|dpg|threshold")),
         "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter."
-        "Choices are <kelly|dpg>.");
+        "Choices are <kelly|dpg|threshold>.");
 
       prm.declare_entry(
         "fraction refinement",
@@ -3836,6 +3836,22 @@ namespace Parameters
         "Fraction of coarsened elements"
         "For multi-variables refinement, separate the different fractions with a comma "
         "(ex/ 'set fraction coarsening = 0.05,0.05')");
+
+      prm.declare_entry(
+        "upper threshold",
+        "1.0",
+        Patterns::List(Patterns::Double()),
+        "Upper threshold"
+        "For multi-variables refinement, separate the different fractions with a comma "
+        "(ex/ 'set fraction coarsening = 1.0,1.0')");
+
+      prm.declare_entry(
+        "lower threshold",
+        "0.0",
+        Patterns::List(Patterns::Double()),
+        "ower threshold"
+        "For multi-variables refinement, separate the different fractions with a comma "
+        "(ex/ 'set fraction coarsening = 0.0,0.0')");
 
       prm.declare_entry(
         "variable",
@@ -3918,6 +3934,13 @@ namespace Parameters
       std::vector<std::string> refin_vec =
         Utilities::split_string_list(refin_op);
 
+      const std::string        upper_threshold_op = prm.get("upper threshold");
+      std::vector<std::string> upper_threshold_vec =
+        Utilities::split_string_list(upper_threshold_op);
+      const std::string        lower_threshold_op = prm.get("lower threshold");
+      std::vector<std::string> lower_threshold_vec =
+        Utilities::split_string_list(lower_threshold_op);
+
       // Checking that the sizes are coherent
       Assert(strategy_vec.size() == var_vec.size(),
              MultipleAdaptationSizeError("error estimator",
@@ -3969,14 +3992,22 @@ namespace Parameters
           else if (strategy_vec[i] == "dpg")
             var_adaptation_param.error_estimator =
               MultipleAdaptationParameters::ErrorEstimator::dpg;
+          else if (strategy_vec[i] == "threshold")
+            var_adaptation_param.error_estimator =
+              MultipleAdaptationParameters::ErrorEstimator::threshold;
           else
             throw std::logic_error(
-              "Error, invalid mesh adaptation error estimator. Choices are kelly or dpg");
+              "Error, invalid mesh adaptation error estimator. Choices are kelly, dpg, or threshold");
 
           var_adaptation_param.coarsening_fraction =
             Utilities::string_to_double(coars_vec[i]);
           var_adaptation_param.refinement_fraction =
             Utilities::string_to_double(refin_vec[i]);
+
+          var_adaptation_param.upper_threshold =
+            Utilities::string_to_double(upper_threshold_vec[i]);
+          var_adaptation_param.lower_threshold =
+            Utilities::string_to_double(lower_threshold_vec[i]);
 
           // defining adaptation map for this variable
           variables[vars] = var_adaptation_param;

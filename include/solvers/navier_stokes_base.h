@@ -40,6 +40,7 @@
 #include <deal.II/fe/mapping_q_cache.h>
 
 #include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/affine_constraints.h>
