@@ -20,6 +20,7 @@
 #define lethe_solid_objects_parameters_h
 
 #include <core/parameters.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
@@ -444,7 +445,8 @@ namespace Parameters
                         "Solid object center of rotation");
 
       prm.declare_entry("thermal boundary type",
-                        "adiabatic",
+                        enum_to_string(
+                          SolidObjectThermalBoundaryType::adiabatic),
                         Patterns::Selection("adiabatic|isothermal"),
                         "Choosing thermal boundary type"
                         "Choices are <adiabatic|isothermal>.");
@@ -509,15 +511,8 @@ namespace Parameters
 
       output_bool = prm.get_bool("output solid object");
 
-      const std::string thermal_type = prm.get("thermal boundary type");
-      if (thermal_type == "adiabatic")
-        thermal_boundary_type = SolidObjectThermalBoundaryType::adiabatic;
-      else if (thermal_type == "isothermal")
-        thermal_boundary_type = SolidObjectThermalBoundaryType::isothermal;
-      else
-        {
-          throw(std::runtime_error("Invalid thermal boundary type"));
-        }
+      thermal_boundary_type = string_to_enum<SolidObjectThermalBoundaryType>(
+        prm.get("thermal boundary type"));
 
       // Isothermal boundary
       prm.enter_subsection("temperature");

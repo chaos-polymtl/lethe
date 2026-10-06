@@ -234,7 +234,7 @@ namespace Parameters
     {
       // Defines the type of distribution
       prm.declare_entry("size distribution type",
-                        "uniform",
+                        enum_to_string(SizeDistributionType::uniform),
                         Patterns::Selection("uniform|normal|lognormal|custom"),
                         "Particle size distribution. "
                         "Choices are <uniform|normal|lognormal|custom>.");
@@ -263,7 +263,7 @@ namespace Parameters
                         "Indicates the file where the custom distribution "
                         "values should be read from.");
       prm.declare_entry("custom distribution probability function type",
-                        "PDF",
+                        enum_to_string(ProbabilityFunctionType::PDF),
                         Patterns::Selection("PDF|CDF"),
                         "Particle size distribution. "
                         "Choices are <PDF|CDF>.");
@@ -393,16 +393,8 @@ namespace Parameters
       const ParameterHandler &prm)
     {
       // Defines the type of distribution
-      const std::string size_distribution_type_str =
-        prm.get("size distribution type");
-      if (size_distribution_type_str == "uniform")
-        distribution_type.push_back(SizeDistributionType::uniform);
-      else if (size_distribution_type_str == "normal")
-        distribution_type.push_back(SizeDistributionType::normal);
-      else if (size_distribution_type_str == "lognormal")
-        distribution_type.push_back(SizeDistributionType::lognormal);
-      else if (size_distribution_type_str == "custom")
-        distribution_type.push_back(SizeDistributionType::custom);
+      distribution_type.push_back(string_to_enum<SizeDistributionType>(
+        prm.get("size distribution type")));
 
       // Normal and lognormal distributions
       particle_average_diameter.push_back(prm.get_double("average diameter"));
@@ -414,14 +406,9 @@ namespace Parameters
       custom_distribution_filenames.push_back(
         prm.get("custom distribution filename"));
 
-      const std::string custom_probability_function_type_str =
-        prm.get("custom distribution probability function type");
-      if (custom_probability_function_type_str == "PDF")
-        custom_probability_function_type.push_back(
-          ProbabilityFunctionType::PDF);
-      else if (custom_probability_function_type_str == "CDF")
-        custom_probability_function_type.push_back(
-          ProbabilityFunctionType::CDF);
+      custom_probability_function_type.push_back(
+        string_to_enum<ProbabilityFunctionType>(
+          prm.get("custom distribution probability function type")));
 
       custom_distribution_interpolation.push_back(
         prm.get_bool("custom distribution interpolation"));
@@ -1636,7 +1623,7 @@ namespace Parameters
 
       // Multiphysic DEM
       prm.declare_entry("thermal boundary type",
-                        "adiabatic",
+                        enum_to_string(WallThermalBoundaryType::adiabatic),
                         Patterns::Selection("adiabatic|temperature"),
                         "Thermal boundary type used in multiphysic DEM. "
                         "Choices are <adiabatic|temperature>.");
@@ -1718,19 +1705,16 @@ namespace Parameters
       const bool is_wall = boundary_type == "fixed_wall" ||
                            boundary_type == "translational" ||
                            boundary_type == "rotational";
-      const std::string thermal_type = prm.get("thermal boundary type");
+      const WallThermalBoundaryType thermal_type =
+        string_to_enum<WallThermalBoundaryType>(
+          prm.get("thermal boundary type"));
 
       if (is_wall)
         {
-          if (thermal_type == "adiabatic")
-            this->thermal_boundary_type[boundary_id] =
-              WallThermalBoundaryType::adiabatic;
+          this->thermal_boundary_type[boundary_id] = thermal_type;
 
-          else if (thermal_type == "temperature")
+          if (thermal_type == WallThermalBoundaryType::temperature)
             {
-              this->thermal_boundary_type[boundary_id] =
-                WallThermalBoundaryType::temperature;
-
               // Temperature imposed on the boundary
               auto wall_temperature_function_parsed =
                 std::make_shared<Functions::ParsedFunction<3>>(1);
@@ -1741,17 +1725,13 @@ namespace Parameters
               this->boundary_temperature[boundary_id] =
                 wall_temperature_function_parsed;
             }
-          else
-            {
-              throw(std::runtime_error("Invalid thermal boundary type"));
-            }
         }
       else
         {
           // The outlet and periodic boundaries are not walls: the particles
           // cannot touch them, so they cannot be something else than adiabatic.
           AssertThrow(
-            thermal_type == "adiabatic",
+            thermal_type == WallThermalBoundaryType::adiabatic,
             ExcMessage(
               "Invalid DEM boundary condition with an imposed temperature. Only "
               "the fixed_wall, translational and rotational boundary types can "
