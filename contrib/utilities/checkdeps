@@ -45,7 +45,7 @@
 # Lethe's various libraries.
 
 # Remove sys/stat.h when migrating to C++17 filesystem header.
-common_deps='deal[.]II[/]|boost[/]|sys[/]stat[.]h[">]'
+common_deps='deal[.]II[/]|boost[/]|magic_enum[.]hpp[">]|sys[/]stat[.]h[">]'
 core_deps="$common_deps"
 dem_deps="$common_deps|core[/]"
 solvers_deps="$common_deps|core[/]"

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_multiphysics.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/parameter_handler.h>
@@ -33,36 +34,6 @@ namespace Parameters
   namespace
   {
     std::string
-    to_string(const Parameters::FilterType type)
-    {
-      switch (type)
-        {
-          case Parameters::FilterType::none:
-            return "none";
-          case Parameters::FilterType::clip:
-            return "clip";
-          case Parameters::FilterType::tanh:
-            return "tanh";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Parameters::SharpeningType type)
-    {
-      switch (type)
-        {
-          case Parameters::SharpeningType::constant:
-            return "constant";
-          case Parameters::SharpeningType::adaptive:
-            return "adaptive";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
-
-    std::string
     to_string(const Parameters::RedistanciationTransformationType type)
     {
       switch (type)
@@ -90,52 +61,6 @@ namespace Parameters
             return "pde-based interface reinitialization";
           case Parameters::ReinitializationMethodType::geometric:
             return "geometric interface reinitialization";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Parameters::EpsilonSetMethod method)
-    {
-      switch (method)
-        {
-          case Parameters::EpsilonSetMethod::automatic:
-            return "automatic";
-          case Parameters::EpsilonSetMethod::manual:
-            return "manual";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Parameters::EpsilonVerbosity verbosity)
-    {
-      switch (verbosity)
-        {
-          case Parameters::EpsilonVerbosity::quiet:
-            return "quiet";
-          case Parameters::EpsilonVerbosity::verbose:
-            return "verbose";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
-
-    std::string
-    to_string(const Parameters::TimeHarmonicMaxwellCouplingStrategy strategy)
-    {
-      switch (strategy)
-        {
-          case Parameters::TimeHarmonicMaxwellCouplingStrategy::none:
-            return "none";
-          case Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration:
-            return "iteration";
-          case Parameters::TimeHarmonicMaxwellCouplingStrategy::time:
-            return "time";
-          case Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold:
-            return "threshold";
         }
       Assert(false, dealii::ExcInternalError());
       return "";
@@ -406,7 +331,7 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
   {
     prm.declare_entry(
       "type",
-      to_string(defaults.type),
+      enum_to_string(defaults.type),
       Patterns::Selection("constant|adaptive"),
       "CLS interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
@@ -474,11 +399,7 @@ Parameters::CLS_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
     interface_sharpness = prm.get_double("interface sharpness");
 
     // Sharpening type
-    const std::string t = prm.get("type");
-    if (t == "constant")
-      type = Parameters::SharpeningType::constant;
-    if (t == "adaptive")
-      type = Parameters::SharpeningType::adaptive;
+    type = string_to_enum<Parameters::SharpeningType>(prm.get("type"));
 
     // Parameters for constant sharpening
     threshold = prm.get_double("threshold");
@@ -591,7 +512,7 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
   {
     prm.declare_entry(
       "type",
-      to_string(defaults.type),
+      enum_to_string(defaults.type),
       Patterns::Selection("none|tanh"),
       "CLS phase indicator filtration type, "
       "if <none> is selected, the phase won't be filtered; "
@@ -621,14 +542,7 @@ Parameters::CLS_PhaseFilter::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("phase filtration");
   {
     // filter type
-    const std::string t = prm.get("type");
-    if (t == "none")
-      type = Parameters::FilterType::none;
-    else if (t == "tanh")
-      type = Parameters::FilterType::tanh;
-    else
-      throw(std::logic_error(
-        "Error, invalid filter type. Choices are 'none' or 'tanh'"));
+    type = string_to_enum<Parameters::FilterType>(prm.get("type"));
 
     // beta
     beta = prm.get_double("beta");
@@ -777,7 +691,7 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
   {
     prm.declare_entry(
       "type",
-      to_string(defaults.type),
+      enum_to_string(defaults.type),
       Patterns::Selection("none|clip|tanh"),
       "CahnHilliard phase filtration type, "
       "if <none> is selected, the phase won't be filtered; "
@@ -808,22 +722,7 @@ Parameters::CahnHilliard_PhaseFilter::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("phase filtration");
   {
     // filter type
-    const std::string t = prm.get("type");
-    if (t == "none")
-      {
-        type = Parameters::FilterType::none;
-      }
-    else if (t == "clip")
-      {
-        type = Parameters::FilterType::clip;
-      }
-    else if (t == "tanh")
-      {
-        type = Parameters::FilterType::tanh;
-      }
-    else
-      throw(std::logic_error(
-        "Error, invalid filter type. Choices are 'none', 'clip' or 'tanh'"));
+    type = string_to_enum<Parameters::FilterType>(prm.get("type"));
 
     // beta
     beta = prm.get_double("beta");
@@ -858,7 +757,7 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
     {
       prm.declare_entry(
         "method",
-        to_string(epsilon_set_method),
+        enum_to_string(epsilon_set_method),
         Patterns::Selection("automatic|manual"),
         "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)");
 
@@ -870,7 +769,7 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
 
       prm.declare_entry(
         "verbosity",
-        to_string(epsilon_verbosity),
+        enum_to_string(epsilon_verbosity),
         Patterns::Selection("quiet|verbose"),
         "Display the value of epsilon for each time iteration if set to verbose");
     }
@@ -892,35 +791,11 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
 
     prm.enter_subsection("epsilon");
     {
-      const std::string op_epsilon = prm.get("method");
-      if (op_epsilon == "automatic")
-        {
-          CahnHilliard::epsilon_set_method =
-            Parameters::EpsilonSetMethod::automatic;
-        }
-      else if (op_epsilon == "manual")
-        {
-          CahnHilliard::epsilon_set_method =
-            Parameters::EpsilonSetMethod::manual;
-        }
-      else
-        throw(std::runtime_error("Invalid epsilon setting strategy. "
-                                 "Options are 'automatic' or 'manual'."));
+      CahnHilliard::epsilon_set_method =
+        string_to_enum<Parameters::EpsilonSetMethod>(prm.get("method"));
 
-      const std::string op_epsilon_verbosity = prm.get("verbosity");
-      if (op_epsilon_verbosity == "quiet")
-        {
-          CahnHilliard::epsilon_verbosity = Parameters::EpsilonVerbosity::quiet;
-        }
-      else if (op_epsilon_verbosity == "verbose")
-        {
-          CahnHilliard::epsilon_verbosity =
-            Parameters::EpsilonVerbosity::verbose;
-        }
-      else
-        AssertThrow(false,
-                    ExcMessage("Invalid epsilon verbosity. "
-                               "Options are 'quiet' or 'verbose'."));
+      CahnHilliard::epsilon_verbosity =
+        string_to_enum<Parameters::EpsilonVerbosity>(prm.get("verbosity"));
 
       epsilon = prm.get_double("value");
       epsilon *= dimensions.cahn_hilliard_epsilon_scaling;
@@ -940,7 +815,7 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
     prm.enter_subsection("time coupling strategy");
     {
       prm.declare_entry("type",
-                        to_string(time_coupling_strategy),
+                        enum_to_string(time_coupling_strategy),
                         Patterns::Selection("none|iteration|time|threshold"),
                         "The type of time coupling strategy to use.");
 
@@ -1084,23 +959,9 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
   {
     prm.enter_subsection("time coupling strategy");
     {
-      const std::string op_coupling_type = prm.get("type");
-      if (op_coupling_type == "none")
-        time_coupling_strategy =
-          Parameters::TimeHarmonicMaxwellCouplingStrategy::none;
-      else if (op_coupling_type == "iteration")
-        time_coupling_strategy =
-          Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration;
-      else if (op_coupling_type == "time")
-        time_coupling_strategy =
-          Parameters::TimeHarmonicMaxwellCouplingStrategy::time;
-      else if (op_coupling_type == "threshold")
-        time_coupling_strategy =
-          Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold;
-      else
-        AssertThrow(false,
-                    ExcMessage("Invalid time coupling strategy type. Options "
-                               "are <none|iteration|time|threshold>."));
+      time_coupling_strategy =
+        string_to_enum<Parameters::TimeHarmonicMaxwellCouplingStrategy>(
+          prm.get("type"));
 
       TimeHarmonicMaxwell::coupling_iteration =
         prm.get_integer("coupling iteration");

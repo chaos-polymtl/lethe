@@ -16,7 +16,7 @@ namespace Parameters
   Manifolds::declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc)
   {
     prm.declare_entry("type",
-                      "none",
+                      enum_to_string(ManifoldType::none),
                       Patterns::Selection(
                         "none|spherical|cylindrical|iges|step"),
                       "Type of manifold description"
@@ -58,18 +58,7 @@ namespace Parameters
 
     for (const unsigned int id : ids_current)
       {
-        const std::string op = prm.get("type");
-        if (op == "none")
-          this->types.emplace_back(ManifoldType::none);
-        else if (op == "spherical")
-          this->types.emplace_back(ManifoldType::spherical);
-        else if (op == "cylindrical")
-          this->types.emplace_back(ManifoldType::cylindrical);
-        else if (op == "iges")
-          this->types.emplace_back(ManifoldType::iges);
-        else if (op == "step")
-          this->types.emplace_back(ManifoldType::step);
-
+        this->types.emplace_back(string_to_enum<ManifoldType>(prm.get("type")));
         this->ids.emplace_back(id);
         this->manifold_point.emplace_back(prm.get("point coordinates"));
         this->manifold_direction.emplace_back(prm.get("direction vector"));
