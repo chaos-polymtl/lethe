@@ -184,7 +184,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
         }
     }
 
-  // Once periodic offsets calculated, combine them into a single
+  // Once periodic offsets are calculated, combine them into a single
   // per-direction array
   this->compute_periodic_offset_per_direction();
 }

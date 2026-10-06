@@ -198,7 +198,7 @@ private:
 
   /**
    * @brief Signed periodic distance associated with each periodic boundary
-   * pairs. The component d of this array return the distance, in absolute
+   * pairs. The component d of this array returns the distance, in absolute
    * value, between the two boundaries facing in that d direction (x,y,z). If
    * the associated d direction is not periodic, the array returns a 0. This
    * array is used by the particle-particle fine search to find the nearest
