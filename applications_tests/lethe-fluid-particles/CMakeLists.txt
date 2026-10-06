@@ -112,6 +112,16 @@ file(COPY restart_fluidized_bed_files/restart.triangulation.info DESTINATION    
 file(COPY restart_fluidized_bed_files/restart.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_gas_solid_fluidized_bed.${_build_type}/mpirun=2/")
 file(COPY restart_fluidized_bed_files/pressure_drop.checkpoint DESTINATION            "${CMAKE_CURRENT_BINARY_DIR}/restart_gas_solid_fluidized_bed.${_build_type}/mpirun=2/")
 
+file(COPY restart_particle_insertion_files/restart.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_particle_insertion_files/restart.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_particle_insertion_files/restart_particles.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_particle_insertion_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_particle_insertion_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_particle_insertion_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_particle_insertion_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_particle_insertion_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_particle_insertion_files/restart.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_insertion.${_build_type}/mpirun=1/")
+
 file(COPY heat_transfer_in_aligned_particles_files/particles-equilibrium.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_in_aligned_particles.${_build_type}/serial/")
 
 deal_ii_pickup_tests()
