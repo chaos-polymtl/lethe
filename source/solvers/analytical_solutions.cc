@@ -17,8 +17,10 @@ namespace AnalyticalSolutions
       "Enable the calculation of the analytical solution and L2 error");
     prm.declare_entry(
       "verbosity",
-      Parameters::to_string(verbosity),
-      Patterns::Selection("quiet|verbose"),
+      enum_to_string(verbosity),
+      Patterns::Selection(enum_to_selection<Parameters::Verbosity>(
+        Parameters::deprecated_verbosity_names(),
+        Parameters::quiet_or_verbose())),
       "State whether from the post-processing values should be printed "
       "Choices are <quiet|verbose>.");
 
@@ -71,13 +73,12 @@ namespace AnalyticalSolutions
   AnalyticalSolution<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("analytical solution");
-    enable               = prm.get_bool("enable");
-    filename             = prm.get("filename");
-    const std::string op = prm.get("verbosity");
-    if (op == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    if (op == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
+    enable    = prm.get_bool("enable");
+    filename  = prm.get("filename");
+    verbosity = string_to_enum<Parameters::Verbosity>(
+      prm.get("verbosity"),
+      Parameters::deprecated_verbosity_names(),
+      "verbosity");
 
     {
       prm.enter_subsection("uvwp");

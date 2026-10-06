@@ -242,7 +242,7 @@ public:
         throw std::logic_error(
           "Inconsistency in .prm!\n when CLS = false"
           "\n use (default value): set postprocessed fluid = both"
-          "\n or: set postprocessed fluid = fluid 0");
+          "\n or: set postprocessed fluid = fluid0");
       }
 
     if (physical_properties.number_of_fluids == 2 &&
@@ -297,7 +297,7 @@ public:
                   "Use:\n\n"
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
-                  "    set type = fluid-fluid\n" +
+                  "    set type = fluid_fluid\n" +
                   constant_surface_tension_model + "  end\n");
               }
             else if (multiphysics.CLS &&
@@ -332,7 +332,7 @@ public:
                       "subsection physical properties\n "
                       "Use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       constant_surface_tension_model + "  end\n");
                   }
               }
@@ -349,13 +349,13 @@ public:
                   "effect. In subsection physical properties, use:\n\n"
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
-                  "    set type = fluid-fluid\n" +
+                  "    set type = fluid_fluid\n" +
                   linear_surface_tension_model +
                   "\n"
                   "or: \n\n"
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
-                  "    set type = fluid-fluid\n" +
+                  "    set type = fluid_fluid\n" +
                   phase_change_surface_tension_model + "  end\n");
               }
             else
@@ -370,13 +370,13 @@ public:
                       "physical properties. This is necessary to account for Marangoni\n "
                       "effect. In subsection physical properties, use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       linear_surface_tension_model +
                       "\n"
                       "or:\n\n"
                       "  set number of material interactions = 1\n"
                       "  subsection material interaction 0\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       phase_change_surface_tension_model + "  end\n");
                   }
                 if (is_constant_surface_tension_model(
@@ -389,13 +389,13 @@ public:
                       "physical properties. This is necessary to account for Marangoni \n "
                       "effect. In subsection physical properties, use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       linear_surface_tension_model +
                       "\n"
                       "or:\n\n"
                       "  set number of material interactions = 1\n"
                       "  subsection material interaction 0\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       phase_change_surface_tension_model + "  end\n");
                   }
               }
@@ -418,7 +418,7 @@ public:
           "subsection physical properties\n "
           "Use:\n\n"
           "  subsection material interaction $material_interaction_id\n"
-          "    set type = fluid-fluid\n"
+          "    set type = fluid_fluid\n"
           "    subsection fluid-fluid interaction\n"
           "      set first fluid id                     = 0\n"
           "      set second fluid id                    = 1\n"

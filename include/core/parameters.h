@@ -1657,12 +1657,12 @@ namespace Parameters
     /// Type of preconditioner for the MG smoother
     enum class MultigridSmootherPreconditionerType : std::int8_t
     {
-      InverseDiagonal,
-      AdditiveSchwarzMethod,
-      Chebyshev
+      inverse_diagonal,
+      additive_schwarz_method,
+      chebyshev
     };
     MultigridSmootherPreconditionerType mg_smoother_preconditioner_type =
-      MultigridSmootherPreconditionerType::InverseDiagonal;
+      MultigridSmootherPreconditionerType::inverse_diagonal;
 
     /// Chebyshev smoother polynomial degree
     unsigned int mg_smoother_chebyshev_degree = 3;
@@ -2255,29 +2255,40 @@ namespace Parameters
   };
 
   /**
-   * @brief Convert a Verbosity value to the string used in parameter files.
+   * @brief Return the deprecated strings of the parameters parsed into a
+   * Verbosity, which remain accepted in parameter files.
    *
-   * @param[in] verbosity Verbosity level to convert.
-   *
-   * @return The parameter-file string ("quiet", "verbose" or "extra verbose").
-   *
-   * TODO: Replace with a Magic Enum
+   * @return The deprecated strings, each paired with its Verbosity.
    */
-  std::string
-  to_string(const Verbosity verbosity);
+  const DeprecatedEnumNames<Verbosity> &
+  deprecated_verbosity_names();
 
   /**
-   * @brief Convert a FluidIndicator value to the string used in parameter
-   * files.
+   * @brief Return the verbosity levels accepted by the parameters which do
+   * not support Verbosity::extra_verbose.
    *
-   * @param[in] indicator Fluid indicator to convert.
-   *
-   * @return The parameter-file string ("fluid 0", "fluid 1" or "both").
-   *
-   * TODO: Replace with a Magic Enum
+   * @return Verbosity::quiet and Verbosity::verbose.
    */
-  std::string
-  to_string(const FluidIndicator indicator);
+  const std::vector<Verbosity> &
+  quiet_or_verbose();
+
+  /**
+   * @brief Return the deprecated strings of the parameters parsed into a
+   * FluidIndicator, which remain accepted in parameter files.
+   *
+   * @return The deprecated strings, each paired with its FluidIndicator.
+   */
+  const DeprecatedEnumNames<FluidIndicator> &
+  deprecated_fluid_indicator_names();
+
+  /**
+   * @brief Return the fluid indicators accepted by the parameters which
+   * designate a single fluid.
+   *
+   * @return FluidIndicator::fluid0 and FluidIndicator::fluid1.
+   */
+  const std::vector<FluidIndicator> &
+  single_fluid_indicators();
 
 } // namespace Parameters
 #endif

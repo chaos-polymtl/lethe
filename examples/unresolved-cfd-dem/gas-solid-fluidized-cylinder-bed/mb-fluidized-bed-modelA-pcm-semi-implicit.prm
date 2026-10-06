@@ -76,7 +76,7 @@ subsection cfd-dem
   set drag model                    = difelice
   set coupling frequency            = 100
   set vans model                    = modelA
-  set drag coupling                 = semi-implicit
+  set drag coupling                 = semi_implicit
 end
 
 #---------------------------------------------------

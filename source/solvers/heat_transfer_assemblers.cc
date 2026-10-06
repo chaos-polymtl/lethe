@@ -617,7 +617,7 @@ HeatTransferAssemblerViscousDissipationCLS<dim>::assemble_rhs(
         {
           throw(
             std::runtime_error("Invalid viscous dissipative fluid. "
-                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
+                               "Options are 'fluid0', 'fluid1' or 'both'."));
         }
 
       // assemble the rhs

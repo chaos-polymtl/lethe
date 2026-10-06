@@ -52,9 +52,11 @@ class Shape : public AutoDerivativeFunction<dim>
 {
 public:
   /**
-   * @brief enum class that associate an integer index tp each type of shape
+   * @brief enum class that associate an integer index tp each type of shape.
+   * The enumerator names are the values of the "type" parameter of the
+   * particles.
    */
-  enum ShapeType : std::int8_t
+  enum class ShapeType : std::int8_t
   {
     sphere,
     hyper_rectangle,
@@ -66,9 +68,11 @@ public:
     cylindrical_helix,
     cut_hollow_sphere,
     death_star,
-    composite_shape,
-    rbf_shape,
-    opencascade_shape,
+    composite,
+    rbf,
+    opencascade,
+    superquadric,
+    plane,
   } type;
 
   /**

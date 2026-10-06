@@ -104,7 +104,7 @@ The ``projection-based interface sharpening`` method is selected as the ``interf
         set beta = 10
       end
       subsection interface reinitialization method
-        set type      = projection-based interface sharpening
+        set type      = projection_based_sharpening
         set frequency = 8
         subsection projection-based interface sharpening
           set threshold           = 0.5

@@ -31,7 +31,7 @@ end
 
 subsection CLS
   subsection interface reinitialization method
-    set type      = projection-based interface sharpening
+    set type      = projection_based_sharpening
     set frequency = 2
     set verbosity = verbose
     subsection projection-based interface sharpening
@@ -40,7 +40,7 @@ subsection CLS
       set type                = adaptive
       set max iterations      = 50
       set tolerance           = 1e-8
-      set monitored fluid     = fluid 1
+      set monitored fluid     = fluid1
     end
   end
 end

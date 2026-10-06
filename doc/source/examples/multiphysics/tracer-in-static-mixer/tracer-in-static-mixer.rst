@@ -109,7 +109,7 @@ In this case we consider that we have a passive tracer in water. The units used 
     subsection physical properties
       subsection fluid 0
         set kinematic viscosity      = 0.01
-        set tracer diffusivity model = immersed solid tanh
+        set tracer diffusivity model = immersed_boundary_tanh
         subsection immersed solid tanh
           set tracer diffusivity inside  = 1e-10
           set tracer diffusivity outside = 1e-5
@@ -118,7 +118,7 @@ In this case we consider that we have a passive tracer in water. The units used 
       end
     end
 
-#. The ``tracer diffusivity model`` is ``immersed solid tanh``. This model is used in ``lethe-fluid-sharp`` for tracer flow percolating immersed solids.
+#. The ``tracer diffusivity model`` is ``immersed_boundary_tanh``. This model is used in ``lethe-fluid-sharp`` for tracer flow percolating immersed solids.
 #. The ``tracer diffusivity outside`` is ``1e-5`` :math:`\text{cm²/s}`, as this is a typical value for a passive tracer in a liquid.
 #. The ``tracer diffusivity inside`` is set to ``1e-10`` :math:`\text{cm²/s}`. The low value prevents diffusivity inside the solid while providing numerical stability (:math:`> 0`).
 #. The ``thickness`` is ``5e-1`` :math:`\text{cm}`. At the scale of the problem, this provides a smooth transition without generating oscillations between liquid and solid phases. The thickness is of the order of magnitude of the smallest cell length to restrict the transition to one cell thickness.

@@ -3047,7 +3047,7 @@ HeatTransfer<dim>::set_phase_coefficient(
               throw std::logic_error(
                 "Inconsistency in .prm!\n when CLS = false"
                 "\n use (default value): set postprocessed fluid = both"
-                "\n or: set postprocessed fluid = fluid 0");
+                "\n or: set postprocessed fluid = fluid0");
             }
           break;
         }

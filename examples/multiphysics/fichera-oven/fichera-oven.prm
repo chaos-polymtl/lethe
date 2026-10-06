@@ -28,7 +28,7 @@ end
 
 subsection mesh adaptation
   set type                = adaptive
-  set variable            = electromagnetic fields
+  set variable            = electromagnetic_fields
   set error estimator     = dpg
   set fraction refinement = 0.3
   set fraction coarsening = 0.05
@@ -111,7 +111,7 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 1
     set id   = 1
-    set type = electric field
+    set type = electric_field
     subsection E x real part
       set Function expression = sin(pi*y)
     end

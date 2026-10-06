@@ -26,7 +26,7 @@ This subsection is the most important in a simulation and therefore, the most co
     # BDF scheme parameters
     #---------------------------------------------------
     # Method used to startup high order BDF methods
-    set bdf startup method = multiple step bdf
+    set bdf startup method = multiple_step_bdf
   
     # Scaling factor used in the iterations necessary to startup the BDF schemes
     set startup time scaling = 0.4
@@ -141,8 +141,8 @@ BDF scheme parameters
 ----------------------
 
 * ``bdf startup method``: scheme used to start a high order BDF scheme (2nd order and above). The available options are: 
-	* ``multiple step bdf``:  A lower order BDF scheme is used to start the simulation. For example, in the case of ``bdf3``, the first step is done using ``bdf1``, the second with ``bdf2`` and the third and onward are done with ``bdf3``.
-	* ``initial solution``: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solutions to establish the formal accuracy of the BDF time stepping schemes. 
+	* ``multiple_step_bdf``:  A lower order BDF scheme is used to start the simulation. For example, in the case of ``bdf3``, the first step is done using ``bdf1``, the second with ``bdf2`` and the third and onward are done with ``bdf3``.
+	* ``initial_solution``: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solutions to establish the formal accuracy of the BDF time stepping schemes. 
 
 * ``startup time scaling``: scaling factor used in the iterations necessary to startup the BDF schemes.
 

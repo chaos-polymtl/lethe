@@ -119,7 +119,7 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 1
     set id   = 4
-    set type = electric field
+    set type = electric_field
     subsection E x real part
       set Function expression = 0
     end
@@ -141,7 +141,7 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 2
     set id   = 5
-    set type = magnetic field
+    set type = magnetic_field
     subsection H x real part
       set Function expression = 0
     end

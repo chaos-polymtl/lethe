@@ -12,6 +12,36 @@ using namespace dealii;
 namespace ShapeGenerator
 {
   /**
+   * @brief Return the deprecated strings of the shape types, which remain
+   * accepted in parameter files, composite shape files and particle files.
+   *
+   * @tparam dim Number of spatial dimensions.
+   *
+   * @return The deprecated strings, each paired with its shape type.
+   */
+  template <int dim>
+  const DeprecatedEnumNames<typename Shape<dim>::ShapeType> &
+  deprecated_shape_type_names();
+
+  /**
+   * @brief Return the shape type designated by a string, which is either the
+   * name of a Shape<dim>::ShapeType enumerator or one of the deprecated strings
+   * given by deprecated_shape_type_names(). No deprecation warning is printed,
+   * since the string may come from a composite shape file or a particle file
+   * rather than from a parameter.
+   *
+   * @tparam dim Number of spatial dimensions.
+   *
+   * @param[in] type String designating the type of shape.
+   *
+   * @return The corresponding shape type. An exception is thrown if @p type
+   * designates no shape type.
+   */
+  template <int dim>
+  typename Shape<dim>::ShapeType
+  string_to_shape_type(const std::string &type);
+
+  /**
    * Initializes the shape from its type and arguments
    * @param type the type of shape
    * @param shape_arguments_str the raw arguments

@@ -132,7 +132,7 @@ Creation of the Composite Shape File
 The complete geometry through which the fluid flows contains the helix static mixer as well as the casing around it. We use composite shapes to build the complex geometry; this type of shape is introduced in this example: :doc:`../simple-plane-model-from-composite/simple-plane-model-from-composite`. The main particularities of the current composite shape are:
 
 #. The translation parameter for the ``rbf`` shape is ``-76.201:-20.0098:+15.6051``. It is selected to ensure that the center of the static mixer is located at the origin. The coordinates are taken from ``rbf_generation/bitpit.log``.
-#. The ``hyper rectangle`` is long enough to cover the length of the helix, and just large enough to fit in the background grid.
+#. The ``hyper_rectangle`` is long enough to cover the length of the helix, and just large enough to fit in the background grid.
 #. The ``cylinder`` hole is set to have a very high length to ensure that the difference operation applies properly over the whole domain.
 #. Operation ``15`` forms the casing, and operation ``16`` joins the casing and the helix. The final operation is the one considered as definitive.
 

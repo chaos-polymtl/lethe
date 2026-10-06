@@ -310,8 +310,9 @@ namespace Parameters
     {
       prm.declare_entry(
         "verbosity",
-        "quiet",
-        Patterns::Selection("quiet|verbose"),
+        enum_to_string(Verbosity::quiet),
+        Patterns::Selection(enum_to_selection<Verbosity>(
+          deprecated_verbosity_names(), quiet_or_verbose())),
         "State whether the force on the solid should be printed "
         "Choices are <quiet|verbose>.");
 
@@ -335,11 +336,9 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
-      const std::string op = prm.get("verbosity");
-      if (op == "verbose")
-        verbosity = Verbosity::verbose;
-      if (op == "quiet")
-        verbosity = Verbosity::quiet;
+      verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                            deprecated_verbosity_names(),
+                                            "verbosity");
 
       number_solids = prm.get_integer("number of solids");
       nitsche_solids.resize(number_solids);

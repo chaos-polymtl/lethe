@@ -13,6 +13,8 @@
 #include <deal.II/base/patterns.h>
 
 #include <map>
+#include <string>
+#include <vector>
 
 using namespace dealii;
 
@@ -96,6 +98,50 @@ namespace BoundaryConditions
     impedance_boundary,
     waveguide_port
   };
+
+  /// Deprecated strings of the boundary condition "type" parameters, which
+  /// remain accepted in parameter files
+  inline const DeprecatedEnumNames<BoundaryType>
+    deprecated_boundary_type_names = {
+      {"function weak", BoundaryType::function_weak},
+      {"partial slip", BoundaryType::partial_slip},
+      {"neumann traction", BoundaryType::neumann_traction},
+      {"convection-radiation-flux", BoundaryType::convection_radiation},
+      {"silver muller", BoundaryType::silver_muller},
+      {"electric field", BoundaryType::electric_field},
+      {"magnetic field", BoundaryType::magnetic_field},
+      {"impedance boundary", BoundaryType::impedance_boundary},
+      {"waveguide port", BoundaryType::waveguide_port}};
+
+  /// Boundary condition types of the fluid dynamics
+  inline const std::vector<BoundaryType> fluid_dynamics_boundary_types = {
+    BoundaryType::none,
+    BoundaryType::noslip,
+    BoundaryType::slip,
+    BoundaryType::function,
+    BoundaryType::periodic,
+    BoundaryType::pressure,
+    BoundaryType::neumann_traction,
+    BoundaryType::function_weak,
+    BoundaryType::partial_slip,
+    BoundaryType::outlet};
+
+  /// Boundary condition types of the heat transfer
+  inline const std::vector<BoundaryType> heat_transfer_boundary_types = {
+    BoundaryType::noflux,
+    BoundaryType::temperature,
+    BoundaryType::convection_radiation,
+    BoundaryType::periodic};
+
+  /// Boundary condition types of the time-harmonic Maxwell equations
+  inline const std::vector<BoundaryType> time_harmonic_maxwell_boundary_types =
+    {BoundaryType::pec,
+     BoundaryType::pmc,
+     BoundaryType::silver_muller,
+     BoundaryType::electric_field,
+     BoundaryType::magnetic_field,
+     BoundaryType::impedance_boundary,
+     BoundaryType::waveguide_port};
 
   /**
    * @brief This class is the base class for all boundary conditions. It stores
@@ -297,11 +343,11 @@ namespace BoundaryConditions
   {
     prm.declare_entry(
       "type",
-      "none",
-      Patterns::Selection(
-        "none|noslip|slip|function|periodic|pressure|neumann traction|function weak|partial slip|outlet"),
+      enum_to_string(BoundaryType::none),
+      Patterns::Selection(enum_to_selection<BoundaryType>(
+        deprecated_boundary_type_names, fluid_dynamics_boundary_types)),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|neumann traction|function weak|partial slip|outlet>.");
+      "Choices are <none|noslip|slip|function|periodic|pressure|neumann_traction|function_weak|partial_slip|outlet>.");
 
 
     prm.declare_entry("id",
@@ -441,31 +487,12 @@ namespace BoundaryConditions
         prm.leave_subsection();
 
         // Establish the type of boundary condition
-        const std::string op = prm.get("type");
-        if (op == "none")
-          this->type[boundary_id] = BoundaryType::none;
-        if (op == "noslip")
-          this->type[boundary_id] = BoundaryType::noslip;
-        if (op == "slip")
-          this->type[boundary_id] = BoundaryType::slip;
-        if (op == "function" || op == "function weak" || op == "partial slip")
-          {
-            if (op == "function")
-              this->type[boundary_id] = BoundaryType::function;
-            else if (op == "partial slip")
-              this->type[boundary_id] = BoundaryType::partial_slip;
-            else
-              this->type[boundary_id] = BoundaryType::function_weak;
-          }
-        if (op == "pressure")
-          {
-            this->type[boundary_id] = BoundaryType::pressure;
-          }
-        if (op == "neumann traction")
-          {
-            this->type[boundary_id] = BoundaryType::neumann_traction;
-          }
-        if (op == "periodic")
+        const BoundaryType boundary_type =
+          string_to_enum<BoundaryType>(prm.get("type"),
+                                       deprecated_boundary_type_names,
+                                       "type");
+        this->type[boundary_id] = boundary_type;
+        if (boundary_type == BoundaryType::periodic)
           {
             types::boundary_id periodic_boundary_id =
               prm.get_integer("periodic id");
@@ -527,11 +554,6 @@ namespace BoundaryConditions
                 ->center_of_rotation[2] = prm.get_double("z");
             prm.leave_subsection();
           }
-        if (op == "outlet")
-          {
-            this->type[boundary_id] = BoundaryType::outlet;
-          }
-
         this->beta[boundary_id] = prm.get_double("beta");
         this->boundary_layer_thickness[boundary_id] =
           prm.get_double("boundary layer thickness");
@@ -675,11 +697,11 @@ namespace BoundaryConditions
   {
     prm.declare_entry(
       "type",
-      "noflux",
-      Patterns::Selection(
-        "noflux|temperature|convection-radiation-flux|periodic"),
+      enum_to_string(BoundaryType::noflux),
+      Patterns::Selection(enum_to_selection<BoundaryType>(
+        deprecated_boundary_type_names, heat_transfer_boundary_types)),
       "Type of boundary condition for heat transfer"
-      "Choices are <noflux|temperature|convection-radiation-flux|periodic>.");
+      "Choices are <noflux|temperature|convection_radiation|periodic>.");
 
     prm.declare_entry("id",
                       Utilities::to_string(default_boundary_id, 2),
@@ -797,29 +819,22 @@ namespace BoundaryConditions
                     HeatTransferBoundaryDuplicated(boundary_id));
 
 
-        const std::string op = prm.get("type");
-        if (op == "noflux")
+        const BoundaryType boundary_type =
+          string_to_enum<BoundaryType>(prm.get("type"),
+                                       deprecated_boundary_type_names,
+                                       "type");
+        this->type[boundary_id] = boundary_type;
+        if (boundary_type == BoundaryType::convection_radiation)
           {
-            this->type[boundary_id] = BoundaryType::noflux;
-          }
-        else if (op == "temperature")
-          {
-            this->type[boundary_id] = BoundaryType::temperature;
-          }
-        else if (op == "convection-radiation-flux")
-          {
-            this->type[boundary_id] = BoundaryType::convection_radiation;
             this->has_convection_radiation_bc = true;
 
             // Emissivity validity (0 <= emissivity <= 1) will be checked at
             // evaluation.
           }
-        else if (op == "periodic")
+        else if (boundary_type == BoundaryType::periodic)
           {
             types::boundary_id periodic_boundary_id =
               prm.get_integer("periodic id");
-
-            this->type[boundary_id] = BoundaryType::periodic;
 
             // We attribute a periodic neighbor boundary type to the neighbor
             // boundary to ensure that all boundaries have a defined type
@@ -830,12 +845,6 @@ namespace BoundaryConditions
               .neighbor_id = periodic_boundary_id,
               .direction   = static_cast<unsigned int>(
                 prm.get_integer("periodic direction"))};
-          }
-        else
-          {
-            AssertThrow(
-              false,
-              ExcMessage("Unknown boundary condition type for heat transfer."));
           }
 
         // All the functions are parsed since they might be used for
@@ -1629,11 +1638,11 @@ namespace BoundaryConditions
   {
     prm.declare_entry(
       "type",
-      "silver muller",
-      Patterns::Selection(
-        "pec|pmc|silver muller|electric field|magnetic field|impedance boundary|waveguide port"),
+      enum_to_string(BoundaryType::silver_muller),
+      Patterns::Selection(enum_to_selection<BoundaryType>(
+        deprecated_boundary_type_names, time_harmonic_maxwell_boundary_types)),
       "Type of boundary condition for Time Harmonic Maxwell equations"
-      "Choices are <pec|pmc|silver muller|electric field|magnetic field|impedance boundary|waveguide port>.");
+      "Choices are <pec|pmc|silver_muller|electric_field|magnetic_field|impedance_boundary|waveguide_port>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -1912,42 +1921,10 @@ namespace BoundaryConditions
         prm.leave_subsection();
 
         // Establish the type of boundary condition
-        const std::string op = prm.get("type");
-        if (op == "pec")
-          {
-            this->type[boundary_id] = BoundaryType::pec;
-          }
-        else if (op == "pmc")
-          {
-            this->type[boundary_id] = BoundaryType::pmc;
-          }
-        else if (op == "silver muller")
-          {
-            this->type[boundary_id] = BoundaryType::silver_muller;
-          }
-        else if (op == "electric field")
-          {
-            this->type[boundary_id] = BoundaryType::electric_field;
-          }
-        else if (op == "magnetic field")
-          {
-            this->type[boundary_id] = BoundaryType::magnetic_field;
-          }
-        else if (op == "impedance boundary")
-          {
-            this->type[boundary_id] = BoundaryType::impedance_boundary;
-          }
-        else if (op == "waveguide port")
-          {
-            this->type[boundary_id] = BoundaryType::waveguide_port;
-          }
-        else
-          {
-            AssertThrow(
-              false,
-              ExcMessage(
-                "Unknown boundary condition type for Time Harmonic Maxwell."));
-          }
+        this->type[boundary_id] =
+          string_to_enum<BoundaryType>(prm.get("type"),
+                                       deprecated_boundary_type_names,
+                                       "type");
       }
   }
 

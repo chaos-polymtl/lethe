@@ -87,7 +87,7 @@ end
 #---------------------------------------------------
 
 subsection velocity source
-  set permeability model                    = carman-kozeny phase change
+  set permeability model                    = carman_kozeny_phase_change
   set Carman-Kozeny permeability area       = 5e-6, 5e-7
   set Carman-Kozeny division tolerance      = 1e-3, 1e-3
   set Carman-Kozeny fluid with phase change = both

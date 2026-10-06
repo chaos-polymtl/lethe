@@ -21,14 +21,14 @@ namespace Parameters
   /**
    * @brief Different interface reinitialization method types:
    *  - none
-   *  - sharpening: projection-based interface sharpening
+   *  - projection_based_sharpening: projection-based interface sharpening
    *  - pde_based: PDE-based reinitialization
    *  - geometric: geometric redistanciation
    */
   enum class ReinitializationMethodType : std::int8_t
   {
     none,
-    sharpening,
+    projection_based_sharpening,
     pde_based,
     geometric
   };

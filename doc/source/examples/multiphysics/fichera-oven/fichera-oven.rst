@@ -66,7 +66,7 @@ Physical Problem
 
     See the :doc:`DPG formulation for time-harmonic Maxwell problems <../../../theory/multiphysics/electromagnetism/time_harmonic_weak_form>` theory guide for the full derivation and the DPG variational formulation used by the solver.
 
-The cavity is filled with vacuum (:math:`\varepsilon_\mathrm{r,eff}=\mu_\mathrm{r}=1`) and its walls are perfectly-conducting (``pec``), except for the small top face, on which a Dirichlet ``electric field`` condition of the form :math:`E_x = \sin(\pi y)` is imposed. The excitation frequency is set to :math:`f=\mathrm{238.567258\,MHz}`, corresponding to a dimensionless angular frequency of :math:`\omega = 5`.
+The cavity is filled with vacuum (:math:`\varepsilon_\mathrm{r,eff}=\mu_\mathrm{r}=1`) and its walls are perfectly-conducting (``pec``), except for the small top face, on which a Dirichlet ``electric_field`` condition of the form :math:`E_x = \sin(\pi y)` is imposed. The excitation frequency is set to :math:`f=\mathrm{238.567258\,MHz}`, corresponding to a dimensionless angular frequency of :math:`\omega = 5`.
 
 Since the cavity has no known analytical solution, this example does not rely on an analytical solution to assess convergence, as is done, for instance, in the :doc:`waveguide example <../waveguide/waveguide>`. Instead, it relies on:
 
@@ -103,7 +103,7 @@ This is the core subsection of this example:
 
     subsection mesh adaptation
         set type                = adaptive
-        set variable            = electromagnetic fields
+        set variable            = electromagnetic_fields
         set error estimator     = dpg
         set fraction refinement = 0.3
         set fraction coarsening = 0.05
@@ -111,7 +111,7 @@ This is the core subsection of this example:
     end
 
 - ``set type = adaptive`` requests :math:`h`-adaptive refinement, as opposed to a ``uniform`` refinement of every cell.
-- ``set error estimator = dpg`` selects the DPG built-in residual error estimator, which is the only error estimator available for the ``electromagnetic fields`` variable. Unlike the more generic ``kelly`` estimator (a jump-based indicator applicable to every physics), the ``dpg`` estimator is intrinsic to the DPG variational formulation. This error estimator is computed from the norm, in the test space, of the local residual representation function on each cell (the residual is represented by an error representation function through the Riesz map, for more details see :doc:`DPG formulation for time-harmonic Maxwell problems <../../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell>`). It is available at essentially no extra cost once the DPG system has been solved on that cell. 
+- ``set error estimator = dpg`` selects the DPG built-in residual error estimator, which is the only error estimator available for the ``electromagnetic_fields`` variable. Unlike the more generic ``kelly`` estimator (a jump-based indicator applicable to every physics), the ``dpg`` estimator is intrinsic to the DPG variational formulation. This error estimator is computed from the norm, in the test space, of the local residual representation function on each cell (the residual is represented by an error representation function through the Riesz map, for more details see :doc:`DPG formulation for time-harmonic Maxwell problems <../../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell>`). It is available at essentially no extra cost once the DPG system has been solved on that cell. 
 - ``set fraction refinement = 0.3`` and ``set fraction coarsening = 0.05`` respectively mark the highest error cells that represent :math:`30\%` of the total error indicator for refinement and the lowest error cells that represent :math:`5\%` of the total error indicator for coarsening (using the deal.II ``refine_and_coarsen_fixed_fraction`` strategy). This is done at every adaptation cycle.
 
 FEM
@@ -188,7 +188,7 @@ Time-Harmonic Maxwell
         set electromagnetic frequency = 2.38567258e8
     end
 
-This is the only parameter required in this subsection since, unlike the waveguide example, no waveguide-port inlet is used here: the excitation is instead applied directly as a Dirichlet ``electric field`` boundary condition (see below).
+This is the only parameter required in this subsection since, unlike the waveguide example, no waveguide-port inlet is used here: the excitation is instead applied directly as a Dirichlet ``electric_field`` boundary condition (see below).
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -218,7 +218,7 @@ The electromagnetic boundary conditions are specified in the ``boundary conditio
         end
         subsection bc 1
             set id   = 1
-            set type = electric field
+            set type = electric_field
             subsection E x real part
                 set Function expression = sin(pi*y)
             end
@@ -241,7 +241,7 @@ The electromagnetic boundary conditions are specified in the ``boundary conditio
     end
 
 - ``bc 0`` (``id = 0``) covers every wall of the staircase except the top port and imposes a ``pec`` (perfect electric conductor) condition, :math:`\mathbf{n}\times\mathbf{E}=0`.
-- ``bc 1`` (``id = 1``) covers the small top face and imposes a Dirichlet ``electric field`` condition. Only the real part of :math:`E_x` is non-zero, and is set to :math:`\sin(\pi y)`.
+- ``bc 1`` (``id = 1``) covers the small top face and imposes a Dirichlet ``electric_field`` condition. Only the real part of :math:`E_x` is non-zero, and is set to :math:`\sin(\pi y)`.
 
 Linear Solver Control
 ~~~~~~~~~~~~~~~~~~~~~
@@ -328,8 +328,8 @@ Possibilities for Extension
 ---------------------------
 
 - **Compare against uniform refinement:** Set ``mesh adaptation type = uniform`` and re-run the case. Comparing the resulting convergence curve (error versus number of degrees of freedom) with the adaptive one obtained above would illustrate the benefit of adaptive refinement for problems with corner singularities.
-- **Use the Kelly error estimator:** Set ``mesh adaptation variable = electric field, magnetic field`` and ``error estimator = kelly, kelly`` to compare the mesh refinement pattern, and the resulting convergence, obtained with a generic jump-based estimator against those obtained with the method-intrinsic DPG estimator.
-- **Change the excitation:** Modify the frequency or the profile of the ``electric field`` boundary condition on the port to excite different resonant modes of the cavity and observe how the refinement pattern adapts to the new field distribution.
+- **Use the Kelly error estimator:** Set ``mesh adaptation variable = electric_field, magnetic_field`` and ``error estimator = kelly, kelly`` to compare the mesh refinement pattern, and the resulting convergence, obtained with a generic jump-based estimator against those obtained with the method-intrinsic DPG estimator.
+- **Change the excitation:** Modify the frequency or the profile of the ``electric_field`` boundary condition on the port to excite different resonant modes of the cavity and observe how the refinement pattern adapts to the new field distribution.
 - **Change the polynomial degree:** Change ``electromagnetics trial degree`` (and correspondingly ``electromagnetics test degree``) to study how the polynomial degree affects the convergence rate.
 
 References

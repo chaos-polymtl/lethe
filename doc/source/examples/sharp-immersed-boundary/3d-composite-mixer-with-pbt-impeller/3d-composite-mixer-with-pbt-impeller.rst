@@ -128,10 +128,10 @@ The section defining each parameter for the particles has certain requirements:
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function weak`` type of boundary is used.
+Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function_weak`` type of boundary is used.
 Two aspects need special consideration:
 
-1. ``function weak`` is a variation of ``function``. It is used to weakly impose a Dirichlet boundary condition, and it is necessary when using ``lethe-fluid-sharp``.
+1. ``function_weak`` is a variation of ``function``. It is used to weakly impose a Dirichlet boundary condition, and it is necessary when using ``lethe-fluid-sharp``.
 2. ``beta`` has to be defined. It is a Nitsche penalization parameter that enforces more strongly the boundary condition when it increases (see :doc:`../../../parameters/cfd/nitsche`).
 
 .. code-block:: text
@@ -148,7 +148,7 @@ Two aspects need special consideration:
     end
     subsection bc 2
       set id   = 2
-      set type = function weak
+      set type = function_weak
       set beta = 1
       subsection u
         set Function expression = 0

@@ -82,7 +82,7 @@ This subsection controls the post-processing other than the forces and torque on
     set temperature statistics name       = temperature_statistics
     set calculate heat flux               = false
     set heat flux name                    = heat_flux
-    set monitored fluid with phase change = fluid 0
+    set monitored fluid with phase change = fluid0
     set calculate algebraic melt volume   = false
     set algebraic melt volume name        = melt_volume_alge
     set calculate geometric melt volume   = false
@@ -240,9 +240,9 @@ Multiphysics Post-processing
 
     * ``tracer statistics name``: output filename for tracer statistics calculations.
 
-* ``postprocessed fluid``: fluid domain used for thermal postprocesses. Choices are : ``fluid 0``, ``fluid 1``, or ``both`` (default).
-    * For monophasic simulations (``set cls = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
-    * For multiphasic simulations (``set cls = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
+* ``postprocessed fluid``: fluid domain used for thermal postprocesses. Choices are : ``fluid0``, ``fluid1``, or ``both`` (default).
+    * For monophasic simulations (``set cls = false`` in :doc:`multiphysics`), ``both`` and ``fluid0`` are equivalent and the temperature statistics are computed over the entire domain.
+    * For multiphasic simulations (``set cls = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid0`` or ``fluid1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
     .. note::
 
@@ -300,7 +300,7 @@ Multiphysics Post-processing
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
-* ``monitored fluid with phase change``:  fluid with phase change properties, either ``fluid 0`` or ``fluid 1`` (for CLS multiphase flows). The current implementation does not track two melt volumes simultaneously.
+* ``monitored fluid with phase change``:  fluid with phase change properties, either ``fluid0`` or ``fluid1`` (for CLS multiphase flows). The current implementation does not track two melt volumes simultaneously.
 
 * ``calculate algebraic melt volume``: calculates the algebraic melt volume in simulations with phase change. The algebraic melt volume (:math:`V_\mathrm{i,melt,alge}` with :math:`i \in \{0,1\}` depending on the fluid) corresponds to the volume (surface, in 2D) integral of the liquid fraction in the specified ``monitored fluid with phase change`` domain:
 

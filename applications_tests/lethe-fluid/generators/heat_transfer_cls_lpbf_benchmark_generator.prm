@@ -190,11 +190,11 @@ subsection physical properties
 
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
+    set type = fluid_fluid
     subsection fluid-fluid interaction
       set first fluid id                              = 0
       set second fluid id                             = 1
-      set surface tension model                       = phase change
+      set surface tension model                       = phase_change
       set surface tension coefficient                 = 1.52
       set reference state temperature                 = 1928
       set temperature-driven surface tension gradient = -5.5e-4
@@ -235,7 +235,7 @@ subsection CLS
     set beta      = 20
   end
   subsection interface reinitialization method
-    set type      = projection-based interface sharpening
+    set type      = projection_based_sharpening
     set frequency = 10
     set verbosity = quiet
     subsection projection-based interface sharpening
@@ -244,7 +244,7 @@ subsection CLS
       set type                    = adaptive
       set threshold max deviation = 0.4
       set max iterations          = 50
-      set monitored fluid         = fluid 1
+      set monitored fluid         = fluid1
       set tolerance               = 1e-7
     end
   end

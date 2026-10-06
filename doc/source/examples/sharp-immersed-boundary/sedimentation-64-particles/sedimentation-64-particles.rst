@@ -46,7 +46,7 @@ Simulation Control
 
     subsection simulation control
       set method             = bdf2
-      set bdf startup method = multiple step bdf
+      set bdf startup method = multiple_step_bdf
       set time step          = 0.0025 
       set time end           = 5      
       set output name        = out    

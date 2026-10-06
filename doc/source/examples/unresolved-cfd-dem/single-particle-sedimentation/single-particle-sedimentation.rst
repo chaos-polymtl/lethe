@@ -12,7 +12,7 @@ Features
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 - Simulates a single particle sedimentation in water
-- Uses the ``qcm`` void fraction scheme with ``gauss-lobatto`` quadrature
+- Uses the ``qcm`` void fraction scheme with ``gauss_lobatto`` quadrature
 - Python post-processing script using `PyVista <https://docs.pyvista.org/>`_
 
 
@@ -212,7 +212,7 @@ Void Fraction
 Since we are calculating the void fraction using the particle insertion of the DEM simulation, we need to read the DEM files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the ``dem file name = dem``.
 We choose to use the quadrature centered method (`QCM <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``.
 
-We do not want the volume of the sphere to be equal to the volume of the element. For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Then, we set the ``qcm smoothing length`` so that the averaging sphere diameter is twice our particle's diameter. We also set the L2 smoothing length equal to 10 times the particle diameter. Lastly, we choose the ``gauss-lobatto`` quadrature rule with 5 quadrature points. More details on these parameters are available on the `documentation on void fraction parameters <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_.
+We do not want the volume of the sphere to be equal to the volume of the element. For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Then, we set the ``qcm smoothing length`` so that the averaging sphere diameter is twice our particle's diameter. We also set the L2 smoothing length equal to 10 times the particle diameter. Lastly, we choose the ``gauss_lobatto`` quadrature rule with 5 quadrature points. More details on these parameters are available on the `documentation on void fraction parameters <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_.
 
 .. code-block:: text
 
@@ -223,7 +223,7 @@ We do not want the volume of the sphere to be equal to the volume of the element
       set read dem                     = true
       set dem file name                = dem
       set l2 smoothing length          = 0.02663
-      set quadrature rule              = gauss-lobatto
+      set quadrature rule              = gauss_lobatto
       set n quadrature points          = 5
     end
 
