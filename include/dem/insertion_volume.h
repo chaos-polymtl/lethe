@@ -6,6 +6,8 @@
 
 #include <dem/insertion.h>
 
+#include <deal.II/base/tensor.h>
+
 using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
@@ -61,7 +63,8 @@ public:
   virtual void
   serialize(boost::archive::text_oarchive &ar) override
   {
-    ar &particles_of_each_type_remaining &current_inserting_particle_type;
+    ar &particles_of_each_type_remaining &current_inserting_particle_type
+      &insertion_counter;
   }
 
   /**
@@ -73,7 +76,8 @@ public:
   virtual void
   deserialize(boost::archive::text_iarchive &ar) override
   {
-    ar &particles_of_each_type_remaining &current_inserting_particle_type;
+    ar &particles_of_each_type_remaining &current_inserting_particle_type
+      &insertion_counter;
   }
 
 private:
@@ -101,18 +105,14 @@ private:
    *
    * @param[out] insertion_location Insertion location of the particle
    * @param[in] id Particle_id
-   * @param[in] random_number1 A random number to create randomness in volume
-   * insertion
-   * @param[in] random_number2 A random number to create randomness in volume
-   * insertion
+   * @param[in] offsets Random offsets indexed by spatial direction
    * @param[in] insertion_information DEM insertion parameters declared in the
    * .prm file
    */
   void
   find_insertion_location(Point<dim>               &insertion_location,
                           const unsigned int        id,
-                          const double              random_number1,
-                          const double              random_number2,
+                          const Tensor<1, dim>     &offsets,
                           const InsertionInfo<dim> &insertion_information);
 
   /**
@@ -131,6 +131,10 @@ private:
   /// Number of particles of each type that remain to be inserted in the
   /// upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
+
+  /// Number of insertion steps performed so far, used with the insertion
+  /// seed to generate different random offsets at every insertion step
+  unsigned int insertion_counter;
 
   // Number of insertion points in the x, y and z directions
   std::vector<int> number_of_particles_directions;
