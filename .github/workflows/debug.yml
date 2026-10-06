@@ -51,6 +51,18 @@ jobs:
           cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
           ninja -j${{ env.COMPILE_JOBS }}
 
+      # The executables of the unit tests are not part of the default target.
+      # If they are not compiled here, every unit test compiles its own
+      # executable when ctest launches it, with its own ninja process. Since
+      # the tests run in parallel, these processes then write concurrently to
+      # the .ninja_deps file of the build directory, which ninja does not
+      # support. The file ends up corrupted, ninja crashes (segmentation fault)
+      # and every test launched afterwards fails at its BUILD stage.
+      - name: Compile Lethe unit tests (Debug-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          cd build-debug
+          ninja -j${{ env.COMPILE_JOBS }} compile_test_executables
+
       # These tests require a single core each so we will run them in parallel
       - name: Run Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
         run: |
