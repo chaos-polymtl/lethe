@@ -874,6 +874,59 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
   this->vertices_cell_mapping();
 }
 
+// ADAM
+template <int dim, typename PropertiesIndex>
+void
+CFDDEMSolver<dim, PropertiesIndex>::connect_lost_particles_signal()
+{
+  this->particle_handler.signals.particle_lost.connect(
+      [this](const typename Particles::ParticleIterator<dim> &particle, 
+        const typename parallel::distributed::Triangulation<dim, dim>::active_cell_iterator &cell) {
+          this->track_lost_particles(particle, cell);
+      });
+}
+
+template <int dim, typename PropertiesIndex>
+void
+CFDDEMSolver<dim, PropertiesIndex>::track_lost_particles(
+  const typename Particles::ParticleIterator<dim> &particle,
+  const typename parallel::distributed::Triangulation<dim, dim>::active_cell_iterator &cell)
+{
+  typename dem_data_structures<dim>::lost_particle_data lost_particle;
+  lost_particle.id = particle->get_id();
+  lost_particle.location = particle->get_location();
+  lost_particle.properties.assign(particle->get_properties().begin(), particle->get_properties().end());
+  this->lost_particles_data.push_back(lost_particle);
+}
+// DLH
+
+template <int dim, typename PropertiesIndex>
+void
+CFDDEMSolver<dim, PropertiesIndex>::insert_particles()
+{
+  // If the insertion frequency is set to 0, then no particles are going
+  // to be inserted in the CFD-DEM simulation and the function returns
+  if (dem_parameters.insertion_info.insertion_frequency == 0)
+    return;
+
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+  if ((this->simulation_control->get_iteration_number() %
+       dem_parameters.insertion_info.insertion_frequency) == 1 ||
+      this->simulation_control->get_iteration_number() == 1)
+    {
+      insertion_object->insert(this->particle_handler,
+                               *parallel_triangulation,
+                               dem_parameters);
+
+      dem_action_manager->particle_insertion_step();
+
+      // Sort particles after insertion
+      sort_particles_into_subdomains_and_cells();
+    }
+}
+
 template <int dim, typename PropertiesIndex>
 void
 CFDDEMSolver<dim, PropertiesIndex>::add_fluid_particle_interaction_force()
@@ -919,33 +972,6 @@ CFDDEMSolver<dim, PropertiesIndex>::add_fluid_particle_interaction_torque()
         particle_properties[PropertiesIndex::fem_torque_y];
       torque[particle_id][2] +=
         particle_properties[PropertiesIndex::fem_torque_z];
-    }
-}
-
-template <int dim, typename PropertiesIndex>
-void
-CFDDEMSolver<dim, PropertiesIndex>::insert_particles()
-{
-  // If the insertion frequency is set to 0, then no particles are going
-  // to be inserted in the CFD-DEM simulation and the function returns
-  if (dem_parameters.insertion_info.insertion_frequency == 0)
-    return;
-
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
-  if ((this->simulation_control->get_iteration_number() %
-       dem_parameters.insertion_info.insertion_frequency) == 1 ||
-      this->simulation_control->get_iteration_number() == 1)
-    {
-      insertion_object->insert(this->particle_handler,
-                               *parallel_triangulation,
-                               dem_parameters);
-
-      dem_action_manager->particle_insertion_step();
-
-      // Sort particles after insertion
-      sort_particles_into_subdomains_and_cells();
     }
 }
 
@@ -1609,16 +1635,38 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
       "To run a steady simulation of a fluid-particle mixture, the lethe-fluid-vans application should be used."));
 
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
+  
+  // ADAM
+  if (this->cfd_dem_simulation_parameters.cfd_parameters.mortar_parameters.enable)
+  {
+    // Mortar load balancing
+      this->connect_mortar_weight_signals();
+      this->connect_lost_particles_signal();
 
-  read_mesh_and_manifolds(
-    *this->triangulation,
-    this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
-    this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
-    this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-        .restart ||
-      this->cfd_dem_simulation_parameters.void_fraction->read_dem,
-    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
-      .periodic_boundaries);
+      read_mesh_and_manifolds_for_stator_and_rotor(
+        *this->triangulation,
+        this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+        this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+        this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters.restart ||
+          this->cfd_dem_simulation_parameters.void_fraction->read_dem,
+        this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.periodic_boundaries,
+        this->cfd_dem_simulation_parameters.cfd_parameters.mortar_parameters);
+      // Create and initialize mapping cache
+      this->mapping_cache =
+        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+      this->rotate_rotor_mapping(true);
+  }
+  else
+    read_mesh_and_manifolds(
+      *this->triangulation,
+      this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+      this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+      this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+          .restart ||
+        this->cfd_dem_simulation_parameters.void_fraction->read_dem,
+      this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
+        .periodic_boundaries);
+  // DLH
 
   dem_setup_parameters();
 
@@ -1651,6 +1699,7 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
         .restart)
     dem_action_manager->restart_simulation();
 
+  // DELAMODIF???
   // Initialize the DEM parameters and generate the required ghost particles
   initialize_dem_parameters();
 
@@ -1683,6 +1732,9 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
       insert_particles();
 
       this->dynamic_flow_control();
+      // ADAM
+      this->update_mortar_configuration();
+      // DLH
 
       if (!this->simulation_control->is_at_start())
         {
