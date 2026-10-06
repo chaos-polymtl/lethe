@@ -127,6 +127,14 @@ namespace DEM
       periodic_particle_contact_info   second_particles;
     };
 
+    // Structure to hold information about lost particles for reinsertion
+    struct lost_particle_data
+    {
+      types::particle_index id;
+      Point<dim> location;
+      std::vector<double> properties;
+    };
+
     // <particle id, (particle one iterator, <particle id, particle-particle
     // info>)>
     using adjacent_particle_pairs =
