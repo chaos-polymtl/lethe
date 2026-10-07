@@ -1227,10 +1227,11 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
   dealii::Vector<float> &estimated_error_per_cell)
 {
   // For efficiency, the DPG error estimator is computed in the same loop as the
-  // assembly of the system matrix and rhs, so we do not implement it here as a
-  // separate loop. The estimated error per cell is computed and stored in the
-  // member variable local_estimated_error_per_cell during the assembly, and
-  // then used for marking the cells for refinement.
+  // reconstruction of the interior solution, so we do not implement it here as
+  // a separate loop. The estimated error per cell is computed and stored in the
+  // member variable local_estimated_error_per_cell during the reconstruction if
+  // the DPG error estimator is activated, and then used for marking the cells
+  // for refinement.
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // Here we add a flag to be sure if the local_estimated_error_per_cell has
@@ -2405,9 +2406,6 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
     GlobalVectorType empty_vector;
     this->locally_owned_solution_interior.swap(empty_vector);
   }
-
-  this->locally_owned_solution_interior.reinit(
-    this->locally_owned_dofs_trial_interior, mpi_communicator);
 
   // We also output the global error indicator if the dpg error estimator is
   // activated and in verbose mode

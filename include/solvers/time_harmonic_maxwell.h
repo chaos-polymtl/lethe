@@ -69,6 +69,12 @@ DeclException1(
   << "The boundary id: " << arg1
   << " is defined in the triangulation, but not as a boundary condition for the TimeHarmonicMaxwell physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
+DeclException1(
+  TimeHarmonicMaxwellDimensionNotSupported,
+  int,
+  << "The time-harmonic Maxwell solver does not support dimension: " << arg1
+  << ". Currently, only 3D problems are supported as the 2D version of curls and cross products have completely different definitions than their 3D counterparts.");
+
 template <int dim>
 class TimeHarmonicMaxwell : public AuxiliaryPhysics<dim, VectorType>
 {
@@ -569,7 +575,7 @@ private:
   /**
    * @brief WorkStream copier of the interior reconstruction. It adds the
    * interior solution of a cell, computed by
-   * reconstruct_local_interior_solution_and_residual(), in the global vector
+   * `reconstruct_local_interior_solution`, in the global vector
    * locally_owned_solution_interior. This is done with the dof indices of the
    * cell stored in the copy data, which is
    * equivalent to cell->distribute_local_to_global(local_vector,

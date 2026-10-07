@@ -150,16 +150,19 @@ compute_waveguide_port_excitation(
 /**
  * @brief Class that assembles the cell terms of the ultraweak DPG formulation
  * of the time-harmonic Maxwell equations. With the test functions
- * \f$\mathbf{F}\f$ (electric) and \f$\mathbf{I}\f$ (magnetic), it assembles
+ * \f$\mathbf{F}\f$ (electric) and \f$\mathbf{I}\f$ (magnetic), it assembles:
+ *
  * - the graph norm of the test space in the Gram matrix \f$G\f$:
  *   \f$(\mathbf{F}, \mathbf{F}) + (\nabla \times \mathbf{F}, \nabla \times
  *   \mathbf{F}) + (i\omega\varepsilon \mathbf{F}, i\omega\varepsilon
  *   \mathbf{F})\f$ and the equivalent terms coupling \f$\mathbf{F}\f$ and
  *   \f$\mathbf{I}\f$ and for \f$\mathbf{I}\f$ alone;
+ *
  * - the interior bilinear form in the matrix \f$B\f$:
  *   \f$(i\omega\varepsilon \mathbf{E}, \mathbf{F}) + (\mathbf{H}, \nabla
  *   \times \mathbf{F}) + (\mathbf{E}, \nabla \times \mathbf{I}) -
  *   (i\omega\mu \mathbf{H}, \mathbf{I})\f$;
+ *
  * - the interior load vector \f$l\f$, which is zero since no volume source
  *   term is considered at the moment.
  *

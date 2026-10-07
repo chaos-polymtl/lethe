@@ -290,43 +290,59 @@ public:
     M1_matrix    = 0;
   }
 
-  // Uncondensed local DPG system filled by the assemblers
+  // Local Gram matrix
   LAPACKFullMatrix<double> G_matrix;
+  // Local interior bilinear form matrix
   LAPACKFullMatrix<double> B_matrix;
+  // Local skeleton bilinear form matrix
   LAPACKFullMatrix<double> B_hat_matrix;
-  Vector<double>           l_vector;
+  // Local load vector
+  Vector<double> l_vector;
 
-  // Operators of the static condensation and temporary matrices used for the
-  // matrix products: tmp_matrix_M2M1 = M_2^\dagger M_1^{-1},
-  // tmp_matrix_M2M1M2 = M_2^\dagger M_1^{-1} M_2 and
-  // tmp_matrix_M2M1M4 = M_2^\dagger M_1^{-1} M_4
+  // Static condensation matrix 1 \f$M_1 = B^\dagger G^{-1} B\f$
   LAPACKFullMatrix<double> M1_matrix;
+  // Static condensation matrix 2 \f$M_2 = B^\dagger G^{-1} \hat{B}\f$
   LAPACKFullMatrix<double> M2_matrix;
+  // Static condensation matrix 3 \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$
   LAPACKFullMatrix<double> M3_matrix;
+  // Static condensation matrix 4 \f$M_4 = B^\dagger G^{-1}\f$
   LAPACKFullMatrix<double> M4_matrix;
+  // Static condensation matrix 5 \f$M_5 = \hat{B}^\dagger G^{-1} B\f$
   LAPACKFullMatrix<double> M5_matrix;
+  // Temporary matrices products M_2^\dagger M_1^{-1}
   LAPACKFullMatrix<double> tmp_matrix_M2M1;
+  // Temporary matrices products M_2^\dagger M_1^{-1} M_2
   LAPACKFullMatrix<double> tmp_matrix_M2M1M2;
+  // Temporary matrices products M_2^\dagger M_1^{-1} M_4
   LAPACKFullMatrix<double> tmp_matrix_M2M1M4;
 
-  // Condensed skeleton system distributed in the global system
-  FullMatrix<double>                   local_matrix;
-  Vector<double>                       local_rhs;
+  // Cell condensed skeleton system
+  FullMatrix<double> local_matrix;
+  // Cell condensed skeleton right-hand side
+  Vector<double> local_rhs;
+  // Cell dof indices of the skeleton trial space
   std::vector<types::global_dof_index> local_dof_indices;
 
-  // Interior reconstruction and DPG residual. The temporary vectors are
-  // tmp_vector_interior = M_2 * x_skeleton, used when reconstructing the
-  // interior solution, and tmp_vector_error_indicator = B * x_interior +
-  // B_hat * x_skeleton, used when computing the error indicator.
-  Vector<double>                       local_skeleton_solution;
-  Vector<double>                       local_interior_rhs;
-  Vector<double>                       local_interior_solution;
-  Vector<double>                       tmp_vector_interior;
-  Vector<double>                       tmp_vector_error_indicator;
-  Vector<double>                       local_residual;
+  // Cell skeleton solution
+  Vector<double> local_skeleton_solution;
+  // Cell interior right-hand side
+  Vector<double> local_interior_rhs;
+  // Cell interior solution
+  Vector<double> local_interior_solution;
+  // Temporary vectors used for the interior reconstruction M_2 * x_skeleton
+  Vector<double> tmp_vector_interior;
+  // Temporary vectors used for the error indicator B * x_interior + B_hat *
+  // x_skeleton
+  Vector<double> tmp_vector_error_indicator;
+  // Cell error representation function (Riesz representation of the residual)
+  Vector<double> local_residual;
+  // Cell dof indices of the interior trial space
   std::vector<types::global_dof_index> local_dof_indices_trial_interior;
-  double                               local_residual_norm_squared;
-  unsigned int                         active_cell_index;
+  // Squared norm of the DPG residual, which is the DPG error indicator of the
+  // cell
+  double local_residual_norm_squared;
+  // Index of the active cell being assembled
+  unsigned int active_cell_index;
 
   // Boolean used to indicate if the cell being assembled is local or not
   // This information is used to indicate to the copy_local_to_global function
