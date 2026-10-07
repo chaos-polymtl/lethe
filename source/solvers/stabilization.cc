@@ -322,15 +322,28 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
   const double relative_variation_tolerance =
     100. * std::numeric_limits<double>::epsilon();
 
+  // The bounds of every component of the gradient are relaxed by this fraction
+  // of the largest norm of the gradient among the cells that share the vertex.
+  // The component of the gradient along a direction in which the solution
+  // does not vary is only made of noise (round-off and error of the linear
+  // solver), and so are its bounds. Comparing the two yields an arbitrary
+  // factor which removes the higher-order part of the solution, including
+  // where it is smooth. With this relaxation, a variation of a component of
+  // the gradient is only limited if it is significant with respect to the
+  // gradient of the solution around the vertex.
+  const double relative_gradient_tolerance = 1e-3;
+
   // Largest factor between zero and one by which the variation of a quantity
   // between the centroid of a cell and one of its vertices can be multiplied
-  // for the value at the vertex to remain within the bounds of this vertex.
-  // The bounds always include the value at the centroid.
+  // for the value at the vertex to remain within the bounds of this vertex,
+  // which are widened by the bounds relaxation. The bounds always include the
+  // value at the centroid.
   const auto calculate_correction_factor =
     [relative_variation_tolerance](const double centroid_value,
                                    const double vertex_value,
                                    const double lower_bound,
-                                   const double upper_bound) {
+                                   const double upper_bound,
+                                   const double bounds_relaxation) {
       const double variation = vertex_value - centroid_value;
       const double variation_tolerance =
         relative_variation_tolerance * std::max({std::abs(centroid_value),
@@ -338,9 +351,15 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
                                                  std::abs(lower_bound),
                                                  std::abs(upper_bound)});
       if (variation > variation_tolerance)
-        return std::clamp((upper_bound - centroid_value) / variation, 0., 1.);
+        return std::clamp((upper_bound + bounds_relaxation - centroid_value) /
+                            variation,
+                          0.,
+                          1.);
       if (variation < -variation_tolerance)
-        return std::clamp((lower_bound - centroid_value) / variation, 0., 1.);
+        return std::clamp((lower_bound - bounds_relaxation - centroid_value) /
+                            variation,
+                          0.,
+                          1.);
       return 1.;
     };
 
@@ -385,6 +404,7 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
                                                       largest_gradient);
   std::vector<Tensor<1, dim>> max_gradient_per_vertex(n_vertices,
                                                       -largest_gradient);
+  std::vector<double>         max_gradient_norm_per_vertex(n_vertices, 0.);
   std::vector<bool>           vertex_is_at_boundary(n_vertices, false);
 
   // Extend the bounds of a vertex with the mean and the gradient of a cell.
@@ -394,6 +414,9 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
       std::min(min_mean_per_vertex[vertex_index], mean_per_cell[cell_index]);
     max_mean_per_vertex[vertex_index] =
       std::max(max_mean_per_vertex[vertex_index], mean_per_cell[cell_index]);
+    max_gradient_norm_per_vertex[vertex_index] =
+      std::max(max_gradient_norm_per_vertex[vertex_index],
+               gradient_per_cell[cell_index].norm());
     for (unsigned int d = 0; d < dim; ++d)
       {
         min_gradient_per_vertex[vertex_index][d] =
@@ -543,14 +566,18 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
 
       for (const auto &[group, coinciding_vertices] : coinciding_vertex_groups)
         {
-          double         min_mean     = largest_value;
-          double         max_mean     = -largest_value;
-          Tensor<1, dim> min_gradient = largest_gradient;
-          Tensor<1, dim> max_gradient = -largest_gradient;
+          double         min_mean          = largest_value;
+          double         max_mean          = -largest_value;
+          Tensor<1, dim> min_gradient      = largest_gradient;
+          Tensor<1, dim> max_gradient      = -largest_gradient;
+          double         max_gradient_norm = 0.;
           for (const auto &vertex_index : coinciding_vertices)
             {
               min_mean = std::min(min_mean, min_mean_per_vertex[vertex_index]);
               max_mean = std::max(max_mean, max_mean_per_vertex[vertex_index]);
+              max_gradient_norm =
+                std::max(max_gradient_norm,
+                         max_gradient_norm_per_vertex[vertex_index]);
               for (unsigned int d = 0; d < dim; ++d)
                 {
                   min_gradient[d] =
@@ -563,10 +590,11 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
             }
           for (const auto &vertex_index : coinciding_vertices)
             {
-              min_mean_per_vertex[vertex_index]     = min_mean;
-              max_mean_per_vertex[vertex_index]     = max_mean;
-              min_gradient_per_vertex[vertex_index] = min_gradient;
-              max_gradient_per_vertex[vertex_index] = max_gradient;
+              min_mean_per_vertex[vertex_index]          = min_mean;
+              max_mean_per_vertex[vertex_index]          = max_mean;
+              min_gradient_per_vertex[vertex_index]      = min_gradient;
+              max_gradient_per_vertex[vertex_index]      = max_gradient;
+              max_gradient_norm_per_vertex[vertex_index] = max_gradient_norm;
             }
         }
     }
@@ -639,11 +667,15 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
                                        mean_value,
                                        mean_value + gradient * vertex_position,
                                        min_mean_per_vertex[vertex_index],
-                                       max_mean_per_vertex[vertex_index]));
+                                       max_mean_per_vertex[vertex_index],
+                                       0.));
 
                   // Linear reconstruction of the gradient at the vertex
                   const Tensor<1, dim> vertex_gradient =
                     gradient + hessian_per_cell[cell_index] * vertex_position;
+                  const double gradient_bounds_relaxation =
+                    relative_gradient_tolerance *
+                    max_gradient_norm_per_vertex[vertex_index];
                   for (unsigned int d = 0; d < dim; ++d)
                     alpha_2 =
                       std::min(alpha_2,
@@ -651,7 +683,8 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
                                  gradient[d],
                                  vertex_gradient[d],
                                  min_gradient_per_vertex[vertex_index][d],
-                                 max_gradient_per_vertex[vertex_index][d]));
+                                 max_gradient_per_vertex[vertex_index][d],
+                                 gradient_bounds_relaxation));
                 }
               else
                 {
@@ -661,7 +694,8 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
                                        mean_value,
                                        dof_values[vertex_to_dof[v]],
                                        min_mean_per_vertex[vertex_index],
-                                       max_mean_per_vertex[vertex_index]));
+                                       max_mean_per_vertex[vertex_index],
+                                       0.));
                 }
             }
 

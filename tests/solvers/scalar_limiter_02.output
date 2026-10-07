@@ -7,11 +7,14 @@ DEAL::Dimension 2 degree 2
 DEAL::  Integral is conserved: 1
 DEAL::  Solution is modified: 1
 DEAL::  Smooth extremum is preserved: 1
+DEAL::  Smooth solution invariant along a direction is preserved: 1
 DEAL::Dimension 2 degree 3
 DEAL::  Integral is conserved: 1
 DEAL::  Solution is modified: 1
 DEAL::  Smooth extremum is preserved: 1
+DEAL::  Smooth solution invariant along a direction is preserved: 1
 DEAL::Dimension 3 degree 2
 DEAL::  Integral is conserved: 1
 DEAL::  Solution is modified: 1
 DEAL::  Smooth extremum is preserved: 1
+DEAL::  Smooth solution invariant along a direction is preserved: 1

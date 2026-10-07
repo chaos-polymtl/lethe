@@ -120,7 +120,9 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
  * limited. This requires a degree of at least two. For a degree of one, there
  * is no second derivative and a single factor, calculated from the values of
  * the solution at the vertices, multiplies the deviation from the mean. The
- * limiter has no adjustable parameter.
+ * limiter has no adjustable parameter. The solution is not limited in a cell
+ * of which all the vertices are located on the boundaries of the domain, which
+ * is the case of every cell of a mesh that is a single cell thick.
  *
  * The implementation differs from the article on the following points:
  * - The gradient and the second derivatives are those of the L2 projection of
@@ -131,6 +133,11 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
  * - For degrees above two, the article limits every order of derivative
  *   separately. Here, all the terms above the linear one are multiplied by
  *   \f$\alpha_2\f$.
+ * - The bounds of the components of the gradient are widened by a small
+ *   fraction (0.1%) of the largest norm of the gradient among the cells that
+ *   share the vertex. Along a direction in which the solution does not vary,
+ *   the gradient and its bounds are only made of noise, and comparing them
+ *   without this relaxation removes the higher-order part of smooth solutions.
  * - The vertices located on a boundary of the domain are not used to calculate
  *   the factors. The means of the cells around such a vertex do not bound a
  *   solution that varies monotonically in the direction normal to the

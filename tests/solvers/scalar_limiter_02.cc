@@ -11,7 +11,10 @@
  *   boundary is between the minimum and the maximum of the means of the cells
  *   that share this vertex;
  * - for a degree of two and above, a smooth solution with an extremum within
- *   the domain is not modified.
+ *   the domain is not modified;
+ * - for a degree of two and above, a smooth solution that only varies along
+ *   one direction, and that contains the error of an iterative linear solver,
+ *   is not modified.
  */
 
 // Deal.II includes
@@ -97,6 +100,30 @@ public:
     for (unsigned int d = 0; d < dim; ++d)
       value -= (p[d] - 0.52) * (p[d] - 0.52);
     return value;
+  }
+};
+
+/**
+ * @brief Polynomial of degree two that only varies along the first direction,
+ * with a maximum within the domain.
+ */
+template <int dim>
+class SmoothRidgeField : public Function<dim>
+{
+public:
+  /**
+   * @brief Value of the field.
+   *
+   * @param[in] p Location at which the field is evaluated.
+   * @param[in] component Component of the field, unused since it is a scalar.
+   *
+   * @return Value of the field at the location.
+   */
+  double
+  value(const Point<dim> &p, const unsigned int component = 0) const override
+  {
+    (void)component;
+    return 1. - (p[0] - 0.52) * (p[0] - 0.52);
   }
 };
 
@@ -339,6 +366,39 @@ test(const unsigned int degree)
       difference -= initial_solution;
 
       deallog << "  Smooth extremum is preserved: "
+              << (difference.linfty_norm() < tolerance) << std::endl;
+    }
+
+  // 3. Smooth solution that only varies along the first direction, to which a
+  // perturbation that mimics the error of an iterative linear solver is added.
+  // The gradient along the other directions is only made of this perturbation
+  // and it must not trigger the limiter.
+  if (degree >= 2)
+    {
+      const double linear_solver_error = 1e-9;
+
+      VectorTools::interpolate(mapping,
+                               dof_handler,
+                               SmoothRidgeField<dim>(),
+                               locally_owned_solution);
+      for (const auto i : locally_owned_dofs)
+        locally_owned_solution(i) +=
+          linear_solver_error * std::sin(static_cast<double>(i));
+      locally_owned_solution.compress(VectorOperation::add);
+      locally_relevant_solution = locally_owned_solution;
+
+      const GlobalVectorType initial_solution = locally_owned_solution;
+
+      kuzmin_scalar_limiter<dim>(dof_handler,
+                                 mapping,
+                                 quadrature,
+                                 locally_relevant_solution,
+                                 locally_owned_solution);
+
+      GlobalVectorType difference = locally_owned_solution;
+      difference -= initial_solution;
+
+      deallog << "  Smooth solution invariant along a direction is preserved: "
               << (difference.linfty_norm() < tolerance) << std::endl;
     }
 }
