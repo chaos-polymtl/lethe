@@ -216,7 +216,7 @@ namespace Parameters
     double tolerance = 1e-6;
 
     Parameters::FluidIndicator monitored_fluid =
-      Parameters::FluidIndicator::fluid1;
+      Parameters::FluidIndicator::fluid_1;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -412,7 +412,7 @@ namespace Parameters
     Parameters::CLS_ReinitializationMethod reinitialization_method;
 
     Parameters::FluidIndicator viscous_dissipative_fluid =
-      Parameters::FluidIndicator::fluid1;
+      Parameters::FluidIndicator::fluid_1;
 
     // artificial diffusivity (diffusion coefficient) (in L^2/s) added to the
     // CLS transport equation. This parameter is zero by default, and can be

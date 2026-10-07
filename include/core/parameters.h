@@ -73,9 +73,9 @@ namespace Parameters
    */
   enum class FluidIndicator : std::uint8_t
   {
-    fluid0, ///< fluid 0 only
-    fluid1, ///< fluid 1 only
-    both    ///< both fluids
+    fluid_0, ///< fluid 0 only
+    fluid_1, ///< fluid 1 only
+    both     ///< both fluids
   };
 
   /**
@@ -1341,7 +1341,7 @@ namespace Parameters
 
     /// FluidIndicator corresponding to the fluid which has phase change
     Parameters::FluidIndicator monitored_fluid_with_phase_change =
-      Parameters::FluidIndicator::fluid0;
+      Parameters::FluidIndicator::fluid_0;
 
     /// Melting temperature iso-value
     double melting_temperature = 0.;
@@ -1992,7 +1992,7 @@ namespace Parameters
     PermeabilityModel permeability_model = PermeabilityModel::none;
 
     /// Indicates which fluids are with liquid-solid phase change.
-    FluidIndicator fluid_with_phase_change = FluidIndicator::fluid0;
+    FluidIndicator fluid_with_phase_change = FluidIndicator::fluid_0;
 
     /**
      * Enable the multiplication of the Darcy force term
@@ -2285,7 +2285,7 @@ namespace Parameters
    * @brief Return the fluid indicators accepted by the parameters which
    * designate a single fluid.
    *
-   * @return FluidIndicator::fluid0 and FluidIndicator::fluid1.
+   * @return FluidIndicator::fluid_0 and FluidIndicator::fluid_1.
    */
   const std::vector<FluidIndicator> &
   single_fluid_indicators();

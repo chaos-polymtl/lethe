@@ -237,12 +237,12 @@ public:
       }
 
     if (not(multiphysics.CLS) && post_processing.postprocessed_fluid ==
-                                   Parameters::FluidIndicator::fluid1)
+                                   Parameters::FluidIndicator::fluid_1)
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n when CLS = false"
           "\n use (default value): set postprocessed fluid = both"
-          "\n or: set postprocessed fluid = fluid0");
+          "\n or: set postprocessed fluid = fluid_0");
       }
 
     if (physical_properties.number_of_fluids == 2 &&
@@ -502,11 +502,11 @@ public:
 
     AssertThrow(
       velocity_sources.fluid_with_phase_change ==
-          Parameters::FluidIndicator::fluid0 ||
+          Parameters::FluidIndicator::fluid_0 ||
         multiphysics.CLS,
       ExcMessage(
         "Inconsistency in .prm!\n"
-        "The 'cls' multiphysics is disabled and the 'fluid with phase change' parameter (subsection velocity source) has not been to 'fluid 0'."));
+        "The 'cls' multiphysics is disabled and the 'fluid with phase change' parameter (subsection velocity source) has not been to 'fluid_0'."));
 
     // For isocontour bounding boxes
     if (post_processing.isocontour_bounding_boxes

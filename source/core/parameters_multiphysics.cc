@@ -162,7 +162,7 @@ Parameters::CLS::declare_parameters(ParameterHandler &prm) const
                       Patterns::Selection(enum_to_selection<FluidIndicator>(
                         deprecated_fluid_indicator_names())),
                       "Fluid to which the viscous dissipation is applied "
-                      "in the heat equation <fluid0|fluid1|both>");
+                      "in the heat equation <fluid_0|fluid_1|both>");
 
     prm.declare_entry(
       "diffusivity",
@@ -330,7 +330,7 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       enum_to_string(defaults.monitored_fluid),
       Patterns::Selection(enum_to_selection<FluidIndicator>(
         deprecated_fluid_indicator_names(), single_fluid_indicators())),
-      "Fluid for which conservation is monitored <fluid0|fluid1>, used with adaptive sharpening.");
+      "Fluid for which conservation is monitored <fluid_0|fluid_1>, used with adaptive sharpening.");
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.

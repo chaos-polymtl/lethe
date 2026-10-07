@@ -109,15 +109,16 @@ namespace Parameters
   deprecated_fluid_indicator_names()
   {
     static const DeprecatedEnumNames<FluidIndicator> names = {
-      {"fluid 0", FluidIndicator::fluid0}, {"fluid 1", FluidIndicator::fluid1}};
+      {"fluid 0", FluidIndicator::fluid_0},
+      {"fluid 1", FluidIndicator::fluid_1}};
     return names;
   }
 
   const std::vector<FluidIndicator> &
   single_fluid_indicators()
   {
-    static const std::vector<FluidIndicator> values = {FluidIndicator::fluid0,
-                                                       FluidIndicator::fluid1};
+    static const std::vector<FluidIndicator> values = {FluidIndicator::fluid_0,
+                                                       FluidIndicator::fluid_1};
     return values;
   }
 
@@ -2727,7 +2728,7 @@ namespace Parameters
                         Patterns::Selection(enum_to_selection<FluidIndicator>(
                           deprecated_fluid_indicator_names(),
                           single_fluid_indicators())),
-                        "Fluid with phase change properties <fluid0|fluid1>");
+                        "Fluid with phase change properties <fluid_0|fluid_1>");
 
       prm.declare_entry(
         "calculate algebraic melt volume",
@@ -2778,7 +2779,7 @@ namespace Parameters
                         Patterns::Selection(enum_to_selection<FluidIndicator>(
                           deprecated_fluid_indicator_names())),
                         "Fluid domain used for thermal postprocesses "
-                        "in the heat equation <fluid0|fluid1|both>");
+                        "in the heat equation <fluid_0|fluid_1|both>");
 
       prm.declare_entry(
         "calculate barycenter",
@@ -4123,7 +4124,7 @@ namespace Parameters
                         Patterns::Selection(enum_to_selection<FluidIndicator>(
                           deprecated_fluid_indicator_names())),
                         "Select which fluids have phase change. "
-                        "Choices are <fluid0|fluid1|both>.");
+                        "Choices are <fluid_0|fluid_1|both>.");
 
       prm.declare_entry(
         "Carman-Kozeny division tolerance",
@@ -4178,7 +4179,7 @@ namespace Parameters
       const unsigned int expected_size =
         (fluid_with_phase_change == FluidIndicator::both) ? 2 : 1;
       const unsigned int first_fluid =
-        (fluid_with_phase_change == FluidIndicator::fluid1) ? 1 : 0;
+        (fluid_with_phase_change == FluidIndicator::fluid_1) ? 1 : 0;
       AssertThrow(
         permeability_area_values.size() == expected_size,
         ExcMessage(

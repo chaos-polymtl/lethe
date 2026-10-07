@@ -114,7 +114,7 @@ subsection post-processing
   set verbosity                         = verbose
   set calculate geometric melt volume   = true
   set calculate algebraic melt volume   = true
-  set monitored fluid with phase change = fluid1
+  set monitored fluid with phase change = fluid_1
   set melting temperature               = 0.02
   set calculate mass conservation       = false
 end

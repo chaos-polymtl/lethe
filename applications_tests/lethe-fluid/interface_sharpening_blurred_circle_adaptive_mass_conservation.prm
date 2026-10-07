@@ -40,7 +40,7 @@ subsection CLS
       set type                = adaptive
       set max iterations      = 50
       set tolerance           = 1e-8
-      set monitored fluid     = fluid1
+      set monitored fluid     = fluid_1
     end
   end
 end

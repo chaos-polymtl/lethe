@@ -116,7 +116,7 @@ end
 
 subsection post-processing
   set verbosity            = verbose
-  set postprocessed fluid  = fluid1
+  set postprocessed fluid  = fluid_1
   set calculate barycenter = true
 end
 

@@ -277,7 +277,7 @@ subsection CLS
       set type                    = adaptive
       set threshold max deviation = 0.4
       set max iterations          = 50
-      set monitored fluid         = fluid1
+      set monitored fluid         = fluid_1
       set tolerance               = 1e-7
     end
   end

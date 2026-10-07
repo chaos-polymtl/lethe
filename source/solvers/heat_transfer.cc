@@ -1107,12 +1107,12 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
               domain_name = "fluid";
               break;
             }
-          case Parameters::FluidIndicator::fluid0:
+          case Parameters::FluidIndicator::fluid_0:
             {
               domain_name = "fluid_0";
               break;
             }
-          case Parameters::FluidIndicator::fluid1:
+          case Parameters::FluidIndicator::fluid_1:
             {
               domain_name = "fluid_1";
               break;
@@ -2175,9 +2175,9 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
 
   AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
                                    .monitored_fluid_with_phase_change ==
-                                 Parameters::FluidIndicator::fluid1),
+                                 Parameters::FluidIndicator::fluid_1),
               ExcMessage(
-                "For single-fluid flows only 'fluid 0' can be monitored."));
+                "For single-fluid flows only 'fluid_0' can be monitored."));
 
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
@@ -2256,7 +2256,7 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
                   // Case of fluid 0 being a phase change
                   if (this->simulation_parameters.post_processing
                         .monitored_fluid_with_phase_change ==
-                      Parameters::FluidIndicator::fluid0)
+                      Parameters::FluidIndicator::fluid_0)
                     {
                       liquid_volume_integral +=
                         (1. - filtered_phase_values[q]) *
@@ -2270,7 +2270,7 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
                   // Case of fluid 1 being a phase change
                   if (this->simulation_parameters.post_processing
                         .monitored_fluid_with_phase_change ==
-                      Parameters::FluidIndicator::fluid1)
+                      Parameters::FluidIndicator::fluid_1)
                     {
                       liquid_volume_integral +=
                         (filtered_phase_values[q]) *
@@ -2349,9 +2349,9 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
 
   AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
                                    .monitored_fluid_with_phase_change ==
-                                 Parameters::FluidIndicator::fluid1),
+                                 Parameters::FluidIndicator::fluid_1),
               ExcMessage(
-                "For single-fluid flows only 'fluid 0' can be monitored."));
+                "For single-fluid flows only 'fluid_0' can be monitored."));
 
   // Initializes variables for the melt volume and surface
   double melt_volume;
@@ -2397,7 +2397,7 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
       phase_indicator_vector_owned_copy->add(-phase_indicator_interface_value);
       if (this->simulation_parameters.post_processing
             .monitored_fluid_with_phase_change ==
-          Parameters::FluidIndicator::fluid1)
+          Parameters::FluidIndicator::fluid_1)
         phase_indicator_vector_owned_copy->operator*=(-1);
 
       // Get the intersection region between the monitored fluid and the
@@ -3015,7 +3015,7 @@ HeatTransfer<dim>::set_phase_coefficient(
           point_is_in_postprocessed_fluid = true;
           break;
         }
-      case Parameters::FluidIndicator::fluid0:
+      case Parameters::FluidIndicator::fluid_0:
         {
           if (gather_cls)
             {
@@ -3025,14 +3025,14 @@ HeatTransfer<dim>::set_phase_coefficient(
             }
           else
             {
-              // In the case of monophase simulations, "fluid0" is
+              // In the case of monophase simulations, "fluid_0" is
               // equivalent to "both" (all domain) calculation
               phase_coefficient               = 1.;
               point_is_in_postprocessed_fluid = true;
             }
           break;
         }
-      case Parameters::FluidIndicator::fluid1:
+      case Parameters::FluidIndicator::fluid_1:
         {
           if (gather_cls)
             {
@@ -3047,7 +3047,7 @@ HeatTransfer<dim>::set_phase_coefficient(
               throw std::logic_error(
                 "Inconsistency in .prm!\n when CLS = false"
                 "\n use (default value): set postprocessed fluid = both"
-                "\n or: set postprocessed fluid = fluid0");
+                "\n or: set postprocessed fluid = fluid_0");
             }
           break;
         }

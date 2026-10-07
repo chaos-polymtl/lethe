@@ -17,7 +17,7 @@ The default values of the CLS parameters are given in the text box below.
 
   subsection CLS
 
-    set viscous dissipative fluid = fluid1
+    set viscous dissipative fluid = fluid_1
     set diffusivity               = 0
     set compressible              = false
     
@@ -37,7 +37,7 @@ The default values of the CLS parameters are given in the text box below.
         set threshold max deviation = 0.20
         set max iterations          = 20
         set tolerance               = 1e-6
-        set monitored fluid         = fluid1
+        set monitored fluid         = fluid_1
       end
       
       subsection geometric interface reinitialization
@@ -77,7 +77,7 @@ The default values of the CLS parameters are given in the text box below.
 
 * ``viscous dissipative fluid``: defines fluid(s) to which viscous dissipation is applied.
 
-  Choices are: ``fluid0``, ``fluid1`` (default) or ``both``, with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
+  Choices are: ``fluid_0``, ``fluid_1`` (default) or ``both``, with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
   .. tip::
     Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature. This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`.
@@ -132,7 +132,7 @@ The ``type = projection_based_sharpening`` corresponds to a projection-based rei
 
     As most of the other iterations converge in only one step (corresponding to a final threshold of :math:`0.5`), increasing the sharpening search range through a higher ``threshold max deviation`` will relax the condition on the first iterations with a limited impact on the computational cost.
     
-* ``monitored fluid``: Fluid in which the mass conservation is monitored to find the adaptive sharpening threshold. The choices are ``fluid1`` (default) or ``fluid0``.
+* ``monitored fluid``: Fluid in which the mass conservation is monitored to find the adaptive sharpening threshold. The choices are ``fluid_1`` (default) or ``fluid_0``.
 
 * ``tolerance``: Value of the tolerance on the mass conservation of the monitored fluid.
 

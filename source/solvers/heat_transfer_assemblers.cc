@@ -594,14 +594,15 @@ HeatTransferAssemblerViscousDissipationCLS<dim>::assemble_rhs(
       // Manage viscous dissipation application on specified fluid
       const double filtered_phase_value_q =
         scratch_data.filtered_phase_values[q];
-      if (this->viscous_dissipative_fluid == Parameters::FluidIndicator::fluid1)
+      if (this->viscous_dissipative_fluid ==
+          Parameters::FluidIndicator::fluid_1)
         {
           // if phase = 0, no viscous dissipation
           // if phase = 1, maximum viscous dissipation
           viscous_dissipation_coefficient = filtered_phase_value_q;
         }
       else if (this->viscous_dissipative_fluid ==
-               Parameters::FluidIndicator::fluid0)
+               Parameters::FluidIndicator::fluid_0)
         {
           // if phase = 1, no viscous dissipation
           // if phase = 0, maximum viscous dissipation
@@ -617,7 +618,7 @@ HeatTransferAssemblerViscousDissipationCLS<dim>::assemble_rhs(
         {
           throw(
             std::runtime_error("Invalid viscous dissipative fluid. "
-                               "Options are 'fluid0', 'fluid1' or 'both'."));
+                               "Options are 'fluid_0', 'fluid_1' or 'both'."));
         }
 
       // assemble the rhs
