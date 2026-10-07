@@ -5,6 +5,8 @@
 
 #include <dem/insertion_volume.h>
 
+#include <boost/archive/archive_exception.hpp>
+
 #include <random>
 
 using namespace DEM;
@@ -153,6 +155,32 @@ InsertionVolume<dim, PropertiesIndex>::insert(
                                  pcout);
     }
 }
+
+
+template <int dim, typename PropertiesIndex>
+void
+InsertionVolume<dim, PropertiesIndex>::deserialize(
+  boost::archive::text_iarchive &ar)
+{
+  ar &particles_of_each_type_remaining &current_inserting_particle_type;
+
+  // Checkpoint written before the insertion counter was introduced do not
+  // contain it. Reading it then reaches the end of the archive, in which case
+  // the counter restarts from zero.
+  try
+    {
+      ar &insertion_counter;
+    }
+  catch (const boost::archive::archive_exception &exception)
+    {
+      if (exception.code !=
+          boost::archive::archive_exception::input_stream_error)
+        throw;
+
+      insertion_counter = 0;
+    }
+}
+
 
 // This function assigns the insertion points of the inserted particles
 template <int dim, typename PropertiesIndex>

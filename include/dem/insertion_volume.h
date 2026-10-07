@@ -68,17 +68,13 @@ public:
   }
 
   /**
-   * @brief Deserialize an input archive to the volume insertion object.
+   * @brief Deserialize an input archive to the volume insertion object. Checkpoints written before the insertion counter was introduced do not contain it, in which case the counter is reset to zero
    *
    * @param[in] ar Input archive where the attributes are stored.
    *
    */
   virtual void
-  deserialize(boost::archive::text_iarchive &ar) override
-  {
-    ar &particles_of_each_type_remaining &current_inserting_particle_type
-      &insertion_counter;
-  }
+  deserialize(boost::archive::text_iarchive &ar) override;
 
 private:
   /**
