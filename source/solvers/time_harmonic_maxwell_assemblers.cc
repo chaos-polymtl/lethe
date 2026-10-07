@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <solvers/time_harmonic_maxwell.h>
 #include <solvers/time_harmonic_maxwell_assemblers.h>
 
 #include <deal.II/base/numbers.h>
@@ -153,8 +154,10 @@ compute_waveguide_port_incident_fields(
   Tensor<1, dim> p_local =
     p - origin_local; // Coordinates of point p in this local system.
 
-  double x_local = p_local * e_t1; // Coordinate along e_t1 in the local system
-  double y_local = p_local * e_t2; // Coordinate along e_t2 in the local system
+  const double x_local =
+    p_local * e_t1; // Coordinate along e_t1 in the local system
+  const double y_local =
+    p_local * e_t2; // Coordinate along e_t2 in the local system
   // We assume that the z_local coordinate is 0 since we are on the face.
 
   // Compute the E and H field components for the TE mode in the local
@@ -163,49 +166,42 @@ compute_waveguide_port_incident_fields(
   Tensor<1, dim, std::complex<double>> E_inc_local;
   Tensor<1, dim, std::complex<double>> H_inc_local;
 
+  // sin and cos functions that are repeatedly used in the computation of the E
+  // and H fields.
+  const double sin_k_t1_x = std::sin(k_t1 * (x_local + 0.5 * length_t1));
+  const double cos_k_t1_x = std::cos(k_t1 * (x_local + 0.5 * length_t1));
+  const double sin_k_t2_y = std::sin(k_t2 * (y_local + 0.5 * length_t2));
+  const double cos_k_t2_y = std::cos(k_t2 * (y_local + 0.5 * length_t2));
+
   if (mode == Parameters::WaveguideMode::TE)
     {
       std::complex<double> factor =
         imag * omega * effective_magnetic_permeability / (k_c * k_c);
 
-      E_inc_local[0] = -factor * k_t2 *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[1] = factor * k_t1 *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[0] = -factor * k_t2 * cos_k_t1_x * sin_k_t2_y;
+      E_inc_local[1] = factor * k_t1 * sin_k_t1_x * cos_k_t2_y;
       E_inc_local[2] = 0.0;
 
-      H_inc_local[0] = -imag * k_l * k_t1 / (k_c * k_c) *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[1] = -imag * k_l * k_t2 / (k_c * k_c) *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[0] =
+        -imag * k_l * k_t1 / (k_c * k_c) * sin_k_t1_x * cos_k_t2_y;
+      H_inc_local[1] =
+        -imag * k_l * k_t2 / (k_c * k_c) * cos_k_t1_x * sin_k_t2_y;
+      H_inc_local[2] = cos_k_t1_x * cos_k_t2_y;
     }
   else if (mode == Parameters::WaveguideMode::TM)
     {
       std::complex<double> factor =
         imag * omega * effective_electric_permittivity / (k_c * k_c);
 
-      H_inc_local[0] = factor * k_t2 *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[1] = -factor * k_t1 *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[0] = factor * k_t2 * sin_k_t1_x * cos_k_t2_y;
+      H_inc_local[1] = -factor * k_t1 * cos_k_t1_x * sin_k_t2_y;
       H_inc_local[2] = 0.0;
 
-      E_inc_local[0] = imag * k_l * k_t1 / (k_c * k_c) *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[1] = imag * k_l * k_t2 / (k_c * k_c) *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[0] =
+        imag * k_l * k_t1 / (k_c * k_c) * cos_k_t1_x * sin_k_t2_y;
+      E_inc_local[1] =
+        imag * k_l * k_t2 / (k_c * k_c) * sin_k_t1_x * cos_k_t2_y;
+      E_inc_local[2] = sin_k_t1_x * sin_k_t2_y;
     }
   else
     {
@@ -214,9 +210,9 @@ compute_waveguide_port_incident_fields(
 
   // Convert the E and H field components from the local coordinate system back
   // to the global coordinate system using the basis vectors e_t1, e_t2, e_t3
-  Tensor<1, dim, std::complex<double>> E_inc =
+  const Tensor<1, dim, std::complex<double>> E_inc =
     E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3;
-  Tensor<1, dim, std::complex<double>> H_inc =
+  const Tensor<1, dim, std::complex<double>> H_inc =
     parity_factor *
     (H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3);
 
