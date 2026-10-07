@@ -28,12 +28,6 @@
 #include <memory>
 #include <vector>
 
-DeclException1(
-  TimeHarmonicMaxwellDimensionNotSupported,
-  int,
-  << "The time-harmonic Maxwell solver does not support dimension: " << arg1
-  << ". Currently, only 3D problems are supported as the 2D version of curls and cross products have completely different definitions than their 3D counterparts.");
-
 /**
  * This helper function projects a 3D tensor onto the tangential plane
  * defined by the given normal vector. Mathematically, it computes:

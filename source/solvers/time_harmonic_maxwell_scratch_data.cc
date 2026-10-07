@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <solvers/time_harmonic_maxwell.h>
 #include <solvers/time_harmonic_maxwell_scratch_data.h>
 
 #include <algorithm>
