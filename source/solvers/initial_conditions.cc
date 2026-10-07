@@ -113,7 +113,7 @@ namespace Parameters
         "type",
         enum_to_string(type),
         Patterns::Selection(
-          "L2projection|viscous|nodal|ramp|average_velocity_profile"),
+          enum_to_selection<FluidDynamicsInitialConditionType>()),
         "Type of initial condition. "
         "Choices are <L2projection|viscous|nodal|ramp|average_velocity_profile>.");
       prm.enter_subsection("uvwp");
@@ -140,7 +140,7 @@ namespace Parameters
       prm.declare_entry(
         "smoothing type",
         enum_to_string(cls_initial_condition_smoothing),
-        Patterns::Selection("none|diffusive|geometric"),
+        Patterns::Selection(enum_to_selection<CLSInitialConditionType>()),
         "Apply a projection step with diffusion to smooth the CLS initial condition");
 
       prm.declare_entry(

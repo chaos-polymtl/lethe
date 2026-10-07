@@ -253,7 +253,8 @@ namespace Parameters
       // Defines the type of distribution
       prm.declare_entry("size distribution type",
                         enum_to_string(SizeDistributionType::uniform),
-                        Patterns::Selection("uniform|normal|lognormal|custom"),
+                        Patterns::Selection(
+                          enum_to_selection<SizeDistributionType>()),
                         "Particle size distribution. "
                         "Choices are <uniform|normal|lognormal|custom>.");
 
@@ -282,7 +283,8 @@ namespace Parameters
                         "values should be read from.");
       prm.declare_entry("custom distribution probability function type",
                         enum_to_string(ProbabilityFunctionType::PDF),
-                        Patterns::Selection("PDF|CDF"),
+                        Patterns::Selection(
+                          enum_to_selection<ProbabilityFunctionType>()),
                         "Particle size distribution. "
                         "Choices are <PDF|CDF>.");
       prm.declare_entry("custom distribution interpolation",
@@ -571,7 +573,8 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           enum_to_string(defaults.insertion_method),
-                          Patterns::Selection("file|list|plane|volume|packed"),
+                          Patterns::Selection(
+                            enum_to_selection<InsertionMethod>()),
                           "Choosing insertion method. "
                           "Choices are <file|plane|list|volume|packed>.");
         prm.declare_entry("inserted number of particles at each time step",
@@ -951,8 +954,7 @@ namespace Parameters
           prm.declare_entry(
             "load balance method",
             enum_to_string(defaults.load_balance_method),
-            Patterns::Selection(
-              "none|once|frequent|dynamic|dynamic_with_sparse_contacts"),
+            Patterns::Selection(enum_to_selection<LoadBalanceMethod>()),
             "Choosing load-balance method. "
             "Choices are <none|once|frequent|dynamic|dynamic_with_sparse_contacts>.");
 
@@ -1020,7 +1022,8 @@ namespace Parameters
         {
           prm.declare_entry("contact detection method",
                             enum_to_string(defaults.contact_detection_method),
-                            Patterns::Selection("constant|dynamic"),
+                            Patterns::Selection(
+                              enum_to_selection<ContactDetectionMethod>()),
                             "Choosing contact detection method. "
                             "Choices are <constant|dynamic>.");
 
@@ -1050,16 +1053,28 @@ namespace Parameters
           "particle particle contact force method",
           enum_to_string(defaults.particle_particle_contact_force_model),
           Patterns::Selection(
-            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT"),
+            enum_to_selection<ParticleParticleContactForceModel>(
+              {},
+              {ParticleParticleContactForceModel::linear,
+               ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+               ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+               ParticleParticleContactForceModel::hertz,
+               ParticleParticleContactForceModel::hertz_JKR,
+               ParticleParticleContactForceModel::DMT})),
           "Choosing particle-particle contact force model. "
           "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
-        prm.declare_entry("particle wall contact force method",
-                          enum_to_string(
-                            defaults.particle_wall_contact_force_method),
-                          Patterns::Selection("linear|nonlinear|JKR|DMT"),
-                          "Choosing particle-wall contact force model. "
-                          "Choices are <linear|nonlinear|JKR|DMT>.");
+        prm.declare_entry(
+          "particle wall contact force method",
+          enum_to_string(defaults.particle_wall_contact_force_method),
+          Patterns::Selection(enum_to_selection<ParticleWallContactForceModel>(
+            {},
+            {ParticleWallContactForceModel::linear,
+             ParticleWallContactForceModel::nonlinear,
+             ParticleWallContactForceModel::JKR,
+             ParticleWallContactForceModel::DMT})),
+          "Choosing particle-wall contact force model. "
+          "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
           "dmt cut-off threshold",
@@ -1086,13 +1101,15 @@ namespace Parameters
 
         prm.declare_entry("integration method",
                           enum_to_string(defaults.integration_method),
-                          Patterns::Selection("velocity_verlet|explicit_euler"),
+                          Patterns::Selection(
+                            enum_to_selection<IntegrationMethod>()),
                           "Choosing integration method. "
                           "Choices are <velocity_verlet|explicit_euler>.");
 
         prm.declare_entry("solver type",
                           enum_to_string(defaults.solver_type),
-                          Patterns::Selection("dem|dem_mp"),
+                          Patterns::Selection(
+                            enum_to_selection<DEM::SolverType>()),
                           "Choosing solver type. "
                           "Choices are <dem|dem_mp>.");
 
@@ -1589,7 +1606,8 @@ namespace Parameters
       // Multiphysic DEM
       prm.declare_entry("thermal boundary type",
                         enum_to_string(WallThermalBoundaryType::adiabatic),
-                        Patterns::Selection("adiabatic|temperature"),
+                        Patterns::Selection(
+                          enum_to_selection<WallThermalBoundaryType>()),
                         "Thermal boundary type used in multiphysic DEM. "
                         "Choices are <adiabatic|temperature>.");
 
@@ -1713,7 +1731,7 @@ namespace Parameters
       {
         prm.declare_entry("motion type",
                           enum_to_string(defaults.motion_type),
-                          Patterns::Selection("none|translational|rotational"),
+                          Patterns::Selection(enum_to_selection<MotionType>()),
                           "Choosing grid motion type. "
                           "Choices are <none|translational|rotational>.");
 

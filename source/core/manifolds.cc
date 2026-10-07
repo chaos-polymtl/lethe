@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/manifolds.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/point.h>
 
@@ -17,8 +18,7 @@ namespace Parameters
   {
     prm.declare_entry("type",
                       enum_to_string(ManifoldType::none),
-                      Patterns::Selection(
-                        "none|spherical|cylindrical|iges|step"),
+                      Patterns::Selection(enum_to_selection<ManifoldType>()),
                       "Type of manifold description"
                       "Choices are <none|spherical|cylindrical|iges|step>.");
 

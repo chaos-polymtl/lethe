@@ -283,7 +283,7 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
     prm.declare_entry(
       "type",
       enum_to_string(defaults.type),
-      Patterns::Selection("constant|adaptive"),
+      Patterns::Selection(enum_to_selection<Parameters::SharpeningType>()),
       "CLS interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
       "if adaptive the sharpening threshold is determined by binary search, "
@@ -458,7 +458,8 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
     prm.declare_entry(
       "type",
       enum_to_string(defaults.type),
-      Patterns::Selection("none|tanh"),
+      Patterns::Selection(enum_to_selection<Parameters::FilterType>(
+        {}, {Parameters::FilterType::none, Parameters::FilterType::tanh})),
       "CLS phase indicator filtration type, "
       "if <none> is selected, the phase won't be filtered; "
       "if <tanh> is selected, the filtered phase will be a result of the "
@@ -629,7 +630,7 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
     prm.declare_entry(
       "type",
       enum_to_string(defaults.type),
-      Patterns::Selection("none|clip|tanh"),
+      Patterns::Selection(enum_to_selection<Parameters::FilterType>()),
       "CahnHilliard phase filtration type, "
       "if <none> is selected, the phase won't be filtered; "
       "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1); "
@@ -692,7 +693,7 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
       prm.declare_entry(
         "method",
         enum_to_string(epsilon_set_method),
-        Patterns::Selection("automatic|manual"),
+        Patterns::Selection(enum_to_selection<Parameters::EpsilonSetMethod>()),
         "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)");
 
       prm.declare_entry(
@@ -704,7 +705,7 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
       prm.declare_entry(
         "verbosity",
         enum_to_string(epsilon_verbosity),
-        Patterns::Selection("quiet|verbose"),
+        Patterns::Selection(enum_to_selection<Parameters::EpsilonVerbosity>()),
         "Display the value of epsilon for each time iteration if set to verbose");
     }
     prm.leave_subsection();
@@ -748,10 +749,12 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
   {
     prm.enter_subsection("time coupling strategy");
     {
-      prm.declare_entry("type",
-                        enum_to_string(time_coupling_strategy),
-                        Patterns::Selection("none|iteration|time|threshold"),
-                        "The type of time coupling strategy to use.");
+      prm.declare_entry(
+        "type",
+        enum_to_string(time_coupling_strategy),
+        Patterns::Selection(
+          enum_to_selection<Parameters::TimeHarmonicMaxwellCouplingStrategy>()),
+        "The type of time coupling strategy to use.");
 
       prm.declare_entry(
         "coupling iteration",

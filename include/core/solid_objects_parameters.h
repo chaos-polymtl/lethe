@@ -446,7 +446,8 @@ namespace Parameters
       prm.declare_entry("thermal boundary type",
                         enum_to_string(
                           SolidObjectThermalBoundaryType::adiabatic),
-                        Patterns::Selection("adiabatic|isothermal"),
+                        Patterns::Selection(
+                          enum_to_selection<SolidObjectThermalBoundaryType>()),
                         "Choosing thermal boundary type"
                         "Choices are <adiabatic|isothermal>.");
 

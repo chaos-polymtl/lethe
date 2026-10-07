@@ -153,8 +153,7 @@ namespace Parameters
       prm.declare_entry(
         "method",
         enum_to_string(defaults.method),
-        Patterns::Selection(
-          "steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33|sdirk43"),
+        Patterns::Selection(enum_to_selection<TimeSteppingMethod>()),
         "The time integration scheme. "
         "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk22|sdirk33|sdirk43>.");
 
@@ -298,7 +297,7 @@ namespace Parameters
       prm.declare_entry(
         "end control",
         enum_to_string(defaults.end_control),
-        Patterns::Selection("iteration|time"),
+        Patterns::Selection(enum_to_selection<EndControl>()),
         "The control for the end of a transient simulation. The end "
         "condition is either a maximum time value (time end) or a maximum "
         "number of transient iterations (iteration end)");
@@ -306,7 +305,7 @@ namespace Parameters
       prm.declare_entry(
         "output control",
         enum_to_string(defaults.output_control),
-        Patterns::Selection("iteration|time"),
+        Patterns::Selection(enum_to_selection<OutputControl>()),
         "The control for the output of the simulation results. "
         "Results can be either outputted at constant iteration frequency or at constant time");
 
@@ -395,7 +394,7 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         enum_to_string(defaults.type),
-                        Patterns::Selection("none|iteration|end"),
+                        Patterns::Selection(enum_to_selection<Type>()),
                         "Clock monitoring methods "
                         "Choices are <none|iteration|end>.");
       prm.declare_entry(
@@ -944,7 +943,7 @@ namespace Parameters
       prm.declare_entry(
         "stabilization",
         enum_to_string(defaults.stabilization),
-        Patterns::Selection("pspg_supg|gls|grad_div"),
+        Patterns::Selection(enum_to_selection<NavierStokesStabilization>()),
         "Type of stabilization used for the Navier-Stokes equations. "
         "Choices are <pspg_supg|gls|grad_div>.");
 
@@ -985,7 +984,7 @@ namespace Parameters
       prm.declare_entry(
         "scalar limiter",
         enum_to_string(defaults.scalar_limiter),
-        Patterns::Selection("none|moe"),
+        Patterns::Selection(enum_to_selection<ScalarLimiters>()),
         "Type of scalar limiter. The limiters are only appropriate with the DG versions of the solvers and should only be used for advection-dominated problem.");
     }
     prm.leave_subsection();
@@ -1392,7 +1391,7 @@ namespace Parameters
 
       prm.declare_entry("density model",
                         enum_to_string(density_model),
-                        Patterns::Selection("constant|isothermal_ideal_gas"),
+                        Patterns::Selection(enum_to_selection<DensityModel>()),
                         "Model used for the calculation of the density. "
                         "Choices are <constant|isothermal_ideal_gas>.");
 
@@ -1400,7 +1399,8 @@ namespace Parameters
 
       prm.declare_entry("specific heat model",
                         enum_to_string(specific_heat_model),
-                        Patterns::Selection("constant|phase_change"),
+                        Patterns::Selection(
+                          enum_to_selection<SpecificHeatModel>()),
                         "Model used for the calculation of the specific heat. "
                         "Choices are <constant|phase_change>.");
 
@@ -1409,14 +1409,14 @@ namespace Parameters
       prm.declare_entry(
         "thermal conductivity model",
         enum_to_string(thermal_conductivity_model),
-        Patterns::Selection("constant|linear|phase_change"),
+        Patterns::Selection(enum_to_selection<ThermalConductivityModel>()),
         "Model used for the calculation of the thermal conductivity. "
         "Choices are <constant|linear|phase_change>.");
 
       prm.declare_entry(
         "thermal expansion model",
         enum_to_string(thermal_expansion_model),
-        Patterns::Selection("constant|phase_change"),
+        Patterns::Selection(enum_to_selection<ThermalExpansionModel>()),
         "Model used for the calculation of the thermal expansion coefficient. "
         "Choices are <constant|phase_change>.");
 
@@ -1436,7 +1436,7 @@ namespace Parameters
       prm.declare_entry(
         "electric conductivity model",
         enum_to_string(electric_conductivity_model),
-        Patterns::Selection("constant|polynomial"),
+        Patterns::Selection(enum_to_selection<ElectricConductivityModel>()),
         "Model used for the calculation of the electric conductivity. "
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
@@ -1458,7 +1458,7 @@ namespace Parameters
       prm.declare_entry(
         "electric permittivity model",
         enum_to_string(electric_permittivity_model),
-        Patterns::Selection("constant|polynomial"),
+        Patterns::Selection(enum_to_selection<ElectricPermittivityModel>()),
         "Model used for the calculation of the electric permittivity. "
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
@@ -1494,7 +1494,7 @@ namespace Parameters
       prm.declare_entry(
         "magnetic permeability model",
         enum_to_string(magnetic_permeability_model),
-        Patterns::Selection("constant|polynomial"),
+        Patterns::Selection(enum_to_selection<MagneticPermeabilityModel>()),
         "Model used for the calculation of the magnetic permeability. "
         "Choices are <constant|polynomial>.");
       prm.declare_entry(
@@ -1754,7 +1754,7 @@ namespace Parameters
         prm.declare_entry(
           "cahn hilliard mobility model",
           enum_to_string(mobility_cahn_hilliard_model),
-          Patterns::Selection("constant|quartic"),
+          Patterns::Selection(enum_to_selection<MobilityCahnHilliardModel>()),
           "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
           "\n"
           "The choices are <constant|quartic>.");
@@ -1788,7 +1788,7 @@ namespace Parameters
         prm.declare_entry(
           "cahn hilliard mobility model",
           enum_to_string(mobility_cahn_hilliard_model),
-          Patterns::Selection("constant|quartic"),
+          Patterns::Selection(enum_to_selection<MobilityCahnHilliardModel>()),
           "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
           "\n"
           "The choices are <constant|quartic>.");
@@ -2109,8 +2109,7 @@ namespace Parameters
       prm.declare_entry(
         "type",
         enum_to_string(laser_type),
-        Patterns::Selection(
-          "exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface"),
+        Patterns::Selection(enum_to_selection<LaserType>()),
         "Type of laser model used. "
         "Choices are <exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface>.");
       prm.declare_entry(
@@ -2964,7 +2963,7 @@ namespace Parameters
         prm.declare_entry(
           "solver",
           enum_to_string(defaults.solver),
-          Patterns::Selection("newton|kinsol_newton|inexact_newton"),
+          Patterns::Selection(enum_to_selection<SolverType>()),
           "Non-linear solver that will be used "
           "Choices are <newton|kinsol_newton|inexact_newton>."
           " The newton solver is a traditional newton solver with "
@@ -2976,7 +2975,7 @@ namespace Parameters
         prm.declare_entry(
           "kinsol strategy",
           enum_to_string(defaults.kinsol_strategy),
-          Patterns::Selection("normal_newton|line_search|picard"),
+          Patterns::Selection(enum_to_selection<KinsolStrategy>()),
           "Strategy that will be used by the kinsol newton solver");
 
         prm.declare_entry("tolerance",
@@ -3084,7 +3083,7 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         enum_to_string(defaults.type),
-                        Patterns::Selection("gmsh|dealii|lethe"),
+                        Patterns::Selection(enum_to_selection<Type>()),
                         "Type of mesh "
                         "Choices are <gmsh|dealii|lethe>.");
 
@@ -3335,7 +3334,7 @@ namespace Parameters
         prm.declare_entry(
           "method",
           enum_to_string(defaults.solver),
-          Patterns::Selection("gmres|bicgstab|direct"),
+          Patterns::Selection(enum_to_selection<SolverType>()),
           "The iterative solver for the linear system of equations. "
           "Choices are <gmres|bicgstab|direct>.");
 
@@ -3383,7 +3382,8 @@ namespace Parameters
 
         prm.declare_entry("preconditioner",
                           enum_to_string(defaults.preconditioner),
-                          Patterns::Selection("amg|ilu|lsmg|gcmg|none"),
+                          Patterns::Selection(
+                            enum_to_selection<PreconditionerType>()),
                           "The preconditioner for the linear solver. "
                           "Choices are <amg|ilu|lsmg|gcmg|none>.");
 
@@ -3551,7 +3551,8 @@ namespace Parameters
 
         prm.declare_entry("mg coarse grid solver",
                           enum_to_string(defaults.mg_coarse_grid_solver),
-                          Patterns::Selection("gmres|amg|ilu|direct"),
+                          Patterns::Selection(
+                            enum_to_selection<CoarseGridSolverType>()),
                           "The coarse grid solver for lsmg or gcmg. "
                           "Choices are <gmres|amg|ilu|direct>.");
 
@@ -3562,10 +3563,12 @@ namespace Parameters
           Patterns::Bool(),
           "use elements with linear interpolation for coarse grid");
 
-        prm.declare_entry("mg coarsening type",
-                          enum_to_string(defaults.mg_coarsening_type),
-                          Patterns::Selection("h|p|hp|ph"),
-                          "mg coarsening type for gcmg");
+        prm.declare_entry(
+          "mg coarsening type",
+          enum_to_string(defaults.mg_coarsening_type),
+          Patterns::Selection(
+            enum_to_selection<MultigridCoarseningSequenceType>()),
+          "mg coarsening type for gcmg");
 
         prm.declare_entry(
           "mg p coarsening type",
@@ -3606,11 +3609,13 @@ namespace Parameters
                           Patterns::Integer(),
                           "mg gmres max krylov vectors for lsmg or gcmg");
 
-        prm.declare_entry("mg gmres preconditioner",
-                          enum_to_string(defaults.mg_gmres_preconditioner),
-                          Patterns::Selection("amg|ilu"),
-                          "The preconditioner for the mg gmres solver. "
-                          "Choices are <amg|ilu>.");
+        prm.declare_entry(
+          "mg gmres preconditioner",
+          enum_to_string(defaults.mg_gmres_preconditioner),
+          Patterns::Selection(enum_to_selection<PreconditionerType>(
+            {}, {PreconditionerType::amg, PreconditionerType::ilu})),
+          "The preconditioner for the mg gmres solver. "
+          "Choices are <amg|ilu>.");
 
         prm.declare_entry("mg amg use default parameters",
                           Patterns::Tools::Convert<bool>::to_string(
@@ -3789,14 +3794,15 @@ namespace Parameters
 
       prm.declare_entry("type",
                         enum_to_string(defaults.type),
-                        Patterns::Selection("none|uniform|adaptive"),
+                        Patterns::Selection(enum_to_selection<Type>()),
                         "Type of mesh adaptation. "
                         "Choices are <none|uniform|adaptive>.");
 
       prm.declare_entry(
         "error estimator",
         enum_to_string(variable_defaults.error_estimator),
-        Patterns::List(Patterns::Selection("kelly|dpg")),
+        Patterns::List(Patterns::Selection(
+          enum_to_selection<MultipleAdaptationParameters::ErrorEstimator>())),
         "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter. "
         "Choices are <kelly|dpg>.");
 
@@ -3831,7 +3837,7 @@ namespace Parameters
       prm.declare_entry(
         "fraction type",
         enum_to_string(defaults.fractionType),
-        Patterns::Selection("number|fraction"),
+        Patterns::Selection(enum_to_selection<FractionType>()),
         "How the fraction of refinement/coarsening are interpreted. "
         "Choices are <number|fraction>.");
       prm.declare_entry("max number elements",
@@ -3987,7 +3993,7 @@ namespace Parameters
       prm.declare_entry(
         "type",
         enum_to_string(defaults.test_type),
-        Patterns::Selection("particles|mobility_status|subdomain"),
+        Patterns::Selection(enum_to_selection<TestType>()),
         "Output type for testing mode. Currently, particles type will output "
         "each particle with some information and mobility_status or subdomain output results "
         "in deal.II format.");
@@ -4073,7 +4079,7 @@ namespace Parameters
       prm.declare_entry(
         "rotating frame type",
         enum_to_string(defaults.rotating_frame_type),
-        Patterns::Selection("none|srf"),
+        Patterns::Selection(enum_to_selection<RotatingFrameType>()),
         "Rotating frame velocity-dependent source terms. "
         "Choices are <none|srf>. The srf stands "
         "for single rotating frame and adds "
@@ -4970,7 +4976,7 @@ namespace Parameters
       prm.declare_entry(
         "evaporation mass flux model",
         enum_to_string(defaults.evaporative_mass_flux_model_type),
-        Patterns::Selection("constant|temperature_dependent"),
+        Patterns::Selection(enum_to_selection<EvaporativeMassFluxModelType>()),
         "Model used for the calculation of the evaporative mass flux. "
         "Choices are <constant|temperature_dependent>.");
       prm.declare_entry(
@@ -5081,7 +5087,7 @@ namespace Parameters
                         "Enable mortar interface <true|false>");
       prm.declare_entry("interface type",
                         enum_to_string(interface_type),
-                        Patterns::Selection("circular|linear"),
+                        Patterns::Selection(enum_to_selection<InterfaceType>()),
                         "Type of mortar interface. "
                         "Choices are <circular|linear>.");
       rotor_mesh = std::make_shared<Mesh<dim>>();

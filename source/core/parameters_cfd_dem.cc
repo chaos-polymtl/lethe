@@ -38,7 +38,7 @@ namespace Parameters
     prm.declare_entry(
       "mode",
       enum_to_string(mode),
-      Patterns::Selection("function|pcm|qcm|spm"),
+      Patterns::Selection(enum_to_selection<Parameters::VoidFractionMode>()),
       "Choose the method for the calculation of the void fraction");
     prm.enter_subsection("function");
     void_fraction.declare_parameters(prm);
@@ -75,7 +75,7 @@ namespace Parameters
     prm.declare_entry(
       "qcm filter type",
       enum_to_string(qcm_filter_type),
-      Patterns::Selection("spherical|gaussian"),
+      Patterns::Selection(enum_to_selection<Parameters::QCMFilterType>()),
       "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm smoothing length' is the averaging-sphere radius. With 'gaussian', half of 'qcm smoothing length' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
     prm.declare_entry(
       "quadrature rule",
@@ -195,7 +195,7 @@ namespace Parameters
     prm.declare_entry("drag model",
                       enum_to_string(defaults.drag_model),
                       Patterns::Selection(
-                        "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
+                        enum_to_selection<Parameters::DragModel>()),
                       "The drag model used to determine the drag coefficient");
     prm.declare_entry(
       "dem iteration control",
@@ -217,7 +217,8 @@ namespace Parameters
       "Fraction of Rayleigh time used to control the DEM iterations.");
     prm.declare_entry("vans model",
                       enum_to_string(defaults.vans_model),
-                      Patterns::Selection("modelA|modelB"),
+                      Patterns::Selection(
+                        enum_to_selection<Parameters::VANSModel>()),
                       "The volume averaged Navier Stokes model to be solved.");
     prm.declare_entry(
       "grad-div length scale",
