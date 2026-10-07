@@ -1,0 +1,282 @@
+# ============================================================
+#  Ex.1 (b)
+# ============================================================
+
+set dimension = 2
+
+subsection simulation control
+  set method             = steady
+  set number mesh adapt  = 0
+  set output name        = couette_ex1_b_particles_eps0
+  set output frequency   = 1
+  set subdivision        = 1
+  set output path        = out/
+end
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 10
+    set density             = 1
+  end
+end
+
+subsection timer
+  set type = iteration
+end
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 25,10 : 0,0 : 50,20 : true
+  set initial refinement = 2
+end
+
+subsection boundary conditions
+  set number = 3
+
+  subsection bc 0
+    set id                 = 0
+    set type               = periodic
+    set periodic id        = 1
+    set periodic direction = 0
+  end
+
+  subsection bc 1
+    set id   = 2
+    set type = function weak # better to use function weak with the sharp edge IB
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0
+    end
+    set beta = 10
+  end
+
+  subsection bc 2
+    set id   = 3
+    set type = function weak # better to u se function weak with teh sharp edge IB
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    set beta = 10
+  end
+end
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+        set Function expression = 0; 0; 0  # With particles it's easier not to have initial conditions
+  end
+end
+
+subsection particles
+  set assemble Navier-Stokes inside particles = false
+  set number of particles                     = 7
+
+  subsection extrapolation function
+    set length ratio   = 2
+    set stencil degree = 1
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 4
+    set refine mesh inside radius factor  = 0.7
+    set refine mesh outside radius factor = 1.3
+  end
+
+  subsection DEM
+    set particle nonlinear tolerance = 1e-4
+    set DEM coupling frequency       = 1000
+    set enable lubrication force     = false
+    subsection gravity
+      set Function expression = 0; 0
+    end
+    subsection wall physical properties
+      set wall youngs modulus               = 100000000
+      set wall restitution coefficient      = 0.9
+      set wall poisson ratio                = 0.3
+      set wall friction coefficient         = 0
+      set wall rolling friction coefficient = 0
+    end
+  end
+
+  subsection particle info 0
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 7; 5
+    end
+    subsection velocity
+      set Function expression = y/20; 0
+    end
+    subsection physical properties
+      set density                 = 1
+      set youngs modulus          = 100000000
+      set restitution coefficient = 0.9
+      set poisson ratio           = 0.3
+      set friction coefficient    = 0
+    end
+  end
+
+  subsection particle info 1
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 18; 14
+    end
+    subsection velocity
+      set Function expression = y/20; 0
+    end
+    subsection physical properties
+      set density                 = 1
+      set youngs modulus          = 100000000
+      set restitution coefficient = 0.9
+      set poisson ratio           = 0.3
+      set friction coefficient    = 0
+    end
+  end
+
+  subsection particle info 2
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 28; 7
+    end
+    subsection velocity
+      set Function expression = y/20; 0
+    end
+    subsection physical properties
+      set density                 = 1
+      set youngs modulus          = 100000000
+      set restitution coefficient = 0.9
+      set poisson ratio           = 0.3
+      set friction coefficient    = 0
+    end
+  end
+
+  subsection particle info 3
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 38; 12
+    end
+    subsection velocity
+      set Function expression = y/20; 0
+    end
+    subsection physical properties
+      set density                 = 1
+      set youngs modulus          = 100000000
+      set restitution coefficient = 0.9
+      set poisson ratio           = 0.3
+      set friction coefficient    = 0
+    end
+  end
+
+  subsection particle info 4
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 12; 16
+    end
+    subsection velocity
+      set Function expression = y/20; 0
+    end
+    subsection physical properties
+      set density                 = 1
+      set youngs modulus          = 100000000
+      set restitution coefficient = 0.9
+      set poisson ratio           = 0.3
+      set friction coefficient    = 0
+    end
+  end
+
+  subsection particle info 5
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 33; 4
+    end
+    subsection velocity
+      set Function expression = y/20; 0
+    end
+    subsection physical properties
+      set density                 = 1
+      set youngs modulus          = 100000000
+      set restitution coefficient = 0.9
+      set poisson ratio           = 0.3
+      set friction coefficient    = 0
+    end
+  end
+
+  subsection particle info 6
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 44; 9
+    end
+    subsection velocity
+      set Function expression = y/20; 0
+    end
+    subsection physical properties
+      set density                 = 1
+      set youngs modulus          = 100000000
+      set restitution coefficient = 0.9
+      set poisson ratio           = 0.3
+      set friction coefficient    = 0
+    end
+  end
+end
+
+subsection mesh adaptation
+  set type = adaptive # If y ou want mesh adaptation to work with particles you need to  have the type be adaptive, otherwise it won't adapt
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity             = verbose
+    set tolerance             = 1e-4
+    set max iterations        = 10
+    set force rhs calculation = true
+  end
+end
+
+subsection forces
+  set verbosity             = verbose
+  set calculate force       = true
+  set calculate torque      = false
+  set force name            = force_7p_eps0
+  set output precision      = 10
+  set calculation frequency = 1
+  set output frequency      = 1
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set method                                = gmres
+    set max iters                             = 1000
+    set max krylov vectors                    = 1000
+    set relative residual                     = 1e-2
+    set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = verbose
+  end
+end
