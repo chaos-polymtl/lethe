@@ -860,6 +860,7 @@ namespace Parameters
     enum class ScalarLimiters : std::int8_t
     {
       moe,
+      kuzmin,
       none
     } scalar_limiter = ScalarLimiters::none;
 

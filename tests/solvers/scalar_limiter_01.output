@@ -1,0 +1,21 @@
+
+DEAL::Dimension 2 degree 1
+DEAL::  Integral is conserved: 1
+DEAL::  Solution is modified: 1
+DEAL::  No new extremum: 1
+DEAL::  Round-off variation is not amplified: 1
+DEAL::Dimension 2 degree 2
+DEAL::  Integral is conserved: 1
+DEAL::  Solution is modified: 1
+DEAL::  No new extremum: 1
+DEAL::  Round-off variation is not amplified: 1
+DEAL::Dimension 2 degree 3
+DEAL::  Integral is conserved: 1
+DEAL::  Solution is modified: 1
+DEAL::  No new extremum: 1
+DEAL::  Round-off variation is not amplified: 1
+DEAL::Dimension 3 degree 2
+DEAL::  Integral is conserved: 1
+DEAL::  Solution is modified: 1
+DEAL::  No new extremum: 1
+DEAL::  Round-off variation is not amplified: 1

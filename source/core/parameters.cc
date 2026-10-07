@@ -998,7 +998,7 @@ namespace Parameters
       prm.declare_entry(
         "scalar limiter",
         enum_to_string(defaults.scalar_limiter),
-        Patterns::Selection("none|moe"),
+        Patterns::Selection("none|moe|kuzmin"),
         "Type of scalar limiter. The limiters are only appropriate with the DG versions of the solvers and should only be used for advection-dominated problem.");
     }
     prm.leave_subsection();

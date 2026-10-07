@@ -536,8 +536,21 @@ private:
             Parameters::Stabilization::ScalarLimiters::moe)
           {
             moe_scalar_limiter<dim>(*this->dof_handler,
+                                    *this->get_mapping(),
+                                    *this->cell_quadrature,
                                     this->evaluation_point,
                                     this->local_evaluation_point);
+
+            *present_solution = this->local_evaluation_point;
+          }
+        else if (simulation_parameters.stabilization.scalar_limiter ==
+                 Parameters::Stabilization::ScalarLimiters::kuzmin)
+          {
+            kuzmin_scalar_limiter<dim>(*this->dof_handler,
+                                       *this->get_mapping(),
+                                       *this->cell_quadrature,
+                                       this->evaluation_point,
+                                       this->local_evaluation_point);
 
             *present_solution = this->local_evaluation_point;
           }
