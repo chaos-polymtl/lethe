@@ -476,7 +476,7 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("verbosity",
                       enum_to_string(defaults.verbosity),
                       Patterns::Selection(enum_to_selection<Verbosity>(
-                        deprecated_verbosity_names())),
+                        deprecated_verbosity_names(), quiet_or_verbose())),
                       "States whether the filtered data should be printed "
                       "Choices are <quiet|verbose>.");
   }
@@ -648,7 +648,7 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("verbosity",
                       enum_to_string(defaults.verbosity),
                       Patterns::Selection(enum_to_selection<Verbosity>(
-                        deprecated_verbosity_names())),
+                        deprecated_verbosity_names(), quiet_or_verbose())),
                       "States whether the filtered data should be printed "
                       "Choices are <quiet|verbose>.");
   }

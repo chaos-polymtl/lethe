@@ -10,6 +10,8 @@
 
 #include <deal.II/grid/grid_in.h>
 
+#include <vector>
+
 namespace Parameters
 {
   namespace Lagrangian
@@ -30,6 +32,30 @@ namespace Parameters
           {"constant_resistance", RollingResistanceMethod::constant},
           {"viscous_resistance", RollingResistanceMethod::viscous},
           {"epsd_resistance", RollingResistanceMethod::epsd}};
+
+      /// Particle-particle contact force models which can be selected with
+      /// the "particle particle contact force method" parameter. The shift
+      /// model is left out, since it is only used internally by the packed
+      /// insertion method.
+      const std::vector<ParticleParticleContactForceModel>
+        selectable_particle_particle_contact_force_models = {
+          ParticleParticleContactForceModel::linear,
+          ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+          ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+          ParticleParticleContactForceModel::hertz,
+          ParticleParticleContactForceModel::hertz_JKR,
+          ParticleParticleContactForceModel::DMT};
+
+      /// Particle-wall contact force models which can be selected with the
+      /// "particle wall contact force method" parameter. The shift model is
+      /// left out, since it is only used internally by the packed insertion
+      /// method.
+      const std::vector<ParticleWallContactForceModel>
+        selectable_particle_wall_contact_force_models = {
+          ParticleWallContactForceModel::linear,
+          ParticleWallContactForceModel::nonlinear,
+          ParticleWallContactForceModel::JKR,
+          ParticleWallContactForceModel::DMT};
     } // namespace
 
     void
@@ -1054,13 +1080,7 @@ namespace Parameters
           enum_to_string(defaults.particle_particle_contact_force_model),
           Patterns::Selection(
             enum_to_selection<ParticleParticleContactForceModel>(
-              {},
-              {ParticleParticleContactForceModel::linear,
-               ParticleParticleContactForceModel::hertz_mindlin_limit_force,
-               ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
-               ParticleParticleContactForceModel::hertz,
-               ParticleParticleContactForceModel::hertz_JKR,
-               ParticleParticleContactForceModel::DMT})),
+              {}, selectable_particle_particle_contact_force_models)),
           "Choosing particle-particle contact force model. "
           "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
@@ -1068,11 +1088,7 @@ namespace Parameters
           "particle wall contact force method",
           enum_to_string(defaults.particle_wall_contact_force_method),
           Patterns::Selection(enum_to_selection<ParticleWallContactForceModel>(
-            {},
-            {ParticleWallContactForceModel::linear,
-             ParticleWallContactForceModel::nonlinear,
-             ParticleWallContactForceModel::JKR,
-             ParticleWallContactForceModel::DMT})),
+            {}, selectable_particle_wall_contact_force_models)),
           "Choosing particle-wall contact force model. "
           "Choices are <linear|nonlinear|JKR|DMT>.");
 

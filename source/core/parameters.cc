@@ -3391,7 +3391,7 @@ namespace Parameters
         prm.declare_entry("ilu preconditioner fill",
                           Patterns::Tools::Convert<unsigned int>::to_string(
                             defaults.ilu_precond_fill),
-                          Patterns::Double(),
+                          Patterns::Integer(0),
                           "Ilu preconditioner fill");
 
         prm.declare_entry("ilu preconditioner absolute tolerance",
@@ -3409,7 +3409,7 @@ namespace Parameters
         prm.declare_entry("amg preconditioner ilu fill",
                           Patterns::Tools::Convert<unsigned int>::to_string(
                             defaults.amg_precond_ilu_fill),
-                          Patterns::Double(),
+                          Patterns::Integer(0),
                           "amg preconditioner ilu smoother fill");
 
         prm.declare_entry("amg preconditioner ilu absolute tolerance",
@@ -3902,18 +3902,18 @@ namespace Parameters
         Utilities::split_string_list(refin_op);
 
       // Checking that the sizes are coherent
-      Assert(strategy_vec.size() == var_vec.size(),
-             MultipleAdaptationSizeError("error estimator",
-                                         strategy_vec.size(),
-                                         var_vec.size()));
-      Assert(coars_vec.size() == var_vec.size(),
-             MultipleAdaptationSizeError("fraction coarsening",
-                                         coars_vec.size(),
-                                         var_vec.size()));
-      Assert(refin_vec.size() == var_vec.size(),
-             MultipleAdaptationSizeError("fraction refinement",
-                                         refin_vec.size(),
-                                         var_vec.size()));
+      AssertThrow(strategy_vec.size() == var_vec.size(),
+                  MultipleAdaptationSizeError("error estimator",
+                                              strategy_vec.size(),
+                                              var_vec.size()));
+      AssertThrow(coars_vec.size() == var_vec.size(),
+                  MultipleAdaptationSizeError("fraction coarsening",
+                                              coars_vec.size(),
+                                              var_vec.size()));
+      AssertThrow(refin_vec.size() == var_vec.size(),
+                  MultipleAdaptationSizeError("fraction refinement",
+                                              refin_vec.size(),
+                                              var_vec.size()));
 
       // Create map of refinement variables
       for (std::vector<int>::size_type i = 0; i != var_vec.size(); ++i)
