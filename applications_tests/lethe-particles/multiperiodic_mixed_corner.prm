@@ -2,18 +2,17 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Two particles collide head-on through the corner of a domain that is
-# periodic in both x and y. Particle 0 is in cell C (touching x_max only)
-# and particle 1 is in cell D (touching x_max and y_min), so their only
-# contact is through the y-periodic boundary. With 2 MPI ranks, C and D are
-# owned by different ranks.
+# periodic in both x and y. Particle 0 is in the top right corner (touching
+# x_max only) and particle 1 is in the bottom right corner (touching x_max
+# and y_min), so their only  contact is through the y-periodic boundary.
+# With 2 MPI ranks, the cells that own particle 1 and 2 are on different ranks.
 #
 # This tests that a periodic contact between two cells which both touch a
 # principal periodic boundary is found only once when the cells are on
 # different ranks; otherwise the contact force is applied twice. The
 # collision is perfectly elastic (restitution of 1, no friction, no
 # gravity), so both particles must leave with their velocity reversed
-# (0.1 m/s), and the mpirun=1 and mpirun=2 outputs must be identical apart
-# from the printed rank count.
+# (0.1 m/s), and the mpirun=1 and mpirun=2 outputs must be identical.
 
 set dimension = 3
 
@@ -75,14 +74,6 @@ end
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
-
-# Particle 0 sits in mixed corner cell C (0.75-1.0, 0.75-1.0), particle 1 in
-# double-principal corner cell D (0.75-1.0, 0.0-0.25). They approach each
-# other along y with equal and opposite velocity; the periodic gap at t=0 is
-# (1 - 0.975) + 0.025 = 0.05, exactly equal to the diameter, so the
-# particles start exactly touching (zero overlap, zero contact potential
-# energy) and the whole compress/rebound/separate cycle happens within the
-# simulated window.
 
 subsection insertion info
   set insertion method    = list

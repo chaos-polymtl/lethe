@@ -163,7 +163,7 @@ find_cell_periodic_neighbors(
       if (processed_cells.contains(cell))
         continue;
 
-      // Since the cell is gonna be processed, we add it to he list.
+      // Since the cell is gonna be processed, we add it to the list.
       processed_cells.insert(cell);
 
       // If the cell is owned by the processor
@@ -219,14 +219,14 @@ find_cell_periodic_neighbors(
                 }
               else if (periodic_neighbor->is_ghost())
                 {
-                  // If the periodic neighbor is also processed as a main
+                  // If the periodic neighbor was also processed as a main
                   // cell, both cells discover this pair. Only the cell with
                   // the smallest CellId records it, otherwise the ghost
-                  // branch below records it a second time and the contact
-                  // force is applied twice to the same local particle. If
-                  // the periodic neighbor is not a main cell, it never
-                  // discovers the pair and the current cell must record it.
-                  // CellId is used since it identifies a cell identically
+                  // branch below will records it a second time and the contact
+                  // force will br applied twice to the same local particle. If
+                  // the periodic neighbor is never treated as main cell, it
+                  // never discovers this pair and the current cell must record
+                  // it. CellId is used since it identifies a cell identically
                   // on every process, ghost cells included.
                   if (all_main_cell_list.contains(periodic_neighbor) &&
                       periodic_neighbor->id() < cell->id())
@@ -297,12 +297,8 @@ find_cell_periodic_neighbors(
                   // one of this cell's periodic vertices independently, and
                   // a shared periodic face has multiple coinciding
                   // vertices, each contributing the same neighbor cell.
-                  auto local_search_iterator =
-                    std::find(ghost_local_periodic_neighbor_vector.begin(),
-                              ghost_local_periodic_neighbor_vector.end(),
-                              periodic_neighbor);
-
-                  if (local_search_iterator ==
+                  if (std::ranges::find(ghost_local_periodic_neighbor_vector,
+                                        periodic_neighbor) ==
                       ghost_local_periodic_neighbor_vector.end())
                     {
                       ghost_local_periodic_neighbor_vector.push_back(
@@ -385,8 +381,7 @@ get_periodic_neighbor_list(
       unsigned int vertex_id = cell->vertex_index(vertex);
 
       // Check if vertex is at periodic boundary, there should be a key if so
-      if (vertex_to_coinciding_vertex_group.find(vertex_id) !=
-          vertex_to_coinciding_vertex_group.end())
+      if (vertex_to_coinciding_vertex_group.contains(vertex_id))
         {
           // Get the coinciding vertex key to the current vertex
           unsigned int coinciding_vertex_key =
