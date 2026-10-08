@@ -19,3 +19,15 @@ DEAL::Batch 2, particle 16 is inserted at: 0.0122751 -0.0474177 -0.0452558
 DEAL::Batch 2, particle 17 is inserted at: 0.0228245 -0.0458389 -0.0456722
 DEAL::Batch 2, particle 18 is inserted at: 0.0320158 -0.0465668 -0.0475690
 DEAL::Batch 2, particle 19 is inserted at: 0.0427649 -0.0478622 -0.0453755
+DEAL::Batch 3, particle 20 is inserted at: -0.0481763 -0.0481091 -0.0456365
+DEAL::Batch 3, particle 21 is inserted at: -0.0379362 -0.0478447 -0.0474122
+DEAL::Batch 3, particle 22 is inserted at: -0.0281153 -0.0450510 -0.0450013
+DEAL::Batch 3, particle 23 is inserted at: -0.0164785 -0.0455070 -0.0463539
+DEAL::Batch 3, particle 24 is inserted at: -0.00737315 -0.0452007 -0.0471317
+DEAL::Batch 3, particle 25 is inserted at: 0.00355599 -0.0451365 -0.0472397
+DEAL::Batch 3, particle 26 is inserted at: 0.0125927 -0.0453814 -0.0487109
+DEAL::Batch 3, particle 27 is inserted at: 0.0240978 -0.0465654 -0.0456573
+DEAL::Batch 3, particle 28 is inserted at: 0.0348560 -0.0462487 -0.0466246
+DEAL::Batch 3, particle 29 is inserted at: 0.0431554 -0.0475403 -0.0452884
+DEAL::Restored third batch matches the uninterrupted third batch: true
+DEAL::Restored third batch matches the first batch: false

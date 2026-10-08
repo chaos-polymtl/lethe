@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Inserts two batches of particles with the volume insertion and checks that the random offsets differ between batches.
+ * @brief Inserts three batches of particles with the volume insertion and
+ * checks that the random offsets differ between batches. The insertion object
+ * is also checkpointed after the second batch and restored in a new object,
+ * which must insert the same third batch as the original object.
  */
 
 // Deal.II includes
@@ -15,9 +18,13 @@
 #include <dem/insertion_volume.h>
 
 // Tests (with common definitions)
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <../tests/tests.h>
 
 #include <algorithm>
+#include <sstream>
 #include <vector>
 
 using namespace dealii;
@@ -60,7 +67,7 @@ test()
   lpp.particle_average_diameter.push_back(0.005);
   lpp.distribution_type.push_back(SizeDistributionType::uniform);
   lpp.density_particle.push_back(2500);
-  lpp.number.push_back(20);
+  lpp.number.push_back(30);
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
@@ -82,13 +89,47 @@ test()
   insertion_object.insert(particle_handler, tr, dem_parameters);
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
-  // Sort the particles by id so that the output follows the insertion order
-  std::vector<std::pair<types::particle_index, Point<dim>>> particles;
-  for (const auto &particle : particle_handler)
-    particles.emplace_back(particle.get_id(), particle.get_location());
-  std::sort(particles.begin(),
-            particles.end(),
-            [](const auto &a, const auto &b) { return a.first < b.first; });
+  // Checkpoint the insertion object after the second batch. The archive is
+  // scoped so that it is complete before the checkpoint is read back.
+  std::stringstream checkpoint;
+  {
+    boost::archive::text_oarchive oa(checkpoint, boost::archive::no_header);
+    insertion_object.serialize(oa);
+  }
+
+  // Insert the third batch with the original insertion object
+  insertion_object.insert(particle_handler, tr, dem_parameters);
+
+  // Restore the checkpoint in a new insertion object and insert the third
+  // batch with it, in a separate particle handler
+  InsertionVolume<dim, PropertiesIndex> restored_insertion_object(
+    distribution_object_container,
+    tr,
+    dem_parameters,
+    distribution_object_container[0]->find_max_diameter());
+  boost::archive::text_iarchive ia(checkpoint, boost::archive::no_header);
+  restored_insertion_object.deserialize(ia);
+
+  Particles::ParticleHandler<dim> restored_particle_handler(
+    tr, mapping, PropertiesIndex::n_properties);
+  restored_insertion_object.insert(restored_particle_handler,
+                                   tr,
+                                   dem_parameters);
+
+  // Sort the particles of a particle handler by id, so that they follow the
+  // insertion order
+  auto sorted_particles = [](const Particles::ParticleHandler<dim> &handler) {
+    std::vector<std::pair<types::particle_index, Point<dim>>> particles;
+    for (const auto &particle : handler)
+      particles.emplace_back(particle.get_id(), particle.get_location());
+    std::sort(particles.begin(),
+              particles.end(),
+              [](const auto &a, const auto &b) { return a.first < b.first; });
+    return particles;
+  };
+
+  const auto particles          = sorted_particles(particle_handler);
+  const auto restored_particles = sorted_particles(restored_particle_handler);
 
   // Output
   for (const auto &[id, location] : particles)
@@ -97,6 +138,29 @@ test()
               << ", particle " << id << " is inserted at: " << location[0]
               << " " << location[1] << " " << location[2] << std::endl;
     }
+
+  // Check if the batch inserted by the restored object has the same positions
+  // as the batch starting at first_index in the original particle handler. The
+  // ids differ, since the restored particle handler starts from id 0.
+  const double tolerance     = 1e-12;
+  auto         matches_batch = [&](const unsigned int first_index) {
+    if (restored_particles.size() != insert_info.inserted_this_step)
+      return false;
+    for (unsigned int i = 0; i < restored_particles.size(); ++i)
+      if ((restored_particles[i].second - particles[first_index + i].second)
+            .norm() > tolerance)
+        return false;
+    return true;
+  };
+
+  // The restored insertion counter must continue the sequence of the original
+  // object (third batch), and must not restart it (first batch).
+  deallog << "Restored third batch matches the uninterrupted third batch: "
+          << (matches_batch(2 * insert_info.inserted_this_step) ? "true" :
+                                                                  "false")
+          << std::endl;
+  deallog << "Restored third batch matches the first batch: "
+          << (matches_batch(0) ? "true" : "false") << std::endl;
 }
 
 int
