@@ -835,7 +835,7 @@ enum_to_selection(const DeprecatedEnumNames<EnumType> &deprecated_names = {},
  *
  * @tparam EnumType Enumeration type.
  *
- * @param[in] name Value of the parameter.
+ * @param[in] parameter_value Value of the parameter.
  *
  * @param[in] deprecated_names Deprecated strings which remain accepted.
  *
