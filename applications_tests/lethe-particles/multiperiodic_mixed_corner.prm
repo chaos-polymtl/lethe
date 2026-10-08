@@ -1,0 +1,126 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Two particles collide head-on through the corner of a domain that is
+# periodic in both x and y. Particle 0 is in the top right corner (touching
+# x_max only) and particle 1 is in the bottom right corner (touching x_max
+# and y_min), so their only  contact is through the y-periodic boundary.
+# With 2 MPI ranks, the cells that own particle 1 and 2 are on different ranks.
+#
+# This tests that a periodic contact between two cells which both touch a
+# principal periodic boundary is found only once when the cells are on
+# different ranks; otherwise the contact force is applied twice. The
+# collision is perfectly elastic (restitution of 1, no friction, no
+# gravity), so both particles must leave with their velocity reversed
+# (0.1 m/s), and the mpirun=1 and mpirun=2 outputs must be identical.
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 1e-5
+  set time end         = 3e-2
+  set log frequency    = 3000
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = constant
+    set frequency                = 50
+    set neighborhood threshold   = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = none
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0., 0., 0.
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.05
+    set number of particles               = 2
+    set density particles                 = 2000
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 1.0
+    set friction coefficient particles    = 0.0
+    set rolling friction particles        = 0.0
+  end
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 1000000
+  set list x              = 0.850, 0.850
+  set list y              = 0.975, 0.025
+  set list z              = 0.125, 0.125
+  set list velocity x     = 0.000, 0.000
+  set list velocity y     = 0.100, -0.100
+  set list velocity z     = 0.000, 0.000
+  set list omega x        = 0.000, 0.000
+  set list omega y        = 0.000, 0.000
+  set list omega z        = 0.000, 0.000
+  set list diameters      = 0.050, 0.050
+  set list temperatures   = 0.000, 0.000
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = dealii
+  set grid type                           = subdivided_hyper_rectangle
+  set grid arguments                      = 4, 4, 1 : 0.0, 0.0, 0.0 : 1.0, 1.0, 0.25 : true
+  set initial refinement                  = 0
+  set expand particle-wall contact search = false
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 2
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 0
+    set periodic direction = 0
+  end
+
+  subsection boundary condition 1
+    set type               = periodic
+    set periodic id 0      = 2
+    set periodic id 1      = 3
+    set periodic direction = 1
+  end
+end

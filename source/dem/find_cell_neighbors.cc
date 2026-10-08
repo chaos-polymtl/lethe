@@ -3,6 +3,7 @@
 
 #include <dem/find_cell_neighbors.h>
 
+#include <deal.II/grid/cell_id.h>
 #include <deal.II/grid/grid_tools.h>
 
 using namespace DEM;
@@ -120,7 +121,17 @@ find_cell_periodic_neighbors(
     ghost_local_periodic_neighbor_vector;
 
   typename dem_data_structures<dim>::cell_set total_cell_list;
-  typename dem_data_structures<dim>::cell_set total_ghost_cell_list;
+
+  // Every distinct cell of periodic_boundaries_cells_information touches at
+  // least one principal periodic boundary and is therefore processed as a
+  // periodic main cell by the loop below. Since we support multiple PBC, it is
+  // possible that a main cell on the principal boundary of PBC 0 is also a
+  // periodic neighbor of another main cell relative to PBC 1. We need to store
+  // all the cells that were treated as "main" otherwise we are gonna have
+  // duplicated neighboring cell pairs. this cell_set stores the those cells.
+  typename dem_data_structures<dim>::cell_set all_main_cell_list;
+  for (const auto &pb_cell_struct : periodic_boundaries_cells_information)
+    all_main_cell_list.insert(pb_cell_struct.second.cell);
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -147,10 +158,12 @@ find_cell_periodic_neighbors(
     {
       auto &cell = pb_cell_struct.second.cell;
 
-      // Skip if we already mapped this cell's periodic neighbors
-      if (processed_cells.find(cell) != processed_cells.end())
+      // Skip if we already mapped this cell's periodic neighbors. This could
+      // happen if a cell is located at a corner formed by two primary PBC.
+      if (processed_cells.contains(cell))
         continue;
 
+      // Since the cell is gonna be processed, we add it to the list.
       processed_cells.insert(cell);
 
       // If the cell is owned by the processor
@@ -206,6 +219,19 @@ find_cell_periodic_neighbors(
                 }
               else if (periodic_neighbor->is_ghost())
                 {
+                  // If the periodic neighbor was also processed as a main
+                  // cell, both cells discover this pair. Only the cell with
+                  // the smallest CellId records it, otherwise the ghost
+                  // branch below will records it a second time and the contact
+                  // force will br applied twice to the same local particle. If
+                  // the periodic neighbor is never treated as main cell, it
+                  // never discovers this pair and the current cell must record
+                  // it. CellId is used since it identifies a cell identically
+                  // on every process, ghost cells included.
+                  if (all_main_cell_list.contains(periodic_neighbor) &&
+                      periodic_neighbor->id() < cell->id())
+                    continue;
+
                   // If the cell neighbor is a ghost, it should be added in
                   // the ghost_periodic_neighbor_vector container
                   auto ghost_search_iterator =
@@ -243,7 +269,6 @@ find_cell_periodic_neighbors(
 
           // The first element of each vector is the cell itself
           ghost_local_periodic_neighbor_vector.push_back(cell);
-          total_ghost_cell_list.insert(cell);
 
           // Empty list of periodic cell neighbor
           typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
@@ -259,17 +284,22 @@ find_cell_periodic_neighbors(
             {
               if (periodic_neighbor->is_locally_owned())
                 {
-                  auto search_iterator =
-                    total_ghost_cell_list.find(periodic_neighbor);
+                  // Same rule as in the local branch above: if the periodic
+                  // neighbor is also a main cell, only the cell with the
+                  // smallest CellId records the pair.
+                  if (all_main_cell_list.contains(periodic_neighbor) &&
+                      periodic_neighbor->id() < cell->id())
+                    continue;
 
-                  auto local_search_iterator =
-                    std::find(ghost_local_periodic_neighbor_vector.begin(),
-                              ghost_local_periodic_neighbor_vector.end(),
-                              periodic_neighbor);
-
-                  if (search_iterator == total_ghost_cell_list.end() &&
-                      local_search_iterator ==
-                        ghost_local_periodic_neighbor_vector.end())
+                  // Check if the neighbor cell is already in
+                  // ghost_local_periodic_neighbor_vector. Duplicates are
+                  // expected here: get_periodic_neighbor_list sweeps every
+                  // one of this cell's periodic vertices independently, and
+                  // a shared periodic face has multiple coinciding
+                  // vertices, each contributing the same neighbor cell.
+                  if (std::ranges::find(ghost_local_periodic_neighbor_vector,
+                                        periodic_neighbor) ==
+                      ghost_local_periodic_neighbor_vector.end())
                     {
                       ghost_local_periodic_neighbor_vector.push_back(
                         periodic_neighbor);
@@ -351,8 +381,7 @@ get_periodic_neighbor_list(
       unsigned int vertex_id = cell->vertex_index(vertex);
 
       // Check if vertex is at periodic boundary, there should be a key if so
-      if (vertex_to_coinciding_vertex_group.find(vertex_id) !=
-          vertex_to_coinciding_vertex_group.end())
+      if (vertex_to_coinciding_vertex_group.contains(vertex_id))
         {
           // Get the coinciding vertex key to the current vertex
           unsigned int coinciding_vertex_key =
