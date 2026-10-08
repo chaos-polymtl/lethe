@@ -12,10 +12,10 @@
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title=" ">
-<polygon fill="#999999" stroke="#666666" points="349.5,-349 212.5,-349 212.5,-308 349.5,-308 349.5,-349"/>
-<text text-anchor="start" x="220.5" y="-337" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
-<text text-anchor="start" x="220.5" y="-326" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/source/dem/find</text>
-<text text-anchor="middle" x="281" y="-315" font-family="Helvetica,sans-Serif" font-size="10.00">_cell_neighbors.cc</text>
+<polygon fill="#999999" stroke="#666666" points="418.5,-349 281.5,-349 281.5,-308 418.5,-308 418.5,-349"/>
+<text text-anchor="start" x="289.5" y="-337" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
+<text text-anchor="start" x="289.5" y="-326" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/source/dem/find</text>
+<text text-anchor="middle" x="350" y="-315" font-family="Helvetica,sans-Serif" font-size="10.00">_cell_neighbors.cc</text>
 </a>
 </g>
 </g>
@@ -32,8 +32,8 @@
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M257.48,-307.95C246.17,-298.55 232.82,-287.46 222.29,-278.7"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="224.47,-275.96 214.54,-272.26 219.99,-281.34 224.47,-275.96"/>
+<path fill="none" stroke="#63b8ff" d="M305.4,-307.95C281.8,-297.6 253.51,-285.2 232.81,-276.13"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="234.16,-272.9 223.6,-272.09 231.35,-279.31 234.16,-272.9"/>
 </a>
 </g>
 </g>
@@ -41,8 +41,8 @@
 <g id="Node000034" class="node">
 <title>Node34</title>
 <g id="a_Node000034"><a xlink:title=" ">
-<polygon fill="#e0e0e0" stroke="#999999" points="422,-272 294,-272 294,-253 422,-253 422,-272"/>
-<text text-anchor="middle" x="358" y="-260" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/grid/grid_tools.h</text>
+<polygon fill="#e0e0e0" stroke="#999999" points="406,-272 294,-272 294,-253 406,-253 406,-272"/>
+<text text-anchor="middle" x="350" y="-260" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/grid/cell_id.h</text>
 </a>
 </g>
 </g>
@@ -50,8 +50,26 @@
 <g id="edge44_Node000001_Node000034" class="edge">
 <title>Node1&#45;&gt;Node34</title>
 <g id="a_edge44_Node000001_Node000034"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M304.52,-307.95C315.83,-298.55 329.18,-287.46 339.71,-278.7"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="342.01,-281.34 347.46,-272.26 337.53,-275.96 342.01,-281.34"/>
+<path fill="none" stroke="#63b8ff" d="M350,-307.95C350,-299.85 350,-290.5 350,-282.47"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="353.5,-282.26 350,-272.26 346.5,-282.26 353.5,-282.26"/>
+</a>
+</g>
+</g>
+<!-- Node35 -->
+<g id="Node000035" class="node">
+<title>Node35</title>
+<g id="a_Node000035"><a xlink:title=" ">
+<polygon fill="#e0e0e0" stroke="#999999" points="552,-272 424,-272 424,-253 552,-253 552,-272"/>
+<text text-anchor="middle" x="488" y="-260" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/grid/grid_tools.h</text>
+</a>
+</g>
+</g>
+<!-- Node1&#45;&gt;Node35 -->
+<g id="edge45_Node000001_Node000035" class="edge">
+<title>Node1&#45;&gt;Node35</title>
+<g id="a_edge45_Node000001_Node000035"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M392.15,-307.95C414.26,-297.7 440.72,-285.43 460.23,-276.38"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="461.87,-279.47 469.47,-272.09 458.93,-273.12 461.87,-279.47"/>
 </a>
 </g>
 </g>
