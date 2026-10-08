@@ -39,7 +39,8 @@ namespace Parameters
       "mode",
       enum_to_string(mode),
       Patterns::Selection(enum_to_selection<Parameters::VoidFractionMode>()),
-      "Choose the method for the calculation of the void fraction");
+      "Choose the method for the calculation of the void fraction."
+      "Choices are <function|pcm|qcm|spm>.");
     prm.enter_subsection("function");
     void_fraction.declare_parameters(prm);
     prm.leave_subsection();

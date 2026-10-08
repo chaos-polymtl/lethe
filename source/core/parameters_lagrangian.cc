@@ -38,7 +38,7 @@ namespace Parameters
       /// model is left out, since it is only used internally by the packed
       /// insertion method.
       const std::vector<ParticleParticleContactForceModel>
-        selectable_particle_particle_contact_force_models = {
+        allowed_particle_particle_contact_force_models = {
           ParticleParticleContactForceModel::linear,
           ParticleParticleContactForceModel::hertz_mindlin_limit_force,
           ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,

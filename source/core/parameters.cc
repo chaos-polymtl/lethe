@@ -3569,7 +3569,8 @@ namespace Parameters
           enum_to_string(defaults.mg_coarsening_type),
           Patterns::Selection(
             enum_to_selection<MultigridCoarseningSequenceType>()),
-          "mg coarsening type for gcmg");
+          "mg coarsening type for gcmg."
+          "Choices are <h|p|hp|ph>.");
 
         prm.declare_entry(
           "mg p coarsening type",
@@ -3578,7 +3579,8 @@ namespace Parameters
             enum_to_selection<MGTransferGlobalCoarseningTools::
                                 PolynomialCoarseningSequenceType>(
               deprecated_mg_p_coarsening_type_names)),
-          "mg p coarsening type for gcmg");
+          "mg p coarsening type for gcmg."
+          "Choices are <decrease_by_one|bisect|go_to_one>.");
 
         prm.declare_entry("mg p min coarsening degree",
                           Patterns::Tools::Convert<unsigned int>::to_string(
