@@ -782,16 +782,23 @@ warn_deprecated_parameter_value(const std::string &parameter_name,
 /**
  * @brief Return the selection string (e.g. "quiet|verbose|extra_verbose") of
  * an enum parameter, to be given to Patterns::Selection. The choices returned
- * in the selection string are the enumerator identifiers followed by the
+ * in the selection string are the enumerator identifiers (meaning, the names
+ * in the enum converted into strings) followed by the
  * deprecated strings which are still accepted.
  *
  * @tparam EnumType Enumeration type.
  *
  * @param[in] deprecated_names Deprecated strings which remain accepted.
  *
- * @param[in] allowed_values Enumerators accepted by the parameter. If empty,
- * all the enumerators of @p EnumType are accepted. The deprecated strings of
- * enumerators which are not accepted are left out.
+ * @param[in] allowed_values Enumerators (e.g. the enum values, for example
+ * quiet, verbose and extra_vebose) accepted by the parameter. If empty,
+ * all the enumerators (meaning all possible values) of @p EnumType are accepted.
+ * This is necessary because some enums (for example
+ * BoundaryConditions::BoundaryType) contains values which are not accepted for
+ * all physics.
+ *
+ * //TODO Separate the enum for the BoundaryConditions::BoundaryType into a
+ * separate enum for each physics
  *
  * @return The choices separated by "|".
  */

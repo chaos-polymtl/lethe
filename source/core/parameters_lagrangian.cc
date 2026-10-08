@@ -51,7 +51,7 @@ namespace Parameters
       /// left out, since it is only used internally by the packed insertion
       /// method.
       const std::vector<ParticleWallContactForceModel>
-        selectable_particle_wall_contact_force_models = {
+        allowed_particle_wall_contact_force_models = {
           ParticleWallContactForceModel::linear,
           ParticleWallContactForceModel::nonlinear,
           ParticleWallContactForceModel::JKR,
@@ -1080,7 +1080,7 @@ namespace Parameters
           enum_to_string(defaults.particle_particle_contact_force_model),
           Patterns::Selection(
             enum_to_selection<ParticleParticleContactForceModel>(
-              {}, selectable_particle_particle_contact_force_models)),
+              {}, allowed_particle_particle_contact_force_models)),
           "Choosing particle-particle contact force model. "
           "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
@@ -1088,7 +1088,7 @@ namespace Parameters
           "particle wall contact force method",
           enum_to_string(defaults.particle_wall_contact_force_method),
           Patterns::Selection(enum_to_selection<ParticleWallContactForceModel>(
-            {}, selectable_particle_wall_contact_force_models)),
+            {}, allowed_particle_wall_contact_force_models)),
           "Choosing particle-wall contact force model. "
           "Choices are <linear|nonlinear|JKR|DMT>.");
 
