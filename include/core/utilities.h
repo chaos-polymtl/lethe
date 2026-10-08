@@ -781,9 +781,9 @@ warn_deprecated_parameter_value(const std::string &parameter_name,
 
 /**
  * @brief Return the selection string (e.g. "quiet|verbose|extra_verbose") of
- * an enum parameter, to be given to Patterns::Selection. The choices returned in the selection string are the
- * enumerator identifiers followed by the deprecated strings which are still
- * accepted.
+ * an enum parameter, to be given to Patterns::Selection. The choices returned
+ * in the selection string are the enumerator identifiers followed by the
+ * deprecated strings which are still accepted.
  *
  * @tparam EnumType Enumeration type.
  *
