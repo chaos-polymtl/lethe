@@ -8,3 +8,21 @@ Running on 1 MPI rank(s)...
    Number of active cells:       1796
    Number of degrees of freedom: 9440
    Volume of triangulation:      1.600000e+03
+------------------------
+Anderson-Jackson filter
+------------------------
+   Kernel:                                   gaussian
+   Standard deviation:                       5.000000e-01
+   Support radius:                           1.500000e+00
+   Retained mass of the gaussian:            9.707091e-01
+   Polynomial degree of the filtered fields: 1
+   Quadrature points per direction:          2
+   Cut cell subdivisions:                    4
+   Number of filter centers:                 2168
+   Number of fluid, solid and cut cells:     1740 0 56
+   Kernel mass (min, max):                   1.280372e-01 1.024298e+00
+   Fluid volume fraction (min, max):         5.121490e-01 1.000000e+00
+   Number of undefined phase averages:       0
+   Volume of the source cells:               1.600000e+03
+   Solid volume of the source cells:         1.771484e+00
+   Integral of the solid volume fraction:    1.894577e+00

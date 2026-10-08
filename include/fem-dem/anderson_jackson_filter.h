@@ -52,20 +52,27 @@
  * \mathrm{d}V}{E(\mathbf{x})}, \f] where \f$g\f$ is a kernel of unit mass with
  * compact support and \f$I_f\f$ is the fluid indicator. The fluid volume
  * fraction is \f$\epsilon_f = E\f$ and the solid volume fraction is
- * \f$\epsilon_s = M - E\f$, which reduces to \f$1 - \epsilon_f\f$ away from
- * the boundaries of the domain. Optionally, both volume fractions are divided
- * by the kernel mass \f$M\f$, which renormalizes the kernel where it is
- * truncated by a boundary of the domain.
+ * \f$\epsilon_s = M - E\f$. Where the support of the kernel does not reach a
+ * non-periodic boundary of the domain, the kernel mass is exactly one, and
+ * both volume fractions are divided by its discrete value, which removes the
+ * quadrature error of the kernel and ensures that
+ * \f$\epsilon_f + \epsilon_s = 1\f$. The same division is applied where
+ * the discrete mass exceeds one, since any excess is a quadrature error.
+ * Otherwise, where the kernel is truncated by a boundary, the volume
+ * fractions are optionally divided by the kernel mass \f$M\f$, which
+ * renormalizes the kernel.
  *
  * Optionally, the part of the kernel outside of the domain, beyond the walls
  * where the velocity is imposed, is filled with fluid moving at the velocity
- * of the wall when the phase-averaged velocity is computed. The mass of this
- * exterior part is \f$1 - M\f$, attributed to the walls in proportion to the
- * integral of the kernel over the walls and over the other non-periodic
- * boundaries, and its velocity is the average of the wall velocity weighted by
- * the kernel. The integrals over the walls are accumulated by the same sweep
- * as the integrals over the cells, from the boundary faces of the locally
- * owned cells.
+ * of the wall. The mass \f$M_e\f$ of this exterior part is \f$1 - M\f$,
+ * attributed to the walls in proportion to the integral of the kernel over
+ * the walls and over the other non-periodic boundaries, and its velocity is
+ * the average of the wall velocity weighted by the kernel. The exterior fluid
+ * is counted both in the fluid volume fraction,
+ * \f$\epsilon_f = E + M_e\f$, and in the phase-averaged velocity, so that
+ * their product remains the flux of fluid seen by the kernel. The integrals
+ * over the boundaries are accumulated by the same sweep as the integrals over
+ * the cells, from the boundary faces of the locally owned cells.
  *
  * The convolution is source-centric: every process integrates its locally
  * owned cells (the sources) once, and adds the contribution of each batch of
@@ -178,8 +185,8 @@ public:
     double source_solid_volume = 0.;
 
     /// Integral of the solid volume fraction over the domain. For a periodic
-    /// domain without renormalization, it equals the volume of the solids up
-    /// to discretization errors.
+    /// domain, it equals the volume of the solids up to discretization
+    /// errors.
     double solid_volume_fraction_integral = 0.;
   };
 
@@ -212,12 +219,13 @@ public:
    * @param[in] classifier Description of the immersed solids.
    *
    * @param[in] periodic_boundaries Pairs of periodic boundaries of the
-   * triangulation. The support radius of the kernel must not exceed half of
-   * the period in each periodic direction.
+   * triangulation. The support radius of the kernel may exceed the period:
+   * the kernel is then periodized, i.e. a source point contributes to a
+   * filter center through several of its periodic images.
    *
    * @param[in] wall_velocities Velocity imposed on the walls, used to fill the
-   * part of the kernel beyond the walls when the parameters request it. The
-   * boundaries that are not listed truncate the kernel.
+   * part of the kernel beyond the walls with fluid when the parameters request
+   * it. The boundaries that are not listed truncate the kernel.
    */
   void
   apply(const dealii::DoFHandler<dim>        &fluid_dof_handler,
@@ -311,7 +319,8 @@ private:
     /// Integral of the kernel times the fluid indicator times the pressure.
     double pressure_moment = 0.;
 
-    /// Integral of the kernel over the non-periodic boundaries.
+    /// Integral of the kernel over the non-periodic boundaries. It is zero
+    /// where the support of the kernel does not reach these boundaries.
     double boundary_weight = 0.;
 
     /// Integral of the kernel over the walls where the velocity is imposed.
@@ -485,9 +494,11 @@ private:
    *
    * @param[in] classifier Description of the immersed solids.
    *
-   * @param[in] wall_velocities Velocity imposed on the walls. The boundary
-   * faces are only integrated if the parameters request the extension of the
-   * velocity beyond the walls.
+   * @param[in] wall_velocities Velocity imposed on the walls. The kernel is
+   * always integrated over the non-periodic boundary faces, to identify the
+   * filter centers whose kernel is truncated by a boundary. The velocity of
+   * the walls is only integrated if the parameters request the extension of
+   * the velocity beyond the walls.
    */
   template <typename KernelType>
   void
@@ -618,7 +629,7 @@ private:
   double support_radius = 0.;
 
   /// Mass of the untruncated gaussian retained by the kernel (1 for the
-  /// top-hat kernel).
+  /// top-hat and Wendland kernels).
   double retained_mass_fraction = 1.;
 
   /// Locations of the filter centers owned by this process.

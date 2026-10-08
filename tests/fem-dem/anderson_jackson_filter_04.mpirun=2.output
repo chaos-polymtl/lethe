@@ -1,21 +1,23 @@
 
 DEAL::Couette flow, velocity beyond the walls: kernel truncated
-DEAL::  y = 0.000000e+00, filtered u = 7.836878e-02, exact u = 0.000000e+00
-DEAL::  y = 6.250000e-02, filtered u = 1.060746e-01, exact u = 6.250000e-02
-DEAL::  y = 1.250000e-01, filtered u = 1.444229e-01, exact u = 1.250000e-01
-DEAL::  y = 1.875000e-01, filtered u = 1.936735e-01, exact u = 1.875000e-01
-DEAL::  y = 2.500000e-01, filtered u = 2.510283e-01, exact u = 2.500000e-01
-DEAL::  y = 3.125000e-01, filtered u = 3.125000e-01, exact u = 3.125000e-01
+DEAL::  y = 0.000000e+00, filtered u = 7.836878e-02, exact u = 0.000000e+00, fluid fraction = 5.002128e-01
+DEAL::  y = 6.250000e-02, filtered u = 1.060746e-01, exact u = 6.250000e-02, fluid fraction = 7.361003e-01
+DEAL::  y = 1.250000e-01, filtered u = 1.444229e-01, exact u = 1.250000e-01, fluid fraction = 8.974992e-01
+DEAL::  y = 1.875000e-01, filtered u = 1.936735e-01, exact u = 1.875000e-01, fluid fraction = 9.730470e-01
+DEAL::  y = 2.500000e-01, filtered u = 2.510283e-01, exact u = 2.500000e-01, fluid fraction = 9.965805e-01
+DEAL::  y = 3.125000e-01, filtered u = 3.125000e-01, exact u = 3.125000e-01, fluid fraction = 1.000000e+00
 DEAL::  profile antisymmetric about the middle : true
 DEAL::  exact at the middle                    : true
 DEAL::  filtered v is zero                     : true
+DEAL::  volume fractions sum to one            : false
 DEAL::Couette flow, velocity beyond the walls: velocity of the wall
-DEAL::  y = 0.000000e+00, filtered u = 3.920106e-02, exact u = 0.000000e+00
-DEAL::  y = 6.250000e-02, filtered u = 7.808157e-02, exact u = 6.250000e-02
-DEAL::  y = 1.250000e-01, filtered u = 1.296195e-01, exact u = 1.250000e-01
-DEAL::  y = 1.875000e-01, filtered u = 1.884534e-01, exact u = 1.875000e-01
-DEAL::  y = 2.500000e-01, filtered u = 2.501699e-01, exact u = 2.500000e-01
-DEAL::  y = 3.125000e-01, filtered u = 3.125000e-01, exact u = 3.125000e-01
+DEAL::  y = 0.000000e+00, filtered u = 3.920106e-02, exact u = 0.000000e+00, fluid fraction = 1.000000e+00
+DEAL::  y = 6.250000e-02, filtered u = 7.808157e-02, exact u = 6.250000e-02, fluid fraction = 1.000000e+00
+DEAL::  y = 1.250000e-01, filtered u = 1.296195e-01, exact u = 1.250000e-01, fluid fraction = 1.000000e+00
+DEAL::  y = 1.875000e-01, filtered u = 1.884534e-01, exact u = 1.875000e-01, fluid fraction = 1.000000e+00
+DEAL::  y = 2.500000e-01, filtered u = 2.501699e-01, exact u = 2.500000e-01, fluid fraction = 1.000000e+00
+DEAL::  y = 3.125000e-01, filtered u = 3.125000e-01, exact u = 3.125000e-01, fluid fraction = 1.000000e+00
 DEAL::  profile antisymmetric about the middle : true
 DEAL::  exact at the middle                    : true
 DEAL::  filtered v is zero                     : true
+DEAL::  volume fractions sum to one            : true

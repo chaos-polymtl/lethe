@@ -29,7 +29,15 @@ These are the definitions used in the unresolved CFD-DEM section, where the kern
 .. math::
     M(\mathbf{x}) = \int_\Omega g(\lVert \mathbf{x}-\mathbf{y} \rVert) \, \mathrm{d}\mathbf{y}, \qquad \varepsilon_s(\mathbf{x}) = M(\mathbf{x}) - \varepsilon_f(\mathbf{x}).
 
-Away from the boundaries of the domain, :math:`M = 1` and :math:`\varepsilon_s = 1 - \varepsilon_f`. Near a wall, the support of the kernel leaves the domain and :math:`M < 1`: the averages of a truncated kernel are still well defined, since :math:`\langle a \rangle_f` is a ratio of two integrals of the same kernel, but the volume fractions no longer sum to one. They can optionally be divided by :math:`M`, which renormalizes the kernel near the walls. :math:`\langle a \rangle_f` is undefined where the kernel contains no fluid, for example at a filter center deep inside a large particle. The application reports these filter centers and sets their averages to zero.
+Where the support of the kernel does not reach a non-periodic boundary of the domain, :math:`M = 1` and :math:`\varepsilon_s = 1 - \varepsilon_f`. The discrete kernel mass however differs from one by the quadrature error of the kernel (see below). Since :math:`M` is known exactly there, the application divides both volume fractions by the discrete kernel mass, :math:`\varepsilon_f = E / M` and :math:`\varepsilon_s = (M - E) / M`. This does not change their definition, removes the quadrature error of the kernel mass from the volume fractions, and ensures that they sum to one, in the same way as the phase averages, which are ratios of two integrals of the same kernel. The same division is applied wherever the discrete mass of the kernel exceeds one, since the mass of the kernel is at most one and any excess is thus a quadrature error. The volume fractions therefore never exceed one.
+
+Near a wall, the support of the kernel leaves the domain and :math:`M < 1`: the averages of a truncated kernel are still well defined, since :math:`\langle a \rangle_f` is a ratio of two integrals of the same kernel, but the volume fractions no longer sum to one. Three treatments of the part of the kernel beyond the boundaries are available:
+
+* the kernel is truncated, and the volume fractions :math:`\varepsilon_f = E` and :math:`\varepsilon_s = M - E` sum to :math:`M`;
+* the volume fractions are divided by :math:`M`, which renormalizes the kernel near the boundaries;
+* the part of the kernel beyond the walls is filled with fluid moving at the velocity of the wall (see below), which is the default.
+
+:math:`\langle a \rangle_f` is undefined where the kernel contains no fluid, for example at a filter center deep inside a large particle. The application reports these filter centers and sets their averages to zero.
 
 Integrating the solid volume fraction over a periodic domain gives
 
@@ -55,29 +63,30 @@ Near a wall, the integration by parts also produces a term on the part of the wa
 
 which is smaller than :math:`\dot{\gamma}` within the distance :math:`R` of the wall, since :math:`\delta` decreases. For a 2D gaussian kernel truncated at :math:`3\sigma`, the gradient of the averaged velocity on the wall is only 37% of the exact gradient, and it recovers 89% of it at :math:`2\sigma` and 100% at :math:`3\sigma`, while the averaged velocity itself never differs from the exact one by more than :math:`0.8\sigma\dot{\gamma}`. The phase average of the gradient, :math:`\langle \nabla \mathbf{u} \rangle_f`, is not affected: it is exactly :math:`\dot{\gamma}` everywhere for this profile. Renormalizing the kernel by its mass does not change this behavior, since the phase averages are already ratios of integrals of the same kernel.
 
-Extension of the velocity beyond the walls
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Extension of the fluid beyond the walls
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Optionally, the part of the kernel outside of the domain, beyond a wall where the velocity :math:`\mathbf{u}_w` is imposed (Dirichlet boundary condition), is considered as fluid moving at the velocity of the wall when the phase-averaged velocity is computed:
+Optionally, the part of the kernel outside of the domain, beyond a wall where the velocity :math:`\mathbf{u}_w` is imposed (Dirichlet boundary condition), is considered as fluid moving at the velocity of the wall. This exterior fluid is counted both in the fluid volume fraction and in the phase-averaged velocity:
 
 .. math::
-    \bar{\mathbf{u}}_f(\mathbf{x}) = \frac{\int_\Omega I_f \, \mathbf{u} \, g \, \mathrm{d}V + M_e(\mathbf{x}) \, \bar{\mathbf{u}}_w(\mathbf{x})}{\varepsilon_f(\mathbf{x}) + M_e(\mathbf{x})},
+    \varepsilon_f(\mathbf{x}) = E(\mathbf{x}) + M_e(\mathbf{x}), \qquad
+    \bar{\mathbf{u}}_f(\mathbf{x}) = \frac{\int_\Omega I_f \, \mathbf{u} \, g \, \mathrm{d}V + M_e(\mathbf{x}) \, \bar{\mathbf{u}}_w(\mathbf{x})}{E(\mathbf{x}) + M_e(\mathbf{x})},
 
-where :math:`M_e` is the mass of the kernel beyond the walls and :math:`\bar{\mathbf{u}}_w` is the velocity of the walls within the support of the kernel. Since the kernel has unit mass, the mass of the kernel outside of the domain is :math:`1 - M`. When the support of the kernel also crosses boundaries without imposed velocity (e.g. outlets), this mass is attributed to the walls in proportion to the integral of the kernel over the walls, :math:`S_w`, and over all the non-periodic boundaries, :math:`S`:
+where :math:`E = \int_\Omega I_f \, g \, \mathrm{d}V`, :math:`M_e` is the mass of the kernel beyond the walls and :math:`\bar{\mathbf{u}}_w` is the velocity of the walls within the support of the kernel. The product :math:`\varepsilon_f \bar{\mathbf{u}}_f` thus remains the flux of fluid seen by the kernel, :math:`\int_\Omega I_f \, \mathbf{u} \, g \, \mathrm{d}V + M_e \bar{\mathbf{u}}_w`, which reduces to the flux of the truncated kernel near a stationary wall. The latter is divergence-free for fixed particles and impermeable walls, a property that the averaged fields would lose if the exterior fluid was only counted in the velocity. Near a domain bounded by walls only, :math:`\varepsilon_f + \varepsilon_s = M + M_e = 1`. Since the kernel has unit mass, the mass of the kernel outside of the domain is :math:`1 - M`. When the support of the kernel also crosses boundaries without imposed velocity (e.g. outlets), this mass is attributed to the walls in proportion to the integral of the kernel over the walls, :math:`S_w`, and over all the non-periodic boundaries, :math:`S`:
 
 .. math::
     M_e = (1 - M) \frac{S_w}{S}, \qquad
     S_w(\mathbf{x}) = \int_{\Gamma_w} g(\lVert \mathbf{x}-\mathbf{y} \rVert) \, \mathrm{d}S_\mathbf{y}, \qquad
     \bar{\mathbf{u}}_w(\mathbf{x}) = \frac{1}{S_w(\mathbf{x})} \int_{\Gamma_w} \mathbf{u}_w(\mathbf{y}) \, g(\lVert \mathbf{x}-\mathbf{y} \rVert) \, \mathrm{d}S_\mathbf{y}.
 
-This attribution is exact near a single wall, or near several walls moving at the same velocity. The surface integrals are accumulated by the same source-centric sweep as the volume integrals, from the quadrature points of the boundary faces of the locally owned cells, and they are communicated with the other moments. The volume fractions and the averaged pressure are not affected by the extension.
+This attribution is exact near a single wall, or near several walls moving at the same velocity. The surface integrals are accumulated by the same source-centric sweep as the volume integrals, from the quadrature points of the boundary faces of the locally owned cells, and they are communicated with the other moments. The integral :math:`S` is always accumulated, since it also identifies the filter centers whose kernel reaches a non-periodic boundary (:math:`S > 0`), where the volume fractions are not divided by the kernel mass unless the renormalization is requested. With both the extension and the renormalization, the volume fractions are divided by :math:`M + M_e`, which only differs from one near the boundaries that are not walls. The solid volume fraction and the averaged pressure are not affected by the extension.
 
 For the linear profile above, the extended velocity has a kink at the wall, where its gradient jumps from :math:`\dot{\gamma}` to zero. The gradient of the averaged velocity is then the average of this gradient, i.e. :math:`\dot{\gamma}` times the fraction of the kernel inside the domain, which is 1/2 on the wall. The extension thus raises the gradient of the averaged velocity on the wall from 37% to 50% of the exact gradient for a 2D gaussian truncated at :math:`3\sigma`, it recovers 84% of it at :math:`\sigma` and 98% at :math:`2\sigma`, and it halves the deviation of the averaged velocity from the exact one on the wall, down to :math:`0.4\sigma\dot{\gamma}`. In any case, the gradient of the averaged velocity must be interpreted with care within the distance :math:`R` of the walls.
 
 Kernels
 ~~~~~~~
 
-Two kernels are available. The top-hat kernel is the normalized indicator function of the ball :math:`B_R` of radius :math:`R`, :math:`g(r) = 1/|B_R|` for :math:`r < R`. The gaussian kernel of standard deviation :math:`\sigma` is truncated at :math:`R = c\sigma` and renormalized:
+Three kernels are available. The top-hat kernel is the normalized indicator function of the ball :math:`B_R` of radius :math:`R`, :math:`g(r) = 1/|B_R|` for :math:`r < R`. The gaussian kernel of standard deviation :math:`\sigma` is truncated at :math:`R = c\sigma` and renormalized:
 
 .. math::
     g(r) = \frac{\exp\left(-r^2 / 2\sigma^2\right)}{(2\pi\sigma^2)^{d/2} \, m_d(c)} \quad \text{for } r < R, \qquad
@@ -85,6 +94,17 @@ Two kernels are available. The top-hat kernel is the normalized indicator functi
     m_3(c) = \mathrm{erf}\left(\frac{c}{\sqrt{2}}\right) - \sqrt{\frac{2}{\pi}} \, c \, e^{-c^2/2},
 
 where :math:`m_d(c)` is the mass of the untruncated gaussian contained in :math:`B_R`. The renormalization matters: in 3D, a gaussian truncated at three standard deviations retains only 97.1% of its mass, and would bias every volume fraction by 2.9% without it. The truncated kernel is discontinuous at :math:`r = R`, where its value relative to its maximum is :math:`e^{-c^2/2}`, which limits the accuracy of its quadrature. A cutoff :math:`c` between 3 and 4 is a good compromise between this discontinuity and the size of the support, which drives the cost of the filter.
+
+The Wendland C2 kernel [#wendland1995]_ of support radius :math:`R` is the polynomial
+
+.. math::
+    g(r) = \alpha_d \left(1 - \frac{r}{R}\right)^4 \left(1 + 4 \frac{r}{R}\right) \quad \text{for } r < R, \qquad
+    \alpha_2 = \frac{7}{\pi R^2}, \qquad
+    \alpha_3 = \frac{21}{2 \pi R^3}.
+
+Unlike the two other kernels, it vanishes at :math:`r = R` along with its first two derivatives, so it is twice continuously differentiable. The averaging theorem above, which is obtained by integrating by parts, assumes such a differentiable kernel, and the gradients of the fields filtered with this kernel are continuous. Its shape is close to a gaussian: it has the second moment of a gaussian of standard deviation :math:`\sqrt{5/72} \, R \approx 0.264 R` in 2D and :math:`R/\sqrt{15} \approx 0.258 R` in 3D, i.e. it is comparable to a gaussian truncated at about 3.8 standard deviations.
+
+The smoothness of the kernel at its support radius controls the accuracy of its quadrature. The error of the kernel mass of the top-hat kernel, which jumps from its maximum to zero, only decreases slowly and irregularly with the number of quadrature points. The error of the truncated gaussian decreases until it reaches the level set by its jump :math:`e^{-c^2/2}`, so that increasing the cutoff from 3 to 4 is more effective than adding quadrature points. The error of the Wendland kernel decreases steadily with the number of quadrature points and with the size of the cells. For example, on a 3D mesh of Q1 elements with :math:`R/h = 2.8` and two Gauss points per direction, the error of the kernel mass is :math:`5 \times 10^{-2}` for the top-hat kernel and :math:`7 \times 10^{-4}` for the Wendland kernel of the same support radius, and the latter drops to :math:`10^{-6}` with four Gauss points per direction.
 
 Discretization
 --------------
@@ -102,7 +122,7 @@ The integrals over the domain are split over the cells :math:`K` of the mesh and
 .. math::
     \varepsilon_f(\mathbf{x}_t) \approx \sum_K \sum_q I_f(\mathbf{y}_q) \, g(\lVert \mathbf{x}_t-\mathbf{y}_q \rVert) \, w_q,
 
-and the velocity and pressure are evaluated from the finite element solution at the quadrature points. Every filtered quantity is a combination of four moments accumulated at each filter center: :math:`M`, :math:`E = \varepsilon_f`, :math:`\int I_f \mathbf{u} g` and :math:`\int I_f p g`. The kernel is evaluated from the squared distance, which avoids a square root, and returns zero beyond its support. The quadrature of the kernel is accurate when its support contains many cells, i.e. when :math:`R \gg h`, where :math:`h` is the size of the cells.
+and the velocity and pressure are evaluated from the finite element solution at the quadrature points. Every filtered quantity is a combination of four moments accumulated at each filter center: :math:`M`, :math:`E`, :math:`\int I_f \mathbf{u} g` and :math:`\int I_f p g`. The kernel is evaluated from the squared distance, which avoids a square root, and returns zero beyond its support. The quadrature of the kernel is accurate when its support contains many cells, i.e. when :math:`R \gg h`, where :math:`h` is the size of the cells.
 
 Cells cut by the particles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,9 +170,14 @@ This distribution is complete, as every quadrature point that can contribute to 
 Periodic boundaries
 ~~~~~~~~~~~~~~~~~~~
 
-Across a periodic boundary, a filter center must gather the quadrature points located on the other side of the domain. This is achieved by distributing periodic images of the filter centers. The translation :math:`\mathbf{L}` of each pair of periodic boundaries is computed from the coarse mesh, which every process stores, so that it is known on every process without communication, including the processes that do not own any cell at the periodic boundaries. A filter center within the distance :math:`R` of a periodic boundary has an image translated by :math:`\pm \mathbf{L}`, and the images along several periodic directions are combined to reach the edges and corners of the domain. Each image is distributed like a regular filter center, and its partial moments are returned to the owner of the original filter center.
+Across a periodic boundary, a filter center must gather the quadrature points located on the other side of the domain. This is achieved by distributing periodic images of the filter centers. The translation :math:`\mathbf{L}` of each pair of periodic boundaries is computed from the coarse mesh, which every process stores, so that it is known on every process without communication, including the processes that do not own any cell at the periodic boundaries. A filter center has an image translated by :math:`k \mathbf{L}` for every non-zero integer :math:`k` such that the image lies within the distance :math:`R` of the domain, and the images along several periodic directions are combined to reach the edges and corners of the domain. Each image is distributed like a regular filter center, and its partial moments are returned to the owner of the original filter center.
 
-The support radius must not exceed half of the period, :math:`R \leq \lVert \mathbf{L} \rVert / 2`. A quadrature point then contributes to a filter center through at most one of its images, since two images are separated by at least :math:`2R`, and no contribution is counted twice.
+The support radius is not limited by the period. Since the fields are periodic, the average over the infinite periodic medium is the integral over the domain of the periodized kernel:
+
+.. math::
+    \int_{\mathbb{R}^d} I_f(\mathbf{y}) \, a(\mathbf{y}) \, g(\lVert \mathbf{x}-\mathbf{y} \rVert) \, \mathrm{d}\mathbf{y} = \int_\Omega I_f(\mathbf{y}) \, a(\mathbf{y}) \sum_{\mathbf{k}} g(\lVert \mathbf{x} + \mathbf{k} \mathbf{L} - \mathbf{y} \rVert) \, \mathrm{d}\mathbf{y}.
+
+When :math:`R \leq \lVert \mathbf{L} \rVert / 2`, a quadrature point contributes to a filter center through at most one of its images. When the support radius is larger, as is common for the small periodic domains used to derive closures, a quadrature point contributes through several images: these contributions are the terms of the sum above and are not counted twice. The mass of the periodized kernel over the domain remains one.
 
 Batched sweep of the source cells
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -187,19 +212,21 @@ Verification
 
 The unit tests of the filter verify properties that hold exactly for the discrete filter, on one, two and three processes:
 
-* On a periodic mesh of uniform Q1 elements, every filter center sees the same arrangement of quadrature points, so the kernel mass must be identical at every filter center. A contribution missed across the subdomains or across the periodic boundaries breaks this uniformity.
+* On a periodic mesh of uniform Q1 elements, every filter center sees the same arrangement of quadrature points, so the kernel mass must be identical at every filter center. A contribution missed across the subdomains or across the periodic boundaries breaks this uniformity. This also holds for a kernel wider than the period, whose filter centers have several periodic images per direction.
 * On a uniform mesh with walls, the kernel mass of a filter center on a face, an edge or a corner is exactly 1/2, 1/4 or 1/8 of the kernel mass at the middle of the domain, by symmetry.
-* With a top-hat kernel centered on a particle smaller than the kernel, the solid volume fraction times the volume of the kernel equals the volume of the particle integrated by the quadratures of the source cells.
+* With a top-hat kernel centered on a particle smaller than the kernel, the solid volume fraction times the kernel mass and the volume of the kernel equals the volume of the particle integrated by the quadratures of the source cells.
 * The phase averages of a uniform field recover the field exactly wherever they are defined.
-* For a Couette flow between a stationary and a moving wall, the averaged velocity is exact beyond the distance :math:`R` of the walls and antisymmetric about the middle of the channel, with and without the extension of the velocity beyond the walls.
+* On an adaptively refined mesh, the value of every filtered field at a hanging node is the interpolation of the values at the filter centers that constrain it, and a uniform field is recovered at every degree of freedom.
+* For a Couette flow between a stationary and a moving wall, the averaged velocity is exact beyond the distance :math:`R` of the walls and antisymmetric about the middle of the channel, with and without the extension of the fluid beyond the walls. With the extension, the fluid and solid volume fractions sum to one up to the walls.
 
 Limitations
 -----------
 
 * The classification of the cells assumes that the signed distance functions of the particles are 1-Lipschitz, which holds for the exact signed distances of analytical shapes.
 * Like the sharp-interface immersed boundary solver, the filter does not consider the periodic images of the particles.
-* The support radius must not exceed half of the period in each periodic direction.
-* Within the distance :math:`R` of a wall, the kernel is truncated and off-centered, which reduces the gradient of the averaged velocity, even when the velocity is extended beyond the walls (see above).
+* The periodic boundaries must be planes normal to their direction of periodicity.
+* Within the distance :math:`R` of a non-periodic boundary, the exact mass of the truncated kernel is not known, and the volume fractions carry the quadrature error of the kernel mass, unless they are renormalized. This error is small when the support of the kernel contains many cells.
+* Within the distance :math:`R` of a wall, the kernel is truncated and off-centered, which reduces the gradient of the averaged velocity, even when the fluid is extended beyond the walls (see above).
 * Only quadrilateral and hexahedral meshes are supported.
 
 References
@@ -207,4 +234,5 @@ References
 
 .. [#anderson1967] \T. B. Anderson and R. Jackson, "Fluid mechanical description of fluidized beds. Equations of motion," *Industrial & Engineering Chemistry Fundamentals*, vol. 6, no. 4, pp. 527–539, 1967, doi: `10.1021/i160024a007 <https://doi.org/10.1021/i160024a007>`_\.
 .. [#jackson2000] \R. Jackson, *The Dynamics of Fluidized Particles*. Cambridge University Press, 2000.
+.. [#wendland1995] \H. Wendland, "Piecewise polynomial, positive definite and compactly supported radial functions of minimal degree," *Advances in Computational Mathematics*, vol. 4, pp. 389–396, 1995, doi: `10.1007/BF02123482 <https://doi.org/10.1007/BF02123482>`_\.
 .. [#burstedde2011] \C. Burstedde, L. C. Wilcox, and O. Ghattas, "p4est: Scalable algorithms for parallel adaptive mesh refinement on forests of octrees," *SIAM Journal on Scientific Computing*, vol. 33, no. 3, pp. 1103–1133, 2011, doi: `10.1137/100791634 <https://doi.org/10.1137/100791634>`_\.

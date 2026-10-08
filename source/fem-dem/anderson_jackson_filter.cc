@@ -460,9 +460,22 @@ AndersonJacksonFilter<dim>::apply(
                    periodic_boundaries,
                    wall_velocities);
     }
-  else
+  else if (filter_parameters.kernel_type ==
+           Parameters::FilterKernelType::top_hat)
     {
       const TopHatFilterKernel<dim> kernel(filter_parameters.filter_width);
+      retained_mass_fraction = 1.;
+      apply_kernel(kernel,
+                   fluid_dof_handler,
+                   mapping,
+                   fluid_solution,
+                   classifier,
+                   periodic_boundaries,
+                   wall_velocities);
+    }
+  else
+    {
+      const WendlandFilterKernel<dim> kernel(filter_parameters.filter_width);
       retained_mass_fraction = 1.;
       apply_kernel(kernel,
                    fluid_dof_handler,
@@ -655,16 +668,12 @@ AndersonJacksonFilter<dim>::distribute_targets(
     LetheGridTools::compute_periodic_translations(triangulation,
                                                   periodic_boundaries);
   for (const auto &translation : translations)
-    AssertThrow(
-      2. * support_radius <=
-        std::abs(translation.offset[translation.direction]),
-      ExcMessage(
-        "The support radius of the kernel of the Anderson-Jackson filter (" +
-        std::to_string(support_radius) +
-        ") exceeds half of the period of the domain in direction " +
-        std::to_string(translation.direction) +
-        ". A source point could then contribute to a filter center through "
-        "several periodic images."));
+    AssertThrow(std::abs(translation.offset[translation.direction]) > 0.,
+                ExcMessage(
+                  "The period of the domain in direction " +
+                  std::to_string(translation.direction) +
+                  " is zero. The Anderson-Jackson filter cannot build the "
+                  "periodic images of the filter centers."));
 
   std::vector<std::pair<Point<dim>, unsigned int>>              local_targets;
   std::map<unsigned int, std::vector<FilterTargetRequest<dim>>> requests;
@@ -674,25 +683,46 @@ AndersonJacksonFilter<dim>::distribute_targets(
     {
       const Point<dim> &location = owned_target_locations[t];
 
-      // A filter center within the support radius of a periodic boundary also
-      // gathers the sources located across that boundary, through its image
-      // translated to the other side of the domain. Since the support radius
-      // does not exceed half of the period, a filter center has at most one
-      // image per periodic direction, and the images along several directions
+      // A filter center also gathers the sources located across the periodic
+      // boundaries, through its images translated by a multiple of the
+      // period. An image is needed if it lies within the support radius of
+      // the domain. When the support radius exceeds half of the period, a
+      // source point contributes to a filter center through several of its
+      // images: this is the convolution with the periodized kernel, whose
+      // mass over the domain remains one. The images along several directions
       // are combined to reach the edges and corners of the domain.
       images.assign(1, location);
       for (const auto &translation : translations)
         {
           const unsigned int n_images   = images.size();
           const double       coordinate = location[translation.direction];
-          if (std::abs(coordinate - translation.principal_coordinate) <
-              support_radius)
+          const double       lower_coordinate =
+            std::min(translation.principal_coordinate,
+                     translation.neighbor_coordinate);
+          const double upper_coordinate =
+            std::max(translation.principal_coordinate,
+                     translation.neighbor_coordinate);
+          const double   period = upper_coordinate - lower_coordinate;
+          Tensor<1, dim> shift;
+          shift[translation.direction] = period;
+
+          // The image translated by k periods upwards lies beyond the upper
+          // boundary, at the distance of the filter center to the lower
+          // boundary plus k - 1 periods.
+          for (unsigned int k = 1;
+               (coordinate - lower_coordinate) + (k - 1) * period <
+               support_radius;
+               ++k)
             for (unsigned int i = 0; i < n_images; ++i)
-              images.push_back(images[i] + translation.offset);
-          else if (std::abs(coordinate - translation.neighbor_coordinate) <
-                   support_radius)
+              images.push_back(images[i] + static_cast<double>(k) * shift);
+
+          // Likewise for the images translated downwards.
+          for (unsigned int k = 1;
+               (upper_coordinate - coordinate) + (k - 1) * period <
+               support_radius;
+               ++k)
             for (unsigned int i = 0; i < n_images; ++i)
-              images.push_back(images[i] - translation.offset);
+              images.push_back(images[i] - static_cast<double>(k) * shift);
         }
 
       for (const Point<dim> &image : images)
@@ -821,7 +851,10 @@ AndersonJacksonFilter<dim>::integrate_source_cells(
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
 
-  // The boundary faces are integrated to extend the velocity beyond the walls.
+  // The non-periodic boundary faces are integrated to identify the filter
+  // centers whose kernel is truncated by a boundary of the domain. The
+  // velocity imposed on the walls is only integrated to extend the velocity
+  // beyond the walls.
   const bool extend_velocity_beyond_walls =
     filter_parameters.extend_velocity_beyond_walls && !wall_velocities.empty();
   FEFaceValues<dim>           face_fe_values(mapping,
@@ -965,7 +998,7 @@ AndersonJacksonFilter<dim>::integrate_source_cells(
           local_source_solid_volume += JxW[q] - fluid_weight;
         }
 
-      if (!extend_velocity_beyond_walls || !cell->at_boundary())
+      if (!cell->at_boundary())
         continue;
 
       // The faces on the periodic boundaries are interior faces of the
@@ -980,7 +1013,10 @@ AndersonJacksonFilter<dim>::integrate_source_cells(
             face_fe_values.get_quadrature_points();
 
           wall_velocity_values.clear();
-          const auto wall = wall_velocities.find(cell->face(f)->boundary_id());
+          const auto wall =
+            extend_velocity_beyond_walls ?
+              wall_velocities.find(cell->face(f)->boundary_id()) :
+              wall_velocities.end();
           if (wall != wall_velocities.end())
             {
               wall_velocity_values.resize(face_points.size());
@@ -1205,16 +1241,46 @@ AndersonJacksonFilter<dim>::normalize_filtered_fields()
       const double                  kernel_mass  = moments.kernel_mass;
       const double                  fluid_volume = moments.fluid_volume;
 
+      const bool has_mass = kernel_mass > 0.;
+
+      // The part of the kernel outside of the domain, of mass 1 - M, is
+      // attributed to the walls in proportion to the integral of the kernel
+      // over the walls and over all the non-periodic boundaries, and it is
+      // filled with fluid moving at the kernel-weighted average of the wall
+      // velocity. The wall integrals are only accumulated if the velocity is
+      // extended beyond the walls. This exterior fluid is counted in the
+      // fluid volume fraction and in the weight of the velocity, so that
+      // their product remains the flux of fluid seen by the kernel.
+      const double exterior_fluid_volume = (moments.wall_weight > 0.) ?
+                                             std::max(0., 1. - kernel_mass) *
+                                               moments.wall_weight /
+                                               moments.boundary_weight :
+                                             0.;
+
       // The fluid volume never exceeds the kernel mass, since both integrate
       // the same non-negative terms and the fluid volume omits some of them.
-      const bool has_mass              = kernel_mass > 0.;
-      double     fluid_volume_fraction = fluid_volume;
-      double     solid_volume_fraction = kernel_mass - fluid_volume;
-      if (filter_parameters.normalize_at_domain_boundaries)
+      const double extended_fluid_volume = fluid_volume + exterior_fluid_volume;
+      const double solid_volume          = kernel_mass - fluid_volume;
+      const double total_volume          = kernel_mass + exterior_fluid_volume;
+
+      // Where the support of the kernel does not reach a non-periodic
+      // boundary, the kernel mass is exactly one, and its discrete value only
+      // differs from one by the quadrature error of the kernel. Dividing the
+      // volume fractions by it removes this error without changing their
+      // definition. Likewise, the mass of the kernel never exceeds one, so
+      // that any excess is a quadrature error. Otherwise, where the kernel is
+      // truncated by a boundary, this division renormalizes the kernel and is
+      // left to the user.
+      const bool reaches_boundary      = moments.boundary_weight > 0.;
+      const bool exceeds_unit_mass     = total_volume > 1.;
+      double     fluid_volume_fraction = extended_fluid_volume;
+      double     solid_volume_fraction = solid_volume;
+      if (!reaches_boundary || exceeds_unit_mass ||
+          filter_parameters.normalize_at_domain_boundaries)
         {
-          fluid_volume_fraction = has_mass ? fluid_volume / kernel_mass : 0.;
-          solid_volume_fraction =
-            has_mass ? (kernel_mass - fluid_volume) / kernel_mass : 0.;
+          fluid_volume_fraction =
+            has_mass ? extended_fluid_volume / total_volume : 0.;
+          solid_volume_fraction = has_mass ? solid_volume / total_volume : 0.;
         }
 
       filtered_fields.kernel_mass(dof)           = kernel_mass;
@@ -1228,23 +1294,11 @@ AndersonJacksonFilter<dim>::normalize_filtered_fields()
         fluid_volume >= filter_parameters.minimum_fluid_fraction * kernel_mass;
       if (is_defined)
         {
-          // The part of the kernel outside of the domain, of mass 1 - M, is
-          // attributed to the walls in proportion to the integral of the
-          // kernel over the walls and over all the non-periodic boundaries,
-          // and it is filled with fluid moving at the kernel-weighted average
-          // of the wall velocity. The wall integrals are only accumulated if
-          // the velocity is extended beyond the walls.
-          double         velocity_weight = fluid_volume;
+          const double   velocity_weight = extended_fluid_volume;
           Tensor<1, dim> velocity_moment = moments.velocity_moment;
           if (moments.wall_weight > 0.)
-            {
-              const double exterior_mass = std::max(0., 1. - kernel_mass) *
-                                           moments.wall_weight /
-                                           moments.boundary_weight;
-              velocity_moment += (exterior_mass / moments.wall_weight) *
-                                 moments.wall_velocity_moment;
-              velocity_weight += exterior_mass;
-            }
+            velocity_moment += (exterior_fluid_volume / moments.wall_weight) *
+                               moments.wall_velocity_moment;
 
           for (unsigned int d = 0; d < dim; ++d)
             filtered_fields.velocity[d](dof) =
@@ -1313,10 +1367,10 @@ AndersonJacksonFilter<dim>::compute_statistics(const Mapping<dim> &mapping)
   statistics.source_solid_volume =
     Utilities::MPI::sum(local_source_solid_volume, mpi_communicator);
 
-  // Integral of the solid volume fraction. For a periodic domain without
-  // renormalization, it equals the volume of the solids, since the kernel has
-  // unit mass, which verifies that every source point reached every filter
-  // center within its support.
+  // Integral of the solid volume fraction. For a periodic domain, it equals
+  // the volume of the solids up to discretization errors, since the kernel
+  // has unit mass, which verifies that every source point reached every
+  // filter center within its support.
   const QGauss<dim>   quadrature(output_degree + 1);
   FEValues<dim>       fe_values(mapping,
                           *fe,
@@ -1360,7 +1414,12 @@ AndersonJacksonFilter<dim>::print_statistics() const
     }
   else
     {
-      pcout << statistics_label("Kernel:") << "top-hat" << std::endl;
+      pcout << statistics_label("Kernel:")
+            << ((filter_parameters.kernel_type ==
+                 Parameters::FilterKernelType::top_hat) ?
+                  "top-hat" :
+                  "wendland")
+            << std::endl;
       pcout << statistics_label("Support radius:") << support_radius
             << std::endl;
     }

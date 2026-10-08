@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Tests the Gaussian and top-hat filter kernels used by the
+ * @brief Tests the Gaussian, top-hat and Wendland filter kernels used by the
  * Anderson-Jackson filter.
  *
  * For each kernel, in 2D and 3D, the test checks the value at the center of
@@ -10,8 +10,11 @@
  * support radius and zero on and beyond it) and the unit mass of the kernel,
  * integrated with a composite Gauss rule in the radial direction. For the
  * truncated Gaussian, the retained mass fraction given by the closed form is
- * also compared with its numerical integral. Finally, the test checks that
- * invalid kernels throw.
+ * also compared with its numerical integral. For the Wendland kernel, the
+ * test also checks that the kernel vanishes smoothly at its support radius
+ * and that its second moment is the one of the Gaussian of standard deviation
+ * given in its documentation. Finally, the test checks that invalid kernels
+ * throw.
  */
 
 // Deal.II includes
@@ -200,6 +203,49 @@ namespace
   }
 
   /**
+   * @brief Test the Wendland kernel.
+   *
+   * @tparam dim Number of spatial dimensions.
+   *
+   * @param[in] radius Support radius of the kernel.
+   */
+  template <int dim>
+  void
+  test_wendland(const double radius)
+  {
+    deallog << "Wendland kernel, dim = " << dim
+            << ", radius = " << format(radius) << std::endl;
+
+    const WendlandFilterKernel<dim> kernel(radius);
+    check_kernel<dim>(kernel);
+
+    // The kernel and its first two derivatives vanish at the support radius,
+    // so that it decreases as the fourth power of the distance to the support
+    // radius: its value at 0.99 R is 5 e-8 times its value at the center.
+    const double value_near_support =
+      kernel.value_from_squared_distance(0.99 * 0.99 * radius * radius) /
+      kernel.value_from_squared_distance(0.);
+    deallog << "  relative value at 0.99 R        : "
+            << format(value_near_support) << std::endl;
+
+    // Standard deviation of the Gaussian that has the second moment of the
+    // kernel, i.e. the square root of the second moment divided by dim.
+    const double second_moment = integrate_over_ball<dim>(
+      [&kernel](const double r) {
+        return r * r * kernel.value_from_squared_distance(r * r);
+      },
+      radius);
+    const double equivalent_standard_deviation =
+      (dim == 2) ? std::sqrt(5. / 72.) * radius : radius / std::sqrt(15.);
+    deallog << "  equivalent standard deviation   : "
+            << format(equivalent_standard_deviation) << std::endl;
+    deallog << "  second moment matches           : "
+            << format(std::abs(std::sqrt(second_moment / dim) -
+                               equivalent_standard_deviation) < 1e-12 * radius)
+            << std::endl;
+  }
+
+  /**
    * @brief Check that kernels with invalid parameters throw.
    *
    * @tparam dim Number of spatial dimensions.
@@ -247,6 +293,18 @@ namespace
       }
     deallog << "  negative top-hat radius throws  : "
             << format(negative_radius_throws) << std::endl;
+
+    bool zero_wendland_radius_throws = false;
+    try
+      {
+        const WendlandFilterKernel<dim> kernel(0.);
+      }
+    catch (const ExceptionBase &)
+      {
+        zero_wendland_radius_throws = true;
+      }
+    deallog << "  zero Wendland radius throws     : "
+            << format(zero_wendland_radius_throws) << std::endl;
   }
 } // namespace
 
@@ -263,6 +321,8 @@ main()
       test_gaussian<3>(2., 1.5);
       test_top_hat<2>(0.7);
       test_top_hat<3>(0.7);
+      test_wendland<2>(0.7);
+      test_wendland<3>(0.7);
       test_invalid_kernels<2>();
       test_invalid_kernels<3>();
     }

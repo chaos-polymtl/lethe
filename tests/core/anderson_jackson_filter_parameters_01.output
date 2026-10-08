@@ -43,3 +43,17 @@ DEAL::  extend velocity beyond walls   : true
 DEAL::  output folder                  : ./filter_output/
 DEAL::  output name                    : filtered
 DEAL::  verbosity                      : quiet
+DEAL::--- Scenario 5: Wendland kernel ---
+DEAL::  kernel type                    : wendland
+DEAL::  filter width                   : 5.000000e-01
+DEAL::  gaussian cutoff                : 3.000000e+00
+DEAL::  output polynomial degree       : 0
+DEAL::  quadrature points              : 0
+DEAL::  cut cell subdivisions          : 4
+DEAL::  filter pressure                : true
+DEAL::  minimum fluid fraction         : 1.000000e-12
+DEAL::  normalize at domain boundaries : false
+DEAL::  extend velocity beyond walls   : true
+DEAL::  output folder                  : ./filter_output/
+DEAL::  output name                    : filtered
+DEAL::  verbosity                      : quiet

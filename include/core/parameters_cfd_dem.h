@@ -334,7 +334,9 @@ namespace Parameters
     /// mass.
     gaussian,
     /// Top-hat kernel, i.e. the normalized indicator function of a ball.
-    top_hat
+    top_hat,
+    /// Wendland C2 kernel, which vanishes smoothly at its support radius.
+    wendland
   };
 
   /**
@@ -354,7 +356,7 @@ namespace Parameters
     FilterKernelType kernel_type = FilterKernelType::gaussian;
 
     /// Width of the filter. This is the standard deviation of the Gaussian
-    /// kernel or the radius of the top-hat kernel.
+    /// kernel or the support radius of the top-hat and Wendland kernels.
     double filter_width = 1.;
 
     /// Truncation radius of the Gaussian kernel, expressed in number of
@@ -380,13 +382,16 @@ namespace Parameters
     /// phase-averaged fields are not defined.
     double minimum_fluid_fraction = 1e-12;
 
-    /// Divide the fluid and solid volume fractions by the kernel mass, which
-    /// renormalizes the kernel where it is truncated by a domain boundary.
+    /// Divide the fluid and solid volume fractions by the kernel mass where
+    /// the kernel is truncated by a domain boundary, which renormalizes the
+    /// kernel. Away from the boundaries, where the kernel mass is exactly
+    /// one, the volume fractions are always divided by its discrete value.
     bool normalize_at_domain_boundaries = false;
 
     /// Fill the part of the kernel outside of the domain, beyond the walls
     /// where the velocity is imposed, with fluid moving at the velocity of the
-    /// wall when computing the phase-averaged velocity.
+    /// wall. This fluid is counted in the fluid volume fraction and in the
+    /// phase-averaged velocity.
     bool extend_velocity_beyond_walls = true;
 
     /// Folder in which the filtered fields are written.

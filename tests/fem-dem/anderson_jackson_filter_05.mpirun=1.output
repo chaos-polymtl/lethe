@@ -1,0 +1,21 @@
+
+DEAL::Uniform field, kernel truncated by the walls
+DEAL::  number of filter centers              : 131
+DEAL::  number of hanging nodes               : 8
+DEAL::  hanging nodes are interpolated        : true
+DEAL::  velocity is recovered                 : true
+DEAL::  pressure is recovered                 : true
+DEAL::  undefined phase averages              : 0
+DEAL::  minimum kernel mass                   : 5.007250e-01
+DEAL::  maximum kernel mass                   : 1.002360e+00
+DEAL::  minimum fluid fraction                : 5.007250e-01
+DEAL::  maximum fluid fraction                : 1.000000e+00
+DEAL::Couette flow, fluid extended beyond the walls
+DEAL::  number of walls                       : 2
+DEAL::  velocity of the wall 2                : (0.000000e+00, 0.000000e+00)
+DEAL::  velocity of the wall 3                : (1.000000e+00, 0.000000e+00)
+DEAL::  y = 0.000000e+00, filtered u = 3.938069e-02, fluid fraction = 1.000000e+00
+DEAL::  y = 6.250000e-01, filtered u = 6.250000e-01, fluid fraction = 1.000000e+00
+DEAL::  y = 1.000000e+00, filtered u = 9.607340e-01, fluid fraction = 1.000000e+00
+DEAL::  exact away from the walls             : true
+DEAL::  undefined phase averages              : 0

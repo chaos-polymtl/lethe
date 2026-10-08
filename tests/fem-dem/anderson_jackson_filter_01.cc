@@ -11,11 +11,21 @@
  * every filter center. A contribution missed across the boundaries of the
  * subdomains of the processes or across the periodic boundaries breaks this
  * uniformity. The kernel mass differs from one by the quadrature error of the
- * truncated kernel. Without solids, the fluid volume fraction equals the
- * kernel mass and the phase-averaged velocity and pressure recover the
- * uniform field exactly. A case with Q2 elements checks the filter with
- * higher-order elements, whose filter centers are not all equivalent, and a
- * case with the top-hat kernel checks the second kernel.
+ * truncated kernel. Since the kernel never reaches a non-periodic boundary,
+ * the volume fractions are divided by the kernel mass: without solids, the
+ * fluid volume fraction is exactly one, and the phase-averaged velocity and
+ * pressure recover the uniform field exactly. A case with Q2 elements checks
+ * the filter with higher-order elements, whose filter centers are not all
+ * equivalent, and cases with the top-hat and Wendland kernels check the other
+ * kernels. The Wendland kernel has the support radius of the top-hat kernel
+ * but vanishes smoothly at this radius, so that the quadrature error of its
+ * mass is much smaller.
+ *
+ * The last case uses a kernel whose support radius (1.2) exceeds the period
+ * of the domain (1). Every filter center then has several periodic images per
+ * direction, and a source point contributes to it through several of them.
+ * The kernel mass must remain uniform and close to one, which checks that
+ * every image is accounted for exactly once.
  *
  * The output is identical for any number of processes.
  */
@@ -61,7 +71,7 @@ namespace
    * @param[in] kernel_type Kernel of the filter.
    *
    * @param[in] filter_width Standard deviation of the gaussian kernel or
-   * radius of the top-hat kernel.
+   * support radius of the top-hat and Wendland kernels.
    *
    * @param[in] gaussian_cutoff Truncation radius of the gaussian kernel in
    * number of standard deviations.
@@ -102,22 +112,21 @@ namespace
     const auto &statistics = filter.get_statistics();
     const auto &fields     = filter.get_filtered_fields();
 
-    // Without solids, the fluid volume fraction equals the kernel mass and the
-    // solid volume fraction is zero.
-    double fraction_difference = 0.;
-    double solid_fraction      = 0.;
+    // Without solids, the fluid volume fraction is one, since it is divided by
+    // the kernel mass where the kernel does not reach a non-periodic boundary,
+    // and the solid volume fraction is zero.
+    double fluid_error    = 0.;
+    double solid_fraction = 0.;
     for (const types::global_dof_index dof :
          filter.get_dof_handler().locally_owned_dofs())
       {
-        fraction_difference =
-          std::max(fraction_difference,
-                   std::abs(fields.fluid_volume_fraction(dof) -
-                            fields.kernel_mass(dof)));
+        fluid_error =
+          std::max(fluid_error,
+                   std::abs(fields.fluid_volume_fraction(dof) - 1.));
         solid_fraction =
           std::max(solid_fraction, std::abs(fields.solid_volume_fraction(dof)));
       }
-    fraction_difference =
-      Utilities::MPI::max(fraction_difference, MPI_COMM_WORLD);
+    fluid_error    = Utilities::MPI::max(fluid_error, MPI_COMM_WORLD);
     solid_fraction = Utilities::MPI::max(solid_fraction, MPI_COMM_WORLD);
 
     const auto [velocity_error, pressure_error] =
@@ -139,8 +148,8 @@ namespace
                           statistics.minimum_kernel_mass <
                         1e-12)
               << std::endl;
-    deallog << "  fluid fraction equals kernel mass    : "
-            << format(fraction_difference < 1e-14) << std::endl;
+    deallog << "  fluid fraction is one                : "
+            << format(fluid_error < 1e-14) << std::endl;
     deallog << "  solid fraction is zero               : "
             << format(solid_fraction < 1e-14) << std::endl;
     deallog << "  velocity is recovered                : "
@@ -183,6 +192,18 @@ main(int argc, char *argv[])
               3.5);
       test<3>(
         "Top-hat kernel", 1, 3, Parameters::FilterKernelType::top_hat, 0.3, 3.);
+      test<3>("Wendland kernel",
+              1,
+              3,
+              Parameters::FilterKernelType::wendland,
+              0.3,
+              3.);
+      test<2>("Gaussian kernel wider than the period",
+              1,
+              4,
+              Parameters::FilterKernelType::gaussian,
+              0.4,
+              3.);
     }
   catch (std::exception &exc)
     {

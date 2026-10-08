@@ -5,12 +5,13 @@
  * @brief Tests the declaration and the parsing of the parameters of the
  * Anderson-Jackson filter.
  *
- * Four scenarios are tested:
+ * Five scenarios are tested:
  *  1. The subsection is empty                                   -> defaults
  *  2. Every parameter is given a non-default value              -> valid
  *  3. The filter width is zero                                  -> must throw
  *  4. A top-hat kernel with a zero gaussian cutoff, which is
  *     only used by the gaussian kernel                          -> valid
+ *  5. A Wendland kernel                                         -> valid
  */
 
 // Deal.II includes
@@ -100,10 +101,12 @@ namespace
         const Parameters::AndersonJacksonFilter p =
           parse_filter_parameters(entries);
 
-        deallog << "  kernel type                    : "
-                << (p.kernel_type == Parameters::FilterKernelType::gaussian ?
-                      "gaussian" :
-                      "top-hat")
+        std::string kernel_type = "wendland";
+        if (p.kernel_type == Parameters::FilterKernelType::gaussian)
+          kernel_type = "gaussian";
+        else if (p.kernel_type == Parameters::FilterKernelType::top_hat)
+          kernel_type = "top-hat";
+        deallog << "  kernel type                    : " << kernel_type
                 << std::endl;
         deallog << "  filter width                   : "
                 << format(p.filter_width) << std::endl;
@@ -165,6 +168,9 @@ main()
       check("Scenario 4: top-hat kernel with a zero gaussian cutoff",
             "  set kernel type     = top-hat\n"
             "  set gaussian cutoff = 0\n");
+      check("Scenario 5: Wendland kernel",
+            "  set kernel type  = wendland\n"
+            "  set filter width = 0.5\n");
     }
   catch (std::exception &exc)
     {

@@ -130,6 +130,8 @@ namespace Parameters
             return "gaussian";
           case FilterKernelType::top_hat:
             return "top-hat";
+          case FilterKernelType::wendland:
+            return "wendland";
         }
       Assert(false, ExcInternalError());
       return "";
@@ -457,14 +459,15 @@ namespace Parameters
     prm.enter_subsection("anderson jackson filter");
     prm.declare_entry("kernel type",
                       to_string(defaults.kernel_type),
-                      Patterns::Selection("gaussian|top-hat"),
-                      "Kernel of the filter. Choices are <gaussian|top-hat>.");
+                      Patterns::Selection("gaussian|top-hat|wendland"),
+                      "Kernel of the filter. Choices are "
+                      "<gaussian|top-hat|wendland>.");
     prm.declare_entry(
       "filter width",
       Patterns::Tools::Convert<double>::to_string(defaults.filter_width),
       Patterns::Double(0.),
       "Width of the filter. This is the standard deviation of the gaussian "
-      "kernel or the radius of the top-hat kernel.");
+      "kernel or the support radius of the top-hat and wendland kernels.");
     prm.declare_entry(
       "gaussian cutoff",
       Patterns::Tools::Convert<double>::to_string(defaults.gaussian_cutoff),
@@ -510,9 +513,12 @@ namespace Parameters
                         defaults.normalize_at_domain_boundaries),
                       Patterns::Bool(),
                       "Divide the fluid and solid volume fractions by the "
-                      "kernel mass. This renormalizes the kernel where it is "
-                      "truncated by a domain boundary, which changes the "
-                      "definition of the filter near the boundaries.");
+                      "kernel mass where the kernel is truncated by a domain "
+                      "boundary. This renormalizes the kernel, which changes "
+                      "the definition of the filter near the boundaries. Away "
+                      "from the boundaries, the volume fractions are always "
+                      "divided by the kernel mass, which is exactly one up to "
+                      "its quadrature error.");
     prm.declare_entry("extend velocity beyond walls",
                       Patterns::Tools::Convert<bool>::to_string(
                         defaults.extend_velocity_beyond_walls),
@@ -521,8 +527,9 @@ namespace Parameters
                       "beyond the walls where the velocity is imposed "
                       "(noslip, function and function weak boundary "
                       "conditions), with fluid moving at the velocity of the "
-                      "wall when computing the phase-averaged velocity. If "
-                      "false, the kernel is truncated by the walls.");
+                      "wall. This fluid is counted in the fluid volume "
+                      "fraction and in the phase-averaged velocity. If false, "
+                      "the kernel is truncated by the walls.");
     prm.declare_entry("output folder",
                       defaults.output_folder,
                       Patterns::FileName(),
@@ -549,10 +556,13 @@ namespace Parameters
       kernel_type = FilterKernelType::gaussian;
     else if (kernel == "top-hat")
       kernel_type = FilterKernelType::top_hat;
+    else if (kernel == "wendland")
+      kernel_type = FilterKernelType::wendland;
     else
       AssertThrow(false,
                   ExcMessage("Invalid kernel type for the Anderson-Jackson "
-                             "filter. Choices are <gaussian|top-hat>."));
+                             "filter. Choices are "
+                             "<gaussian|top-hat|wendland>."));
 
     filter_width           = prm.get_double("filter width");
     gaussian_cutoff        = prm.get_double("gaussian cutoff");

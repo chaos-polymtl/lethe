@@ -14,10 +14,16 @@
  * subdivisions of the quadrature of the cut cells, the test prints:
  * - the relative error of the volume of the sphere integrated by the source
  *   quadratures;
- * - whether the solid volume fraction at the center times the volume of the
- *   kernel equals this integrated volume, which checks that every solid
- *   source point reached the filter center;
- * - the solid volume fraction at the center and off the center.
+ * - whether the solid volume fraction at the center times the kernel mass and
+ *   the volume of the kernel equals this integrated volume, which checks that
+ *   every solid source point reached the filter center. The kernel mass
+ *   appears because the volume fractions are divided by it where the kernel
+ *   does not reach a non-periodic boundary;
+ * - the kernel mass at the center, and the solid volume fraction at the
+ *   center and off the center. On these coarse meshes, the quadrature error
+ *   of the kernel mass of the discontinuous top-hat kernel is of a few
+ *   percents, and it is the main difference between the solid volume
+ *   fractions, which are divided by the kernel mass, and their closed form.
  *
  * The quadrature error of the discontinuous fluid indicator does not decrease
  * monotonically for a sphere centered at a vertex (see the test
@@ -233,6 +239,11 @@ namespace
           filter.get_filtered_fields().solid_volume_fraction;
         const double center_fraction = value_at_filter_center(
           filter.get_dof_handler(), problem.mapping, solid_fraction, center);
+        const double center_mass =
+          value_at_filter_center(filter.get_dof_handler(),
+                                 problem.mapping,
+                                 filter.get_filtered_fields().kernel_mass,
+                                 center);
         const double off_center_fraction =
           value_at_filter_center(filter.get_dof_handler(),
                                  problem.mapping,
@@ -252,10 +263,13 @@ namespace
                           3)
                 << std::endl;
         deallog << "    center fraction matches solid volume  : "
-                << format(std::abs(center_fraction * kernel_volume -
-                                   statistics.source_solid_volume) <
-                          1e-12 * solid_volume)
+                << format(
+                     std::abs(center_fraction * center_mass * kernel_volume -
+                              statistics.source_solid_volume) <
+                     1e-12 * solid_volume)
                 << std::endl;
+        deallog << "    kernel mass at the center             : "
+                << format(center_mass) << std::endl;
         deallog << "    solid fraction at the center          : "
                 << format(center_fraction) << std::endl;
         deallog << "    solid fraction off the center         : "
@@ -303,6 +317,11 @@ namespace
                              problem.mapping,
                              filter.get_filtered_fields().solid_volume_fraction,
                              middle_of_domain<dim>());
+    const double center_mass =
+      value_at_filter_center(filter.get_dof_handler(),
+                             problem.mapping,
+                             filter.get_filtered_fields().kernel_mass,
+                             middle_of_domain<dim>());
     const auto [velocity_error, pressure_error] =
       maximum_phase_average_errors(filter);
 
@@ -312,6 +331,8 @@ namespace
                                                  standard_deviation) /
                       gaussian_mass_in_ball<dim>(cutoff))
             << std::endl;
+    deallog << "  kernel mass at the center               : "
+            << format(center_mass) << std::endl;
     deallog << "  solid fraction at the center            : "
             << format(center_fraction) << std::endl;
     deallog << "  velocity and pressure are recovered     : "

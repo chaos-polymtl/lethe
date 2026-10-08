@@ -4,8 +4,12 @@
 # Anderson-Jackson filter of the checkpoint written by the check_point test of
 # lethe-fluid-sharp. The mesh restored from the checkpoint is adaptively
 # refined around the particle, which exercises the hanging node constraints
-# of the filtered fields. The parameters of the simulation are those of the
-# check_point test.
+# of the filtered fields, and the domain is bounded by noslip walls and an
+# outlet, which exercises the treatment of the kernel beyond the boundaries.
+# The statistics printed by the filter only depend on the mesh, the particle
+# and the boundaries. The filter is much coarser than the particle, so these
+# statistics are not accurate: the test only checks that they do not change.
+# The parameters of the simulation are those of the check_point test.
 
 # Listing of Parameters
 #----------------------
@@ -255,5 +259,5 @@ subsection anderson jackson filter
   set kernel type     = gaussian
   set filter width    = 0.5
   set gaussian cutoff = 3
-  set verbosity       = quiet
+  set verbosity       = verbose
 end

@@ -19,6 +19,13 @@
  * antisymmetric about the middle of the channel, like the exact one, that it
  * is exact at the middle, and that the filtered vertical velocity is zero.
  *
+ * The fluid volume fraction is printed along with the velocity. Without
+ * extension, it is the mass of the truncated kernel, which is one half on the
+ * wall. With extension, the fluid beyond the wall is counted in the fluid
+ * volume fraction, which is one everywhere, so that the fluid and solid
+ * volume fractions sum to one and the product of the fluid volume fraction
+ * and of the filtered velocity remains the flux of fluid seen by the kernel.
+ *
  * The output is identical for any number of processes.
  */
 
@@ -173,6 +180,12 @@ namespace
                                     fields.velocity[0],
                                     Point<dim>(0.5, y));
     };
+    const auto fluid_fraction = [&](const double y) {
+      return value_at_filter_center(filter.get_dof_handler(),
+                                    mapping,
+                                    fields.fluid_volume_fraction,
+                                    Point<dim>(0.5, y));
+    };
 
     // The exact profile is antisymmetric about the middle of the channel:
     // u(1 - y) = 1 - u(y).
@@ -182,16 +195,26 @@ namespace
         const double y = static_cast<double>(k) / n_cells;
         const double u = filtered_u(y);
         deallog << "  y = " << format(y) << ", filtered u = " << format(u)
-                << ", exact u = " << format(y) << std::endl;
+                << ", exact u = " << format(y)
+                << ", fluid fraction = " << format(fluid_fraction(y))
+                << std::endl;
         antisymmetric =
           antisymmetric && std::abs(u + filtered_u(1. - y) - 1.) < 1e-12;
       }
 
-    double maximum_v = 0.;
+    double maximum_v      = 0.;
+    double fraction_error = 0.;
     for (const types::global_dof_index dof :
          filter.get_dof_handler().locally_owned_dofs())
-      maximum_v = std::max(maximum_v, std::abs(fields.velocity[1](dof)));
-    maximum_v = Utilities::MPI::max(maximum_v, MPI_COMM_WORLD);
+      {
+        maximum_v = std::max(maximum_v, std::abs(fields.velocity[1](dof)));
+        fraction_error =
+          std::max(fraction_error,
+                   std::abs(fields.fluid_volume_fraction(dof) +
+                            fields.solid_volume_fraction(dof) - 1.));
+      }
+    maximum_v      = Utilities::MPI::max(maximum_v, MPI_COMM_WORLD);
+    fraction_error = Utilities::MPI::max(fraction_error, MPI_COMM_WORLD);
 
     deallog << "  profile antisymmetric about the middle : "
             << format(antisymmetric) << std::endl;
@@ -199,6 +222,8 @@ namespace
             << format(std::abs(filtered_u(0.5) - 0.5) < 1e-12) << std::endl;
     deallog << "  filtered v is zero                     : "
             << format(maximum_v < 1e-14) << std::endl;
+    deallog << "  volume fractions sum to one            : "
+            << format(fraction_error < 1e-12) << std::endl;
   }
 } // namespace
 

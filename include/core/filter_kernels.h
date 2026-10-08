@@ -204,4 +204,95 @@ private:
   double normalization;
 };
 
+/**
+ * @brief Wendland C2 filter kernel of unit mass with compact support:
+ * \f[
+ *   g(r) = \alpha_d \left(1 - \frac{r}{R}\right)^4 \left(1 + 4\frac{r}{R}
+ *   \right) \quad \text{if } r < R, \qquad g(r) = 0 \quad \text{otherwise},
+ * \f]
+ * where \f$R\f$ is the support radius, \f$\alpha_2 = 7 / (\pi R^2)\f$ and
+ * \f$\alpha_3 = 21 / (2 \pi R^3)\f$.
+ *
+ * Unlike the truncated Gaussian and the top-hat kernels, this kernel and its
+ * first two derivatives vanish at the support radius. It is therefore twice
+ * continuously differentiable, which makes its quadrature converge much
+ * faster and makes the gradients of the filtered fields continuous. Its
+ * shape is close to a Gaussian: it has the second moment of a Gaussian of
+ * standard deviation \f$\sqrt{5/72} R \approx 0.264 R\f$ in 2D and
+ * \f$R / \sqrt{15} \approx 0.258 R\f$ in 3D.
+ *
+ * @tparam dim Number of spatial dimensions (2 or 3).
+ */
+template <int dim>
+class WendlandFilterKernel
+{
+  static_assert(dim == 2 || dim == 3,
+                "The Wendland filter kernel is only defined in 2D and 3D.");
+
+public:
+  /**
+   * @brief Constructor.
+   *
+   * @param[in] radius Radius of the support of the kernel. Must be strictly
+   * positive.
+   */
+  explicit WendlandFilterKernel(const double radius);
+
+  /**
+   * @brief Evaluate the kernel from the squared distance to its center.
+   *
+   * @param[in] r_squared Squared distance between the center of the kernel and
+   * the evaluation point.
+   *
+   * @return Value of the kernel, which is zero outside of its support.
+   */
+  inline double
+  value_from_squared_distance(const double r_squared) const
+  {
+    if (r_squared >= cutoff_radius_squared)
+      return 0.;
+
+    const double q                   = std::sqrt(r_squared) * inverse_radius;
+    const double one_minus_q         = 1. - q;
+    const double one_minus_q_squared = one_minus_q * one_minus_q;
+    return normalization * one_minus_q_squared * one_minus_q_squared *
+           (1. + 4. * q);
+  }
+
+  /**
+   * @brief Return the radius of the support of the kernel.
+   *
+   * @return Support radius.
+   */
+  double
+  support_radius() const
+  {
+    return cutoff_radius;
+  }
+
+  /**
+   * @brief Return the squared radius of the support of the kernel.
+   *
+   * @return Squared support radius.
+   */
+  double
+  support_radius_squared() const
+  {
+    return cutoff_radius_squared;
+  }
+
+private:
+  /// Radius of the support of the kernel.
+  double cutoff_radius;
+
+  /// Squared radius of the support of the kernel.
+  double cutoff_radius_squared;
+
+  /// Inverse of the radius of the support of the kernel.
+  double inverse_radius;
+
+  /// Normalization constant of the kernel.
+  double normalization;
+};
+
 #endif

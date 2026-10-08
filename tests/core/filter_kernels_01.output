@@ -55,11 +55,35 @@ DEAL::  positive just inside support    : true
 DEAL::  zero on the support radius      : true
 DEAL::  zero beyond the support radius  : true
 DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::Wendland kernel, dim = 2, radius = 7.000000e-01
+DEAL::  support radius                  : 7.000000e-01
+DEAL::  squared support radius matches  : true
+DEAL::  value at the center             : 4.547284e+00
+DEAL::  positive just inside support    : true
+DEAL::  zero on the support radius      : true
+DEAL::  zero beyond the support radius  : true
+DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::  relative value at 0.99 R        : 4.960000e-08
+DEAL::  equivalent standard deviation   : 1.844662e-01
+DEAL::  second moment matches           : true
+DEAL::Wendland kernel, dim = 3, radius = 7.000000e-01
+DEAL::  support radius                  : 7.000000e-01
+DEAL::  squared support radius matches  : true
+DEAL::  value at the center             : 9.744180e+00
+DEAL::  positive just inside support    : true
+DEAL::  zero on the support radius      : true
+DEAL::  zero beyond the support radius  : true
+DEAL::  unit mass (|mass - 1| < 1e-12)  : true
+DEAL::  relative value at 0.99 R        : 4.960000e-08
+DEAL::  equivalent standard deviation   : 1.807392e-01
+DEAL::  second moment matches           : true
 DEAL::Invalid kernels, dim = 2
 DEAL::  zero standard deviation throws  : true
 DEAL::  zero cutoff throws              : true
 DEAL::  negative top-hat radius throws  : true
+DEAL::  zero Wendland radius throws     : true
 DEAL::Invalid kernels, dim = 3
 DEAL::  zero standard deviation throws  : true
 DEAL::  zero cutoff throws              : true
 DEAL::  negative top-hat radius throws  : true
+DEAL::  zero Wendland radius throws     : true

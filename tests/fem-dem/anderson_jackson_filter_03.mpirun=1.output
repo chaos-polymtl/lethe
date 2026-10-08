@@ -6,32 +6,36 @@ DEAL::  cut cell subdivisions 1
 DEAL::    fluid, solid and cut cells            : 204 16 36
 DEAL::    relative error of the solid volume    : 3.637e-02
 DEAL::    center fraction matches solid volume  : true
-DEAL::    solid fraction at the center          : 3.146558e-01
-DEAL::    solid fraction off the center         : 2.385294e-01
+DEAL::    kernel mass at the center             : 9.947184e-01
+DEAL::    solid fraction at the center          : 3.163265e-01
+DEAL::    solid fraction off the center         : 2.397959e-01
 DEAL::    velocity and pressure are recovered   : true
 DEAL::    undefined phase averages              : 0
 DEAL::  cut cell subdivisions 2
 DEAL::    fluid, solid and cut cells            : 204 16 36
 DEAL::    relative error of the solid volume    : 2.490e-03
 DEAL::    center fraction matches solid volume  : true
-DEAL::    solid fraction at the center          : 3.273436e-01
-DEAL::    solid fraction off the center         : 2.486796e-01
+DEAL::    kernel mass at the center             : 9.947184e-01
+DEAL::    solid fraction at the center          : 3.290816e-01
+DEAL::    solid fraction off the center         : 2.493639e-01
 DEAL::    velocity and pressure are recovered   : true
 DEAL::    undefined phase averages              : 0
 DEAL::  cut cell subdivisions 4
 DEAL::    fluid, solid and cut cells            : 204 16 36
 DEAL::    relative error of the solid volume    : 1.396e-03
 DEAL::    center fraction matches solid volume  : true
-DEAL::    solid fraction at the center          : 3.260748e-01
-DEAL::    solid fraction off the center         : 2.461421e-01
+DEAL::    kernel mass at the center             : 9.947184e-01
+DEAL::    solid fraction at the center          : 3.278061e-01
+DEAL::    solid fraction off the center         : 2.468979e-01
 DEAL::    velocity and pressure are recovered   : true
 DEAL::    undefined phase averages              : 0
 DEAL::  cut cell subdivisions 8
 DEAL::    fluid, solid and cut cells            : 204 16 36
 DEAL::    relative error of the solid volume    : 1.518e-03
 DEAL::    center fraction matches solid volume  : true
-DEAL::    solid fraction at the center          : 3.270264e-01
-DEAL::    solid fraction off the center         : 2.470936e-01
+DEAL::    kernel mass at the center             : 9.947184e-01
+DEAL::    solid fraction at the center          : 3.287628e-01
+DEAL::    solid fraction off the center         : 2.478918e-01
 DEAL::    velocity and pressure are recovered   : true
 DEAL::    undefined phase averages              : 0
 DEAL::Sphere and top-hat kernel, dim = 3
@@ -41,34 +45,39 @@ DEAL::  cut cell subdivisions 1
 DEAL::    fluid, solid and cut cells            : 456 0 56
 DEAL::    relative error of the solid volume    : 9.167e-03
 DEAL::    center fraction matches solid volume  : true
-DEAL::    solid fraction at the center          : 1.848784e-01
-DEAL::    solid fraction off the center         : 1.359400e-01
+DEAL::    kernel mass at the center             : 9.461425e-01
+DEAL::    solid fraction at the center          : 1.954023e-01
+DEAL::    solid fraction off the center         : 1.436782e-01
 DEAL::    velocity and pressure are recovered   : true
 DEAL::    undefined phase averages              : 0
 DEAL::  cut cell subdivisions 2
 DEAL::    fluid, solid and cut cells            : 456 0 56
 DEAL::    relative error of the solid volume    : 9.167e-03
 DEAL::    center fraction matches solid volume  : true
-DEAL::    solid fraction at the center          : 1.848784e-01
-DEAL::    solid fraction off the center         : 1.413776e-01
+DEAL::    kernel mass at the center             : 9.420643e-01
+DEAL::    solid fraction at the center          : 1.962482e-01
+DEAL::    solid fraction off the center         : 1.469965e-01
 DEAL::    velocity and pressure are recovered   : true
 DEAL::    undefined phase averages              : 0
 DEAL::  cut cell subdivisions 4
 DEAL::    fluid, solid and cut cells            : 456 0 56
 DEAL::    relative error of the solid volume    : 1.882e-03
 DEAL::    center fraction matches solid volume  : true
-DEAL::    solid fraction at the center          : 1.862378e-01
-DEAL::    solid fraction off the center         : 1.415475e-01
+DEAL::    kernel mass at the center             : 9.430838e-01
+DEAL::    solid fraction at the center          : 1.974775e-01
+DEAL::    solid fraction off the center         : 1.473293e-01
 DEAL::    velocity and pressure are recovered   : true
 DEAL::    undefined phase averages              : 0
 DEAL::Sphere and gaussian kernel, dim = 2
 DEAL::  exact solid fraction at the center      : 8.665603e-01
-DEAL::  solid fraction at the center            : 8.661144e-01
+DEAL::  kernel mass at the center               : 9.999225e-01
+DEAL::  solid fraction at the center            : 8.661815e-01
 DEAL::  velocity and pressure are recovered     : true
 DEAL::  undefined phase averages                : 0
 DEAL::Sphere and gaussian kernel, dim = 3
 DEAL::  exact solid fraction at the center      : 7.434232e-01
-DEAL::  solid fraction at the center            : 7.428193e-01
+DEAL::  kernel mass at the center               : 9.983027e-01
+DEAL::  solid fraction at the center            : 7.440823e-01
 DEAL::  velocity and pressure are recovered     : true
 DEAL::  undefined phase averages                : 0
 DEAL::Large sphere and small top-hat kernel, dim = 2

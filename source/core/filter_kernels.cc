@@ -55,6 +55,26 @@ namespace
     else
       return 4. / 3. * std::numbers::pi * radius * radius * radius;
   }
+
+  /**
+   * @brief Return the normalization constant of the Wendland C2 kernel, such
+   * that its integral over its support is one.
+   *
+   * @tparam dim Number of spatial dimensions (2 or 3).
+   *
+   * @param[in] radius Radius of the support of the kernel.
+   *
+   * @return Normalization constant.
+   */
+  template <int dim>
+  double
+  wendland_normalization(const double radius)
+  {
+    if constexpr (dim == 2)
+      return 7. / (std::numbers::pi * radius * radius);
+    else
+      return 21. / (2. * std::numbers::pi * radius * radius * radius);
+  }
 } // namespace
 
 template <int dim>
@@ -89,7 +109,21 @@ TopHatFilterKernel<dim>::TopHatFilterKernel(const double radius)
                          "strictly positive."));
 }
 
+template <int dim>
+WendlandFilterKernel<dim>::WendlandFilterKernel(const double radius)
+  : cutoff_radius(radius)
+  , cutoff_radius_squared(radius * radius)
+  , inverse_radius(1. / radius)
+  , normalization(wendland_normalization<dim>(radius))
+{
+  AssertThrow(radius > 0.,
+              ExcMessage("The support radius of the Wendland filter kernel "
+                         "must be strictly positive."));
+}
+
 template class GaussianFilterKernel<2>;
 template class GaussianFilterKernel<3>;
 template class TopHatFilterKernel<2>;
 template class TopHatFilterKernel<3>;
+template class WendlandFilterKernel<2>;
+template class WendlandFilterKernel<3>;
