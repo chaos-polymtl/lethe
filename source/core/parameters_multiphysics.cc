@@ -157,12 +157,12 @@ Parameters::CLS::declare_parameters(ParameterHandler &prm) const
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
 
-    prm.declare_entry("viscous dissipative fluid",
-                      enum_to_string(viscous_dissipative_fluid),
-                      Patterns::Selection(enum_to_selection<FluidIndicator>(
-                        deprecated_fluid_indicator_names())),
-                      "Fluid to which the viscous dissipation is applied "
-                      "in the heat equation <fluid_0|fluid_1|both>");
+    declare_enum_entry(prm,
+                       "viscous dissipative fluid",
+                       viscous_dissipative_fluid,
+                       "Fluid to which the viscous dissipation is applied "
+                       "in the heat equation.",
+                       deprecated_fluid_indicator_names());
 
     prm.declare_entry(
       "diffusivity",
@@ -209,14 +209,11 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
 {
   prm.enter_subsection("interface reinitialization method");
   {
-    prm.declare_entry(
-      "type",
-      enum_to_string(reinitialization_method_type),
-      Patterns::Selection(
-        enum_to_selection<Parameters::ReinitializationMethodType>(
-          deprecated_reinitialization_method_type_names)),
-      "CLS interface reinitialization method. "
-      "Choices are <none|projection_based_sharpening|pde_based|geometric>.");
+    declare_enum_entry(prm,
+                       "type",
+                       reinitialization_method_type,
+                       "CLS interface reinitialization method.",
+                       deprecated_reinitialization_method_type_names);
 
     prm.declare_entry(
       "frequency",
@@ -225,14 +222,13 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
       "Reinitialization frequency (number of time steps) at which the "
       "interface reinitialization process will be applied to the CLS "
       "phase indicator field.");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "verbosity",
-      enum_to_string(verbosity),
-      Patterns::Selection(
-        enum_to_selection<Verbosity>(deprecated_verbosity_names())),
+      verbosity,
       "States whether the output from the interface reinitialization method "
-      "should be printed. "
-      "Choices are <quiet|verbose|extra_verbose>.");
+      "should be printed.",
+      deprecated_verbosity_names());
 
     sharpening.declare_parameters(prm);
     pde_based_interface_reinitialization.declare_parameters(prm);
@@ -280,14 +276,14 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
   const CLS_InterfaceSharpening defaults;
   prm.enter_subsection("projection-based interface sharpening");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection(enum_to_selection<Parameters::SharpeningType>()),
+      defaults.type,
       "CLS interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
       "if adaptive the sharpening threshold is determined by binary search, "
-      "to ensure mass conservation of the monitored phase");
+      "to ensure mass conservation of the monitored phase.");
 
     // Parameters for constant sharpening
     prm.declare_entry(
@@ -325,12 +321,13 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptive sharpening");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "monitored fluid",
-      enum_to_string(defaults.monitored_fluid),
-      Patterns::Selection(enum_to_selection<FluidIndicator>(
-        deprecated_fluid_indicator_names(), single_fluid_indicators())),
-      "Fluid for which conservation is monitored <fluid_0|fluid_1>, used with adaptive sharpening.");
+      defaults.monitored_fluid,
+      "Fluid for which conservation is monitored, used with adaptive sharpening.",
+      deprecated_fluid_indicator_names(),
+      single_fluid_indicators());
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.
@@ -410,13 +407,13 @@ Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Factor applied to the filter for curvature calculations to damp high-frequency errors");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "verbosity",
-      enum_to_string(defaults.verbosity),
-      Patterns::Selection(enum_to_selection<Verbosity>(
-        deprecated_verbosity_names(), quiet_or_verbose())),
-      "State whether the output from the surface tension force calculations should be printed "
-      "Choices are <quiet|verbose>.");
+      defaults.verbosity,
+      "State whether the output from the surface tension force calculations should be printed.",
+      deprecated_verbosity_names(),
+      quiet_or_verbose());
 
 
     prm.declare_entry("enable marangoni effect",
@@ -455,17 +452,18 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
   const CLS_PhaseFilter defaults;
   prm.enter_subsection("phase filtration");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection(enum_to_selection<Parameters::FilterType>(
-        {}, {Parameters::FilterType::none, Parameters::FilterType::tanh})),
+      defaults.type,
       "CLS phase indicator filtration type, "
       "if <none> is selected, the phase won't be filtered; "
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = 0.5 \\tanh(\\beta(\\alpha-0.5)) + 0.5; "
       "where \\beta is a parameter influencing the interface thickness that "
-      "must be defined");
+      "must be defined.",
+      {},
+      {Parameters::FilterType::none, Parameters::FilterType::tanh});
     prm.declare_entry(
       "beta",
       Patterns::Tools::Convert<double>::to_string(defaults.beta),
@@ -473,12 +471,12 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
-    prm.declare_entry("verbosity",
-                      enum_to_string(defaults.verbosity),
-                      Patterns::Selection(enum_to_selection<Verbosity>(
-                        deprecated_verbosity_names(), quiet_or_verbose())),
-                      "States whether the filtered data should be printed "
-                      "Choices are <quiet|verbose>.");
+    declare_enum_entry(prm,
+                       "verbosity",
+                       defaults.verbosity,
+                       "States whether the filtered data should be printed.",
+                       deprecated_verbosity_names(),
+                       quiet_or_verbose());
   }
   prm.leave_subsection();
 }
@@ -585,14 +583,13 @@ Parameters::CLS_GeometricInterfaceReinitialization::declare_parameters(
                         defaults.max_reinitialization_distance),
                       Patterns::Double(),
                       "Maximum reinitialization distance value");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "transformation type",
-      enum_to_string(defaults.transformation_type),
-      Patterns::Selection(
-        enum_to_selection<Parameters::RedistanciationTransformationType>(
-          deprecated_transformation_type_names)),
+      defaults.transformation_type,
       "Transformation function used to get the phase indicator from the signed "
-      "distance");
+      "distance.",
+      deprecated_transformation_type_names);
     prm.declare_entry("tanh thickness",
                       Patterns::Tools::Convert<double>::to_string(
                         defaults.tanh_thickness),
@@ -627,17 +624,17 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
   const CahnHilliard_PhaseFilter defaults;
   prm.enter_subsection("phase filtration");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection(enum_to_selection<Parameters::FilterType>()),
+      defaults.type,
       "CahnHilliard phase filtration type, "
       "if <none> is selected, the phase won't be filtered; "
       "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1); "
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = \\tanh(\\beta\\alpha); "
       "where beta is a parameter influencing the interface thickness that "
-      "must be defined");
+      "must be defined.");
     prm.declare_entry(
       "beta",
       Patterns::Tools::Convert<double>::to_string(defaults.beta),
@@ -645,12 +642,12 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
-    prm.declare_entry("verbosity",
-                      enum_to_string(defaults.verbosity),
-                      Patterns::Selection(enum_to_selection<Verbosity>(
-                        deprecated_verbosity_names(), quiet_or_verbose())),
-                      "States whether the filtered data should be printed "
-                      "Choices are <quiet|verbose>.");
+    declare_enum_entry(prm,
+                       "verbosity",
+                       defaults.verbosity,
+                       "States whether the filtered data should be printed.",
+                       deprecated_verbosity_names(),
+                       quiet_or_verbose());
   }
   prm.leave_subsection();
 }
@@ -690,11 +687,11 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
 
     prm.enter_subsection("epsilon");
     {
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "method",
-        enum_to_string(epsilon_set_method),
-        Patterns::Selection(enum_to_selection<Parameters::EpsilonSetMethod>()),
-        "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)");
+        epsilon_set_method,
+        "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual).");
 
       prm.declare_entry(
         "value",
@@ -702,11 +699,11 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
         Patterns::Double(),
         "Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element");
 
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "verbosity",
-        enum_to_string(epsilon_verbosity),
-        Patterns::Selection(enum_to_selection<Parameters::EpsilonVerbosity>()),
-        "Display the value of epsilon for each time iteration if set to verbose");
+        epsilon_verbosity,
+        "Display the value of epsilon for each time iteration if set to verbose.");
     }
     prm.leave_subsection();
   }
@@ -749,12 +746,10 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
   {
     prm.enter_subsection("time coupling strategy");
     {
-      prm.declare_entry(
-        "type",
-        enum_to_string(time_coupling_strategy),
-        Patterns::Selection(
-          enum_to_selection<Parameters::TimeHarmonicMaxwellCouplingStrategy>()),
-        "The type of time coupling strategy to use.");
+      declare_enum_entry(prm,
+                         "type",
+                         time_coupling_strategy,
+                         "The type of time coupling strategy to use.");
 
       prm.declare_entry(
         "coupling iteration",
@@ -791,13 +786,12 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
       Patterns::Double(0),
       "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "electromagnetic scaling type",
-      enum_to_string(electromagnetic_scaling_type),
-      Patterns::Selection(
-        enum_to_selection<Parameters::ElectromagneticScalingType>(
-          deprecated_electromagnetic_scaling_type_names)),
-      "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.");
+      electromagnetic_scaling_type,
+      "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.",
+      deprecated_electromagnetic_scaling_type_names);
 
     prm.declare_entry(
       "electric field amplitude",
@@ -842,11 +836,10 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
           prm.enter_subsection("waveguide mode");
           {
-            prm.declare_entry(
+            declare_enum_entry(
+              prm,
               "mode type",
-              enum_to_string(Parameters::WaveguideMode::TE),
-              Patterns::Selection(
-                enum_to_selection<Parameters::WaveguideMode>()),
+              Parameters::WaveguideMode::TE,
               "The waveguide mode excitation for a rectangular waveguide can be either Transverse Electric (TE) or Transverse Magnetic (TM).");
 
             prm.declare_entry(

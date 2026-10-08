@@ -341,13 +341,12 @@ namespace BoundaryConditions
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
-    prm.declare_entry(
-      "type",
-      enum_to_string(BoundaryType::none),
-      Patterns::Selection(enum_to_selection<BoundaryType>(
-        deprecated_boundary_type_names, fluid_dynamics_boundary_types)),
-      "Type of boundary condition"
-      "Choices are <none|noslip|slip|function|periodic|pressure|neumann_traction|function_weak|partial_slip|outlet>.");
+    declare_enum_entry(prm,
+                       "type",
+                       BoundaryType::none,
+                       "Type of boundary condition.",
+                       deprecated_boundary_type_names,
+                       fluid_dynamics_boundary_types);
 
 
     prm.declare_entry("id",
@@ -695,13 +694,12 @@ namespace BoundaryConditions
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
-    prm.declare_entry(
-      "type",
-      enum_to_string(BoundaryType::noflux),
-      Patterns::Selection(enum_to_selection<BoundaryType>(
-        deprecated_boundary_type_names, heat_transfer_boundary_types)),
-      "Type of boundary condition for heat transfer"
-      "Choices are <noflux|temperature|convection_radiation|periodic>.");
+    declare_enum_entry(prm,
+                       "type",
+                       BoundaryType::noflux,
+                       "Type of boundary condition for heat transfer.",
+                       deprecated_boundary_type_names,
+                       heat_transfer_boundary_types);
 
     prm.declare_entry("id",
                       Utilities::to_string(default_boundary_id, 2),
@@ -1636,13 +1634,13 @@ namespace BoundaryConditions
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(BoundaryType::silver_muller),
-      Patterns::Selection(enum_to_selection<BoundaryType>(
-        deprecated_boundary_type_names, time_harmonic_maxwell_boundary_types)),
-      "Type of boundary condition for Time Harmonic Maxwell equations"
-      "Choices are <pec|pmc|silver_muller|electric_field|magnetic_field|impedance_boundary|waveguide_port>.");
+      BoundaryType::silver_muller,
+      "Type of boundary condition for Time Harmonic Maxwell equations.",
+      deprecated_boundary_type_names,
+      time_harmonic_maxwell_boundary_types);
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),

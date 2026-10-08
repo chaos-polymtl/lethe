@@ -16,11 +16,10 @@ namespace Parameters
   void
   Manifolds::declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc)
   {
-    prm.declare_entry("type",
-                      enum_to_string(ManifoldType::none),
-                      Patterns::Selection(enum_to_selection<ManifoldType>()),
-                      "Type of manifold description"
-                      "Choices are <none|spherical|cylindrical|iges|step>.");
+    declare_enum_entry(prm,
+                       "type",
+                       ManifoldType::none,
+                       "Type of manifold description.");
 
     prm.declare_entry(
       "id",

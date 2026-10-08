@@ -277,12 +277,10 @@ namespace Parameters
     LagrangianPhysicalProperties::declareDefaultEntry(ParameterHandler &prm)
     {
       // Defines the type of distribution
-      prm.declare_entry("size distribution type",
-                        enum_to_string(SizeDistributionType::uniform),
-                        Patterns::Selection(
-                          enum_to_selection<SizeDistributionType>()),
-                        "Particle size distribution. "
-                        "Choices are <uniform|normal|lognormal|custom>.");
+      declare_enum_entry(prm,
+                         "size distribution type",
+                         SizeDistributionType::uniform,
+                         "Particle size distribution.");
 
       // Normal and lognormal distributions
       prm.declare_entry("average diameter",
@@ -307,12 +305,10 @@ namespace Parameters
                         Patterns::FileName(),
                         "Indicates the file where the custom distribution "
                         "values should be read from.");
-      prm.declare_entry("custom distribution probability function type",
-                        enum_to_string(ProbabilityFunctionType::PDF),
-                        Patterns::Selection(
-                          enum_to_selection<ProbabilityFunctionType>()),
-                        "Particle size distribution. "
-                        "Choices are <PDF|CDF>.");
+      declare_enum_entry(prm,
+                         "custom distribution probability function type",
+                         ProbabilityFunctionType::PDF,
+                         "Particle size distribution.");
       prm.declare_entry("custom distribution interpolation",
                         "false",
                         Patterns::Bool(),
@@ -334,13 +330,11 @@ namespace Parameters
         "a custom distribution. ");
 
       // Normal, lognormal and custom distributions
-      prm.declare_entry("distribution weighting basis",
-                        enum_to_string(DistributionWeightingType::number_based),
-                        Patterns::Selection(
-                          enum_to_selection<DistributionWeightingType>(
-                            deprecated_distribution_weighting_type_names)),
-                        "Weighting basis for the size distribution. "
-                        "Choices are <number_based|volume_based>.");
+      declare_enum_entry(prm,
+                         "distribution weighting basis",
+                         DistributionWeightingType::number_based,
+                         "Weighting basis for the size distribution.",
+                         deprecated_distribution_weighting_type_names);
       prm.declare_entry("distribution prn seed",
                         "1",
                         Patterns::Integer(),
@@ -597,12 +591,10 @@ namespace Parameters
       const InsertionInfo<dim> defaults;
       prm.enter_subsection("insertion info");
       {
-        prm.declare_entry("insertion method",
-                          enum_to_string(defaults.insertion_method),
-                          Patterns::Selection(
-                            enum_to_selection<InsertionMethod>()),
-                          "Choosing insertion method. "
-                          "Choices are <file|plane|list|volume|packed>.");
+        declare_enum_entry(prm,
+                           "insertion method",
+                           defaults.insertion_method,
+                           "Choosing insertion method.");
         prm.declare_entry("inserted number of particles at each time step",
                           Patterns::Tools::Convert<unsigned int>::to_string(
                             defaults.inserted_this_step),
@@ -977,12 +969,10 @@ namespace Parameters
       {
         prm.enter_subsection("load balancing");
         {
-          prm.declare_entry(
-            "load balance method",
-            enum_to_string(defaults.load_balance_method),
-            Patterns::Selection(enum_to_selection<LoadBalanceMethod>()),
-            "Choosing load-balance method. "
-            "Choices are <none|once|frequent|dynamic|dynamic_with_sparse_contacts>.");
+          declare_enum_entry(prm,
+                             "load balance method",
+                             defaults.load_balance_method,
+                             "Choosing load-balance method.");
 
           prm.declare_entry(
             "step",
@@ -1046,12 +1036,10 @@ namespace Parameters
 
         prm.enter_subsection("contact detection");
         {
-          prm.declare_entry("contact detection method",
-                            enum_to_string(defaults.contact_detection_method),
-                            Patterns::Selection(
-                              enum_to_selection<ContactDetectionMethod>()),
-                            "Choosing contact detection method. "
-                            "Choices are <constant|dynamic>.");
+          declare_enum_entry(prm,
+                             "contact detection method",
+                             defaults.contact_detection_method,
+                             "Choosing contact detection method.");
 
           prm.declare_entry("frequency",
                             Patterns::Tools::Convert<unsigned int>::to_string(
@@ -1075,22 +1063,19 @@ namespace Parameters
         }
         prm.leave_subsection();
 
-        prm.declare_entry(
-          "particle particle contact force method",
-          enum_to_string(defaults.particle_particle_contact_force_model),
-          Patterns::Selection(
-            enum_to_selection<ParticleParticleContactForceModel>(
-              {}, allowed_particle_particle_contact_force_models)),
-          "Choosing particle-particle contact force model. "
-          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
+        declare_enum_entry(prm,
+                           "particle particle contact force method",
+                           defaults.particle_particle_contact_force_model,
+                           "Choosing particle-particle contact force model.",
+                           {},
+                           allowed_particle_particle_contact_force_models);
 
-        prm.declare_entry(
-          "particle wall contact force method",
-          enum_to_string(defaults.particle_wall_contact_force_method),
-          Patterns::Selection(enum_to_selection<ParticleWallContactForceModel>(
-            {}, allowed_particle_wall_contact_force_models)),
-          "Choosing particle-wall contact force model. "
-          "Choices are <linear|nonlinear|JKR|DMT>.");
+        declare_enum_entry(prm,
+                           "particle wall contact force method",
+                           defaults.particle_wall_contact_force_method,
+                           "Choosing particle-wall contact force model.",
+                           {},
+                           allowed_particle_wall_contact_force_models);
 
         prm.declare_entry(
           "dmt cut-off threshold",
@@ -1100,13 +1085,11 @@ namespace Parameters
           "Cut-off threshold above which the Van der Waal forces are "
           "ignored for the DMT model relative to the pull-off force");
 
-        prm.declare_entry("rolling resistance torque method",
-                          enum_to_string(defaults.rolling_resistance_method),
-                          Patterns::Selection(
-                            enum_to_selection<RollingResistanceMethod>(
-                              deprecated_rolling_resistance_method_names)),
-                          "Choosing rolling resistance torque model. "
-                          "Choices are <none|constant|viscous|epsd>.");
+        declare_enum_entry(prm,
+                           "rolling resistance torque method",
+                           defaults.rolling_resistance_method,
+                           "Choosing rolling resistance torque model.",
+                           deprecated_rolling_resistance_method_names);
 
         prm.declare_entry(
           "f coefficient",
@@ -1115,19 +1098,15 @@ namespace Parameters
           Patterns::Double(),
           "Model parameter for the EPSD rolling resistance model.");
 
-        prm.declare_entry("integration method",
-                          enum_to_string(defaults.integration_method),
-                          Patterns::Selection(
-                            enum_to_selection<IntegrationMethod>()),
-                          "Choosing integration method. "
-                          "Choices are <velocity_verlet|explicit_euler>.");
+        declare_enum_entry(prm,
+                           "integration method",
+                           defaults.integration_method,
+                           "Choosing integration method.");
 
-        prm.declare_entry("solver type",
-                          enum_to_string(defaults.solver_type),
-                          Patterns::Selection(
-                            enum_to_selection<DEM::SolverType>()),
-                          "Choosing solver type. "
-                          "Choices are <dem|dem_mp>.");
+        declare_enum_entry(prm,
+                           "solver type",
+                           defaults.solver_type,
+                           "Choosing solver type.");
 
         prm.enter_subsection("adaptive sparse contacts");
         {
@@ -1285,13 +1264,13 @@ namespace Parameters
                           defaults.calculate_force_torque),
                         Patterns::Bool(),
                         "Enable calculation of forces");
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "verbosity",
-        enum_to_string(defaults.force_torque_verbosity),
-        Patterns::Selection(enum_to_selection<Verbosity>(
-          deprecated_verbosity_names(), quiet_or_verbose())),
-        "State whether output from solver runs should be printed. "
-        "Choices are <quiet|verbose>.");
+        defaults.force_torque_verbosity,
+        "State whether output from solver runs should be printed.",
+        deprecated_verbosity_names(),
+        quiet_or_verbose());
       prm.declare_entry("filename",
                         defaults.force_torque_output_name,
                         Patterns::FileName(),
@@ -1620,12 +1599,10 @@ namespace Parameters
         "Periodic direction or normal direction of periodic boundary");
 
       // Multiphysic DEM
-      prm.declare_entry("thermal boundary type",
-                        enum_to_string(WallThermalBoundaryType::adiabatic),
-                        Patterns::Selection(
-                          enum_to_selection<WallThermalBoundaryType>()),
-                        "Thermal boundary type used in multiphysic DEM. "
-                        "Choices are <adiabatic|temperature>.");
+      declare_enum_entry(prm,
+                         "thermal boundary type",
+                         WallThermalBoundaryType::adiabatic,
+                         "Thermal boundary type used in multiphysic DEM.");
 
       auto wall_temperature_function_parsed =
         std::make_shared<Functions::ParsedFunction<3>>(1);
@@ -1745,11 +1722,10 @@ namespace Parameters
       const GridMotion<dim> defaults;
       prm.enter_subsection("grid motion");
       {
-        prm.declare_entry("motion type",
-                          enum_to_string(defaults.motion_type),
-                          Patterns::Selection(enum_to_selection<MotionType>()),
-                          "Choosing grid motion type. "
-                          "Choices are <none|translational|rotational>.");
+        declare_enum_entry(prm,
+                           "motion type",
+                           defaults.motion_type,
+                           "Choosing grid motion type.");
 
         prm.declare_entry("grid translational velocity x",
                           Patterns::Tools::Convert<double>::to_string(
@@ -1851,13 +1827,13 @@ namespace Parameters
             Patterns::FileName(),
             "Exported particle-wall collision results filename");
 
-          prm.declare_entry(
+          declare_enum_entry(
+            prm,
             "verbosity",
-            enum_to_string(defaults.collision_verbosity),
-            Patterns::Selection(enum_to_selection<Verbosity>(
-              deprecated_verbosity_names(), quiet_or_verbose())),
-            "State whether collision starts and ends should be printed. "
-            "Choices are <quiet|verbose>.");
+            defaults.collision_verbosity,
+            "State whether collision starts and ends should be printed.",
+            deprecated_verbosity_names(),
+            quiet_or_verbose());
         }
         prm.leave_subsection();
       }

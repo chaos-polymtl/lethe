@@ -17,14 +17,13 @@ namespace AnalyticalSolutions
       Patterns::Tools::Convert<bool>::to_string(enable),
       Patterns::Bool(),
       "Enable the calculation of the analytical solution and L2 error");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "verbosity",
-      enum_to_string(verbosity),
-      Patterns::Selection(enum_to_selection<Parameters::Verbosity>(
-        Parameters::deprecated_verbosity_names(),
-        Parameters::quiet_or_verbose())),
-      "State whether from the post-processing values should be printed "
-      "Choices are <quiet|verbose>.");
+      verbosity,
+      "State whether from the post-processing values should be printed.",
+      Parameters::deprecated_verbosity_names(),
+      Parameters::quiet_or_verbose());
 
     prm.declare_entry(
       "filename",

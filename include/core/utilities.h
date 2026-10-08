@@ -10,6 +10,7 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/mpi_remote_point_evaluation.h>
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/patterns.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
@@ -833,6 +834,72 @@ enum_to_selection(const DeprecatedEnumNames<EnumType> &deprecated_names = {},
       add_choice(deprecated_name);
 
   return selection;
+}
+
+/**
+ * @brief Return the sentence listing the choices of an enum parameter (e.g.
+ * "Choices are <quiet|verbose|extra_verbose>."), to be used in the description
+ * of the parameter entry. The choices are the enumerator identifiers, in the
+ * order of the enumeration. The deprecated strings which are still accepted are
+ * deliberately not listed.
+ *
+ * @tparam EnumType Enumeration type.
+ *
+ * @param[in] allowed_values Enumerators accepted by the parameter. If empty,
+ * all the enumerators of @p EnumType are accepted (see enum_to_selection()).
+ *
+ * @return The sentence listing the choices, separated by "|".
+ */
+template <typename EnumType>
+  requires std::is_enum_v<EnumType>
+inline std::string
+enum_to_choices(const std::vector<EnumType> &allowed_values = {})
+{
+  return "Choices are <" + enum_to_selection<EnumType>({}, allowed_values) +
+         ">.";
+}
+
+/**
+ * @brief Declare a parameter entry whose value is an enumerator. The default
+ * value, the accepted values and the choices listed in the description are all
+ * derived from the enumeration, so that they cannot differ from one another.
+ *
+ * The entry is declared with enum_to_string() of @p default_value as default
+ * value, a Patterns::Selection built with enum_to_selection() as pattern and
+ * @p description followed by enum_to_choices() as documentation.
+ *
+ * @tparam EnumType Enumeration type.
+ *
+ * @param[in,out] prm Parameter handler in which the entry is declared.
+ *
+ * @param[in] entry_name Name of the parameter in the parameter file.
+ *
+ * @param[in] default_value Default enumerator of the parameter.
+ *
+ * @param[in] description Description of the parameter, without the list of its
+ * choices, which is appended to it. It should end with a period.
+ *
+ * @param[in] deprecated_names Deprecated strings which remain accepted.
+ *
+ * @param[in] allowed_values Enumerators accepted by the parameter. If empty,
+ * all the enumerators of @p EnumType are accepted (see enum_to_selection()).
+ */
+template <typename EnumType>
+  requires std::is_enum_v<EnumType>
+inline void
+declare_enum_entry(ParameterHandler                    &prm,
+                   const std::string                   &entry_name,
+                   const EnumType                       default_value,
+                   const std::string                   &description,
+                   const DeprecatedEnumNames<EnumType> &deprecated_names = {},
+                   const std::vector<EnumType>         &allowed_values   = {})
+{
+  prm.declare_entry(
+    entry_name,
+    enum_to_string(default_value),
+    Patterns::Selection(
+      enum_to_selection<EnumType>(deprecated_names, allowed_values)),
+    description + " " + enum_to_choices<EnumType>(allowed_values));
 }
 
 /**

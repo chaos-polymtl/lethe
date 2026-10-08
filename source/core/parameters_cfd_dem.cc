@@ -35,12 +35,11 @@ namespace Parameters
   VoidFractionParameters<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("void fraction");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "mode",
-      enum_to_string(mode),
-      Patterns::Selection(enum_to_selection<Parameters::VoidFractionMode>()),
-      "Choose the method for the calculation of the void fraction."
-      "Choices are <function|pcm|qcm|spm>.");
+      mode,
+      "Choose the method for the calculation of the void fraction.");
     prm.enter_subsection("function");
     void_fraction.declare_parameters(prm);
     prm.leave_subsection();
@@ -73,17 +72,17 @@ namespace Parameters
       Patterns::Tools::Convert<bool>::to_string(qcm_sphere_equal_cell_volume),
       Patterns::Bool(),
       "Specify whether the virtual sphere has the same volume as the mesh element");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "qcm filter type",
-      enum_to_string(qcm_filter_type),
-      Patterns::Selection(enum_to_selection<Parameters::QCMFilterType>()),
+      qcm_filter_type,
       "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm smoothing length' is the averaging-sphere radius. With 'gaussian', half of 'qcm smoothing length' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "quadrature rule",
-      enum_to_string(quadrature_rule),
-      Patterns::Selection(enum_to_selection<VoidFractionQuadratureRule>(
-        deprecated_quadrature_rule_names)),
-      "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme");
+      quadrature_rule,
+      "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme.",
+      deprecated_quadrature_rule_names);
     prm.declare_entry(
       "n quadrature points",
       Patterns::Tools::Convert<unsigned int>::to_string(n_quadrature_points),
@@ -193,18 +192,17 @@ namespace Parameters
         defaults.vortical_viscous_torque),
       Patterns::Bool(),
       "Choose whether or not to apply vortical viscous torque on particles");
-    prm.declare_entry("drag model",
-                      enum_to_string(defaults.drag_model),
-                      Patterns::Selection(
-                        enum_to_selection<Parameters::DragModel>()),
-                      "The drag model used to determine the drag coefficient");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
+      "drag model",
+      defaults.drag_model,
+      "The drag model used to determine the drag coefficient.");
+    declare_enum_entry(
+      prm,
       "dem iteration control",
-      enum_to_string(defaults.dem_iteration_control),
-      Patterns::Selection(
-        enum_to_selection<SubSimulationControlDEM::DEMSubIterationLogic>(
-          deprecated_dem_iteration_control_names)),
-      "The strategy used to control the DEM iterations in CFD-DEM simulations");
+      defaults.dem_iteration_control,
+      "The strategy used to control the DEM iterations in CFD-DEM simulations.",
+      deprecated_dem_iteration_control_names);
     prm.declare_entry("coupling frequency",
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.coupling_frequency),
@@ -216,11 +214,10 @@ namespace Parameters
         defaults.fraction_of_rayleigh_time),
       Patterns::Double(0., 1.),
       "Fraction of Rayleigh time used to control the DEM iterations.");
-    prm.declare_entry("vans model",
-                      enum_to_string(defaults.vans_model),
-                      Patterns::Selection(
-                        enum_to_selection<Parameters::VANSModel>()),
-                      "The volume averaged Navier Stokes model to be solved.");
+    declare_enum_entry(prm,
+                       "vans model",
+                       defaults.vans_model,
+                       "The volume averaged Navier Stokes model to be solved.");
     prm.declare_entry(
       "grad-div length scale",
       Patterns::Tools::Convert<double>::to_string(defaults.cstar),
@@ -239,12 +236,12 @@ namespace Parameters
       Patterns::Bool(),
       "Outputs statistics about the particles such as their total kinetic energy, angular momentum, etc.");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "drag coupling",
-      enum_to_string(defaults.drag_coupling),
-      Patterns::Selection(
-        enum_to_selection<DragCoupling>(deprecated_drag_coupling_names)),
-      "Formulation for the drag force. Choices are fully_implicit|semi_implicit|fully_explicit. The default value is semi_implicit, which represents the legacy coupling method.");
+      defaults.drag_coupling,
+      "Formulation for the drag force. The default value is semi_implicit, which represents the legacy coupling method.",
+      deprecated_drag_coupling_names);
 
     prm.declare_entry(
       "project particle forces",
