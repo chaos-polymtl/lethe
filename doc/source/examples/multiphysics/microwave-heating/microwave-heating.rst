@@ -25,7 +25,7 @@ Both parameter files below are located in the example's folder (``examples/multi
 - Parameter file, heating of a silicon carbide cylinder cooled by an air flow: ``filled_waveguide_cylinder_SiC.prm``
 
 .. note::
-    Additional parameter files for the square and tilted square obstacles are also provided to make the results easy to reproduce, but they are not discussed in this example since they follow the same logic as the ``filled_waveguide_cylinder_SiC.prm`` case, only with a different obstacle geometry. See the :ref:`Uniform Channel with Meshed Square Prism <channel-prism>` for details on this grid and its arguments.
+    Additional parameter files for the square and tilted square obstacles are also provided to make the results from the DPG article of Lethe [#Marquis2026]_ easy to reproduce, but they are not discussed in this example since they follow the same logic as the ``filled_waveguide_cylinder_SiC.prm`` case, only with a different obstacle geometry. See the :ref:`Uniform Channel with Meshed Square Prism <channel-prism>` for details on this grid and its arguments.
 
 Description of the Case
 -----------------------
@@ -643,7 +643,7 @@ Running the Simulations
     mpirun -np 8 lethe-fluid-matrix-free filled_waveguide_cylinder_SiC.prm
 
 .. warning::
-    Both cases are too expensive in memory to be run on a desktop computer, except for very coarse meshes (for which the simulation would not be converged). The first case has been run on a single node with 128 cores and 1 TB of RAM, while the second case has been run on 4 nodes totaling 192 cores and 749 GB of RAM. The second case is also significantly more expensive in CPU time than the first, due to the added cost of solving the fluid dynamics equations at every time step; it took approximately a day to run.
+    Both cases are too expensive in memory to be run on a desktop computer, except for very coarse meshes (for which the simulation would not be converged). The first case has been run on a single node with 128 cores and 1 TB of RAM, while the second case has been run on 8 nodes totaling 192 cores and 749 GB of RAM each. The second case is also significantly more expensive in CPU time than the first, due to the added cost of solving the fluid dynamics equations at every time step; it took approximately a day to run.
 
 Results and Discussion
 ----------------------
@@ -658,15 +658,13 @@ The first figure reproduces the results of Peng *et al.* [#Peng2024]_ for the al
 
 Because the cylinder's radius and permittivity place it near a resonant condition of the waveguide-cylinder system, the internal electric field, and therefore the heating rate, are strongly enhanced. The overall field distribution pattern is in agreement with the resonance-driven heating mechanism described by Peng *et al.* [#Peng2024]_. When comparing amplitudes, the electric field in our solution is lower than what they report, which is caused by a difference in the definition of the input power in the waveguide. To recover the same amplitude, one would need to scale the solution field by a factor of :math:`\sqrt{P_\mathrm{inlet}/P_\mathrm{total}} \approx 1.51`, where :math:`P_\mathrm{inlet}` is the power flowing through the waveguide inlet (the ``waveguide power`` parameter) and :math:`P_\mathrm{total}` is the total power passing through the waveguide, accounting for the reflected component of the electromagnetic wave (this needs to be computed numerically by integrating the Poynting vector over the waveguide cross-section).
 
-The second figure shows a summary of the second test case, showing the corresponding temperature field and electric field amplitude after 60 seconds of simulation for different obstacle geometries. It also shows the average change in temperature (:math:`\Delta T`) inside the obstacle along two crossing planes, at :math:`x_1=0.0556` m (:math:`x_2x_3`-plane) and at :math:`x_3=0.1` m (:math:`x_1x_2`-plane), together with the difference in average temperature with respect to the cylinder case (:math:`\delta \overline{T}`) along those same planes. The dashed lines bound the region between the :math:`\mathrm{P}_1` and :math:`\mathrm{P}_{99}` percentiles. Note that the gray lines in (a) indicate where the profiles of (b) have been taken.
+The second figure shows a summary of the second test case, showing the corresponding temperature field and electric field amplitude after 60 seconds of simulation for different obstacle geometries. Unlike Case 1, the air flow continuously removes heat from the cylinder by forced convection, which skews the temperature field toward the downstream side of the cylinder. By looking at the figure, one can see that the different geometries lead to different heating patterns and rates from the electric field intensity distribution. This shows that microwave heating depends not only on the type of material, but also on the geometry and its orientation with respect to the electromagnetic field.
 
 .. image:: images/geometrie_temp_comparison.png
     :alt: temperature field in the SiC cylinder, cooled by an air flow
     :align: center
     :name: temperature-sic
     :width: 600
-
-Unlike Case 1, the air flow continuously removes heat from the cylinder by forced convection, which skews the temperature field toward the downstream side of the cylinder. By looking at the figure, one can see that the different geometries lead to different heating patterns and rates. The tilted square prism shows slightly greater temperature non-uniformity, although the variations remain small compared with the overall temperature increase. Interestingly, the cylinder heats more slowly than the two square prisms, despite having a smaller volume. This demonstrates that microwave heating depends not only on the amount of material present, but also on how much of it can absorb electromagnetic energy. Consequently, at the end of the simulation, the square obstacles are significantly hotter than the cylinder, and none of the three obstacles has reached thermal equilibrium. Finally, this also highlights the impact of the flow on the temperature distribution: changing only the orientation of the square prism changes its heating rate, even though its electromagnetic properties remain identical and constant regardless of orientation.
 
 On a final note, we present an animation of the transient heating and flow fields for the SiC cylinder case, showing the evolution of the temperature field and the velocity field in the :math:`x_1x_2`-plane at mid height:
 
@@ -684,5 +682,7 @@ References
 ----------
 
 .. [#Peng2024] \Y. Peng, D. Zhou, H. Chen, M. Liu, Z. Tang, and T. Hong, "Resonance-Driven Microwave Heating of Low-Loss Cylindrical Substances in Waveguide Systems," *IEEE Transactions on Microwave Theory and Techniques*, vol. 72, no. 6, pp. 3722-3733, June 2024, doi: `10.1109/TMTT.2023.3327488 <https://doi.org/10.1109/TMTT.2023.3327488>`_\.
+
+.. [#Marquis2026] \O. Marquis, M. S. Maier, and B. Blais, "A discontinuous Petrov-Galerkin finite-element framework for the simulation of microwave-heated flows," *\*arXiv preprint arXiv:2609.03155\**, 2026, doi: \`10.48550/arXiv.2609.03155 <[https://doi.org/10.48550/arXiv.2609.03155](https://doi.org/10.48550/arXiv.2609.03155)>\`\_\\.
 
 .. [#CRC2006] \Shackelford, J.F., CRC Press (Eds.), 2016. CRC Materials Science and Engineering Handbook. Fourth edition ed., CRC Press, Taylor & Francis Group, Boca Raton.
