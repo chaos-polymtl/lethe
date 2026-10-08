@@ -195,7 +195,7 @@ subsection particles
       set Function expression = 66;17;10
     end
     subsection velocity
-      set Function expression = 1.15;0;0
+      set Function expression = 0.85;0;0
     end
   end
 end
