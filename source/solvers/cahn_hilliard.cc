@@ -724,16 +724,6 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::iteration)
-    {
-      announce_string(this->pcout, "Cahn-Hilliard");
-      this->pcout << std::defaultfloat;
-      this->computing_timer.print_summary();
-      this->pcout << std::scientific;
-      this->computing_timer.reset();
-    }
-
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     {
       // Calculate volume and mass (this->mass_monitored)
@@ -869,6 +859,16 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
     }
 }
 
+template <int dim>
+void
+CahnHilliard<dim>::output_per_iteration_timer()
+{
+announce_string(this->pcout, "Cahn-Hilliard");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+      this->computing_timer.reset();
+}
 
 template <int dim>
 void

@@ -855,16 +855,17 @@ Tracer<dim>::postprocess(bool first_iteration)
         }
       this->write_tracer_flow_rates(tracer_flow_rates);
     }
+}
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::iteration)
-    {
-      announce_string(this->pcout, "Tracer");
+template <int dim>
+void
+Tracer<dim>::output_per_iteration_timer()
+{
+  announce_string(this->pcout, "Tracer");
       this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
       this->pcout << std::scientific;
       this->computing_timer.reset();
-    }
 }
 
 template <int dim>
