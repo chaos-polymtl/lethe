@@ -3,6 +3,8 @@
 
 #include <solvers/time_harmonic_maxwell.h>
 
+#include <deal.II/base/work_stream.h>
+
 #include <deal.II/dofs/dof_renumbering.h>
 
 #include <deal.II/fe/fe_system.h>
@@ -95,10 +97,9 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
     }
 
-  // Initialize solutions and DPG error indicator shared_ptr
-  present_solution            = std::make_shared<GlobalVectorType>();
-  present_solution_skeleton   = std::make_shared<GlobalVectorType>();
-  present_DPG_error_indicator = std::make_shared<GlobalVectorType>();
+  // Initialize solutions shared_ptr
+  present_solution          = std::make_shared<GlobalVectorType>();
+  present_solution_skeleton = std::make_shared<GlobalVectorType>();
 
   // Allocate solution transfer
   solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
@@ -165,8 +166,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     this->present_solution->memory_consumption() * bytes_to_gb;
   const auto present_solution_skeleton_memory =
     this->present_solution_skeleton->memory_consumption() * bytes_to_gb;
-  const auto present_dpg_error_indicator_memory =
-    this->present_DPG_error_indicator->memory_consumption() * bytes_to_gb;
   const auto system_rhs_memory =
     this->system_rhs.memory_consumption() * bytes_to_gb;
   const auto sparsity_pattern_memory =
@@ -194,10 +193,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     Utilities::MPI::gather(mpi_communicator,
                            present_solution_skeleton_memory,
                            0);
-  const auto present_dpg_error_indicator_memory_by_rank =
-    Utilities::MPI::gather(mpi_communicator,
-                           present_dpg_error_indicator_memory,
-                           0);
   const auto system_rhs_memory_by_rank =
     Utilities::MPI::gather(mpi_communicator, system_rhs_memory, 0);
   const auto sparsity_pattern_memory_by_rank =
@@ -220,8 +215,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     Utilities::MPI::sum(present_solution_memory, mpi_communicator);
   const auto present_solution_skeleton_memory_total =
     Utilities::MPI::sum(present_solution_skeleton_memory, mpi_communicator);
-  const auto present_dpg_error_indicator_memory_total =
-    Utilities::MPI::sum(present_dpg_error_indicator_memory, mpi_communicator);
   const auto system_rhs_memory_total =
     Utilities::MPI::sum(system_rhs_memory, mpi_communicator);
   const auto sparsity_pattern_memory_total =
@@ -240,9 +233,8 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     {
       const auto total_memory =
         present_solution_memory_total + present_solution_skeleton_memory_total +
-        present_dpg_error_indicator_memory_total + system_rhs_memory_total +
-        sparsity_pattern_memory_total + system_matrix_memory_total +
-        dof_handler_trial_interior_memory_total +
+        system_rhs_memory_total + sparsity_pattern_memory_total +
+        system_matrix_memory_total + dof_handler_trial_interior_memory_total +
         dof_handler_trial_skeleton_memory_total + dof_handler_test_memory_total;
 
       announce_string(this->pcout,
@@ -268,11 +260,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
             "present_solution_skeleton",
             present_solution_skeleton_memory_by_rank.size(),
             present_solution_skeleton_memory_by_rank);
-          print_memory_consumption(
-            this->pcout,
-            "present_DPG_error_indicator",
-            present_dpg_error_indicator_memory_by_rank.size(),
-            present_dpg_error_indicator_memory_by_rank);
           print_memory_consumption(this->pcout,
                                    "system_rhs",
                                    system_rhs_memory_by_rank.size(),
@@ -311,8 +298,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
                   << std::endl;
       this->pcout << "  present_solution_skeleton : "
                   << present_solution_skeleton_memory_total << std::endl;
-      this->pcout << "  present_DPG_error_indicator : "
-                  << present_dpg_error_indicator_memory_total << std::endl;
       this->pcout << "  system_rhs : " << system_rhs_memory_total << std::endl;
       this->pcout << "  sparsity_pattern : " << sparsity_pattern_memory_total
                   << std::endl;
@@ -332,304 +317,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     }
 }
 
-
-template <>
-std::pair<Tensor<1, 2, std::complex<double>>,
-          Tensor<1, 2, std::complex<double>>>
-TimeHarmonicMaxwell<2>::compute_waveguide_port_incident_fields(
-  const Point<2> & /*p*/,
-  const Tensor<1, 2> & /*normal*/,
-  const std::complex<double> & /*effective_electric_permittivity*/,
-  const std::complex<double> & /*effective_magnetic_permeability*/,
-  const types::boundary_id /*boundary_id_index*/)
-{
-  // The waveguide port excitation would be completely different in 2D as curls
-  // and cross products are not defined the same way as in 3D. Therefore, we do
-  // not implement it for now and throw an error if someone tries to use the 2D
-  // version.
-  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
-  return std::pair<Tensor<1, 2, std::complex<double>>,
-                   Tensor<1, 2, std::complex<double>>>();
-}
-
-template <>
-std::pair<Tensor<1, 3, std::complex<double>>,
-          Tensor<1, 3, std::complex<double>>>
-TimeHarmonicMaxwell<3>::compute_waveguide_port_incident_fields(
-  const Point<3>             &p,
-  const Tensor<1, 3>         &normal,
-  const std::complex<double> &effective_electric_permittivity,
-  const std::complex<double> &effective_magnetic_permeability,
-  const types::boundary_id    boundary_id_index)
-{
-  // Define some constexpr values for the computation
-  static constexpr std::complex<double> imag{0., 1.};
-  static constexpr double               PI  = numbers::PI;
-  static constexpr unsigned int         dim = 3;
-
-  // Gather the relevant waveguide parameters
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
-    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
-  const double omega =
-    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
-  const auto &waveguide_corners =
-    time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
-  const Parameters::WaveguideMode mode =
-    time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
-  unsigned int m =
-    time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
-  unsigned int n =
-    time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
-
-  // We first define the transverse face vectors of the waveguide in the global
-  // system
-  Tensor<1, dim> transverse_vector_1 =
-    waveguide_corners[1] - waveguide_corners[0];
-  Tensor<1, dim> transverse_vector_2 =
-    waveguide_corners[2] - waveguide_corners[0];
-  double         length_t1 = transverse_vector_1.norm();
-  double         length_t2 = transverse_vector_2.norm();
-  Tensor<1, dim> e_t1      = transverse_vector_1 / length_t1;
-  Tensor<1, dim> e_t2      = transverse_vector_2 / length_t2;
-
-  // Check if the transverse vectors form a perfect rectangle (orthogonal and
-  // aligned with the axes)
-  AssertThrow(
-    std::abs(e_t1 * e_t2) < 1e-12,
-    ExcMessage(
-      "The transverse plane defined by the waveguide corners for the waveguide port at boundary ID " +
-      std::to_string(time_harmonic_maxwell_parameters
-                       .waveguide_boundary_ids[boundary_id_index]) +
-      " is not a perfect rectangle (i.e., the vector created by the waveguide corners are not orthogonal). Please check the waveguide corners definition in the input prm file."));
-
-
-  // Also verify that those transverse vectors are perpendicular to the normal
-  // of the
-  // face and form an orthogonal basis.
-  if ((std::abs(normal * e_t1) > 1e-12) || (std::abs(normal * e_t2) > 1e-12))
-    AssertThrow(
-      false,
-      ExcMessage(
-        "The transverse plane defined by the waveguide corners for the waveguide port at boundary ID " +
-        std::to_string(time_harmonic_maxwell_parameters
-                         .waveguide_boundary_ids[boundary_id_index]) +
-        " is not orthogonal to the boundary face normal. Please check the waveguide corners definition in the input prm file."));
-
-  // Create a third vector to complete the right-handed coordinate system
-  Tensor<1, dim> e_t3 = cross_product_3d(e_t1, e_t2);
-
-  // Determine if the system needs to be flipped so the e_t3 vector points in
-  // the direction opposite to the outward normal of the face boundary. For an
-  // incident wave at the inlet, the propagation direction should point into the
-  // domain (opposite to the outward normal). We use the sign of (normal · t3)
-  // to determine this:
-  //   - If normal · t3 > 0: t3 points outward, need to flip entire system
-  //   - If normal · t3 < 0: t3 points inward (correct for incident wave)
-  // Note that by swapping the basis vectors e_t1 and e_t2, we change the parity
-  // of the system since it is equivalent to a reflection. This means that
-  // pseudo vectors (like the magnetic field) will not change sign while regular
-  // vectors (like the electric field) will. Even though this does not affect
-  // the physics of the solution, it is important to be consistent with the
-  // definition of the mode profiles that we use, which assume a specific parity
-  // for the system. Therefore, we keep track of the status of the parity and
-  // apply it later on to the magnetic field to make it consistent with the
-  // switch of sign that has been applied to the electric field when we compute
-  // the excitation.
-  double parity_factor = 1.0;
-  if ((normal * e_t3) > 0)
-    {
-      std::swap(e_t1, e_t2);
-      std::swap(length_t1, length_t2);
-      std::swap(m, n);
-      e_t3 =
-        cross_product_3d(e_t1, e_t2); // Recompute t3 after swapping t1 and t2
-                                      // to be sure the system is right-handed
-      parity_factor = -1.0;
-    }
-
-  // Compute the various wavenumbers k in using this global coordinate system
-  double k_t1 = m * PI / length_t1;                   // Transverse wavenumber 1
-  double k_t2 = n * PI / length_t2;                   // Transverse wavenumber 2
-  double k_c  = std::sqrt(k_t1 * k_t1 + k_t2 * k_t2); // Cutoff wavenumber
-  std::complex<double> k =
-    omega *
-    std::sqrt(effective_electric_permittivity *
-              effective_magnetic_permeability); // Wavenumber in the medium
-  std::complex<double> k_l = std::sqrt(
-    k * k - std::complex<double>(k_c * k_c, 0)); // Longitudinal wavenumber
-
-  // Verify that the mode is not evanescent, i.e. k_l is not purely imaginary
-  // (k_c^2 < k^2). std::norm computes the squared magnitude of a complex
-  // number.
-  AssertThrow(std::norm(k) > (k_c * k_c),
-              ExcMessage(
-                "The chosen mode for the waveguide port at boundary ID " +
-                std::to_string(time_harmonic_maxwell_parameters
-                                 .waveguide_boundary_ids[boundary_id_index]) +
-                " is evanescent at the given frequency. Please "
-                "choose another mode or increase the frequency."));
-
-  // Now we want to compute the electromagnetic field and surface admittance at
-  // point p as if the waveguide center was at the origin. So we will perform a
-  // change of basis to a local coordinate system where the waveguide center is
-  // at the origin.
-  Tensor<1, dim> origin_local =
-    0.25 * (waveguide_corners[0] + waveguide_corners[1] + waveguide_corners[2] +
-            waveguide_corners[3]);
-
-  Tensor<1, dim> p_local =
-    p - origin_local; // Coordinates of point p in this local system.
-
-  double x_local = p_local * e_t1; // Coordinate along e_t1 in the local system
-  double y_local = p_local * e_t2; // Coordinate along e_t2 in the local system
-  // We assume that the z_local coordinate is 0 since we are on the face.
-
-  // Compute the E and H field components for the TE mode in the local
-  // coordinate system {t1, t2, t3} = {x', y', z'}. We assume z' = 0 at the
-  // boundary.
-  Tensor<1, dim, std::complex<double>> E_inc_local;
-  Tensor<1, dim, std::complex<double>> H_inc_local;
-
-  if (mode == Parameters::WaveguideMode::TE)
-    {
-      std::complex<double> factor =
-        imag * omega * effective_magnetic_permeability / (k_c * k_c);
-
-      E_inc_local[0] = -factor * k_t2 *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[1] = factor * k_t1 *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[2] = 0.0;
-
-      H_inc_local[0] = -imag * k_l * k_t1 / (k_c * k_c) *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[1] = -imag * k_l * k_t2 / (k_c * k_c) *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-    }
-  else if (mode == Parameters::WaveguideMode::TM)
-    {
-      std::complex<double> factor =
-        imag * omega * effective_electric_permittivity / (k_c * k_c);
-
-      H_inc_local[0] = factor * k_t2 *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[1] = -factor * k_t1 *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[2] = 0.0;
-
-      E_inc_local[0] = imag * k_l * k_t1 / (k_c * k_c) *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[1] = imag * k_l * k_t2 / (k_c * k_c) *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-    }
-  else
-    {
-      AssertThrow(false, ExcMessage("Unknown waveguide mode type."));
-    }
-
-  // Convert the E and H field components from the local coordinate system back
-  // to the global coordinate system using the basis vectors e_t1, e_t2, e_t3
-  Tensor<1, dim, std::complex<double>> E_inc =
-    E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3;
-  Tensor<1, dim, std::complex<double>> H_inc =
-    parity_factor *
-    (H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3);
-
-  return std::make_pair(E_inc, H_inc);
-}
-
-
-template <>
-std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>
-TimeHarmonicMaxwell<2>::compute_waveguide_port_excitation(
-  const Point<2> & /*p*/,
-  const Tensor<1, 2> & /*normal*/,
-  const std::complex<double> & /*effective_electric_permittivity*/,
-  const std::complex<double> & /*effective_magnetic_permeability*/,
-  const types::boundary_id /*boundary_id_index*/)
-{
-  // The waveguide port excitation would be completely different in 2D as curls
-  // and cross products are not defined the same way as in 3D. Therefore, we do
-  // not implement it for now and throw an error if someone tries to use the 2D
-  // version.
-  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
-  return std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>();
-}
-
-template <>
-std::pair<Tensor<1, 3, std::complex<double>>, std::complex<double>>
-TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
-  const Point<3>             &p,
-  const Tensor<1, 3>         &normal,
-  const std::complex<double> &effective_electric_permittivity,
-  const std::complex<double> &effective_magnetic_permeability,
-  const types::boundary_id    boundary_id_index)
-{
-  static constexpr unsigned int dim = 3;
-  static constexpr double       PI  = numbers::PI;
-  const auto                    incident_fields =
-    compute_waveguide_port_incident_fields(p,
-                                           normal,
-                                           effective_electric_permittivity,
-                                           effective_magnetic_permeability,
-                                           boundary_id_index);
-
-  // Gather the relevant waveguide parameters
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
-    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
-  const double omega =
-    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
-  const auto &waveguide_corners =
-    time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
-  const Parameters::WaveguideMode mode =
-    time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
-  unsigned int m =
-    time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
-  unsigned int n =
-    time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
-
-  const double k_t1 = m * PI /
-                      (waveguide_corners[1] - waveguide_corners[0])
-                        .norm(); // Transverse wavenumber 1
-  const double k_t2 = n * PI /
-                      (waveguide_corners[2] - waveguide_corners[0])
-                        .norm(); // Transverse wavenumber 2
-  const std::complex<double> k_l =
-    std::sqrt(omega * omega * effective_electric_permittivity *
-                effective_magnetic_permeability -
-              (k_t1 * k_t1 + k_t2 * k_t2)); // Longitudinal wavenumber
-
-  std::complex<double> surface_admittance =
-    (mode == Parameters::WaveguideMode::TE) ?
-      k_l / (omega * effective_magnetic_permeability) :
-      omega * effective_electric_permittivity / k_l;
-
-  const Tensor<1, dim, std::complex<double>> &E_inc = incident_fields.first;
-  const Tensor<1, dim, std::complex<double>> &H_inc = incident_fields.second;
-
-  // We normalize the excitation by the maximum amplitude accross all
-  // the waveguide ports to ensure that everything is normalized
-  double scaling_factor =
-    this->waveguide_ports_electric_amplitudes[boundary_id_index] /
-    *std::ranges::max_element(this->waveguide_ports_electric_amplitudes);
-  const Tensor<1, dim, std::complex<double>> excitation =
-    scaling_factor * (cross_product_3d(normal, H_inc) +
-                      map_H12(surface_admittance * E_inc, normal));
-
-  return std::make_pair(excitation, surface_admittance);
-}
 
 template <int dim>
 void
@@ -653,52 +340,6 @@ TimeHarmonicMaxwell<dim>::update_material_properties(
       ->value(field_values),
     physical_properties_manager.get_magnetic_permeability_imag(0, material_id)
       ->value(field_values)};
-}
-
-template <int dim>
-void
-TimeHarmonicMaxwell<dim>::update_material_properties(
-  const PhysicalPropertiesManager            &physical_properties_manager,
-  const std::map<field, std::vector<double>> &field_values_vectors,
-  const unsigned int                          material_id,
-  std::vector<std::complex<double>>          &effective_electric_permittivities,
-  std::vector<std::complex<double>>          &effective_magnetic_permeabilities)
-{
-  const unsigned int n_q_points =
-    field_values_vectors.at(field::temperature).size();
-
-  // Create temporary vectors to store the real and imaginary parts of the
-  // electromagnetic properties
-  std::vector<double> permittivity_real(n_q_points);
-  std::vector<double> permittivity_imag(n_q_points);
-  std::vector<double> conductivity(n_q_points);
-  std::vector<double> permeability_real(n_q_points);
-  std::vector<double> permeability_imag(n_q_points);
-
-  physical_properties_manager.get_electric_permittivity_real(0, material_id)
-    ->vector_value(field_values_vectors, permittivity_real);
-  physical_properties_manager.get_electric_permittivity_imag(0, material_id)
-    ->vector_value(field_values_vectors, permittivity_imag);
-  physical_properties_manager.get_electric_conductivity(0, material_id)
-    ->vector_value(field_values_vectors, conductivity);
-  physical_properties_manager.get_magnetic_permeability_real(0, material_id)
-    ->vector_value(field_values_vectors, permeability_real);
-  physical_properties_manager.get_magnetic_permeability_imag(0, material_id)
-    ->vector_value(field_values_vectors, permeability_imag);
-
-  // We resize the effective electromagnetic property vectors to match the
-  // number of quadrature points because this can be called
-  effective_electric_permittivities.resize(n_q_points);
-  effective_magnetic_permeabilities.resize(n_q_points);
-
-  for (unsigned int q = 0; q < n_q_points; ++q)
-    {
-      effective_electric_permittivities[q] = {permittivity_real[q],
-                                              permittivity_imag[q] +
-                                                conductivity[q]};
-      effective_magnetic_permeabilities[q] = {permeability_real[q],
-                                              permeability_imag[q]};
-    }
 }
 
 template <int dim>
@@ -862,11 +503,12 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                   field_values_vector[field::temperature] =
                     temperature_face_values;
 
-                  update_material_properties(physical_properties_manager,
-                                             field_values_vector,
-                                             material_id,
-                                             effective_electric_permittivities,
-                                             effective_magnetic_permeabilities);
+                  compute_effective_electromagnetic_properties(
+                    physical_properties_manager,
+                    field_values_vector,
+                    material_id,
+                    effective_electric_permittivities,
+                    effective_magnetic_permeabilities);
 
                   // Loop over all face quadrature points
                   for (unsigned int q_point = 0; q_point < n_face_q_points;
@@ -882,6 +524,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
 
                       std::tie(E_inc, H_inc) =
                         compute_waveguide_port_incident_fields(
+                          electromagnetic_parameters,
                           position,
                           normal,
                           effective_electric_permittivities[q_point],
@@ -894,17 +537,21 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                       // the power entering the domain is given by the
                       // negative of the flux of the Poynting vector
                       // through the face (that's why we have a negative
-                      // sign in front of the integral).
-                      waveguide_modal_powers[boundary_index] -=
-                        0.5 *
-                        std::real(normal[0] * (E_inc[1] * std::conj(H_inc[2]) -
-                                               E_inc[2] * std::conj(H_inc[1])) +
-                                  normal[1] * (E_inc[2] * std::conj(H_inc[0]) -
-                                               E_inc[0] * std::conj(H_inc[2])) +
-                                  normal[2] *
-                                    (E_inc[0] * std::conj(H_inc[1]) -
-                                     E_inc[1] * std::conj(H_inc[0]))) *
-                        JxW_face;
+                      // sign in front of the integral). The cross product
+                      // is written explicitly in 3D, so it is only compiled
+                      // for dim = 3 (the waveguide port fields are not
+                      // defined in 2D).
+                      if constexpr (dim == 3)
+                        waveguide_modal_powers[boundary_index] -=
+                          0.5 *
+                          std::real(
+                            normal[0] * (E_inc[1] * std::conj(H_inc[2]) -
+                                         E_inc[2] * std::conj(H_inc[1])) +
+                            normal[1] * (E_inc[2] * std::conj(H_inc[0]) -
+                                         E_inc[0] * std::conj(H_inc[2])) +
+                            normal[2] * (E_inc[0] * std::conj(H_inc[1]) -
+                                         E_inc[1] * std::conj(H_inc[0]))) *
+                          JxW_face;
                     }
                 }
             }
@@ -1581,10 +1228,11 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
   dealii::Vector<float> &estimated_error_per_cell)
 {
   // For efficiency, the DPG error estimator is computed in the same loop as the
-  // assembly of the system matrix and rhs, so we do not implement it here as a
-  // separate loop. The estimated error per cell is computed and stored in the
-  // member variable local_estimated_error_per_cell during the assembly, and
-  // then used for marking the cells for refinement.
+  // reconstruction of the interior solution, so we do not implement it here as
+  // a separate loop. The estimated error per cell is computed and stored in the
+  // member variable local_estimated_error_per_cell during the reconstruction if
+  // the DPG error estimator is activated, and then used for marking the cells
+  // for refinement.
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // Here we add a flag to be sure if the local_estimated_error_per_cell has
@@ -1640,17 +1288,14 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     this->dof_handler_trial_interior->locally_owned_dofs();
   this->locally_owned_dofs_trial_skeleton =
     this->dof_handler_trial_skeleton->locally_owned_dofs();
-  this->locally_owned_dofs_test = this->dof_handler_test->locally_owned_dofs();
 
   // Get the locally relevant dofs
   this->locally_relevant_dofs_trial_interior =
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler_trial_interior);
   this->locally_relevant_dofs_trial_skeleton =
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler_trial_skeleton);
-  this->locally_relevant_dofs_test =
-    DoFTools::extract_locally_relevant_dofs(*this->dof_handler_test);
 
-  // Initialize the solution vectors and error indicator
+  // Initialize the solution vectors and the error estimate per cell
   this->present_solution->reinit(this->locally_owned_dofs_trial_interior,
                                  this->locally_relevant_dofs_trial_interior,
                                  mpi_communicator);
@@ -1658,9 +1303,6 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     this->locally_owned_dofs_trial_skeleton,
     this->locally_relevant_dofs_trial_skeleton,
     mpi_communicator);
-  this->present_DPG_error_indicator->reinit(this->locally_owned_dofs_test,
-                                            this->locally_relevant_dofs_test,
-                                            mpi_communicator);
   this->local_estimated_error_per_cell.reinit(triangulation->n_active_cells());
 
   // We reinitialize the system rhs with the skeleton dofs because we have
@@ -2279,14 +1921,14 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
 
                           material_id = cell->material_id();
 
-                          update_material_properties(
+                          compute_effective_electromagnetic_properties(
                             physical_properties_manager,
                             field_values_vector_last_solved,
                             material_id,
                             effective_electric_permittivities_last_solved,
                             effective_magnetic_permeabilities_last_solved);
 
-                          update_material_properties(
+                          compute_effective_electromagnetic_properties(
                             physical_properties_manager,
                             field_values_vector_current,
                             material_id,
@@ -2366,1076 +2008,92 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
     }
 }
 
-template <>
+template <int dim>
 void
-TimeHarmonicMaxwell<2>::assemble_system_matrix()
+TimeHarmonicMaxwell<dim>::setup_assemblers()
 {
-  // We need a specific definition of the function for the 2D so the compiler
-  // doesn't try to build curl and cross operations at compile time that will
-  // never be used anyway. Indeed, curl and cross operations behave very
-  // differently in 2D than in 3D. This physics only support 3D problem at the
-  // moment. So even though the class is templated in dim, we only want to
-  // compile the whole function when dim=3.
-  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
-}
+  this->assemblers.clear();
+  this->face_assemblers.clear();
 
-template <>
-void
-TimeHarmonicMaxwell<3>::assemble_system_matrix()
-{
-  // Constexpr values that are used in the assembly. Since we are in the
-  // specialized 3D function we define dim=3 here. This makes easier to read the
-  // code below to see what are templated in dim and what are not.
-  static constexpr double               PI = numbers::PI;
-  static constexpr std::complex<double> imag{0., 1.};
-  static constexpr int                  dim = 3;
-
-  // Get properties manager and define model physical properties
-  const auto &physical_properties_manager =
-    this->simulation_parameters.physical_properties_manager;
-  std::vector<std::complex<double>> effective_electric_permittivities;
-  std::vector<std::complex<double>> effective_magnetic_permeabilities;
-  unsigned int                      material_id;
-  bool                              cell_material_needs_temperature;
-
-  /// Excitation properties
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
-  const double omega =
-    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
+  const BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim> &
+    boundary_conditions = this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics;
 
+  // Cell terms: Gram matrix, interior bilinear form and imposed current
+  // density.
+  this->assemblers.emplace_back(
+    std::make_shared<TimeHarmonicMaxwellAssemblerCore<dim>>(
+      time_harmonic_maxwell_parameters));
+
+  // Skeleton terms, which are present on every face of the mesh.
+  this->face_assemblers.emplace_back(
+    std::make_shared<TimeHarmonicMaxwellAssemblerSkeleton<dim>>(
+      boundary_conditions));
+
+  // Robin boundary conditions. The waveguide port amplitudes must have been
+  // computed by compute_electromagnetic_scaling before this call.
+  bool has_robin_boundary = false;
+  for (const auto &bc : boundary_conditions.type)
+    if (is_robin_boundary_type(bc.second))
+      has_robin_boundary = true;
+  if (has_robin_boundary)
+    this->face_assemblers.emplace_back(
+      std::make_shared<TimeHarmonicMaxwellAssemblerRobinBC<dim>>(
+        time_harmonic_maxwell_parameters,
+        boundary_conditions,
+        this->waveguide_ports_electric_amplitudes));
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::assemble_system_matrix()
+{
   // We always need to compute the scaling for the electromagnetic fields even
   // if the user does not want to apply it to the solution because it is used to
   // normalize the waveguide inlets relative input power
-  compute_electromagnetic_scaling(physical_properties_manager);
+  compute_electromagnetic_scaling(
+    this->simulation_parameters.physical_properties_manager);
 
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix and RHS");
 
+  // The time-harmonic Maxwell system is assembled again every time it is
+  // solved (i.e., at each coupling step), so the global system needs to be
+  // reset before the assembly.
+  this->system_matrix = 0;
+  this->system_rhs    = 0;
 
-  // We then create the corresponding FEValues and FEFaceValues objects. Note
-  // that only the test space needs gradients because of the ultraweak
-  // formulation. Similarly, because everything is on the same triangulation,
-  // we only need to update the quadrature points and JxW values in one of the
-  // spaces. Here we choose the trial space.
-  const unsigned int n_q_points      = this->cell_quadrature->size();
-  const unsigned int n_face_q_points = this->face_quadrature->size();
+  setup_assemblers();
 
-  FEValues<dim> fe_values_trial_interior(*this->mapping,
-                                         *this->fe_trial_interior,
-                                         *this->cell_quadrature,
-                                         update_values |
-                                           update_quadrature_points |
-                                           update_JxW_values);
-
-  FEValues<dim> fe_values_test(*this->mapping,
-                               *this->fe_test,
-                               *this->cell_quadrature,
-                               update_values | update_gradients);
-
-  FEFaceValues<dim> fe_face_values_trial_skeleton(*this->mapping,
-                                                  *this->fe_trial_skeleton,
-                                                  *this->face_quadrature,
-                                                  update_values |
-                                                    update_quadrature_points |
-                                                    update_normal_vectors |
-                                                    update_JxW_values);
-
-  FEFaceValues<dim> fe_face_values_test(*this->mapping,
-                                        *this->fe_test,
-                                        *this->face_quadrature,
-                                        update_values);
+  auto scratch_data = TimeHarmonicMaxwellScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe_trial_interior,
+    *this->fe_trial_skeleton,
+    *this->fe_test,
+    *this->cell_quadrature,
+    *this->face_quadrature,
+    *this->mapping);
 
   // We may need the temperature field for the physical properties.
-  std::unique_ptr<FEValues<dim>>       fe_values_temperature;
-  std::unique_ptr<FEFaceValues<dim>>   fe_face_values_temperature;
-  const DoFHandler<dim>               *dof_handler_temperature = nullptr;
-  const GlobalVectorType              *temperature_solution    = nullptr;
-  std::vector<double>                  temperature_values(n_q_points);
-  std::vector<double>                  temperature_face_values(n_face_q_points);
-  std::map<field, std::vector<double>> field_values_vector;
-
   if (needs_temperature)
-    {
-      dof_handler_temperature =
-        &this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      fe_values_temperature =
-        std::make_unique<FEValues<dim>>(*this->mapping,
-                                        dof_handler_temperature->get_fe(),
-                                        *this->cell_quadrature,
-                                        update_values |
-                                          update_quadrature_points);
-      fe_face_values_temperature =
-        std::make_unique<FEFaceValues<dim>>(*this->mapping,
-                                            dof_handler_temperature->get_fe(),
-                                            *this->face_quadrature,
-                                            update_values |
-                                              update_quadrature_points);
-      temperature_solution =
-        &this->multiphysics->get_solution(PhysicsID::heat_transfer);
-    }
-
-  // We also create all the relevant matrices and vector to build the DPG
-  // system. To do so we first need the number of dofs per cell for each of
-  // the finite element spaces.
-  const unsigned int dofs_per_cell_test = this->fe_test->n_dofs_per_cell();
-  const unsigned int dofs_per_cell_trial_interior =
-    this->fe_trial_interior->n_dofs_per_cell();
-  const unsigned int dofs_per_cell_trial_skeleton =
-    this->fe_trial_skeleton->n_dofs_per_cell();
-
-  // To avoid unecessary computations, we will precompute the shape functions
-  // of all our spaces once and then use those precomputed values to assemble
-  // the local matrices. Consequently, we need to create containers to store
-  // these values. Since those are complex-valued functions, we use two
-  // different containers for the real and imaginary parts because the
-  // conjugate of a complex tensor is not implemented in deal.II.
-  std::vector<Tensor<1, dim, std::complex<double>>> F(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> F_conj(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> I(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> I_conj(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> curl_F(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> curl_F_conj(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> curl_I(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> curl_I_conj(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> F_face(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> F_face_conj(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> I_face_conj(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_I_face(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_I_face_conj(
-    dofs_per_cell_test);
-
-  std::vector<Tensor<1, dim, std::complex<double>>> E(
-    dofs_per_cell_trial_interior);
-  std::vector<Tensor<1, dim, std::complex<double>>> H(
-    dofs_per_cell_trial_interior);
-  std::vector<Tensor<1, dim, std::complex<double>>> E_hat(
-    dofs_per_cell_trial_skeleton);
-  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_E_hat(
-    dofs_per_cell_trial_skeleton);
-  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_H_hat(
-    dofs_per_cell_trial_skeleton);
-
-  // Also, to avoid multiple "if" calls during the assembly to understand where
-  // each term needs to be assembled in the DPG global matrix, we will use
-  // containers to store dofs relationships for each of the local matrices.
-
-  // G matrix stands for the Riesz map and needs the relationships between test
-  // functions F and I
-  std::vector<std::pair<unsigned int, unsigned int>> G_FF;
-  std::vector<std::pair<unsigned int, unsigned int>> G_FI;
-  std::vector<std::pair<unsigned int, unsigned int>> G_IF;
-  std::vector<std::pair<unsigned int, unsigned int>> G_II;
-
-  // B matrix stands for the bilinear form and needs the relationships between
-  // interior trial space (E and H) and the test (F and I)
-  std::vector<std::pair<unsigned int, unsigned int>> B_FE;
-  std::vector<std::pair<unsigned int, unsigned int>> B_IE;
-  std::vector<std::pair<unsigned int, unsigned int>> B_FH;
-  std::vector<std::pair<unsigned int, unsigned int>> B_IH;
-
-  // B_hat matrix stands for the bilinear form, but on the skeleton, and needs
-  // the relationships between skeleton trial space (E_hat, H_hat) and the test
-  // (F and I). Note that the B_hat_FE is required for the Robin boundary
-  // condition that we chose to apply on the electric field instead of the
-  // magnetic field. This choice is arbitrary but it cannot be applied on both
-  // fields at the same time.
-  std::vector<std::pair<unsigned int, unsigned int>> B_hat_IE;
-  std::vector<std::pair<unsigned int, unsigned int>> B_hat_FH;
-  std::vector<std::pair<unsigned int, unsigned int>> B_hat_FE;
-
-  // l vector stands for the linear form of the problem and needs the
-  // relationships between test functions. Note that in its simplest form, the
-  // time-harmonic Maxwell equation does not have a magnetic source term, so
-  // there is no contribution from the I test functions.
-  std::vector<unsigned int> l_F;
-
-  // Reserve memory to avoid reallocations of each relationship vectors
-  G_FF.reserve(dofs_per_cell_test * dofs_per_cell_test);
-  G_FI.reserve(dofs_per_cell_test * dofs_per_cell_test);
-  G_IF.reserve(dofs_per_cell_test * dofs_per_cell_test);
-  G_II.reserve(dofs_per_cell_test * dofs_per_cell_test);
-
-  B_FE.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
-  B_IE.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
-  B_FH.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
-  B_IH.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
-
-  B_hat_IE.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
-  B_hat_FH.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
-  B_hat_FE.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
-
-  l_F.reserve(dofs_per_cell_test);
-
-  // Here we create the DPG local matrices and vector used for the assembly
-  // before condensation.
-  LAPACKFullMatrix<double> G_matrix(dofs_per_cell_test, dofs_per_cell_test);
-
-  LAPACKFullMatrix<double> B_matrix(dofs_per_cell_test,
-                                    dofs_per_cell_trial_interior);
-
-  LAPACKFullMatrix<double> B_hat_matrix(dofs_per_cell_test,
-                                        dofs_per_cell_trial_skeleton);
-
-  Vector<double> l_vector(dofs_per_cell_test);
-
-  // We create the condensation matrices which are defined as :
-  // $M_1 = B^\dagger G^{-1}B$;
-  // $M_2 = B^\dagger G^{-1}\hat{B}$;
-  // $M_3 = \hat{B}^\dagger G^{-1}\hat{B}$;
-  // $M_4 = B^\dagger G^{-1}$;
-  // $M_5 = \hat{B}^\dagger G^{-1}$.
-  LAPACKFullMatrix<double> M1_matrix(dofs_per_cell_trial_interior,
-                                     dofs_per_cell_trial_interior);
-  LAPACKFullMatrix<double> M2_matrix(dofs_per_cell_trial_interior,
-                                     dofs_per_cell_trial_skeleton);
-  LAPACKFullMatrix<double> M3_matrix(dofs_per_cell_trial_skeleton,
-                                     dofs_per_cell_trial_skeleton);
-  LAPACKFullMatrix<double> M4_matrix(dofs_per_cell_trial_interior,
-                                     dofs_per_cell_test);
-  LAPACKFullMatrix<double> M5_matrix(dofs_per_cell_trial_skeleton,
-                                     dofs_per_cell_test);
-
-  // During the calculation of matrix vector product, we require intermediary
-  // matrices and vector that we also allocate here. The temporary matrices
-  // are defined as :
-  // $tmp_matrix_M2M1  = M_2^\dagger M_1^{-1}$;
-  // $tmp_matrix_M2M1M2 = M_2^\dagger M_1^{-1} M_2$;
-  // $tmp_matrix_M2M1M4 = M_2^\dagger M_1^{-1} M_4$.
-
-  LAPACKFullMatrix<double> tmp_matrix_M2M1(dofs_per_cell_trial_skeleton,
-                                           dofs_per_cell_trial_interior);
-
-  LAPACKFullMatrix<double> tmp_matrix_M2M1M2(dofs_per_cell_trial_skeleton,
-                                             dofs_per_cell_trial_skeleton);
-
-  LAPACKFullMatrix<double> tmp_matrix_M2M1M4(dofs_per_cell_trial_skeleton,
-                                             dofs_per_cell_test);
-
-  // We create the cell matrix and the RHS that will be distributed in the
-  // full system after the assembly along with the index’s mapping.
-  FullMatrix<double> cell_matrix(dofs_per_cell_trial_skeleton,
-                                 dofs_per_cell_trial_skeleton);
-  Vector<double>     cell_skeleton_rhs(dofs_per_cell_trial_skeleton);
-
-  std::vector<types::global_dof_index> local_dof_indices(
-    dofs_per_cell_trial_skeleton);
-
-  // We also create objects used for the various Robin boundary conditions.
-  BoundaryConditions::BoundaryType bc_type(
-    BoundaryConditions::BoundaryType::none);
-  Tensor<1, dim, std::complex<double>> g_inc;
-  std::complex<double>                 boundary_surface_admittance;
-  std::complex<double>                 conj_boundary_surface_admittance;
-
-  // As it is standard we first loop over the cells of the triangulation. Here
-  // we have the choice of the DoFHandler to perform this loop. We use the
-  // DoFHandler associated with the trial space.
-  for (const auto &cell :
-       this->dof_handler_trial_interior->active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          // We update the material id
-          material_id = cell->material_id();
-
-          // We reinitialize the FEValues objects to the current cell.
-          fe_values_trial_interior.reinit(cell);
-
-          // We will also need to reinitialize the FEValues for the test
-          // space and make sure that is the same cell as the one used for the
-          // trial space.
-          const typename DoFHandler<dim>::active_cell_iterator cell_test =
-            cell->as_dof_handler_iterator(*this->dof_handler_test);
-          fe_values_test.reinit(cell_test);
-
-          // Similarly, we reinitialize the FEValues for the trial space on
-          // the skeleton, but this will not be used before we also loop on
-          // the cells faces.
-          const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
-            cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
-
-          // We check if the physical properties depend on the temperature
-          // field. If so, we will need to evaluate the temperature field at the
-          // quadrature points.
-          cell_material_needs_temperature =
-            physical_properties_manager
-              .get_electric_conductivity(0, material_id)
-              ->depends_on(field::temperature) ||
-            physical_properties_manager
-              .get_electric_permittivity_real(0, material_id)
-              ->depends_on(field::temperature) ||
-            physical_properties_manager
-              .get_electric_permittivity_imag(0, material_id)
-              ->depends_on(field::temperature) ||
-            physical_properties_manager
-              .get_magnetic_permeability_real(0, material_id)
-              ->depends_on(field::temperature) ||
-            physical_properties_manager
-              .get_magnetic_permeability_imag(0, material_id)
-              ->depends_on(field::temperature);
-
-          if (cell_material_needs_temperature)
-            {
-              const typename DoFHandler<dim>::active_cell_iterator
-                cell_temperature =
-                  cell->as_dof_handler_iterator(*dof_handler_temperature);
-              fe_values_temperature->reinit(cell_temperature);
-              fe_values_temperature->get_function_values(*temperature_solution,
-                                                         temperature_values);
-            }
-          else
-            {
-              std::ranges::fill(temperature_values, 0.);
-            }
-
-          // We then reinitialize all the matrices where we are aggregating
-          // information for the current cell.
-          G_matrix     = 0;
-          B_matrix     = 0;
-          B_hat_matrix = 0;
-          l_vector     = 0;
-
-          // We also need to reinitialize the $M_1$ condensation matrix
-          // between each iteration on cell to get rid of its inverse status.
-          M1_matrix = 0;
-
-          // Here we reset the dofs relationships containers. These containers
-          // are used to store all the relationships between the dof i
-          // dof j according to which space they belong to. Indeed, when
-          // looping over all the test and trial dofs, the terms  we need to
-          // compute depend on the specific combination of spaces
-          // involved. The following containers are therefore used to avoid
-          // multiple "if" statements inside the dofs loops and are filled with
-          // all the relevant dofs pairs that we need for each of the
-          // different terms.
-
-          // For example, in the ultraweak form of Maxwell equation we have a
-          // term (E, curl(I)) in the interior so the matrix B has a term
-          // (curl(I_i), E_j), so we want to only compute this term for the
-          // dofs i that are in the test space I and the dofs j that are in
-          // the trial space for E. Therefore, when looping on all the
-          // interior and test dofs in a cell we add the pairs of dofs that
-          // are in those spaces to the container B_IE. In the end, the
-          // container B_IE has all the required pairs of dofs indices for which
-          // we need to compute the term. We do this for all the different terms
-          // of the formulation.
-
-          // Finally, we can loop on all the pairs that we have assigned in
-          // each vector container to compute the desired terms.
-          G_FF.clear();
-          G_FI.clear();
-          G_IF.clear();
-          G_II.clear();
-
-          B_FE.clear();
-          B_IE.clear();
-          B_FH.clear();
-          B_IH.clear();
-
-          l_F.clear();
-
-          // We fill the dofs relationship containers at the cell level. To do
-          // so, we first loop on the test space dofs.
-          for (unsigned int i : fe_values_test.dof_indices())
-            {
-              // Get the information on which element the dof is
-              const unsigned int current_element_test_i =
-                this->fe_test->system_to_base_index(i).first.first;
-
-              // Fill the load vector relationship
-              if ((current_element_test_i == 0) ||
-                  (current_element_test_i == 1))
-                {
-                  l_F.emplace_back(i);
-                }
-
-              // Loop over the test dofs a second time to fill the dofs
-              // relationship for the G matrix (Riesz map)
-              for (unsigned int j : fe_values_test.dof_indices())
-                {
-                  const unsigned int current_element_test_j =
-                    this->fe_test->system_to_base_index(j).first.first;
-                  if (((current_element_test_i == 0) ||
-                       (current_element_test_i == 1)) &&
-                      ((current_element_test_j == 0) ||
-                       (current_element_test_j == 1)))
-                    {
-                      G_FF.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 0) ||
-                       (current_element_test_i == 1)) &&
-                      ((current_element_test_j == 2) ||
-                       (current_element_test_j == 3)))
-                    {
-                      G_FI.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 2) ||
-                       (current_element_test_i == 3)) &&
-                      ((current_element_test_j == 0) ||
-                       (current_element_test_j == 1)))
-                    {
-                      G_IF.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 2) ||
-                       (current_element_test_i == 3)) &&
-                      ((current_element_test_j == 2) ||
-                       (current_element_test_j == 3)))
-                    {
-                      G_II.emplace_back(i, j);
-                    }
-                }
-
-              // Then we loop over the trial dofs space to fill the dofs
-              // relationship for the B matrix (bilinear form)
-              for (unsigned int j : fe_values_trial_interior.dof_indices())
-                {
-                  const unsigned int current_element_trial_j =
-                    this->fe_trial_interior->system_to_base_index(j)
-                      .first.first;
-
-                  if (((current_element_test_i == 0) ||
-                       (current_element_test_i == 1)) &&
-                      ((current_element_trial_j == 0) ||
-                       (current_element_trial_j == 1)))
-                    {
-                      B_FE.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 0) ||
-                       (current_element_test_i == 1)) &&
-                      ((current_element_trial_j == 2) ||
-                       (current_element_trial_j == 3)))
-                    {
-                      B_FH.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 2) ||
-                       (current_element_test_i == 3)) &&
-                      ((current_element_trial_j == 0) ||
-                       (current_element_trial_j == 1)))
-                    {
-                      B_IE.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 2) ||
-                       (current_element_test_i == 3)) &&
-                      ((current_element_trial_j == 2) ||
-                       (current_element_trial_j == 3)))
-                    {
-                      B_IH.emplace_back(i, j);
-                    }
-                }
-            }
-
-          // We update the material properties for the current cell
-          // quadrature points.
-          field_values_vector[field::temperature] = temperature_values;
-
-          update_material_properties(physical_properties_manager,
-                                     field_values_vector,
-                                     material_id,
-                                     effective_electric_permittivities,
-                                     effective_magnetic_permeabilities);
-
-          // Now we loop over all quadrature points of the cell
-          for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
-            {
-              const std::complex<double> iweffective_magnetic_permeability =
-                imag * omega * effective_magnetic_permeabilities[q_point];
-              const std::complex<double>
-                conj_iweffective_magnetic_permeability =
-                  std::conj(iweffective_magnetic_permeability);
-              const std::complex<double> iweps_r =
-                imag * omega * effective_electric_permittivities[q_point];
-              const std::complex<double> conj_iweps_r = std::conj(iweps_r);
-
-              // To avoid unnecessary computation, we fill the shape values
-              // containers for the real and imaginary parts of the electric
-              // and magnetic fields and the dofs relationship at the current
-              // quadrature point.
-              const double &JxW = fe_values_trial_interior.JxW(q_point);
-
-              for (unsigned int i : fe_values_test.dof_indices())
-                {
-                  F[i] =
-                    fe_values_test[extractor_E_real].value(i, q_point) +
-                    imag * fe_values_test[extractor_E_imag].value(i, q_point);
-                  F_conj[i] =
-                    fe_values_test[extractor_E_real].value(i, q_point) -
-                    imag * fe_values_test[extractor_E_imag].value(i, q_point);
-
-                  curl_F[i] =
-                    fe_values_test[extractor_E_real].curl(i, q_point) +
-                    imag * fe_values_test[extractor_E_imag].curl(i, q_point);
-                  curl_F_conj[i] =
-                    fe_values_test[extractor_E_real].curl(i, q_point) -
-                    imag * fe_values_test[extractor_E_imag].curl(i, q_point);
-
-                  I[i] =
-                    fe_values_test[extractor_H_real].value(i, q_point) +
-                    imag * fe_values_test[extractor_H_imag].value(i, q_point);
-                  I_conj[i] =
-                    fe_values_test[extractor_H_real].value(i, q_point) -
-                    imag * fe_values_test[extractor_H_imag].value(i, q_point);
-
-                  curl_I[i] =
-                    fe_values_test[extractor_H_real].curl(i, q_point) +
-                    imag * fe_values_test[extractor_H_imag].curl(i, q_point);
-                  curl_I_conj[i] =
-                    fe_values_test[extractor_H_real].curl(i, q_point) -
-                    imag * fe_values_test[extractor_H_imag].curl(i, q_point);
-                }
-
-              for (unsigned int i : fe_values_trial_interior.dof_indices())
-                {
-                  E[i] =
-                    fe_values_trial_interior[extractor_E_real].value(i,
-                                                                     q_point) +
-                    imag *
-                      fe_values_trial_interior[extractor_E_imag].value(i,
-                                                                       q_point);
-                  H[i] =
-                    fe_values_trial_interior[extractor_H_real].value(i,
-                                                                     q_point) +
-                    imag *
-                      fe_values_trial_interior[extractor_H_imag].value(i,
-                                                                       q_point);
-                }
-
-              // Now we loop on each relationship container to assemble the
-              // relevant matrices
-              for (const auto &[i, j] : G_FF)
-                {
-                  G_matrix(i, j) +=
-                    (((F[j] * F_conj[i]) + (curl_F[j] * curl_F_conj[i]) +
-                      (conj_iweps_r * F[j] * iweps_r * F_conj[i])) *
-                     JxW)
-                      .real();
-                }
-
-              for (const auto &[i, j] : G_FI)
-                {
-                  G_matrix(i, j) += (((curl_I[j] * iweps_r * F_conj[i]) -
-                                      (conj_iweffective_magnetic_permeability *
-                                       I[j] * curl_F_conj[i])) *
-                                     JxW)
-                                      .real();
-                }
-
-              for (const auto &[i, j] : G_IF)
-                {
-                  G_matrix(i, j) +=
-                    (((conj_iweps_r * F[j] * curl_I_conj[i]) -
-                      (curl_F[j] * iweffective_magnetic_permeability *
-                       I_conj[i])) *
-                     JxW)
-                      .real();
-                }
-
-              for (const auto &[i, j] : G_II)
-                {
-                  G_matrix(i, j) +=
-                    (((I[j] * I_conj[i]) + (curl_I[j] * curl_I_conj[i]) +
-                      (conj_iweffective_magnetic_permeability * I[j] *
-                       iweffective_magnetic_permeability * I_conj[i])) *
-                     JxW)
-                      .real();
-                }
-
-              for (const auto &[i, j] : B_FE)
-                {
-                  B_matrix(i, j) += (iweps_r * E[j] * F_conj[i] * JxW).real();
-                }
-
-              for (const auto &[i, j] : B_FH)
-                {
-                  B_matrix(i, j) += (H[j] * curl_F_conj[i] * JxW).real();
-                }
-
-              for (const auto &[i, j] : B_IE)
-                {
-                  B_matrix(i, j) += (E[j] * curl_I_conj[i] * JxW).real();
-                }
-
-              for (const auto &[i, j] : B_IH)
-                {
-                  B_matrix(i, j) -=
-                    (iweffective_magnetic_permeability * H[j] * I_conj[i] * JxW)
-                      .real();
-                }
-
-              for (const auto &i : l_F)
-                {
-                  l_vector[i] += 0.0;
-                }
-            }
-
-          // We now build the skeleton terms. Similarly, we choose to loop on
-          // the skeleton trial space faces.
-          for (const auto &face : cell_skeleton->face_iterators())
-            {
-              // We reinitialize the FEFaceValues objects to the current
-              // faces.
-              fe_face_values_test.reinit(cell_test, face);
-              fe_face_values_trial_skeleton.reinit(cell_skeleton, face);
-
-              if (cell_material_needs_temperature)
-                {
-                  const typename DoFHandler<dim>::active_cell_iterator
-                    cell_temperature =
-                      cell->as_dof_handler_iterator(*dof_handler_temperature);
-                  fe_face_values_temperature->reinit(cell_temperature, face);
-                  fe_face_values_temperature->get_function_values(
-                    *temperature_solution, temperature_face_values);
-                }
-              else
-                {
-                  std::ranges::fill(temperature_face_values, 0.);
-                }
-
-              // Get the boundary condition type on the current face
-              bc_type = BoundaryConditions::BoundaryType::none;
-
-              if (face->at_boundary())
-                bc_type =
-                  this->simulation_parameters
-                    .boundary_conditions_time_harmonic_electromagnetics.type.at(
-                      face->boundary_id());
-
-              // Reset the face dofs relationships
-              G_FF.clear();
-              G_FI.clear();
-              G_IF.clear();
-              G_II.clear();
-
-              B_hat_FH.clear();
-              B_hat_IE.clear();
-              B_hat_FE.clear();
-
-              l_F.clear();
-
-              // We fill the dofs relationship containers at the face level.
-              // To do so, we first loop on the test space dofs.
-              for (unsigned int i : fe_face_values_test.dof_indices())
-                {
-                  // Get the information on which element the dof is
-                  const unsigned int current_element_test_i =
-                    this->fe_test->system_to_base_index(i).first.first;
-
-                  // Apply the different Robin boundary conditions if needed.
-                  // The load vector and the B_hat matrix will have a
-                  // contribution in addition to a modification of the Riesz
-                  // map (G matrix) because of the energy norm that we want to
-                  // minimize there.
-                  if ((bc_type ==
-                       BoundaryConditions::BoundaryType::silver_muller) ||
-                      (bc_type ==
-                       BoundaryConditions::BoundaryType::impedance_boundary) ||
-                      (bc_type ==
-                       BoundaryConditions::BoundaryType::waveguide_port))
-                    {
-                      if ((current_element_test_i == 0) ||
-                          (current_element_test_i == 1))
-                        {
-                          l_F.emplace_back(i);
-                        }
-
-                      // Loop over the dofs test to fill the G_matrix dofs
-                      // relationship
-                      for (unsigned int j : fe_face_values_test.dof_indices())
-                        {
-                          const unsigned int current_element_test_j =
-                            this->fe_test->system_to_base_index(j).first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_test_j == 0) ||
-                               (current_element_test_j == 1)))
-                            {
-                              G_FF.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_test_j == 2) ||
-                               (current_element_test_j == 3)))
-                            {
-                              G_FI.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_test_j == 0) ||
-                               (current_element_test_j == 1)))
-                            {
-                              G_IF.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_test_j == 2) ||
-                               (current_element_test_j == 3)))
-                            {
-                              G_II.emplace_back(i, j);
-                            }
-                        }
-                      // Loop over the dofs trial space to fill the B_hat
-                      // matrix dofs relationship for the Robin boundary
-                      // condition
-                      for (unsigned int j :
-                           fe_face_values_trial_skeleton.dof_indices())
-                        {
-                          const unsigned int current_element_trial_j =
-                            this->fe_trial_skeleton->system_to_base_index(j)
-                              .first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_FE.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_IE.emplace_back(i, j);
-                            }
-                        }
-                    }
-                  else
-                    {
-                      // If not on a Robin B.C., assemble all the other
-                      // relevant skeleton terms
-                      for (unsigned int j :
-                           fe_face_values_trial_skeleton.dof_indices())
-                        {
-                          const unsigned int current_element_trial_j =
-                            this->fe_trial_skeleton->system_to_base_index(j)
-                              .first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_trial_j == 2) ||
-                               (current_element_trial_j == 3)))
-                            {
-                              B_hat_FH.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_IE.emplace_back(i, j);
-                            }
-                        }
-                    }
-                }
-
-              // We update the material properties for the current face
-              // quadrature points. If no temperature field is needed, the
-              // temperature_face_values vector is filled with zeros and
-              // will not affect the material properties.
-              field_values_vector[field::temperature] = temperature_face_values;
-              update_material_properties(physical_properties_manager,
-                                         field_values_vector,
-                                         material_id,
-                                         effective_electric_permittivities,
-                                         effective_magnetic_permeabilities);
-
-              // Loop over all face quadrature points
-              for (unsigned int q_point = 0; q_point < n_face_q_points;
-                   ++q_point)
-                {
-                  // Initialize reusable variables
-                  const auto &position =
-                    fe_face_values_trial_skeleton.quadrature_point(q_point);
-                  const auto &normal =
-                    fe_face_values_trial_skeleton.normal_vector(q_point);
-                  const double JxW_face =
-                    fe_face_values_trial_skeleton.JxW(q_point);
-
-                  // As for the cell, we first loop over the test dofs to fill
-                  // the face values containers
-                  for (unsigned int i : fe_face_values_test.dof_indices())
-                    {
-                      F_face[i] =
-                        fe_face_values_test[extractor_E_real].value(i,
-                                                                    q_point) +
-                        imag *
-                          fe_face_values_test[extractor_E_imag].value(i,
-                                                                      q_point);
-                      F_face_conj[i] =
-                        fe_face_values_test[extractor_E_real].value(i,
-                                                                    q_point) -
-                        imag *
-                          fe_face_values_test[extractor_E_imag].value(i,
-                                                                      q_point);
-
-                      I_face_conj[i] =
-                        fe_face_values_test[extractor_H_real].value(i,
-                                                                    q_point) -
-                        imag *
-                          fe_face_values_test[extractor_H_imag].value(i,
-                                                                      q_point);
-
-                      n_cross_I_face[i] = cross_product_3d(
-                        normal,
-                        fe_face_values_test[extractor_H_real].value(i,
-                                                                    q_point) +
-                          imag * fe_face_values_test[extractor_H_imag].value(
-                                   i, q_point));
-                      n_cross_I_face_conj[i] = cross_product_3d(
-                        normal,
-                        fe_face_values_test[extractor_H_real].value(i,
-                                                                    q_point) -
-                          imag * fe_face_values_test[extractor_H_imag].value(
-                                   i, q_point));
-                    }
-
-                  // Then, similarly we loop over the trial dofs to fill the
-                  // face values containers. Note that to be in
-                  // H^-1/2(curl), the fields needs to have the tangential
-                  // property mapping (n x (E x n)) which effectively extract
-                  // the tangential component of the field at the face. So
-                  // here we apply this operation using the map_H12 function
-                  // that we defined earlier. Stricly speeking, nx(E_parallel)
-                  // = n x E, and we would not need to use the map_H12
-                  // function, but we keep it for consistency.
-                  for (unsigned int i :
-                       fe_face_values_trial_skeleton.dof_indices())
-                    {
-                      E_hat[i] = map_H12(
-                        fe_face_values_trial_skeleton[extractor_E_real].value(
-                          i, q_point) +
-                          imag * fe_face_values_trial_skeleton[extractor_E_imag]
-                                   .value(i, q_point),
-                        normal);
-
-                      n_cross_E_hat[i] = cross_product_3d(
-                        normal,
-                        map_H12(
-                          fe_face_values_trial_skeleton[extractor_E_real].value(
-                            i, q_point) +
-                            imag *
-                              fe_face_values_trial_skeleton[extractor_E_imag]
-                                .value(i, q_point),
-                          normal));
-
-                      n_cross_H_hat[i] = cross_product_3d(
-                        normal,
-                        map_H12(
-                          fe_face_values_trial_skeleton[extractor_H_real].value(
-                            i, q_point) +
-                            imag *
-                              fe_face_values_trial_skeleton[extractor_H_imag]
-                                .value(i, q_point),
-                          normal));
-                    }
-
-                  // Here we apply the excitation at the relevant boundary.
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::silver_muller)
-                    {
-                      boundary_surface_admittance =
-                        sqrt(effective_electric_permittivities[q_point] /
-                             effective_magnetic_permeabilities[q_point]);
-                      conj_boundary_surface_admittance =
-                        std::conj(boundary_surface_admittance);
-                      g_inc = 0.;
-                    }
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::impedance_boundary)
-                    {
-                      unsigned int face_id = face->boundary_id();
-
-                      boundary_surface_admittance =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .surface_admittance_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .surface_admittance_imag.at(face_id)
-                            ->value(position);
-
-                      conj_boundary_surface_admittance =
-                        std::conj(boundary_surface_admittance);
-
-                      // Get the incident electromagnetic field at this face
-                      g_inc[0] =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .excitation_x_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .excitation_x_imag.at(face_id)
-                            ->value(position);
-
-                      g_inc[1] =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .excitation_y_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .excitation_y_imag.at(face_id)
-                            ->value(position);
-
-                      g_inc[2] =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .excitation_z_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .excitation_z_imag.at(face_id)
-                            ->value(position);
-                    }
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::waveguide_port)
-                    {
-                      unsigned int boundary_index = std::distance(
-                        time_harmonic_maxwell_parameters.waveguide_boundary_ids
-                          .begin(),
-                        std::ranges::find(time_harmonic_maxwell_parameters
-                                            .waveguide_boundary_ids,
-                                          face->boundary_id()));
-
-                      std::tie(g_inc, boundary_surface_admittance) =
-                        compute_waveguide_port_excitation(
-                          position,
-                          normal,
-                          effective_electric_permittivities[q_point],
-                          effective_magnetic_permeabilities[q_point],
-                          boundary_index);
-
-                      conj_boundary_surface_admittance =
-                        std::conj(boundary_surface_admittance);
-                    }
-
-                  // Now we loop on each relationship container to assemble
-                  // the relevant matrices.
-                  for (const auto &[i, j] : G_FF)
-                    {
-                      G_matrix(i, j) +=
-                        (conj_boundary_surface_admittance * F_face[j] *
-                         boundary_surface_admittance * F_face_conj[i] *
-                         JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &[i, j] : G_FI)
-                    {
-                      G_matrix(i, j) +=
-                        (n_cross_I_face[j] * boundary_surface_admittance *
-                         F_face_conj[i] * JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &[i, j] : G_IF)
-                    {
-                      G_matrix(i, j) +=
-                        (conj_boundary_surface_admittance * F_face[j] *
-                         n_cross_I_face_conj[i] * JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &[i, j] : G_II)
-                    {
-                      G_matrix(i, j) +=
-                        (n_cross_I_face[j] * n_cross_I_face_conj[i] * JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &[i, j] : B_hat_FH)
-                    {
-                      B_hat_matrix(i, j) +=
-                        (n_cross_H_hat[j] * F_face_conj[i] * JxW_face).real();
-                    }
-
-                  for (const auto &[i, j] : B_hat_IE)
-                    {
-                      B_hat_matrix(i, j) +=
-                        (n_cross_E_hat[j] * I_face_conj[i] * JxW_face).real();
-                    }
-
-                  for (const auto &[i, j] : B_hat_FE)
-                    {
-                      B_hat_matrix(i, j) -=
-                        (boundary_surface_admittance * E_hat[j] *
-                         F_face_conj[i] * JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &i : l_F)
-                    {
-                      l_vector[i] -= (g_inc * F_face_conj[i] * JxW_face).real();
-                    }
-                }
-            } // End of face loop
-
-          // Finally, after having assembled all the matrices and vectors, we
-          // build the condensed version of the system.
-
-          // We only need the inverse of the Gram matrix $G$, so we
-          // invert it.
-          G_matrix.invert();
-
-          // We construct $M_4 = B^\dagger G^{-1}$ and $M_5 = \hat{B}^\dagger
-          // G^{-1}$ with it:
-          B_matrix.Tmmult(M4_matrix, G_matrix);
-          B_hat_matrix.Tmmult(M5_matrix, G_matrix);
-
-          // Then using $M_4$ we compute the condensed matrix $M_1 = B^\dagger
-          // G^{-1} B$ and $M_2 = B^\dagger G^{-1} \hat{B}$:
-          M4_matrix.mmult(M1_matrix, B_matrix);
-          M4_matrix.mmult(M2_matrix, B_hat_matrix);
-
-          // We also compute the matrix $M_3 = \hat{B}^\dagger G^{-1} \hat{B}$
-          M5_matrix.mmult(M3_matrix, B_hat_matrix);
-
-          // Finally, as for the $G$ matrix, we invert the $M_1$
-          // matrix:
-          M1_matrix.invert();
-
-          // Now, we have to compute the local matrix and the local RHS for the
-          // condensed system.
-
-          // The cell matrix is obtained with the formula $(M_3 -
-          // M_2^\dagger M_1^{-1} M_2)$:
-          M2_matrix.Tmmult(tmp_matrix_M2M1, M1_matrix);
-          tmp_matrix_M2M1.mmult(tmp_matrix_M2M1M2, M2_matrix);
-          tmp_matrix_M2M1M2.add(-1.0, M3_matrix);
-          tmp_matrix_M2M1M2 *= -1.0;
-          // This line is used to convert the LAPACK matrix to a full
-          // matrix so we can perform the distribution to the global
-          // system below.
-          cell_matrix = tmp_matrix_M2M1M2;
-
-          // Then we compute the cell RHS using $(M_5 -
-          // M_2^\dagger M_1^{-1} M_4)l -
-          // G$.
-          tmp_matrix_M2M1.mmult(tmp_matrix_M2M1M4, M4_matrix);
-          M5_matrix.add(-1.0, tmp_matrix_M2M1M4);
-          M5_matrix.vmult(cell_skeleton_rhs, l_vector);
-
-          // Map to global matrix
-          cell_skeleton->get_dof_indices(local_dof_indices);
-          this->nonzero_constraints.distribute_local_to_global(
-            cell_matrix,
-            cell_skeleton_rhs,
-            local_dof_indices,
-            this->system_matrix,
-            this->system_rhs);
-        }
-    }
+    scratch_data.enable_temperature(
+      this->multiphysics->get_dof_handler(PhysicsID::heat_transfer).get_fe(),
+      *this->cell_quadrature,
+      *this->face_quadrature,
+      *this->mapping);
+
+  // As it is standard, we loop over the cells of the triangulation. We use
+  // the DoFHandler associated with the interior trial space for this loop.
+  WorkStream::run(this->dof_handler_trial_interior->begin_active(),
+                  this->dof_handler_trial_interior->end(),
+                  *this,
+                  &TimeHarmonicMaxwell::assemble_local_system_matrix,
+                  &TimeHarmonicMaxwell::copy_local_matrix_to_global_matrix,
+                  scratch_data,
+                  DPGCopyData(this->fe_test->n_dofs_per_cell(),
+                              this->fe_trial_interior->n_dofs_per_cell(),
+                              this->fe_trial_skeleton->n_dofs_per_cell()));
 
   // After the loop over the cells, we finalize the assembly by compressing
   // the vectors because of the MPI parallelization.
@@ -3445,1123 +2103,321 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
 
 template <int dim>
 void
-TimeHarmonicMaxwell<dim>::assemble_system_rhs()
+TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
+  DPGCopyData                                          &copy_data)
 {
-  // At the moment everything is done in assemble_system_matrix(). In the
-  // future, we want to add the possibility of assembling both the matrix and
-  // rhs in the same function and loop for efficiency.
-}
+  // We get the same cell for the test and skeleton trial spaces to make sure
+  // that all the FEValues objects are reinitialized on the same physical cell.
+  const typename DoFHandler<dim>::active_cell_iterator cell_test =
+    cell->as_dof_handler_iterator(*this->dof_handler_test);
+  const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
+    cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
 
-template <>
-void
-TimeHarmonicMaxwell<2>::reconstruct_interior_solution()
-{
-  // As for the assembly, we need to perform operations like curl and cross
-  // product, that are completely different in 2D in comparison to 3D. At the
-  // moment, we do not support 2D time-harmonic Maxwell so this function throws
-  // an error.
-  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
-}
+  scratch_data.reinit(cell, cell_test);
 
-
-template <>
-void
-TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
-{
-  // Constexpr values and used in the assembly. Since we are in the specialized
-  // 3D function we define dim = 3 here. This makes easier to read the code
-  // below to see what are templated in dim and what are not.
-  static constexpr double               PI = numbers::PI;
-  static constexpr std::complex<double> imag{0., 1.};
-  static constexpr int                  dim = 3;
-
-  // Get properties manager and define model physical properties
-  const auto &physical_properties_manager =
-    this->simulation_parameters.physical_properties_manager;
-  std::vector<std::complex<double>> effective_electric_permittivities;
-  std::vector<std::complex<double>> effective_magnetic_permeabilities;
-  unsigned int                      material_id;
-  bool                              cell_material_needs_temperature;
-
-  /// Excitation properties
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
-    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
-  const double omega =
-    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
-
-  // We then create the corresponding FEValues and FEFaceValues objects. Note
-  // that only the test space needs gradients because of the ultraweak
-  // formulation. Similarly, because everything is on the same triangulation,
-  // we only need to update the quadrature points and JxW values in one of the
-  // spaces. Here we choose the trial space.
-  const unsigned int n_q_points      = this->cell_quadrature->size();
-  const unsigned int n_face_q_points = this->face_quadrature->size();
-
-  FEValues<dim> fe_values_trial_interior(*this->mapping,
-                                         *this->fe_trial_interior,
-                                         *this->cell_quadrature,
-                                         update_values |
-                                           update_quadrature_points |
-                                           update_JxW_values);
-
-  FEValues<dim> fe_values_test(*this->mapping,
-                               *this->fe_test,
-                               *this->cell_quadrature,
-                               update_values | update_gradients);
-
-  FEFaceValues<dim> fe_face_values_trial_skeleton(*this->mapping,
-                                                  *this->fe_trial_skeleton,
-                                                  *this->face_quadrature,
-                                                  update_values |
-                                                    update_quadrature_points |
-                                                    update_normal_vectors |
-                                                    update_JxW_values);
-
-  FEFaceValues<dim> fe_face_values_test(*this->mapping,
-                                        *this->fe_test,
-                                        *this->face_quadrature,
-                                        update_values);
-
-  // We may need the temperature field for the physical properties.
-  std::unique_ptr<FEValues<dim>>       fe_values_temperature;
-  std::unique_ptr<FEFaceValues<dim>>   fe_face_values_temperature;
-  const DoFHandler<dim>               *dof_handler_temperature = nullptr;
-  const GlobalVectorType              *temperature_solution    = nullptr;
-  std::vector<double>                  temperature_values(n_q_points);
-  std::vector<double>                  temperature_face_values(n_face_q_points);
-  std::map<field, std::vector<double>> field_values_vector;
-
-  if (needs_temperature)
+  // The temperature field is only evaluated at the quadrature points if the
+  // physical properties of the cell material depend on it.
+  typename DoFHandler<dim>::active_cell_iterator cell_temperature;
+  const GlobalVectorType                        *temperature_solution = nullptr;
+  if (scratch_data.cell_material_needs_temperature)
     {
-      dof_handler_temperature =
-        &this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      fe_values_temperature =
-        std::make_unique<FEValues<dim>>(*this->mapping,
-                                        dof_handler_temperature->get_fe(),
-                                        *this->cell_quadrature,
-                                        update_values |
-                                          update_quadrature_points);
-      fe_face_values_temperature =
-        std::make_unique<FEFaceValues<dim>>(*this->mapping,
-                                            dof_handler_temperature->get_fe(),
-                                            *this->face_quadrature,
-                                            update_values |
-                                              update_quadrature_points);
+      cell_temperature = cell->as_dof_handler_iterator(
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer));
       temperature_solution =
         &this->multiphysics->get_solution(PhysicsID::heat_transfer);
+      scratch_data.reinit_temperature(cell_temperature, *temperature_solution);
+    }
+  scratch_data.calculate_physical_properties();
+
+  // We reset the local matrices and vector where we are aggregating the
+  // information of the current cell.
+  copy_data.reset();
+
+  // Cell contributions to the local DPG system
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_matrix(scratch_data, copy_data);
+      assembler->assemble_rhs(scratch_data, copy_data);
     }
 
-  // We also create all the relevant matrices and vector to build the DPG
-  // system. To do so we first need the number of dofs per cell for each of
-  // the finite element spaces.
-  const unsigned int dofs_per_cell_test = this->fe_test->n_dofs_per_cell();
-  const unsigned int dofs_per_cell_trial_interior =
-    this->fe_trial_interior->n_dofs_per_cell();
-  const unsigned int dofs_per_cell_trial_skeleton =
-    this->fe_trial_skeleton->n_dofs_per_cell();
-
-  // To avoid unecessary computations, we will precompute the shape functions
-  // of all our spaces once and then use those precomputed values to assemble
-  // the local matrices. Consequently, we need to create containers to store
-  // these values. Since those are complex-valued functions, we use two
-  // different containers for the real and imaginary parts because the
-  // conjugate of a complex tensor is not implemented in deal.II.
-  std::vector<Tensor<1, dim, std::complex<double>>> F(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> F_conj(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> I(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> I_conj(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> curl_F(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> curl_F_conj(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> curl_I(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> curl_I_conj(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> F_face(dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> F_face_conj(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> I_face_conj(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_I_face(
-    dofs_per_cell_test);
-  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_I_face_conj(
-    dofs_per_cell_test);
-
-  std::vector<Tensor<1, dim, std::complex<double>>> E(
-    dofs_per_cell_trial_interior);
-  std::vector<Tensor<1, dim, std::complex<double>>> H(
-    dofs_per_cell_trial_interior);
-  std::vector<Tensor<1, dim, std::complex<double>>> E_hat(
-    dofs_per_cell_trial_skeleton);
-  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_E_hat(
-    dofs_per_cell_trial_skeleton);
-  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_H_hat(
-    dofs_per_cell_trial_skeleton);
-
-  // Also, to avoid multiple "if" calls during the assembly to understand where
-  // each term needs to be assembled in the DPG global matrix, we will use
-  // containers to store dofs relationships for each of the local matrices.
-
-  // G matrix stands for the Riesz map and needs the relationships between test
-  // functions F and I
-  std::vector<std::pair<unsigned int, unsigned int>> G_FF;
-  std::vector<std::pair<unsigned int, unsigned int>> G_FI;
-  std::vector<std::pair<unsigned int, unsigned int>> G_IF;
-  std::vector<std::pair<unsigned int, unsigned int>> G_II;
-
-  // B matrix stands for the bilinear form and needs the relationships between
-  // interior trial space (E and H) and the test (F and I)
-  std::vector<std::pair<unsigned int, unsigned int>> B_FE;
-  std::vector<std::pair<unsigned int, unsigned int>> B_IE;
-  std::vector<std::pair<unsigned int, unsigned int>> B_FH;
-  std::vector<std::pair<unsigned int, unsigned int>> B_IH;
-
-  // B_hat matrix stands for the bilinear form, but on the skeleton, and needs
-  // the relationships between skeleton trial space (E_hat, H_hat) and the test
-  // (F and I). Note that the B_hat_FE is required for the Robin boundary
-  // condition that we chose to apply on the electric field instead of the
-  // magnetic field. This choice is arbitrary but it cannot be applied on both
-  // fields at the same time.
-  std::vector<std::pair<unsigned int, unsigned int>> B_hat_IE;
-  std::vector<std::pair<unsigned int, unsigned int>> B_hat_FH;
-  std::vector<std::pair<unsigned int, unsigned int>> B_hat_FE;
-
-  // l vector stands for the linear form of the problem and needs the
-  // relationships between test functions. Note that in its simplest form, the
-  // time-harmonic Maxwell equation does not have a magnetic source term, so
-  // there is no contribution from the I test functions.
-  std::vector<unsigned int> l_F;
-
-  // Reserve memory to avoid reallocations of each relationship vectors
-  G_FF.reserve(dofs_per_cell_test * dofs_per_cell_test);
-  G_FI.reserve(dofs_per_cell_test * dofs_per_cell_test);
-  G_IF.reserve(dofs_per_cell_test * dofs_per_cell_test);
-  G_II.reserve(dofs_per_cell_test * dofs_per_cell_test);
-
-  B_FE.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
-  B_IE.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
-  B_FH.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
-  B_IH.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
-
-  B_hat_IE.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
-  B_hat_FH.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
-  B_hat_FE.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
-
-  l_F.reserve(dofs_per_cell_test);
-
-  // Here we create the DPG local matrices and vector used for the assembly
-  // before condensation.
-  LAPACKFullMatrix<double> G_matrix(dofs_per_cell_test, dofs_per_cell_test);
-
-  LAPACKFullMatrix<double> B_matrix(dofs_per_cell_test,
-                                    dofs_per_cell_trial_interior);
-
-  LAPACKFullMatrix<double> B_hat_matrix(dofs_per_cell_test,
-                                        dofs_per_cell_trial_skeleton);
-
-  Vector<double> l_vector(dofs_per_cell_test);
-
-  // We create the condensation matrices which are defined as :
-  // $M_1 = B^\dagger G^{-1}B$;
-  // $M_2 = B^\dagger G^{-1}\hat{B}$;
-  // $M_3 = \hat{B}^\dagger G^{-1}\hat{B}$;
-  // $M_4 = B^\dagger G^{-1}$;
-  // $M_5 = \hat{B}^\dagger G^{-1}$.
-  LAPACKFullMatrix<double> M1_matrix(dofs_per_cell_trial_interior,
-                                     dofs_per_cell_trial_interior);
-  LAPACKFullMatrix<double> M2_matrix(dofs_per_cell_trial_interior,
-                                     dofs_per_cell_trial_skeleton);
-  LAPACKFullMatrix<double> M3_matrix(dofs_per_cell_trial_skeleton,
-                                     dofs_per_cell_trial_skeleton);
-  LAPACKFullMatrix<double> M4_matrix(dofs_per_cell_trial_interior,
-                                     dofs_per_cell_test);
-  LAPACKFullMatrix<double> M5_matrix(dofs_per_cell_trial_skeleton,
-                                     dofs_per_cell_test);
-
-  // We create the cell matrix and the RHS that will be distributed in the
-  // full system after the assembly along with the index’s mapping.
-  FullMatrix<double> cell_matrix(dofs_per_cell_trial_skeleton,
-                                 dofs_per_cell_trial_skeleton);
-  Vector<double>     cell_skeleton_rhs(dofs_per_cell_trial_skeleton);
-
-  std::vector<types::global_dof_index> local_dof_indices(
-    dofs_per_cell_trial_skeleton);
-
-  // We also create objects used for the various Robin boundary conditions.
-  BoundaryConditions::BoundaryType     bc_type;
-  Tensor<1, dim, std::complex<double>> g_inc;
-  std::complex<double>                 boundary_surface_admittance;
-  std::complex<double>                 conj_boundary_surface_admittance;
-
-  // L2 norm of the residual for the dpg error indicator
-  double residual_L2_norm = 0.0;
-
-  // The above declarations are the same as the ones in the assembly of the
-  // skeleton system. Below we add new ones that are specific to the
-  // reconstruction of the interior solution.
-
-  MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
-
-  // We initialize vectors to store the locally owned solution and the error
-  // indicator.
-  GlobalVectorType locally_owned_solution_interior(
-    this->locally_owned_dofs_trial_interior, mpi_communicator);
-  GlobalVectorType locally_owned_error_indicator(this->locally_owned_dofs_test,
-                                                 mpi_communicator);
-
-  // Temporary vector used when reconstructing the interior solution :
-  // $tmp_{interior} = M_2 * x_{skeleton}$
-  Vector<double> tmp_vector_interior(dofs_per_cell_trial_interior);
-
-  // Temporary vector used when computing the error indicator :
-  // $tmp_{error\_indicator} = B * x_{interior}$
-  Vector<double> tmp_vector_error_indicator(dofs_per_cell_test);
-
-  // Finally, when reconstructing the interior solution from the skeleton, we
-  // require additional vectors that we allocate here.
-  Vector<double> cell_interior_rhs(dofs_per_cell_trial_interior);
-  Vector<double> cell_interior_solution(dofs_per_cell_trial_interior);
-  Vector<double> cell_skeleton_solution(dofs_per_cell_trial_skeleton);
-  Vector<double> cell_residual(dofs_per_cell_test);
-
-  // The assembly on each cell is the same as previously done, so we first loop
-  // over the cells of the triangulation.
-  for (const auto &cell :
-       this->dof_handler_trial_interior->active_cell_iterators())
+  // Skeleton contributions to the local DPG system. All the faces of the cell
+  // belong to the skeleton.
+  for (const unsigned int face_no : cell->face_indices())
     {
-      if (cell->is_locally_owned())
+      scratch_data.reinit_face(cell_skeleton, cell_test, face_no);
+      if (scratch_data.cell_material_needs_temperature)
+        scratch_data.reinit_face_temperature(cell_temperature,
+                                             face_no,
+                                             *temperature_solution);
+      scratch_data.calculate_face_physical_properties();
+
+      for (auto &assembler : this->face_assemblers)
         {
-          // We update the material id and determine the
-          // temperature field if needed.
-          material_id = cell->material_id();
-
-          // We reinitialize the FEValues objects to the current cell.
-          fe_values_trial_interior.reinit(cell);
-
-          // We will also need to reinitialize the FEValues for the test
-          // space and make sure that is the same cell as the one used for the
-          // trial space.
-          const typename DoFHandler<dim>::active_cell_iterator cell_test =
-            cell->as_dof_handler_iterator(*this->dof_handler_test);
-          fe_values_test.reinit(cell_test);
-
-          // Similarly, we reinitialize the FEValues for the trial space on
-          // the skeleton, but this will not be used before we also loop on
-          // the cells faces.
-          const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
-            cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
-
-          // We check if the physical properties depend on the temperature
-          // field. If so, we will need to evaluate the temperature field at the
-          // quadrature points.
-          cell_material_needs_temperature =
-            physical_properties_manager
-              .get_electric_conductivity(0, material_id)
-              ->depends_on(field::temperature) ||
-            physical_properties_manager
-              .get_electric_permittivity_real(0, material_id)
-              ->depends_on(field::temperature) ||
-            physical_properties_manager
-              .get_electric_permittivity_imag(0, material_id)
-              ->depends_on(field::temperature) ||
-            physical_properties_manager
-              .get_magnetic_permeability_real(0, material_id)
-              ->depends_on(field::temperature) ||
-            physical_properties_manager
-              .get_magnetic_permeability_imag(0, material_id)
-              ->depends_on(field::temperature);
-
-          if (cell_material_needs_temperature)
-            {
-              const typename DoFHandler<dim>::active_cell_iterator
-                cell_temperature =
-                  cell->as_dof_handler_iterator(*dof_handler_temperature);
-              fe_values_temperature->reinit(cell_temperature);
-              fe_values_temperature->get_function_values(*temperature_solution,
-                                                         temperature_values);
-            }
-          else
-            {
-              std::ranges::fill(temperature_values, 0.);
-            }
-
-          // We then reinitialize all the matrices that we are aggregating
-          // information for each cell.
-          G_matrix     = 0;
-          B_matrix     = 0;
-          B_hat_matrix = 0;
-          l_vector     = 0;
-
-          // We also need to reinitialize the $M_1$ condensation matrix
-          // between each iteration on cell to get rid of its inverse status.
-          M1_matrix = 0;
-
-          // Here we reset the dofs relationships containers. These containers
-          // are used to store all the relationships between the dof i
-          // dof j according to which space they belong to. Indeed, when
-          // looping over all the test and trial dofs, the terms  we need to
-          // compute depend on the specific combination of spaces
-          // involved. The following containers are therefore used to avoid
-          // multiple "if" statements inside the dofs loops and are filled with
-          // all the relevant dofs pairs that we need for each of the
-          // different terms.
-
-          // For example, in the ultraweak form of Maxwell equation we have a
-          // term (E, curl(I)) in the interior so the matrix B has a term
-          // (curl(I_i), E_j), so we want to only compute this term for the
-          // dofs i that are in the test space I and the dofs j that are in
-          // the trial space for E. Therefore, when looping on all the
-          // interior and test dofs in a cell we add the pairs of dofs that
-          // are in those spaces to the container B_IE. We do this for all the
-          // different terms of the formulation.
-
-          // Finally, we can loop on all the pairs that we have assigned in
-          // each vector container to compute the desired terms.
-          G_FF.clear();
-          G_FI.clear();
-          G_IF.clear();
-          G_II.clear();
-
-          B_FE.clear();
-          B_IE.clear();
-          B_FH.clear();
-          B_IH.clear();
-
-          l_F.clear();
-
-          // We fill the dofs relationship containers at the cell level. To do
-          // so, we first loop on the test space dofs.
-          for (unsigned int i : fe_values_test.dof_indices())
-            {
-              // Get the information on which element the dof is
-              const unsigned int current_element_test_i =
-                this->fe_test->system_to_base_index(i).first.first;
-
-              // Fill the load vector relationship
-              if ((current_element_test_i == 0) ||
-                  (current_element_test_i == 1))
-                {
-                  l_F.emplace_back(i);
-                }
-
-              // Loop over the test dofs a second time to fill the dofs
-              // relationship for the G matrix (Riesz map)
-              for (unsigned int j : fe_values_test.dof_indices())
-                {
-                  const unsigned int current_element_test_j =
-                    this->fe_test->system_to_base_index(j).first.first;
-                  if (((current_element_test_i == 0) ||
-                       (current_element_test_i == 1)) &&
-                      ((current_element_test_j == 0) ||
-                       (current_element_test_j == 1)))
-                    {
-                      G_FF.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 0) ||
-                       (current_element_test_i == 1)) &&
-                      ((current_element_test_j == 2) ||
-                       (current_element_test_j == 3)))
-                    {
-                      G_FI.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 2) ||
-                       (current_element_test_i == 3)) &&
-                      ((current_element_test_j == 0) ||
-                       (current_element_test_j == 1)))
-                    {
-                      G_IF.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 2) ||
-                       (current_element_test_i == 3)) &&
-                      ((current_element_test_j == 2) ||
-                       (current_element_test_j == 3)))
-                    {
-                      G_II.emplace_back(i, j);
-                    }
-                }
-
-              // Then we loop over the trial dofs space to fill the dofs
-              // relationship for the B matrix (bilinear form)
-              for (unsigned int j : fe_values_trial_interior.dof_indices())
-                {
-                  const unsigned int current_element_trial_j =
-                    this->fe_trial_interior->system_to_base_index(j)
-                      .first.first;
-
-                  if (((current_element_test_i == 0) ||
-                       (current_element_test_i == 1)) &&
-                      ((current_element_trial_j == 0) ||
-                       (current_element_trial_j == 1)))
-                    {
-                      B_FE.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 0) ||
-                       (current_element_test_i == 1)) &&
-                      ((current_element_trial_j == 2) ||
-                       (current_element_trial_j == 3)))
-                    {
-                      B_FH.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 2) ||
-                       (current_element_test_i == 3)) &&
-                      ((current_element_trial_j == 0) ||
-                       (current_element_trial_j == 1)))
-                    {
-                      B_IE.emplace_back(i, j);
-                    }
-                  if (((current_element_test_i == 2) ||
-                       (current_element_test_i == 3)) &&
-                      ((current_element_trial_j == 2) ||
-                       (current_element_trial_j == 3)))
-                    {
-                      B_IH.emplace_back(i, j);
-                    }
-                }
-            }
-
-          // We update the material properties for the current cell
-          // quadrature points.
-          field_values_vector[field::temperature] = temperature_values;
-
-          update_material_properties(physical_properties_manager,
-                                     field_values_vector,
-                                     material_id,
-                                     effective_electric_permittivities,
-                                     effective_magnetic_permeabilities);
-
-          // Now we loop over all quadrature points of the cell
-          for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
-            {
-              const std::complex<double> iweffective_magnetic_permeability =
-                imag * omega * effective_magnetic_permeabilities[q_point];
-              const std::complex<double>
-                conj_iweffective_magnetic_permeability =
-                  std::conj(iweffective_magnetic_permeability);
-              const std::complex<double> iweps_r =
-                imag * omega * effective_electric_permittivities[q_point];
-              const std::complex<double> conj_iweps_r = std::conj(iweps_r);
-
-              // To avoid unnecessary computation, we fill the shape values
-              // containers for the real and imaginary parts of the electric
-              // and magnetic fields and the dofs relationship at the current
-              // quadrature point.
-              const double &JxW = fe_values_trial_interior.JxW(q_point);
-
-              for (unsigned int i : fe_values_test.dof_indices())
-                {
-                  F[i] =
-                    fe_values_test[extractor_E_real].value(i, q_point) +
-                    imag * fe_values_test[extractor_E_imag].value(i, q_point);
-                  F_conj[i] =
-                    fe_values_test[extractor_E_real].value(i, q_point) -
-                    imag * fe_values_test[extractor_E_imag].value(i, q_point);
-
-                  curl_F[i] =
-                    fe_values_test[extractor_E_real].curl(i, q_point) +
-                    imag * fe_values_test[extractor_E_imag].curl(i, q_point);
-                  curl_F_conj[i] =
-                    fe_values_test[extractor_E_real].curl(i, q_point) -
-                    imag * fe_values_test[extractor_E_imag].curl(i, q_point);
-
-                  I[i] =
-                    fe_values_test[extractor_H_real].value(i, q_point) +
-                    imag * fe_values_test[extractor_H_imag].value(i, q_point);
-                  I_conj[i] =
-                    fe_values_test[extractor_H_real].value(i, q_point) -
-                    imag * fe_values_test[extractor_H_imag].value(i, q_point);
-
-                  curl_I[i] =
-                    fe_values_test[extractor_H_real].curl(i, q_point) +
-                    imag * fe_values_test[extractor_H_imag].curl(i, q_point);
-                  curl_I_conj[i] =
-                    fe_values_test[extractor_H_real].curl(i, q_point) -
-                    imag * fe_values_test[extractor_H_imag].curl(i, q_point);
-                }
-
-              for (unsigned int i : fe_values_trial_interior.dof_indices())
-                {
-                  E[i] =
-                    fe_values_trial_interior[extractor_E_real].value(i,
-                                                                     q_point) +
-                    imag *
-                      fe_values_trial_interior[extractor_E_imag].value(i,
-                                                                       q_point);
-                  H[i] =
-                    fe_values_trial_interior[extractor_H_real].value(i,
-                                                                     q_point) +
-                    imag *
-                      fe_values_trial_interior[extractor_H_imag].value(i,
-                                                                       q_point);
-                }
-
-              // Now we loop on each relationship container to assemble the
-              // relevant matrices
-              for (const auto &[i, j] : G_FF)
-                {
-                  G_matrix(i, j) +=
-                    (((F[j] * F_conj[i]) + (curl_F[j] * curl_F_conj[i]) +
-                      (conj_iweps_r * F[j] * iweps_r * F_conj[i])) *
-                     JxW)
-                      .real();
-                }
-
-              for (const auto &[i, j] : G_FI)
-                {
-                  G_matrix(i, j) += (((curl_I[j] * iweps_r * F_conj[i]) -
-                                      (conj_iweffective_magnetic_permeability *
-                                       I[j] * curl_F_conj[i])) *
-                                     JxW)
-                                      .real();
-                }
-
-              for (const auto &[i, j] : G_IF)
-                {
-                  G_matrix(i, j) +=
-                    (((conj_iweps_r * F[j] * curl_I_conj[i]) -
-                      (curl_F[j] * iweffective_magnetic_permeability *
-                       I_conj[i])) *
-                     JxW)
-                      .real();
-                }
-
-              for (const auto &[i, j] : G_II)
-                {
-                  G_matrix(i, j) +=
-                    (((I[j] * I_conj[i]) + (curl_I[j] * curl_I_conj[i]) +
-                      (conj_iweffective_magnetic_permeability * I[j] *
-                       iweffective_magnetic_permeability * I_conj[i])) *
-                     JxW)
-                      .real();
-                }
-
-              for (const auto &[i, j] : B_FE)
-                {
-                  B_matrix(i, j) += (iweps_r * E[j] * F_conj[i] * JxW).real();
-                }
-
-              for (const auto &[i, j] : B_FH)
-                {
-                  B_matrix(i, j) += (H[j] * curl_F_conj[i] * JxW).real();
-                }
-
-              for (const auto &[i, j] : B_IE)
-                {
-                  B_matrix(i, j) += (E[j] * curl_I_conj[i] * JxW).real();
-                }
-
-              for (const auto &[i, j] : B_IH)
-                {
-                  B_matrix(i, j) -=
-                    (iweffective_magnetic_permeability * H[j] * I_conj[i] * JxW)
-                      .real();
-                }
-
-              for (const auto &i : l_F)
-                {
-                  l_vector[i] += 0.0;
-                }
-            }
-
-          // We now build the skeleton terms. Similarly, we choose to loop on
-          // the skeleton trial space faces.
-          for (const auto &face : cell_skeleton->face_iterators())
-            {
-              // We reinitialize the FEFaceValues objects to the current
-              // faces.
-              fe_face_values_test.reinit(cell_test, face);
-              fe_face_values_trial_skeleton.reinit(cell_skeleton, face);
-
-              if (cell_material_needs_temperature)
-                {
-                  const typename DoFHandler<dim>::active_cell_iterator
-                    cell_temperature =
-                      cell->as_dof_handler_iterator(*dof_handler_temperature);
-                  fe_face_values_temperature->reinit(cell_temperature, face);
-                  fe_face_values_temperature->get_function_values(
-                    *temperature_solution, temperature_face_values);
-                }
-              else
-                {
-                  std::ranges::fill(temperature_face_values, 0.);
-                }
-
-              // Get the boundary condition type on the current face
-              bc_type = BoundaryConditions::BoundaryType::none;
-
-              if (face->at_boundary())
-                bc_type =
-                  this->simulation_parameters
-                    .boundary_conditions_time_harmonic_electromagnetics.type.at(
-                      face->boundary_id());
-
-              // Reset the face dofs relationships
-              G_FF.clear();
-              G_FI.clear();
-              G_IF.clear();
-              G_II.clear();
-
-              B_hat_FH.clear();
-              B_hat_IE.clear();
-              B_hat_FE.clear();
-
-              l_F.clear();
-
-              // We fill the dofs relationship containers at the face level.
-              // To do so, we first loop on the test space dofs.
-              for (unsigned int i : fe_face_values_test.dof_indices())
-                {
-                  // Get the information on which element the dof is
-                  const unsigned int current_element_test_i =
-                    this->fe_test->system_to_base_index(i).first.first;
-
-                  // Apply the different Robin boundary conditions if needed.
-                  // The load vector and the B_hat matrix will have a
-                  // contribution in addition to a modification of the Riesz
-                  // map (G matrix) because of the energy norm that we want to
-                  // minimize there.
-                  if ((bc_type ==
-                       BoundaryConditions::BoundaryType::silver_muller) ||
-                      (bc_type ==
-                       BoundaryConditions::BoundaryType::impedance_boundary) ||
-                      (bc_type ==
-                       BoundaryConditions::BoundaryType::waveguide_port))
-                    {
-                      if ((current_element_test_i == 0) ||
-                          (current_element_test_i == 1))
-                        {
-                          l_F.emplace_back(i);
-                        }
-
-                      // Loop over the dofs test to fill the G_matrix dofs
-                      // relationship
-                      for (unsigned int j : fe_face_values_test.dof_indices())
-                        {
-                          const unsigned int current_element_test_j =
-                            this->fe_test->system_to_base_index(j).first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_test_j == 0) ||
-                               (current_element_test_j == 1)))
-                            {
-                              G_FF.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_test_j == 2) ||
-                               (current_element_test_j == 3)))
-                            {
-                              G_FI.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_test_j == 0) ||
-                               (current_element_test_j == 1)))
-                            {
-                              G_IF.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_test_j == 2) ||
-                               (current_element_test_j == 3)))
-                            {
-                              G_II.emplace_back(i, j);
-                            }
-                        }
-                      // Loop over the dofs trial space to fill the B_hat
-                      // matrix dofs relationship for the Robin boundary
-                      // condition
-                      for (unsigned int j :
-                           fe_face_values_trial_skeleton.dof_indices())
-                        {
-                          const unsigned int current_element_trial_j =
-                            this->fe_trial_skeleton->system_to_base_index(j)
-                              .first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_FE.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_IE.emplace_back(i, j);
-                            }
-                        }
-                    }
-                  else
-                    {
-                      // If not on a Robin B.C., assemble all the other
-                      // relevant skeleton terms
-                      for (unsigned int j :
-                           fe_face_values_trial_skeleton.dof_indices())
-                        {
-                          const unsigned int current_element_trial_j =
-                            this->fe_trial_skeleton->system_to_base_index(j)
-                              .first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_trial_j == 2) ||
-                               (current_element_trial_j == 3)))
-                            {
-                              B_hat_FH.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_IE.emplace_back(i, j);
-                            }
-                        }
-                    }
-                }
-
-              // We update the material properties for the current face
-              // quadrature points. If no temperature field is needed, the
-              // temperature_face_values vector is filled with zeros and
-              // will not affect the material properties.
-              field_values_vector[field::temperature] = temperature_face_values;
-
-              update_material_properties(physical_properties_manager,
-                                         field_values_vector,
-                                         material_id,
-                                         effective_electric_permittivities,
-                                         effective_magnetic_permeabilities);
-
-              // Loop over all face quadrature points
-              for (unsigned int q_point = 0; q_point < n_face_q_points;
-                   ++q_point)
-                {
-                  // Initialize reusable variables
-                  const auto &position =
-                    fe_face_values_trial_skeleton.quadrature_point(q_point);
-                  const auto &normal =
-                    fe_face_values_trial_skeleton.normal_vector(q_point);
-                  const double JxW_face =
-                    fe_face_values_trial_skeleton.JxW(q_point);
-
-                  // As for the cell, we first loop over the test dofs to fill
-                  // the face values containers
-                  for (unsigned int i : fe_face_values_test.dof_indices())
-                    {
-                      F_face[i] =
-                        fe_face_values_test[extractor_E_real].value(i,
-                                                                    q_point) +
-                        imag *
-                          fe_face_values_test[extractor_E_imag].value(i,
-                                                                      q_point);
-                      F_face_conj[i] =
-                        fe_face_values_test[extractor_E_real].value(i,
-                                                                    q_point) -
-                        imag *
-                          fe_face_values_test[extractor_E_imag].value(i,
-                                                                      q_point);
-
-                      I_face_conj[i] =
-                        fe_face_values_test[extractor_H_real].value(i,
-                                                                    q_point) -
-                        imag *
-                          fe_face_values_test[extractor_H_imag].value(i,
-                                                                      q_point);
-
-                      n_cross_I_face[i] = cross_product_3d(
-                        normal,
-                        fe_face_values_test[extractor_H_real].value(i,
-                                                                    q_point) +
-                          imag * fe_face_values_test[extractor_H_imag].value(
-                                   i, q_point));
-                      n_cross_I_face_conj[i] = cross_product_3d(
-                        normal,
-                        fe_face_values_test[extractor_H_real].value(i,
-                                                                    q_point) -
-                          imag * fe_face_values_test[extractor_H_imag].value(
-                                   i, q_point));
-                    }
-
-                  // Then, similarly we loop over the trial dofs to fill the
-                  // face values containers. Note that to be in
-                  // H^-1/2(curl), the fields needs to have the tangential
-                  // property mapping (n x (E x n)) which effectively extracts
-                  // the tangential component of the field at the face. So
-                  // here we apply this operation using the map_H12 function
-                  // that we defined earlier. Stricly speeking, nx(E_parallel)
-                  // = n x E, and we would not need to use the map_H12
-                  // function, but we keep it for consistency.
-                  for (unsigned int i :
-                       fe_face_values_trial_skeleton.dof_indices())
-                    {
-                      E_hat[i] = map_H12(
-                        fe_face_values_trial_skeleton[extractor_E_real].value(
-                          i, q_point) +
-                          imag * fe_face_values_trial_skeleton[extractor_E_imag]
-                                   .value(i, q_point),
-                        normal);
-
-                      n_cross_E_hat[i] = cross_product_3d(
-                        normal,
-                        map_H12(
-                          fe_face_values_trial_skeleton[extractor_E_real].value(
-                            i, q_point) +
-                            imag *
-                              fe_face_values_trial_skeleton[extractor_E_imag]
-                                .value(i, q_point),
-                          normal));
-
-                      n_cross_H_hat[i] = cross_product_3d(
-                        normal,
-                        map_H12(
-                          fe_face_values_trial_skeleton[extractor_H_real].value(
-                            i, q_point) +
-                            imag *
-                              fe_face_values_trial_skeleton[extractor_H_imag]
-                                .value(i, q_point),
-                          normal));
-                    }
-
-                  // Here we apply the excitation at the relevant boundary.
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::silver_muller)
-                    {
-                      boundary_surface_admittance =
-                        sqrt(effective_electric_permittivities[q_point] /
-                             effective_magnetic_permeabilities[q_point]);
-                      conj_boundary_surface_admittance =
-                        std::conj(boundary_surface_admittance);
-                      g_inc = 0.;
-                    }
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::impedance_boundary)
-                    {
-                      unsigned int face_id = face->boundary_id();
-
-                      boundary_surface_admittance =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .surface_admittance_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .surface_admittance_imag.at(face_id)
-                            ->value(position);
-
-                      conj_boundary_surface_admittance =
-                        std::conj(boundary_surface_admittance);
-
-                      // Get the incident electromagnetic field at this face
-                      g_inc[0] =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .excitation_x_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .excitation_x_imag.at(face_id)
-                            ->value(position);
-
-                      g_inc[1] =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .excitation_y_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .excitation_y_imag.at(face_id)
-                            ->value(position);
-
-                      g_inc[2] =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .excitation_z_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .excitation_z_imag.at(face_id)
-                            ->value(position);
-                    }
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::waveguide_port)
-                    {
-                      unsigned int boundary_index = std::distance(
-                        time_harmonic_maxwell_parameters.waveguide_boundary_ids
-                          .begin(),
-                        std::ranges::find(time_harmonic_maxwell_parameters
-                                            .waveguide_boundary_ids,
-                                          face->boundary_id()));
-
-                      std::tie(g_inc, boundary_surface_admittance) =
-                        compute_waveguide_port_excitation(
-                          position,
-                          normal,
-                          effective_electric_permittivities[q_point],
-                          effective_magnetic_permeabilities[q_point],
-                          boundary_index);
-
-                      conj_boundary_surface_admittance =
-                        std::conj(boundary_surface_admittance);
-                    }
-
-                  // Now we loop on each relationship container to assemble
-                  // the relevant matrices.
-                  for (const auto &[i, j] : G_FF)
-                    {
-                      G_matrix(i, j) +=
-                        (conj_boundary_surface_admittance * F_face[j] *
-                         boundary_surface_admittance * F_face_conj[i] *
-                         JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &[i, j] : G_FI)
-                    {
-                      G_matrix(i, j) +=
-                        (n_cross_I_face[j] * boundary_surface_admittance *
-                         F_face_conj[i] * JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &[i, j] : G_IF)
-                    {
-                      G_matrix(i, j) +=
-                        (conj_boundary_surface_admittance * F_face[j] *
-                         n_cross_I_face_conj[i] * JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &[i, j] : G_II)
-                    {
-                      G_matrix(i, j) +=
-                        (n_cross_I_face[j] * n_cross_I_face_conj[i] * JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &[i, j] : B_hat_FH)
-                    {
-                      B_hat_matrix(i, j) +=
-                        (n_cross_H_hat[j] * F_face_conj[i] * JxW_face).real();
-                    }
-
-                  for (const auto &[i, j] : B_hat_IE)
-                    {
-                      B_hat_matrix(i, j) +=
-                        (n_cross_E_hat[j] * I_face_conj[i] * JxW_face).real();
-                    }
-
-                  for (const auto &[i, j] : B_hat_FE)
-                    {
-                      B_hat_matrix(i, j) -=
-                        (boundary_surface_admittance * E_hat[j] *
-                         F_face_conj[i] * JxW_face)
-                          .real();
-                    }
-
-                  for (const auto &i : l_F)
-                    {
-                      l_vector[i] -= (g_inc * F_face_conj[i] * JxW_face).real();
-                    }
-                }
-            } // End of face loop
-
-          // Finally, after having assembled all the matrices and vectors, we
-          // build the condensed version of the system.
-
-          // We only need the inverse of the Gram matrix $G$, so we
-          // invert it.
-          G_matrix.invert();
-
-          // We construct $M_4 = B^\dagger G^{-1}$ and $M_5 = \hat{B}^\dagger
-          // G^{-1}$ with it:
-          B_matrix.Tmmult(M4_matrix, G_matrix);
-          B_hat_matrix.Tmmult(M5_matrix, G_matrix);
-
-          // Then using $M_4$ we compute the condensed matrix $M_1 = B^\dagger
-          // G^{-1} B$ and $M_2 = B^\dagger G^{-1} \hat{B}$:
-          M4_matrix.mmult(M1_matrix, B_matrix);
-          M4_matrix.mmult(M2_matrix, B_hat_matrix);
-
-          // We also compute the matrix $M_3 = \hat{B}^\dagger G^{-1} \hat{B}$
-          M5_matrix.mmult(M3_matrix, B_hat_matrix);
-
-          // Finally, as for the $G$ matrix, we invert the $M_1$
-          // matrix:
-          M1_matrix.invert();
-
-          // Now,  we have already the
-          // solution on the skeleton and only need to perform $u_h = M_1^{-1}
-          // (M_4 l - M_2 \hat{u}_h)$ on each cell. When this is obtained, we
-          // can perform at the same time the error indicator (\Psi =
-          // G^{-1}(l-B u_h
-          // - \hat{B}\hat{u}_h)).
-
-          // We first get the solution vector for this cell.
-          cell_skeleton->get_dof_values(*present_solution_skeleton,
-                                        cell_skeleton_solution);
-
-          // Then we do the matrix-vector products to obtain the interior
-          // unknowns.
-          M2_matrix.vmult(tmp_vector_interior, cell_skeleton_solution);
-          M4_matrix.vmult(cell_interior_rhs, l_vector);
-          cell_interior_rhs -= tmp_vector_interior;
-          M1_matrix.vmult(cell_interior_solution, cell_interior_rhs);
-
-          // Finally, we map the cell interior solution to the global
-          // interior solution.
-          cell->distribute_local_to_global(cell_interior_solution,
-                                           locally_owned_solution_interior);
-
-          // We can also compute the error indicator on this cell.
-          B_matrix.vmult(tmp_vector_error_indicator, cell_interior_solution);
-          B_hat_matrix.vmult_add(tmp_vector_error_indicator,
-                                 cell_skeleton_solution);
-          l_vector -= tmp_vector_error_indicator;
-          G_matrix.vmult(cell_residual, l_vector);
-
-          // Compute the error indicator on the cell if the dpg error_indicator
-          // is activated
-          if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
-                .error_estimator ==
-              Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
-            {
-              double error_sqared =
-                l_vector * cell_residual; // ||R||^2_V = R^T G^-1 R = R^T Psi
-              local_estimated_error_per_cell(cell->active_cell_index()) =
-                std::sqrt(error_sqared); // ||R||^2_V = R^T G^-1 R = R^T Psi
-              residual_L2_norm += error_sqared;
-            }
-
-          cell_test->distribute_local_to_global(cell_residual,
-                                                locally_owned_error_indicator);
+          assembler->assemble_matrix(scratch_data, copy_data);
+          assembler->assemble_rhs(scratch_data, copy_data);
         }
     }
 
-  // After the loop over the cells, we finalize the assembly by compressing
-  // the vectors because of the MPI parallelization.
-  locally_owned_solution_interior.compress(VectorOperation::add);
-  locally_owned_error_indicator.compress(VectorOperation::add);
+  // After having assembled all the matrices and vectors, we compute the
+  // condensation operators that are required both for the assembly of the
+  // skeleton system and for the reconstruction of the interior solution.
 
-  *this->present_solution            = locally_owned_solution_interior;
-  *this->present_DPG_error_indicator = locally_owned_error_indicator;
+  // We only need the inverse of the Gram matrix $G$, so we invert it.
+  copy_data.G_matrix.invert();
+
+  // We construct $M_4 = B^\dagger G^{-1}$ with it.
+  copy_data.B_matrix.Tmmult(copy_data.M4_matrix, copy_data.G_matrix);
+
+  // Then using $M_4$ we compute the condensed matrices $M_1 = B^\dagger G^{-1}
+  // B$ and $M_2 = B^\dagger G^{-1} \hat{B}$.
+  copy_data.M4_matrix.mmult(copy_data.M1_matrix, copy_data.B_matrix);
+  copy_data.M4_matrix.mmult(copy_data.M2_matrix, copy_data.B_hat_matrix);
+
+  // Finally, as for the $G$ matrix, we invert the $M_1$ matrix.
+  copy_data.M1_matrix.invert();
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
+  DPGCopyData                                          &copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  assemble_local_dpg_system(cell, scratch_data, copy_data);
+
+  // We construct $M_5 = \hat{B}^\dagger G^{-1}$ and the matrix
+  // $M_3 = \hat{B}^\dagger G^{-1} \hat{B}$.
+  copy_data.B_hat_matrix.Tmmult(copy_data.M5_matrix, copy_data.G_matrix);
+  copy_data.M5_matrix.mmult(copy_data.M3_matrix, copy_data.B_hat_matrix);
+
+  // Now, we have to compute the local matrix and the local RHS for the
+  // condensed system.
+
+  // The cell matrix is obtained with the formula $(M_3 -
+  // M_2^\dagger M_1^{-1} M_2)$:
+  copy_data.M2_matrix.Tmmult(copy_data.tmp_matrix_M2M1, copy_data.M1_matrix);
+  copy_data.tmp_matrix_M2M1.mmult(copy_data.tmp_matrix_M2M1M2,
+                                  copy_data.M2_matrix);
+  copy_data.tmp_matrix_M2M1M2.add(-1.0, copy_data.M3_matrix);
+  copy_data.tmp_matrix_M2M1M2 *= -1.0;
+  // This line is used to convert the LAPACK matrix to a full matrix so we can
+  // perform the distribution to the global system.
+  copy_data.local_matrix = copy_data.tmp_matrix_M2M1M2;
+
+  // Then we compute the cell RHS using $(M_5 - M_2^\dagger M_1^{-1} M_4)l$.
+  copy_data.tmp_matrix_M2M1.mmult(copy_data.tmp_matrix_M2M1M4,
+                                  copy_data.M4_matrix);
+  copy_data.M5_matrix.add(-1.0, copy_data.tmp_matrix_M2M1M4);
+  copy_data.M5_matrix.vmult(copy_data.local_rhs, copy_data.l_vector);
+
+  // Get the local dof indices for the skeleton trial space to be able to
+  // distribute the local matrix and RHS to the global system. Cannot use
+  // cell->get_dof_indices() because the skeleton trial space is not the same as
+  // the interior trial space so we need to use the as_dof_handler_iterator()
+  // function to change the cell iterator to the skeleton trial space and then
+  // get the dof indices from that.
+  cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton)
+    ->get_dof_indices(copy_data.local_dof_indices);
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::copy_local_matrix_to_global_matrix(
+  const DPGCopyData &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  this->nonzero_constraints.distribute_local_to_global(
+    copy_data.local_matrix,
+    copy_data.local_rhs,
+    copy_data.local_dof_indices,
+    this->system_matrix,
+    this->system_rhs);
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::assemble_system_rhs()
+{
+  // Because of the static condensation, the condensed right-hand side
+  // requires the full local DPG system. It is therefore assembled with the
+  // matrix in assemble_system_matrix().
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
+  DPGCopyData                                          &copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  assemble_local_dpg_system(cell, scratch_data, copy_data);
+
+  // Now, we already have the solution on the skeleton and only need to
+  // perform $u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)$ on each cell. When this
+  // is obtained, we can compute at the same time the error indicator
+  // $\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)$ if the dpg error estimator
+  // is activated.
+
+  // We first get the skeleton solution vector for this cell.
+  cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton)
+    ->get_dof_values(*this->present_solution_skeleton,
+                     copy_data.local_skeleton_solution);
+
+  // Then we do the matrix-vector products to obtain the interior unknowns.
+  copy_data.M2_matrix.vmult(copy_data.tmp_vector_interior,
+                            copy_data.local_skeleton_solution);
+  copy_data.M4_matrix.vmult(copy_data.local_interior_rhs, copy_data.l_vector);
+  copy_data.local_interior_rhs -= copy_data.tmp_vector_interior;
+  copy_data.M1_matrix.vmult(copy_data.local_interior_solution,
+                            copy_data.local_interior_rhs);
+
+  // We can also compute the error indicator on this cell if the dpg error
+  // estimator is activated. The residual R = l - B u_h - \hat{B}\hat{u}_h is
+  // stored in l_vector, its Riesz representation Psi = G^{-1} R in
+  // local_residual, and the squared energy norm of the residual is
+  // ||R||^2_V = R^T G^-1 R = R^T Psi.
+  if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
+        .error_estimator ==
+      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+    {
+      copy_data.B_matrix.vmult(copy_data.tmp_vector_error_indicator,
+                               copy_data.local_interior_solution);
+      copy_data.B_hat_matrix.vmult_add(copy_data.tmp_vector_error_indicator,
+                                       copy_data.local_skeleton_solution);
+      copy_data.l_vector -= copy_data.tmp_vector_error_indicator;
+      copy_data.G_matrix.vmult(copy_data.local_residual, copy_data.l_vector);
+
+      copy_data.local_residual_norm_squared =
+        copy_data.l_vector * copy_data.local_residual;
+    }
+  copy_data.active_cell_index = cell->active_cell_index();
+
+  cell->get_dof_indices(copy_data.local_dof_indices_trial_interior);
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::copy_local_interior_solution_to_global(
+  const DPGCopyData &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  // We map the cell interior solution to the global interior solution. Adding
+  // the values at the dof indices of the cell is what
+  // cell->distribute_local_to_global(local_vector, global_vector) does, which
+  // cannot be used here since the copier does not have access to the cell.
+  // Since the interior trial space is discontinuous, each dof belongs to a
+  // single cell and adding the value is equivalent to setting it.
+  this->locally_owned_solution_interior.add(
+    copy_data.local_dof_indices_trial_interior,
+    copy_data.local_interior_solution);
+
+  // Store the error indicator of the cell if the dpg error estimator is
+  // activated
+  if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
+        .error_estimator ==
+      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+    {
+      this->local_estimated_error_per_cell(copy_data.active_cell_index) =
+        std::sqrt(copy_data.local_residual_norm_squared);
+      this->squared_residual_L2_norm += copy_data.local_residual_norm_squared;
+    }
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
+{
+  MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  const bool dpg_error_estimator_enabled =
+    this->simulation_parameters.mesh_adaptation.var_adaptation_param
+      .error_estimator ==
+    Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg;
+
+  // The interior solution is assembled cell by cell. However,
+  // present_solution is a ghosted vector (it also stores the locally relevant
+  // dofs owned by the other processes, which are needed by the other physics
+  // and the output) and a ghosted vector can only be read. Therefore, the
+  // contributions of the locally owned cells are first added to the following
+  // vector, which only stores the locally owned dofs. After the loop on the
+  // cells, compress(VectorOperation::add) finalizes it, and the assignment to
+  // the ghosted vector updates its ghost values. This vector is only needed
+  // during the reconstruction, so it is allocated here and released at the end
+  // of the function to avoid keeping it in memory between the solves.
+  this->locally_owned_solution_interior.reinit(
+    this->locally_owned_dofs_trial_interior, mpi_communicator);
+
+  // Squared L2 norm of the residual for the dpg error indicator, accumulated
+  // over the locally owned cells
+  this->squared_residual_L2_norm = 0.0;
+
+  auto scratch_data = TimeHarmonicMaxwellScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe_trial_interior,
+    *this->fe_trial_skeleton,
+    *this->fe_test,
+    *this->cell_quadrature,
+    *this->face_quadrature,
+    *this->mapping);
+
+  if (needs_temperature)
+    scratch_data.enable_temperature(
+      this->multiphysics->get_dof_handler(PhysicsID::heat_transfer).get_fe(),
+      *this->cell_quadrature,
+      *this->face_quadrature,
+      *this->mapping);
+
+
+  WorkStream::run(this->dof_handler_trial_interior->begin_active(),
+                  this->dof_handler_trial_interior->end(),
+                  *this,
+                  &TimeHarmonicMaxwell::reconstruct_local_interior_solution,
+                  &TimeHarmonicMaxwell::copy_local_interior_solution_to_global,
+                  scratch_data,
+                  DPGCopyData(this->fe_test->n_dofs_per_cell(),
+                              this->fe_trial_interior->n_dofs_per_cell(),
+                              this->fe_trial_skeleton->n_dofs_per_cell()));
+
+  // After the loop over the cells, we finalize the assembly by compressing
+  // the vector because of the MPI parallelization.
+  this->locally_owned_solution_interior.compress(VectorOperation::add);
+
+  *this->present_solution = this->locally_owned_solution_interior;
+
+  // The non-ghosted vector is not needed anymore, so we release its memory by
+  // swapping it with an empty vector, which is deallocated at the end of the
+  // scope. This is used instead of clear(), which is not available for all the
+  // types of GlobalVectorType.
+  {
+    GlobalVectorType empty_vector;
+    this->locally_owned_solution_interior.swap(empty_vector);
+  }
 
   // We also output the global error indicator if the dpg error estimator is
   // activated and in verbose mode
-  if ((this->simulation_parameters.mesh_adaptation.var_adaptation_param
-         .error_estimator ==
-       Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg) &&
+  if (dpg_error_estimator_enabled &&
       (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
          .verbosity != Parameters::Verbosity::quiet))
     {
       this->pcout << "   Time-Harmonic Maxwell DPG residual: "
                   << std::sqrt(
-                       Utilities::MPI::sum(residual_L2_norm, mpi_communicator))
+                       Utilities::MPI::sum(this->squared_residual_L2_norm,
+                                           mpi_communicator))
                   << std::endl;
     }
 }
