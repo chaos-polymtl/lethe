@@ -229,7 +229,7 @@ public:
    */
   void
   output_per_iteration_timer() override;
-  
+
   /**
    * @brief Prepare the auxiliary physics variables for a
    * mesh refinement/coarsening.

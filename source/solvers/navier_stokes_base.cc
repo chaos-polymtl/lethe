@@ -597,7 +597,6 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       this->computing_timer.reset();
 
       multiphysics->output_per_iteration_timer();
-
     }
 }
 

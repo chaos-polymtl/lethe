@@ -1356,10 +1356,10 @@ void
 TimeHarmonicMaxwell<dim>::output_per_iteration_timer()
 {
   announce_string(this->pcout, "Time Harmonic Electromagnetics");
-      this->pcout << std::defaultfloat;
-      this->computing_timer.print_summary();
-      this->pcout << std::scientific;
-      this->computing_timer.reset();
+  this->pcout << std::defaultfloat;
+  this->computing_timer.print_summary();
+  this->pcout << std::scientific;
+  this->computing_timer.reset();
 }
 
 template <int dim>
