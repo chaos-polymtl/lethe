@@ -220,6 +220,21 @@ make_table_tensors_scalars(
 }
 
 void
+create_random_number_container(std::vector<double> &random_container,
+                               const unsigned int   number_of_elements,
+                               const double         maximum_range,
+                               std::mt19937        &generator)
+{
+  random_container.reserve(random_container.size() + number_of_elements);
+  for (unsigned int i = 0; i < number_of_elements; ++i)
+    {
+      random_container.push_back(static_cast<double>(generator()) /
+                                 static_cast<double>(std::mt19937::max()) *
+                                 maximum_range);
+    }
+}
+
+void
 check_file_exists(const std::string &file_name,
                   const std::string &file_description)
 {
