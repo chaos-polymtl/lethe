@@ -132,6 +132,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a38a9189e1b9034343448a965e0ca0585"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d990a130cbff0d8461624e3612f3901" id="r_a4d990a130cbff0d8461624e3612f3901"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConservativeLevelSet.html#a4d990a130cbff0d8461624e3612f3901">postprocess</a> (bool first_iteration) override</td></tr>
 <tr class="separator:a4d990a130cbff0d8461624e3612f3901"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9f625780362e9915e6d00167167b1dd" id="r_ac9f625780362e9915e6d00167167b1dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConservativeLevelSet.html#ac9f625780362e9915e6d00167167b1dd">output_per_iteration_timer</a> () override</td></tr>
+<tr class="separator:ac9f625780362e9915e6d00167167b1dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53bd748af5758234191dce0877813892" id="r_a53bd748af5758234191dce0877813892"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConservativeLevelSet.html#a53bd748af5758234191dce0877813892">pre_mesh_adaptation</a> () override</td></tr>
 <tr class="separator:a53bd748af5758234191dce0877813892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb9f9759f8123f761494d75ac1619ba5" id="r_acb9f9759f8123f761494d75ac1619ba5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConservativeLevelSet.html#acb9f9759f8123f761494d75ac1619ba5">post_mesh_adaptation</a> () override</td></tr>
@@ -438,7 +440,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00024">24</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00787">ConservativeLevelSet&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="cls_8h_source.html#l00826">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, <a class="el" href="cls_8h_source.html#l00788">ConservativeLevelSet&lt; dim &gt;::face_quadrature</a>, <a class="el" href="cls_8h_source.html#l00782">ConservativeLevelSet&lt; dim &gt;::fe</a>, <a class="el" href="cls_8h_source.html#l00803">ConservativeLevelSet&lt; dim &gt;::filtered_solution</a>, <a class="el" href="namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="cls_8h_source.html#l00786">ConservativeLevelSet&lt; dim &gt;::mapping</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="signed__distance__transformation_8cc_source.html#l00007">SignedDistanceTransformationBase::model_cast()</a>, <a class="el" href="namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="cls_8h_source.html#l00797">ConservativeLevelSet&lt; dim &gt;::present_solution</a>, <a class="el" href="cls_8h_source.html#l00810">ConservativeLevelSet&lt; dim &gt;::previous_solutions</a>, <a class="el" href="cls_8h_source.html#l00815">ConservativeLevelSet&lt; dim &gt;::previous_solutions_transfer</a>, <a class="el" href="cls_8h_source.html#l00867">ConservativeLevelSet&lt; dim &gt;::signed_distance_solver</a>, <a class="el" href="cls_8h_source.html#l00871">ConservativeLevelSet&lt; dim &gt;::signed_distance_transformation</a>, <a class="el" href="cls_8h_source.html#l00780">ConservativeLevelSet&lt; dim &gt;::simulation_control</a>, <a class="el" href="cls_8h_source.html#l00776">ConservativeLevelSet&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="cls_8h_source.html#l00813">ConservativeLevelSet&lt; dim &gt;::solution_transfer</a>, and <a class="el" href="cls_8h_source.html#l00779">ConservativeLevelSet&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00792">ConservativeLevelSet&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="cls_8h_source.html#l00831">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, <a class="el" href="cls_8h_source.html#l00793">ConservativeLevelSet&lt; dim &gt;::face_quadrature</a>, <a class="el" href="cls_8h_source.html#l00787">ConservativeLevelSet&lt; dim &gt;::fe</a>, <a class="el" href="cls_8h_source.html#l00808">ConservativeLevelSet&lt; dim &gt;::filtered_solution</a>, <a class="el" href="namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="cls_8h_source.html#l00791">ConservativeLevelSet&lt; dim &gt;::mapping</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="signed__distance__transformation_8cc_source.html#l00007">SignedDistanceTransformationBase::model_cast()</a>, <a class="el" href="namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="cls_8h_source.html#l00802">ConservativeLevelSet&lt; dim &gt;::present_solution</a>, <a class="el" href="cls_8h_source.html#l00815">ConservativeLevelSet&lt; dim &gt;::previous_solutions</a>, <a class="el" href="cls_8h_source.html#l00820">ConservativeLevelSet&lt; dim &gt;::previous_solutions_transfer</a>, <a class="el" href="cls_8h_source.html#l00872">ConservativeLevelSet&lt; dim &gt;::signed_distance_solver</a>, <a class="el" href="cls_8h_source.html#l00876">ConservativeLevelSet&lt; dim &gt;::signed_distance_transformation</a>, <a class="el" href="cls_8h_source.html#l00785">ConservativeLevelSet&lt; dim &gt;::simulation_control</a>, <a class="el" href="cls_8h_source.html#l00781">ConservativeLevelSet&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="cls_8h_source.html#l00818">ConservativeLevelSet&lt; dim &gt;::solution_transfer</a>, and <a class="el" href="cls_8h_source.html#l00784">ConservativeLevelSet&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -1746,9 +1748,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00387">387</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00392">392</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00826">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00831">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>.</p>
 
 </div>
 </div>
@@ -1777,9 +1779,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00401">401</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00406">406</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00826">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00831">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>.</p>
 
 </div>
 </div>
@@ -1812,9 +1814,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#af12247ba26a29f99e637d62ed93d1e92">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00338">338</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00343">343</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00781">ConservativeLevelSet&lt; dim &gt;::dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00786">ConservativeLevelSet&lt; dim &gt;::dof_handler</a>.</p>
 
 </div>
 </div>
@@ -1847,9 +1849,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#afb198eb8763f9770a48edccd21073731">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00344">344</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00349">349</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00794">ConservativeLevelSet&lt; dim &gt;::evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00799">ConservativeLevelSet&lt; dim &gt;::evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -1880,9 +1882,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#ae6cc2bfa320526e438a44bd6dc8ee804">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00350">350</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00355">355</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00795">ConservativeLevelSet&lt; dim &gt;::local_evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00800">ConservativeLevelSet&lt; dim &gt;::local_evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -1913,9 +1915,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#afb66d0340d77e712bca30814eef04e5d">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00356">356</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00361">361</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00796">ConservativeLevelSet&lt; dim &gt;::newton_update</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00801">ConservativeLevelSet&lt; dim &gt;::newton_update</a>.</p>
 
 </div>
 </div>
@@ -1946,9 +1948,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#abf527a264ed49a5327db8f48e16ee182">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00374">374</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00379">379</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00799">ConservativeLevelSet&lt; dim &gt;::nonzero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00804">ConservativeLevelSet&lt; dim &gt;::nonzero_constraints</a>.</p>
 
 </div>
 </div>
@@ -1979,9 +1981,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a0a64669b4bbd93475dc816a8291a588f">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00362">362</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00367">367</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00797">ConservativeLevelSet&lt; dim &gt;::present_solution</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00802">ConservativeLevelSet&lt; dim &gt;::present_solution</a>.</p>
 
 </div>
 </div>
@@ -2010,9 +2012,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00380">380</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00385">385</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00826">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00831">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
 </div>
 </div>
@@ -2041,9 +2043,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00394">394</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00399">399</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00826">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00831">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
 </div>
 </div>
@@ -2077,9 +2079,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a365035283c1495135aaee11de8abaa19">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00426">426</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00431">431</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00036">CLS</a>, <a class="el" href="cls_8h_source.html#l00786">ConservativeLevelSet&lt; dim &gt;::mapping</a>, <a class="el" href="cls_8h_source.html#l00776">ConservativeLevelSet&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="cls_8h_source.html#l00779">ConservativeLevelSet&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00036">CLS</a>, <a class="el" href="cls_8h_source.html#l00791">ConservativeLevelSet&lt; dim &gt;::mapping</a>, <a class="el" href="cls_8h_source.html#l00781">ConservativeLevelSet&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="cls_8h_source.html#l00784">ConservativeLevelSet&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -2110,9 +2112,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00368">368</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00373">373</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00798">ConservativeLevelSet&lt; dim &gt;::system_rhs</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00803">ConservativeLevelSet&lt; dim &gt;::system_rhs</a>.</p>
 
 </div>
 </div>
@@ -2213,9 +2215,44 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#abfa7bc1385779d5c7175411f4c8e3264">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00410">410</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00415">415</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00796">ConservativeLevelSet&lt; dim &gt;::newton_update</a>, and <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00801">ConservativeLevelSet&lt; dim &gt;::newton_update</a>, and <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; VectorType &gt;::pcout</a>.</p>
+
+</div>
+</div>
+<a id="ac9f625780362e9915e6d00167167b1dd" name="ac9f625780362e9915e6d00167167b1dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9f625780362e9915e6d00167167b1dd">&#9670;&#160;</a></span>output_per_iteration_timer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classConservativeLevelSet.html">ConservativeLevelSet</a>&lt; dim &gt;::output_per_iteration_timer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Output the per iteration wallclock times. </p>
+
+<p>Implements <a class="el" href="classAuxiliaryPhysics.html#a80ca51c9663936458f15d33e85774e4d">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01983">1983</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00497">announce_string()</a>.</p>
 
 </div>
 </div>
@@ -2317,7 +2354,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01384">1384</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00497">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01221">calculate_L2_error()</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="multiphysics_8h_source.html#l00029">fluid_dynamics</a>, <a class="el" href="interface__tools_8cc_source.html#l00189">InterfaceTools::integrate_barycenter()</a>, <a class="el" href="interface__tools_8cc_source.html#l00070">InterfaceTools::integrate_volume_and_surface()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="utilities_8cc_source.html#l00057">make_table_scalars_tensors()</a>, <a class="el" href="utilities_8cc_source.html#l00022">make_table_scalars_vectors()</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="interface__tools_8cc_source.html#l01764">InterfaceTools::postprocess_isocontour_bounding_values()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00497">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01221">calculate_L2_error()</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="multiphysics_8h_source.html#l00029">fluid_dynamics</a>, <a class="el" href="interface__tools_8cc_source.html#l00189">InterfaceTools::integrate_barycenter()</a>, <a class="el" href="interface__tools_8cc_source.html#l00070">InterfaceTools::integrate_volume_and_surface()</a>, <a class="el" href="utilities_8cc_source.html#l00057">make_table_scalars_tensors()</a>, <a class="el" href="utilities_8cc_source.html#l00022">make_table_scalars_vectors()</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="interface__tools_8cc_source.html#l01764">InterfaceTools::postprocess_isocontour_bounding_values()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -2441,9 +2478,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00746">746</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00751">751</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00029">fluid_dynamics</a>, <a class="el" href="cls_8h_source.html#l00772">ConservativeLevelSet&lt; dim &gt;::multiphysics</a>, and <a class="el" href="cls__scratch__data_8h_source.html#l00345">CLSScratchData&lt; dim &gt;::reinit_face_velocity()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00029">fluid_dynamics</a>, <a class="el" href="cls_8h_source.html#l00777">ConservativeLevelSet&lt; dim &gt;::multiphysics</a>, and <a class="el" href="cls__scratch__data_8h_source.html#l00345">CLSScratchData&lt; dim &gt;::reinit_face_velocity()</a>.</p>
 
 </div>
 </div>
@@ -2963,9 +3000,9 @@ template&lt;int dim&gt; </div>
 
 <p>Verify consistency of the input parameters for boundary conditions to ensure that for every boundary condition within the triangulation, a boundary condition has been specified in the input file. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00442">442</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00447">447</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00776">ConservativeLevelSet&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="cls_8h_source.html#l00779">ConservativeLevelSet&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00781">ConservativeLevelSet&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="cls_8h_source.html#l00784">ConservativeLevelSet&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -3029,7 +3066,7 @@ template&lt;int dim&gt; </div>
 
 <p>AMG preconditioner used by the iterative linear solver of the main conservative level set system. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00834">834</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00839">839</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3055,7 +3092,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00857">857</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00862">862</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3081,7 +3118,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00800">800</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00805">805</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3107,7 +3144,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00787">787</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00792">792</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3133,7 +3170,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00826">826</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00831">831</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3159,7 +3196,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00819">819</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00824">824</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3185,7 +3222,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00821">821</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00826">826</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3211,7 +3248,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00774">774</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00779">779</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3237,7 +3274,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00781">781</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00786">786</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3263,7 +3300,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00783">783</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00788">788</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3289,7 +3326,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00794">794</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00799">799</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3315,7 +3352,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00788">788</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00793">793</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3341,7 +3378,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00782">782</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00787">787</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3367,7 +3404,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00863">863</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00868">868</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3393,7 +3430,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00803">803</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00808">808</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3419,7 +3456,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00828">828</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00833">833</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3445,7 +3482,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00860">860</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00865">865</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3472,7 +3509,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Level-set field obtained from the phase indicator field using a tanh-based transformation </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00807">807</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00812">812</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3498,7 +3535,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00795">795</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00800">800</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3524,7 +3561,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00791">791</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00796">796</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3550,7 +3587,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00792">792</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00797">797</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3576,7 +3613,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00786">786</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00791">791</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3602,7 +3639,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00844">844</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00849">849</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3628,7 +3665,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00822">822</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00827">827</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3654,7 +3691,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00843">843</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00848">848</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3680,7 +3717,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00772">772</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00777">777</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3706,7 +3743,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00796">796</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00801">801</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3732,7 +3769,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00770">770</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00775">775</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3758,7 +3795,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00799">799</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00804">804</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3786,7 +3823,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector of tables containing evolution of phase indicator isocontour bounding values. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00854">854</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00859">859</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3812,7 +3849,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00838">838</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00843">843</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3838,7 +3875,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00837">837</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00842">842</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3864,7 +3901,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00797">797</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00802">802</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3890,7 +3927,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00810">810</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00815">815</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3916,7 +3953,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00815">815</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00820">820</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3942,7 +3979,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00845">845</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00850">850</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3968,7 +4005,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00867">867</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00872">872</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3994,7 +4031,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00871">871</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00876">876</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4020,7 +4057,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00780">780</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00785">785</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4046,7 +4083,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00776">776</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00781">781</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4072,7 +4109,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00813">813</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00818">818</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4098,7 +4135,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00802">802</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00807">807</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4124,7 +4161,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00818">818</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00823">823</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4150,7 +4187,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00798">798</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00803">803</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4176,7 +4213,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00820">820</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00825">825</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4202,7 +4239,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00848">848</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00853">853</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4228,7 +4265,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00841">841</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00846">846</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4254,7 +4291,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00779">779</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00784">784</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4280,7 +4317,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00842">842</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00847">847</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -4306,7 +4343,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00801">801</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00806">806</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>

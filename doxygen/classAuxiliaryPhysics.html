@@ -121,6 +121,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af12247ba26a29f99e637d62ed93d1e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cddfe1a7224404a899d7564d908d098" id="r_a5cddfe1a7224404a899d7564d908d098"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a5cddfe1a7224404a899d7564d908d098">postprocess</a> (bool first_iteration)=0</td></tr>
 <tr class="separator:a5cddfe1a7224404a899d7564d908d098"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80ca51c9663936458f15d33e85774e4d" id="r_a80ca51c9663936458f15d33e85774e4d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a80ca51c9663936458f15d33e85774e4d">output_per_iteration_timer</a> ()=0</td></tr>
+<tr class="separator:a80ca51c9663936458f15d33e85774e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae80e26995eb53ee0ea0239a2390d082f" id="r_ae80e26995eb53ee0ea0239a2390d082f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#ae80e26995eb53ee0ea0239a2390d082f">pre_mesh_adaptation</a> ()=0</td></tr>
 <tr class="separator:ae80e26995eb53ee0ea0239a2390d082f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3870a0c5dc427098c9bec1afc9a668c0" id="r_a3870a0c5dc427098c9bec1afc9a668c0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a3870a0c5dc427098c9bec1afc9a668c0">post_mesh_adaptation</a> ()=0</td></tr>
@@ -515,6 +517,37 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 </div>
 </div>
+<a id="a80ca51c9663936458f15d33e85774e4d" name="a80ca51c9663936458f15d33e85774e4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80ca51c9663936458f15d33e85774e4d">&#9670;&#160;</a></span>output_per_iteration_timer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::output_per_iteration_timer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Output the per iteration wallclock times. </p>
+
+<p>Implemented in <a class="el" href="classCahnHilliard.html#aece85611a77aac21ac44a50b02b99a62">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classConservativeLevelSet.html#ac9f625780362e9915e6d00167167b1dd">ConservativeLevelSet&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a4c1ad969cc09ddc6d9d8db8dc33dd0c8">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a08de7b292b18c52d3d405ef9a5328e98">TimeHarmonicMaxwell&lt; dim &gt;</a>, and <a class="el" href="classTracer.html#aa89a743e0546d1f0f4d9ea3f3a14254d">Tracer&lt; dim &gt;</a>.</p>
+
+</div>
+</div>
 <a id="a0e74925e0067b4bcf2578f18a2f15204" name="a0e74925e0067b4bcf2578f18a2f15204"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0e74925e0067b4bcf2578f18a2f15204">&#9670;&#160;</a></span>percolate_time_vectors()</h2>
 
@@ -764,7 +797,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Reimplemented in <a class="el" href="classTimeHarmonicMaxwell.html#a19bce29a7b265f24d66bbead2898be6b">TimeHarmonicMaxwell&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00205">205</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00210">210</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -797,7 +830,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Reimplemented in <a class="el" href="classTimeHarmonicMaxwell.html#a2d3c064b6bf670746350109f43b90062">TimeHarmonicMaxwell&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00211">211</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00216">216</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>

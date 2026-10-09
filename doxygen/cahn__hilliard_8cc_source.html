@@ -856,152 +856,154 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>        }</div>
 <div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    }</div>
 <div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span> </div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.timer.type ==</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>      <a class="code hl_enumvalue" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::Type::iteration</a>)</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    {</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>      <a class="code hl_function" href="core_2utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Cahn-Hilliard&quot;</span>);</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>      this-&gt;pcout &lt;&lt; std::defaultfloat;</div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>      this-&gt;computing_timer.print_summary();</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>      this-&gt;pcout &lt;&lt; std::scientific;</div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>      this-&gt;computing_timer.reset();</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>    }</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span> </div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.post_processing.calculate_barycenter)</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>    {</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>      <span class="comment">// Calculate volume and mass (this-&gt;mass_monitored)</span></div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>      std::pair&lt;Tensor&lt;1, dim&gt;, Tensor&lt;1, dim&gt;&gt; position_and_velocity;</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span> </div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>      <span class="keywordflow">if</span> (multiphysics-&gt;fluid_dynamics_is_block())</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>        {</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>          <span class="comment">// Check if the post processed variable needs to be calculated with</span></div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>          <span class="comment">// the average velocity profile or the fluid solution.</span></div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>          <span class="keywordflow">if</span> (this-&gt;simulation_parameters.initial_condition-&gt;type ==</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>                <a class="code hl_enumeration" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a>::</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>                  average_velocity_profile &amp;&amp;</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>              !this-&gt;simulation_parameters.multiphysics.fluid_dynamics &amp;&amp;</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>              simulation_control-&gt;get_current_time() &gt;</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>                this-&gt;simulation_parameters.post_processing</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>                  .initial_time_for_average_velocities)</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>            {</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>              position_and_velocity = calculate_barycenter(</div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>                *this-&gt;present_solution,</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>                multiphysics-&gt;get_block_time_average_solution(</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>                  <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>            }</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>          <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>            {</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>              position_and_velocity =</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>                calculate_barycenter(*this-&gt;present_solution,</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>                                     multiphysics-&gt;get_block_solution(</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>                                       <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>            }</div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>        }</div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        {</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>          <span class="comment">// Check if the post processed variable needs to be calculated with</span></div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>          <span class="comment">// the average velocity profile or the fluid solution.</span></div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>          <span class="keywordflow">if</span> (this-&gt;simulation_parameters.initial_condition-&gt;type ==</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>                <a class="code hl_enumeration" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a>::</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>                  average_velocity_profile &amp;&amp;</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>              !this-&gt;simulation_parameters.multiphysics.fluid_dynamics &amp;&amp;</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>              simulation_control-&gt;get_current_time() &gt;</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>                this-&gt;simulation_parameters.post_processing</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>                  .initial_time_for_average_velocities)</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>            {</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>              position_and_velocity =</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>                calculate_barycenter(*this-&gt;present_solution,</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>                                     multiphysics-&gt;get_time_average_solution(</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>                                       <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>            }</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>          <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>            {</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>              position_and_velocity =</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>                calculate_barycenter(*this-&gt;present_solution,</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>                                     multiphysics-&gt;get_solution(</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>                                       <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>            }</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>        }</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>      <span class="keywordflow">if</span> (this_mpi_process == 0)</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>        {</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>          <span class="keywordflow">if</span> (simulation_parameters.post_processing.verbosity ==</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>              <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a>)</div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>            {</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>              std::cout &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>              std::string independent_column_names = <span class="stringliteral">&quot;time&quot;</span>;</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.post_processing.calculate_barycenter)</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    {</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>      <span class="comment">// Calculate volume and mass (this-&gt;mass_monitored)</span></div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>      std::pair&lt;Tensor&lt;1, dim&gt;, Tensor&lt;1, dim&gt;&gt; position_and_velocity;</div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span> </div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>      <span class="keywordflow">if</span> (multiphysics-&gt;fluid_dynamics_is_block())</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>        {</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>          <span class="comment">// Check if the post processed variable needs to be calculated with</span></div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>          <span class="comment">// the average velocity profile or the fluid solution.</span></div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>          <span class="keywordflow">if</span> (this-&gt;simulation_parameters.initial_condition-&gt;type ==</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>                <a class="code hl_enumeration" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a>::</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>                  average_velocity_profile &amp;&amp;</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>              !this-&gt;simulation_parameters.multiphysics.fluid_dynamics &amp;&amp;</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>              simulation_control-&gt;get_current_time() &gt;</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>                this-&gt;simulation_parameters.post_processing</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>                  .initial_time_for_average_velocities)</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>            {</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>              position_and_velocity = calculate_barycenter(</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>                *this-&gt;present_solution,</div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>                multiphysics-&gt;get_block_time_average_solution(</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>                  <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>            }</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>          <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>            {</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>              position_and_velocity =</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>                calculate_barycenter(*this-&gt;present_solution,</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>                                     multiphysics-&gt;get_block_solution(</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>                                       <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>            }</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>        }</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>        {</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>          <span class="comment">// Check if the post processed variable needs to be calculated with</span></div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>          <span class="comment">// the average velocity profile or the fluid solution.</span></div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>          <span class="keywordflow">if</span> (this-&gt;simulation_parameters.initial_condition-&gt;type ==</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>                <a class="code hl_enumeration" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a>::</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>                  average_velocity_profile &amp;&amp;</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>              !this-&gt;simulation_parameters.multiphysics.fluid_dynamics &amp;&amp;</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>              simulation_control-&gt;get_current_time() &gt;</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>                this-&gt;simulation_parameters.post_processing</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>                  .initial_time_for_average_velocities)</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>            {</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>              position_and_velocity =</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>                calculate_barycenter(*this-&gt;present_solution,</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>                                     multiphysics-&gt;get_time_average_solution(</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>                                       <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>            }</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>          <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>            {</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>              position_and_velocity =</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>                calculate_barycenter(*this-&gt;present_solution,</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>                                     multiphysics-&gt;get_solution(</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>                                       <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>            }</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>        }</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>      <span class="keywordflow">if</span> (this_mpi_process == 0)</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        {</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>          <span class="keywordflow">if</span> (simulation_parameters.post_processing.verbosity ==</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>              <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a>)</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>            {</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>              std::cout &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>              std::string independent_column_names = <span class="stringliteral">&quot;time&quot;</span>;</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span> </div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>              std::vector&lt;std::string&gt; dependent_column_names;</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>              dependent_column_names.emplace_back(<span class="stringliteral">&quot;x_cahn_hilliard&quot;</span>);</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>              dependent_column_names.emplace_back(<span class="stringliteral">&quot;y_cahn_hilliard&quot;</span>);</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>              <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>                dependent_column_names.emplace_back(<span class="stringliteral">&quot;z_cahn_hilliard&quot;</span>);</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>              dependent_column_names.emplace_back(<span class="stringliteral">&quot;vx_cahn_hilliard&quot;</span>);</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>              dependent_column_names.emplace_back(<span class="stringliteral">&quot;vy_cahn_hilliard&quot;</span>);</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>              <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>                dependent_column_names.emplace_back(<span class="stringliteral">&quot;vz_cahn_hilliard&quot;</span>);</div>
 <div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span> </div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>              std::vector&lt;std::string&gt; dependent_column_names;</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>              dependent_column_names.emplace_back(<span class="stringliteral">&quot;x_cahn_hilliard&quot;</span>);</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>              dependent_column_names.emplace_back(<span class="stringliteral">&quot;y_cahn_hilliard&quot;</span>);</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>              <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>                dependent_column_names.emplace_back(<span class="stringliteral">&quot;z_cahn_hilliard&quot;</span>);</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>              dependent_column_names.emplace_back(<span class="stringliteral">&quot;vx_cahn_hilliard&quot;</span>);</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>              dependent_column_names.emplace_back(<span class="stringliteral">&quot;vy_cahn_hilliard&quot;</span>);</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>              <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>                dependent_column_names.emplace_back(<span class="stringliteral">&quot;vz_cahn_hilliard&quot;</span>);</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span> </div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>              std::vector&lt;Tensor&lt;1, dim&gt;&gt; position_vector{</div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>                position_and_velocity.first};</div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>              std::vector&lt;Tensor&lt;1, dim&gt;&gt; velocity_vector{</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                position_and_velocity.second};</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span> </div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>              std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>                position_and_velocity_vectors{position_vector, velocity_vector};</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span> </div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>              std::vector&lt;double&gt; time = {</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>                this-&gt;simulation_control-&gt;get_current_time()};</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>              std::vector&lt;Tensor&lt;1, dim&gt;&gt; position_vector{</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>                position_and_velocity.first};</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>              std::vector&lt;Tensor&lt;1, dim&gt;&gt; velocity_vector{</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>                position_and_velocity.second};</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span> </div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>              std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>                position_and_velocity_vectors{position_vector, velocity_vector};</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span> </div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>              std::vector&lt;double&gt; time = {</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>                this-&gt;simulation_control-&gt;get_current_time()};</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span> </div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>              TableHandler table = <a class="code hl_function" href="core_2utilities_8h.html#a40f89884908bf5a561d2cc5f0e5e028d">make_table_scalars_tensors</a>(</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>                time,</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                independent_column_names,</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>                position_and_velocity_vectors,</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>                dependent_column_names,</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>                this-&gt;simulation_parameters.simulation_control.log_precision,</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>                <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span> </div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>              <a class="code hl_function" href="core_2utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Cahn-Hilliard Barycenter&quot;</span>);</div>
 <div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span> </div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>              TableHandler table = <a class="code hl_function" href="core_2utilities_8h.html#a40f89884908bf5a561d2cc5f0e5e028d">make_table_scalars_tensors</a>(</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>                time,</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                independent_column_names,</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                position_and_velocity_vectors,</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                dependent_column_names,</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                this-&gt;simulation_parameters.simulation_control.log_precision,</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                <span class="keyword">true</span>);</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span> </div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>              <a class="code hl_function" href="core_2utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Cahn-Hilliard Barycenter&quot;</span>);</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span> </div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>              table.write_text(std::cout);</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>            }</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span> </div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>          this-&gt;barycenter_table.add_value(</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>            <span class="stringliteral">&quot;time&quot;</span>, simulation_control-&gt;get_current_time());</div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>          this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;x_cahn_hilliard&quot;</span>,</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>                                           position_and_velocity.first[0]);</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>          this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;y_cahn_hilliard&quot;</span>,</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>                                           position_and_velocity.first[1]);</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>            this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;z_cahn_hilliard&quot;</span>,</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>                                             position_and_velocity.first[2]);</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span> </div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>          this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;vx_cahn_hilliard&quot;</span>,</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>                                           position_and_velocity.second[0]);</div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>          this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;vy_cahn_hilliard&quot;</span>,</div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>                                           position_and_velocity.second[1]);</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>            this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;vz_cahn_hilliard&quot;</span>,</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>                                             position_and_velocity.second[2]);</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span> </div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span> </div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>          <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;get_iteration_number() %</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>                this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>              0)</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>            {</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>              <span class="comment">// Save table to .dat</span></div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>              std::string filename =</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>                this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>                this-&gt;simulation_parameters.post_processing</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>                  .barycenter_output_name +</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>                <span class="stringliteral">&quot;.dat&quot;</span>;</div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>              std::ofstream output(filename.c_str());</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>              this-&gt;barycenter_table.write_text(output);</div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>              output.close();</div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>            }</div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>        }</div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>    }</div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>}</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>              table.write_text(std::cout);</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>            }</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span> </div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>          this-&gt;barycenter_table.add_value(</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>            <span class="stringliteral">&quot;time&quot;</span>, simulation_control-&gt;get_current_time());</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>          this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;x_cahn_hilliard&quot;</span>,</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                                           position_and_velocity.first[0]);</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>          this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;y_cahn_hilliard&quot;</span>,</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>                                           position_and_velocity.first[1]);</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>            this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;z_cahn_hilliard&quot;</span>,</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>                                             position_and_velocity.first[2]);</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span> </div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>          this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;vx_cahn_hilliard&quot;</span>,</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>                                           position_and_velocity.second[0]);</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>          this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;vy_cahn_hilliard&quot;</span>,</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>                                           position_and_velocity.second[1]);</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>          <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>            this-&gt;barycenter_table.add_value(<span class="stringliteral">&quot;vz_cahn_hilliard&quot;</span>,</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>                                             position_and_velocity.second[2]);</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span> </div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span> </div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>          <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;get_iteration_number() %</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>                this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>              0)</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>            {</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>              <span class="comment">// Save table to .dat</span></div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>              std::string filename =</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>                this-&gt;simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>                this-&gt;simulation_parameters.post_processing</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>                  .barycenter_output_name +</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>                <span class="stringliteral">&quot;.dat&quot;</span>;</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>              std::ofstream output(filename.c_str());</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>              this-&gt;barycenter_table.write_text(output);</div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>              output.close();</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>            }</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>        }</div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    }</div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>}</div>
 </div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span> </div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span> </div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00864" data-start="{" data-end="}">
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#aece85611a77aac21ac44a50b02b99a62">  864</a></span><a class="code hl_function" href="classCahnHilliard.html#aece85611a77aac21ac44a50b02b99a62">CahnHilliard&lt;dim&gt;::output_per_iteration_timer</a>()</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>{</div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>  <a class="code hl_function" href="core_2utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Cahn-Hilliard&quot;</span>);</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>  this-&gt;pcout &lt;&lt; std::defaultfloat;</div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>  this-&gt;computing_timer.print_summary();</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>  this-&gt;pcout &lt;&lt; std::scientific;</div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>  this-&gt;computing_timer.reset();</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>}</div>
+</div>
 <div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span> </div>
 <div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span><span class="keywordtype">void</span></div>
@@ -1943,6 +1945,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassCahnHilliard_html_ade1e46e3e24c91cf566a00a799c75e36"><div class="ttname"><a href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36">CahnHilliard::set_initial_conditions</a></div><div class="ttdeci">void set_initial_conditions() override</div><div class="ttdoc">Sets-up the initial conditions associated with the physics. Generally, physics only support imposing ...</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard_8cc_source.html#l01271">cahn_hilliard.cc:1271</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_ae7097ba585595d2f1d00ea69498e7603"><div class="ttname"><a href="classCahnHilliard.html#ae7097ba585595d2f1d00ea69498e7603">CahnHilliard::postprocess</a></div><div class="ttdeci">void postprocess(bool first_iteration) override</div><div class="ttdoc">Postprocess the auxiliary physics results. Post-processing this case implies the calculation of all d...</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard_8cc_source.html#l00661">cahn_hilliard.cc:661</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_aebfae6c29cd95f9b3af7f97fd2f1e1f0"><div class="ttname"><a href="classCahnHilliard.html#aebfae6c29cd95f9b3af7f97fd2f1e1f0">CahnHilliard::calculate_phase_energy</a></div><div class="ttdeci">void calculate_phase_energy()</div><div class="ttdoc">Calculate the phase energies : bulk energy, interface energy and total energy.</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard_8cc_source.html#l00506">cahn_hilliard.cc:506</a></div></div>
+<div class="ttc" id="aclassCahnHilliard_html_aece85611a77aac21ac44a50b02b99a62"><div class="ttname"><a href="classCahnHilliard.html#aece85611a77aac21ac44a50b02b99a62">CahnHilliard::output_per_iteration_timer</a></div><div class="ttdeci">void output_per_iteration_timer() override</div><div class="ttdoc">Output the per iteration wallclock times.</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard_8cc_source.html#l00864">cahn_hilliard.cc:864</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_af4a9d35de8e0fbbb2386fbbbd986b0c6"><div class="ttname"><a href="classCahnHilliard.html#af4a9d35de8e0fbbb2386fbbbd986b0c6">CahnHilliard::assemble_local_system_matrix</a></div><div class="ttdeci">virtual void assemble_local_system_matrix(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Assemble the local matrix for a given cell.</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard_8cc_source.html#l00127">cahn_hilliard.cc:127</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_af4cb5f47a1918a7b3aa4827ac0087127"><div class="ttname"><a href="classCahnHilliard.html#af4cb5f47a1918a7b3aa4827ac0087127">CahnHilliard::calculate_L2_error</a></div><div class="ttdeci">std::pair&lt; double, double &gt; calculate_L2_error()</div><div class="ttdoc">Calculates the L2 error of the solution.</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard_8cc_source.html#l00326">cahn_hilliard.cc:326</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_af92cd0dbe8d21a2b38062e4fa49e39b1"><div class="ttname"><a href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1">CahnHilliard::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions() override</div><div class="ttdoc">Update non zero constraints if the boundary is time-dependent.</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard_8cc_source.html#l01213">cahn_hilliard.cc:1213</a></div></div>
@@ -1980,7 +1983,6 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructParameters_1_1LinearSolver_html_abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab"><div class="ttname"><a href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab">Parameters::LinearSolver::PreconditionerType::ilu</a></div><div class="ttdeci">@ ilu</div><div class="ttdoc">Incomplete LU Factorization.</div></div>
 <div class="ttc" id="astructParameters_1_1MultipleAdaptationParameters_html_a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40"><div class="ttname"><a href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly</a></div><div class="ttdeci">@ kelly</div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::TimeSteppingMethod::steady</a></div><div class="ttdeci">@ steady</div></div>
-<div class="ttc" id="astructParameters_1_1Timer_html_a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99"><div class="ttname"><a href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::Type::iteration</a></div><div class="ttdeci">@ iteration</div></div>
 <div class="ttc" id="astructParameters_1_1Timer_html_a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53"><div class="ttname"><a href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::Type::end</a></div><div class="ttdeci">@ end</div></div>
 <div class="ttc" id="atime__harmonic__maxwell_8h_html_a5114f84176ad5081553f88d2b5d2525e"><div class="ttname"><a href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a></div><div class="ttdeci">GlobalVectorType VectorType</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell_8h_source.html#l00062">time_harmonic_maxwell.h:62</a></div></div>
 <div class="ttc" id="atime__integration__utilities_8h_html"><div class="ttname"><a href="time__integration__utilities_8h.html">time_integration_utilities.h</a></div></div>
