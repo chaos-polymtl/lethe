@@ -10,6 +10,7 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/mpi_remote_point_evaluation.h>
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/patterns.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
@@ -27,6 +28,7 @@
 
 #include <magic_enum.hpp>
 
+#include <algorithm>
 #include <fstream>
 #include <map>
 #include <optional>
@@ -34,6 +36,7 @@
 #include <string_view>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 using namespace dealii;
@@ -747,6 +750,191 @@ string_to_enum(const std::string &name)
                     ". The choices are <" + choices + ">."));
     }
   return *value;
+}
+
+/**
+ * @brief Deprecated strings of an enum parameter, each paired with the
+ * enumerator it stands for. These are the values that were accepted before the
+ * parameter strings were made identical to the enumerator identifiers (e.g.
+ * "extra verbose" for Verbosity::extra_verbose). They remain accepted, but
+ * using one of them raises a deprecation warning.
+ *
+ * @tparam EnumType Enumeration type.
+ */
+template <typename EnumType>
+using DeprecatedEnumNames = std::vector<std::pair<std::string, EnumType>>;
+
+/**
+ * @brief Print a warning stating that a deprecated value was given to a
+ * parameter, along with the value which replaces it. The warning is only
+ * printed by the first MPI process.
+ *
+ * @param[in] parameter_name Name of the parameter in the parameter file.
+ *
+ * @param[in] deprecated_value Deprecated value which was given.
+ *
+ * @param[in] new_value Value which replaces @p deprecated_value.
+ */
+void
+warn_deprecated_parameter_value(const std::string &parameter_name,
+                                const std::string &deprecated_value,
+                                const std::string &new_value);
+
+/**
+ * @brief Return the selection string (e.g. "quiet|verbose|extra_verbose") of
+ * an enum parameter, to be given to Patterns::Selection. The choices returned
+ * in the selection string are the enumerator identifiers (meaning, the names
+ * in the enum converted into strings) followed by the
+ * deprecated strings which are still accepted.
+ *
+ * @tparam EnumType Enumeration type.
+ *
+ * @param[in] deprecated_names Deprecated strings which remain accepted.
+ *
+ * @param[in] allowed_values Enumerators (e.g. the enum values, for example
+ * quiet, verbose and extra_vebose) accepted by the parameter. If empty,
+ * all the enumerators (meaning all possible values) of @p EnumType are accepted.
+ * This is necessary because some enums (for example
+ * BoundaryConditions::BoundaryType) contains values which are not accepted for
+ * all physics.
+ *
+ * //TODO Separate the enum for the BoundaryConditions::BoundaryType into a
+ * separate enum for each physics
+ *
+ * @return The choices separated by "|".
+ */
+template <typename EnumType>
+  requires std::is_enum_v<EnumType>
+inline std::string
+enum_to_selection(const DeprecatedEnumNames<EnumType> &deprecated_names = {},
+                  const std::vector<EnumType>         &allowed_values   = {})
+{
+  const auto is_allowed = [&allowed_values](const EnumType value) {
+    return allowed_values.empty() ||
+           std::find(allowed_values.begin(), allowed_values.end(), value) !=
+             allowed_values.end();
+  };
+
+  std::string selection;
+  const auto  add_choice = [&selection](const std::string_view choice) {
+    if (!selection.empty())
+      selection += "|";
+    selection += choice;
+  };
+
+  if (allowed_values.empty())
+    for (const std::string_view name : magic_enum::enum_names<EnumType>())
+      add_choice(name);
+  else
+    for (const EnumType value : allowed_values)
+      add_choice(enum_to_string(value));
+
+  for (const auto &[deprecated_name, value] : deprecated_names)
+    if (is_allowed(value))
+      add_choice(deprecated_name);
+
+  return selection;
+}
+
+/**
+ * @brief Return the sentence listing the choices of an enum parameter (e.g.
+ * "Choices are <quiet|verbose|extra_verbose>."), to be used in the description
+ * of the parameter entry. The choices are the enumerator identifiers, in the
+ * order of the enumeration. The deprecated strings which are still accepted are
+ * deliberately not listed.
+ *
+ * @tparam EnumType Enumeration type.
+ *
+ * @param[in] allowed_values Enumerators accepted by the parameter. If empty,
+ * all the enumerators of @p EnumType are accepted (see enum_to_selection()).
+ *
+ * @return The sentence listing the choices, separated by "|".
+ */
+template <typename EnumType>
+  requires std::is_enum_v<EnumType>
+inline std::string
+enum_to_choices(const std::vector<EnumType> &allowed_values = {})
+{
+  return "Choices are <" + enum_to_selection<EnumType>({}, allowed_values) +
+         ">.";
+}
+
+/**
+ * @brief Declare a parameter entry whose value is an enumerator. The default
+ * value, the accepted values and the choices listed in the description are all
+ * derived from the enumeration, so that they cannot differ from one another.
+ *
+ * The entry is declared with enum_to_string() of @p default_value as default
+ * value, a Patterns::Selection built with enum_to_selection() as pattern and
+ * @p description followed by enum_to_choices() as documentation.
+ *
+ * @tparam EnumType Enumeration type.
+ *
+ * @param[in,out] prm Parameter handler in which the entry is declared.
+ *
+ * @param[in] entry_name Name of the parameter in the parameter file.
+ *
+ * @param[in] default_value Default enumerator of the parameter.
+ *
+ * @param[in] description Description of the parameter, without the list of its
+ * choices, which is appended to it. It should end with a period.
+ *
+ * @param[in] deprecated_names Deprecated strings which remain accepted.
+ *
+ * @param[in] allowed_values Enumerators accepted by the parameter. If empty,
+ * all the enumerators of @p EnumType are accepted (see enum_to_selection()).
+ */
+template <typename EnumType>
+  requires std::is_enum_v<EnumType>
+inline void
+declare_enum_entry(ParameterHandler                    &prm,
+                   const std::string                   &entry_name,
+                   const EnumType                       default_value,
+                   const std::string                   &description,
+                   const DeprecatedEnumNames<EnumType> &deprecated_names = {},
+                   const std::vector<EnumType>         &allowed_values   = {})
+{
+  prm.declare_entry(
+    entry_name,
+    enum_to_string(default_value),
+    Patterns::Selection(
+      enum_to_selection<EnumType>(deprecated_names, allowed_values)),
+    description + " " + enum_to_choices<EnumType>(allowed_values));
+}
+
+/**
+ * @brief Return the enumerator designated by @p name, which is either the
+ * identifier of the enumerator or one of the deprecated strings of the
+ * parameter. In the latter case, a deprecation warning is printed.
+ *
+ * @tparam EnumType Enumeration type.
+ *
+ * @param[in] parameter_value Value of the parameter.
+ *
+ * @param[in] deprecated_names Deprecated strings which remain accepted.
+ *
+ * @param[in] parameter_name Name of the parameter in the parameter file, used
+ * in the deprecation warning.
+ *
+ * @return The enumerator of @p EnumType designated by @p name. An exception is
+ * thrown if @p name is neither an enumerator nor a deprecated string.
+ */
+template <typename EnumType>
+  requires std::is_enum_v<EnumType>
+inline EnumType
+string_to_enum(const std::string                   &name,
+               const DeprecatedEnumNames<EnumType> &deprecated_names,
+               const std::string                   &parameter_name)
+{
+  for (const auto &[deprecated_name, value] : deprecated_names)
+    if (name == deprecated_name)
+      {
+        warn_deprecated_parameter_value(parameter_name,
+                                        deprecated_name,
+                                        enum_to_string(value));
+        return value;
+      }
+  return string_to_enum<EnumType>(name);
 }
 
 /**

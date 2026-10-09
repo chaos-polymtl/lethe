@@ -66,7 +66,7 @@ end
 
 subsection CLS
   subsection interface reinitialization method
-    set type      = pde-based interface reinitialization
+    set type      = pde_based
     set frequency = 4
     subsection PDE-based interface reinitialization
       set diffusivity multiplier = 0.6
@@ -116,7 +116,7 @@ end
 
 subsection post-processing
   set verbosity            = verbose
-  set postprocessed fluid  = fluid 1
+  set postprocessed fluid  = fluid_1
   set calculate barycenter = true
 end
 

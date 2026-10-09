@@ -150,7 +150,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
   end
   subsection tracer
-    set verbosity                             = extra verbose
+    set verbosity                             = extra_verbose
     set method                                = gmres
     set relative residual                     = 1e-13
     set minimum residual                      = 1e-14

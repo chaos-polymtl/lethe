@@ -17,7 +17,7 @@ The default values of the CLS parameters are given in the text box below.
 
   subsection CLS
 
-    set viscous dissipative fluid = fluid 1
+    set viscous dissipative fluid = fluid_1
     set diffusivity               = 0
     set compressible              = false
     
@@ -37,7 +37,7 @@ The default values of the CLS parameters are given in the text box below.
         set threshold max deviation = 0.20
         set max iterations          = 20
         set tolerance               = 1e-6
-        set monitored fluid         = fluid 1
+        set monitored fluid         = fluid_1
       end
       
       subsection geometric interface reinitialization
@@ -77,7 +77,7 @@ The default values of the CLS parameters are given in the text box below.
 
 * ``viscous dissipative fluid``: defines fluid(s) to which viscous dissipation is applied.
 
-  Choices are: ``fluid 0``, ``fluid 1`` (default) or ``both``, with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
+  Choices are: ``fluid_0``, ``fluid_1`` (default) or ``both``, with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
   .. tip::
     Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature. This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`.
@@ -90,7 +90,7 @@ Interface Reinitialization Method
 
 The ``subsection interface reinitialization method`` defines parameters to counter numerical diffusion of the CLS method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
-* ``type``: sets the method of reinitialization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``pde-based interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described below along with their corresponding subsection.
+* ``type``: sets the method of reinitialization. There are four methods available: ``none``, ``projection_based_sharpening``, ``geometric`` (geometric interface reinitialization), and ``pde_based`` (PDE-based interface reinitialization). If ``none`` is selected, the interface is not regularized. The three other types are described below along with their corresponding subsection.
 * ``frequency``: indicates the frequency at which the reinitialization process is applied to the CLS phase indicator field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
 
 * ``verbosity``: displays the solution process of the reinitialization method. The different levels of verbosity are:
@@ -100,14 +100,14 @@ The ``subsection interface reinitialization method`` defines parameters to count
     .. warning::
       The verbosity of the pde-based interface reinitialization (``type = pde-based``) depends also on the verbosity level of the non-linear and linear solvers. If they are set to ``verbose``, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.
 
-  * ``verbose``: displays reinitialization steps progression. For the ``pde-based interface reinitialization``, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
+  * ``verbose``: displays reinitialization steps progression. For the ``pde_based`` method, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
 
-  * ``extra verbose``: for the ``projection-based interface sharpening``, indicates the details of the linear iterations. For the ``pde-based interface reinitialization``, in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
+  * ``extra_verbose``: for the ``projection_based_sharpening`` method, indicates the details of the linear iterations. For the ``pde_based`` method, in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
   
 Projection-Based Interface Sharpening
 +++++++++++++++++++++++++++++++++++++
 
-The ``type = projection-based interface sharpening`` corresponds to a projection-based reinitialization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/cls` theory guide for additional details on this reinitialization method. The ``subsection projection-based interface sharpening`` defines the relevant parameters.
+The ``type = projection_based_sharpening`` corresponds to a projection-based reinitialization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/cls` theory guide for additional details on this reinitialization method. The ``subsection projection-based interface sharpening`` defines the relevant parameters.
 
 * ``interface sharpness``: sharpness of the moving interface, denoted :math:`\alpha` in the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/cls` and :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_ paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
@@ -132,7 +132,7 @@ The ``type = projection-based interface sharpening`` corresponds to a projection
 
     As most of the other iterations converge in only one step (corresponding to a final threshold of :math:`0.5`), increasing the sharpening search range through a higher ``threshold max deviation`` will relax the condition on the first iterations with a limited impact on the computational cost.
     
-* ``monitored fluid``: Fluid in which the mass conservation is monitored to find the adaptive sharpening threshold. The choices are ``fluid 1`` (default) or ``fluid 0``.
+* ``monitored fluid``: Fluid in which the mass conservation is monitored to find the adaptive sharpening threshold. The choices are ``fluid_1`` (default) or ``fluid_0``.
 
 * ``tolerance``: Value of the tolerance on the mass conservation of the monitored fluid.
 
@@ -147,15 +147,15 @@ The ``type = projection-based interface sharpening`` corresponds to a projection
 Geometric Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = geometric interface reinitialization`` reinitializes the phase indicator field by computing the signed distance from the interface. The latter is then converted back to a phase indicator using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Conservative Level-Set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
+The ``type = geometric`` reinitializes the phase indicator field by computing the signed distance from the interface. The latter is then converted back to a phase indicator using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Conservative Level-Set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
 
 * ``max reinitialization distance``: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the ``max reinitialization distance``.
 
-* ``transformation type``: type of the transformation function used to convert the signed distance to a phase indicator. The choices are: ``tanh`` and ``piecewise polynomial``.
+* ``transformation type``: type of the transformation function used to convert the signed distance to a phase indicator. The choices are: ``tanh`` and ``piecewise_polynomial``.
   
   * ``tanh``: the regularized phase indicator is given by :math:`\phi = 0.5-0.5\tanh(d/\varepsilon)`, where :math:`d` is the signed distance to the interface and :math:`\varepsilon` is a measure of the interface thickness and is set by the parameter ``tanh thickness``.
   
-  * ``piecewise polynomial``: this transformation uses a piecewise polynomial function of degree 4. It takes the form:
+  * ``piecewise_polynomial``: this transformation uses a piecewise polynomial function of degree 4. It takes the form:
   
     .. math::
       \phi =
@@ -169,7 +169,7 @@ The ``type = geometric interface reinitialization`` reinitializes the phase indi
 PDE-based Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = pde-based interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase indicator and redefine the interface sharply by resolving a PDE.  The reader is referred to the *PDE-based Interface Reinitialization* section of the :doc:`Conservative level set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``subsection pde-based interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
+The ``type = pde_based`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase indicator and redefine the interface sharply by resolving a PDE.  The reader is referred to the *PDE-based Interface Reinitialization* section of the :doc:`Conservative level set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``subsection pde-based interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
 
 * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the pde-based reinitialization steps. The files are stored in a folder named ``pde-based-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 
@@ -239,7 +239,7 @@ Surface Tension Force
 
     .. attention::
 
-      When the surface tension force is enabled, a ``fluid-fluid`` material interaction and a ``surface tension model`` with its parameters must be specified in the :doc:`physical_properties` subsection.
+      When the surface tension force is enabled, a ``fluid_fluid`` material interaction and a ``surface tension model`` with its parameters must be specified in the :doc:`physical_properties` subsection.
 
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
   * ``output auxiliary fields``: enables the display of the projected ``phase indicator gradient`` and projected ``curvature``. Used for debugging purposes.

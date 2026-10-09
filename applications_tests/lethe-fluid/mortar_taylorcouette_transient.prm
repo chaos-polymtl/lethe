@@ -101,7 +101,7 @@ subsection boundary conditions
   end
   subsection bc 2
     set id   = 2
-    set type = function weak
+    set type = function_weak
     subsection u
       set Function expression = -y
     end

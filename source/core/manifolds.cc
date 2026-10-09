@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/manifolds.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/point.h>
 
@@ -15,12 +16,10 @@ namespace Parameters
   void
   Manifolds::declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc)
   {
-    prm.declare_entry("type",
-                      enum_to_string(ManifoldType::none),
-                      Patterns::Selection(
-                        "none|spherical|cylindrical|iges|step"),
-                      "Type of manifold description"
-                      "Choices are <none|spherical|cylindrical|iges|step>.");
+    declare_enum_entry(prm,
+                       "type",
+                       ManifoldType::none,
+                       "Type of manifold description.");
 
     prm.declare_entry(
       "id",

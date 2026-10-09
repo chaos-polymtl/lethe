@@ -64,19 +64,19 @@ subsection boundary conditions
   set number = 4
   subsection bc 0
     set id   = 0
-    set type = function weak
+    set type = function_weak
   end
   subsection bc 1
     set id   = 1
-    set type = function weak
+    set type = function_weak
   end
   subsection bc 2
     set id   = 2
-    set type = function weak
+    set type = function_weak
   end
   subsection bc 3
     set id   = 3
-    set type = function weak
+    set type = function_weak
   end
 end
 
@@ -154,8 +154,8 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set tracer diffusivity model       = immersed solid tanh
-    set tracer reaction constant model = immersed solid tanh
+    set tracer diffusivity model       = immersed_boundary_tanh
+    set tracer reaction constant model = immersed_boundary_tanh
     set tracer reaction order          = 1.5
     subsection immersed solid tanh
       set tracer diffusivity inside        = 1

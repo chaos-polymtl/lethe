@@ -245,7 +245,7 @@ In the ``CLS`` subsection, we select the ``geometric interface reinitialization`
 
   subsection CLS
     subsection interface reinitialization method
-      set type      = geometric interface reinitialization
+      set type      = geometric
       set frequency = 20
       set verbosity = verbose
       subsection geometric interface reinitialization

@@ -8,51 +8,26 @@ namespace Parameters
 {
   namespace
   {
-    std::string
-    to_string(const VoidFractionQuadratureRule rule)
-    {
-      switch (rule)
-        {
-          case VoidFractionQuadratureRule::gauss:
-            return "gauss";
-          case VoidFractionQuadratureRule::gauss_lobatto:
-            return "gauss-lobatto";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
+    /// Deprecated strings of the void fraction "quadrature rule" parameter
+    const DeprecatedEnumNames<VoidFractionQuadratureRule>
+      deprecated_quadrature_rule_names = {
+        {"gauss-lobatto", VoidFractionQuadratureRule::gauss_lobatto}};
 
-    std::string
-    to_string(const DragCoupling coupling)
-    {
-      switch (coupling)
-        {
-          case DragCoupling::fully_implicit:
-            return "implicit";
-          case DragCoupling::semi_implicit:
-            return "semi-implicit";
-          case DragCoupling::fully_explicit:
-            return "explicit";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
+    /// Deprecated strings of the "drag coupling" parameter
+    const DeprecatedEnumNames<DragCoupling> deprecated_drag_coupling_names = {
+      {"implicit", DragCoupling::fully_implicit},
+      {"semi-implicit", DragCoupling::semi_implicit},
+      {"explicit", DragCoupling::fully_explicit}};
 
-    std::string
-    to_string(const SubSimulationControlDEM::DEMSubIterationLogic logic)
-    {
-      switch (logic)
-        {
-          case SubSimulationControlDEM::DEMSubIterationLogic::
-            fixed_number_of_iterations:
-            return "number of iterations";
-          case SubSimulationControlDEM::DEMSubIterationLogic::
-            fixed_fraction_of_rayleigh_time_step:
-            return "fraction of rayleigh time";
-        }
-      Assert(false, ExcInternalError());
-      return "";
-    }
+    /// Deprecated strings of the "dem iteration control" parameter
+    const DeprecatedEnumNames<SubSimulationControlDEM::DEMSubIterationLogic>
+      deprecated_dem_iteration_control_names = {
+        {"number of iterations",
+         SubSimulationControlDEM::DEMSubIterationLogic::
+           fixed_number_of_iterations},
+        {"fraction of rayleigh time",
+         SubSimulationControlDEM::DEMSubIterationLogic::
+           fixed_fraction_of_rayleigh_time_step}};
   } // namespace
 
   template <int dim>
@@ -60,11 +35,11 @@ namespace Parameters
   VoidFractionParameters<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("void fraction");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "mode",
-      enum_to_string(mode),
-      Patterns::Selection("function|pcm|qcm|spm"),
-      "Choose the method for the calculation of the void fraction");
+      mode,
+      "Choose the method for the calculation of the void fraction.");
     prm.enter_subsection("function");
     void_fraction.declare_parameters(prm);
     prm.leave_subsection();
@@ -97,16 +72,17 @@ namespace Parameters
       Patterns::Tools::Convert<bool>::to_string(qcm_sphere_equal_cell_volume),
       Patterns::Bool(),
       "Specify whether the virtual sphere has the same volume as the mesh element");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "qcm filter type",
-      enum_to_string(qcm_filter_type),
-      Patterns::Selection("spherical|gaussian"),
+      qcm_filter_type,
       "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm smoothing length' is the averaging-sphere radius. With 'gaussian', half of 'qcm smoothing length' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "quadrature rule",
-      to_string(quadrature_rule),
-      Patterns::Selection("gauss|gauss-lobatto"),
-      "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme");
+      quadrature_rule,
+      "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme.",
+      deprecated_quadrature_rule_names);
     prm.declare_entry(
       "n quadrature points",
       Patterns::Tools::Convert<unsigned int>::to_string(n_quadrature_points),
@@ -141,15 +117,10 @@ namespace Parameters
     qcm_filter_type =
       string_to_enum<Parameters::QCMFilterType>(prm.get("qcm filter type"));
 
-    const std::string quadrature_rule_op = prm.get("quadrature rule");
-
-    if (quadrature_rule_op == "gauss")
-      quadrature_rule = Parameters::VoidFractionQuadratureRule::gauss;
-    else if (quadrature_rule_op == "gauss-lobatto")
-      quadrature_rule = Parameters::VoidFractionQuadratureRule::gauss_lobatto;
-    else
-      throw(std::runtime_error(
-        "Invalid quadrature rule for the void fraction calculation scheme. Options are 'gauss' or 'gauss-lobatto'"));
+    quadrature_rule = string_to_enum<Parameters::VoidFractionQuadratureRule>(
+      prm.get("quadrature rule"),
+      deprecated_quadrature_rule_names,
+      "quadrature rule");
 
     n_quadrature_points = prm.get_integer("n quadrature points");
 
@@ -221,16 +192,17 @@ namespace Parameters
         defaults.vortical_viscous_torque),
       Patterns::Bool(),
       "Choose whether or not to apply vortical viscous torque on particles");
-    prm.declare_entry("drag model",
-                      enum_to_string(defaults.drag_model),
-                      Patterns::Selection(
-                        "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
-                      "The drag model used to determine the drag coefficient");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
+      "drag model",
+      defaults.drag_model,
+      "The drag model used to determine the drag coefficient.");
+    declare_enum_entry(
+      prm,
       "dem iteration control",
-      to_string(defaults.dem_iteration_control),
-      Patterns::Selection("number of iterations|fraction of rayleigh time"),
-      "The strategy used to control the DEM iterations in CFD-DEM simulations");
+      defaults.dem_iteration_control,
+      "The strategy used to control the DEM iterations in CFD-DEM simulations.",
+      deprecated_dem_iteration_control_names);
     prm.declare_entry("coupling frequency",
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.coupling_frequency),
@@ -242,10 +214,10 @@ namespace Parameters
         defaults.fraction_of_rayleigh_time),
       Patterns::Double(0., 1.),
       "Fraction of Rayleigh time used to control the DEM iterations.");
-    prm.declare_entry("vans model",
-                      enum_to_string(defaults.vans_model),
-                      Patterns::Selection("modelA|modelB"),
-                      "The volume averaged Navier Stokes model to be solved.");
+    declare_enum_entry(prm,
+                       "vans model",
+                       defaults.vans_model,
+                       "The volume averaged Navier Stokes model to be solved.");
     prm.declare_entry(
       "grad-div length scale",
       Patterns::Tools::Convert<double>::to_string(defaults.cstar),
@@ -264,11 +236,12 @@ namespace Parameters
       Patterns::Bool(),
       "Outputs statistics about the particles such as their total kinetic energy, angular momentum, etc.");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "drag coupling",
-      to_string(defaults.drag_coupling),
-      Patterns::Selection("implicit|semi-implicit|explicit"),
-      "Formulation for the drag force. Choices are implicit|semi-implicit|explicit. The default value is semi-implicit, which represents the legacy coupling method.");
+      defaults.drag_coupling,
+      "Formulation for the drag force. The default value is semi_implicit, which represents the legacy coupling method.",
+      deprecated_drag_coupling_names);
 
     prm.declare_entry(
       "project particle forces",
@@ -303,30 +276,18 @@ namespace Parameters
     particle_statistics        = prm.get_bool("particle statistics");
     project_particle_forces    = prm.get_bool("project particle forces");
 
-    const std::string it_ctrl = prm.get("dem iteration control");
-    if (it_ctrl == "number of iterations")
-      dem_iteration_control = SubSimulationControlDEM::DEMSubIterationLogic::
-        fixed_number_of_iterations;
-    else if (it_ctrl == "fraction of rayleigh time")
-      dem_iteration_control = SubSimulationControlDEM::DEMSubIterationLogic::
-        fixed_fraction_of_rayleigh_time_step;
-    else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "An invalid dem iteration control strategy was parsed. Simulation will now stop."));
+    dem_iteration_control =
+      string_to_enum<SubSimulationControlDEM::DEMSubIterationLogic>(
+        prm.get("dem iteration control"),
+        deprecated_dem_iteration_control_names,
+        "dem iteration control");
 
     drag_model = string_to_enum<Parameters::DragModel>(prm.get("drag model"));
 
-    const std::string drag_coupling_str = prm.get("drag coupling");
-    if (drag_coupling_str == "implicit")
-      drag_coupling = Parameters::DragCoupling::fully_implicit;
-    else if (drag_coupling_str == "explicit")
-      drag_coupling = Parameters::DragCoupling::fully_explicit;
-    else if (drag_coupling_str == "semi-implicit")
-      drag_coupling = Parameters::DragCoupling::semi_implicit;
-    else
-      AssertThrow(false, ExcMessage("Drag coupling formulation"));
+    drag_coupling =
+      string_to_enum<Parameters::DragCoupling>(prm.get("drag coupling"),
+                                               deprecated_drag_coupling_names,
+                                               "drag coupling");
 
     vans_model = string_to_enum<Parameters::VANSModel>(prm.get("vans model"));
     prm.leave_subsection();

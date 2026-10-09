@@ -560,7 +560,7 @@ private:
    * @param gather_cls Boolean true when CLS=true (multiphase flow), used to gather
    * CLS information.
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * @param monitored_fluid Fluid indicator (fluid_0 or fluid_1 or both) corresponding
    * to the phase of interest.
    *
    * @param domain_name String indicating the monitored_fluid in the output filename.
@@ -652,7 +652,7 @@ private:
    * @param gather_cls Boolean true when CLS=true (multiphase flow), used to gather
    * CLS information.
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * @param monitored_fluid Fluid indicator (fluid_0 or fluid_1 or both) corresponding
    * to the phase of interest.
    *
    * @param domain_name String indicating the monitored_fluid in the console output,
@@ -693,7 +693,7 @@ private:
    * @param gather_cls boolean true when CLS=true (multiphase flow), used to gather
    * CLS information
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * @param monitored_fluid Fluid indicator (fluid_0 or fluid_1 or both) corresponding
    * to the phase of interest.
    *
    * @param phase_value_q double corresponding to the phase value at this quadrature point

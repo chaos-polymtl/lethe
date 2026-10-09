@@ -276,7 +276,7 @@ Physical Properties
 
 The ``physical properties`` subsection sets the material properties for the metal and gas phase. It is in this subsection that we activate the phase change by setting the solid and liquid properties for the metal phase, in the same fashion as in the :doc:`Stefan problem <../stefan-problem/stefan-problem>` and :doc:`melting cavity <../melting-cavity/melting-cavity>` examples. However, since we consider an alloy (TI6Al4V), the phase change occurs over a temperature range. Hence, the difference between the ``liquidus temperature`` and ``solidus temperature`` corresponds to the real temperature range in which the solid and liquid TI6Al4V coexist (mushy zone). 
 
-We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Marangoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
+We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Marangoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase_change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
   
 .. code-block:: text
 
@@ -312,11 +312,11 @@ We also set in this subsection the reference surface tension coefficient of the 
 
       set number of material interactions = 1
       subsection material interaction 0
-        set type = fluid-fluid
+        set type = fluid_fluid
         subsection fluid-fluid interaction
           set first fluid id                              = 0
           set second fluid id                             = 1
-          set surface tension model                       = phase change
+          set surface tension model                       = phase_change
           set surface tension coefficient                 = 1.52
           set reference state temperature                 = 1928.0
           set temperature-driven surface tension gradient = -5.5e-4

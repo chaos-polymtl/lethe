@@ -36,7 +36,7 @@ subsection CLS
   subsection interface reinitialization method
     set type      = REINITIALIZATION_TYPE
     set frequency = REINITIALIZATION_FREQUENCY
-    set verbosity = extra verbose
+    set verbosity = extra_verbose
     subsection projection-based interface sharpening
       set threshold           = 0.5
       set interface sharpness = 1.5
@@ -109,7 +109,7 @@ subsection physical properties
   end
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
+    set type = fluid_fluid
     subsection fluid-fluid interaction
       set first fluid id              = 0
       set second fluid id             = 1

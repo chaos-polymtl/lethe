@@ -308,12 +308,13 @@ namespace Parameters
 
     prm.enter_subsection("nitsche");
     {
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "verbosity",
-        "quiet",
-        Patterns::Selection("quiet|verbose"),
-        "State whether the force on the solid should be printed "
-        "Choices are <quiet|verbose>.");
+        Verbosity::quiet,
+        "State whether the force on the solid should be printed.",
+        deprecated_verbosity_names(),
+        quiet_or_verbose());
 
       prm.declare_entry("number of solids",
                         "0",
@@ -335,11 +336,9 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
-      const std::string op = prm.get("verbosity");
-      if (op == "verbose")
-        verbosity = Verbosity::verbose;
-      if (op == "quiet")
-        verbosity = Verbosity::quiet;
+      verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                            deprecated_verbosity_names(),
+                                            "verbosity");
 
       number_solids = prm.get_integer("number of solids");
       nitsche_solids.resize(number_solids);
@@ -444,12 +443,10 @@ namespace Parameters
                         Patterns::List(Patterns::Double()),
                         "Solid object center of rotation");
 
-      prm.declare_entry("thermal boundary type",
-                        enum_to_string(
-                          SolidObjectThermalBoundaryType::adiabatic),
-                        Patterns::Selection("adiabatic|isothermal"),
-                        "Choosing thermal boundary type"
-                        "Choices are <adiabatic|isothermal>.");
+      declare_enum_entry(prm,
+                         "thermal boundary type",
+                         SolidObjectThermalBoundaryType::adiabatic,
+                         "Choosing thermal boundary type.");
 
       // Isothermal boundary
       prm.enter_subsection("temperature");

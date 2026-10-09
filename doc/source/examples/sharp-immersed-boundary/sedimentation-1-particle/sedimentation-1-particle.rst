@@ -48,7 +48,7 @@ Simulation Control
 
     subsection simulation control
       set method             = bdf2
-      set bdf startup method = multiple step bdf
+      set bdf startup method = multiple_step_bdf
       set time step          = 0.0025 # Time step
       set time end           = 1.3    # End time of simulation
       set output name        = out    # Prefix for VTU outputs
@@ -58,7 +58,7 @@ Simulation Control
 
 * The ``method`` is set to  ``bdf2`` to have a second-order time-stepping method. This ensures a low error due to the time discretization in this case.
 
-* The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. We use a multiple step bdf approach that will ramp the order of the scheme in the first few time steps.
+* The ``bdf startup method`` is set to  ``multiple_step_bdf``  as we do not have an initial solution that allows us to generate previous time steps. We use a multiple step bdf approach that will ramp the order of the scheme in the first few time steps.
 
 * The ``time step`` is set to  0.0025. This ensures a low error due to the time discretization for this case.
 

@@ -151,7 +151,7 @@ The surface tension force computation is enabled in the ``CLS`` subsection. The 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The ``density`` and the ``kinematic viscosity`` of the two fluids involved in this example are set in the subsection ``physical properties``. To neglect buoyancy, the density of both fluids is set to :math:`10.0`. The kinematic viscosity is set to :math:`0.1` for both fluids. Finally, a ``fluid-fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`1.0`.
+The ``density`` and the ``kinematic viscosity`` of the two fluids involved in this example are set in the subsection ``physical properties``. To neglect buoyancy, the density of both fluids is set to :math:`10.0`. The kinematic viscosity is set to :math:`0.1` for both fluids. Finally, a ``fluid_fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`1.0`.
 
 .. code-block:: text
 
@@ -167,7 +167,7 @@ The ``density`` and the ``kinematic viscosity`` of the two fluids involved in th
       end
       set number of material interactions = 1
       subsection material interaction 0
-        set type = fluid-fluid
+        set type = fluid_fluid
         subsection fluid-fluid interaction
           set first fluid id              = 0
           set second fluid id             = 1

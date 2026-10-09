@@ -1,9 +1,34 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/shape_parsing.h>
 
 #include <algorithm>
+
+template <int dim>
+const DeprecatedEnumNames<typename Shape<dim>::ShapeType> &
+ShapeGenerator::deprecated_shape_type_names()
+{
+  using ShapeType = typename Shape<dim>::ShapeType;
+  static const DeprecatedEnumNames<ShapeType> names = {
+    {"hyper rectangle", ShapeType::hyper_rectangle},
+    {"cylindrical tube", ShapeType::cylindrical_tube},
+    {"cylindrical helix", ShapeType::cylindrical_helix},
+    {"cut hollow sphere", ShapeType::cut_hollow_sphere},
+    {"death star", ShapeType::death_star}};
+  return names;
+}
+
+template <int dim>
+typename Shape<dim>::ShapeType
+ShapeGenerator::string_to_shape_type(const std::string &type)
+{
+  for (const auto &[deprecated_name, shape_type] :
+       deprecated_shape_type_names<dim>())
+    if (type == deprecated_name)
+      return shape_type;
+  return string_to_enum<typename Shape<dim>::ShapeType>(type);
+}
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
@@ -12,9 +37,13 @@ ShapeGenerator::initialize_shape(const std::string  &type,
                                  const Point<dim>   &position,
                                  const Tensor<1, 3> &orientation)
 {
+  using ShapeType            = typename Shape<dim>::ShapeType;
+  const ShapeType shape_type = string_to_shape_type<dim>(type);
+
   std::shared_ptr<Shape<dim>> shape;
   std::vector<double>         shape_arguments;
-  if (type == "rbf" || type == "composite" || type == "opencascade")
+  if (shape_type == ShapeType::rbf || shape_type == ShapeType::composite ||
+      shape_type == ShapeType::opencascade)
     {
       shape = initialize_shape_from_file(type,
                                          shape_arguments_str,
@@ -42,11 +71,14 @@ ShapeGenerator::initialize_shape_from_vector(
   const Point<dim>          &position,
   const Tensor<1, 3>        &orientation)
 {
+  using ShapeType            = typename Shape<dim>::ShapeType;
+  const ShapeType shape_type = string_to_shape_type<dim>(type);
+
   std::shared_ptr<Shape<dim>> shape;
-  if (type == "sphere")
+  if (shape_type == ShapeType::sphere)
     shape =
       std::make_shared<Sphere<dim>>(shape_arguments[0], position, orientation);
-  else if (type == "hyper rectangle")
+  else if (shape_type == ShapeType::hyper_rectangle)
     {
       Tensor<1, dim> half_lengths;
       for (int i = 0; i < dim; ++i)
@@ -57,7 +89,7 @@ ShapeGenerator::initialize_shape_from_vector(
                                                     position,
                                                     orientation);
     }
-  else if (type == "ellipsoid")
+  else if (shape_type == ShapeType::ellipsoid)
     {
       Tensor<1, dim> radii;
       for (int i = 0; i < dim; ++i)
@@ -66,7 +98,7 @@ ShapeGenerator::initialize_shape_from_vector(
         }
       shape = std::make_shared<Ellipsoid<dim>>(radii, position, orientation);
     }
-  else if (type == "superquadric")
+  else if (shape_type == ShapeType::superquadric)
     {
       if constexpr (dim == 3)
         {
@@ -86,7 +118,7 @@ ShapeGenerator::initialize_shape_from_vector(
             half_lengths, exponents, epsilon, position, orientation);
         }
     }
-  else if (type == "torus")
+  else if (shape_type == ShapeType::torus)
     {
       if constexpr (dim == 3)
         shape = std::make_shared<Torus<dim>>(shape_arguments[0],
@@ -94,7 +126,7 @@ ShapeGenerator::initialize_shape_from_vector(
                                              position,
                                              orientation);
     }
-  else if (type == "cone")
+  else if (shape_type == ShapeType::cone)
     {
       if constexpr (dim == 3)
         shape = std::make_shared<Cone<dim>>(shape_arguments[0],
@@ -102,7 +134,7 @@ ShapeGenerator::initialize_shape_from_vector(
                                             position,
                                             orientation);
     }
-  else if (type == "cylinder")
+  else if (shape_type == ShapeType::cylinder)
     {
       if constexpr (dim == 3)
         shape = std::make_shared<Cylinder<dim>>(shape_arguments[0],
@@ -110,7 +142,7 @@ ShapeGenerator::initialize_shape_from_vector(
                                                 position,
                                                 orientation);
     }
-  else if (type == "cylindrical tube")
+  else if (shape_type == ShapeType::cylindrical_tube)
     {
       if constexpr (dim == 3)
         shape = std::make_shared<CylindricalTube<dim>>(shape_arguments[0],
@@ -119,7 +151,7 @@ ShapeGenerator::initialize_shape_from_vector(
                                                        position,
                                                        orientation);
     }
-  else if (type == "cylindrical helix")
+  else if (shape_type == ShapeType::cylindrical_helix)
     {
       if constexpr (dim == 3)
         shape = std::make_shared<CylindricalHelix<dim>>(shape_arguments[0],
@@ -129,7 +161,7 @@ ShapeGenerator::initialize_shape_from_vector(
                                                         position,
                                                         orientation);
     }
-  else if (type == "cut hollow sphere")
+  else if (shape_type == ShapeType::cut_hollow_sphere)
     {
       if constexpr (dim == 3)
         shape = std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
@@ -138,7 +170,7 @@ ShapeGenerator::initialize_shape_from_vector(
                                                        position,
                                                        orientation);
     }
-  else if (type == "death star")
+  else if (shape_type == ShapeType::death_star)
     {
       if constexpr (dim == 3)
         shape = std::make_shared<DeathStar<dim>>(shape_arguments[0],
@@ -147,7 +179,7 @@ ShapeGenerator::initialize_shape_from_vector(
                                                  position,
                                                  orientation);
     }
-  else if (type == "plane")
+  else if (shape_type == ShapeType::plane)
     {
       shape = std::make_shared<Plane<dim>>(position, orientation);
     }
@@ -163,13 +195,16 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
                                            const Point<dim>   &position,
                                            const Tensor<1, 3> &orientation)
 {
+  using ShapeType            = typename Shape<dim>::ShapeType;
+  const ShapeType shape_type = string_to_shape_type<dim>(type);
+
   std::shared_ptr<Shape<dim>> shape;
   std::vector<double>         shape_arguments;
-  if (type == "rbf")
+  if (shape_type == ShapeType::rbf)
     {
       shape = std::make_shared<RBFShape<dim>>(file_name, position, orientation);
     }
-  else if (type == "composite")
+  else if (shape_type == ShapeType::composite)
     {
       // The following lines retrieve information regarding a
       // composite shape.
@@ -304,7 +339,7 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
       else
         throw std::invalid_argument(file_name);
     }
-  else if (type == "opencascade")
+  else if (shape_type == ShapeType::opencascade)
     {
       shape = std::make_shared<OpenCascadeShape<dim>>(file_name,
                                                       position,
@@ -313,6 +348,14 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
   return shape;
 }
 
+template const DeprecatedEnumNames<Shape<2>::ShapeType> &
+ShapeGenerator::deprecated_shape_type_names<2>();
+template const DeprecatedEnumNames<Shape<3>::ShapeType> &
+ShapeGenerator::deprecated_shape_type_names<3>();
+template Shape<2>::ShapeType
+ShapeGenerator::string_to_shape_type<2>(const std::string &type);
+template Shape<3>::ShapeType
+ShapeGenerator::string_to_shape_type<3>(const std::string &type);
 template std::shared_ptr<Shape<2>>
 ShapeGenerator::initialize_shape(const std::string  &type,
                                  const std::string  &arguments,

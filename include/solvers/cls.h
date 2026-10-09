@@ -108,7 +108,7 @@ public:
    *
    * @param current_solution_fd current solution for the fluid dynamics
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
+   * @param monitored_fluid Fluid indicator (fluid_0 or fluid_1) corresponding to
    * the phase of interest.
    */
   template <typename VectorType>
@@ -125,8 +125,8 @@ public:
    *
    * @param[in] current_solution_fd current solution for the fluid dynamics
    *
-   * @param[in] monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding
-   * to the phase of interest.
+   * @param[in] monitored_fluid Fluid indicator (fluid_0 or fluid_1)
+   * corresponding to the phase of interest.
    *
    * @return A tensor<1,dim> corresponding to the entry_string in the prm file.
    */
@@ -631,7 +631,7 @@ private:
    * test multiple sharpening threshold in the binary search algorithm
    * (adaptive sharpening).
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
+   * @param monitored_fluid Fluid indicator (fluid_0 or fluid_1) corresponding to
    * the phase of interest.
    *
    * @param sharpening_threshold Interface sharpening threshold that represents the

@@ -40,7 +40,7 @@ subsection CLS
     set output auxiliary fields = true
   end
   subsection interface reinitialization method
-    set type      = projection-based interface sharpening
+    set type      = projection_based_sharpening
     set frequency = 20
     subsection projection-based interface sharpening
       set interface sharpness = 1.5
@@ -84,7 +84,7 @@ subsection physical properties
   end
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
+    set type = fluid_fluid
     subsection fluid-fluid interaction
       set surface tension coefficient = 0.0674
     end

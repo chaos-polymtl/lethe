@@ -320,7 +320,7 @@ All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows t
         set drag model                    = difelice
         set coupling frequency            = 100
         set vans model                    = modelA
-        set drag coupling                 = semi-implicit
+        set drag coupling                 = semi_implicit
         set project particle forces       = true
     end
 

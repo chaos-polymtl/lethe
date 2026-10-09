@@ -143,10 +143,10 @@ box below.
 
   * ``none`` (default): the solution is left in dimensionless form and output
     as such.
-  * ``electric field``: rescaled so the electric field matches
+  * ``electric_field``: rescaled so the electric field matches
     ``electric field amplitude``, and the magnetic field matches
     :math:`H_0 = E_0 / Z_0`.
-  * ``magnetic field``: rescaled so the magnetic field matches
+  * ``magnetic_field``: rescaled so the magnetic field matches
     ``magnetic field amplitude``, and the electric field matches
     :math:`E_0 = Z_0 H_0`.
   * ``power``: rescaled so the power delivered through the waveguide inlet
@@ -181,10 +181,10 @@ box below.
     other physics, since the other physics expect dimensional fields.
 
 * ``electric field amplitude``: the reference amplitude :math:`E_0` used as the
-  target amplitude when ``electromagnetic scaling type = electric field``.
+  target amplitude when ``electromagnetic scaling type = electric_field``.
 
 * ``magnetic field amplitude``: the reference amplitude :math:`H_0 = E_0 / Z_0` used as
-  the target amplitude when ``electromagnetic scaling type = magnetic field``.
+  the target amplitude when ``electromagnetic scaling type = magnetic_field``.
 
 * ``number of waveguide inlets``: number of ``waveguide inlet`` subsections to
   apply on the geometry boundary. See also the

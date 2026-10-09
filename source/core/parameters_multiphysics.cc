@@ -33,56 +33,30 @@ namespace Parameters
 {
   namespace
   {
-    std::string
-    to_string(const Parameters::RedistanciationTransformationType type)
-    {
-      switch (type)
-        {
-          case Parameters::RedistanciationTransformationType::tanh:
-            return "tanh";
-          case Parameters::RedistanciationTransformationType::
-            piecewise_polynomial:
-            return "piecewise polynomial";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
+    /// Deprecated strings of the "transformation type" parameter
+    const DeprecatedEnumNames<Parameters::RedistanciationTransformationType>
+      deprecated_transformation_type_names = {
+        {"piecewise polynomial",
+         Parameters::RedistanciationTransformationType::piecewise_polynomial}};
 
-    std::string
-    to_string(const Parameters::ReinitializationMethodType type)
-    {
-      switch (type)
-        {
-          case Parameters::ReinitializationMethodType::none:
-            return "none";
-          case Parameters::ReinitializationMethodType::sharpening:
-            return "projection-based interface sharpening";
-          case Parameters::ReinitializationMethodType::pde_based:
-            return "pde-based interface reinitialization";
-          case Parameters::ReinitializationMethodType::geometric:
-            return "geometric interface reinitialization";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
+    /// Deprecated strings of the interface reinitialization method "type"
+    /// parameter
+    const DeprecatedEnumNames<Parameters::ReinitializationMethodType>
+      deprecated_reinitialization_method_type_names = {
+        {"projection-based interface sharpening",
+         Parameters::ReinitializationMethodType::projection_based_sharpening},
+        {"pde-based interface reinitialization",
+         Parameters::ReinitializationMethodType::pde_based},
+        {"geometric interface reinitialization",
+         Parameters::ReinitializationMethodType::geometric}};
 
-    std::string
-    to_string(const Parameters::ElectromagneticScalingType type)
-    {
-      switch (type)
-        {
-          case Parameters::ElectromagneticScalingType::none:
-            return "none";
-          case Parameters::ElectromagneticScalingType::electric_field:
-            return "electric field";
-          case Parameters::ElectromagneticScalingType::magnetic_field:
-            return "magnetic field";
-          case Parameters::ElectromagneticScalingType::power:
-            return "power";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
+    /// Deprecated strings of the "electromagnetic scaling type" parameter
+    const DeprecatedEnumNames<Parameters::ElectromagneticScalingType>
+      deprecated_electromagnetic_scaling_type_names = {
+        {"electric field",
+         Parameters::ElectromagneticScalingType::electric_field},
+        {"magnetic field",
+         Parameters::ElectromagneticScalingType::magnetic_field}};
   } // namespace
 } // namespace Parameters
 
@@ -183,11 +157,12 @@ Parameters::CLS::declare_parameters(ParameterHandler &prm) const
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
 
-    prm.declare_entry("viscous dissipative fluid",
-                      to_string(viscous_dissipative_fluid),
-                      Patterns::Selection("fluid 0|fluid 1|both"),
-                      "Fluid to which the viscous dissipation is applied "
-                      "in the heat equation <fluid 0|fluid 1|both>");
+    declare_enum_entry(prm,
+                       "viscous dissipative fluid",
+                       viscous_dissipative_fluid,
+                       "Fluid to which the viscous dissipation is applied "
+                       "in the heat equation.",
+                       deprecated_fluid_indicator_names());
 
     prm.declare_entry(
       "diffusivity",
@@ -216,16 +191,10 @@ Parameters::CLS::parse_parameters(ParameterHandler &prm)
     phase_filter.parse_parameters(prm);
 
     // Viscous dissipative fluid
-    const std::string op = prm.get("viscous dissipative fluid");
-    if (op == "fluid 1")
-      viscous_dissipative_fluid = Parameters::FluidIndicator::fluid1;
-    else if (op == "fluid 0")
-      viscous_dissipative_fluid = Parameters::FluidIndicator::fluid0;
-    else if (op == "both")
-      viscous_dissipative_fluid = Parameters::FluidIndicator::both;
-    else
-      throw(std::runtime_error("Invalid viscous dissipative fluid. "
-                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
+    viscous_dissipative_fluid =
+      string_to_enum<FluidIndicator>(prm.get("viscous dissipative fluid"),
+                                     deprecated_fluid_indicator_names(),
+                                     "viscous dissipative fluid");
 
     diffusivity = prm.get_double("diffusivity");
 
@@ -240,12 +209,11 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
 {
   prm.enter_subsection("interface reinitialization method");
   {
-    prm.declare_entry(
-      "type",
-      to_string(reinitialization_method_type),
-      Patterns::Selection(
-        "none|projection-based interface sharpening|pde-based interface reinitialization|geometric interface reinitialization"),
-      "CLS interface reinitialization method");
+    declare_enum_entry(prm,
+                       "type",
+                       reinitialization_method_type,
+                       "CLS interface reinitialization method.",
+                       deprecated_reinitialization_method_type_names);
 
     prm.declare_entry(
       "frequency",
@@ -254,13 +222,13 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
       "Reinitialization frequency (number of time steps) at which the "
       "interface reinitialization process will be applied to the CLS "
       "phase indicator field.");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "verbosity",
-      to_string(verbosity),
-      Patterns::Selection("quiet|verbose|extra verbose"),
+      verbosity,
       "States whether the output from the interface reinitialization method "
-      "should be printed. "
-      "Choices are <quiet|verbose|extra verbose>.");
+      "should be printed.",
+      deprecated_verbosity_names());
 
     sharpening.declare_parameters(prm);
     pde_based_interface_reinitialization.declare_parameters(prm);
@@ -274,47 +242,26 @@ Parameters::CLS_ReinitializationMethod::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface reinitialization method");
   {
-    const std::string t = prm.get("type");
-    if (t == "none")
-      this->reinitialization_method_type =
-        Parameters::ReinitializationMethodType::none;
-    else if (t == "projection-based interface sharpening")
-      {
-        reinitialization_method_type =
-          Parameters::ReinitializationMethodType::sharpening;
-        sharpening.enable = true;
-      }
-    else if (t == "pde-based interface reinitialization")
-      {
-        this->reinitialization_method_type =
-          Parameters::ReinitializationMethodType::pde_based;
-        pde_based_interface_reinitialization.enable = true;
-      }
-    else if (t == "geometric interface reinitialization")
-      {
-        this->reinitialization_method_type =
-          Parameters::ReinitializationMethodType::geometric;
-        geometric_interface_reinitialization.enable = true;
-      }
-    else
-      throw(
-        std::runtime_error("Invalid interface reinitialization method type!"));
+    this->reinitialization_method_type =
+      string_to_enum<Parameters::ReinitializationMethodType>(
+        prm.get("type"), deprecated_reinitialization_method_type_names, "type");
+    if (this->reinitialization_method_type ==
+        Parameters::ReinitializationMethodType::projection_based_sharpening)
+      sharpening.enable = true;
+    else if (this->reinitialization_method_type ==
+             Parameters::ReinitializationMethodType::pde_based)
+      pde_based_interface_reinitialization.enable = true;
+    else if (this->reinitialization_method_type ==
+             Parameters::ReinitializationMethodType::geometric)
+      geometric_interface_reinitialization.enable = true;
 
     this->frequency = prm.get_integer("frequency");
     Assert(this->frequency > 0,
            ReinitializationMethodFrequencyError(this->frequency));
 
-    const std::string op2 = prm.get("verbosity");
-    if (op2 == "quiet")
-      this->verbosity = Parameters::Verbosity::quiet;
-    else if (op2 == "verbose")
-      this->verbosity = Parameters::Verbosity::verbose;
-    else if (op2 == "extra verbose")
-      this->verbosity = Parameters::Verbosity::extra_verbose;
-    else
-      throw(std::invalid_argument("Invalid verbosity level\n "
-                                  "Options are: \n"
-                                  " <quiet|verbose|extra verbose>"));
+    this->verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                                deprecated_verbosity_names(),
+                                                "verbosity");
 
     this->sharpening.parse_parameters(prm);
     this->pde_based_interface_reinitialization.parse_parameters(prm);
@@ -329,14 +276,14 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
   const CLS_InterfaceSharpening defaults;
   prm.enter_subsection("projection-based interface sharpening");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection("constant|adaptive"),
+      defaults.type,
       "CLS interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
       "if adaptive the sharpening threshold is determined by binary search, "
-      "to ensure mass conservation of the monitored phase");
+      "to ensure mass conservation of the monitored phase.");
 
     // Parameters for constant sharpening
     prm.declare_entry(
@@ -374,11 +321,13 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptive sharpening");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "monitored fluid",
-      to_string(defaults.monitored_fluid),
-      Patterns::Selection("fluid 0|fluid 1"),
-      "Fluid for which conservation is monitored <fluid 0|fluid 1>, used with adaptive sharpening.");
+      defaults.monitored_fluid,
+      "Fluid for which conservation is monitored, used with adaptive sharpening.",
+      deprecated_fluid_indicator_names(),
+      single_fluid_indicators());
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.
@@ -411,14 +360,10 @@ Parameters::CLS_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
     tolerance               = prm.get_double("tolerance");
 
     // Monitored fluid
-    const std::string op_mf = prm.get("monitored fluid");
-    if (op_mf == "fluid 1")
-      monitored_fluid = Parameters::FluidIndicator::fluid1;
-    else if (op_mf == "fluid 0")
-      monitored_fluid = Parameters::FluidIndicator::fluid0;
-    else
-      throw(std::runtime_error("Invalid monitored fluid. "
-                               "Options are 'fluid 0' or 'fluid 1'."));
+    monitored_fluid =
+      string_to_enum<FluidIndicator>(prm.get("monitored fluid"),
+                                     deprecated_fluid_indicator_names(),
+                                     "monitored fluid");
 
     // Error definitions
     Assert(threshold > 0.0 && threshold < 1.0,
@@ -462,12 +407,13 @@ Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Factor applied to the filter for curvature calculations to damp high-frequency errors");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "verbosity",
-      to_string(defaults.verbosity),
-      Patterns::Selection("quiet|verbose"),
-      "State whether the output from the surface tension force calculations should be printed "
-      "Choices are <quiet|verbose>.");
+      defaults.verbosity,
+      "State whether the output from the surface tension force calculations should be printed.",
+      deprecated_verbosity_names(),
+      quiet_or_verbose());
 
 
     prm.declare_entry("enable marangoni effect",
@@ -491,13 +437,9 @@ Parameters::CLS_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
 
     output_cls_auxiliary_fields = prm.get_bool("output auxiliary fields");
 
-    const std::string op = prm.get("verbosity");
-    if (op == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (op == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
-    else
-      throw(std::runtime_error("Invalid verbosity level"));
+    verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                          deprecated_verbosity_names(),
+                                          "verbosity");
 
     enable_marangoni_effect = prm.get_bool("enable marangoni effect");
   }
@@ -510,16 +452,18 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
   const CLS_PhaseFilter defaults;
   prm.enter_subsection("phase filtration");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection("none|tanh"),
+      defaults.type,
       "CLS phase indicator filtration type, "
       "if <none> is selected, the phase won't be filtered; "
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = 0.5 \\tanh(\\beta(\\alpha-0.5)) + 0.5; "
       "where \\beta is a parameter influencing the interface thickness that "
-      "must be defined");
+      "must be defined.",
+      {},
+      {Parameters::FilterType::none, Parameters::FilterType::tanh});
     prm.declare_entry(
       "beta",
       Patterns::Tools::Convert<double>::to_string(defaults.beta),
@@ -527,11 +471,12 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
-    prm.declare_entry("verbosity",
-                      to_string(defaults.verbosity),
-                      Patterns::Selection("quiet|verbose|extra verbose"),
-                      "States whether the filtered data should be printed "
-                      "Choices are <quiet|verbose>.");
+    declare_enum_entry(prm,
+                       "verbosity",
+                       defaults.verbosity,
+                       "States whether the filtered data should be printed.",
+                       deprecated_verbosity_names(),
+                       quiet_or_verbose());
   }
   prm.leave_subsection();
 }
@@ -548,13 +493,9 @@ Parameters::CLS_PhaseFilter::parse_parameters(ParameterHandler &prm)
     beta = prm.get_double("beta");
 
     // Verbosity
-    const std::string filter_v = prm.get("verbosity");
-    if (filter_v == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (filter_v == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
-    else
-      throw(std::logic_error("Invalid verbosity level"));
+    verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                          deprecated_verbosity_names(),
+                                          "verbosity");
   }
   prm.leave_subsection();
 }
@@ -642,12 +583,13 @@ Parameters::CLS_GeometricInterfaceReinitialization::declare_parameters(
                         defaults.max_reinitialization_distance),
                       Patterns::Double(),
                       "Maximum reinitialization distance value");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "transformation type",
-      to_string(defaults.transformation_type),
-      Patterns::Selection("tanh|piecewise polynomial"),
+      defaults.transformation_type,
       "Transformation function used to get the phase indicator from the signed "
-      "distance");
+      "distance.",
+      deprecated_transformation_type_names);
     prm.declare_entry("tanh thickness",
                       Patterns::Tools::Convert<double>::to_string(
                         defaults.tanh_thickness),
@@ -666,18 +608,11 @@ Parameters::CLS_GeometricInterfaceReinitialization::parse_parameters(
     this->output_signed_distance = prm.get_bool("output signed distance");
     this->max_reinitialization_distance =
       prm.get_double("max reinitialization distance");
-    const std::string t = prm.get("transformation type");
-    if (t == "tanh")
-      this->transformation_type =
-        Parameters::RedistanciationTransformationType::tanh;
-    else if (t == "piecewise polynomial")
-      {
-        this->transformation_type =
-          Parameters::RedistanciationTransformationType::piecewise_polynomial;
-      }
-    else
-      throw(std::runtime_error(
-        "Invalid transformation type for the geometric interface reinitialization method!"));
+    this->transformation_type =
+      string_to_enum<Parameters::RedistanciationTransformationType>(
+        prm.get("transformation type"),
+        deprecated_transformation_type_names,
+        "transformation type");
     this->tanh_thickness = prm.get_double("tanh thickness");
   }
   prm.leave_subsection();
@@ -689,17 +624,17 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
   const CahnHilliard_PhaseFilter defaults;
   prm.enter_subsection("phase filtration");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection("none|clip|tanh"),
+      defaults.type,
       "CahnHilliard phase filtration type, "
       "if <none> is selected, the phase won't be filtered; "
       "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1); "
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = \\tanh(\\beta\\alpha); "
       "where beta is a parameter influencing the interface thickness that "
-      "must be defined");
+      "must be defined.");
     prm.declare_entry(
       "beta",
       Patterns::Tools::Convert<double>::to_string(defaults.beta),
@@ -707,11 +642,12 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
-    prm.declare_entry("verbosity",
-                      to_string(defaults.verbosity),
-                      Patterns::Selection("quiet|verbose|extra verbose"),
-                      "States whether the filtered data should be printed "
-                      "Choices are <quiet|verbose>.");
+    declare_enum_entry(prm,
+                       "verbosity",
+                       defaults.verbosity,
+                       "States whether the filtered data should be printed.",
+                       deprecated_verbosity_names(),
+                       quiet_or_verbose());
   }
   prm.leave_subsection();
 }
@@ -728,13 +664,9 @@ Parameters::CahnHilliard_PhaseFilter::parse_parameters(ParameterHandler &prm)
     beta = prm.get_double("beta");
 
     // Verbosity
-    const std::string filter_v = prm.get("verbosity");
-    if (filter_v == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (filter_v == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
-    else
-      throw(std::logic_error("Invalid verbosity level"));
+    verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                          deprecated_verbosity_names(),
+                                          "verbosity");
   }
   prm.leave_subsection();
 }
@@ -755,11 +687,11 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
 
     prm.enter_subsection("epsilon");
     {
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "method",
-        enum_to_string(epsilon_set_method),
-        Patterns::Selection("automatic|manual"),
-        "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)");
+        epsilon_set_method,
+        "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual).");
 
       prm.declare_entry(
         "value",
@@ -767,11 +699,11 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
         Patterns::Double(),
         "Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element");
 
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "verbosity",
-        enum_to_string(epsilon_verbosity),
-        Patterns::Selection("quiet|verbose"),
-        "Display the value of epsilon for each time iteration if set to verbose");
+        epsilon_verbosity,
+        "Display the value of epsilon for each time iteration if set to verbose.");
     }
     prm.leave_subsection();
   }
@@ -814,10 +746,10 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
   {
     prm.enter_subsection("time coupling strategy");
     {
-      prm.declare_entry("type",
-                        enum_to_string(time_coupling_strategy),
-                        Patterns::Selection("none|iteration|time|threshold"),
-                        "The type of time coupling strategy to use.");
+      declare_enum_entry(prm,
+                         "type",
+                         time_coupling_strategy,
+                         "The type of time coupling strategy to use.");
 
       prm.declare_entry(
         "coupling iteration",
@@ -854,11 +786,12 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
       Patterns::Double(0),
       "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "electromagnetic scaling type",
-      to_string(electromagnetic_scaling_type),
-      Patterns::Selection("none|electric field|magnetic field|power"),
-      "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.");
+      electromagnetic_scaling_type,
+      "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.",
+      deprecated_electromagnetic_scaling_type_names);
 
     prm.declare_entry(
       "electric field amplitude",
@@ -879,9 +812,10 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
                       "Number of waveguide inlets in the simulation.");
 
     // Declare a fixed maximum number of waveguide inlets.
-    // Only the ones specified by "number of waveguide inlets" will be parsed.
-    // This is necessary because declare_parameters runs before the file is
-    // read, so we can't know the actual number of inlets at declaration time.
+    // Only the ones specified by "number of waveguide inlets" will be
+    // parsed. This is necessary because declare_parameters runs before the
+    // file is read, so we can't know the actual number of inlets at
+    // declaration time.
     constexpr unsigned int max_waveguide_inlets = 10;
 
     for (unsigned int inlet = 0; inlet < max_waveguide_inlets; ++inlet)
@@ -902,10 +836,10 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
           prm.enter_subsection("waveguide mode");
           {
-            prm.declare_entry(
+            declare_enum_entry(
+              prm,
               "mode type",
-              "TE",
-              Patterns::Selection("TE|TM"),
+              Parameters::WaveguideMode::TE,
               "The waveguide mode excitation for a rectangular waveguide can be either Transverse Electric (TE) or Transverse Magnetic (TM).");
 
             prm.declare_entry(
@@ -975,30 +909,15 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
       prm.get_double("electromagnetic frequency") *
       dimensions.electromagnetic_frequency_scaling;
 
-    const std::string op_scaling_type = prm.get("electromagnetic scaling type");
-    if (op_scaling_type == "none")
-      TimeHarmonicMaxwell::electromagnetic_scaling_type =
-        Parameters::ElectromagneticScalingType::none;
-    else if (op_scaling_type == "electric field")
-      TimeHarmonicMaxwell::electromagnetic_scaling_type =
-        Parameters::ElectromagneticScalingType::electric_field;
-    else if (op_scaling_type == "magnetic field")
-      TimeHarmonicMaxwell::electromagnetic_scaling_type =
-        Parameters::ElectromagneticScalingType::magnetic_field;
-    else if (op_scaling_type == "power")
-      TimeHarmonicMaxwell::electromagnetic_scaling_type =
-        Parameters::ElectromagneticScalingType::power;
-    else
-      AssertThrow(false,
-                  ExcMessage(
-                    "Invalid electromagnetic scaling type. "
-                    "Options are <none|electric field|magnetic field|power>."));
+    TimeHarmonicMaxwell::electromagnetic_scaling_type =
+      string_to_enum<Parameters::ElectromagneticScalingType>(
+        prm.get("electromagnetic scaling type"),
+        deprecated_electromagnetic_scaling_type_names,
+        "electromagnetic scaling type");
 
-
-
-    // The user always provides the electric and magnetic field amplitudes in
-    // dimensional units (V/m and A/m respectively). The scaling factors will be
-    // applied in the time_harmonic_maxwell class.
+    // The user always provides the electric and magnetic field amplitudes
+    // in dimensional units (V/m and A/m respectively). The scaling factors
+    // will be applied in the time_harmonic_maxwell class.
     TimeHarmonicMaxwell::electric_field_amplitude =
       prm.get_double("electric field amplitude");
 
@@ -1008,8 +927,8 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
     TimeHarmonicMaxwell::number_of_waveguide_inlets =
       prm.get_integer("number of waveguide inlets");
 
-    // Ensure that the number of waveguide inlets is smaller than the maximum
-    // declared in declare_parameters.
+    // Ensure that the number of waveguide inlets is smaller than the
+    // maximum declared in declare_parameters.
     AssertThrow(
       TimeHarmonicMaxwell::number_of_waveguide_inlets <= 10,
       ExcMessage(
@@ -1045,20 +964,8 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
 
           prm.enter_subsection("waveguide mode");
           {
-            const std::string op_mode_type = prm.get("mode type");
-            if (op_mode_type == "TE")
-              {
-                TimeHarmonicMaxwell::waveguide_mode[inlet] =
-                  Parameters::WaveguideMode::TE;
-              }
-            else if (op_mode_type == "TM")
-              {
-                TimeHarmonicMaxwell::waveguide_mode[inlet] =
-                  Parameters::WaveguideMode::TM;
-              }
-            else
-              throw(std::runtime_error("Invalid waveguide mode type. "
-                                       "Options are 'TE' or 'TM'."));
+            TimeHarmonicMaxwell::waveguide_mode[inlet] =
+              string_to_enum<Parameters::WaveguideMode>(prm.get("mode type"));
 
             TimeHarmonicMaxwell::mode_order_m[inlet] =
               prm.get_integer("mode order m");
@@ -1091,8 +998,8 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
             }
 
           // In 3D, verify that the provided corners define a coplanar
-          // quadrilateral. This is not useful in 2D as any 2 points are always
-          // collinear.
+          // quadrilateral. This is not useful in 2D as any 2 points are
+          // always collinear.
           if constexpr (dim == 3)
             {
               const Tensor<1, dim> vec1 =
@@ -1105,11 +1012,12 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
                 tmp_corners[3] -
                 tmp_corners[0]; // Vector from corner 1 to corner 4
 
-              // The triple scalar product (determinant) scales as the volume of
-              // the parallelepiped defined by the three vectors. So we make the
-              // it dimensionless by a characteristic volume (product of the
-              // norms of the three vectors). This way we can set a tolerance
-              // that is independent of the actual size of the waveguide.
+              // The triple scalar product (determinant) scales as the
+              // volume of the parallelepiped defined by the three vectors.
+              // So we make the it dimensionless by a characteristic volume
+              // (product of the norms of the three vectors). This way we
+              // can set a tolerance that is independent of the actual size
+              // of the waveguide.
               const double determinant =
                 scalar_product(vec3, cross_product_3d(vec1, vec2)) /
                 (vec1.norm() * vec2.norm() * vec3.norm());

@@ -114,7 +114,7 @@ For the heat transfer, we set the boundary conditions as follows:
     set number = 3
     subsection bc 0
       set id    = 0
-      set type = convection-radiation-flux
+      set type = convection_radiation
       subsection h
         set Function expression = 10
       end
@@ -137,7 +137,7 @@ For the heat transfer, we set the boundary conditions as follows:
     end
     subsection bc 2
       set id    = 2
-      set type = convection-radiation-flux
+      set type = convection_radiation
       subsection h
         set Function expression = 0
       end

@@ -108,7 +108,7 @@ To prevent the interface between phases from becoming blurry due to diffusion, t
 
     subsection CLS
       subsection interface reinitialization method
-        set type      = geometric interface reinitialization
+        set type      = geometric
         set frequency = 10
         set verbosity = verbose
         subsection geometric interface reinitialization
