@@ -120,7 +120,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
           // The random numbers are identical on every process, so each particle
           // uses the offsets associated with its global index
           Tensor<1, dim> offsets;
-          for (unsigned int d = 0; d < dim; ++d)
+          for (int d = 0; d < dim; ++d)
             offsets[d] = random_number_vector.at(dim * global_index + d);
 
           find_insertion_location(insertion_location,
