@@ -376,6 +376,22 @@ public:
     this->probe_postprocessor.write_probing_points_tables();
   }
 
+  /**
+   * @brief Output the per iteration wallclock times.
+   */
+  void
+  output_per_iteration_timer()
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->output_per_iteration_timer();
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->output_per_iteration_timer();
+      }
+  }
+
 
   /**
    * @brief Prepare the auxiliary physics for mesh adaptation

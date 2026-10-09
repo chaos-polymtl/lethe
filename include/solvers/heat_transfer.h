@@ -224,6 +224,11 @@ public:
   void
   postprocess(bool first_iteration) override;
 
+  /**
+   * @brief Output the per iteration wallclock times.
+   */
+  void
+  output_per_iteration_timer() override;
 
   /**
    * @brief Prepare the auxiliary physics variables for a

@@ -166,6 +166,11 @@ public:
   void
   postprocess(bool first_iteration) override;
 
+  /**
+   * @brief Output the per iteration wallclock times.
+   */
+  void
+  output_per_iteration_timer() override;
 
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
