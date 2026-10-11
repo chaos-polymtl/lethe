@@ -30,13 +30,15 @@ add_library(lethe-dem
   particle_handler_conversion.cc
   particle_heat_transfer.cc
   particle_particle_broad_search.cc
-  particle_particle_contact_force.cc
+  particle_particle_contact_force_2d.cc
+  particle_particle_contact_force_3d.cc
   particle_particle_fine_search.cc
   particle_point_line_broad_search.cc
   particle_point_line_contact_force.cc
   particle_point_line_fine_search.cc
   particle_wall_broad_search.cc
-  particle_wall_contact_force.cc
+  particle_wall_contact_force_2d.cc
+  particle_wall_contact_force_3d.cc
   particle_wall_fine_search.cc
   periodic_boundaries_manipulator.cc
   ray_tracing.cc
@@ -84,12 +86,14 @@ add_library(lethe-dem
   ../../include/dem/particle_heat_transfer.h
   ../../include/dem/particle_particle_broad_search.h
   ../../include/dem/particle_particle_contact_force.h
+  ../../include/dem/particle_particle_contact_force.templates.h
   ../../include/dem/particle_particle_fine_search.h
   ../../include/dem/particle_point_line_broad_search.h
   ../../include/dem/particle_point_line_contact_force.h
   ../../include/dem/particle_point_line_fine_search.h
   ../../include/dem/particle_wall_broad_search.h
   ../../include/dem/particle_wall_contact_force.h
+  ../../include/dem/particle_wall_contact_force.templates.h
   ../../include/dem/particle_wall_fine_search.h
   ../../include/dem/particle_wall_rolling_resistance_torque.h
   ../../include/dem/periodic_boundaries_manipulator.h

@@ -1,6 +1,18 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#ifndef lethe_particle_wall_contact_force_templates_h
+#define lethe_particle_wall_contact_force_templates_h
+
+// This file contains the definitions of the member functions of
+// ParticleWallContactForce that are not defined in the class body.
+// They are in a header rather than in a source file because the explicit
+// instantiations of the class are distributed over two source files
+// (particle_wall_contact_force_2d.cc and
+// particle_wall_contact_force_3d.cc) so that they are compiled in parallel.
+// Only these source files should include this header; everything else should
+// include particle_wall_contact_force.h.
+
 #include <core/auxiliary_math_functions.h>
 
 #include <dem/contact_type.h>
@@ -11,13 +23,11 @@
 #include <ranges>
 #include <vector>
 
-using namespace DEM;
-using namespace Parameters::Lagrangian;
-
-template <int dim,
-          typename PropertiesIndex,
-          ParticleWallContactForceModel contact_model,
-          RollingResistanceMethod       rolling_friction_model>
+template <
+  int dim,
+  typename PropertiesIndex,
+  Parameters::Lagrangian::ParticleWallContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod       rolling_friction_model>
 ParticleWallContactForce<dim,
                          PropertiesIndex,
                          contact_model,
@@ -33,17 +43,18 @@ ParticleWallContactForce<dim,
     }
 }
 
-template <int dim,
-          typename PropertiesIndex,
-          ParticleWallContactForceModel contact_model,
-          RollingResistanceMethod       rolling_friction_model>
+template <
+  int dim,
+  typename PropertiesIndex,
+  Parameters::Lagrangian::ParticleWallContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod       rolling_friction_model>
 void
 ParticleWallContactForce<dim,
                          PropertiesIndex,
                          contact_model,
                          rolling_friction_model>::
   calculate_particle_wall_contact(
-    typename dem_data_structures<dim>::particle_wall_in_contact
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                 &particle_wall_pairs_in_contact,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
@@ -198,17 +209,18 @@ ParticleWallContactForce<dim,
     }
 }
 
-template <int dim,
-          typename PropertiesIndex,
-          ParticleWallContactForceModel contact_model,
-          RollingResistanceMethod       rolling_friction_model>
+template <
+  int dim,
+  typename PropertiesIndex,
+  Parameters::Lagrangian::ParticleWallContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod       rolling_friction_model>
 void
 ParticleWallContactForce<dim,
                          PropertiesIndex,
                          contact_model,
                          rolling_friction_model>::
   calculate_particle_solid_object_contact(
-    typename dem_data_structures<
+    typename DEM::dem_data_structures<
       dim>::particle_floating_mesh_potentially_in_contact
                 &particle_floating_mesh_potentially_in_contact,
     const double dt,
@@ -251,7 +263,7 @@ ParticleWallContactForce<dim,
         solid_contact_records[solid_counter];
       contact_record.clear();
 
-      typename dem_data_structures<
+      typename DEM::dem_data_structures<
         dim>::particle_triangle_cell_from_mesh_potentially_in_contact
         &particle_floating_mesh_potential_contact_pair =
           particle_floating_mesh_potentially_in_contact[solid_counter];
@@ -655,10 +667,11 @@ ParticleWallContactForce<dim,
 }
 
 
-template <int dim,
-          typename PropertiesIndex,
-          ParticleWallContactForceModel contact_model,
-          RollingResistanceMethod       rolling_friction_model>
+template <
+  int dim,
+  typename PropertiesIndex,
+  Parameters::Lagrangian::ParticleWallContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod       rolling_friction_model>
 void
 ParticleWallContactForce<dim,
                          PropertiesIndex,
@@ -772,10 +785,11 @@ ParticleWallContactForce<dim,
     }
 }
 
-template <int dim,
-          typename PropertiesIndex,
-          ParticleWallContactForceModel contact_model,
-          RollingResistanceMethod       rolling_friction_model>
+template <
+  int dim,
+  typename PropertiesIndex,
+  Parameters::Lagrangian::ParticleWallContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod       rolling_friction_model>
 void
 ParticleWallContactForce<dim,
                          PropertiesIndex,
@@ -857,639 +871,4 @@ ParticleWallContactForce<dim,
     dem_parameters.boundary_conditions.boundary_temperature;
 }
 
-// dem
-// No resistance
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  2,
-  DEM::DEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  3,
-  DEM::DEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::none>;
-
-// Constant resistance
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  2,
-  DEM::DEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  3,
-  DEM::DEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::constant>;
-
-// Viscous resistance
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  2,
-  DEM::DEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  3,
-  DEM::DEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::viscous>;
-
-// EPSD resistance
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  2,
-  DEM::DEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  3,
-  DEM::DEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::epsd>;
-
-// cfd_dem
-// No resistance
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::none>;
-
-// Constant resistance
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::constant>;
-
-// Viscous resistance
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::viscous>;
-
-// EPSD resistance
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<2,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<3,
-                                        DEM::CFDDEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::epsd>;
-
-// dem_mp
-//  No resistance
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::none>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::none>;
-
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::none>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::none>;
-
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::none>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::none>;
-
-template class ParticleWallContactForce<
-  2,
-  DEM::DEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::none>;
-
-template class ParticleWallContactForce<
-  3,
-  DEM::DEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<2,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::shift,
-                                        RollingResistanceMethod::none>;
-template class ParticleWallContactForce<3,
-                                        DEM::DEMProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::shift,
-                                        RollingResistanceMethod::none>;
-
-// Constant resistance
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::constant>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::constant>;
-
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::constant>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::constant>;
-
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::constant>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::constant>;
-
-template class ParticleWallContactForce<
-  2,
-  DEM::DEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::constant>;
-
-template class ParticleWallContactForce<
-  3,
-  DEM::DEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::constant>;
-
-// Viscous resistance
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::viscous>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::viscous>;
-
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::viscous>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::viscous>;
-
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::viscous>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::viscous>;
-
-template class ParticleWallContactForce<
-  2,
-  DEM::DEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::viscous>;
-
-template class ParticleWallContactForce<
-  3,
-  DEM::DEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::viscous>;
-
-// EPSD resistance
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::epsd>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::DMT,
-                                        RollingResistanceMethod::epsd>;
-
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::epsd>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::JKR,
-                                        RollingResistanceMethod::epsd>;
-
-template class ParticleWallContactForce<2,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::epsd>;
-
-template class ParticleWallContactForce<3,
-                                        DEM::DEMMPProperties::PropertiesIndex,
-                                        ParticleWallContactForceModel::linear,
-                                        RollingResistanceMethod::epsd>;
-
-template class ParticleWallContactForce<
-  2,
-  DEM::DEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::epsd>;
-
-template class ParticleWallContactForce<
-  3,
-  DEM::DEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::epsd>;
-
-// cfd_dem_mp
-//  No resistance
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::DMT,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::DMT,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::JKR,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::JKR,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::linear,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::linear,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::none>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::none>;
-// Constant resistance
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::DMT,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::DMT,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::JKR,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::JKR,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::linear,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::linear,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::constant>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::constant>;
-// Viscous resistance
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::DMT,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::DMT,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::JKR,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::JKR,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::linear,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::linear,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::viscous>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::viscous>;
-// EPSD resistance
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::DMT,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::DMT,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::JKR,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::JKR,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::linear,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::linear,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::epsd>;
-template class ParticleWallContactForce<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex,
-  ParticleWallContactForceModel::nonlinear,
-  RollingResistanceMethod::epsd>;
+#endif

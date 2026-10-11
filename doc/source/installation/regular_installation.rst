@@ -199,6 +199,9 @@ or
 
   cmake ../lethe -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/username/path/to/installation
 
+.. tip::
+  Every application and every unit test of Lethe is a separate executable, and linking them with the default GNU linker (``ld``) is slow, especially in Debug. If the `mold <https://github.com/rui314/mold>`_ or `lld <https://lld.llvm.org/>`_ linker is installed (e.g. ``sudo apt-get install lld``), Lethe links with it automatically, unless deal.II was already configured with one of them. CMake then prints ``Linking Lethe with lld`` (or ``mold``) during the configuration. This can be disabled with ``-DLETHE_USE_FAST_LINKER=OFF``, and a specific linker can be requested with ``-DCMAKE_LINKER_TYPE``.
+
 Then you can compile:
 
 .. code-block:: text
