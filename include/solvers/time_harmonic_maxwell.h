@@ -56,8 +56,8 @@
  * three-dimensional spaces and requires the 3 sets of Finite Element spaces
  * that define the DPG method: the interior trial space that is discontinuous
  * between elements, the skeleton trace space that lives on the faces of the
- *mesh elements and connects the interior solutions of adjacent elements, and
- *the test space that is enriched compared to the trial space and is also
+ * mesh elements and connects the interior solutions of adjacent elements, and
+ * the test space that is enriched compared to the trial space and is also
  * discontinuous between elements.
  **/
 
@@ -488,7 +488,9 @@ private:
    * the linear system on the skeleton only. The local DPG system of each cell
    * is assembled again to compute the interior solution
    * \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ and the DPG residual
-   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$.
+   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ when the dpg error
+   * estimator is activated. The latter is only used to compute the error
+   * estimate on the cell and is not stored anywhere else.
    */
   void
   reconstruct_interior_solution();
@@ -523,7 +525,8 @@ private:
     DPGCopyData                                          &copy_data);
 
   /**
-   * @brief Assemble the local DPG system of a cell and condense it on the
+   * @brief Assemble the local DPG system of a cell using the function
+   * `assemble_local_dpg_system` and condense it on the
    * skeleton unknowns. The condensed matrix is \f$M_3 - M_2^\dagger M_1^{-1}
    * M_2\f$ and the condensed right-hand side is \f$(M_5 - M_2^\dagger
    * M_1^{-1} M_4) l\f$.
@@ -552,16 +555,17 @@ private:
 
   /**
    * @brief WorkStream worker of the interior reconstruction. It assembles the
-   * local DPG system of a cell with assemble_local_dpg_system() and uses the
+   * local DPG system of a cell with `assemble_local_dpg_system()` and uses the
    * skeleton solution of the cell \f$\hat{u}_h\f$ to compute:
    * - the interior solution of the cell
    *   \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$;
-   * - if the dpg error estimator is activated, the DPG residual of the cell
-   *   (Riesz representation of the residual)
-   *   \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ and the squared
+   * - if the DPG error estimator is activated, the error representation
+   *   function of the cell, which is the Riesz representation of the residual
+   *   in the test space (it solves \f$G \Psi = R\f$),
+   *   \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$, and the squared
    *   energy norm of the residual
-   *   \f$\|R\|^2_V = (l - B u_h - \hat{B}\hat{u}_h)^\dagger \Psi\f$, which is
-   *   the DPG error indicator of the cell.
+   *   \f$\|R\|^2_V = R^\dagger G^{-1} R = (l - B u_h -
+   *   \hat{B}\hat{u}_h)^\dagger \Psi\f$.
    *
    * @param[in] cell The cell of the interior trial space DoFHandler.
    *
@@ -581,13 +585,13 @@ private:
    * @brief WorkStream copier of the interior reconstruction. It adds the
    * interior solution of a cell, computed by
    * `reconstruct_local_interior_solution`, in the global vector
-   * locally_owned_solution_interior. This is done with the dof indices of the
+   * `locally_owned_solution_interior`. This is done with the dof indices of the
    * cell stored in the copy data, which is
    * equivalent to cell->distribute_local_to_global(local_vector,
    * global_vector), since the copier does not have access to the cell. If the
-   * dpg error estimator is activated, it also stores the error indicator of
-   * the cell in local_estimated_error_per_cell and adds its squared norm to
-   * squared_residual_L2_norm.
+   * DPG error estimator is activated, it also stores the error indicator of
+   * the cell in `local_estimated_error_per_cell` and adds its squared norm to
+   * `squared_residual_L2_norm`.
    *
    * @param[in] copy_data Copy data containing the interior solution, the
    * squared norm of the DPG residual and the dof indices of the cell.
@@ -625,38 +629,6 @@ private:
   void
   print_THM_setup_memory(
     const TrilinosWrappers::SparsityPattern &sparsity_pattern);
-
-
-  /**
-   * @brief Updates the material properties during the assembly of the system matrix.
-   * @note The time-harmonic Maxwell equations do not support multiple
-   * fluids so the fluid_id is not necessary to determine the material
-   * properties. The material properties only depend on the material_id, which
-   * is used to identify the different materials in the input file and assign
-   * them their corresponding properties.
-   *
-   *  @param[in] physical_properties_manager The object that manages the
-   * physical properties of the problem and provides them at any given position
-   * of the domain.
-   * @param[in] field_values A map containing the values of the fields at the
-   * current position. This is used to compute the material properties that
-   * depend on the fields.
-   *  @param[in] material_id The material id of the current position, used to
-   * determine the appropriate material properties from the input parameters.
-   *  @param[out] effective_electric_permittivity Effective electric
-   * permittivity at the current position. This value is updated in place by the
-   * function.
-   *  @param[out] effective_magnetic_permeability Effective magnetic
-   * permeability at the current position. This value is updated in place by the
-   * function.
-   */
-  void
-  update_material_properties(
-    const PhysicalPropertiesManager &physical_properties_manager,
-    const std::map<field, double>   &field_values,
-    const unsigned int               material_id,
-    std::complex<double>            &effective_electric_permittivity,
-    std::complex<double>            &effective_magnetic_permeability);
 
   /**
    * @brief Compute the electromagnetic scaling factor used to non-dimensionalize the time-harmonic Maxwell system from the type of scaling required from the user. This is factor will be based on the electric field and obtained :
@@ -777,8 +749,7 @@ private:
     assemblers;
 
   /**
-   * Face assemblers of the local DPG system. They are called for every face of
-   * every cell since all the faces belong to the skeleton.
+   * Face assemblers of the local DPG system.
    */
   std::vector<std::shared_ptr<TimeHarmonicMaxwellFaceAssemblerBase<dim>>>
     face_assemblers;
@@ -854,7 +825,7 @@ private:
 
   /**
    * Non-ghosted vector in which the interior solution is assembled cell by
-   * cell during the reconstruction. It is needed because present_solution is
+   * cell during the reconstruction. It is needed because `present_solution` is
    * a ghosted vector, which can only be read. It is a class member so the
    * WorkStream copier can access it, but it is only allocated during
    * reconstruct_interior_solution() to avoid keeping it in memory between the
@@ -947,6 +918,12 @@ private:
    * solution from the last solve.
    */
   bool needs_temperature;
+
+  /**
+   * A boolean variable that indicates whether the time-harmonic Maxwell solver
+   * needs to compute the value of the DPG error estimator.
+   */
+  bool needs_dpg_error_estimator;
 
   /**
    * A vector containing all the values of the temperature solution when the

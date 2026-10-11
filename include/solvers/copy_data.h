@@ -226,8 +226,8 @@ public:
  * \f$M_1 = B^\dagger G^{-1} B\f$, \f$M_2 = B^\dagger G^{-1} \hat{B}\f$,
  * \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$, \f$M_4 = B^\dagger G^{-1}\f$ and
  * \f$M_5 = \hat{B}^\dagger G^{-1}\f$, and stores either the condensed skeleton
- * system (assembly) or the reconstructed interior solution and the DPG
- * residual (interior reconstruction).
+ * system (assembly) or the reconstructed interior solution (interior
+ *reconstruction).
  **/
 class DPGCopyData
 {
