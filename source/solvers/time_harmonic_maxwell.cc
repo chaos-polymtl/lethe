@@ -114,6 +114,11 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
     physical_properties_manager.get_number_of_fluids() +
     physical_properties_manager.get_number_of_solids() - 1;
 
+  needs_dpg_error_estimator =
+    this->simulation_parameters.mesh_adaptation.var_adaptation_param
+      .error_estimator ==
+    Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg;
+
   needs_temperature = false;
   for (unsigned int material_id = 0; material_id <= number_of_material_ids;
        ++material_id)
@@ -317,31 +322,6 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     }
 }
 
-
-template <int dim>
-void
-TimeHarmonicMaxwell<dim>::update_material_properties(
-  const PhysicalPropertiesManager &physical_properties_manager,
-  const std::map<field, double>   &field_values,
-  const unsigned int               material_id,
-  std::complex<double>            &effective_electric_permittivity,
-  std::complex<double>            &effective_magnetic_permeability)
-{
-  effective_electric_permittivity = {
-    physical_properties_manager.get_electric_permittivity_real(0, material_id)
-      ->value(field_values),
-    physical_properties_manager.get_electric_permittivity_imag(0, material_id)
-        ->value(field_values) +
-      physical_properties_manager.get_electric_conductivity(0, material_id)
-        ->value(field_values)};
-
-  effective_magnetic_permeability = {
-    physical_properties_manager.get_magnetic_permeability_real(0, material_id)
-      ->value(field_values),
-    physical_properties_manager.get_magnetic_permeability_imag(0, material_id)
-      ->value(field_values)};
-}
-
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
@@ -542,16 +522,24 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                       // for dim = 3 (the waveguide port fields are not
                       // defined in 2D).
                       if constexpr (dim == 3)
-                        waveguide_modal_powers[boundary_index] -=
-                          0.5 *
-                          std::real(
-                            normal[0] * (E_inc[1] * std::conj(H_inc[2]) -
-                                         E_inc[2] * std::conj(H_inc[1])) +
-                            normal[1] * (E_inc[2] * std::conj(H_inc[0]) -
-                                         E_inc[0] * std::conj(H_inc[2])) +
-                            normal[2] * (E_inc[0] * std::conj(H_inc[1]) -
-                                         E_inc[1] * std::conj(H_inc[0]))) *
-                          JxW_face;
+                        {
+                          waveguide_modal_powers[boundary_index] -=
+                            0.5 *
+                            std::real(
+                              normal[0] * (E_inc[1] * std::conj(H_inc[2]) -
+                                           E_inc[2] * std::conj(H_inc[1])) +
+                              normal[1] * (E_inc[2] * std::conj(H_inc[0]) -
+                                           E_inc[0] * std::conj(H_inc[2])) +
+                              normal[2] * (E_inc[0] * std::conj(H_inc[1]) -
+                                           E_inc[1] * std::conj(H_inc[0]))) *
+                            JxW_face;
+                        }
+                      else
+                        {
+                          AssertThrow(false,
+                                      TimeHarmonicMaxwellDimensionNotSupported(
+                                        dim));
+                        }
                     }
                 }
             }
@@ -749,9 +737,7 @@ TimeHarmonicMaxwell<dim>::gather_output_hook()
 
   // We also want to output the DPG estimator as a separate field for
   // visualization and postprocessing purposes when computed.
-  if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
-        .error_estimator ==
-      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+  if (needs_dpg_error_estimator)
     {
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructCellVector>,
@@ -1229,10 +1215,10 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
 {
   // For efficiency, the DPG error estimator is computed in the same loop as the
   // reconstruction of the interior solution, so we do not implement it here as
-  // a separate loop. The estimated error per cell is computed and stored in the
-  // member variable local_estimated_error_per_cell during the reconstruction if
-  // the DPG error estimator is activated, and then used for marking the cells
-  // for refinement.
+  // a separate loop. If it is activated, the estimated error per cell is
+  // computed and stored in the member variable `local_estimated_error_per_cell`
+  // during the reconstruction and then used for marking the cells for
+  // refinement here.
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // Here we add a flag to be sure if the local_estimated_error_per_cell has
@@ -1295,7 +1281,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   this->locally_relevant_dofs_trial_skeleton =
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler_trial_skeleton);
 
-  // Initialize the solution vectors and the error estimate per cell
+  // Initialize the solution vectors
   this->present_solution->reinit(this->locally_owned_dofs_trial_interior,
                                  this->locally_relevant_dofs_trial_interior,
                                  mpi_communicator);
@@ -1303,8 +1289,14 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     this->locally_owned_dofs_trial_skeleton,
     this->locally_relevant_dofs_trial_skeleton,
     mpi_communicator);
-  this->local_estimated_error_per_cell.reinit(triangulation->n_active_cells());
 
+  // We reinitialize the local estimated error per cell vector to store the
+  // DPG error estimator for each cell if necessary.
+  if (needs_dpg_error_estimator)
+    {
+      this->local_estimated_error_per_cell.reinit(
+        triangulation->n_active_cells());
+    }
   // We reinitialize the system rhs with the skeleton dofs because we have
   // performed a static condensation of the interior dofs using the Schur
   // complement.
@@ -2027,15 +2019,17 @@ TimeHarmonicMaxwell<dim>::setup_assemblers()
     std::make_shared<TimeHarmonicMaxwellAssemblerCore<dim>>(
       time_harmonic_maxwell_parameters));
 
-  // Skeleton terms, which are present on every face of the mesh.
+  // Skeleton terms: skeleton bilinear form.
   this->face_assemblers.emplace_back(
     std::make_shared<TimeHarmonicMaxwellAssemblerSkeleton<dim>>(
       boundary_conditions));
 
   // Robin boundary conditions. The waveguide port amplitudes must have been
-  // computed by compute_electromagnetic_scaling before this call.
+  // computed by `compute_electromagnetic_scaling` before this call. It is done
+  // in `assemble_system_matrix` before the assemblers are set up.
   bool has_robin_boundary = false;
   for (const auto &bc : boundary_conditions.type)
+    // bc is a pair of boundary id and boundary type
     if (is_robin_boundary_type(bc.second))
       has_robin_boundary = true;
   if (has_robin_boundary)
@@ -2060,7 +2054,7 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
 
   // The time-harmonic Maxwell system is assembled again every time it is
   // solved (i.e., at each coupling step), so the global system needs to be
-  // reset before the assembly.
+  // reset before the assembly, even when the setup dofs is not called again.
   this->system_matrix = 0;
   this->system_rhs    = 0;
 
@@ -2077,12 +2071,14 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
 
   // We may need the temperature field for the physical properties.
   if (needs_temperature)
-    scratch_data.enable_temperature(
-      this->multiphysics->get_dof_handler(PhysicsID::heat_transfer).get_fe(),
-      *this->cell_quadrature,
-      *this->face_quadrature,
-      *this->mapping);
-
+    {
+      const DoFHandler<dim> &dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      scratch_data.enable_temperature(dof_handler_ht.get_fe(),
+                                      *this->cell_quadrature,
+                                      *this->face_quadrature,
+                                      *this->mapping);
+    }
   // As it is standard, we loop over the cells of the triangulation. We use
   // the DoFHandler associated with the interior trial space for this loop.
   WorkStream::run(this->dof_handler_trial_interior->begin_active(),
@@ -2289,9 +2285,7 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
   // stored in l_vector, its Riesz representation Psi = G^{-1} R in
   // local_residual, and the squared energy norm of the residual is
   // ||R||^2_V = R^T G^-1 R = R^T Psi.
-  if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
-        .error_estimator ==
-      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+  if (needs_dpg_error_estimator)
     {
       copy_data.B_matrix.vmult(copy_data.tmp_vector_error_indicator,
                                copy_data.local_interior_solution);
@@ -2302,8 +2296,11 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
 
       copy_data.local_residual_norm_squared =
         copy_data.l_vector * copy_data.local_residual;
+
+      // Update the active cell index to know which cell the error indicator is
+      // for.
+      copy_data.active_cell_index = cell->active_cell_index();
     }
-  copy_data.active_cell_index = cell->active_cell_index();
 
   cell->get_dof_indices(copy_data.local_dof_indices_trial_interior);
 }
@@ -2328,9 +2325,7 @@ TimeHarmonicMaxwell<dim>::copy_local_interior_solution_to_global(
 
   // Store the error indicator of the cell if the dpg error estimator is
   // activated
-  if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
-        .error_estimator ==
-      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+  if (needs_dpg_error_estimator)
     {
       this->local_estimated_error_per_cell(copy_data.active_cell_index) =
         std::sqrt(copy_data.local_residual_norm_squared);
@@ -2343,11 +2338,6 @@ void
 TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
 {
   MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
-
-  const bool dpg_error_estimator_enabled =
-    this->simulation_parameters.mesh_adaptation.var_adaptation_param
-      .error_estimator ==
-    Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg;
 
   // The interior solution is assembled cell by cell. However,
   // present_solution is a ghosted vector (it also stores the locally relevant
@@ -2376,11 +2366,14 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
     *this->mapping);
 
   if (needs_temperature)
-    scratch_data.enable_temperature(
-      this->multiphysics->get_dof_handler(PhysicsID::heat_transfer).get_fe(),
-      *this->cell_quadrature,
-      *this->face_quadrature,
-      *this->mapping);
+    {
+      const DoFHandler<dim> &dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      scratch_data.enable_temperature(dof_handler_ht.get_fe(),
+                                      *this->cell_quadrature,
+                                      *this->face_quadrature,
+                                      *this->mapping);
+    }
 
 
   WorkStream::run(this->dof_handler_trial_interior->begin_active(),
@@ -2410,7 +2403,7 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
 
   // We also output the global error indicator if the dpg error estimator is
   // activated and in verbose mode
-  if (dpg_error_estimator_enabled &&
+  if (needs_dpg_error_estimator &&
       (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
          .verbosity != Parameters::Verbosity::quiet))
     {
