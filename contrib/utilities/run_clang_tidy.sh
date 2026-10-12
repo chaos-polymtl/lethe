@@ -59,7 +59,7 @@ CC=clang CXX=clang++ cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) 
 # a compiler other than clang: GCC and clang mangle deal.II's enable_if-based
 # template signatures (e.g. TrilinosWrappers::SparseMatrix::vmult) differently,
 # so the explicit instantiations shipped in libdeal_II cannot be resolved.
-CXXFLAGS="-Wno-unknown-warning-option";  cmake --build . -j 12 \
+CXXFLAGS="-Wno-unknown-warning-option";  cmake --build . -j "$(nproc)" \
   --target lethe-core lethe-dem lethe-solvers lethe-fem-dem
 
 # generate allheaders.h
