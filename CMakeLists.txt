@@ -120,6 +120,41 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     add_compile_options(-march=native)
   endif()
 
+  # Every application and every unit test is a separate executable that
+  # carries the debug information of the Lethe libraries, which makes the
+  # default GNU linker (ld.bfd) the slowest step of an incremental build.
+  # deal.II selects mold or lld when it is configured, but only if one of
+  # them was installed at that time. If deal.II did not select a linker and
+  # the user did not request one, look for mold, then lld, here.
+  option(LETHE_USE_FAST_LINKER
+    "Link with mold or lld when one of them is available" ON)
+  if(LETHE_USE_FAST_LINKER
+      AND NOT CMAKE_VERSION VERSION_LESS 3.14 # CMAKE_REQUIRED_LINK_OPTIONS
+      AND NOT CMAKE_LINKER_TYPE
+      AND NOT "${DEAL_II_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}" MATCHES "-fuse-ld=")
+    include(CheckCXXSourceCompiles)
+    foreach(_linker IN ITEMS mold lld)
+      string(TOUPPER ${_linker} _linker_upper)
+      # A failed check is not kept in the cache, so that a linker installed
+      # after the first configuration is found by the next one.
+      if(NOT LETHE_HAVE_LINKER_${_linker_upper})
+        unset(LETHE_HAVE_LINKER_${_linker_upper} CACHE)
+      endif()
+      # The check has to link an executable: the compiler accepts
+      # -fuse-ld=<linker> even when that linker is not installed.
+      set(CMAKE_REQUIRED_LINK_OPTIONS "-fuse-ld=${_linker}")
+      check_cxx_source_compiles("int main() { return 0; }"
+        LETHE_HAVE_LINKER_${_linker_upper})
+      unset(CMAKE_REQUIRED_LINK_OPTIONS)
+      if(LETHE_HAVE_LINKER_${_linker_upper})
+        message(STATUS "Linking Lethe with ${_linker}")
+        add_link_options("-fuse-ld=${_linker}")
+        break()
+      endif()
+    endforeach()
+    unset(_linker_upper)
+  endif()
+
   option(BUILD_PROTOTYPES "Build the prototype applications")
   mark_as_advanced(BUILD_PROTOTYPES)
 

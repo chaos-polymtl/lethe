@@ -16,11 +16,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dealii_version: ["master"]
+        dealii_version: ["master-noble"]
     
     # Run steps in container of dealii's master branch
     container:
-      image: dealii/dealii:${{ matrix.dealii_version }}-jammy
+      image: dealii/dealii:${{ matrix.dealii_version }}
       options: --user root
 
     steps:
@@ -29,6 +29,12 @@ jobs:
           # Since dealii image doesn't include Node.js, we'll install it
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs
+
+          # Lethe links with mold when it is installed, which is much faster
+          # than the default GNU linker (see LETHE_USE_FAST_LINKER in the
+          # top-level CMakeLists.txt). Install it if the image lacks it.
+          command -v mold > /dev/null || sudo apt-get install -y --no-install-recommends mold
+          mold --version
 
           echo "Github actions is sane!"
           echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
