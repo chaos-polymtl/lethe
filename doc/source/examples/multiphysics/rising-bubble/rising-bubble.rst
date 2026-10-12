@@ -110,7 +110,7 @@ This is addressed in the ``interface reinitialization method`` subsection. Lethe
 
 We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface reinitialization methods.
 
-For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other reinitialization methods available are described in the second part of this example (:ref:`Interface Reinitialization Methods Comparison`).
+For the first part of this example, the ``projection_based_sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other reinitialization methods available are described in the second part of this example (:ref:`Interface Reinitialization Methods Comparison`).
 
 
 .. code-block:: text
