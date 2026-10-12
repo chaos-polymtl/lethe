@@ -349,16 +349,17 @@ public:
 
   // Physical properties
   const PhysicalPropertiesManager properties_manager;
-  // ID of the material of the current cell, used to determine the appropriate material properties from the input parameters.
-  unsigned int                    material_id;
+  // ID of the material of the current cell, used to determine the appropriate
+  // material properties from the input parameters.
+  unsigned int material_id;
   // Flag to indicate whether the material of the cell depends on the
   // temperature.
-  bool                            cell_material_needs_temperature;
+  bool cell_material_needs_temperature;
 
   // FEValues of the interior trial space
-  FEValues<dim>     fe_values_trial_interior;
+  FEValues<dim> fe_values_trial_interior;
   // FEValues of the test space
-  FEValues<dim>     fe_values_test;
+  FEValues<dim> fe_values_test;
   // FEFaceValues of the skeleton trial space
   FEFaceValues<dim> fe_face_values_trial_skeleton;
   // FEFaceValues of the test space
@@ -391,32 +392,38 @@ public:
   // Classification of the shape functions of the skeleton trial space
   std::vector<unsigned char> shape_function_type_trial_skeleton;
 
-  // Local dof indices of the test functions associated with the electric field (F)
+  // Local dof indices of the test functions associated with the electric field
+  // (F)
   std::vector<unsigned int> test_dofs_electric;
-  // Local dof indices of the test functions associated with the magnetic field (I)
+  // Local dof indices of the test functions associated with the magnetic field
+  // (I)
   std::vector<unsigned int> test_dofs_magnetic;
-  // Local dof indices of the interior trial functions associated with the electric field (E)
+  // Local dof indices of the interior trial functions associated with the
+  // electric field (E)
   std::vector<unsigned int> trial_interior_dofs_electric;
-  // Local dof indices of the interior trial functions associated with the magnetic field (H)
+  // Local dof indices of the interior trial functions associated with the
+  // magnetic field (H)
   std::vector<unsigned int> trial_interior_dofs_magnetic;
-  // Local dof indices of the skeleton trial functions associated with the electric field (E_hat)
+  // Local dof indices of the skeleton trial functions associated with the
+  // electric field (E_hat)
   std::vector<unsigned int> trial_skeleton_dofs_electric;
-  // Local dof indices of the skeleton trial functions associated with the magnetic field (H_hat)
+  // Local dof indices of the skeleton trial functions associated with the
+  // magnetic field (H_hat)
   std::vector<unsigned int> trial_skeleton_dofs_magnetic;
 
   // Cell container for the volume integrals weights
-  std::vector<double>     JxW;
+  std::vector<double> JxW;
   // Cell container for the quadrature points
   std::vector<Point<dim>> quadrature_points;
 
   // Temperature values at the cell quadrature points
-  std::vector<double>                  temperature_values;
+  std::vector<double> temperature_values;
   // Map of the field values at the cell quadrature points, indexed by field
   std::map<field, std::vector<double>> fields;
   // Effective electric permittivities at the cell quadrature points
-  std::vector<std::complex<double>>    effective_electric_permittivities;
+  std::vector<std::complex<double>> effective_electric_permittivities;
   // Effective magnetic permeabilities at the cell quadrature points
-  std::vector<std::complex<double>>    effective_magnetic_permeabilities;
+  std::vector<std::complex<double>> effective_magnetic_permeabilities;
 
   // Cell electric test functions
   Table<2, Tensor<1, dim, std::complex<double>>> phi_F;
@@ -441,48 +448,55 @@ public:
   Table<2, Tensor<1, dim, std::complex<double>>> phi_H;
 
   // Flag to indicate whether the current face is at the boundary of the domain
-  bool               face_at_boundary;
-  // Boundary ID of the current face, used to determine the appropriate boundary conditions from the input parameters
+  bool face_at_boundary;
+  // Boundary ID of the current face, used to determine the appropriate boundary
+  // conditions from the input parameters
   types::boundary_id face_boundary_id;
 
   // Face container for the face integrals weights
-  std::vector<double>         face_JxW;
+  std::vector<double> face_JxW;
   // Face container for the face quadrature points
-  std::vector<Point<dim>>     face_quadrature_points;
+  std::vector<Point<dim>> face_quadrature_points;
   // Face container for the face normal vectors
   std::vector<Tensor<1, dim>> face_normals;
 
   // Face temperature values at the face quadrature points
-  std::vector<double>                  face_temperature_values;
+  std::vector<double> face_temperature_values;
   // Map of the field values at the face quadrature points, indexed by field
   std::map<field, std::vector<double>> face_fields;
   // Effective electric permittivities at the face quadrature points
-  std::vector<std::complex<double>>    face_effective_electric_permittivities;
+  std::vector<std::complex<double>> face_effective_electric_permittivities;
   // Effective magnetic permeabilities at the face quadrature points
-  std::vector<std::complex<double>>    face_effective_magnetic_permeabilities;
+  std::vector<std::complex<double>> face_effective_magnetic_permeabilities;
 
   // Face electric test functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> phi_F_face;
-  // Face complex conjugate of the electric test functions at the face quadrature points
+  // Face complex conjugate of the electric test functions at the face
+  // quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> phi_F_face_conj;
   // Face magnetic test functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> phi_I_face_conj;
-  // Face normal cross product of the magnetic test functions at the face quadrature points
+  // Face normal cross product of the magnetic test functions at the face
+  // quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_I_face;
-  // Face complex conjugate of the normal cross product of the magnetic test functions at the face quadrature points
+  // Face complex conjugate of the normal cross product of the magnetic test
+  // functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_I_face_conj;
 
   // Face skeleton trial electric functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> phi_E_hat;
-  // Face normal cross product of the skeleton trial electric functions at the face quadrature points
+  // Face normal cross product of the skeleton trial electric functions at the
+  // face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_E_hat;
-  // Face normal cross product of the complex conjugate of the skeleton trial magnetic functions at the face quadrature points
+  // Face normal cross product of the complex conjugate of the skeleton trial
+  // magnetic functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_H_hat;
 
-  // Flag to indicate whether the temperature field needs to be gathered and evaluated at the quadrature points
-  bool                               gather_temperature;
+  // Flag to indicate whether the temperature field needs to be gathered and
+  // evaluated at the quadrature points
+  bool gather_temperature;
   // FEValues of the temperature field
-  std::shared_ptr<FEValues<dim>>     fe_values_temperature;
+  std::shared_ptr<FEValues<dim>> fe_values_temperature;
   // FEFaceValues of the temperature field
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_temperature;
 };

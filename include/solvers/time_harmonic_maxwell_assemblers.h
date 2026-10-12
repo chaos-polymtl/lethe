@@ -21,8 +21,7 @@
 
 /**
  * @brief A pure virtual class that serves as an interface for all the cell
- * assemblers of the time-harmonic Maxwell equations. The assemblers fill the
- * uncondensed local DPG system stored in the DPGCopyData.
+ * assemblers of the time-harmonic Maxwell equations.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -34,10 +33,7 @@ using TimeHarmonicMaxwellAssemblerBase =
 
 /**
  * @brief A pure virtual class that serves as an interface for all the face
- * assemblers of the time-harmonic Maxwell equations. In the DPG method, every
- * face of a cell contributes to the local system through the skeleton trial
- * space, so these assemblers are called for each face of each cell once the
- * scratch has been reinitialized on that face.
+ * assemblers of the time-harmonic Maxwell equations.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -50,7 +46,7 @@ using TimeHarmonicMaxwellFaceAssemblerBase =
 /**
  * @brief Check if a boundary condition type of the time-harmonic Maxwell
  * equations is a Robin boundary condition, that is applied weakly through the
- * assembly instead of through the constraints.
+ * assembly.
  *
  * @param[in] type Boundary condition type.
  *
@@ -245,7 +241,10 @@ private:
  * \f$-\langle Y \hat{\mathbf{E}}, \mathbf{F} \rangle\f$ in \f$\hat{B}\f$ and
  * \f$-\langle \mathbf{g}, \mathbf{F} \rangle\f$ in \f$l\f$. Since the energy
  * norm that is minimized is also modified on these faces, it also assembles
- * the boundary terms of the Gram matrix \f$G\f$.
+ * the boundary terms of the Gram matrix
+ * \f$G\f$:
+ *\f[\left(\mathbf{n}\times\mathbf{I}+Y*\mathbf{n}\times(\mathbf{F}\times\mathbf{n}),
+\mathbf{n}\times\tilde{\mathbf{I}}+Y*\mathbf{n}\times(\tilde{\mathbf{F}}\times\mathbf{n})\right)_{\Gamma_R}.\f]
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
