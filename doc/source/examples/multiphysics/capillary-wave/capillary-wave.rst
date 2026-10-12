@@ -183,7 +183,7 @@ In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the `
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-In the ``physical properties`` subsection, we define the fluids such that both fluids have the same properties. We set the ``density`` to :math:`1` and the ``kinematic viscosity`` to :math:`5 \times 10^{-6}`. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` set to :math:`0.01`.
+In the ``physical properties`` subsection, we define the fluids such that both fluids have the same properties. We set the ``density`` to :math:`1` and the ``kinematic viscosity`` to :math:`5 \times 10^{-6}`. A ``fluid_fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` set to :math:`0.01`.
 
 .. code-block:: text
 
@@ -199,7 +199,7 @@ In the ``physical properties`` subsection, we define the fluids such that both f
       end
       set number of material interactions = 1
       subsection material interaction 0
-        set type = fluid-fluid
+        set type = fluid_fluid
         subsection fluid-fluid interaction
           set first fluid id              = 0
           set second fluid id             = 1

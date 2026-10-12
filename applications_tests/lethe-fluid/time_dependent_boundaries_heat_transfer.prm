@@ -73,7 +73,7 @@ subsection boundary conditions heat transfer
   end
   subsection bc 1
     set id   = 1
-    set type = convection-radiation-flux
+    set type = convection_radiation
     subsection h
       set Function expression = 5*t
     end
@@ -86,7 +86,7 @@ subsection boundary conditions heat transfer
   end
   subsection bc 2
     set id   = 2
-    set type = convection-radiation-flux
+    set type = convection_radiation
     subsection h
       set Function expression = 1
     end
@@ -99,7 +99,7 @@ subsection boundary conditions heat transfer
   end
   subsection bc 3
     set id   = 3
-    set type = convection-radiation-flux
+    set type = convection_radiation
     subsection h
       set Function expression = 1
     end

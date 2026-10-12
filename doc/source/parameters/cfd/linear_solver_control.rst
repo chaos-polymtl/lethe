@@ -85,7 +85,7 @@ In the example below, only ``fluid dynamics`` is used, however, the same block c
 		-Tolerance of iterative solver is : 1e-13
 		-Iterative solver took : 0 steps 
 
-When set to ``extra verbose``, the residual at each iteration of the linear solver is printed.
+When set to ``extra_verbose``, the residual at each iteration of the linear solver is printed.
 
 * The ``minimum residual`` for the linear solver.
 
@@ -324,7 +324,7 @@ Different parameters for the main components of the two geometric multigrid algo
     set mg smoother iterations          = 10
     set mg smoother relaxation          = 0.5
     set mg smoother eig estimation      = true #if set to true, previous parameter is not used
-    set mg smoother preconditioner type = inverse diagonal
+    set mg smoother preconditioner type = inverse_diagonal
 
     # Chebyshev smoother parameters (used when preconditioner type = chebyshev)
     set mg smoother chebyshev degree              = 3
@@ -363,11 +363,11 @@ Different parameters for the main components of the two geometric multigrid algo
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1
 
-* The ``mg verbosity`` parameters controls enables to display more information related to the multigrid algorithm. If it is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra verbose``, apart from all the previous information, several additional tables with the times related to multigrid are also displayed. 
+* The ``mg verbosity`` parameters controls enables to display more information related to the multigrid algorithm. If it is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra_verbose``, apart from all the previous information, several additional tables with the times related to multigrid are also displayed. 
 
 * The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For ``lsmg`` the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed.
 
-* The multigrid algorithms use a relaxation scheme as smoother. There are three types of smoothers supported: ``inverse diagonal``, ``additive schwarz method`` and ``chebyshev``. The first is cheaper than the second one. In our experience, ``inverse diagonal`` should work fine for transient problems, while ``additive schwarz method`` is more robust in the case of challenging steady-state problems. The ``chebyshev`` option is a Chebyshev-accelerated inverse-diagonal smoother. In terms of robustness, it is a compromise between the ``inverse diagonal`` and ``additive schwarz method``. It is more robust than the ``inverse diagonal``, but may be slightly more expensive and might require more tuning. However, it is significantly less expensive than the ``additive schwarz method`` since it does not require the assembly of the Jacobian matrix. For ``inverse diagonal`` and ``additive schwarz method`` we recommend to always use eigenvalue estimation to calculate the relaxation parameter by setting ``set mg smoother eig estimation = true``.
+* The multigrid algorithms use a relaxation scheme as smoother. There are three types of smoothers supported: ``inverse_diagonal``, ``additive_schwarz_method`` and ``chebyshev``. The first is cheaper than the second one. In our experience, ``inverse_diagonal`` should work fine for transient problems, while ``additive_schwarz_method`` is more robust in the case of challenging steady-state problems. The ``chebyshev`` option is a Chebyshev-accelerated inverse-diagonal smoother. In terms of robustness, it is a compromise between the ``inverse_diagonal`` and ``additive_schwarz_method``. It is more robust than the ``inverse_diagonal``, but may be slightly more expensive and might require more tuning. However, it is significantly less expensive than the ``additive_schwarz_method`` since it does not require the assembly of the Jacobian matrix. For ``inverse_diagonal`` and ``additive_schwarz_method`` we recommend to always use eigenvalue estimation to calculate the relaxation parameter by setting ``set mg smoother eig estimation = true``.
 
 .. tip::
   The ``chebyshev`` smoother applies a single step of a Chebyshev polynomial of degree ``mg smoother chebyshev degree`` built on the inverse diagonal, which improves robustness on anisotropic/boundary-layer meshes at a comparable cost per V-cycle. The maximum eigenvalue is estimated internally (``mg smoother chebyshev eig cg n iterations`` iterations), so no relaxation parameter or manual eigenvalue estimation is needed. The polynomial acts on the spectral interval ``[lambda_max / smoothing_range, lambda_max]``, with ``mg smoother chebyshev smoothing range`` typically between 5 and 20. A degree of ``0`` recovers the damped inverse-diagonal (Jacobi) smoother. If the smoother diverges, the most likely cause is an underestimated maximum eigenvalue: increase ``mg smoother chebyshev eig cg n iterations`` before changing the degree.
@@ -388,18 +388,18 @@ In addition, Lethe supports `p-multigrid` through the ``gcmg`` preconditioner. I
 .. code-block:: text
 
     set mg coarsening type             = p
-    set mg p coarsening type           = decrease by one
+    set mg p coarsening type           = decrease_by_one
     set mg p min coarsening degree     = 1
 
 This multigrid preconditioner creates the different multigrid levels by keeping the mesh constant but reducing the polynomial degree `p` of the shape functions. Three strategies to create the `p-multigrid` levels can be used by specifying the ``mg p coarsening type`` parameter:
 
 * ``bisect``: half polynomial degree.
 
-* ``decrease by one``: decrease the polynomial degree by one for every level.
+* ``decrease_by_one``: decrease the polynomial degree by one for every level.
 
-* ``go to one``: decrease the polynomial degree to one directly.
+* ``go_to_one``: decrease the polynomial degree to one directly.
 
-When using ``mg p coarsening type = decrease by one``, the lowest level has a first order polynomial degree by default; this can be altered by modifying the parameter ``set mg p min coarsening degree``.
+When using ``mg p coarsening type = decrease_by_one``, the lowest level has a first order polynomial degree by default; this can be altered by modifying the parameter ``set mg p min coarsening degree``.
 
 In addition, Lethe supports hybrid strategies that combine h- and p-multigrid, and can be specified through the ``mg coarsening type`` parameter:
 

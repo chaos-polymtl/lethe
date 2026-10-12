@@ -1046,7 +1046,7 @@ ConservativeLevelSet<dim>::calculate_volume_and_mass(
             {
               switch (monitored_fluid)
                 {
-                  case Parameters::FluidIndicator::fluid0:
+                  case Parameters::FluidIndicator::fluid_0:
                     {
                       this->volume_monitored +=
                         fe_values_cls.JxW(q) * (1 - phase_values[q]);
@@ -1055,7 +1055,7 @@ ConservativeLevelSet<dim>::calculate_volume_and_mass(
                                               density_0[q];
                       break;
                     }
-                  case Parameters::FluidIndicator::fluid1:
+                  case Parameters::FluidIndicator::fluid_1:
                     {
                       this->volume_monitored +=
                         fe_values_cls.JxW(q) * phase_values[q];
@@ -1156,14 +1156,14 @@ ConservativeLevelSet<dim>::calculate_momentum(
             {
               switch (monitored_fluid)
                 {
-                  case Parameters::FluidIndicator::fluid0:
+                  case Parameters::FluidIndicator::fluid_0:
                     {
                       total_momentum += fe_values_cls.JxW(q) *
                                         (1 - phase_values[q]) *
                                         velocity_values[q] * density_0[q];
                       break;
                     }
-                  case Parameters::FluidIndicator::fluid1:
+                  case Parameters::FluidIndicator::fluid_1:
                     {
                       total_momentum += fe_values_cls.JxW(q) * phase_values[q] *
                                         velocity_values[q] * density_1[q];
@@ -1416,7 +1416,8 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
       TimerOutput::Scope                            t(this->computing_timer,
                            "Calculate mass conservation");
       const std::vector<Parameters::FluidIndicator> fluid_indicators = {
-        Parameters::FluidIndicator::fluid0, Parameters::FluidIndicator::fluid1};
+        Parameters::FluidIndicator::fluid_0,
+        Parameters::FluidIndicator::fluid_1};
 
       const unsigned int n_fluids =
         this->simulation_parameters.physical_properties_manager
@@ -1489,12 +1490,12 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
             {
               std::string fluid_id("");
 
-              if (fluid_indicators[i] == Parameters::FluidIndicator::fluid1)
+              if (fluid_indicators[i] == Parameters::FluidIndicator::fluid_1)
                 {
                   fluid_id = "fluid_1";
                 }
               else if (fluid_indicators[i] ==
-                       Parameters::FluidIndicator::fluid0)
+                       Parameters::FluidIndicator::fluid_0)
                 {
                   fluid_id = "fluid_0";
                 }

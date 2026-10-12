@@ -96,7 +96,7 @@ subsection cfd-dem
   set pressure force = false
   set shear force    = false
   set buoyancy force = true
-  set drag coupling  = explicit
+  set drag coupling  = fully_explicit
 end
 
 #---------------------------------------------------
@@ -187,7 +187,7 @@ subsection linear solver
     set mg verbosity                    = quiet
     set mg smoother iterations          = 1
     set mg smoother eig estimation      = true
-    set mg smoother preconditioner type = additive schwarz method
+    set mg smoother preconditioner type = additive_schwarz_method
     set eig estimation verbosity        = quiet
     set mg coarse grid solver           = direct
     set max krylov vectors              = 500

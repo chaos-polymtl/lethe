@@ -120,11 +120,11 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 1
     set id   = 4
-    set type = waveguide port
+    set type = waveguide_port
   end
   subsection bc 2
     set id   = 5
-    set type = impedance boundary
+    set type = impedance_boundary
     subsection excitation x real part
       set Function expression = 0
     end

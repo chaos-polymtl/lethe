@@ -6,6 +6,7 @@
 #include <core/utilities.h>
 #include <core/vector.h>
 
+#include <deal.II/base/mpi.h>
 #include <deal.II/base/revision.h>
 
 #include <deal.II/numerics/vector_tools.h>
@@ -13,6 +14,7 @@
 #include <boost/algorithm/string/replace.hpp>
 
 #include <filesystem>
+#include <iostream>
 #include <regex>
 #include <system_error>
 #include <type_traits>
@@ -831,6 +833,25 @@ parse_args(int argc, char **argv)
       args.push_back(arg);
     }
   return {options, args};
+}
+
+void
+warn_deprecated_parameter_value(const std::string &parameter_name,
+                                const std::string &deprecated_value,
+                                const std::string &new_value)
+{
+  // Parameters are parsed by every MPI process, but the warning should only be
+  // printed once. Parameters may also be parsed without MPI being initialized
+  // (e.g. in unit tests).
+  const bool is_first_process =
+    !Utilities::MPI::job_supports_mpi() ||
+    Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0;
+  const ConditionalOStream pcout(std::cout, is_first_process);
+
+  pcout << "Warning: the value \"" << deprecated_value
+        << "\" of the parameter \"" << parameter_name
+        << "\" is deprecated and will be removed. Use \"" << new_value
+        << "\" instead." << std::endl;
 }
 
 /**

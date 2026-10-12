@@ -71,7 +71,7 @@ subsection void fraction
   set read dem                     = true
   set dem file name                = dem
   set l2 smoothing length          = 0.02663
-  set quadrature rule              = gauss-lobatto
+  set quadrature rule              = gauss_lobatto
   set n quadrature points          = 5
 end
 

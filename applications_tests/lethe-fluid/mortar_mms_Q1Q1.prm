@@ -55,7 +55,7 @@ subsection mortar
   set rotor boundary id  = 2
   set stator boundary id = 1
   set penalty factor     = 1
-  set verbosity          = extra verbose
+  set verbosity          = extra_verbose
 end
 
 #---------------------------------------------------

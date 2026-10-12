@@ -87,7 +87,7 @@ subsection boundary conditions heat transfer
   set time dependent = true
   subsection bc 0
     set id   = 0
-    set type = convection-radiation-flux
+    set type = convection_radiation
     subsection heat_flux
       set Function expression = 10*t*y
     end
@@ -101,11 +101,11 @@ subsection boundary conditions heat transfer
   end
   subsection bc 2
     set id   = 2
-    set type = convection-radiation-flux
+    set type = convection_radiation
   end
   subsection bc 3
     set id   = 3
-    set type = convection-radiation-flux
+    set type = convection_radiation
   end
 end
 

@@ -155,12 +155,12 @@ subsection linear solver
     set mg enable hessians in jacobian = true
 
     # MG parameters
-    set mg verbosity = extra verbose
+    set mg verbosity = extra_verbose
 
     # Relaxation smoother parameters
     set mg smoother iterations          = 10
     set mg smoother eig estimation      = true
-    set mg smoother preconditioner type = inverse diagonal
+    set mg smoother preconditioner type = inverse_diagonal
 
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 5

@@ -110,7 +110,7 @@ subsection particles
     subsection orientation
       set Function expression = 0;-pi/2;0
     end
-    set type            = cylindrical tube
+    set type            = cylindrical_tube
     set shape arguments = 0.4;0.6;0.5
   end
 end

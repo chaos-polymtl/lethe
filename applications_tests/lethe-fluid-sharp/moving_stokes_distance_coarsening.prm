@@ -103,7 +103,7 @@ subsection boundary conditions
   end
   subsection bc 3
     set id   = 1
-    set type = function weak
+    set type = function_weak
     set beta = 10000
 
     subsection u

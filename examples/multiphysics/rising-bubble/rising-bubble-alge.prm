@@ -36,7 +36,7 @@ end
 
 subsection CLS
   subsection interface reinitialization method
-    set type      = pde-based interface reinitialization
+    set type      = pde_based
     set frequency = 20
     set verbosity = verbose
     subsection PDE-based interface reinitialization
@@ -105,7 +105,7 @@ subsection physical properties
   end
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
+    set type = fluid_fluid
     subsection fluid-fluid interaction
       set first fluid id        = 0
       set second fluid id       = 1

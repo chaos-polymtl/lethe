@@ -305,9 +305,9 @@ private:
   {
     std::vector<bool> enable_phase_change_vector(n_fluids, false);
 
-    if (fluid_with_phase_change == Parameters::FluidIndicator::fluid0)
+    if (fluid_with_phase_change == Parameters::FluidIndicator::fluid_0)
       enable_phase_change_vector[0] = true;
-    else if (fluid_with_phase_change == Parameters::FluidIndicator::fluid1)
+    else if (fluid_with_phase_change == Parameters::FluidIndicator::fluid_1)
       enable_phase_change_vector[1] = true;
     else // fluid_with_phase_change == Parameters::FluidIndicator::both
       std::fill(enable_phase_change_vector.begin(),

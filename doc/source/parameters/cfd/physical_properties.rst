@@ -64,7 +64,7 @@ Physical Properties
 
     set number of material interactions = 1 #by default it is set to 0
     subsection material interaction 0
-      set type = fluid-fluid
+      set type = fluid_fluid
       subsection fluid-fluid interaction
         set first fluid id  = 0
         set second fluid id = 1
@@ -102,7 +102,7 @@ Physical Properties
 
 * The ``reference temperature`` parameter specifies the reference temperature used in the calculation of some physical properties or the thermal expansion force.
 
-  * The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological models, see  `Rheological Models`_ .
+  * The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``powerlaw``, ``carreau`` and ``phase_change``. For more details on the rheological models, see  `Rheological Models`_ .
 
   * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonian fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
 
@@ -128,11 +128,11 @@ Physical Properties
 
     where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_\text{ref}` is the reference temperature. This is only used when a constant thermal expansion model is used.
 
-* The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity, a level set based :math:`\tanh` model and a Gaussian level set based models are supported. The ``immersed solid tanh`` and ``immersed solid gaussian`` models are intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as well (described more in `Immersed Solid Models`_).
+* The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity, a level set based :math:`\tanh` model and a Gaussian level set based models are supported. The ``immersed_boundary_tanh`` and ``immersed_boundary_gaussian`` models are intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as well (described more in `Immersed Solid Models`_).
 
 * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
 
-* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant :math:`\alpha`. At the moment, a constant tracer reaction constant, a level set based :math:`\tanh` model and a Gaussian level set based models are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed solid tanh``, ``immersed solid gaussian``>. The ``immersed solid tanh`` and ``immersed solid gaussian`` models are intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_). At the moment, only power law reaction consumption rates (:math:`-R`) are implemented:
+* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant :math:`\alpha`. At the moment, a constant tracer reaction constant, a level set based :math:`\tanh` model and a Gaussian level set based models are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed_boundary_tanh``, ``immersed_boundary_gaussian``>. The ``immersed_boundary_tanh`` and ``immersed_boundary_gaussian`` models are intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_). At the moment, only power law reaction consumption rates (:math:`-R`) are implemented:
 
   .. math::
 
@@ -214,7 +214,7 @@ Physical Properties
 
 * The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in `Two Phase Simulations`_.
 
-  * The material interaction ``type`` can either be ``fluid-fluid`` (default) or ``fluid-solid``.
+  * The material interaction ``type`` can either be ``fluid_fluid`` (default) or ``fluid_solid``.
 
   * In the ``fluid-fluid`` subsection we define the pair of fluids and their physical properties.
 
@@ -342,13 +342,13 @@ The immersed solid properties models are based on the signed distance function o
 
 The ``tracer diffusivity model`` and ``tracer reaction constant model`` parameters set which models are used. The default models are ``constant``, which use constant ``tracer diffusivity`` and ``tracer reaction constant``.
 
-The equation of the ``immersed solid tanh`` model is defined as follows. :math:`D` is the tracer property (outside and inside), :math:`\lambda` is the signed distance and :math:`\sigma` the thickness of the transition zone between both property values:
+The equation of the ``immersed_boundary_tanh`` model is defined as follows. :math:`D` is the tracer property (outside and inside), :math:`\lambda` is the signed distance and :math:`\sigma` the thickness of the transition zone between both property values:
 
 .. math::
 
   D(\lambda) = D_\text{inside} + \left(D_\text{outside} - D_\text{inside}\right) \left( 0.5 + 0.5 \tanh \left(\frac{\lambda}{\sigma}\right)\right)
 
-The equation of the ``immersed solid gaussian`` model is defined as follows. :math:`D` is the tracer property (interface and bulk), :math:`\lambda` is the signed distance and :math:`\sigma` the thickness (standard deviation) of the Gaussian function:
+The equation of the ``immersed_boundary_gaussian`` model is defined as follows. :math:`D` is the tracer property (interface and bulk), :math:`\lambda` is the signed distance and :math:`\sigma` the thickness (standard deviation) of the Gaussian function:
 
 .. math::
 
@@ -360,7 +360,7 @@ The equation of the ``immersed solid gaussian`` model is defined as follows. :ma
       set number of fluids = 1
       subsection fluid 0
         set kinematic viscosity       = 0.01
-        set tracer diffusivity model  = immersed solid tanh # or immersed solid gaussian
+        set tracer diffusivity model  = immersed_boundary_tanh # or immersed_boundary_gaussian
         set tracer reaction order     = 1
         set tracer reaction threshold = 1e-8
         subsection immersed solid tanh
@@ -411,7 +411,7 @@ The ``rheological model`` parameter sets which rheological model you are using. 
 
 The rheological model available options are:
     * ``newtonian``
-    * ``power-law`` 
+    * ``powerlaw`` 
     * ``carreau``
     * ``phase_change``
 
@@ -438,7 +438,7 @@ When using the power-law model, the default values are:
   subsection physical properties
     set number of fluids = 1
     subsection fluid 0
-      set rheological model   = power-law
+      set rheological model   = powerlaw
       subsection non newtonian
         subsection power-law
           set K               = 1.0

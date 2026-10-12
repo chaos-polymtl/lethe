@@ -337,7 +337,7 @@ public:
                 this->void_fraction_parameters->n_quadrature_points);
             else
               throw(std::runtime_error(
-                "For void fraction using Gauss-Lobatto ('gauss-lobatto') quadrature rule, the minimum number of quadrature points is 3"));
+                "For void fraction using Gauss-Lobatto ('gauss_lobatto') quadrature rule, the minimum number of quadrature points is 3"));
           }
         else
           {

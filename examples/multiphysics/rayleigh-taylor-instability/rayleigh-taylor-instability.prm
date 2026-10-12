@@ -104,7 +104,7 @@ end
 
 subsection CLS
   subsection interface reinitialization method
-    set type      = geometric interface reinitialization
+    set type      = geometric
     set frequency = 20
     set verbosity = verbose
     subsection geometric interface reinitialization

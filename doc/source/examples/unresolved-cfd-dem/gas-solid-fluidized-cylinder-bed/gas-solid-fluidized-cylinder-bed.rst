@@ -305,7 +305,7 @@ The ``dem file name`` corresponds to the files written during the previous DEM s
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows testing the different models. Grad-div stabilization is also enabled to improve mass conservation, using a length-scale equal to the column's radius, which is of the same order of the characteristic length of the flow, as recommended in the `CFD-DEM parameters section <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. In simulations of this example using the QCM filter, the parameter ``project particle forces`` is set to ``true``, to use the QCM filter to calculate the particle-fluid forces (by default, this parameter is ``false``, and the cell-based filter is used to calculate the particle-fluid forces term in the VANS equations). The ``drag coupling`` parameter is set to the desired coupling approach and defaults to ``semi-implicit``.
+All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows testing the different models. Grad-div stabilization is also enabled to improve mass conservation, using a length-scale equal to the column's radius, which is of the same order of the characteristic length of the flow, as recommended in the `CFD-DEM parameters section <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. In simulations of this example using the QCM filter, the parameter ``project particle forces`` is set to ``true``, to use the QCM filter to calculate the particle-fluid forces (by default, this parameter is ``false``, and the cell-based filter is used to calculate the particle-fluid forces term in the VANS equations). The ``drag coupling`` parameter is set to the desired coupling approach and defaults to ``semi_implicit``.
 
 .. code-block:: text
 
@@ -320,7 +320,7 @@ All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows t
         set drag model                    = difelice
         set coupling frequency            = 100
         set vans model                    = modelA
-        set drag coupling                 = semi-implicit
+        set drag coupling                 = semi_implicit
         set project particle forces       = true
     end
 

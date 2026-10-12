@@ -66,7 +66,7 @@ subsection boundary conditions
   subsection bc 0
     set id   = 0
     set beta = 10
-    set type = function weak
+    set type = function_weak
     subsection u
       set Function expression = 0
     end
@@ -131,7 +131,7 @@ subsection linear solver
     set minimum residual                = 1e-10
     set preconditioner                  = gcmg
     set verbosity                       = quiet
-    set mg smoother preconditioner type = additive schwarz method
+    set mg smoother preconditioner type = additive_schwarz_method
 
     # Smoother
     set mg smoother iterations     = 2

@@ -61,7 +61,7 @@ subsection mortar
   set penalty factor     = 1
   set radius tolerance   = 1e-10
   set cell weight        = 2000
-  set verbosity          = extra verbose
+  set verbosity          = extra_verbose
 end
 
 #---------------------------------------------------

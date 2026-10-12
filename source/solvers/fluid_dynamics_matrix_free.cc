@@ -1871,7 +1871,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
 
   const bool use_chebyshev =
     smoother_preconditioner_type ==
-    Parameters::LinearSolver::MultigridSmootherPreconditionerType::Chebyshev;
+    Parameters::LinearSolver::MultigridSmootherPreconditionerType::chebyshev;
 
   // Build the per-level inner preconditioner. The inverse diagonal is used both
   // for the InverseDiagonal relaxation smoother and as the inner preconditioner
@@ -1880,7 +1880,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
     {
       if (smoother_preconditioner_type ==
             Parameters::LinearSolver::MultigridSmootherPreconditionerType::
-              InverseDiagonal ||
+              inverse_diagonal ||
           use_chebyshev)
         {
           MGVectorType diagonal_vector;
@@ -1890,7 +1890,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
         }
       else if (smoother_preconditioner_type ==
                Parameters::LinearSolver::MultigridSmootherPreconditionerType::
-                 AdditiveSchwarzMethod)
+                 additive_schwarz_method)
         {
           if (mg_smoother_preconditioners[level] == nullptr)
             mg_smoother_preconditioners[level] =

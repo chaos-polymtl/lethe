@@ -12,7 +12,7 @@ set dimension = 3
 
 subsection simulation control
   set method             = bdf1
-  set bdf startup method = multiple step bdf
+  set bdf startup method = multiple_step_bdf
   set time step          = 0.0025 # Time step
   set time end           = 0.0025 # End time of simulation
   set output name        = out    # Prefix for VTU outputs
@@ -85,7 +85,7 @@ subsection boundary conditions
   end
   subsection bc 3
     set id   = 3
-    set type = function weak
+    set type = function_weak
     set beta = 0
   end
   subsection bc 4

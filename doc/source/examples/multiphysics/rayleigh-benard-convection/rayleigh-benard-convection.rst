@@ -54,7 +54,7 @@ where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitati
 In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers ( :math:`Ra=10^4` and :math:`Ra=10^6` ) with a Prandtl number of :math:`Pr=0.71` which correspond to air. According to the literature [#ouertatani]_ , we should see one big convective cell at steady-state for both :math:`Ra=10^4` and :math:`Ra=10^6`, but for the latter, there should also be two small vortices in opposite corners rotating in the reverse direction of the big vortex. For simplicity, the gravity magnitude is set to 10 pointing in the opposite direction of the y-axis for both simulations. Additionally, because the two dimensionless numbers above are the only thing that characterize the flow we may choose the remaining parameters as we want. Here we chose to fix :math:`\rho = 1`, :math:`H = 1`, :math:`c_\text{p} = 100` and :math:`\mu = 0.071`. Thus, the Rayleigh number is controlled only by the thermal expansion coefficient (:math:`\beta = 0.71` or :math:`\beta = 71`).
 
 .. note:: 
-    All four boundary conditions for the velocity are ``noslip``. The sides wall are set to ``convection-radiation-flux`` with a heat transfer coefficient of 0 to have isolated walls. The top and bottom walls are set to a ``temperature`` to force a value of 0 and 10, respectively. 
+    All four boundary conditions for the velocity are ``noslip``. The sides wall are set to ``convection_radiation`` with a heat transfer coefficient of 0 to have isolated walls. The top and bottom walls are set to a ``temperature`` to force a value of 0 and 10, respectively. 
 
 
 --------------

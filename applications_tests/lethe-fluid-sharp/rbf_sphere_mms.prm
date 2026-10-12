@@ -125,7 +125,7 @@ subsection boundary conditions
   end
   subsection bc 5
     set id   = 5
-    set type = function weak
+    set type = function_weak
     set beta = 1
 
     subsection u

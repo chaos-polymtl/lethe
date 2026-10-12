@@ -106,18 +106,18 @@ In the ``CLS`` subsection, two features are enabled : the ``phase filtration`` a
 The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
 Since a straightforward advection of the phase indicator typically leads to significant interface diffusion, an interface reinitialization method is required. 
-This is addressed in the ``interface reinitialization method`` subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``pde-based interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
+This is addressed in the ``interface reinitialization method`` subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  ``projection_based_sharpening`` (projection-based interface sharpening), ``pde_based`` (PDE-based interface reinitialization), and ``geometric`` (geometric interface reinitialization). The desired method can be selected using the ``type`` parameter.
 
 We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface reinitialization methods.
 
-For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other reinitialization methods available are described in the second part of this example (:ref:`Interface Reinitialization Methods Comparison`).
+For the first part of this example, the ``projection_based_sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other reinitialization methods available are described in the second part of this example (:ref:`Interface Reinitialization Methods Comparison`).
 
 
 .. code-block:: text
 
   subsection CLS
     subsection interface reinitialization method
-      set type      = projection-based interface sharpening
+      set type      = projection_based_sharpening
       set frequency = 20
       set verbosity = verbose
       subsection projection-based interface sharpening
@@ -181,7 +181,7 @@ Physical Properties
 
 We define two fluids simply by setting the number of fluids to be :math:`2`. In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a CLS indicator of :math:`0`, depending on the test case. A similar procedure is done for the phase associated with a CLS indicator of :math:`1` in ``subsection fluid 1``. 
 
-Then a ``fluid-fluid`` type of ``material interaction`` is added to specify the ``surface tension model``. In this example, it is set to ``constant`` with the ``surface tension coefficient`` depending on the test case [#hysing2009]_.
+Then a ``fluid_fluid`` type of ``material interaction`` is added to specify the ``surface tension model``. In this example, it is set to ``constant`` with the ``surface tension coefficient`` depending on the test case [#hysing2009]_.
 
 The values in the provided parameter files correspond to case 1. When launching case 2, the density and the kinematic viscosity of ``fluid 1`` and the ``surface tension coefficient`` for case 1 should be commented to use the ones for case 2 instead.
 
@@ -203,7 +203,7 @@ The values in the provided parameter files correspond to case 1. When launching 
       end
       set number of material interactions = 1
       subsection material interaction 0
-        set type = fluid-fluid
+        set type = fluid_fluid
         subsection fluid-fluid interaction
           set first fluid id              = 0
           set second fluid id             = 1
@@ -369,14 +369,14 @@ Interface Reinitialization Methods Comparison
 Parameter Files
 ~~~~~~~~~~~~~~~~
 
-For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface reinitialization method`` is changed to ``geometric interface reinitialization`` or ``pde-based interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each reinitialization method: 
+For the methods other than ``projection_based_sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface reinitialization method`` is changed to ``geometric`` or ``pde_based``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each reinitialization method: 
 
 * With the geometric method, the phase indicator field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase indicator field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
 
 .. code-block:: text
 
     subsection interface reinitialization method
-      set type       = geometric interface reinitialization
+      set type       = geometric
       set frequency  = 20
       set verbosity  = verbose
       subsection geometric interface reinitialization
@@ -402,7 +402,7 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
 .. code-block:: text
 
     subsection interface reinitialization method
-      set type      = pde-based interface reinitialization
+      set type      = pde_based
       set frequency = 20
       set verbosity = verbose
       subsection pde-based interface reinitialization
