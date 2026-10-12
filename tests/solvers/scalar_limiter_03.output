@@ -1,0 +1,33 @@
+
+DEAL::Dimension 2 degree 1
+DEAL::  Integral is conserved: 1
+DEAL::  Solution is modified: 1
+DEAL::  Solution is within the bounds: 1
+DEAL::  Integral is conserved with a lower bound only: 1
+DEAL::  Solution is above the lower bound: 1
+DEAL::  Solution within the bounds is not modified: 1
+DEAL::  Solution is not modified without bounds: 1
+DEAL::Dimension 2 degree 2
+DEAL::  Integral is conserved: 1
+DEAL::  Solution is modified: 1
+DEAL::  Solution is within the bounds: 1
+DEAL::  Integral is conserved with a lower bound only: 1
+DEAL::  Solution is above the lower bound: 1
+DEAL::  Solution within the bounds is not modified: 1
+DEAL::  Solution is not modified without bounds: 1
+DEAL::Dimension 2 degree 3
+DEAL::  Integral is conserved: 1
+DEAL::  Solution is modified: 1
+DEAL::  Solution is within the bounds: 1
+DEAL::  Integral is conserved with a lower bound only: 1
+DEAL::  Solution is above the lower bound: 1
+DEAL::  Solution within the bounds is not modified: 1
+DEAL::  Solution is not modified without bounds: 1
+DEAL::Dimension 3 degree 2
+DEAL::  Integral is conserved: 1
+DEAL::  Solution is modified: 1
+DEAL::  Solution is within the bounds: 1
+DEAL::  Integral is conserved with a lower bound only: 1
+DEAL::  Solution is above the lower bound: 1
+DEAL::  Solution within the bounds is not modified: 1
+DEAL::  Solution is not modified without bounds: 1

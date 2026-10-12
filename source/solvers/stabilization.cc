@@ -21,6 +21,7 @@
 
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/vector.h>
+#include <deal.II/lac/vector_operation.h>
 
 #include <algorithm>
 #include <cmath>
@@ -767,3 +768,153 @@ kuzmin_scalar_limiter(const DoFHandler<3> &dof_handler,
                       const Quadrature<3> &cell_quadrature,
                       GlobalVectorType    &locally_relevant_vector,
                       GlobalVectorType    &locally_owned_vector);
+
+
+template <int dim>
+void
+zhang_shu_scalar_limiter(
+  const DoFHandler<dim>           &dof_handler,
+  const Mapping<dim>              &mapping,
+  const Quadrature<dim>           &cell_quadrature,
+  const Parameters::Stabilization &stabilization_parameters,
+  GlobalVectorType                &locally_relevant_vector,
+  GlobalVectorType                &locally_owned_vector)
+{
+  const double lower_bound =
+    stabilization_parameters.scalar_limiter_lower_bound;
+  const double upper_bound =
+    stabilization_parameters.scalar_limiter_upper_bound;
+
+  // Nothing to do if no bound is prescribed. This is only used to skip the
+  // loop over the cells: a bound that no solution can exceed never modifies the
+  // solution.
+  if (lower_bound <= std::numeric_limits<double>::lowest() &&
+      upper_bound >= std::numeric_limits<double>::max())
+    return;
+
+  // The limiter requires a vector in which the value can be modified. We begin
+  // by making sure that it is set at the present value of the solution to
+  // limit.
+  locally_owned_vector = locally_relevant_vector;
+
+  // The values of the degrees of freedom are used as the values of the solution
+  // at the support points. This requires a finite element with support points.
+  const FiniteElement<dim> &fe = dof_handler.get_fe();
+  Assert(
+    fe.has_support_points(),
+    ExcMessage(
+      "The Zhang-Shu limiter requires a finite element with support points."));
+
+  // A variation of the solution within a cell that is below this fraction of
+  // the magnitude of the solution is round-off noise. It is not limited since
+  // the ratio between the bounds and such a variation is meaningless.
+  const double relative_variation_tolerance =
+    100. * std::numeric_limits<double>::epsilon();
+
+  // The mean is obtained by integrating the solution over the cell. The
+  // solution at the quadrature points is also used to sample the extrema.
+  FEValues<dim>       fe_values(mapping,
+                          fe,
+                          cell_quadrature,
+                          update_values | update_JxW_values);
+  const unsigned int  n_q_points = cell_quadrature.size();
+  std::vector<double> values_q(n_q_points);
+
+  std::vector<types::global_dof_index> local_dof_indices(fe.n_dofs_per_cell());
+
+  // Loop over every local cell and do:
+  // 1. Calculate the max, the min and the mean of the solution.
+  // 2. Calculate the factor that keeps the solution within the bounds.
+  // 3. Rescale the nodal values of the solution around the mean.
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // 1. Extrema of the solution at the support points and at the
+          // quadrature points, and mean of the solution.
+          cell->get_dof_indices(local_dof_indices);
+          double max_value = std::numeric_limits<double>::lowest();
+          double min_value = std::numeric_limits<double>::max();
+          for (const auto &i_dof : local_dof_indices)
+            {
+              const double dof_value = locally_relevant_vector(i_dof);
+              max_value              = std::max(max_value, dof_value);
+              min_value              = std::min(min_value, dof_value);
+            }
+
+          fe_values.reinit(cell);
+          fe_values.get_function_values(locally_relevant_vector, values_q);
+          double cell_integral = 0;
+          double cell_measure  = 0;
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              max_value = std::max(max_value, values_q[q]);
+              min_value = std::min(min_value, values_q[q]);
+
+              cell_integral += values_q[q] * fe_values.JxW(q);
+              cell_measure += fe_values.JxW(q);
+            }
+
+          // Nothing to do if the solution is within the bounds
+          if (min_value >= lower_bound && max_value <= upper_bound)
+            continue;
+
+          const double mean_value = cell_integral / cell_measure;
+
+          // 2. Calculate the factor. The distances between the mean and the
+          // extrema of the cell are positive. A ratio is only calculated for a
+          // bound that is exceeded, which is never the case of a bound that is
+          // not prescribed, and when the variation within the cell is above
+          // round-off.
+          const double max_variation = max_value - mean_value;
+          const double min_variation = mean_value - min_value;
+          const double variation_tolerance =
+            relative_variation_tolerance *
+            std::max(std::abs(max_value), std::abs(min_value));
+
+          double theta = 1.;
+          if (max_value > upper_bound && max_variation > variation_tolerance)
+            theta = std::min(theta, (upper_bound - mean_value) / max_variation);
+          if (min_value < lower_bound && min_variation > variation_tolerance)
+            theta = std::min(theta, (mean_value - lower_bound) / min_variation);
+
+          // The factor is negative when the mean is outside of the bounds. The
+          // solution is then set to its mean, since the rescaling must never
+          // invert the solution around its mean.
+          theta = std::max(theta, 0.);
+
+          // 3. Rescale the solution within the cell
+          for (const auto &i_dof : local_dof_indices)
+            {
+              const double dof_value = locally_relevant_vector(i_dof);
+              locally_owned_vector(i_dof) =
+                mean_value + theta * (dof_value - mean_value);
+            }
+        }
+    }
+
+  locally_owned_vector.compress(VectorOperation::insert);
+
+  // Reset the present solution and the evaluation point to the new updated
+  // solution.
+  locally_relevant_vector = locally_owned_vector;
+}
+
+
+template void
+zhang_shu_scalar_limiter(
+  const DoFHandler<2>             &dof_handler,
+  const Mapping<2>                &mapping,
+  const Quadrature<2>             &cell_quadrature,
+  const Parameters::Stabilization &stabilization_parameters,
+  GlobalVectorType                &locally_relevant_vector,
+  GlobalVectorType                &locally_owned_vector);
+
+template void
+zhang_shu_scalar_limiter(
+  const DoFHandler<3>             &dof_handler,
+  const Mapping<3>                &mapping,
+  const Quadrature<3>             &cell_quadrature,
+  const Parameters::Stabilization &stabilization_parameters,
+  GlobalVectorType                &locally_relevant_vector,
+  GlobalVectorType                &locally_owned_vector);

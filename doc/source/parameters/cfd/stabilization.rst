@@ -22,6 +22,8 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
     
     # Scalar limiter
     set scalar limiter                   = none #<none|moe|kuzmin>
+    set scalar limiter lower bound       = -1.7e308
+    set scalar limiter upper bound       = 1.7e308
   end
   
 
@@ -49,7 +51,13 @@ There are three choices of stabilization strategy:
 
   * ``moe`` applies a monotone upstream-centered scheme for conservation laws (MUSCL) type of limiter (see `Moe et al. (2015) <https://doi.org/10.48550/arXiv.1507.03024>`_). The deviation of the solution from its cell average is rescaled so that the solution remains between the minimum and the maximum of the solution in the neighboring cells. This limiter also reduces the smooth extrema of the solution.
 
-  * ``kuzmin`` applies the hierarchical vertex-based limiter of `Kuzmin (2010) <https://doi.org/10.1016/j.cam.2009.05.028>`_. The linear part of the solution and its higher-order part are rescaled separately, using bounds that are established at the vertices of the cell from the cells that share them. The linear part is never limited more than the higher-order part, which preserves the smooth extrema of the solution. This property requires ``tracer degree`` to be at least 2. With a degree of 1, this limiter behaves as a classical slope limiter and it reduces the smooth extrema. This limiter does not have any parameter. The vertices located on the boundaries of the domain are not used to establish the bounds. Consequently, the solution is not limited in the cells of which all the vertices are on a boundary, which is the case of every cell of a mesh that is a single cell thick.
+  * ``kuzmin`` applies the hierarchical vertex-based limiter of `Kuzmin (2010) <https://doi.org/10.1016/j.cam.2009.05.028>`_. The linear part of the solution and its higher-order part are rescaled separately, using bounds that are established at the vertices of the cell from the cells that share them. The linear part is never limited more than the higher-order part, which preserves the smooth extrema of the solution. This property requires ``tracer degree`` to be at least 2. With a degree of 1, this limiter behaves as a classical slope limiter and it reduces the smooth extrema. This limiter does not have any parameter. The vertices located on the boundaries of the domain are not used to establish the bounds. Consequently, the solution is not limited in the cells of which all the vertices are on a boundary, which is the case of every cell of a mesh that is a single cell thick. The solution at the vertices located on the boundaries can be bounded with the ``scalar limiter lower bound`` and ``scalar limiter upper bound`` parameters.
+
+* ``scalar limiter lower bound`` and ``scalar limiter upper bound`` prescribe the bounds within which the solution of the tracer equation is kept when a ``scalar limiter`` is used (``moe`` or ``kuzmin``). After the limiter is applied, the deviation of the solution from its cell average is rescaled, in every cell in which the solution exceeds a bound, by the largest factor between 0 and 1 for which the solution remains within the bounds (see `Zhang and Shu (2010) <https://doi.org/10.1016/j.jcp.2009.12.030>`_). The default values are the lowest and the largest representable numbers, which means that the solution is not bounded. A single bound can be prescribed, for example a lower bound of 0 to keep a concentration positive.
+
+  Contrary to the bounds of the ``moe`` and ``kuzmin`` limiters, which are established from the solution in the neighboring cells, these bounds are prescribed. Consequently, they also apply at the vertices located on the boundaries of the domain, which the ``kuzmin`` limiter does not use, and they do not modify a solution that respects them, whether or not it has an extremum. The bounds must be values that the exact solution cannot exceed, considering the initial condition, the boundary conditions and the source terms.
+
+  This rescaling does not change the average of the solution within a cell. Consequently, the solution in a cell of which the average is outside of the bounds cannot be brought within them: it is set to its average. This occurs when the time step is large (see the warning below) and in steady-state simulations, in which the limiter is only applied once, to the solution of the steady-state problem.
 
 .. warning::
 

@@ -864,6 +864,14 @@ namespace Parameters
       none
     } scalar_limiter = ScalarLimiters::none;
 
+    /// Lower bound prescribed to the scalar when a scalar limiter is used. The
+    /// default value means that the scalar does not have a lower bound.
+    double scalar_limiter_lower_bound = std::numeric_limits<double>::lowest();
+
+    /// Upper bound prescribed to the scalar when a scalar limiter is used. The
+    /// default value means that the scalar does not have an upper bound.
+    double scalar_limiter_upper_bound = std::numeric_limits<double>::max();
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

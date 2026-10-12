@@ -4,6 +4,7 @@
 #ifndef lethe_stabilization_h
 #define lethe_stabilization_h
 
+#include <core/parameters.h>
 #include <core/vector.h>
 
 #include <deal.II/base/quadrature.h>
@@ -122,7 +123,10 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
  * the solution at the vertices, multiplies the deviation from the mean. The
  * limiter has no adjustable parameter. The solution is not limited in a cell
  * of which all the vertices are located on the boundaries of the domain, which
- * is the case of every cell of a mesh that is a single cell thick.
+ * is the case of every cell of a mesh that is a single cell thick. Since the
+ * vertices located on a boundary are not used, the solution at these vertices
+ * is not bounded by this limiter. It can be bounded by applying the
+ * zhang_shu_scalar_limiter() afterwards.
  *
  * The implementation differs from the article on the following points:
  * - The gradient and the second derivatives are those of the L2 projection of
@@ -157,4 +161,51 @@ kuzmin_scalar_limiter(const DoFHandler<dim> &dof_handler,
                       const Quadrature<dim> &cell_quadrature,
                       GlobalVectorType      &locally_relevant_vector,
                       GlobalVectorType      &locally_owned_vector);
+
+/**
+ * @brief Implements the scaling limiter of Zhang and Shu to keep the field within prescribed bounds. This limiter is only used when DG advection is selected for the Tracer, after one of the other scalar limiters.
+ * The limiter is based on: Zhang, Xiangxiong, and Chi-Wang Shu. "On
+ * maximum-principle-satisfying high order schemes for scalar conservation
+ * laws." Journal of Computational Physics 229.9 (2010): 3091-3120.
+ * https://doi.org/10.1016/j.jcp.2009.12.030
+ *
+ * In every cell in which the solution exceeds one of the bounds, the deviation
+ * of the solution from its mean is multiplied by the largest factor between
+ * zero and one for which the solution remains within the bounds. The mean,
+ * which is obtained by integrating the solution over the cell, is preserved.
+ * The limiter consequently conserves the integral of the solution for every
+ * polynomial degree. The extrema of the solution within a cell are sampled at
+ * the support points of the finite element and at the quadrature points.
+ *
+ * Contrary to the bounds of the other scalar limiters, which are established
+ * from the solution in the neighboring cells, these bounds are prescribed.
+ * Consequently:
+ * - They apply everywhere, including at the vertices located on the boundaries
+ *   of the domain, which the kuzmin_scalar_limiter() does not use.
+ * - A solution that respects the bounds is not modified, whether or not it has
+ *   an extremum.
+ * - Since the mean is preserved, the solution in a cell of which the mean is
+ *   outside of the bounds cannot be brought within them. It is set to its
+ *   mean. This limiter does not bound the means of the cells, which are the
+ *   result of the discretization.
+ *
+ * The function does nothing, and it does not modify the vectors, if no bound is
+ * prescribed, that is if the two bounds have their default values.
+ *
+ * @param dof_handler The DoFHandler used in the scalar simulation. This DOFHandler must have only a single component (a scalar equation) and its finite element must have support points.
+ * @param mapping The mapping used in the scalar simulation.
+ * @param cell_quadrature The quadrature used to integrate the solution over the cells. It should be the quadrature used to assemble the scalar equation so that the limiter conserves the same discrete integral.
+ * @param stabilization_parameters The stabilization parameters, which contain the lower and the upper bounds prescribed to the scalar.
+ * @param locally_relevant_vector A solution vector that contains the locally_relevant solution. This vector is used to read the solution and will be modified at the end.
+ * @param locally_owned_vector A solution vector that contains the locally_owned solution. This vector will be used to write the new limited solution.
+ */
+template <int dim>
+void
+zhang_shu_scalar_limiter(
+  const DoFHandler<dim>           &dof_handler,
+  const Mapping<dim>              &mapping,
+  const Quadrature<dim>           &cell_quadrature,
+  const Parameters::Stabilization &stabilization_parameters,
+  GlobalVectorType                &locally_relevant_vector,
+  GlobalVectorType                &locally_owned_vector);
 #endif

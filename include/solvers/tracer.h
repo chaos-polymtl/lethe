@@ -530,30 +530,36 @@ private:
   virtual void
   modify_solution() override
   {
-    if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    if (simulation_parameters.fem_parameters.tracer_uses_dg &&
+        simulation_parameters.stabilization.scalar_limiter !=
+          Parameters::Stabilization::ScalarLimiters::none)
       {
         if (simulation_parameters.stabilization.scalar_limiter ==
             Parameters::Stabilization::ScalarLimiters::moe)
-          {
-            moe_scalar_limiter<dim>(*this->dof_handler,
-                                    *this->get_mapping(),
-                                    *this->cell_quadrature,
-                                    this->evaluation_point,
-                                    this->local_evaluation_point);
-
-            *present_solution = this->local_evaluation_point;
-          }
+          moe_scalar_limiter<dim>(*this->dof_handler,
+                                  *this->get_mapping(),
+                                  *this->cell_quadrature,
+                                  this->evaluation_point,
+                                  this->local_evaluation_point);
         else if (simulation_parameters.stabilization.scalar_limiter ==
                  Parameters::Stabilization::ScalarLimiters::kuzmin)
-          {
-            kuzmin_scalar_limiter<dim>(*this->dof_handler,
-                                       *this->get_mapping(),
-                                       *this->cell_quadrature,
-                                       this->evaluation_point,
-                                       this->local_evaluation_point);
+          kuzmin_scalar_limiter<dim>(*this->dof_handler,
+                                     *this->get_mapping(),
+                                     *this->cell_quadrature,
+                                     this->evaluation_point,
+                                     this->local_evaluation_point);
 
-            *present_solution = this->local_evaluation_point;
-          }
+        // The limiters above establish their bounds from the solution in the
+        // neighboring cells. The bounds prescribed to the scalar, if any, are
+        // enforced afterwards. This does nothing if no bound is prescribed.
+        zhang_shu_scalar_limiter<dim>(*this->dof_handler,
+                                      *this->get_mapping(),
+                                      *this->cell_quadrature,
+                                      simulation_parameters.stabilization,
+                                      this->evaluation_point,
+                                      this->local_evaluation_point);
+
+        *present_solution = this->local_evaluation_point;
       }
   };
 

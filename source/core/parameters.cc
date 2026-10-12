@@ -5,6 +5,7 @@
 #include <core/utilities.h>
 
 #include <deal.II/base/exceptions.h>
+#include <deal.II/base/utilities.h>
 
 #include <algorithm>
 
@@ -1000,6 +1001,21 @@ namespace Parameters
         enum_to_string(defaults.scalar_limiter),
         Patterns::Selection("none|moe|kuzmin"),
         "Type of scalar limiter. The limiters are only appropriate with the DG versions of the solvers and should only be used for advection-dominated problem.");
+
+      // The default bounds are the lowest and the largest representable
+      // numbers. They are written with all their digits so that they are
+      // recovered exactly when they are parsed.
+      prm.declare_entry(
+        "scalar limiter lower bound",
+        Utilities::to_string(defaults.scalar_limiter_lower_bound),
+        Patterns::Double(),
+        "Lower bound within which the scalar is kept when a scalar limiter is used. The default value means that there is no lower bound.");
+
+      prm.declare_entry(
+        "scalar limiter upper bound",
+        Utilities::to_string(defaults.scalar_limiter_upper_bound),
+        Patterns::Double(),
+        "Upper bound within which the scalar is kept when a scalar limiter is used. The default value means that there is no upper bound.");
     }
     prm.leave_subsection();
   }
@@ -1014,6 +1030,12 @@ namespace Parameters
         string_to_enum<NavierStokesStabilization>(prm.get("stabilization"));
       scalar_limiter =
         string_to_enum<ScalarLimiters>(prm.get("scalar limiter"));
+      scalar_limiter_lower_bound = prm.get_double("scalar limiter lower bound");
+      scalar_limiter_upper_bound = prm.get_double("scalar limiter upper bound");
+      AssertThrow(
+        scalar_limiter_lower_bound < scalar_limiter_upper_bound,
+        ExcMessage(
+          "The scalar limiter lower bound must be smaller than the scalar limiter upper bound."));
 
       // DCDD stabilization activation parameters
       heat_transfer_dcdd_stabilization =
