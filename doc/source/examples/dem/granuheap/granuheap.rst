@@ -24,8 +24,9 @@ All files mentioned below are located in the example's folder (``examples/dem/3d
 
 - Mesh file: ``cylinder.msh`` and ``support.msh``
 - Python file to generate mesh files: ``generate_meshes.py``
-- Parameters files for the problem: ``granuheap.prm`` and ``granuheap_multicase.prm``
-- Post-processing python files: ``post_processing.py``, ``post_processing_multicase.prm`` and ``post_processing_functions.py``.
+- Parameter file for the problem: ``granuheap.prm``
+- Parameter file for case generation: ``granuheap_multicase.tpl``
+- Post-processing python files: ``post_processing.py``, ``post_processing_multicase.py`` and ``post_processing_functions.py``.
 
 -----------------------
 Description of the Case
@@ -264,7 +265,7 @@ A simulation with one set of values for the ``rolling friction`` and the ``surfa
 Running multiple cases
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Three files are needed to create and launch multiple simulations; ``generate_cases_locally.py``, ``granuheap_multicase.prm`` and ``launch_lethe_locally.py``. For more information, visit `How to Automatically Create and Launch Lethe Simulations <../../../tools/automatic_launch/automatic_launch.html>`_
+Three files are needed to create and launch multiple simulations; ``generate_cases_locally.py``, ``granuheap_multicase.tpl`` and ``launch_lethe_locally.py``. For more information, visit `How to Automatically Create and Launch Lethe Simulations <../../../tools/automatic_launch/automatic_launch.html>`_
 
 In this case, we run 3 different values of ``rolling friction`` and 4 different values of ``surface energy``, for a total of 12 simulations. 
 

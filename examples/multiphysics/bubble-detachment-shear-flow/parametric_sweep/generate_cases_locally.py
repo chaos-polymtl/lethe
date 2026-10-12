@@ -16,6 +16,7 @@ PATH = os.getcwd()
 
 # User input
 CASE_PREFIX = ''
+TEMPLATE_FILE = 'bubble-detachment-shear-flow.tpl'
 PRM_FILE = 'bubble-detachment-shear-flow.prm'
 SHELL_FILE = 'launch_lethe.sh'
 
@@ -43,7 +44,7 @@ number_of_cases = 0
 # Create Jinja template
 templateLoader = jinja2.FileSystemLoader(searchpath=PATH)
 templateEnv = jinja2.Environment(loader=templateLoader)
-template = templateEnv.get_template(PRM_FILE)
+template = templateEnv.get_template(TEMPLATE_FILE)
 
 # Generation of different cases (density sweep then surface tension sweep)
 if os.path.exists(f'{PATH}/shear_rate_sweep/'):
@@ -90,7 +91,7 @@ with open(summary_sweep_path,'w') as file:
                 case_path = f'{PATH}/shear_rate_sweep/{case_folder_name}'
 
                 os.mkdir(case_path)
-                shutil.copy(f'{PATH}/{PRM_FILE}', f'{case_path}/{PRM_FILE}')
+                shutil.copy(f'{PATH}/{TEMPLATE_FILE}', f'{case_path}/{PRM_FILE}')
 
                 # Write a unique prm file with the prm template being updated
                 with open(f'{case_path}/{PRM_FILE}', 'w') as f:

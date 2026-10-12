@@ -18,6 +18,7 @@ PATH = os.getcwd()
 
 # User input
 CASE_PREFIX = 'R_'
+TEMPLATE_FILE = 'static-bubble-chns.tpl'
 PRM_FILE = 'static-bubble-chns.prm'
 
 # Generation of data points
@@ -31,7 +32,7 @@ epsilon = 0.01381
 # Create Jinja template
 templateLoader = jinja2.FileSystemLoader(searchpath=PATH)
 templateEnv = jinja2.Environment(loader=templateLoader)
-template = templateEnv.get_template(PRM_FILE)
+template = templateEnv.get_template(TEMPLATE_FILE)
 
 # Generation of different cases
 for r in radii:
@@ -47,7 +48,7 @@ for r in radii:
     # Create the folder of the case and put the prm template in it
     case_path = f'{PATH}/{case_folder_name}'
     os.mkdir(case_path)
-    shutil.copy(f'{PATH}/{PRM_FILE}', f'{case_path}/{PRM_FILE}')
+    shutil.copy(f'{PATH}/{TEMPLATE_FILE}', f'{case_path}/{PRM_FILE}')
     
     # Write a unique prm file with the prm template being updated
     with open(f'{case_path}/{PRM_FILE}', 'w') as f:

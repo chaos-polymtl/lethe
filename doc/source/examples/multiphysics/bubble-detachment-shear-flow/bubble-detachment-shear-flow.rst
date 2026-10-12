@@ -24,8 +24,9 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/multiphysics/bubble-detachment-shear-flow``).
 
 - Parameter file: ``bubble-detachment-shear-flow.prm``
+- Parameter file for case generation: ``parametric_sweep/bubble-detachment-shear-flow.tpl``
 - Postprocessing Python script: ``multiple_folders_bubble_detachment_post_processing.py`` (using the functions of ``functions_bubble_detachment_post_processing.py``)
-- Parametric sweep generation files : ``generate_cases_locally.py``, ``launch_lethe.sh`` and ``launch_lethe_cluster.py``
+- Parametric sweep generation files : ``parametric_sweep/generate_cases_locally.py``, ``parametric_sweep/launch_lethe.sh`` and ``parametric_sweep/launch_lethe_cluster.py``
 
 
 -------------------------
@@ -358,12 +359,12 @@ The simulation may be run locally by calling ``lethe-fluid`` by invoking:
 .. code-block:: text
   :class: copy-button
   
-   mpirun -np 10 lethe-fluid jurins-law-2d.prm
+   mpirun -np 10 lethe-fluid bubble-detachment-shear-flow.prm
    
 to run the simulation using ten CPU cores. 
 
-Though we highly advise you to run the simulation on a computational cluster (such as Narval, Béluga, etc.). To do so, a python script (``generate_cases_locally.py``) is included to generate automatically the cases with the correct parameters and physical properties locally. The script works with a ``.prm`` template (``bubble-detachment-shear-flow.prm``) and a ``.sh`` file (``launch_lethe.sh``) containing the information to launch the simulation on Narval. 
-To use the python script, invoke:
+Though we highly advise you to run the simulation on a computational cluster (such as Narval, Béluga, etc.). To do so, a python script (``generate_cases_locally.py``) is included in the ``parametric_sweep`` folder to generate automatically the cases with the correct parameters and physical properties locally. The script works with a parameter file template (``bubble-detachment-shear-flow.tpl``) and a ``.sh`` file (``launch_lethe.sh``) containing the information to launch the simulation on Narval. 
+To use the python script, invoke from the ``parametric_sweep`` folder:
 
 .. code-block:: text
   :class: copy-button
