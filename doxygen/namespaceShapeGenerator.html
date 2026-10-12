@@ -93,6 +93,12 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a441f8d8f7a3032714bb3a89907c0cf2f" id="r_a441f8d8f7a3032714bb3a89907c0cf2f"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a441f8d8f7a3032714bb3a89907c0cf2f"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="core_2utilities_8h.html#aef330c4a36137fca9e43551c2862930e">DeprecatedEnumNames</a>&lt; typename <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::ShapeType &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceShapeGenerator.html#a441f8d8f7a3032714bb3a89907c0cf2f">deprecated_shape_type_names</a> ()</td></tr>
+<tr class="separator:a441f8d8f7a3032714bb3a89907c0cf2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a212a31e4297f066126aa20d7a11577da" id="r_a212a31e4297f066126aa20d7a11577da"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a212a31e4297f066126aa20d7a11577da"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::ShapeType&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceShapeGenerator.html#a212a31e4297f066126aa20d7a11577da">string_to_shape_type</a> (const std::string &amp;type)</td></tr>
+<tr class="separator:a212a31e4297f066126aa20d7a11577da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab44d589cc8edd0b6dd1defc5d8705561" id="r_ab44d589cc8edd0b6dd1defc5d8705561"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:ab44d589cc8edd0b6dd1defc5d8705561"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">initialize_shape</a> (const std::string &amp;type, const std::string &amp;shape_arguments_str, const Point&lt; dim &gt; &amp;position, const Tensor&lt; 1, 3 &gt; &amp;orientation)</td></tr>
 <tr class="separator:ab44d589cc8edd0b6dd1defc5d8705561"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -104,6 +110,36 @@ Functions</h2></td></tr>
 <tr class="separator:ab53ceb8233664f0289908d673701d386"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a441f8d8f7a3032714bb3a89907c0cf2f" name="a441f8d8f7a3032714bb3a89907c0cf2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a441f8d8f7a3032714bb3a89907c0cf2f">&#9670;&#160;</a></span>deprecated_shape_type_names()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">template const <a class="el" href="core_2utilities_8h.html#aef330c4a36137fca9e43551c2862930e">DeprecatedEnumNames</a>&lt; <a class="el" href="classShape.html">Shape</a>&lt; 3 &gt;::ShapeType &gt; &amp; ShapeGenerator::deprecated_shape_type_names&lt; 3 &gt; </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the deprecated strings of the shape types, which remain accepted in parameter files, composite shape files and particle files. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The deprecated strings, each paired with its shape type. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="shape__parsing_8cc_source.html#l00010">10</a> of file <a class="el" href="shape__parsing_8cc_source.html">shape_parsing.cc</a>.</p>
+
+</div>
+</div>
 <a id="ab44d589cc8edd0b6dd1defc5d8705561" name="ab44d589cc8edd0b6dd1defc5d8705561"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab44d589cc8edd0b6dd1defc5d8705561">&#9670;&#160;</a></span>initialize_shape()</h2>
 
@@ -153,9 +189,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape__parsing_8cc_source.html#l00010">10</a> of file <a class="el" href="shape__parsing_8cc_source.html">shape_parsing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape__parsing_8cc_source.html#l00035">35</a> of file <a class="el" href="shape__parsing_8cc_source.html">shape_parsing.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="shape__parsing_8cc_source.html#l00161">initialize_shape_from_file()</a>, and <a class="el" href="shape__parsing_8cc_source.html#l00039">initialize_shape_from_vector()</a>.</p>
+<p class="reference">References <a class="el" href="shape__parsing_8cc_source.html#l00193">initialize_shape_from_file()</a>, and <a class="el" href="shape__parsing_8cc_source.html#l00068">initialize_shape_from_vector()</a>.</p>
 
 </div>
 </div>
@@ -208,9 +244,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape__parsing_8cc_source.html#l00161">161</a> of file <a class="el" href="shape__parsing_8cc_source.html">shape_parsing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape__parsing_8cc_source.html#l00193">193</a> of file <a class="el" href="shape__parsing_8cc_source.html">shape_parsing.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="shape__parsing_8cc_source.html#l00010">initialize_shape()</a>.</p>
+<p class="reference">References <a class="el" href="shape__parsing_8cc_source.html#l00035">initialize_shape()</a>.</p>
 
 </div>
 </div>
@@ -263,7 +299,44 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape__parsing_8cc_source.html#l00039">39</a> of file <a class="el" href="shape__parsing_8cc_source.html">shape_parsing.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape__parsing_8cc_source.html#l00068">68</a> of file <a class="el" href="shape__parsing_8cc_source.html">shape_parsing.cc</a>.</p>
+
+</div>
+</div>
+<a id="a212a31e4297f066126aa20d7a11577da" name="a212a31e4297f066126aa20d7a11577da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a212a31e4297f066126aa20d7a11577da">&#9670;&#160;</a></span>string_to_shape_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="classShape.html">Shape</a>&lt; 3 &gt;::ShapeType ShapeGenerator::string_to_shape_type&lt; 3 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the shape type designated by a string, which is either the name of a <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb" title="enum class that associate an integer index tp each type of shape. The enumerator names are the values...">Shape&lt;dim&gt;::ShapeType</a> enumerator or one of the deprecated strings given by <a class="el" href="namespaceShapeGenerator.html#a441f8d8f7a3032714bb3a89907c0cf2f" title="Return the deprecated strings of the shape types, which remain accepted in parameter files,...">deprecated_shape_type_names()</a>. No deprecation warning is printed, since the string may come from a composite shape file or a particle file rather than from a parameter. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>String designating the type of shape.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The corresponding shape type. An exception is thrown if <code>type</code> designates no shape type. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="shape__parsing_8cc_source.html#l00024">24</a> of file <a class="el" href="shape__parsing_8cc_source.html">shape_parsing.cc</a>.</p>
 
 </div>
 </div>

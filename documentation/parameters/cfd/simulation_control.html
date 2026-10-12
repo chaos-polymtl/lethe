@@ -475,7 +475,7 @@
   # BDF scheme parameters
   #---------------------------------------------------
   # Method used to startup high order BDF methods
-  set bdf startup method = multiple step bdf
+  set bdf startup method = multiple_step_bdf
 
   # Scaling factor used in the iterations necessary to startup the BDF schemes
   set startup time scaling = 0.4
@@ -597,8 +597,8 @@ end
 <ul class="simple">
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">bdf</span> <span class="pre">startup</span> <span class="pre">method</span></code>: scheme used to start a high order BDF scheme (2nd order and above). The available options are:</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">multiple</span> <span class="pre">step</span> <span class="pre">bdf</span></code>:  A lower order BDF scheme is used to start the simulation. For example, in the case of <code class="docutils literal notranslate"><span class="pre">bdf3</span></code>, the first step is done using <code class="docutils literal notranslate"><span class="pre">bdf1</span></code>, the second with <code class="docutils literal notranslate"><span class="pre">bdf2</span></code> and the third and onward are done with <code class="docutils literal notranslate"><span class="pre">bdf3</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">solution</span></code>: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solutions to establish the formal accuracy of the BDF time stepping schemes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">multiple_step_bdf</span></code>:  A lower order BDF scheme is used to start the simulation. For example, in the case of <code class="docutils literal notranslate"><span class="pre">bdf3</span></code>, the first step is done using <code class="docutils literal notranslate"><span class="pre">bdf1</span></code>, the second with <code class="docutils literal notranslate"><span class="pre">bdf2</span></code> and the third and onward are done with <code class="docutils literal notranslate"><span class="pre">bdf3</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initial_solution</span></code>: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solutions to establish the formal accuracy of the BDF time stepping schemes.</p></li>
 </ul>
 </dd>
 </dl>

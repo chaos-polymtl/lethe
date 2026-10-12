@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['matching_5fdem_5fproperties_5findex_0',['matching_dem_properties_index',['../namespaceDEM.html#ad6f19a136c3504e472457942a25bac01',1,'DEM']]],
-  ['mgnumber_1',['mgnumber',['../classMFNavierStokesVANSPreconditionGMG.html#a19e3f11562db4fdf33412f2a2a7b2197',1,'MFNavierStokesVANSPreconditionGMG::MGNumber'],['../classMFNavierStokesPreconditionGMGBase.html#afb59826ed31b92b6494e1b76ebb5fa35',1,'MFNavierStokesPreconditionGMGBase::MGNumber'],['../classMFNavierStokesPreconditionGMG.html#a8700847e8fe8089d8d7c8767f777c883',1,'MFNavierStokesPreconditionGMG::MGNumber']]],
-  ['mgvectortype_2',['mgvectortype',['../classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a',1,'MFNavierStokesVANSPreconditionGMG::MGVectorType'],['../classMFNavierStokesPreconditionGMGBase.html#a83497d7eb659c193af08115bb14d49ce',1,'MFNavierStokesPreconditionGMGBase::MGVectorType'],['../classMFNavierStokesPreconditionGMG.html#a8fe85e5d7ae9505b5f21398834bc6513',1,'MFNavierStokesPreconditionGMG::MGVectorType']]]
+  ['local_5fneighbor_5flist_0',['local_neighbor_list',['../classRayTracingSolver.html#ad419665d9cb9c2ce446db3efb05fc754',1,'RayTracingSolver']]],
+  ['lstransfertype_1',['lstransfertype',['../classMFNavierStokesVANSPreconditionGMG.html#a299c5ff69809f40ba7ad0bf16bf7a161',1,'MFNavierStokesVANSPreconditionGMG::LSTransferType'],['../classMFNavierStokesPreconditionGMGBase.html#a3e65523e07b2d99117fbc9827a12f333',1,'MFNavierStokesPreconditionGMGBase::LSTransferType']]]
 ];

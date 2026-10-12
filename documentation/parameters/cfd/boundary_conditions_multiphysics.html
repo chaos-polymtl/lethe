@@ -456,8 +456,8 @@
 <p>This subsection’s purpose is defining the boundary conditions associated to multiphysic problems.</p>
 <section id="heat-transfer">
 <span id="heat-transfer-bc"></span><h2>Heat Transfer<a class="headerlink" href="#heat-transfer" title="Link to this heading">#</a></h2>
-<p>For heat transfer boundary conditions, the possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">noflux</span></code> (default), <code class="docutils literal notranslate"><span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">convection-radiation-flux</span></code>.
-The default parameters for <code class="docutils literal notranslate"><span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">convection-radiation-flux</span></code> are shown:</p>
+<p>For heat transfer boundary conditions, the possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">noflux</span></code> (default), <code class="docutils literal notranslate"><span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">convection_radiation</span></code>.
+The default parameters for <code class="docutils literal notranslate"><span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">convection_radiation</span></code> are shown:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions heat transfer
   set number         = 3
   set time dependent = false
@@ -477,7 +477,7 @@ The default parameters for <code class="docutils literal notranslate"><span clas
   end
   subsection bc 2
     set id   = 2
-    set type = convection-radiation-flux
+    set type = convection_radiation
     subsection h
       set Function expression = 0
     end
@@ -515,7 +515,7 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">noflux</span></code> (default) so that there is no heat transfer boundary condition,</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code> (Dirichlet BC), to impose a given temperature <code class="docutils literal notranslate"><span class="pre">value</span></code> at the boundary,</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code> to impose periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span> <span class="pre">=</span> <span class="pre">0</span></code>;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">convection-radiation-flux</span></code> (Robin BC) for cooling/heating, depending on the environment temperature at the boundary <code class="docutils literal notranslate"><span class="pre">Tinf</span></code>, with a given heat transfer coefficient <code class="docutils literal notranslate"><span class="pre">h</span></code> and <code class="docutils literal notranslate"><span class="pre">emissivity</span></code> of the boundary <span class="math notranslate nohighlight">\(\mathbf{\epsilon}\)</span> following Newton’s law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to impose a given heat flux (<span class="math notranslate nohighlight">\(q_0\)</span>) by using the parameter <code class="docutils literal notranslate"><span class="pre">heat_flux</span></code>. This BC can be represented by:</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">convection_radiation</span></code> (Robin BC) for cooling/heating, depending on the environment temperature at the boundary <code class="docutils literal notranslate"><span class="pre">Tinf</span></code>, with a given heat transfer coefficient <code class="docutils literal notranslate"><span class="pre">h</span></code> and <code class="docutils literal notranslate"><span class="pre">emissivity</span></code> of the boundary <span class="math notranslate nohighlight">\(\mathbf{\epsilon}\)</span> following Newton’s law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to impose a given heat flux (<span class="math notranslate nohighlight">\(q_0\)</span>) by using the parameter <code class="docutils literal notranslate"><span class="pre">heat_flux</span></code>. This BC can be represented by:</p></li>
 </ul>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -524,7 +524,7 @@ end
 <p>where <span class="math notranslate nohighlight">\(\mathbf{\sigma}\)</span> is the Stefan-Boltzmann constant.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>The flux represented by the <code class="docutils literal notranslate"><span class="pre">convection-radiation-flux</span></code> BC follow the direction of the normal vector to the boundary, i.e., pointing outwards the boundary. As consequence, a positive value for <code class="docutils literal notranslate"><span class="pre">heat_flux</span></code>, for example, will result on heat being extracted from the boundary.</p>
+<p>The flux represented by the <code class="docutils literal notranslate"><span class="pre">convection_radiation</span></code> BC follow the direction of the normal vector to the boundary, i.e., pointing outwards the boundary. As consequence, a positive value for <code class="docutils literal notranslate"><span class="pre">heat_flux</span></code>, for example, will result on heat being extracted from the boundary.</p>
 </div>
 </dd>
 </dl>
@@ -678,13 +678,13 @@ end
 </section>
 <section id="time-harmonic-maxwell">
 <h2>Time-Harmonic Maxwell<a class="headerlink" href="#time-harmonic-maxwell" title="Link to this heading">#</a></h2>
-<p>For Time-Harmonic Maxwell boundary conditions, the possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">pec</span></code> (perfect electric conductor), <code class="docutils literal notranslate"><span class="pre">pmc</span></code> (perfect magnetic conductor), <code class="docutils literal notranslate"><span class="pre">silver</span> <span class="pre">muller</span></code>, <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code>, <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span></code>, <code class="docutils literal notranslate"><span class="pre">impedance</span> <span class="pre">boundary</span></code> and <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">port</span></code>. The default parameters are shown below.</p>
+<p>For Time-Harmonic Maxwell boundary conditions, the possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">pec</span></code> (perfect electric conductor), <code class="docutils literal notranslate"><span class="pre">pmc</span></code> (perfect magnetic conductor), <code class="docutils literal notranslate"><span class="pre">silver_muller</span></code>, <code class="docutils literal notranslate"><span class="pre">electric_field</span></code>, <code class="docutils literal notranslate"><span class="pre">magnetic_field</span></code>, <code class="docutils literal notranslate"><span class="pre">impedance_boundary</span></code> and <code class="docutils literal notranslate"><span class="pre">waveguide_port</span></code>. The default parameters are shown below.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions time harmonic maxwell
   set number         = 1
   set time dependent = false
   subsection bc 0
     set id   = 0
-    set type = silver muller
+    set type = silver_muller
   end
 end
 </pre></div>
@@ -721,7 +721,7 @@ end
 </pre></div>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">silver</span> <span class="pre">muller</span></code> for a Silver-Müller absorbing boundary condition. In its standard form, the boundary relation is written as</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">silver_muller</span></code> for a Silver-Müller absorbing boundary condition. In its standard form, the boundary relation is written as</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{n} \times \mathbf{H} + \sqrt{\frac{\varepsilon_{r,\mathrm{eff}}}{\mu_r}} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = 0\]</div>
@@ -729,12 +729,12 @@ end
 <p>Example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
   set id   = 0
-  set type = silver muller
+  set type = silver_muller
 end
 </pre></div>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code> to impose a prescribed electric field. The boundary values are taken from the parsed functions in the <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">electric_field</span></code> to impose a prescribed electric field. The boundary values are taken from the parsed functions in the <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}^{\mathrm{inc}}\]</div>
@@ -742,7 +742,7 @@ end
 <p>Example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
   set id   = 0
-  set type = electric field
+  set type = electric_field
   subsection E x real part
     set Function expression = 1
   end
@@ -765,7 +765,7 @@ end
 </pre></div>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span></code> to impose a prescribed magnetic field. The boundary values are taken from the parsed functions in the <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">magnetic_field</span></code> to impose a prescribed magnetic field. The boundary values are taken from the parsed functions in the <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}^{\mathrm{inc}} - \mathbf{J}_\mathrm{s}\]</div>
@@ -777,7 +777,7 @@ end
 <div><p>Example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
   set id   = 0
-  set type = magnetic field
+  set type = magnetic_field
   subsection H x real part
     set Function expression = 1
   end
@@ -801,7 +801,7 @@ end
 </div>
 </div></blockquote>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">impedance</span> <span class="pre">boundary</span></code> to impose an impedance boundary condition. The boundary is governed by the surface admittance <span class="math notranslate nohighlight">\(Y_s\)</span> supplied through the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">admittance</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">admittance</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections and the electromagnetic excitation <span class="math notranslate nohighlight">\(\mathbf{g}\)</span> supplied through the <code class="docutils literal notranslate"><span class="pre">excitation</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">excitation</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">impedance_boundary</span></code> to impose an impedance boundary condition. The boundary is governed by the surface admittance <span class="math notranslate nohighlight">\(Y_s\)</span> supplied through the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">admittance</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">admittance</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections and the electromagnetic excitation <span class="math notranslate nohighlight">\(\mathbf{g}\)</span> supplied through the <code class="docutils literal notranslate"><span class="pre">excitation</span> <span class="pre">x/y/z</span> <span class="pre">real</span> <span class="pre">part</span></code> and <code class="docutils literal notranslate"><span class="pre">excitation</span> <span class="pre">x/y/z</span> <span class="pre">imag</span> <span class="pre">part</span></code> subsections,</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{n} \times \mathbf{H} + Y_s \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{g}\]</div>
@@ -809,7 +809,7 @@ end
 <p>Example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
   set id   = 0
-  set type = impedance boundary
+  set type = impedance_boundary
   subsection surface admittance real part
     set Function expression = 0.1
   end
@@ -838,7 +838,7 @@ end
 </pre></div>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">port</span></code> to impose a waveguide port boundary condition. The parameters for this boundary conditions are defined in the Time-Harmonic Maxwell section of the input file. In the following, <span class="math notranslate nohighlight">\(k_l\)</span> is the wave number in the longitudinal direction of the waveguide.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">waveguide_port</span></code> to impose a waveguide port boundary condition. The parameters for this boundary conditions are defined in the Time-Harmonic Maxwell section of the input file. In the following, <span class="math notranslate nohighlight">\(k_l\)</span> is the wave number in the longitudinal direction of the waveguide.</p>
 <p>For TE modes, the boundary condition is expressed as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -852,7 +852,7 @@ end
 <p>Example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection bc 0
   set id   = 0
-  set type = waveguide port
+  set type = waveguide_port
 end
 </pre></div>
 </div>

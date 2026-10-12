@@ -445,7 +445,7 @@ The boundary condition at the wall of the pipe is a weak function where the Diri
       set number = 2
       subsection bc 0
         set id   = 0
-        set type = function weak
+        set type = function_weak
         set beta = 100
         subsection u
           set Function expression = 0

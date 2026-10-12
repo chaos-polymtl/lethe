@@ -535,10 +535,10 @@ end
 </section>
 <section id="cls">
 <h3>CLS<a class="headerlink" href="#cls" title="Link to this heading">#</a></h3>
-<p>To prevent the interface between phases from becoming blurry due to diffusion, the interface <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> method is selected in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">reinitialization</span> <span class="pre">method</span></code> subsection. The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code> is set to ensure the interface thickness is at least 12 cells. Furthermore, the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> is enabled in this example. We refer the reader to the <a class="reference internal" href="../../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> documentation for more explanation on both methods.</p>
+<p>To prevent the interface between phases from becoming blurry due to diffusion, the <code class="docutils literal notranslate"><span class="pre">geometric</span></code> interface reinitialization method is selected in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">reinitialization</span> <span class="pre">method</span></code> subsection. The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code> is set to ensure the interface thickness is at least 12 cells. Furthermore, the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> is enabled in this example. We refer the reader to the <a class="reference internal" href="../../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> documentation for more explanation on both methods.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection CLS
   subsection interface reinitialization method
-    set type      = geometric interface reinitialization
+    set type      = geometric
     set frequency = 10
     set verbosity = verbose
     subsection geometric interface reinitialization

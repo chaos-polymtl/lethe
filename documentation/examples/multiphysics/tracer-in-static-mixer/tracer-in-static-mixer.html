@@ -543,7 +543,7 @@ end
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
   subsection fluid 0
     set kinematic viscosity      = 0.01
-    set tracer diffusivity model = immersed solid tanh
+    set tracer diffusivity model = immersed_boundary_tanh
     subsection immersed solid tanh
       set tracer diffusivity inside  = 1e-10
       set tracer diffusivity outside = 1e-5
@@ -554,7 +554,7 @@ end
 </pre></div>
 </div>
 <ol class="arabic simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">model</span></code> is <code class="docutils literal notranslate"><span class="pre">immersed</span> <span class="pre">solid</span> <span class="pre">tanh</span></code>. This model is used in <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> for tracer flow percolating immersed solids.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">model</span></code> is <code class="docutils literal notranslate"><span class="pre">immersed_boundary_tanh</span></code>. This model is used in <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> for tracer flow percolating immersed solids.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">outside</span></code> is <code class="docutils literal notranslate"><span class="pre">1e-5</span></code> <span class="math notranslate nohighlight">\(\text{cm²/s}\)</span>, as this is a typical value for a passive tracer in a liquid.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">inside</span></code> is set to <code class="docutils literal notranslate"><span class="pre">1e-10</span></code> <span class="math notranslate nohighlight">\(\text{cm²/s}\)</span>. The low value prevents diffusivity inside the solid while providing numerical stability (<span class="math notranslate nohighlight">\(&gt; 0\)</span>).</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">thickness</span></code> is <code class="docutils literal notranslate"><span class="pre">5e-1</span></code> <span class="math notranslate nohighlight">\(\text{cm}\)</span>. At the scale of the problem, this provides a smooth transition without generating oscillations between liquid and solid phases. The thickness is of the order of magnitude of the smallest cell length to restrict the transition to one cell thickness.</p></li>

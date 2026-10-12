@@ -534,7 +534,7 @@ box below.</p>
 
   set electromagnetic frequency    = 1 # Hz
 
-  set electromagnetic scaling type = &lt;none|electric field|magnetic field|power&gt;
+  set electromagnetic scaling type = &lt;none|electric_field|magnetic_field|power&gt;
 
   set electric field amplitude     = 1
   set magnetic field amplitude     = 1
@@ -585,10 +585,10 @@ to physical units after the linear system is solved. The choices are:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">none</span></code> (default): the solution is left in dimensionless form and output
 as such.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code>: rescaled so the electric field matches
+<li><p><code class="docutils literal notranslate"><span class="pre">electric_field</span></code>: rescaled so the electric field matches
 <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>, and the magnetic field matches
 <span class="math notranslate nohighlight">\(H_0 = E_0 / Z_0\)</span>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span></code>: rescaled so the magnetic field matches
+<li><p><code class="docutils literal notranslate"><span class="pre">magnetic_field</span></code>: rescaled so the magnetic field matches
 <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>, and the electric field matches
 <span class="math notranslate nohighlight">\(E_0 = Z_0 H_0\)</span>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">power</span></code>: rescaled so the power delivered through the waveguide inlet
@@ -625,9 +625,9 @@ other physics, since the other physics expect dimensional fields.</p>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>: the reference amplitude <span class="math notranslate nohighlight">\(E_0\)</span> used as the
-target amplitude when <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">electric</span> <span class="pre">field</span></code>.</p></li>
+target amplitude when <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">electric_field</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>: the reference amplitude <span class="math notranslate nohighlight">\(H_0 = E_0 / Z_0\)</span> used as
-the target amplitude when <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">magnetic</span> <span class="pre">field</span></code>.</p></li>
+the target amplitude when <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">magnetic_field</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">waveguide</span> <span class="pre">inlets</span></code>: number of <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">inlet</span></code> subsections to
 apply on the geometry boundary. See also the
 <a class="reference internal" href="boundary_conditions_multiphysics.html"><span class="doc">boundary conditions</span></a> section for

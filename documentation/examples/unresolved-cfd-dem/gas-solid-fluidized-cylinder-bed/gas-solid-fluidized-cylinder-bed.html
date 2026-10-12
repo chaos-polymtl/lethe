@@ -705,7 +705,7 @@ end
 </section>
 <section id="cfd-dem">
 <h3>CFD-DEM<a class="headerlink" href="#cfd-dem" title="Link to this heading">#</a></h3>
-<p>All hydrodynamic forces are enabled in the <code class="docutils literal notranslate"><span class="pre">cfd-dem</span></code> subsection. This allows testing the different models. Grad-div stabilization is also enabled to improve mass conservation, using a length-scale equal to the column’s radius, which is of the same order of the characteristic length of the flow, as recommended in the <a class="reference external" href="../../../parameters/unresolved-cfd-dem/cfd-dem.html">CFD-DEM parameters section</a>. In simulations of this example using the QCM filter, the parameter <code class="docutils literal notranslate"><span class="pre">project</span> <span class="pre">particle</span> <span class="pre">forces</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, to use the QCM filter to calculate the particle-fluid forces (by default, this parameter is <code class="docutils literal notranslate"><span class="pre">false</span></code>, and the cell-based filter is used to calculate the particle-fluid forces term in the VANS equations). The <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span></code> parameter is set to the desired coupling approach and defaults to <code class="docutils literal notranslate"><span class="pre">semi-implicit</span></code>.</p>
+<p>All hydrodynamic forces are enabled in the <code class="docutils literal notranslate"><span class="pre">cfd-dem</span></code> subsection. This allows testing the different models. Grad-div stabilization is also enabled to improve mass conservation, using a length-scale equal to the column’s radius, which is of the same order of the characteristic length of the flow, as recommended in the <a class="reference external" href="../../../parameters/unresolved-cfd-dem/cfd-dem.html">CFD-DEM parameters section</a>. In simulations of this example using the QCM filter, the parameter <code class="docutils literal notranslate"><span class="pre">project</span> <span class="pre">particle</span> <span class="pre">forces</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, to use the QCM filter to calculate the particle-fluid forces (by default, this parameter is <code class="docutils literal notranslate"><span class="pre">false</span></code>, and the cell-based filter is used to calculate the particle-fluid forces term in the VANS equations). The <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span></code> parameter is set to the desired coupling approach and defaults to <code class="docutils literal notranslate"><span class="pre">semi_implicit</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection cfd-dem
     set grad div                      = true
     set grad-div length scale         = 0.01
@@ -717,7 +717,7 @@ end
     set drag model                    = difelice
     set coupling frequency            = 100
     set vans model                    = modelA
-    set drag coupling                 = semi-implicit
+    set drag coupling                 = semi_implicit
     set project particle forces       = true
 end
 </pre></div>

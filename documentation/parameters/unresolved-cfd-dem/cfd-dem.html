@@ -460,7 +460,7 @@
   set interpolated void fraction    = true
   set vans model                    = modelA
   set drag force                    = true
-  set drag coupling                 = semi-implicit # semi-implicit | implicit | explicit
+  set drag coupling                 = semi_implicit # semi_implicit | fully_implicit | fully_explicit
   set drag model                    = difelice
   set saffman lift force            = false
   set magnus lift force             = false
@@ -470,7 +470,7 @@
   set shear force                   = true
   set pressure force                = true
   set project particle forces       = false
-  set dem iteration control         = number of iterations # number of iterations | fraction of rayleigh time
+  set dem iteration control         = fixed_number_of_iterations # fixed_number_of_iterations | fixed_fraction_of_rayleigh_time_step
   set coupling frequency            = 100
   set fraction rayleigh time        = 0.1
   set implicit stabilization        = true
@@ -527,9 +527,9 @@ Since the viscous torque model is not complete without the vortical component, <
 <ul class="simple">
 <li><dl class="simple">
 <dt>The <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span></code> parameter controls the time level at which the fluid velocity is evaluated when computing the drag and hydrodynamic forces.</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">semi-implicit</span></code>:  the drag force on the particles is computed using the velocity of both the particles and the fluid at time <span class="math notranslate nohighlight">\(t\)</span> . When transferring momentum to the fluid, the previous fluid velocity is used to evaluate the momentum transfer coefficient, while the current fluid velocity is used to calculate relative velocity between the particle and the fluid. This provides extensive stability, but for larger time step may lead to a slight violation of Newton’s third law since the drag applied on the fluid is not strictly equal to the drag applied to the particles. the drag force is computed but is partially implicit on the fluid to ensure stable coupling. The default value is to use a <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">semi-implicit</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">implicit</span></code>: the drag force (including the drag coefficient) is evaluated implicitly using the fluid velocity at time <span class="math notranslate nohighlight">\(t + \Delta t\)</span>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">explicit</span></code>: the drag force is computed explicitly using the fluid velocity at time <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">semi_implicit</span></code>:  the drag force on the particles is computed using the velocity of both the particles and the fluid at time <span class="math notranslate nohighlight">\(t\)</span> . When transferring momentum to the fluid, the previous fluid velocity is used to evaluate the momentum transfer coefficient, while the current fluid velocity is used to calculate relative velocity between the particle and the fluid. This provides extensive stability, but for larger time step may lead to a slight violation of Newton’s third law since the drag applied on the fluid is not strictly equal to the drag applied to the particles. the drag force is computed but is partially implicit on the fluid to ensure stable coupling. The default value is to use a <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">semi_implicit</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">fully_implicit</span></code>: the drag force (including the drag coefficient) is evaluated implicitly using the fluid velocity at time <span class="math notranslate nohighlight">\(t + \Delta t\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">fully_explicit</span></code>: the drag force is computed explicitly using the fluid velocity at time <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -577,14 +577,14 @@ Since the viscous torque model is not complete without the vortical component, <
 <li><p>The <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">statistics</span></code> parameter, when enabled, outputs statistics about the particles’ velocity, kinetic energy, and the amount of contact detection.</p></li>
 <li><dl>
 <dt>The <code class="docutils literal notranslate"><span class="pre">dem</span> <span class="pre">iteration</span> <span class="pre">control</span></code> determines the strategy to carry out the DEM time-steps. Two modes are supported:</dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dem</span> <span class="pre">iteration</span> <span class="pre">control</span> <span class="pre">=</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">iterations</span></code>: A fixed number of DEM iterations, equal to <code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">frequency</span></code> (<span class="math notranslate nohighlight">\(f_{\text{coupling}}\)</span>), is carried out per 1 CFD iteration. If the CFD time step is not constant, the DEM time step will changed dynamically:</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dem</span> <span class="pre">iteration</span> <span class="pre">control</span> <span class="pre">=</span> <span class="pre">fixed_number_of_iterations</span></code>: A fixed number of DEM iterations, equal to <code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">frequency</span></code> (<span class="math notranslate nohighlight">\(f_{\text{coupling}}\)</span>), is carried out per 1 CFD iteration. If the CFD time step is not constant, the DEM time step will changed dynamically:</p></li>
 </ul>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\Delta t_{\text{DEM}} = \frac{\Delta t_{\text{CFD}}}{f_{\text{coupling}}}\]</div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dem</span> <span class="pre">iteration</span> <span class="pre">control</span> <span class="pre">=</span> <span class="pre">fraction</span> <span class="pre">of</span> <span class="pre">rayleigh</span> <span class="pre">time</span></code>: The DEM time step is fixed to a given fraction of the Rayleigh time ( equal to <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">rayleigh</span> <span class="pre">time</span></code>) and remains constant throughout the simulation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dem</span> <span class="pre">iteration</span> <span class="pre">control</span> <span class="pre">=</span> <span class="pre">fixed_fraction_of_rayleigh_time_step</span></code>: The DEM time step is fixed to a given fraction of the Rayleigh time ( equal to <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">rayleigh</span> <span class="pre">time</span></code>) and remains constant throughout the simulation.</p></li>
 </ul>
 </dd>
 </dl>

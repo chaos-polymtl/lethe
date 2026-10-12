@@ -1,7 +1,7 @@
 var searchData=
 [
   ['adaptive_0',['adaptive',['../structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a8cb043b2dace9afc0680e6bae5cd316f',1,'Parameters::MeshAdaptation::adaptive'],['../namespaceParameters.html#a18e7a3c8a6fc1a1320cca7af11b021d1a8cb043b2dace9afc0680e6bae5cd316f',1,'Parameters::adaptive']]],
-  ['additiveschwarzmethod_1',['AdditiveSchwarzMethod',['../structParameters_1_1LinearSolver.html#a93912c5605189c7d315554f4d9c82a5ba1b95d77c3911463763940c13b3c75245',1,'Parameters::LinearSolver']]],
+  ['additive_5fschwarz_5fmethod_1',['additive_schwarz_method',['../structParameters_1_1LinearSolver.html#a93912c5605189c7d315554f4d9c82a5ba161fcfe82c5c771fa3e0eb3aeaf45c41',1,'Parameters::LinearSolver']]],
   ['adiabatic_2',['adiabatic',['../namespaceParameters_1_1Lagrangian.html#aa61feba8bf151b57b21fc33554d32cbcaecc572378821e873d5ada6b243eb2167',1,'Parameters::Lagrangian::adiabatic'],['../namespaceParameters.html#acc63067dec4e97f0c49d400304a75bebaecc572378821e873d5ada6b243eb2167',1,'Parameters::adiabatic']]],
   ['advected_3',['advected',['../classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230af3795a39836e3971e285031128c89966',1,'AdaptiveSparseContacts']]],
   ['advected_5factive_4',['advected_active',['../classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230a28b88d97e92a8569449968a939350b9a',1,'AdaptiveSparseContacts']]],

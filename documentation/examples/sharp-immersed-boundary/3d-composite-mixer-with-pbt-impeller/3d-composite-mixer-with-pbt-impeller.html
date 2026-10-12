@@ -490,10 +490,10 @@
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>shapes
 0;        cylinder;                   0.025:0.375;              0:0:0.125 ; 0:0:0
 1;        cylinder;                0.05:0.0416666;          0:0:-0.208333 ; 0:0:0
-2; hyper rectangle; 0.083333333:0.00625:0.0416666; 0.08333333:0:-0.208333 ; 0.7853981:0:0
-3; hyper rectangle; 0.00625:0.083333333:0.0416666;  0:0.08333333:-0.208333; 0:0.7853981:0
-4; hyper rectangle; 0.083333333:0.00625:0.0416666;-0.08333333:0:-0.208333 ; -0.7853981:0:0
-5; hyper rectangle; 0.00625:0.083333333:0.0416666;0:-0.08333333:-0.208333 ; 0:-0.7853981:0
+2; hyper_rectangle; 0.083333333:0.00625:0.0416666; 0.08333333:0:-0.208333 ; 0.7853981:0:0
+3; hyper_rectangle; 0.00625:0.083333333:0.0416666;  0:0.08333333:-0.208333; 0:0.7853981:0
+4; hyper_rectangle; 0.083333333:0.00625:0.0416666;-0.08333333:0:-0.208333 ; -0.7853981:0:0
+5; hyper_rectangle; 0.00625:0.083333333:0.0416666;0:-0.08333333:-0.208333 ; 0:-0.7853981:0
 operations
 6; union     ; 0:1
 7; union     ; 6:2
@@ -506,7 +506,7 @@ operations
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">shapes</span></code>: introduces the shapes section.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">0;</span> <span class="pre">cylinder;</span> <span class="pre">0.025:0.375;</span> <span class="pre">0:0:0.125</span> <span class="pre">;</span> <span class="pre">0:0:0</span></code>: defines a cylinder, with ID equal to 0. Its radius is 0.025 and its half-length 0.375. Its z position is 0.125 and its orientation is default (aligned with Z axis).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">2;</span> <span class="pre">hyper</span> <span class="pre">rectangle;</span> <span class="pre">0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333</span> <span class="pre">;</span> <span class="pre">0.7853981:0:0</span></code>: defines a hyper rectangle, with ID equal to 1. Its has half-lengths of 0.083, 0.00625, and 0.0417 in X, Y, and Z directions, respectively, in its own referential. Its center is at 0.083, 0, and -0.208 in the global referential and it is rotated by 0.787 radians around the X axis.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2;</span> <span class="pre">hyper_rectangle;</span> <span class="pre">0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333</span> <span class="pre">;</span> <span class="pre">0.7853981:0:0</span></code>: defines a hyper rectangle, with ID equal to 1. Its has half-lengths of 0.083, 0.00625, and 0.0417 in X, Y, and Z directions, respectively, in its own referential. Its center is at 0.083, 0, and -0.208 in the global referential and it is rotated by 0.787 radians around the X axis.</p></li>
 <li><p>The other shapes are defined in a similar fashion and are assigned IDs 1, 3, 4, and 5.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">operations</span></code>: introduces the operations section.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">6;</span> <span class="pre">union;</span> <span class="pre">0:1</span></code>: defines an intermediate shape that is the union of shapes 0 and 1, and assigns it the ID 6.</p></li>
@@ -562,10 +562,10 @@ end
 </section>
 <section id="boundary-conditions">
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
-<p>Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a <code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">weak</span></code> type of boundary is used.
+<p>Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a <code class="docutils literal notranslate"><span class="pre">function_weak</span></code> type of boundary is used.
 Two aspects need special consideration:</p>
 <ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">weak</span></code> is a variation of <code class="docutils literal notranslate"><span class="pre">function</span></code>. It is used to weakly impose a Dirichlet boundary condition, and it is necessary when using <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">function_weak</span></code> is a variation of <code class="docutils literal notranslate"><span class="pre">function</span></code>. It is used to weakly impose a Dirichlet boundary condition, and it is necessary when using <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code> has to be defined. It is a Nitsche penalization parameter that enforces more strongly the boundary condition when it increases (see <a class="reference internal" href="../../../parameters/cfd/nitsche.html"><span class="doc">Nitsche Immersed Boundary</span></a>).</p></li>
 </ol>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
@@ -580,7 +580,7 @@ Two aspects need special consideration:</p>
   end
   subsection bc 2
     set id   = 2
-    set type = function weak
+    set type = function_weak
     set beta = 1
     subsection u
       set Function expression = 0

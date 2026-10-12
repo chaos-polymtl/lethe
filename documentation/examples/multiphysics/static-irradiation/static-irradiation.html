@@ -714,7 +714,7 @@ end
 <section id="physical-properties">
 <h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">physical</span> <span class="pre">properties</span></code> subsection sets the material properties for the metal and gas phase. It is in this subsection that we activate the phase change by setting the solid and liquid properties for the metal phase, in the same fashion as in the <a class="reference internal" href="../stefan-problem/stefan-problem.html"><span class="doc">Stefan problem</span></a> and <a class="reference internal" href="../melting-cavity/melting-cavity.html"><span class="doc">melting cavity</span></a> examples. However, since we consider an alloy (TI6Al4V), the phase change occurs over a temperature range. Hence, the difference between the <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> corresponds to the real temperature range in which the solid and liquid TI6Al4V coexist (mushy zone).</p>
-<p>We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Marangoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">phase</span> <span class="pre">change</span></code>. We refer to the parameter guide <a class="reference internal" href="../../../parameters/cfd/physical_properties.html"><span class="doc">Physical Properties</span></a> for more details on this model.</p>
+<p>We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Marangoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">phase_change</span></code>. We refer to the parameter guide <a class="reference internal" href="../../../parameters/cfd/physical_properties.html"><span class="doc">Physical Properties</span></a> for more details on this model.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
   set number of fluids = 2
   subsection fluid 1
@@ -747,11 +747,11 @@ end
 
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
+    set type = fluid_fluid
     subsection fluid-fluid interaction
       set first fluid id                              = 0
       set second fluid id                             = 1
-      set surface tension model                       = phase change
+      set surface tension model                       = phase_change
       set surface tension coefficient                 = 1.52
       set reference state temperature                 = 1928.0
       set temperature-driven surface tension gradient = -5.5e-4

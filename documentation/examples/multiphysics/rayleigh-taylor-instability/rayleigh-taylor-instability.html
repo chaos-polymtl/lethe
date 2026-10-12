@@ -667,10 +667,10 @@ end
 </section>
 <section id="cls">
 <h3>CLS<a class="headerlink" href="#cls" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> subsection, we select the <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">reinitialization</span> <span class="pre">method</span></code> subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> subsection, we select the <code class="docutils literal notranslate"><span class="pre">geometric</span></code> interface reinitialization in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">reinitialization</span> <span class="pre">method</span></code> subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection CLS
   subsection interface reinitialization method
-    set type      = geometric interface reinitialization
+    set type      = geometric
     set frequency = 20
     set verbosity = verbose
     subsection geometric interface reinitialization

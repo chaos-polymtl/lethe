@@ -615,7 +615,7 @@ end
 </section>
 <section id="physical-properties">
 <h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">physical</span> <span class="pre">properties</span></code> subsection, we define the fluids such that both fluids have the same properties. We set the <code class="docutils literal notranslate"><span class="pre">density</span></code> to <span class="math notranslate nohighlight">\(1\)</span> and the <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code> to <span class="math notranslate nohighlight">\(5 \times 10^{-6}\)</span>. A <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> type of material interaction is also defined to specify the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code>. In this case, it is set to <code class="docutils literal notranslate"><span class="pre">constant</span></code> with the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> set to <span class="math notranslate nohighlight">\(0.01\)</span>.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">physical</span> <span class="pre">properties</span></code> subsection, we define the fluids such that both fluids have the same properties. We set the <code class="docutils literal notranslate"><span class="pre">density</span></code> to <span class="math notranslate nohighlight">\(1\)</span> and the <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code> to <span class="math notranslate nohighlight">\(5 \times 10^{-6}\)</span>. A <code class="docutils literal notranslate"><span class="pre">fluid_fluid</span></code> type of material interaction is also defined to specify the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code>. In this case, it is set to <code class="docutils literal notranslate"><span class="pre">constant</span></code> with the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> set to <span class="math notranslate nohighlight">\(0.01\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
   set number of fluids = 2
   subsection fluid 1
@@ -628,7 +628,7 @@ end
   end
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
+    set type = fluid_fluid
     subsection fluid-fluid interaction
       set first fluid id              = 0
       set second fluid id             = 1

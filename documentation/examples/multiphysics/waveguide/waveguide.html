@@ -564,8 +564,8 @@ end
 </div>
 <p>There are three types of boundary conditions in this problem, this explains why the surfaces of the waveguide are sorted in three groups. First, there is the inlet <span class="math notranslate nohighlight">\(\Gamma_1\)</span>, then the outlet <span class="math notranslate nohighlight">\(\Gamma_2\)</span> and finally the metal walls <span class="math notranslate nohighlight">\(\Gamma_3\)</span>.</p>
 <ul>
-<li><p>Inlet <span class="math notranslate nohighlight">\(\Gamma_1\)</span>: <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">port</span></code> boundary condition at the inlet of the waveguide to excite the <span class="math notranslate nohighlight">\(\mathrm{TE}_{mn}\)</span> mode at <span class="math notranslate nohighlight">\(z\)</span> = 0</p></li>
-<li><p>Outlet <span class="math notranslate nohighlight">\(\Gamma_2\)</span>: <code class="docutils literal notranslate"><span class="pre">impedance</span> <span class="pre">boundary</span></code> condition tuned to the waveguide impedance to minimize the reflections (the waveguide is theoretically infinite). The dimensionless admittance in such conditions is:</p>
+<li><p>Inlet <span class="math notranslate nohighlight">\(\Gamma_1\)</span>: <code class="docutils literal notranslate"><span class="pre">waveguide_port</span></code> boundary condition at the inlet of the waveguide to excite the <span class="math notranslate nohighlight">\(\mathrm{TE}_{mn}\)</span> mode at <span class="math notranslate nohighlight">\(z\)</span> = 0</p></li>
+<li><p>Outlet <span class="math notranslate nohighlight">\(\Gamma_2\)</span>: <code class="docutils literal notranslate"><span class="pre">impedance_boundary</span></code> condition tuned to the waveguide impedance to minimize the reflections (the waveguide is theoretically infinite). The dimensionless admittance in such conditions is:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[Y_\mathrm{s} = \frac{1}{Z_\mathrm{s}}=\frac{k_\mathrm{z}}{\omega \mu_\mathrm{r}} = \frac{k_\mathrm{z} c}{2\pi f \mathrm{L} \mu_\mathrm{r}} \approx 0.968987646\]</div>
@@ -595,11 +595,11 @@ end
     end
     subsection bc 1
         set id   = 4
-        set type = waveguide port
+        set type = waveguide_port
     end
     subsection bc 2
         set id   = 5
-        set type = impedance boundary
+        set type = impedance_boundary
         subsection excitation x real part
             set Function expression = 0
         end

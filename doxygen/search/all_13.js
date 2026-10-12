@@ -23,7 +23,7 @@ var searchData=
   ['rayleigh_5ftime_5fstep_20',['rayleigh_time_step',['../classCFDDEMMatrixFree.html#a1f3465f2a79a46c2875b41d7d2076b17',1,'CFDDEMMatrixFree::rayleigh_time_step'],['../classCFDDEMSolver.html#a43084a949cc398a9a19c76789305c006',1,'CFDDEMSolver::rayleigh_time_step']]],
   ['raytracingsolver_21',['raytracingsolver',['../classRayTracingSolver.html',1,'RayTracingSolver&lt; dim &gt;'],['../classRayTracingSolver.html#aad45c44f86c3cd1fc8c4e1ae48ce98a6',1,'RayTracingSolver::RayTracingSolver()']]],
   ['raytracingsolverparameters_22',['RayTracingSolverParameters',['../classRayTracingSolverParameters.html',1,'']]],
-  ['rbf_5fshape_23',['rbf_shape',['../classShape.html#a394819ce751267dc955abe4ad18ebdebae54312d0ea888cdacf72bca2101e8042',1,'Shape']]],
+  ['rbf_23',['rbf',['../classShape.html#a394819ce751267dc955abe4ad18ebdeba1c2fc056f2b0d4685d95adb8764a3912',1,'Shape']]],
   ['rbfbasisfunction_24',['RBFBasisFunction',['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66b',1,'RBFShape']]],
   ['rbfshape_25',['rbfshape',['../classRBFShape.html',1,'RBFShape&lt; dim &gt;'],['../classRBFShape.html#a13f71f237f94f59d7f400402c5c2ef94',1,'RBFShape::RBFShape()']]],
   ['re_5fparticle_26',['Re_particle',['../classNavierStokesScratchData.html#a91011b4cd4861cad33fe26dd60c010b8',1,'NavierStokesScratchData']]],

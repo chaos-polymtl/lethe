@@ -75,7 +75,7 @@ where :math:`r_{max}`, :math:`r_{min}` are the maximum and minimum values obtain
 
 * The ``cell weight`` allows the imposition of a higher cell weight for the cells located at the mortar interface, which is then accounted for in the workload balancing between processors. The default value of ``1000`` assumes that mortar cells have the same weight as other cells.
 
-* When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration. The option ``extra verbose`` also prints the workload imbalance of mortar cells. We consider that an ideal work imbalance is given by:
+* When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration. The option ``extra_verbose`` also prints the workload imbalance of mortar cells. We consider that an ideal work imbalance is given by:
 
 .. math::
   \text{ideal} = \dfrac{\sum_i^{n_{proc}} cells_{(i)}}{n_{proc}}
@@ -88,7 +88,7 @@ where :math:`n_{proc}` is the total number of processes and :math:`cells_{(i)}` 
 Ideally, this parallel distribution imbalance is equal to 1; values greater than 1 indicate a slowdown compared to a perfectly distributed scenario in which all processes would contain the same number of mortar cells.
 
 .. seealso::
-  The workload imbalance computation used here follows the same idea as the deal.II ``workload_imbalance()`` function used in the `geometric multigrid setup <https://dealii.org/current/doxygen/deal.II/namespaceMGTools.html>`_, enabled in the :doc:`../cfd/linear_solver_control` when ``set preconditioner = gcmg`` and ``set mg verbosity = extra verbose``.
+  The workload imbalance computation used here follows the same idea as the deal.II ``workload_imbalance()`` function used in the `geometric multigrid setup <https://dealii.org/current/doxygen/deal.II/namespaceMGTools.html>`_, enabled in the :doc:`../cfd/linear_solver_control` when ``set preconditioner = gcmg`` and ``set mg verbosity = extra_verbose``.
 
 Reference
 ---------

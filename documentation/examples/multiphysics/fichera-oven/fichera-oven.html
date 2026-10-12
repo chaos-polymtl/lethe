@@ -502,7 +502,7 @@
 </div>
 <p>See the <a class="reference internal" href="../../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html"><span class="doc">DPG formulation for time-harmonic Maxwell problems</span></a> theory guide for the full derivation and the DPG variational formulation used by the solver.</p>
 </div>
-<p>The cavity is filled with vacuum (<span class="math notranslate nohighlight">\(\varepsilon_\mathrm{r,eff}=\mu_\mathrm{r}=1\)</span>) and its walls are perfectly-conducting (<code class="docutils literal notranslate"><span class="pre">pec</span></code>), except for the small top face, on which a Dirichlet <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code> condition of the form <span class="math notranslate nohighlight">\(E_x = \sin(\pi y)\)</span> is imposed. The excitation frequency is set to <span class="math notranslate nohighlight">\(f=\mathrm{238.567258\,MHz}\)</span>, corresponding to a dimensionless angular frequency of <span class="math notranslate nohighlight">\(\omega = 5\)</span>.</p>
+<p>The cavity is filled with vacuum (<span class="math notranslate nohighlight">\(\varepsilon_\mathrm{r,eff}=\mu_\mathrm{r}=1\)</span>) and its walls are perfectly-conducting (<code class="docutils literal notranslate"><span class="pre">pec</span></code>), except for the small top face, on which a Dirichlet <code class="docutils literal notranslate"><span class="pre">electric_field</span></code> condition of the form <span class="math notranslate nohighlight">\(E_x = \sin(\pi y)\)</span> is imposed. The excitation frequency is set to <span class="math notranslate nohighlight">\(f=\mathrm{238.567258\,MHz}\)</span>, corresponding to a dimensionless angular frequency of <span class="math notranslate nohighlight">\(\omega = 5\)</span>.</p>
 <p>Since the cavity has no known analytical solution, this example does not rely on an analytical solution to assess convergence, as is done, for instance, in the <a class="reference internal" href="../waveguide/waveguide.html"><span class="doc">waveguide example</span></a>. Instead, it relies on:</p>
 <ul>
 <li><dl>
@@ -536,7 +536,7 @@ end
 <p>This is the core subsection of this example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
     set type                = adaptive
-    set variable            = electromagnetic fields
+    set variable            = electromagnetic_fields
     set error estimator     = dpg
     set fraction refinement = 0.3
     set fraction coarsening = 0.05
@@ -546,7 +546,7 @@ end
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">adaptive</span></code> requests <span class="math notranslate nohighlight">\(h\)</span>-adaptive refinement, as opposed to a <code class="docutils literal notranslate"><span class="pre">uniform</span></code> refinement of every cell.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">error</span> <span class="pre">estimator</span> <span class="pre">=</span> <span class="pre">dpg</span></code> selects the DPG built-in residual error estimator, which is the only error estimator available for the <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">fields</span></code> variable. Unlike the more generic <code class="docutils literal notranslate"><span class="pre">kelly</span></code> estimator (a jump-based indicator applicable to every physics), the <code class="docutils literal notranslate"><span class="pre">dpg</span></code> estimator is intrinsic to the DPG variational formulation. This error estimator is computed from the norm, in the test space, of the local residual representation function on each cell (the residual is represented by an error representation function through the Riesz map, for more details see <a class="reference internal" href="../../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell.html"><span class="doc">DPG formulation for time-harmonic Maxwell problems</span></a>). It is available at essentially no extra cost once the DPG system has been solved on that cell.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">error</span> <span class="pre">estimator</span> <span class="pre">=</span> <span class="pre">dpg</span></code> selects the DPG built-in residual error estimator, which is the only error estimator available for the <code class="docutils literal notranslate"><span class="pre">electromagnetic_fields</span></code> variable. Unlike the more generic <code class="docutils literal notranslate"><span class="pre">kelly</span></code> estimator (a jump-based indicator applicable to every physics), the <code class="docutils literal notranslate"><span class="pre">dpg</span></code> estimator is intrinsic to the DPG variational formulation. This error estimator is computed from the norm, in the test space, of the local residual representation function on each cell (the residual is represented by an error representation function through the Riesz map, for more details see <a class="reference internal" href="../../../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell.html"><span class="doc">DPG formulation for time-harmonic Maxwell problems</span></a>). It is available at essentially no extra cost once the DPG system has been solved on that cell.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">fraction</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">0.3</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">fraction</span> <span class="pre">coarsening</span> <span class="pre">=</span> <span class="pre">0.05</span></code> respectively mark the highest error cells that represent <span class="math notranslate nohighlight">\(30\%\)</span> of the total error indicator for refinement and the lowest error cells that represent <span class="math notranslate nohighlight">\(5\%\)</span> of the total error indicator for coarsening (using the deal.II <code class="docutils literal notranslate"><span class="pre">refine_and_coarsen_fixed_fraction</span></code> strategy). This is done at every adaptation cycle.</p></li>
 </ul>
 </section>
@@ -614,7 +614,7 @@ end
 end
 </pre></div>
 </div>
-<p>This is the only parameter required in this subsection since, unlike the waveguide example, no waveguide-port inlet is used here: the excitation is instead applied directly as a Dirichlet <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code> boundary condition (see below).</p>
+<p>This is the only parameter required in this subsection since, unlike the waveguide example, no waveguide-port inlet is used here: the excitation is instead applied directly as a Dirichlet <code class="docutils literal notranslate"><span class="pre">electric_field</span></code> boundary condition (see below).</p>
 </section>
 <section id="boundary-conditions">
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
@@ -640,7 +640,7 @@ end
     end
     subsection bc 1
         set id   = 1
-        set type = electric field
+        set type = electric_field
         subsection E x real part
             set Function expression = sin(pi*y)
         end
@@ -665,7 +665,7 @@ end
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">0</span></code> (<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>) covers every wall of the staircase except the top port and imposes a <code class="docutils literal notranslate"><span class="pre">pec</span></code> (perfect electric conductor) condition, <span class="math notranslate nohighlight">\(\mathbf{n}\times\mathbf{E}=0\)</span>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">1</span></code> (<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code>) covers the small top face and imposes a Dirichlet <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code> condition. Only the real part of <span class="math notranslate nohighlight">\(E_x\)</span> is non-zero, and is set to <span class="math notranslate nohighlight">\(\sin(\pi y)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">1</span></code> (<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code>) covers the small top face and imposes a Dirichlet <code class="docutils literal notranslate"><span class="pre">electric_field</span></code> condition. Only the real part of <span class="math notranslate nohighlight">\(E_x\)</span> is non-zero, and is set to <span class="math notranslate nohighlight">\(\sin(\pi y)\)</span>.</p></li>
 </ul>
 </section>
 <section id="linear-solver-control">
@@ -726,8 +726,8 @@ end
 <h2>Possibilities for Extension<a class="headerlink" href="#possibilities-for-extension" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>Compare against uniform refinement:</strong> Set <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">uniform</span></code> and re-run the case. Comparing the resulting convergence curve (error versus number of degrees of freedom) with the adaptive one obtained above would illustrate the benefit of adaptive refinement for problems with corner singularities.</p></li>
-<li><p><strong>Use the Kelly error estimator:</strong> Set <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span> <span class="pre">variable</span> <span class="pre">=</span> <span class="pre">electric</span> <span class="pre">field,</span> <span class="pre">magnetic</span> <span class="pre">field</span></code> and <code class="docutils literal notranslate"><span class="pre">error</span> <span class="pre">estimator</span> <span class="pre">=</span> <span class="pre">kelly,</span> <span class="pre">kelly</span></code> to compare the mesh refinement pattern, and the resulting convergence, obtained with a generic jump-based estimator against those obtained with the method-intrinsic DPG estimator.</p></li>
-<li><p><strong>Change the excitation:</strong> Modify the frequency or the profile of the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span></code> boundary condition on the port to excite different resonant modes of the cavity and observe how the refinement pattern adapts to the new field distribution.</p></li>
+<li><p><strong>Use the Kelly error estimator:</strong> Set <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span> <span class="pre">variable</span> <span class="pre">=</span> <span class="pre">electric_field,</span> <span class="pre">magnetic_field</span></code> and <code class="docutils literal notranslate"><span class="pre">error</span> <span class="pre">estimator</span> <span class="pre">=</span> <span class="pre">kelly,</span> <span class="pre">kelly</span></code> to compare the mesh refinement pattern, and the resulting convergence, obtained with a generic jump-based estimator against those obtained with the method-intrinsic DPG estimator.</p></li>
+<li><p><strong>Change the excitation:</strong> Modify the frequency or the profile of the <code class="docutils literal notranslate"><span class="pre">electric_field</span></code> boundary condition on the port to excite different resonant modes of the cavity and observe how the refinement pattern adapts to the new field distribution.</p></li>
 <li><p><strong>Change the polynomial degree:</strong> Change <code class="docutils literal notranslate"><span class="pre">electromagnetics</span> <span class="pre">trial</span> <span class="pre">degree</span></code> (and correspondingly <code class="docutils literal notranslate"><span class="pre">electromagnetics</span> <span class="pre">test</span> <span class="pre">degree</span></code>) to study how the polynomial degree affects the convergence rate.</p></li>
 </ul>
 </section>
