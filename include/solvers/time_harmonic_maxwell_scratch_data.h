@@ -9,7 +9,6 @@
 #include <solvers/physical_properties_manager.h>
 #include <solvers/physics_scratch_data.h>
 
-#include <deal.II/base/exceptions.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/quadrature.h>
 #include <deal.II/base/table.h>
@@ -29,56 +28,24 @@
 #include <vector>
 
 /**
- * This helper function projects a 3D tensor onto the tangential plane
- * defined by the given normal vector. Mathematically, it computes:
- * \f[
- * \mathbf{t} = \mathbf{n} \times (\mathbf{v} \times \mathbf{n})
- * \f]
- * which removes the normal component of the vector \f$\mathbf{v}\f$,
- * keeping only the tangential part.
- *
- * @tparam dim Spatial dimension.
- * @param tensor Input vector (field value) to be projected.
- * @param normal Unit normal vector defining the face orientation.
- * @return The tangential component of the input vector.
- *
- * @note This operation is used to obtain traces in H^{-1/2}(curl) spaces,
- * where only tangential components are continuous across interfaces. The
- * inline keyword is enforced to make sure that the tensor operations are
- * efficient as they are called frequently during assembly.
- */
-template <int dim>
-DEAL_II_ALWAYS_INLINE inline Tensor<1, dim, std::complex<double>>
-map_H12(const Tensor<1, dim, std::complex<double>> &tensor,
-        const Tensor<1, dim>                       &normal)
-{
-  if (dim != 3)
-    {
-      AssertThrow(
-        false,
-        ExcMessage(
-          "The map_H12 function is only implemented for 3D problems."));
-    }
-  return cross_product_3d(normal, cross_product_3d(tensor, normal));
-}
-
-/**
  * @brief Compute the effective electromagnetic properties of a material at a
  * set of points. The effective electric permittivity is
  * \f$\varepsilon' + i(\varepsilon'' + \sigma)\f$ and the effective magnetic
  * permeability is \f$\mu' + i\mu''\f$, where each property is evaluated with
  * the physical property models of the material.
  *
- * @note The time-harmonic Maxwell equations do not support multiple fluids, so
- * the properties only depend on the material id of the cell since the interface
- * between two materials is conformed to the mesh.
+ * @note The time-harmonic Maxwell equations do not support multiple
+ * fluids so the fluid_id is not necessary to determine the material
+ * properties. The material properties only depend on the material_id, which
+ * is used to identify the different materials in the input file and assign
+ * them their corresponding properties.
  *
  *  @param[in] physical_properties_manager The object that manages the
  * physical properties of the problem and provides them at any given position
  * of the domain.
- * @param[in] field_values A map containing the values of the fields at the
- * current position. This is used to compute the material properties that
- * depend on the fields.
+ * @param[in] field_values_vector A map containing the vector values of the
+ * fields at the current position. This is used to compute the material
+ * properties that depend on the fields.
  *  @param[in] material_id The material id of the current position, used to
  * determine the appropriate material properties from the input parameters.
  *  @param[out] effective_electric_permittivity Effective electric
@@ -105,17 +72,11 @@ compute_effective_electromagnetic_properties(
  * functions and \f$\mathbf{I}\f$ for the magnetic ones, with their curls and
  * complex conjugates) and of the interior trial space (\f$\mathbf{E}\f$ and
  * \f$\mathbf{H}\f$) and the effective material properties at the quadrature
- * points. For each face of the cell, it evaluates
- * the test functions and the tangential traces of the skeleton trial space
- * (\f$\hat{\mathbf{E}}\f$ and \f$\hat{\mathbf{H}}\f$) at the face quadrature
- * points. The complex values are stored with their complex conjugates because
- * the conjugate of a complex tensor is not implemented in deal.II.
- *
- * To avoid querying the finite elements during the assembly, each shape
- * function of the three spaces is classified once, at construction, with the
- * ShapeFunctionType flags, and the shape functions of each field are gathered
- * in lists of local dof indices. The shape functions of a field are only
- * evaluated for the dofs of that field, since they vanish for the others.
+ * points. For each face of the cell, it evaluates the test functions and the
+ * tangential traces of the skeleton trial space (\f$\hat{\mathbf{E}}\f$ and
+ * \f$\hat{\mathbf{H}}\f$) at the face quadrature points. The complex values are
+ * stored with their complex conjugates because the conjugate of a complex
+ * tensor is not implemented in deal.II.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions. Only
  * dim = 3 is supported.
@@ -188,8 +149,8 @@ public:
                                     update_values | update_quadrature_points |
                                       update_normal_vectors | update_JxW_values)
     , fe_face_values_test(mapping, fe_test, face_quadrature, update_values)
-    , gather_temperature(false)
   {
+    gather_temperature = false;
     allocate();
   }
 
@@ -222,9 +183,11 @@ public:
                           sd.fe_face_values_test.get_fe(),
                           sd.fe_face_values_test.get_quadrature(),
                           update_values)
-    , gather_temperature(false)
   {
+    gather_temperature = sd.gather_temperature;
+
     allocate();
+
     if (sd.gather_temperature)
       enable_temperature(sd.fe_values_temperature->get_fe(),
                          sd.fe_values_temperature->get_quadrature(),
@@ -386,101 +349,141 @@ public:
 
   // Physical properties
   const PhysicalPropertiesManager properties_manager;
+  // ID of the material of the current cell, used to determine the appropriate material properties from the input parameters.
   unsigned int                    material_id;
+  // Flag to indicate whether the material of the cell depends on the
+  // temperature.
   bool                            cell_material_needs_temperature;
 
-  // FEValues of the three DPG spaces. Because all spaces share the same
-  // triangulation and mapping, the quadrature points, normal vectors and JxW
-  // values are only computed with the trial spaces.
+  // FEValues of the interior trial space
   FEValues<dim>     fe_values_trial_interior;
+  // FEValues of the test space
   FEValues<dim>     fe_values_test;
+  // FEFaceValues of the skeleton trial space
   FEFaceValues<dim> fe_face_values_trial_skeleton;
+  // FEFaceValues of the test space
   FEFaceValues<dim> fe_face_values_test;
 
-  // Extractors of the [E_real, E_imag, H_real, H_imag] finite element systems
+  // Extractor for the FESystem of the real component of the electric field
   const FEValuesExtractors::Vector extractor_E_real{0};
+  // Extractor for the FESystem of the imaginary component of the electric field
   const FEValuesExtractors::Vector extractor_E_imag{dim};
+  // Extractor for the FESystem of the real component of the magnetic field
   const FEValuesExtractors::Vector extractor_H_real{2 * dim};
+  // Extractor for the FESystem of the imaginary component of the magnetic field
   const FEValuesExtractors::Vector extractor_H_imag{3 * dim};
 
-  // Sizes
+  // Number of quadrature points
   unsigned int n_q_points;
+  // Number of face quadrature points
   unsigned int n_face_q_points;
+  // Number of dofs of the test space
   unsigned int n_dofs_test;
+  // Number of dofs of the interior trial space
   unsigned int n_dofs_trial_interior;
+  // Number of dofs of the skeleton trial space
   unsigned int n_dofs_trial_skeleton;
 
-  // Classification of the shape functions of each space with the
-  // ShapeFunctionType flags
+  // Classification of the shape functions of the test space
   std::vector<unsigned char> shape_function_type_test;
+  // Classification of the shape functions of the interior trial space
   std::vector<unsigned char> shape_function_type_trial_interior;
+  // Classification of the shape functions of the skeleton trial space
   std::vector<unsigned char> shape_function_type_trial_skeleton;
 
-  // Local dof indices of each field: electric (F) and magnetic (I) test
-  // functions, interior electric (E) and magnetic (H) trial functions and
-  // skeleton electric (E_hat) and magnetic (H_hat) trial functions
+  // Local dof indices of the test functions associated with the electric field (F)
   std::vector<unsigned int> test_dofs_electric;
+  // Local dof indices of the test functions associated with the magnetic field (I)
   std::vector<unsigned int> test_dofs_magnetic;
+  // Local dof indices of the interior trial functions associated with the electric field (E)
   std::vector<unsigned int> trial_interior_dofs_electric;
+  // Local dof indices of the interior trial functions associated with the magnetic field (H)
   std::vector<unsigned int> trial_interior_dofs_magnetic;
+  // Local dof indices of the skeleton trial functions associated with the electric field (E_hat)
   std::vector<unsigned int> trial_skeleton_dofs_electric;
+  // Local dof indices of the skeleton trial functions associated with the magnetic field (H_hat)
   std::vector<unsigned int> trial_skeleton_dofs_magnetic;
 
-  // Cell quadrature
+  // Cell container for the volume integrals weights
   std::vector<double>     JxW;
+  // Cell container for the quadrature points
   std::vector<Point<dim>> quadrature_points;
 
-  // Temperature and effective properties at the cell quadrature points
+  // Temperature values at the cell quadrature points
   std::vector<double>                  temperature_values;
+  // Map of the field values at the cell quadrature points, indexed by field
   std::map<field, std::vector<double>> fields;
+  // Effective electric permittivities at the cell quadrature points
   std::vector<std::complex<double>>    effective_electric_permittivities;
+  // Effective magnetic permeabilities at the cell quadrature points
   std::vector<std::complex<double>>    effective_magnetic_permeabilities;
 
-  // Test functions at the cell quadrature points, indexed [q][k]
+  // Cell electric test functions
   Table<2, Tensor<1, dim, std::complex<double>>> phi_F;
+  // Cell complex conjugate of the electric test functions
   Table<2, Tensor<1, dim, std::complex<double>>> phi_F_conj;
+  // Cell curl of the electric test functions
   Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_F;
+  // Cell complex conjugate of the curl of the electric test functions
   Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_F_conj;
+  // Cell magnetic test functions
   Table<2, Tensor<1, dim, std::complex<double>>> phi_I;
+  // Cell complex conjugate of the magnetic test functions
   Table<2, Tensor<1, dim, std::complex<double>>> phi_I_conj;
+  // Cell curl of the magnetic test functions
   Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_I;
+  // Cell complex conjugate of the curl of the magnetic test functions
   Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_I_conj;
 
-  // Interior trial functions at the cell quadrature points, indexed [q][k]
+  // Cell interior trial electric functions
   Table<2, Tensor<1, dim, std::complex<double>>> phi_E;
+  // Cell interior trial magnetic functions
   Table<2, Tensor<1, dim, std::complex<double>>> phi_H;
 
-  // Current face
+  // Flag to indicate whether the current face is at the boundary of the domain
   bool               face_at_boundary;
+  // Boundary ID of the current face, used to determine the appropriate boundary conditions from the input parameters
   types::boundary_id face_boundary_id;
 
-  // Face quadrature
+  // Face container for the face integrals weights
   std::vector<double>         face_JxW;
+  // Face container for the face quadrature points
   std::vector<Point<dim>>     face_quadrature_points;
+  // Face container for the face normal vectors
   std::vector<Tensor<1, dim>> face_normals;
 
-  // Temperature and effective properties at the face quadrature points
+  // Face temperature values at the face quadrature points
   std::vector<double>                  face_temperature_values;
+  // Map of the field values at the face quadrature points, indexed by field
   std::map<field, std::vector<double>> face_fields;
+  // Effective electric permittivities at the face quadrature points
   std::vector<std::complex<double>>    face_effective_electric_permittivities;
+  // Effective magnetic permeabilities at the face quadrature points
   std::vector<std::complex<double>>    face_effective_magnetic_permeabilities;
 
-  // Test functions at the face quadrature points, indexed [q][k]
+  // Face electric test functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> phi_F_face;
+  // Face complex conjugate of the electric test functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> phi_F_face_conj;
+  // Face magnetic test functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> phi_I_face_conj;
+  // Face normal cross product of the magnetic test functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_I_face;
+  // Face complex conjugate of the normal cross product of the magnetic test functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_I_face_conj;
 
-  // Tangential traces of the skeleton trial functions at the face quadrature
-  // points, indexed [q][k]
+  // Face skeleton trial electric functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> phi_E_hat;
+  // Face normal cross product of the skeleton trial electric functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_E_hat;
+  // Face normal cross product of the complex conjugate of the skeleton trial magnetic functions at the face quadrature points
   Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_H_hat;
 
-  // Temperature coupling
+  // Flag to indicate whether the temperature field needs to be gathered and evaluated at the quadrature points
   bool                               gather_temperature;
+  // FEValues of the temperature field
   std::shared_ptr<FEValues<dim>>     fe_values_temperature;
+  // FEFaceValues of the temperature field
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_temperature;
 };
 

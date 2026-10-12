@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <solvers/time_harmonic_maxwell.h>
 #include <solvers/time_harmonic_maxwell_assemblers.h>
 
@@ -221,88 +223,6 @@ compute_waveguide_port_incident_fields(
 
 
 template <int dim>
-std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
-compute_waveguide_port_excitation(
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters,
-  const std::vector<double>  &waveguide_ports_electric_amplitudes,
-  const Point<dim>           &p,
-  const Tensor<1, dim>       &normal,
-  const std::complex<double> &effective_electric_permittivity,
-  const std::complex<double> &effective_magnetic_permeability,
-  const types::boundary_id    boundary_id_index)
-{
-  // The waveguide port excitation would be completely different in 2D as curls
-  // and cross products are not defined the same way as in 3D. Therefore, we do
-  // not implement it for now and throw an error if someone tries to use the 2D
-  // version.
-  if constexpr (dim != 3)
-    {
-      (void)time_harmonic_maxwell_parameters;
-      (void)waveguide_ports_electric_amplitudes;
-      (void)p;
-      (void)normal;
-      (void)effective_electric_permittivity;
-      (void)effective_magnetic_permeability;
-      (void)boundary_id_index;
-      AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
-      return std::pair<Tensor<1, dim, std::complex<double>>,
-                       std::complex<double>>();
-    }
-
-  static constexpr double PI = numbers::PI;
-  const auto              incident_fields =
-    compute_waveguide_port_incident_fields(time_harmonic_maxwell_parameters,
-                                           p,
-                                           normal,
-                                           effective_electric_permittivity,
-                                           effective_magnetic_permeability,
-                                           boundary_id_index);
-
-  // Gather the relevant waveguide parameters
-  const double omega =
-    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
-  const auto &waveguide_corners =
-    time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
-  const Parameters::WaveguideMode mode =
-    time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
-  unsigned int m =
-    time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
-  unsigned int n =
-    time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
-
-  const double k_t1 = m * PI /
-                      (waveguide_corners[1] - waveguide_corners[0])
-                        .norm(); // Transverse wavenumber 1
-  const double k_t2 = n * PI /
-                      (waveguide_corners[2] - waveguide_corners[0])
-                        .norm(); // Transverse wavenumber 2
-  const std::complex<double> k_l =
-    std::sqrt(omega * omega * effective_electric_permittivity *
-                effective_magnetic_permeability -
-              (k_t1 * k_t1 + k_t2 * k_t2)); // Longitudinal wavenumber
-
-  std::complex<double> surface_admittance =
-    (mode == Parameters::WaveguideMode::TE) ?
-      k_l / (omega * effective_magnetic_permeability) :
-      omega * effective_electric_permittivity / k_l;
-
-  const Tensor<1, dim, std::complex<double>> &E_inc = incident_fields.first;
-  const Tensor<1, dim, std::complex<double>> &H_inc = incident_fields.second;
-
-  // We normalize the excitation by the maximum amplitude accross all
-  // the waveguide ports to ensure that everything is normalized
-  double scaling_factor =
-    waveguide_ports_electric_amplitudes[boundary_id_index] /
-    *std::ranges::max_element(waveguide_ports_electric_amplitudes);
-  const Tensor<1, dim, std::complex<double>> excitation =
-    scaling_factor * (cross_product_3d(normal, H_inc) +
-                      map_H12(surface_admittance * E_inc, normal));
-
-  return std::make_pair(excitation, surface_admittance);
-}
-
-
-template <int dim>
 TimeHarmonicMaxwellAssemblerCore<dim>::TimeHarmonicMaxwellAssemblerCore(
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters)
   : omega(2.0 * numbers::PI *
@@ -496,6 +416,83 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::get_waveguide_port_index(
 
 template <int dim>
 std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
+TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_waveguide_port_excitation(
+  const Point<dim>           &p,
+  const Tensor<1, dim>       &normal,
+  const std::complex<double> &effective_electric_permittivity,
+  const std::complex<double> &effective_magnetic_permeability,
+  const types::boundary_id    boundary_id_index) const
+{
+  // The waveguide port excitation would be completely different in 2D as curls
+  // and cross products are not defined the same way as in 3D. Therefore, we do
+  // not implement it for now and throw an error if someone tries to use the 2D
+  // version.
+  if constexpr (dim != 3)
+    {
+      (void)p;
+      (void)normal;
+      (void)effective_electric_permittivity;
+      (void)effective_magnetic_permeability;
+      (void)boundary_id_index;
+      AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
+      return std::pair<Tensor<1, dim, std::complex<double>>,
+                       std::complex<double>>();
+    }
+
+  static constexpr double PI = numbers::PI;
+  const auto              incident_fields =
+    compute_waveguide_port_incident_fields(time_harmonic_maxwell_parameters,
+                                           p,
+                                           normal,
+                                           effective_electric_permittivity,
+                                           effective_magnetic_permeability,
+                                           boundary_id_index);
+
+  // Gather the relevant waveguide parameters
+  const double omega =
+    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
+  const auto &waveguide_corners =
+    time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
+  const Parameters::WaveguideMode mode =
+    time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
+  unsigned int m =
+    time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
+  unsigned int n =
+    time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
+
+  const double k_t1 = m * PI /
+                      (waveguide_corners[1] - waveguide_corners[0])
+                        .norm(); // Transverse wavenumber 1
+  const double k_t2 = n * PI /
+                      (waveguide_corners[2] - waveguide_corners[0])
+                        .norm(); // Transverse wavenumber 2
+  const std::complex<double> k_l =
+    std::sqrt(omega * omega * effective_electric_permittivity *
+                effective_magnetic_permeability -
+              (k_t1 * k_t1 + k_t2 * k_t2)); // Longitudinal wavenumber
+
+  std::complex<double> surface_admittance =
+    (mode == Parameters::WaveguideMode::TE) ?
+      k_l / (omega * effective_magnetic_permeability) :
+      omega * effective_electric_permittivity / k_l;
+
+  const Tensor<1, dim, std::complex<double>> &E_inc = incident_fields.first;
+  const Tensor<1, dim, std::complex<double>> &H_inc = incident_fields.second;
+
+  // We normalize the excitation by the maximum amplitude accross all
+  // the waveguide ports to ensure that everything is normalized
+  double scaling_factor =
+    waveguide_ports_electric_amplitudes[boundary_id_index] /
+    *std::ranges::max_element(waveguide_ports_electric_amplitudes);
+  const Tensor<1, dim, std::complex<double>> excitation =
+    scaling_factor * (cross_product_3d(normal, H_inc) +
+                      tangential_component(surface_admittance * E_inc, normal));
+
+  return std::make_pair(excitation, surface_admittance);
+}
+
+template <int dim>
+std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
 TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_robin_boundary_data(
   const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
   const unsigned int                         q,
@@ -551,8 +548,6 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_robin_boundary_data(
     {
       std::tie(g_inc, boundary_surface_admittance) =
         compute_waveguide_port_excitation(
-          time_harmonic_maxwell_parameters,
-          waveguide_ports_electric_amplitudes,
           position,
           scratch_data.face_normals[q],
           scratch_data.face_effective_electric_permittivities[q],
@@ -704,25 +699,6 @@ template std::pair<Tensor<1, 3, std::complex<double>>,
                    Tensor<1, 3, std::complex<double>>>
 compute_waveguide_port_incident_fields<3>(
   const Parameters::TimeHarmonicMaxwell<3> &time_harmonic_maxwell_parameters,
-  const Point<3>                           &p,
-  const Tensor<1, 3>                       &normal,
-  const std::complex<double>               &effective_electric_permittivity,
-  const std::complex<double>               &effective_magnetic_permeability,
-  const types::boundary_id                  boundary_id_index);
-
-template std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>
-compute_waveguide_port_excitation<2>(
-  const Parameters::TimeHarmonicMaxwell<2> &time_harmonic_maxwell_parameters,
-  const std::vector<double>                &waveguide_ports_electric_amplitudes,
-  const Point<2>                           &p,
-  const Tensor<1, 2>                       &normal,
-  const std::complex<double>               &effective_electric_permittivity,
-  const std::complex<double>               &effective_magnetic_permeability,
-  const types::boundary_id                  boundary_id_index);
-template std::pair<Tensor<1, 3, std::complex<double>>, std::complex<double>>
-compute_waveguide_port_excitation<3>(
-  const Parameters::TimeHarmonicMaxwell<3> &time_harmonic_maxwell_parameters,
-  const std::vector<double>                &waveguide_ports_electric_amplitudes,
   const Point<3>                           &p,
   const Tensor<1, 3>                       &normal,
   const std::complex<double>               &effective_electric_permittivity,

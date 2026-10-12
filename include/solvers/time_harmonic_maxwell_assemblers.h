@@ -105,49 +105,6 @@ compute_waveguide_port_incident_fields(
   const types::boundary_id                    boundary_id_index = 0);
 
 /**
- * @brief Compute the excitation and the surface admittance of the Robin
- * boundary condition of a rectangular waveguide port from the input
- * parameters. It is only implemented for 3D problems.
- *
- * @tparam dim Spatial dimension.
- *
- * @param[in] time_harmonic_maxwell_parameters Parameters of the time-harmonic
- * Maxwell physics, which contain the waveguide port definitions.
- *
- * @param[in] waveguide_ports_electric_amplitudes Electric field amplitudes of
- * all the waveguide ports. The excitation is normalized by their maximum.
- *
- * @param[in] p Position where the excitation is computed.
- *
- * @param[in] normal Unit normal vector of the waveguide port face.
- *
- * @param[in] effective_electric_permittivity Effective electric permittivity
- * at the point p.
- *
- * @param[in] effective_magnetic_permeability Effective magnetic permeability
- * at the point p.
- *
- * @param[in] boundary_id_index Index of the waveguide port condition within
- * the waveguide port parameters. The default value is 0, which can be used
- * when there is only one waveguide port defined in the input file.
- *
- * @return A pair containing the excitation of the Robin boundary condition and
- * the surface admittance at the point p. The excitation is scaled by the ratio
- * of the port amplitude to the maximum amplitude of all the ports.
- */
-template <int dim>
-std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
-compute_waveguide_port_excitation(
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters,
-  const std::vector<double>  &waveguide_ports_electric_amplitudes,
-  const Point<dim>           &p,
-  const Tensor<1, dim>       &normal,
-  const std::complex<double> &effective_electric_permittivity,
-  const std::complex<double> &effective_magnetic_permeability,
-  const types::boundary_id    boundary_id_index = 0);
-
-
-/**
  * @brief Class that assembles the cell terms of the ultraweak DPG formulation
  * of the time-harmonic Maxwell equations. With the test functions
  * \f$\mathbf{F}\f$ (electric) and \f$\mathbf{I}\f$ (magnetic), it assembles:
@@ -369,6 +326,38 @@ private:
     const unsigned int                         q,
     const BoundaryConditions::BoundaryType     bc_type,
     const unsigned int                         waveguide_port_index) const;
+
+  /**
+   * @brief Compute the excitation and the surface admittance of the Robin
+   * boundary condition of a rectangular waveguide port from the input
+   * parameters. The excitation is normalized by the maximum of the electric
+   * field amplitudes of all the waveguide ports. It is only implemented for 3D
+   * problems.
+   *
+   * @param[in] p Position where the excitation is computed.
+   *
+   * @param[in] normal Unit normal vector of the waveguide port face.
+   *
+   * @param[in] effective_electric_permittivity Effective electric permittivity
+   * at the point p.
+   *
+   * @param[in] effective_magnetic_permeability Effective magnetic permeability
+   * at the point p.
+   *
+   * @param[in] boundary_id_index Index of the waveguide port condition within
+   * the waveguide port parameters.
+   *
+   * @return A pair containing the excitation of the Robin boundary condition
+   * and the surface admittance at the point p. The excitation is scaled by the
+   * ratio of the port amplitude to the maximum amplitude of all the ports.
+   */
+  std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
+  compute_waveguide_port_excitation(
+    const Point<dim>           &p,
+    const Tensor<1, dim>       &normal,
+    const std::complex<double> &effective_electric_permittivity,
+    const std::complex<double> &effective_magnetic_permeability,
+    const types::boundary_id    boundary_id_index) const;
 
   /**
    * @brief Get the index of the waveguide port condition of the current face

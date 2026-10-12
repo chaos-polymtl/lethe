@@ -1,8 +1,12 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <solvers/time_harmonic_maxwell.h>
 #include <solvers/time_harmonic_maxwell_scratch_data.h>
+
+#include <deal.II/base/exceptions.h>
 
 #include <algorithm>
 
@@ -361,13 +365,10 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
 
           // Skeleton trial functions. To be in H^-1/2(curl), the fields need
           // to have the tangential trace mapping (n x (E x n)) which extracts
-          // the tangential component of the field at the face. Strictly
-          // speaking, n x E_parallel = n x E, and we would not need to use the
-          // map_H12 function for the cross products, but we keep it for
-          // consistency.
+          // the tangential component of the field at the face.
           for (const unsigned int k : this->trial_skeleton_dofs_electric)
             {
-              phi_E_hat[q][k] = map_H12(
+              phi_E_hat[q][k] = tangential_component(
                 fe_face_values_trial_skeleton[extractor_E_real].value(k, q) +
                   imag *
                     fe_face_values_trial_skeleton[extractor_E_imag].value(k, q),
@@ -379,7 +380,7 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
             {
               n_cross_phi_H_hat[q][k] = cross_product_3d(
                 normal,
-                map_H12(
+                tangential_component(
                   fe_face_values_trial_skeleton[extractor_H_real].value(k, q) +
                     imag *
                       fe_face_values_trial_skeleton[extractor_H_imag].value(k,
