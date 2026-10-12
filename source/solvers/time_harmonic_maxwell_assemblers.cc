@@ -335,10 +335,7 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_rhs(
   Vector<double> &l_vector = copy_data.l_vector;
 
   // Loop over the quadrature points of the cell. No volume source term is
-  // considered at the moment, so the interior load vector is zero. Note that
-  // in its simplest form, the time-harmonic Maxwell equations do not have a
-  // magnetic source term, so there is no contribution from the I test
-  // functions.
+  // considered at the moment, so the interior load vector is zero.
   for (unsigned int q = 0; q < scratch_data.n_q_points; ++q)
     {
       for (const unsigned int i : scratch_data.test_dofs_electric)
@@ -408,6 +405,7 @@ unsigned int
 TimeHarmonicMaxwellAssemblerRobinBC<dim>::get_waveguide_port_index(
   const TimeHarmonicMaxwellScratchData<dim> &scratch_data) const
 {
+  // Given a face boundary ID, find the index of the corresponding waveguide port in the list of waveguide ports defined in the parameters.
   return std::distance(
     time_harmonic_maxwell_parameters.waveguide_boundary_ids.begin(),
     std::ranges::find(time_harmonic_maxwell_parameters.waveguide_boundary_ids,
