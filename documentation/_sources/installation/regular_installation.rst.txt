@@ -185,6 +185,25 @@ Create a build folder at the same level as the lethe folder
   mkdir build
   cd build
 
+.. note::
+  Installing the mold linker before configuring Lethe significantly reduces the compilation time:
+
+  .. code-block:: text
+    :class: copy-button
+
+    sudo apt-get install mold
+
+  Every application and every unit test of Lethe is a separate executable, and linking them with the default GNU linker (``ld``) is slow, especially in Debug. When mold is installed, Lethe links with it automatically, unless deal.II was already configured with a linker of its own, and CMake prints ``Linking Lethe with mold`` during the configuration.
+
+  Selecting mold requires GCC 12.1 or newer. With an older compiler, such as the GCC 11 of Ubuntu 22.04, install lld instead, which Lethe uses when mold is not available:
+
+  .. code-block:: text
+    :class: copy-button
+
+    sudo apt-get install lld
+
+  This behavior can be disabled with ``-DLETHE_USE_FAST_LINKER=OFF``, and a specific linker can be requested with ``-DCMAKE_LINKER_TYPE``.
+
 Build Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
 
 .. code-block:: text

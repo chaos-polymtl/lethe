@@ -577,6 +577,19 @@ cd build
 cd build
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Installing the mold linker before configuring Lethe significantly reduces the compilation time:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt-get install mold
+</pre></div>
+</div>
+<p>Every application and every unit test of Lethe is a separate executable, and linking them with the default GNU linker (<code class="docutils literal notranslate"><span class="pre">ld</span></code>) is slow, especially in Debug. When mold is installed, Lethe links with it automatically, unless deal.II was already configured with a linker of its own, and CMake prints <code class="docutils literal notranslate"><span class="pre">Linking</span> <span class="pre">Lethe</span> <span class="pre">with</span> <span class="pre">mold</span></code> during the configuration.</p>
+<p>Selecting mold requires GCC 12.1 or newer. With an older compiler, such as the GCC 11 of Ubuntu 22.04, install lld instead, which Lethe uses when mold is not available:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt-get install lld
+</pre></div>
+</div>
+<p>This behavior can be disabled with <code class="docutils literal notranslate"><span class="pre">-DLETHE_USE_FAST_LINKER=OFF</span></code>, and a specific linker can be requested with <code class="docutils literal notranslate"><span class="pre">-DCMAKE_LINKER_TYPE</span></code>.</p>
+</div>
 <p>Build Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cmake ../lethe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/home/username/path/to/installation
 </pre></div>
