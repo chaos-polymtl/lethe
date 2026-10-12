@@ -106,7 +106,7 @@ In the ``CLS`` subsection, two features are enabled : the ``phase filtration`` a
 The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
 Since a straightforward advection of the phase indicator typically leads to significant interface diffusion, an interface reinitialization method is required. 
-This is addressed in the ``interface reinitialization method`` subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``pde-based interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
+This is addressed in the ``interface reinitialization method`` subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  ``projection_based_sharpening`` (projection-based interface sharpening), ``pde_based`` (PDE-based interface reinitialization), and ``geometric`` (geometric interface reinitialization). The desired method can be selected using the ``type`` parameter.
 
 We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface reinitialization methods.
 

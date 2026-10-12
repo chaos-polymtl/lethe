@@ -93,7 +93,7 @@ box below.
 
     set electromagnetic frequency    = 1 # Hz
     
-    set electromagnetic scaling type = <none|electric field|magnetic field|power>
+    set electromagnetic scaling type = <none|electric_field|magnetic_field|power>
 
     set electric field amplitude     = 1
     set magnetic field amplitude     = 1
