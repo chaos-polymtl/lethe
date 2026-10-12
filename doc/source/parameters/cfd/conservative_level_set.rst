@@ -147,7 +147,7 @@ The ``type = projection_based_sharpening`` corresponds to a projection-based rei
 Geometric Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = geometric`` reinitializes the phase indicator field by computing the signed distance from the interface. The latter is then converted back to a phase indicator using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Conservative Level-Set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
+The ``type = geometric`` reinitializes the phase indicator field by computing the signed distance from the interface. The latter is then converted back to a phase indicator using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Conservative Level-Set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``geometric interface reinitialization`` subsection defines the relevant parameters.
 
 * ``max reinitialization distance``: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the ``max reinitialization distance``.
 
