@@ -185,7 +185,7 @@ CFDDEMMatrixFreeLoadBalance<dim, PropertiesIndex>::print_state(
 
   deallog << "  Void fraction             : "
           << field_l2_norm(*this->particle_projector.mapping,
-                           this->particle_projector.dof_handler,
+                           *this->particle_projector.dof_handler,
                            *this->particle_projector.quadrature,
                            this->particle_projector.void_fraction_solution,
                            1)
@@ -196,7 +196,7 @@ CFDDEMMatrixFreeLoadBalance<dim, PropertiesIndex>::print_state(
     deallog << "  Previous void fraction " << i << "  : "
             << field_l2_norm(
                  *this->particle_projector.mapping,
-                 this->particle_projector.dof_handler,
+                 *this->particle_projector.dof_handler,
                  *this->particle_projector.quadrature,
                  this->particle_projector.void_fraction_previous_solution[i],
                  1)

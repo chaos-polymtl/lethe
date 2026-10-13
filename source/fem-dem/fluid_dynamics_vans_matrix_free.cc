@@ -154,8 +154,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       };
 
       this->mg_transfer_ls_void_fraction->build(
-        particle_projector.dof_handler,
-        make_level_partitioner(particle_projector.dof_handler));
+        *particle_projector.dof_handler,
+        make_level_partitioner(*particle_projector.dof_handler));
       this->mg_transfer_ls_pf_force->build(
         particle_projector.fluid_force_on_particles_two_way_coupling
           .dof_handler,
@@ -201,12 +201,12 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         .update_ghost_values();
 
       this->mg_transfer_ls_void_fraction->interpolate_to_mg(
-        particle_projector.dof_handler,
+        *particle_projector.dof_handler,
         mg_void_fraction_solution,
         particle_projector.void_fraction_solution);
 
       this->mg_transfer_ls_void_fraction->interpolate_to_mg(
-        particle_projector.dof_handler,
+        *particle_projector.dof_handler,
         mg_time_derivative_void_fraction,
         time_derivative_void_fraction);
 
@@ -251,7 +251,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                 &(*this->mg_operators[l])))
             {
               mf_operator->compute_void_fraction(
-                particle_projector.dof_handler,
+                *particle_projector.dof_handler,
                 mg_void_fraction_solution[h_level],
                 mg_time_derivative_void_fraction[h_level]);
 
@@ -292,7 +292,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
           this->void_fraction_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->void_fraction_dof_handlers[l].distribute_dofs(
-            particle_projector.dof_handler.get_fe());
+            particle_projector.dof_handler->get_fe());
 
           // Particle-fluid force
           this->pf_force_dof_handlers[l].reinit(
@@ -386,7 +386,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       // Build transfer operator for every field
       this->mg_transfer_gc_void_fraction->build(
-        particle_projector.dof_handler, [&](const auto l, auto &vec) {
+        *particle_projector.dof_handler, [&](const auto l, auto &vec) {
           vec.reinit(
             this->void_fraction_dof_handlers[l].locally_owned_dofs(),
             DoFTools::extract_locally_active_dofs(
@@ -460,12 +460,12 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       // Void fraction
       this->mg_transfer_gc_void_fraction->interpolate_to_mg(
-        particle_projector.dof_handler,
+        *particle_projector.dof_handler,
         mg_void_fraction_solution,
         particle_projector.void_fraction_solution);
 
       this->mg_transfer_gc_void_fraction->interpolate_to_mg(
-        particle_projector.dof_handler,
+        *particle_projector.dof_handler,
         mg_time_derivative_void_fraction,
         time_derivative_void_fraction);
 
@@ -619,8 +619,9 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::setup_dofs()
 
   // Initialize the time derivative of the void fraction.
   this->time_derivative_void_fraction.reinit(
-    particle_projector.dof_handler.locally_owned_dofs(),
-    DoFTools::extract_locally_relevant_dofs(particle_projector.dof_handler),
+    this->particle_projector.dof_handler->locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(
+      *this->particle_projector.dof_handler),
     this->mpi_communicator);
 }
 
@@ -831,7 +832,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
     component_interpretation = {
       DataComponentInterpretation::component_is_scalar};
   OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    void_fraction_struct(particle_projector.dof_handler,
+    void_fraction_struct(*particle_projector.dof_handler,
                          particle_projector.void_fraction_solution,
                          name,
                          component_interpretation);
@@ -1039,7 +1040,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
                                  "Prepare MF operator for VANS");
 
             mf_operator->compute_void_fraction(
-              particle_projector.dof_handler,
+              *particle_projector.dof_handler,
               particle_projector.void_fraction_solution,
               this->time_derivative_void_fraction);
 

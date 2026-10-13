@@ -209,21 +209,22 @@ CFDDEMRestart<dim, PropertiesIndex>::print_state(const std::string &label)
   deallog
     << "  Void fraction             : "
     << field_l2_norm(*this->particle_projector.mapping,
-                     this->particle_projector.dof_handler,
+                     *this->particle_projector.dof_handler,
                      *this->particle_projector.quadrature,
-                     this->particle_projector.void_fraction_locally_relevant,
+                     *this->particle_projector.void_fraction_locally_relevant,
                      1)
     << std::endl;
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
-    deallog << "  Previous void fraction " << i << "  : "
-            << field_l2_norm(*this->particle_projector.mapping,
-                             this->particle_projector.dof_handler,
-                             *this->particle_projector.quadrature,
-                             this->particle_projector.previous_void_fraction[i],
-                             1)
-            << std::endl;
+    deallog
+      << "  Previous void fraction " << i << "  : "
+      << field_l2_norm(*this->particle_projector.mapping,
+                       *this->particle_projector.dof_handler,
+                       *this->particle_projector.quadrature,
+                       (*this->particle_projector.previous_void_fraction)[i],
+                       1)
+      << std::endl;
 
   print_particle_state<dim, PropertiesIndex>(this->particle_handler,
                                              this->mpi_communicator);
