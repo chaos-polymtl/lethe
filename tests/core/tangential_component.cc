@@ -61,7 +61,8 @@ test()
                Tensor<1, 2>({0., 4.}));
     check_case("2D real, n = (1, 1)/sqrt(2)",
                v,
-               Tensor<1, 2>({1. / std::sqrt(2.), 1. / std::sqrt(2.)}),
+               Tensor<1, 2>(
+                 {1. / std::numbers::sqrt2, 1. / std::numbers::sqrt2}),
                Tensor<1, 2>({-0.5, 0.5}));
   }
 
@@ -83,8 +84,9 @@ test()
                Tensor<1, 3>({1., 2., 0.}));
     check_case("3D real, n = (1, 1, 1)/sqrt(3)",
                v,
-               Tensor<1, 3>(
-                 {1. / std::sqrt(3.), 1. / std::sqrt(3.), 1. / std::sqrt(3.)}),
+               Tensor<1, 3>({std::numbers::inv_sqrt3,
+                             std::numbers::inv_sqrt3,
+                             std::numbers::inv_sqrt3}),
                Tensor<1, 3>({-1., 0., 1.}));
   }
 
