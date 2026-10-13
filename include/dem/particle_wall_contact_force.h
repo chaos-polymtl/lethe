@@ -453,7 +453,13 @@ protected:
 
     if constexpr (contact_model == ParticleWallContactForceModel::shift)
       {
-        shift_particle_using_normal_overlap(normal_overlap, contact_info);
+        // The shift model returns a displacement instead of a force. It goes
+        // through the normal force so that it is accumulated on the particle
+        // like a force.
+        calculate_shift_displacement(normal_overlap,
+                                     contact_info,
+                                     particle_properties,
+                                     normal_force);
       }
   }
 
@@ -1084,17 +1090,25 @@ private:
   }
 
   /**
-   * @brief Shift particles that are in contact using their normal overlap. This
-   * contact model is used for the packed insertion method.
+   * @brief Calculate the displacement that separates a particle from a wall it
+   * overlaps. This "contact force" model is used for the packed insertion
+   * method. The particle is not moved here. The accumulated displacements are
+   * applied once all the contacts are evaluated.
    *
    * @param[in] normal_overlap Contact normal overlap.
-   * @param[in,out] contact_info A container that contains the required
+   * @param[in] contact_info A container that contains the required
    * information for calculation of the contact force for a particle-wall pair.
+   * @param[in] particle_properties Properties of the particle.
+   * @param[out] normal_displacement Displacement along the contact normal,
+   * pointing from the particle to the wall like the contact forces. The
+   * particle is displaced by its opposite.
    */
   inline void
-  shift_particle_using_normal_overlap(
-    const double                     normal_overlap,
-    particle_wall_contact_info<dim> &contact_info)
+  calculate_shift_displacement(
+    const double                           normal_overlap,
+    const particle_wall_contact_info<dim> &contact_info,
+    const ArrayView<const double>         &particle_properties,
+    Tensor<1, 3>                          &normal_displacement)
   {
     if (normal_overlap > 0.)
       {
@@ -1104,31 +1118,14 @@ private:
         // convention (i -> j), the forces are thus calculated on the wall
         const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
 
-        auto particle = contact_info.particle;
-
-        Point<dim> particle_position = particle->get_location();
-        Point<dim> particle_new_position;
-
-        if constexpr (dim == 2)
-          {
-            particle_new_position =
-              particle_position -
-              (1.02 * normal_overlap +
-               0.01 * particle->get_properties()[PropertiesIndex::dp]) *
-                tensor_nd_to_2d(normal_vector);
-          }
-        if constexpr (dim == 3)
-          {
-            particle_new_position =
-              particle_position -
-              (1.02 * normal_overlap +
-               0.01 * particle->get_properties()[PropertiesIndex::dp]) *
-                normal_vector;
-          }
-        particle->set_location(particle_new_position);
+        normal_displacement =
+          (1.02 * normal_overlap +
+           0.01 * particle_properties[PropertiesIndex::dp]) *
+          normal_vector;
       }
+    else
+      normal_displacement.clear();
   }
-
 
   /**
    * @brief Set every container needed to carry the particle-wall force

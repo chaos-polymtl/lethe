@@ -554,11 +554,6 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
 
       action_manager->particle_insertion_step();
     }
-
-  if (parameters.insertion_info.insertion_method ==
-      InsertionInfo<dim>::InsertionMethod::packed)
-    InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-      particle_handler);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -590,6 +585,13 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
           solid_surfaces,
           contact_outcome);
     }
+
+  // Particle-point and particle-line contacts have no shift model. They are
+  // skipped with the packed insertion method, since their forces would be
+  // added to the displacements accumulated in the force container.
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
+    return;
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
@@ -1122,10 +1124,12 @@ DEMSolver<dim, PropertiesIndex>::packed_insertion_report_and_status()
   particle_particle_contact_force_object->reset_number_of_contacts();
   particle_wall_contact_force_object->reset_number_of_contacts();
 
-  InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
-    particle_handler, maximum_particle_diameter, displacement);
-  InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-    particle_handler);
+  // Displace the particles using the displacements accumulated by the shift
+  // contact models. A particle may not move by more than the largest particle
+  // diameter during a pseudo-time step. This is important, otherwise a particle
+  // could move to a non-neighboring cell within one pseudo-time step.
+  InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
+    particle_handler, maximum_particle_diameter, contact_outcome, displacement);
 
   // Packed insertion is enabled and simulation will continue.
   return false;
