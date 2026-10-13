@@ -428,7 +428,11 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::TimeHarmonicMaxwellAssemblerRobinBC(
   , boundary_conditions(boundary_conditions)
   , waveguide_ports_relative_amplitudes(waveguide_ports_electric_amplitudes)
 {
-  // In the case of multiple waveguide ports, we normalize their amplitudes by their maximum here before assembling the Robin boundary condition to avoid extra computations as this factor is constant across all quadrature points. This normalization is done to ensure that the waveguide port with the highest amplitude is set to 1, and the other ports are scaled accordingly.
+  // In the case of multiple waveguide ports, we normalize their amplitudes by
+  // their maximum here before assembling the Robin boundary condition to avoid
+  // extra computations as this factor is constant across all quadrature points.
+  // This normalization is done to ensure that the waveguide port with the
+  // highest amplitude is set to 1, and the other ports are scaled accordingly.
   if (waveguide_ports_relative_amplitudes.empty())
     return;
 

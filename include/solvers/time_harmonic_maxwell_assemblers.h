@@ -346,7 +346,8 @@ private:
   /**
    * @brief Compute the excitation and the surface admittance of the Robin
    * boundary condition of a rectangular waveguide port from the input
-   * parameters. The excitation used is the normalized one across all the waveguide ports. This function is only implemented for 3D problems.
+   * parameters. The excitation used is the normalized one across all the
+   * waveguide ports. This function is only implemented for 3D problems.
    *
    * @param[in] p Position where the excitation is computed.
    *
