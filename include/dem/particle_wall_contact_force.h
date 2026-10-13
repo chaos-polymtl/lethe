@@ -1091,9 +1091,10 @@ private:
 
   /**
    * @brief Calculate the displacement that separates a particle from a wall it
-   * overlaps. This "contact force" model is used for the packed insertion
-   * method. The particle is not moved here. The accumulated displacements are
-   * applied once all the contacts are evaluated.
+   * overlaps. This "contact force" model is used by the packed insertion
+   * method. The displacement is along the wall normal and is slightly larger
+   * than the normal overlap, so that the particle is separated from the wall
+   * once it is displaced.
    *
    * @param[in] normal_overlap Contact normal overlap.
    * @param[in] contact_info A container that contains the required
