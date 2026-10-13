@@ -23,7 +23,7 @@ compute_waveguide_port_incident_fields(
   const Tensor<1, dim>                       &normal,
   const std::complex<double>                 &effective_electric_permittivity,
   const std::complex<double>                 &effective_magnetic_permeability,
-  const types::boundary_id                    boundary_id_index)
+  const unsigned int                          waveguide_port_index)
 {
   // The waveguide port excitation would be completely different in 2D as curls
   // and cross products are not defined the same way as in 3D. Therefore, we do
@@ -36,7 +36,7 @@ compute_waveguide_port_incident_fields(
       (void)normal;
       (void)effective_electric_permittivity;
       (void)effective_magnetic_permeability;
-      (void)boundary_id_index;
+      (void)waveguide_port_index;
       AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
       return std::pair<Tensor<1, dim, std::complex<double>>,
                        Tensor<1, dim, std::complex<double>>>();
@@ -49,13 +49,13 @@ compute_waveguide_port_incident_fields(
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
   const auto &waveguide_corners =
-    time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
+    time_harmonic_maxwell_parameters.waveguide_corners[waveguide_port_index];
   const Parameters::WaveguideMode mode =
-    time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
+    time_harmonic_maxwell_parameters.waveguide_mode[waveguide_port_index];
   unsigned int m =
-    time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
+    time_harmonic_maxwell_parameters.mode_order_m[waveguide_port_index];
   unsigned int n =
-    time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
+    time_harmonic_maxwell_parameters.mode_order_n[waveguide_port_index];
 
   // We first define the transverse face vectors of the waveguide in the global
   // system
@@ -75,7 +75,7 @@ compute_waveguide_port_incident_fields(
     ExcMessage(
       "The transverse plane defined by the waveguide corners for the waveguide port at boundary ID " +
       std::to_string(time_harmonic_maxwell_parameters
-                       .waveguide_boundary_ids[boundary_id_index]) +
+                       .waveguide_boundary_ids[waveguide_port_index]) +
       " is not a perfect rectangle (i.e., the vector created by the waveguide corners are not orthogonal). Please check the waveguide corners definition in the input prm file."));
 
 
@@ -88,7 +88,7 @@ compute_waveguide_port_incident_fields(
       ExcMessage(
         "The transverse plane defined by the waveguide corners for the waveguide port at boundary ID " +
         std::to_string(time_harmonic_maxwell_parameters
-                         .waveguide_boundary_ids[boundary_id_index]) +
+                         .waveguide_boundary_ids[waveguide_port_index]) +
         " is not orthogonal to the boundary face normal. Please check the waveguide corners definition in the input prm file."));
 
   // Create a third vector to complete the right-handed coordinate system
@@ -137,13 +137,13 @@ compute_waveguide_port_incident_fields(
   // Verify that the mode is not evanescent, i.e. k_l is not purely imaginary
   // (k_c^2 < k^2). std::norm computes the squared magnitude of a complex
   // number.
-  AssertThrow(std::norm(k) > (k_c * k_c),
-              ExcMessage(
-                "The chosen mode for the waveguide port at boundary ID " +
-                std::to_string(time_harmonic_maxwell_parameters
-                                 .waveguide_boundary_ids[boundary_id_index]) +
-                " is evanescent at the given frequency. Please "
-                "choose another mode or increase the frequency."));
+  AssertThrow(
+    std::norm(k) > (k_c * k_c),
+    ExcMessage("The chosen mode for the waveguide port at boundary ID " +
+               std::to_string(time_harmonic_maxwell_parameters
+                                .waveguide_boundary_ids[waveguide_port_index]) +
+               " is evanescent at the given frequency. Please "
+               "choose another mode or increase the frequency."));
 
   // Now we want to compute the electromagnetic field and surface admittance at
   // point p as if the waveguide center was at the origin. So we will perform a
@@ -219,6 +219,24 @@ compute_waveguide_port_incident_fields(
     (H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3);
 
   return std::make_pair(E_inc, H_inc);
+}
+
+template <int dim>
+unsigned int
+get_waveguide_port_index(
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters,
+  const types::boundary_id                    boundary_id)
+{
+  // The waveguide port index is the position of the boundary id in the list of
+  // the port boundary ids of the waveguide inlets
+  const std::vector<int> &waveguide_boundary_ids =
+    time_harmonic_maxwell_parameters.waveguide_boundary_ids;
+  const unsigned int waveguide_port_index = static_cast<unsigned int>(
+    std::distance(waveguide_boundary_ids.begin(),
+                  std::ranges::find(waveguide_boundary_ids,
+                                    static_cast<int>(boundary_id))));
+
+  return waveguide_port_index;
 }
 
 
@@ -401,15 +419,23 @@ TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_rhs(
 
 
 template <int dim>
-unsigned int
-TimeHarmonicMaxwellAssemblerRobinBC<dim>::get_waveguide_port_index(
-  const TimeHarmonicMaxwellScratchData<dim> &scratch_data) const
+TimeHarmonicMaxwellAssemblerRobinBC<dim>::TimeHarmonicMaxwellAssemblerRobinBC(
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters,
+  const BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
+                            &boundary_conditions,
+  const std::vector<double> &waveguide_ports_electric_amplitudes)
+  : time_harmonic_maxwell_parameters(time_harmonic_maxwell_parameters)
+  , boundary_conditions(boundary_conditions)
+  , waveguide_ports_relative_amplitudes(waveguide_ports_electric_amplitudes)
 {
-  // Given a face boundary ID, find the index of the corresponding waveguide port in the list of waveguide ports defined in the parameters.
-  return std::distance(
-    time_harmonic_maxwell_parameters.waveguide_boundary_ids.begin(),
-    std::ranges::find(time_harmonic_maxwell_parameters.waveguide_boundary_ids,
-                      scratch_data.face_boundary_id));
+  // In the case of multiple waveguide ports, we normalize their amplitudes by their maximum here before assembling the Robin boundary condition to avoid extra computations as this factor is constant across all quadrature points. This normalization is done to ensure that the waveguide port with the highest amplitude is set to 1, and the other ports are scaled accordingly.
+  if (waveguide_ports_relative_amplitudes.empty())
+    return;
+
+  const double max_port_electric_amplitude =
+    *std::ranges::max_element(waveguide_ports_relative_amplitudes);
+  for (double &amplitude : waveguide_ports_relative_amplitudes)
+    amplitude /= max_port_electric_amplitude;
 }
 
 template <int dim>
@@ -419,7 +445,7 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_waveguide_port_excitation(
   const Tensor<1, dim>       &normal,
   const std::complex<double> &effective_electric_permittivity,
   const std::complex<double> &effective_magnetic_permeability,
-  const types::boundary_id    boundary_id_index) const
+  const unsigned int          waveguide_port_index) const
 {
   // The waveguide port excitation would be completely different in 2D as curls
   // and cross products are not defined the same way as in 3D. Therefore, we do
@@ -431,7 +457,7 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_waveguide_port_excitation(
       (void)normal;
       (void)effective_electric_permittivity;
       (void)effective_magnetic_permeability;
-      (void)boundary_id_index;
+      (void)waveguide_port_index;
       AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
       return std::pair<Tensor<1, dim, std::complex<double>>,
                        std::complex<double>>();
@@ -444,19 +470,19 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_waveguide_port_excitation(
                                            normal,
                                            effective_electric_permittivity,
                                            effective_magnetic_permeability,
-                                           boundary_id_index);
+                                           waveguide_port_index);
 
   // Gather the relevant waveguide parameters
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
   const auto &waveguide_corners =
-    time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
+    time_harmonic_maxwell_parameters.waveguide_corners[waveguide_port_index];
   const Parameters::WaveguideMode mode =
-    time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
+    time_harmonic_maxwell_parameters.waveguide_mode[waveguide_port_index];
   unsigned int m =
-    time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
+    time_harmonic_maxwell_parameters.mode_order_m[waveguide_port_index];
   unsigned int n =
-    time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
+    time_harmonic_maxwell_parameters.mode_order_n[waveguide_port_index];
 
   const double k_t1 = m * PI /
                       (waveguide_corners[1] - waveguide_corners[0])
@@ -477,14 +503,10 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_waveguide_port_excitation(
   const Tensor<1, dim, std::complex<double>> &E_inc = incident_fields.first;
   const Tensor<1, dim, std::complex<double>> &H_inc = incident_fields.second;
 
-  // We normalize the excitation by the maximum amplitude accross all
-  // the waveguide ports to ensure that everything is normalized
-  double scaling_factor =
-    waveguide_ports_electric_amplitudes[boundary_id_index] /
-    *std::ranges::max_element(waveguide_ports_electric_amplitudes);
   const Tensor<1, dim, std::complex<double>> excitation =
-    scaling_factor * (cross_product_3d(normal, H_inc) +
-                      tangential_component(surface_admittance * E_inc, normal));
+    waveguide_ports_relative_amplitudes[waveguide_port_index] *
+    (cross_product_3d(normal, H_inc) +
+     tangential_component(surface_admittance * E_inc, normal));
 
   return std::make_pair(excitation, surface_admittance);
 }
@@ -572,7 +594,8 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
 
   const unsigned int waveguide_port_index =
     (bc_type == BoundaryConditions::BoundaryType::waveguide_port) ?
-      get_waveguide_port_index(scratch_data) :
+      get_waveguide_port_index(time_harmonic_maxwell_parameters,
+                               scratch_data.face_boundary_id) :
       0;
 
   const std::vector<unsigned int> &test_dofs_F =
@@ -659,7 +682,8 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_rhs(
 
   const unsigned int waveguide_port_index =
     (bc_type == BoundaryConditions::BoundaryType::waveguide_port) ?
-      get_waveguide_port_index(scratch_data) :
+      get_waveguide_port_index(time_harmonic_maxwell_parameters,
+                               scratch_data.face_boundary_id) :
       0;
 
   Vector<double> &l_vector = copy_data.l_vector;
@@ -692,7 +716,7 @@ compute_waveguide_port_incident_fields<2>(
   const Tensor<1, 2>                       &normal,
   const std::complex<double>               &effective_electric_permittivity,
   const std::complex<double>               &effective_magnetic_permeability,
-  const types::boundary_id                  boundary_id_index);
+  const unsigned int                        waveguide_port_index);
 template std::pair<Tensor<1, 3, std::complex<double>>,
                    Tensor<1, 3, std::complex<double>>>
 compute_waveguide_port_incident_fields<3>(
@@ -701,7 +725,16 @@ compute_waveguide_port_incident_fields<3>(
   const Tensor<1, 3>                       &normal,
   const std::complex<double>               &effective_electric_permittivity,
   const std::complex<double>               &effective_magnetic_permeability,
-  const types::boundary_id                  boundary_id_index);
+  const unsigned int                        waveguide_port_index);
+
+template unsigned int
+get_waveguide_port_index<2>(
+  const Parameters::TimeHarmonicMaxwell<2> &time_harmonic_maxwell_parameters,
+  const types::boundary_id                  boundary_id);
+template unsigned int
+get_waveguide_port_index<3>(
+  const Parameters::TimeHarmonicMaxwell<3> &time_harmonic_maxwell_parameters,
+  const types::boundary_id                  boundary_id);
 
 template class TimeHarmonicMaxwellAssemblerCore<2>;
 template class TimeHarmonicMaxwellAssemblerCore<3>;
