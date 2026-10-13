@@ -495,7 +495,11 @@ public:
 
 
   /**
-   * @brief Request a DOF handler for a given physics ID
+   * @brief Request a DOF handler for a given physics ID.
+   *
+   * PhysicsID::void_fraction is also accepted when the fluid dynamics
+   * formulation is VANS, since the VANS solvers register the void fraction
+   * in the interface.
    *
    * @param physics_id The physics of the DOF handler being requested
    *
@@ -504,16 +508,17 @@ public:
   const DoFHandler<dim> &
   get_dof_handler(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(is_field_available(physics_id), ExcInternalError());
 
     return *physics_dof_handler[physics_id];
   }
 
   /**
    * @brief Request a mapping for a given physics ID
+   *
+   * PhysicsID::void_fraction is also accepted when the fluid dynamics
+   * formulation is VANS, since the VANS solvers register the void fraction
+   * in the interface.
    *
    * @param physics_id The physics of the mapping being requested
    *
@@ -522,16 +527,17 @@ public:
   const Mapping<dim> &
   get_mapping(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(is_field_available(physics_id), ExcInternalError());
 
     return *physics_mapping[physics_id];
   }
 
   /**
    * @brief Request the reference to the present solution of a given physics
+   *
+   * PhysicsID::void_fraction is also accepted when the fluid dynamics
+   * formulation is VANS, since the VANS solvers register the void fraction
+   * in the interface.
    *
    * @param physics_id The physics ID of the solution being requested
    *
@@ -540,10 +546,7 @@ public:
   const GlobalVectorType &
   get_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(is_field_available(physics_id), ExcInternalError());
     return *physics_solutions[physics_id];
   }
 
@@ -680,17 +683,18 @@ public:
 
   /**
    * @brief Request the reference to the vector of previous solutions of a given
-   * physics
+   * physics.
+   *
+   * PhysicsID::void_fraction is also accepted when the fluid dynamics
+   * formulation is VANS, since the VANS solvers register the void fraction
+   * in the interface.
    *
    * @param[in] physics_id The physics ID of the solution being requested
    */
   const std::vector<GlobalVectorType> &
   get_previous_solutions(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(is_field_available(physics_id), ExcInternalError());
     return *physics_previous_solutions[physics_id];
   }
 
@@ -724,10 +728,7 @@ public:
   set_dof_handler(const PhysicsID                  physics_id,
                   std::shared_ptr<DoFHandler<dim>> dof_handler)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(is_field_available(physics_id), ExcInternalError());
     physics_dof_handler[physics_id] = dof_handler;
   }
 
@@ -743,10 +744,7 @@ public:
   void
   set_mapping(const PhysicsID physics_id, std::shared_ptr<Mapping<dim>> mapping)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(is_field_available(physics_id), ExcInternalError());
     physics_mapping[physics_id] = mapping;
   }
 
@@ -778,10 +776,7 @@ public:
   set_solution(const PhysicsID                   physics_id,
                std::shared_ptr<GlobalVectorType> solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(is_field_available(physics_id), ExcInternalError());
     physics_solutions[physics_id] = solution_vector;
   }
 
@@ -884,10 +879,7 @@ public:
     const PhysicsID                                physics_id,
     std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(is_field_available(physics_id), ExcInternalError());
     physics_previous_solutions[physics_id] = previous_solutions_vector;
   }
 
@@ -1140,6 +1132,15 @@ private:
   void
   inspect_multiphysics_models_dependencies(
     const SimulationParameters<dim> &nsparam);
+
+  /**
+   * @brief Return true if the fields of @p physics_id are registered in the interface: either the physics is active, or it is the void fraction under the VANS formulation.
+   *
+   * @param[in] physics_id The ID of the physics to check.
+   * @return true if the fields of @p physics_id are registered in the interface, false otherwise.
+   */
+  bool
+  is_field_available(const PhysicsID physics_id) const;
 
   /// Probe postprocessing object
   PostprocessingProbes<dim> probe_postprocessor;
