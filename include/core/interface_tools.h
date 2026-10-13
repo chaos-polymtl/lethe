@@ -13,6 +13,7 @@
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/data_out_base.h>
 #include <deal.II/base/function.h>
+#include <deal.II/base/geometry_info.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
@@ -647,10 +648,17 @@ namespace InterfaceTools
 
     bool
     newton_raphson_method_for_minimization(
-      const Point<dim>          &point,
+      const Point<dim>          &unit_point,
       const FiniteElement<dim>  &fe,
       const std::vector<double> &dof_values,
-      Point<dim>                &closest_point);
+      Point<dim>                &unit_closest_point);
+
+    bool
+    compute_closet_point_in_reference_cell(
+      const Point<dim>          &unit_point,
+      const FiniteElement<dim>  &fe,
+      const std::vector<double> &dof_values,
+      Point<dim>                &unit_closest_point);
 
     /**
      * @brief Compute the geometric distance (minimization) between the interface

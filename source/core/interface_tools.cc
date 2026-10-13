@@ -697,73 +697,176 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::exchange_distance()
 template <int dim, typename VectorType>
 bool
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
-  newton_raphson_method_for_minimization(const Point<dim>          &point,
+  newton_raphson_method_for_minimization(
+    const Point<dim>          &unit_point,
+    const FiniteElement<dim>  &fe,
+    const std::vector<double> &dof_values,
+    const unsigned int         element_dim,
+    const std::vector<bool>   &free_coordinates,
+    Point<dim>                &unit_closest_point)
+{
+  bool           converged = false;
+  Vector<double> current_solution(element_dim + 1);
+  Vector<double> free_coordinate_ids(element_dim);
+
+  Vector<double> solution_update(element_dim + 1);
+
+  Vector<double>     residual(element_dim + 1);
+  FullMatrix<double> hessian(element_dim + 1, element_dim + 1);
+
+  unsigned int n = 0;
+  for (unsigned int i = 0; i < dim; ++i)
+    {
+      if (free_coordinates[i])
+        {
+          current_solution[n]    = unit_closest_point[i];
+          free_coordinate_ids[n] = i;
+          n += 1;
+        }
+    }
+
+  for (unsigned int newton_iter = 0; newton_iter < 100; ++newton_iter)
+    {
+      hessian             = 0.0;
+      residual            = 0.0;
+      const double lambda = current_solution[dim];
+      for (unsigned int k = 0; k < dof_values.size(); ++k)
+        {
+          const auto value_k = fe.shape_value(k, unit_closest_point);
+          const auto grad_k  = fe.shape_grad(k, unit_closest_point);
+          const auto hess_k  = fe.shape_grad_grad(k, unit_closest_point);
+          for (unsigned int i = 0; i < element_dim; ++i)
+            {
+              const unsigned int i_free_coordinate_id = free_coordinate_id[i];
+              for (unsigned int j = 0; j < element_dim; ++j)
+                {
+                  const unsigned int j_free_coordinate_id =
+                    free_coordinate_id[j];
+
+                  hessian(i, j) +=
+                    lambda * dof_values[k] *
+                    hess_k[i_free_coordinate_id][j_free_coordinate_id];
+                }
+
+              hessian(i, element_dim) +=
+                dof_values[k] * grad_k[i_free_coordinate_id];
+              hessian(element_dim, i) +=
+                dof_values[k] * grad_k[i_free_coordinate_id];
+              residual[i] -=
+                lambda * dof_values[k] * grad_k[i_free_coordinate_id];
+            }
+
+          residual[element_dim] -= dof_values[k] * value_k;
+        }
+
+
+      for (unsigned int i = 0; i < element_dim; ++i)
+        {
+          const unsigned int i_free_coordinate_id = free_coordinate_id[i];
+
+          residual[i] -= current_solution[i] - unit_point[i_free_coordinate_id];
+          hessian[i][i] += 1.0;
+        }
+
+      if (residual.l2_norm() < 1e-12)
+        {
+          converged = true;
+          break;
+        }
+
+      if (std::abs(hessian.determinant()) < 1e-16)
+        return false;
+
+      hessian.gauss_jordan();
+      hessian.vmult(solution_update, residual);
+      current_solution += solution_update;
+
+      for (unsigned int i = 0; i < element_dim; ++i)
+        {
+          const unsigned int i_free_coordinate_id = free_coordinate_id[i];
+
+          unit_closest_point[i_free_coordinate_id] = current_solution[i];
+        }
+    }
+
+  return converged;
+}
+
+
+
+template <int dim, typename VectorType>
+bool
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+  compute_closet_point_in_reference_cell(const Point<dim>          &unit_point,
                                          const FiniteElement<dim>  &fe,
                                          const std::vector<double> &dof_values,
-                                         Point<dim> &closest_point)
+                                         Point<dim> &unit_closest_point)
 {
+  std::vector<bool> free_coordinates(dim, true);
+  Point<dim>        candidate_unit_closest_point = unit_point;
 
-  Vector<double> current_solution(dim + 1);
-    Vector<double> solution_update(dim + 1);
- 
-    Vector<double>     residual(dim + 1);
-    FullMatrix<double> hessian(dim + 1, dim + 1);
- 
-    for (unsigned int i = 0; i < dim; ++i)
-      current_solution[i] = closest_point[i];
- 
- 
-    for (unsigned int newton_iter = 0; newton_iter < 100;
-         ++newton_iter)
-      {
-        hessian             = 0.0;
-        residual            = 0.0;
-        const double lambda = current_solution[dim];
-        for (unsigned int k = 0; k < dof_values.size(); ++k)
-          {
-            const auto value_k = fe.shape_value(k, closest_point);
-            const auto grad_k  = fe.shape_grad(k, closest_point);
-            const auto hess_k  = fe.shape_grad_grad(k, closest_point);
-            for (unsigned int i = 0; i < dim; ++i)
-              {
-                for (unsigned int j = 0; j < dim; ++j)
-                  hessian(i, j) += lambda * dof_values[k] * hess_k[i][j];
- 
-                hessian(i, dim) += dof_values[k] * grad_k[i];
-                hessian(dim, i) += dof_values[k] * grad_k[i];
-              }
- 
-            for (unsigned int i = 0; i < dim; ++i)
-              residual[i] -= lambda * dof_values[k] * grad_k[i];
- 
-            residual[dim] -= dof_values[k] * value_k;
-          }
- 
- 
-        for (unsigned int i = 0; i < dim; ++i)
-          {
-            residual[i] -= current_solution[i] - point[i];
-            hessian[i][i] += 1.0;
-          }
- 
-        if (residual.l2_norm() < 1e-12)
-          break;
- 
- 
-        hessian.gauss_jordan();
-        hessian.vmult(solution_update, residual);
-        current_solution += solution_update;
- 
-        for (unsigned int i = 0; i < dim; ++i)
-          closest_point[i] = current_solution[i];
-      }
- 
-    // Check if the Newton iteration converged
-    Assert(residual.l2_norm() < 1e-12,
-           ExcMessage("Newton iteration did not converge"));
+  bool converged =
+    newton_raphson_method_for_minimization(unit_point,
+                                           fe,
+                                           cell_dof_values,
+                                           free_coordinates,
+                                           candidate_unit_closest_point);
 
-    return true;
+  const double tol = 1e-11;
+  if !GeometryInfo
+    <dim>::is_inside_unit_cell(candidate_unit_closest_point, tol)
+    {
+      double best_distance = max_distance;
+      for (unsigned int i = 0; i < dim; i++)
+        {
+          free_coordinates.assign(dim, true);
+          free_coordinates[i] = false;
 
+          // two faces in each direction
+          for (const double face_coordinate : {0.0, 1.0})
+            {
+              Point<dim> candidate_unit_closest_point_in_face =
+                unit_point;
+
+              candidate_unit_closest_point_in_face[i] = face_coordinate;
+              converged = newton_raphson_method_for_minimization(
+                unit_point,
+                fe,
+                cell_dof_values,
+                free_coordinates,
+                candidate_unit_closest_point_in_face);
+
+              if !GeometryInfo
+                <dim>::is_inside_unit_cell(candidate_unit_closest_point_in_face,
+                                           tol)
+                {
+                  converged = false;
+                  continue;
+                }
+              
+                // It is possible to have a closest point solution in more than one face.
+                // We need to select the one minimizing the distance.
+                double candidate_distance = unit_point.distance(candidate_unit_closest_point_in_face) 
+                if (candidate_distance < distance)
+                {
+                  distance = candidate_distance;
+                  unit_closest_point = candidate_unit_closest_point_in_face;
+                }
+            }
+        }
+
+        if !converged
+        {
+          // the solution will be on an edge
+          
+        }
+    }
+  else
+    {
+      unit_closest_point = candidate_unit_closest_point;
+      return converged;
+    }
+  return true;
 }
 
 template <int dim, typename VectorType>
@@ -788,7 +891,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   std::vector<Point<dim>>        surface_vertices;
   std::vector<CellData<dim - 1>> surface_cells;
-  
+
   const hp::FECollection<dim> fe_collection(*fe);
 
   const QGauss<1> quadrature_1D(fe->degree + 4);
@@ -798,13 +901,12 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
 
 
-  NonMatching::FEValues<dim> non_matching_fe_values(
-  fe_collection,
-  quadrature_1D,
-  region_update_flags,
-  mesh_classifier,
-  dof_handler,
-  level_set);
+  NonMatching::FEValues<dim> non_matching_fe_values(fe_collection,
+                                                    quadrature_1D,
+                                                    region_update_flags,
+                                                    mesh_classifier,
+                                                    dof_handler,
+                                                    level_set);
 
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
@@ -826,8 +928,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
             &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
 
-            
-
           cell->get_dof_values(level_set,
                                cell_dof_values.begin(),
                                cell_dof_values.end());
@@ -837,8 +937,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           const unsigned int cell_index = cell->global_active_cell_index();
 
           auto active_neighbors =
-                LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell,
-                                                            cell);
+            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
           interface_reconstruction_vertices[cell_index] = surface_vertices;
           interface_reconstruction_cells[cell_index]    = surface_cells;
@@ -852,46 +951,47 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               const Point<dim> unit_point =
                 mapping->transform_real_to_unit_cell(cell, point);
 
-              Point<dim> unit_closest_point = mapping->transform_real_to_unit_cell(cell, closest_point);
-              
-              bool converged =newton_raphson_method_for_minimization(unit_point,
-                                                     *fe,
-                                                     cell_dof_values,
-                                                     unit_closest_point);
+              Point<dim> unit_closest_point =
+                mapping->transform_real_to_unit_cell(cell, closest_point);
+
+              bool converged = newton_raphson_method_for_minimization(
+                unit_point, *fe, cell_dof_values, unit_closest_point);
 
               bool outside = false;
 
 
               for (unsigned int jj = 0; jj < dim; ++jj)
-              {
-                double closest_point_i = unit_closest_point[jj];
-  
-                  if (((closest_point_i) < 0.0 - 1e-10) || ((closest_point_i) > 1 + 1e-10))
+                {
+                  double closest_point_i = unit_closest_point[jj];
+
+                  if (((closest_point_i) < 0.0 - 1e-10) ||
+                      ((closest_point_i) > 1 + 1e-10))
                     {
                       outside = true;
                       break;
                     }
-              }                                       
+                }
 
               if (outside)
-              {
-                converged = false;
-              }
+                {
+                  converged = false;
+                }
 
               if (converged)
-              {
-                closest_point =
-                  mapping->transform_unit_to_real_cell(cell, unit_closest_point);
-                  
-                Tensor<1, dim> point_closest_point_vec = point - closest_point;
+                {
+                  closest_point =
+                    mapping->transform_unit_to_real_cell(cell,
+                                                         unit_closest_point);
 
-                distance(dof_indices[i]) = 
-                  std::min(std::abs(distance(dof_indices[i])),
-                          std::abs(point_closest_point_vec.norm()));
+                  Tensor<1, dim> point_closest_point_vec =
+                    point - closest_point;
 
-                intersected_dofs.insert(dof_indices[i]);        
-              }
+                  distance(dof_indices[i]) =
+                    std::min(std::abs(distance(dof_indices[i])),
+                             std::abs(point_closest_point_vec.norm()));
 
+                  intersected_dofs.insert(dof_indices[i]);
+                }
             }
         }
     }
