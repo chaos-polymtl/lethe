@@ -78,7 +78,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
   this->multiphysics->set_solution(
     PhysicsID::void_fraction,
     particle_projector.void_fraction_locally_relevant);
-  this->multiphysics->set_previous_solution(
+  this->multiphysics->set_previous_solutions(
     PhysicsID::void_fraction, particle_projector.previous_void_fraction);
 }
 
