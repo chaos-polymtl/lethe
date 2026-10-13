@@ -1,0 +1,35 @@
+Running on 1 MPI rank(s)...
+Loading particles from a file
+Particles found: 1
+   Number of active cells:       160
+   Number of degrees of freedom: 561
+   Volume of triangulation:      1.600000e+02
+Initial refinement around IB particles - Step : 1 of 1
+   Number of active cells:       202
+   Number of degrees of freedom: 711
+   Volume of triangulation:      1.600000e+02
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.0025   Time step: 0.0025   CFL: 0       
+*******************************************************************************
+particle 0 position 5.000000e+00 1.274939e+01
+particle 0 velocity 0.000000e+00 -2.452500e-01
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time     T_z    omega_z  theta_z     f_x      v_x      p_x      f_y       v_y       p_y      f_xv     f_yv     f_xp      f_yp   
+          0 0.0025 -0.002740 1.000000 0.002500 -0.073088 0.000000 5.000000 0.198218 -0.245250 12.749387 0.000462 0.001329 -0.073550 0.196889 
+
+*********************************************************************************
+Transient iteration: 2        Time: 0.005    Time step: 0.0025   CFL: 0.00313501
+*********************************************************************************
+   Number of active cells:       163
+   Number of degrees of freedom: 591
+   Volume of triangulation:      1.600000e+02
+particle 0 position 4.999838e+00 1.274860e+01
+particle 0 velocity -6.462419e-02 -3.152368e-01
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time     T_z    omega_z  theta_z    f_x       v_x      p_x      f_y       v_y       p_y      f_xv     f_yv     f_xp     f_yp   
+          0 0.0050 -0.002779 0.991277 0.004978 0.051421 -0.064624 4.999838 0.114465 -0.315237 12.748599 0.000812 0.001641 0.050610 0.112824 

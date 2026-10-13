@@ -129,7 +129,10 @@ template <int dim>
 void
 IBParticlesDEM<dim>::update_contact_candidates()
 {
-  particles_contact_candidates.resize(dem_particles.size());
+  // The candidates of the last search are discarded so that pairs of particles
+  // which moved apart are not kept forever.
+  particles_contact_candidates.assign(dem_particles.size(),
+                                      std::set<unsigned int>());
 
   double radius_factor = parameters->contact_search_radius_factor;
 
@@ -1260,8 +1263,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
   // Local time for the dem step.
   double t = 0;
-  // The gravitational acceleration.
-  Tensor<1, 3> g;
+  // The gravitational acceleration at the position of each particle.
+  std::vector<Tensor<1, 3>> g(dem_particles.size());
   this->parameters->f_gravity->set_time(cfd_time + dt);
   // The gravitational force on the particle.
   Tensor<1, 3> gravity;
@@ -1282,10 +1285,12 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       dem_particles[p_i].contact_impulsion       = 0;
       dem_particles[p_i].omega_contact_impulsion = 0;
       // Initialized the gravity at the particle position.
-      g[0] = this->parameters->f_gravity->value(dem_particles[p_i].position, 0);
-      g[1] = this->parameters->f_gravity->value(dem_particles[p_i].position, 1);
+      g[p_i][0] =
+        this->parameters->f_gravity->value(dem_particles[p_i].position, 0);
+      g[p_i][1] =
+        this->parameters->f_gravity->value(dem_particles[p_i].position, 1);
       if (dim == 3)
-        g[2] =
+        g[p_i][2] =
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
       dem_particles[p_i].set_position(dem_particles[p_i].position);
       dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
@@ -1388,8 +1393,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                         dem_particles[p_i].rotation_matrix;
                     }
 
-                  gravity = g * (dem_particles[p_i].mass -
-                                 dem_particles[p_i].volume * rho);
+                  gravity = g[p_i] * (dem_particles[p_i].mass -
+                                      dem_particles[p_i].volume * rho);
 
                   // We consider only the force at t+dt so the scheme is
                   // consistent to a BDFn scheme on the fluid side. If there is
