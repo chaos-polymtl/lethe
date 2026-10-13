@@ -1526,11 +1526,10 @@ private:
 
   /**
    * @brief Calculate the displacement that separates two overlapping particles.
-   * This "contact force" model is used for the packed insertion method. The
-   * particles are not moved here. The accumulated displacements are applied
-   * once all the contacts are evaluated, which makes the displacement of a
-   * particle independent of the order in which its contacts are evaluated and
-   * of the partitioning of the domain.
+   * This "contact force" model is used by the packed insertion method. The
+   * displacement is along the contact normal and is slightly larger than half
+   * the normal overlap, so that the two particles are separated once each of
+   * them is displaced.
    *
    * @param[in] normal_unit_vector Normal unit contact vector from particle one
    * to particle two.

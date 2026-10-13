@@ -79,17 +79,15 @@ public:
   }
 
   /**
-   * @brief Displace the particles to resolve their overlaps.
+   * @brief Displace the locally owned particles by the displacements
+   * accumulated by the shift contact models.
    *
-   * The shift contact models do not move the particles. Instead, every contact
-   * of a particle adds a displacement to its entry of the force container of
-   * the contact outcomes. The displacement applied to each locally owned
-   * particle is the sum of the displacements of its contacts, limited to a
-   * maximum norm. Since all the contacts are evaluated with the positions of
-   * the particles at the beginning of the pseudo-time step, the displacements
-   * do not depend on the order in which the contacts are evaluated nor on the
-   * partitioning of the domain. The force container is reset for the next
-   * pseudo-time step.
+   * Each contact of a particle adds a displacement to the entry of that
+   * particle in the force container of the contact outcomes. Each particle is
+   * moved by the sum of the displacements of its contacts, limited to a
+   * maximum norm, and the norm of the applied displacement is added to the
+   * displacement used by the dynamic contact detection. The force container is
+   * then reset to zero for the next pseudo-time step.
    *
    * @param[in,out] particle_handler The particle handler of particles which are
    * being inserted.
