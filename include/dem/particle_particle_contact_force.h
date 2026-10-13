@@ -320,8 +320,6 @@ protected:
    * @brief Calculate the particle-particle contact force and torque
    * according to the contact model.
    *
-   * @param[in] particle_one Iterator of the particle one. This is needed for
-   * the shift contact model.
    * @param[in,out] contact_info A container that contains the required
    * information for calculation of the contact force for a particle pair in
    * contact.
@@ -342,8 +340,7 @@ protected:
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
   inline void
-  calculate_contact(Particles::ParticleIterator<dim>     particle_one,
-                    particle_particle_contact_info<dim> &contact_info,
+  calculate_contact(particle_particle_contact_info<dim> &contact_info,
                     const Tensor<1, 3> &tangential_relative_velocity,
                     const double        normal_relative_velocity_value,
                     const Tensor<1, 3> &normal_unit_vector,
@@ -468,12 +465,14 @@ protected:
 
     if constexpr (contact_model == ParticleParticleContactForceModel::shift)
       {
-        this->shift_particle_using_normal_overlap(particle_one,
-                                                  contact_info,
-                                                  normal_unit_vector,
-                                                  normal_overlap,
-                                                  particle_one_properties,
-                                                  particle_two_properties);
+        // The shift model returns a displacement instead of a force. It goes
+        // through the normal force so that it is accumulated on the particles
+        // like a force.
+        calculate_shift_displacement(normal_unit_vector,
+                                     normal_overlap,
+                                     particle_one_properties,
+                                     particle_two_properties,
+                                     normal_force);
       }
   }
 
@@ -1526,76 +1525,37 @@ private:
   }
 
   /**
-   * @brief Shift the particles using the normal overlap and the normal unit
-   * vector. Pparticles in contact are shifted in opposite directions to resolve
-   * the overlap. The shift is proportional to the normal overlap and the
-   * particle diameters. This "contact force" model is used for the packed
-   * insertion method.
+   * @brief Calculate the displacement that separates two overlapping particles.
+   * This "contact force" model is used for the packed insertion method. The
+   * particles are not moved here. The accumulated displacements are applied
+   * once all the contacts are evaluated, which makes the displacement of a
+   * particle independent of the order in which its contacts are evaluated and
+   * of the partitioning of the domain.
    *
-   * @param[in] particle_one Iterator of the particle one.
-   * @param[in,out] contact_info A container that contains the required
-   * information for calculation of the contact force for a particle pair in
-   * contact.
-   * @param[in] normal_unit_vector Normal unit contact vector between particle
-   * one and two.
+   * @param[in] normal_unit_vector Normal unit contact vector from particle one
+   * to particle two.
    * @param[in] normal_overlap Contact normal overlap.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
+   * @param[out] normal_displacement Displacement of particle two along the
+   * contact normal. Particle one is displaced by its opposite.
    */
   inline void
-  shift_particle_using_normal_overlap(
-    Particles::ParticleIterator<dim>     particle_one,
-    particle_particle_contact_info<dim> &contact_info,
-    const Tensor<1, 3>                  &normal_unit_vector,
-    const double                         normal_overlap,
-    const ArrayView<const double>       &particle_one_properties,
-    const ArrayView<const double>       &particle_two_properties)
+  calculate_shift_displacement(
+    const Tensor<1, 3>            &normal_unit_vector,
+    const double                   normal_overlap,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    Tensor<1, 3>                  &normal_displacement)
   {
-    // Particle iterator
-    auto particle_two = contact_info.particle_two;
+    const double mean_diameter =
+      0.5 * (particle_one_properties[PropertiesIndex::dp] +
+             particle_two_properties[PropertiesIndex::dp]);
 
-    Point<dim> particle_one_position = particle_one->get_location();
-    Point<dim> particle_two_position = particle_two->get_location();
+    normal_displacement =
+      (0.501 * normal_overlap + 0.01 * mean_diameter) * normal_unit_vector;
 
-    // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
-
-    Point<dim> particle_one_new_position, particle_two_new_position;
-
-    if constexpr (dim == 2)
-      {
-        particle_one_new_position =
-          particle_one_position -
-          (0.501 * normal_overlap + 0.01 * diameter_one) *
-            tensor_nd_to_2d(normal_unit_vector);
-        particle_two_new_position =
-          particle_two_position +
-          (0.501 * normal_overlap + 0.01 * diameter_two) *
-            tensor_nd_to_2d(normal_unit_vector);
-      }
-    if constexpr (dim == 3)
-      {
-        particle_one_new_position =
-          particle_one_position -
-          (0.501 * normal_overlap + 0.01 * diameter_one) * normal_unit_vector;
-
-        particle_two_new_position =
-          particle_two_position +
-          (0.501 * normal_overlap + 0.01 * diameter_two) * normal_unit_vector;
-      }
-
-    auto cell_one = particle_one->get_surrounding_cell();
-    auto cell_two = particle_two->get_surrounding_cell();
-
-    if (cell_one->is_locally_owned())
-      {
-        particle_one->set_location(particle_one_new_position);
-        ++this->n_contacts;
-      }
-
-    if (cell_two->is_locally_owned())
-      particle_two->set_location(particle_two_new_position);
+    ++this->n_contacts;
   }
 
   /**
@@ -1918,8 +1878,7 @@ private:
                                                  dt);
 
                 // Calculation of the contact force
-                this->calculate_contact(particle_one,
-                                        contact_info,
+                this->calculate_contact(contact_info,
                                         tangential_relative_velocity,
                                         normal_relative_velocity_value,
                                         normal_unit_vector,
@@ -1956,8 +1915,7 @@ private:
                                                  dt);
 
                 // Calculation of the contact force
-                this->calculate_contact(particle_two,
-                                        contact_info,
+                this->calculate_contact(contact_info,
                                         tangential_relative_velocity,
                                         normal_relative_velocity_value,
                                         normal_unit_vector,
