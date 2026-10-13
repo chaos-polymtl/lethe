@@ -148,23 +148,6 @@ InsertionPacked<dim, PropertiesIndex>::insert(
                                        insertion_points_on_proc,
                                        particle_properties);
 
-      // The particles do not move during the packing, they are only displaced
-      // to resolve their overlaps. Their velocities are set to zero so that
-      // they do not contribute to the displacement used by the dynamic contact
-      // detection.
-      for (auto &properties_of_one_particle : particle_properties)
-        {
-          // The velocities are used for ...
-          properties_of_one_particle[PropertiesIndex::v_x] = 0.;
-          properties_of_one_particle[PropertiesIndex::v_y] = 0.;
-          properties_of_one_particle[PropertiesIndex::v_z] = 0.;
-
-          //
-          properties_of_one_particle[PropertiesIndex::omega_x] = 0.;
-          properties_of_one_particle[PropertiesIndex::omega_y] = 0.;
-          properties_of_one_particle[PropertiesIndex::omega_z] = 0.;
-        }
-
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points_on_proc,
                                                global_bounding_boxes,
