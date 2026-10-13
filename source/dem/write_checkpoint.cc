@@ -38,14 +38,15 @@ write_checkpoint(
   // Prepare the particle handler for checkpointing
   particle_handler.prepare_for_serialization();
 
-  // Triangulation
-  std::ostringstream            oss;
-  boost::archive::text_oarchive oa(oss, boost::archive::no_header);
-  oa << particle_handler;
+  // Save the triangulation
   triangulation.save(prefix + ".triangulation");
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
+      std::ostringstream            oss;
+      boost::archive::text_oarchive oa(oss, boost::archive::no_header);
+      oa << particle_handler;
+
       simulation_control->save(prefix);
       particles_pvdhandler.save(prefix);
 
