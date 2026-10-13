@@ -472,11 +472,9 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
 
                   // Get the index of the waveguide port boundary
                   // condition to apply the correct mode parameters
-                  unsigned int boundary_index = std::distance(
-                    electromagnetic_parameters.waveguide_boundary_ids.begin(),
-                    std::ranges::find(
-                      electromagnetic_parameters.waveguide_boundary_ids,
-                      face->boundary_id()));
+                  const unsigned int waveguide_port_index =
+                    get_waveguide_port_index(electromagnetic_parameters,
+                                             face->boundary_id());
 
                   // We update the material properties for the current face
                   // quadrature points.
@@ -509,7 +507,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                           normal,
                           effective_electric_permittivities[q_point],
                           effective_magnetic_permeabilities[q_point],
-                          boundary_index);
+                          waveguide_port_index);
 
                       // The Poynting vector is given by S = 0.5 * Re(E
                       // x H*), where H* is the complex conjugate of H.
@@ -523,7 +521,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                       // defined in 2D).
                       if constexpr (dim == 3)
                         {
-                          waveguide_modal_powers[boundary_index] -=
+                          waveguide_modal_powers[waveguide_port_index] -=
                             0.5 *
                             std::real(
                               normal[0] * (E_inc[1] * std::conj(H_inc[2]) -
@@ -600,17 +598,12 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
   else if (electromagnetic_parameters.electromagnetic_scaling_type ==
            Parameters::ElectromagneticScalingType::none)
     {
-      // If there is at least one waveguide inlet, we need to apply the scaling
-      // because some inlet may have different power even if the user chose to
-      // not apply the scaling to the solution after computation.
-      if (electromagnetic_parameters.number_of_waveguide_inlets > 0)
-        {
-          this->electromagnetic_scaling = max_port_electric_amplitude;
-        }
-      else
-        {
-          this->electromagnetic_scaling = 1.0;
-        }
+      // The solution is not rescaled. If there are waveguide inlets, their
+      // relative powers are already accounted for in the excitation, which is
+      // scaled by the amplitude of each inlet relative to the maximum amplitude
+      // of all the inlets (see TimeHarmonicMaxwellAssemblerRobinBC). The
+      // strongest inlet is therefore excited with the unit-amplitude mode.
+      this->electromagnetic_scaling = 1.0;
     }
   else
     {

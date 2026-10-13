@@ -81,9 +81,8 @@ is_robin_boundary_type(const BoundaryConditions::BoundaryType type)
  * @param[in] effective_magnetic_permeability Effective magnetic permeability
  * at the point p.
  *
- * @param[in] boundary_id_index Index of the waveguide port condition within
- * the waveguide port parameters. The default value is 0, which can be used
- * when there is only one waveguide port defined in the input file.
+ * @param[in] waveguide_port_index Index of the waveguide port condition within
+ * the waveguide port parameters.
  *
  * @return This function returns a std::pair containing the electric field
  * Tensor<1, dim, std::complex<double>> and the magnetic field Tensor<1, dim,
@@ -98,7 +97,28 @@ compute_waveguide_port_incident_fields(
   const Tensor<1, dim>                       &normal,
   const std::complex<double>                 &effective_electric_permittivity,
   const std::complex<double>                 &effective_magnetic_permeability,
-  const types::boundary_id                    boundary_id_index = 0);
+  const unsigned int                          waveguide_port_index);
+
+/**
+ * @brief Get the index of the waveguide port condition applied on a boundary,
+ * that is the index of the waveguide inlet whose port boundary id is this
+ * boundary id.
+ *
+ * @tparam dim Spatial dimension.
+ *
+ * @param[in] time_harmonic_maxwell_parameters Parameters of the time-harmonic
+ * Maxwell physics, which contain the waveguide port definitions.
+ *
+ * @param[in] boundary_id Boundary id of a boundary with a waveguide port
+ * condition.
+ *
+ * @return Index of the waveguide port condition.
+ */
+template <int dim>
+unsigned int
+get_waveguide_port_index(
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters,
+  const types::boundary_id                    boundary_id);
 
 /**
  * @brief Class that assembles the cell terms of the ultraweak DPG formulation
@@ -266,18 +286,15 @@ public:
    * Maxwell physics.
    *
    * @param[in] waveguide_ports_electric_amplitudes Electric field amplitudes of
-   * all the waveguide ports.
+   * all the waveguide ports. They are normalized  by their maximum
+   * to get the relative amplitudes of the ports during initialization.
    */
   TimeHarmonicMaxwellAssemblerRobinBC(
     const Parameters::TimeHarmonicMaxwell<dim>
       &time_harmonic_maxwell_parameters,
     const BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
                               &boundary_conditions,
-    const std::vector<double> &waveguide_ports_electric_amplitudes)
-    : time_harmonic_maxwell_parameters(time_harmonic_maxwell_parameters)
-    , boundary_conditions(boundary_conditions)
-    , waveguide_ports_electric_amplitudes(waveguide_ports_electric_amplitudes)
-  {}
+    const std::vector<double> &waveguide_ports_electric_amplitudes);
 
   /**
    * @brief Assemble the Robin boundary terms of the Gram matrix and of the
@@ -329,9 +346,7 @@ private:
   /**
    * @brief Compute the excitation and the surface admittance of the Robin
    * boundary condition of a rectangular waveguide port from the input
-   * parameters. The excitation is normalized by the maximum of the electric
-   * field amplitudes of all the waveguide ports. It is only implemented for 3D
-   * problems.
+   * parameters. The excitation used is the normalized one across all the waveguide ports. This function is only implemented for 3D problems.
    *
    * @param[in] p Position where the excitation is computed.
    *
@@ -343,8 +358,8 @@ private:
    * @param[in] effective_magnetic_permeability Effective magnetic permeability
    * at the point p.
    *
-   * @param[in] boundary_id_index Index of the waveguide port condition within
-   * the waveguide port parameters.
+   * @param[in] waveguide_port_index Index of the waveguide port condition
+   * within the waveguide port parameters.
    *
    * @return A pair containing the excitation of the Robin boundary condition
    * and the surface admittance at the point p. The excitation is scaled by the
@@ -356,19 +371,7 @@ private:
     const Tensor<1, dim>       &normal,
     const std::complex<double> &effective_electric_permittivity,
     const std::complex<double> &effective_magnetic_permeability,
-    const types::boundary_id    boundary_id_index) const;
-
-  /**
-   * @brief Get the index of the waveguide port condition of the current face
-   * within the waveguide port parameters.
-   *
-   * @param[in] scratch_data Scratch data reinitialized on the current face.
-   *
-   * @return Index of the waveguide port condition.
-   */
-  unsigned int
-  get_waveguide_port_index(
-    const TimeHarmonicMaxwellScratchData<dim> &scratch_data) const;
+    const unsigned int          waveguide_port_index) const;
 
   /**
    * Parameters of the time-harmonic Maxwell physics.
@@ -382,9 +385,10 @@ private:
     &boundary_conditions;
 
   /**
-   * Electric field amplitudes of all the waveguide ports.
+   * Relative amplitudes of all the waveguide ports, that is the electric field
+   * amplitude of each port divided by the maximum amplitude of all the ports.
    */
-  const std::vector<double> waveguide_ports_electric_amplitudes;
+  std::vector<double> waveguide_ports_relative_amplitudes;
 };
 
 #endif
