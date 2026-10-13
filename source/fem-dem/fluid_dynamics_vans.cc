@@ -68,6 +68,18 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
+  // Provide the void fraction dof_handler and present solution to the
+  // multiphysics interface
+  this->multiphysics->set_dof_handler(PhysicsID::void_fraction,
+                                      particle_projector.dof_handler);
+  this->multiphysics->set_mapping(PhysicsID::void_fraction,
+                                  particle_projector.mapping);
+  this->multiphysics->set_solution(
+    PhysicsID::void_fraction,
+    particle_projector.void_fraction_locally_relevant);
+  this->multiphysics->set_previous_solution(
+    PhysicsID::void_fraction, particle_projector.previous_void_fraction);
 }
 
 template <int dim, typename PropertiesIndex>
