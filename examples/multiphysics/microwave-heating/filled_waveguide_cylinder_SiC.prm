@@ -158,7 +158,7 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 1
     set id   = 0
-    set type = waveguide port
+    set type = waveguide_port
   end
   subsection bc 2
     set id   = 1
@@ -307,12 +307,12 @@ subsection linear solver
     set mg verbosity                   = quiet
     set mg enable hessians in jacobian = false
     set mg coarsening type             = ph
-    set mg p coarsening type           = decrease by one
+    set mg p coarsening type           = decrease_by_one
 
     # Smoother
     set mg smoother iterations          = 3
     set mg smoother eig estimation      = true
-    set mg smoother preconditioner type = inverse diagonal
+    set mg smoother preconditioner type = inverse_diagonal
 
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 20

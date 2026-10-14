@@ -13,7 +13,7 @@ Features
 - Solver: ``lethe-fluid`` or ``lethe-fluid-matrix-free``
 - Transient problem
 - Coupling of the time-harmonic Maxwell solver with heat transfer through the ``microwave heating = true`` parameter
-- Excitation of a rectangular waveguide through a ``waveguide port`` boundary condition and absorption of outgoing waves through a matched ``impedance boundary``
+- Excitation of a rectangular waveguide through a ``waveguide_port`` boundary condition and absorption of outgoing waves through a matched ``impedance_boundary``
 - Use of the built-in ``uniform_channel_with_meshed_cylinder`` grid, in which a solid cylinder is meshed and embedded in a rectangular channel
 
 Files Used in This Example
@@ -53,7 +53,7 @@ Physical Problem
 
 The amount of power absorbed by a dielectric cylinder placed in a waveguide strongly depends on its radius and permittivity: for specific combinations of these two parameters, the internal electromagnetic field can build up through constructive interference. The ``filled_waveguide_cylinder_Al.prm`` case reproduces this behavior for a low-loss alumina cylinder and is meant to be compared against the results of Peng *et al.* [#Peng2024]_, who studied this exact resonance-driven heating mechanism, both theoretically (using Mie theory) and numerically, for low-loss cylindrical samples of alumina in a waveguide.
 
-The first test case follows their numerical and experimental setup. Like what is described in the :doc:`waveguide example <../waveguide/waveguide>`, the time-harmonic Maxwell solver excites a single rectangular waveguide mode (here, the fundamental :math:`\mathrm{TE}_{10}` mode) through a ``waveguide port`` boundary condition, and absorbs the wave transmitted past the cylinder through a matched ``impedance boundary`` condition, which mimics a semi-infinite waveguide by preventing spurious reflections back toward the cylinder.
+The first test case follows their numerical and experimental setup. Like what is described in the :doc:`waveguide example <../waveguide/waveguide>`, the time-harmonic Maxwell solver excites a single rectangular waveguide mode (here, the fundamental :math:`\mathrm{TE}_{10}` mode) through a ``waveguide_port`` boundary condition, and absorbs the wave transmitted past the cylinder through a matched ``impedance_boundary`` condition, which mimics a semi-infinite waveguide by preventing spurious reflections back toward the cylinder.
 
 Since ``set microwave heating = true`` is used in both cases, the power dissipated by the dielectric losses of the cylinder is automatically computed from the electromagnetic solution and added as a source term to the heat transfer equation,
 
@@ -214,7 +214,7 @@ Boundary Conditions
         end
         subsection bc 1
             set id   = 0
-            set type = waveguide port
+            set type = waveguide_port
         end
         subsection bc 2
             set id   = 1
@@ -247,8 +247,8 @@ Boundary Conditions
     end
 
 - ``bc 0`` (ids ``2`` to ``5``, the four channel walls) is a ``pec`` boundary.
-- ``bc 1`` (id ``0``, the left face) is the ``waveguide port`` used to excite the :math:`\mathrm{TE}_{10}` mode.
-- ``bc 2`` (id ``1``, the right face) is an ``impedance boundary`` whose surface admittance is matched to the :math:`\mathrm{TE}_{10}` wave admittance of the empty guide, with no additional excitation, so that the wave transmitted past the cylinder is absorbed rather than reflected back.
+- ``bc 1`` (id ``0``, the left face) is the ``waveguide_port`` used to excite the :math:`\mathrm{TE}_{10}` mode.
+- ``bc 2`` (id ``1``, the right face) is an ``impedance_boundary`` whose surface admittance is matched to the :math:`\mathrm{TE}_{10}` wave admittance of the empty guide, with no additional excitation, so that the wave transmitted past the cylinder is absorbed rather than reflected back.
 
 .. code-block:: text
 
@@ -575,12 +575,12 @@ Linear Solver Control
             set mg verbosity                   = quiet
             set mg enable hessians in jacobian = false
             set mg coarsening type             = ph
-            set mg p coarsening type           = decrease by one
+            set mg p coarsening type           = decrease_by_one
 
             # Smoother
             set mg smoother iterations          = 3
             set mg smoother eig estimation      = true
-            set mg smoother preconditioner type = inverse diagonal
+            set mg smoother preconditioner type = inverse_diagonal
 
             # Eigenvalue estimation parameters
             set eig estimation smoothing range = 20
