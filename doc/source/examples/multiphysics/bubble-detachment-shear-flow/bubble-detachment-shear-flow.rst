@@ -363,7 +363,7 @@ The simulation may be run locally by calling ``lethe-fluid`` by invoking:
    
 to run the simulation using ten CPU cores. 
 
-Though we highly advise you to run the simulation on a computational cluster (such as Narval, Béluga, etc.). To do so, a python script (``generate_cases_locally.py``) is included in the ``parametric_sweep`` folder to generate automatically the cases with the correct parameters and physical properties locally. The script works with a parameter file template (``bubble-detachment-shear-flow.tpl``) and a ``.sh`` file (``launch_lethe.sh``) containing the information to launch the simulation on Narval. 
+However, we highly advise you to run the simulation on a computational cluster (such as Narval, Béluga, etc.). To do so, a python script (``generate_cases_locally.py``) is included in the ``parametric_sweep`` folder to generate automatically the cases with the correct parameters and physical properties locally. The script works with a parameter file template (``bubble-detachment-shear-flow.tpl``) and a ``.sh`` file (``launch_lethe.sh``) containing the information to launch the simulation on Narval. 
 To use the python script, invoke from the ``parametric_sweep`` folder:
 
 .. code-block:: text
