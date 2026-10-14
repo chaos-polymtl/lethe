@@ -41,7 +41,9 @@ enum PhysicsID : unsigned int
   /// multiphysics interface. Only available with the VANS formulation.
   void_fraction = 5,
   /// Time-harmonic electromagnetics (Electric field, Magnetic field)
-  electromagnetics = 6
+  electromagnetics = 6,
+  /// Euler-euler solid phase (volume fraction, velocity)
+  solid_phase = 7
 };
 
 /**
@@ -106,6 +108,8 @@ get_physics_id(std::string physics_name)
     return PhysicsID::void_fraction;
   else if (physics_name == "electromagnetics")
     return PhysicsID::electromagnetics;
+  else if (physics_name == "solid phase")
+    return PhysicsID::solid_phase;
   else
     AssertThrow(false,
                 dealii::StandardExceptions::ExcMessage(

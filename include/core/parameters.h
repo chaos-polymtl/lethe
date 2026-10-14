@@ -1450,6 +1450,10 @@ namespace Parameters
     unsigned int electromagnetics_trial_degree = 1;
     unsigned int electromagnetics_test_degree  = 2;
 
+    // Polynomial degree of the solid phase fields (solid velocity and solid
+    /// volume fraction) of the Euler-Euler model.
+    unsigned int solid_phase_degree = 1;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
