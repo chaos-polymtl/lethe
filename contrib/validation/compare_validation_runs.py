@@ -19,7 +19,8 @@ current_git_hash.txt file, ordered by the modification time of that file.
 The result is written as a Markdown report in the run folder and printed on
 the standard output. If the environment variable
 LETHE_VALIDATION_SLACK_WEBHOOK contains the URL of a Slack incoming webhook,
-a short summary is also posted to Slack.
+a summary of every case, with a legend of the symbols it uses, is also posted
+to Slack.
 
 Usage:
   python3 compare_validation_runs.py --current <run folder> [options]
@@ -87,24 +88,57 @@ STRUCTURE_CHANGED = "structure changed"
 MISSING = "missing"
 NEW = "new"
 
-# Verdict for a case, from the most to the least severe:
-# key -> (symbol, label used in the summary, description)
-VERDICTS = {
-    "problem": ("❌", "with problems", "problem"),
-    "changed": ("🔶", "changed", "changed in this run"),
-    "reverted": ("⚠️", "reverted",
-                 "different from the previous run but identical to the one "
-                 "before it (non-deterministic results or reverted change?)"),
-    "stabilized": ("ℹ️", "changed in the previous run",
-                   "changed in the previous run, unchanged since"),
-    "new": ("🆕", "new", "new case, no previous run to compare with"),
-    "unchanged": ("✅", "unchanged", "unchanged"),
-}
-SEVERITY = list(VERDICTS)
+# Symbol of the cases whose wall time changed significantly
+WALL_TIME_SYMBOL = "⏱️"
 
 #############################################################################
 # Data structures
 #############################################################################
+
+
+@dataclass(frozen=True)
+class Verdict:
+    """How a verdict is shown in the reports."""
+    symbol: str
+    # Label used in the summary and on Slack
+    label: str
+    # Description used in the headings of the details of the report
+    description: str
+    # Explanation of the verdict given in the legend of the reports
+    meaning: str
+
+
+# Verdict for a case, from the most to the least severe
+VERDICTS = {
+    "problem": Verdict(
+        "❌", "with problems", "problem",
+        "the case is missing from this run, produced no data file or no "
+        "plot, or one of its data files is missing or has a different "
+        "structure than in the previous run"),
+    "changed": Verdict(
+        "🔶", "changed", "changed in this run",
+        "the results differ from the previous run"),
+    "reverted": Verdict(
+        "⚠️", "reverted",
+        "different from the previous run but identical to the one before it "
+        "(non-deterministic results or reverted change?)",
+        "the results differ from the previous run but are identical to the "
+        "run before it (non-deterministic results or a reverted change?)"),
+    "stabilized": Verdict(
+        "ℹ️", "changed in the previous run",
+        "changed in the previous run, unchanged since",
+        "the results are the same as in the previous run, but that run "
+        "differed from the one before it (the change was already reported "
+        "last time)"),
+    "new": Verdict(
+        "🆕", "new", "new case, no previous run to compare with",
+        "no previous run contains this case, so there is nothing to compare "
+        "with"),
+    "unchanged": Verdict(
+        "✅", "unchanged", "unchanged",
+        "the results are the same as in the previous runs"),
+}
+SEVERITY = list(VERDICTS)
 
 
 @dataclass
@@ -493,7 +527,7 @@ def count_verdicts(cases):
 
 def summary_line(cases):
     counts = count_verdicts(cases)
-    parts = [f"{counts[verdict]} {VERDICTS[verdict][1]}"
+    parts = [f"{counts[verdict]} {VERDICTS[verdict].label}"
              for verdict in reversed(SEVERITY) if counts[verdict]]
     n_flagged = sum(case.wall_time_flagged for case in cases)
     if n_flagged:
@@ -512,14 +546,34 @@ def reference_cell(case, index, default_reference):
     return text
 
 
-def wall_time_cell(case):
+def wall_time_text(case):
+    """Return the previous and current wall times of a case and their change.
+
+    Only the current wall time is given if the previous one is unknown.
+    """
     text = format_duration(case.wall_time)
+    if case.previous_wall_time is not None:
+        text = f"{format_duration(case.previous_wall_time)} → {text}"
     change = wall_time_change(case)
     if change is not None:
         text += f" ({change:+.1%})"
     if case.wall_time_flagged:
-        text += " ⏱️"
+        text += f" {WALL_TIME_SYMBOL}"
     return text
+
+
+def legend_lines(cases, time_threshold):
+    """Return the explanation of every symbol used for these cases."""
+    used = {case.verdict for case in cases}
+    lines = [f"{VERDICTS[verdict].symbol} {VERDICTS[verdict].label}: "
+             f"{VERDICTS[verdict].meaning}"
+             for verdict in SEVERITY if verdict in used]
+    if any(case.wall_time_flagged for case in cases):
+        lines.append(f"{WALL_TIME_SYMBOL} wall time changed by more than "
+                     f"{100 * time_threshold:g}% since the previous run (only "
+                     f"checked for cases that ran for more than "
+                     f"{format_duration(MIN_TIMED_SECONDS)})")
+    return lines
 
 
 def case_details(case):
@@ -538,7 +592,8 @@ def case_details(case):
     return lines
 
 
-def build_markdown(current, previous_runs, cases, commits, repository):
+def build_markdown(current, previous_runs, cases, commits, repository,
+                   time_threshold):
     previous = previous_runs[0] if previous_runs else None
     before = previous_runs[1] if len(previous_runs) > 1 else None
 
@@ -561,23 +616,26 @@ def build_markdown(current, previous_runs, cases, commits, repository):
         if url:
             lines.append(f"Changes since the {label}: {url}  ")
     lines += ["", f"**Summary:** {summary_line(cases)}", "", "## Cases", "",
-              "| | Case | vs previous | vs before previous | Wall time |",
+              "| | Case | vs previous | vs before previous | "
+              "Wall time (previous → current) |",
               "|---|---|---|---|---|"]
     for case in cases:
-        lines.append(f"| {VERDICTS[case.verdict][0]} | {case.name} | "
+        lines.append(f"| {VERDICTS[case.verdict].symbol} | {case.name} | "
                      f"{reference_cell(case, 0, previous)} | "
                      f"{reference_cell(case, 1, before)} | "
-                     f"{wall_time_cell(case)} |")
+                     f"{wall_time_text(case)} |")
+    lines += ["", "**Legend:**", ""]
+    lines += [f"- {line}" for line in legend_lines(cases, time_threshold)]
 
     flagged = [case for case in cases
                if case.verdict != "unchanged" or case.wall_time_flagged]
     if flagged:
         lines += ["", "## Details"]
         for case in sorted(flagged, key=lambda c: SEVERITY.index(c.verdict)):
-            symbol, _, description = VERDICTS[case.verdict]
-            timer = " ⏱️" if case.wall_time_flagged else ""
-            lines += ["", f"### {symbol}{timer} {case.name}: {description}",
-                      ""]
+            verdict = VERDICTS[case.verdict]
+            timer = f" {WALL_TIME_SYMBOL}" if case.wall_time_flagged else ""
+            lines += ["", f"### {verdict.symbol}{timer} {case.name}: "
+                          f"{verdict.description}", ""]
             lines += case_details(case)
 
     if commits is not None:
@@ -618,7 +676,8 @@ def difference_summary(comparison):
     return "new data files"
 
 
-def build_slack_message(current, previous_runs, cases, commits):
+def build_slack_message(current, previous_runs, cases, commits,
+                        time_threshold):
     previous = previous_runs[0] if previous_runs else None
     title = f"*Lethe validation* `{current.name}` (`{current.short_hash}`)"
     if previous:
@@ -626,21 +685,19 @@ def build_slack_message(current, previous_runs, cases, commits):
     lines = [title, summary_line(cases)]
 
     for case in sorted(cases, key=lambda c: SEVERITY.index(c.verdict)):
-        if case.verdict == "unchanged" and not case.wall_time_flagged:
-            continue
-        symbol, label, _ = VERDICTS[case.verdict]
+        verdict = VERDICTS[case.verdict]
         reasons = slack_reasons(case)
-        if case.wall_time_flagged:
-            reasons.append(
-                f"wall time {format_duration(case.previous_wall_time)} → "
-                f"{format_duration(case.wall_time)} ⏱️")
-        lines.append(f"{symbol} *{case.name}*: {label}"
+        if case.wall_time is not None or case.previous_wall_time is not None:
+            reasons.append(f"wall time {wall_time_text(case)}")
+        lines.append(f"{verdict.symbol} *{case.name}*: {verdict.label}"
                      + (f" — {'; '.join(reasons)}" if reasons else ""))
 
     url = compare_url(previous, current) if previous else None
     if url:
         n_commits = f"{len(commits)} commits" if commits is not None else "diff"
         lines.append(f"<{url}|Changes since the previous run ({n_commits})>")
+    lines.append("_Legend:_")
+    lines += legend_lines(cases, time_threshold)
     return "\n".join(lines)
 
 
@@ -700,9 +757,9 @@ def parse_arguments():
              "value are considered unchanged. Default: 0, since validation "
              "runs are bitwise reproducible.")
     parser.add_argument(
-        "--time-threshold", type=float, default=0.2,
+        "--time-threshold", type=float, default=0.05,
         help="Relative change of wall time above which a case is flagged. "
-             "Default: 0.2.")
+             "Default: 0.05.")
     parser.add_argument(
         "--no-slack", action="store_true",
         help="Do not post the summary to Slack.")
@@ -736,7 +793,7 @@ def main():
                if previous_runs else None)
 
     report = build_markdown(current, previous_runs, cases, commits,
-                            args.repo)
+                            args.repo, args.time_threshold)
     report_path = args.report or current.path / REPORT_NAME
     try:
         report_path.write_text(report, encoding="utf-8")
@@ -753,7 +810,7 @@ def main():
     elif webhook_url:
         post_to_slack(webhook_url,
                       build_slack_message(current, previous_runs, cases,
-                                          commits))
+                                          commits, args.time_threshold))
     else:
         print(f"{SLACK_WEBHOOK_VARIABLE} is not set: nothing posted to Slack.")
     return 0
