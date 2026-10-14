@@ -400,8 +400,16 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
     this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
   std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
+
+
+  // Prepare particle handler for serialization. This needs to be done by all
+  // the ranks
+  this->particle_handler.prepare_for_serialization();
+
+  // This only needs to be done by rank 0.
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
+      // Simulation control
       this->simulation_control->save(prefix);
       this->pvdhandler.save(prefix);
       particles_pvdhandler.save(prefix_particles);
@@ -412,16 +420,25 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
 
       if (this->simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
+
+      // Save the particle handler
+      std::ostringstream            oss_particle_handler;
+      boost::archive::text_oarchive oa_particle_handler(oss_particle_handler, boost::archive::no_header);
+      oa_particle_handler << this->particle_handler;
+
+      // Write additional particle information for deserialization
+      std::string   particle_filename = prefix + ".particles";
+      std::ofstream output(particle_filename.c_str());
+      output << oss_particle_handler.str() << std::endl;
+
+      // Prepare the insertion object for checkpointing
+      std::string   insertion_object_filename = prefix + ".insertion_object";
+      std::ofstream oss_insertion_obj(insertion_object_filename);
+      boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
+                                                     boost::archive::no_header);
+      // Serialize the insertion object
+      insertion_object->serialize(oa_insertion_obj);
     }
-
-  std::ostringstream            oss;
-  boost::archive::text_oarchive oa(oss, boost::archive::no_header);
-  oa << this->particle_handler;
-
-  // Write additional particle information for deserialization
-  std::string   particle_filename = prefix + ".particles";
-  std::ofstream output(particle_filename.c_str());
-  output << oss.str() << std::endl;
 
   std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&(*this->present_solution));
@@ -444,16 +461,6 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
   // Prepare for Serialization
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
-
-  // Prepare particle handler for serialization
-  this->particle_handler.prepare_for_serialization();
-
-  // Prepare the insertion object for checkpointing
-  std::string   insertion_object_filename = prefix + ".insertion_object";
-  std::ofstream oss_insertion_obj(insertion_object_filename);
-  boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
-                                                 boost::archive::no_header);
-  insertion_object->serialize(oa_insertion_obj);
 
   // Void Fraction
   std::vector<const VectorType *> vf_set_transfer;
