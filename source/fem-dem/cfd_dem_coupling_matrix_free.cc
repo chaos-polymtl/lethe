@@ -401,15 +401,12 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
   std::string prefix_particles = prefix + "_particles";
   std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
 
-
-  // Prepare particle handler for serialization. This needs to be done by all
-  // the ranks
+  // Register the particles for serialization (all ranks)
   this->particle_handler.prepare_for_serialization();
 
   // This only needs to be done by rank 0.
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
-      // Simulation control
       this->simulation_control->save(prefix);
       this->pvdhandler.save(prefix);
       particles_pvdhandler.save(prefix_particles);
@@ -421,9 +418,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
       if (this->simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
 
-      // Save the particle handler
+      // Serialize the global particle counters
       std::ostringstream            oss_particle_handler;
-      boost::archive::text_oarchive oa_particle_handler(oss_particle_handler, boost::archive::no_header);
+      boost::archive::text_oarchive oa_particle_handler(
+        oss_particle_handler, boost::archive::no_header);
       oa_particle_handler << this->particle_handler;
 
       // Write additional particle information for deserialization
@@ -436,7 +434,6 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
       std::ofstream oss_insertion_obj(insertion_object_filename);
       boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
                                                      boost::archive::no_header);
-      // Serialize the insertion object
       insertion_object->serialize(oa_insertion_obj);
     }
 
@@ -484,7 +481,6 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
         dynamic_cast<parallel::distributed::Triangulation<dim> *>(
           &*this->triangulation))
     {
-      std::string triangulationName = prefix + ".triangulation";
       parallel_triangulation->save(prefix + ".triangulation");
     }
   // Serialize all post-processing tables that are currently used

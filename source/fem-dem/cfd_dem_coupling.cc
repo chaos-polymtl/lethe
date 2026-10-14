@@ -400,6 +400,11 @@ CFDDEMSolver<dim, PropertiesIndex>::write_checkpoint()
     this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
   std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
+
+  // Register the particles for serialization (all ranks)
+  this->particle_handler.prepare_for_serialization();
+
+  // Serial restart files, identical on every rank: written once
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       this->simulation_control->save(prefix);
@@ -412,16 +417,25 @@ CFDDEMSolver<dim, PropertiesIndex>::write_checkpoint()
 
       if (this->simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
+
+      // Serialize the global particle counters
+      std::ostringstream            oss_particle_handler;
+      boost::archive::text_oarchive oa_particle_handler(
+        oss_particle_handler, boost::archive::no_header);
+      oa_particle_handler << this->particle_handler;
+
+      // Write additional particle information for deserialization
+      std::string   particle_filename = prefix + ".particles";
+      std::ofstream output(particle_filename.c_str());
+      output << oss_particle_handler.str() << std::endl;
+
+      // Prepare the insertion object for checkpointing
+      std::string   insertion_object_filename = prefix + ".insertion_object";
+      std::ofstream oss_insertion_obj(insertion_object_filename);
+      boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
+                                                     boost::archive::no_header);
+      insertion_object->serialize(oa_insertion_obj);
     }
-
-  std::ostringstream            oss;
-  boost::archive::text_oarchive oa(oss, boost::archive::no_header);
-  oa << this->particle_handler;
-
-  // Write additional particle information for deserialization
-  std::string   particle_filename = prefix + ".particles";
-  std::ofstream output(particle_filename.c_str());
-  output << oss.str() << std::endl;
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&(*this->present_solution));
@@ -446,16 +460,6 @@ CFDDEMSolver<dim, PropertiesIndex>::write_checkpoint()
     *this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  // Prepare particle handler for serialization
-  this->particle_handler.prepare_for_serialization();
-
-  // Prepare the insertion object for checkpointing
-  std::string   insertion_object_filename = prefix + ".insertion_object";
-  std::ofstream oss_insertion_obj(insertion_object_filename);
-  boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
-                                                 boost::archive::no_header);
-  insertion_object->serialize(oa_insertion_obj);
-
   // Void Fraction
   std::vector<const GlobalVectorType *> vf_set_transfer;
   vf_set_transfer.push_back(
@@ -479,7 +483,6 @@ CFDDEMSolver<dim, PropertiesIndex>::write_checkpoint()
         dynamic_cast<parallel::distributed::Triangulation<dim> *>(
           &*this->triangulation))
     {
-      std::string triangulationName = prefix + ".triangulation";
       parallel_triangulation->save(prefix + ".triangulation");
     }
   // Serialize all post-processing tables that are currently used
