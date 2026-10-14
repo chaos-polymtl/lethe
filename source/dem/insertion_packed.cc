@@ -199,7 +199,7 @@ InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
         contact_outcome.force[particle_id];
 
       Tensor<1, dim> particle_displacement;
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         particle_displacement[d] = accumulated_displacement[d];
 
       // Particles without contact are not displaced
