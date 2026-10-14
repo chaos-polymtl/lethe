@@ -581,9 +581,9 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
   // setup_dofs(). Mesh adaptation is therefore only valid with the steady
   // method, which does not use the previous void fractions.
   AssertThrow(
-    nsparam.cfd_parameters.mesh_adaptation.type ==
+    param.cfd_parameters.mesh_adaptation.type ==
         Parameters::MeshAdaptation::Type::none ||
-      nsparam.cfd_parameters.simulation_control.method ==
+      param.cfd_parameters.simulation_control.method ==
         Parameters::SimulationControl::TimeSteppingMethod::steady,
     ExcMessage(
       "Mesh adaptation is only supported with the steady time-stepping method "
