@@ -50,6 +50,7 @@ add_library(lethe-core
   tracer_diffusivity_model.cc
   tracer_reaction_model.cc
   utilities.cc
+  vtu_reader.cc
   # Headers
   ../../include/core/ale.h
   ../../include/core/auxiliary_math_functions.h
@@ -115,7 +116,8 @@ add_library(lethe-core
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/tracer_reaction_model.h
-  ../../include/core/utilities.h)
+  ../../include/core/utilities.h
+  ../../include/core/vtu_reader.h)
 
 deal_ii_setup_target(lethe-core)
 target_include_directories(lethe-core PUBLIC ../../include)

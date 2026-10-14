@@ -182,12 +182,27 @@ For multiphysics DEM simulations, the structure should be:
 
 Each line is associated with a particle and its properties. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with a script. Another option is to use the python code ``extract-particles-properties-from-vtu.py`` in ``lethe/contrib/postprocessing/extract-from-vtu`` directory. This code extracts particle properties from the last vtu file from a given previously run simulation. The code should be run from the case directory containing the .prm file, and the name of the .prm file should be given as an argument. The generated insertion file will be saved in the same directory.
 
-* ``insertion frequency`` defines the frequency of the insertion of particles based on the list in the file(s)
+The particles can also be inserted directly from the particle output of a previous simulation, without extracting them in a text file. A file of the list whose name ends with ``.pvtu`` or ``.vtu`` is read as a particle output file of Lethe:
 
-* ``list of input files`` defines the list of files to be used for the insertion. The default value is ``particles.input``.
+.. code-block:: text
+
+  subsection insertion info
+    set insertion method    = file
+    set insertion frequency = 1
+    set list of input files = output/out.00100.pvtu
+  end
+
+The positions, the ``velocity``, the ``omega`` and the ``diameter`` of the particles are read from the file, as well as their ``temperature`` for multiphysics DEM simulations. The other fields of the file, including the ``type`` of the particles, are ignored: as with a text file, the type and the number of inserted particles are set by the ``lagrangian physical properties`` subsection. A ``.pvtu`` file refers to one or several ``.vtu`` files, which are split among the processes so that each process only reads its share of them. Each ``.vtu`` file is read by a single process, so the reading is only parallel if the previous simulation wrote several ``.vtu`` files per output, which is controlled by the ``group files`` parameter of the ``simulation control`` subsection. Since these files are compressed, they are much smaller and faster to read than the equivalent text file, which matters for simulations with many particles.
 
 .. note::
-    The ``file`` insertion combined with the ``extract-particles-properties-from-vtu.py`` python code can be a useful tool. The loading of particles and the rest of the simulation can be performed in two different triangulations, witch is not the case of the restart feature. This means that the loading triangulation can have smaller cells and a bigger domain to allow for the use of larger insertion boxes. Particle properties can then be extracted and the remainder of the simulation can be performed in the appropriate triangulation.
+    Lethe writes the particle output in single precision. The properties of the particles inserted from a ``.pvtu`` or ``.vtu`` file, or from a text file extracted from it, therefore have about 7 significant digits.
+
+* ``insertion frequency`` defines the frequency of the insertion of particles based on the list in the file(s)
+
+* ``list of input files`` defines the list of files to be used for the insertion. Text files, ``.pvtu`` files and ``.vtu`` files can be mixed in the list. The default value is ``particles.input``.
+
+.. note::
+    The ``file`` insertion from the particle output of a previous simulation can be a useful tool. The loading of particles and the rest of the simulation can be performed in two different triangulations, which is not the case of the restart feature. This means that the loading triangulation can have smaller cells and a bigger domain to allow for the use of larger insertion boxes. The remainder of the simulation can then be performed in the appropriate triangulation by inserting the particles from the last ``.pvtu`` file of the loading simulation.
 
 .. warning::
     The critical Rayleigh time step is computed from the parameters in the ``particle type`` subsections, not the ``insertion info`` subsection. It is the user's responsibility to fill the ``particle type`` subsections correctly according to the diameter values stored in the insertion input file, otherwise the Rayleigh time percentage displayed at the start of every DEM simulation may not be accurate.
@@ -198,7 +213,7 @@ Packed
 The ``packed`` insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions **as is** for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching other particles or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motion are not solved.
 
 .. note::
-    Currently, when using this insertion method, the simulation ends once no contact is detected, thus the particle positions need to be extracted in an insertion file and the simulation must be relaunched with the ``file`` insertion method.
+    Currently, when using this insertion method, the simulation ends once no contact is detected, thus the simulation must be relaunched with the ``file`` insertion method, using the last ``.pvtu`` file written by the ``packed`` simulation as input file.
 
 .. note::
     Due to the use of pseudo time-stepping and the functioning of this insertion method, if multiple particle types are used, every particle type will be inserted on the first insertion time-step.

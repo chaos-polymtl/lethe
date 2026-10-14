@@ -1,9 +1,16 @@
 // SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/dem_properties.h>
 #include <core/utilities.h>
+#include <core/vtu_reader.h>
 
 #include <dem/insertion_file.h>
+
+#include <deal.II/base/index_set.h>
+#include <deal.II/base/mpi.h>
+
+#include <filesystem>
 
 using namespace DEM;
 
@@ -53,49 +60,65 @@ InsertionFile<dim, PropertiesIndex>::insert(
           this->remove_particles_in_box(particle_handler);
         }
 
-      // Read the input file
+      MPI_Comm communicator = triangulation.get_mpi_communicator();
+      auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
+
+      // Read the input file. The particles of a .vtu or .pvtu file are read by
+      // all processes, each reading part of the .vtu files, while the
+      // particles of a text file are only inserted by processor 0.
       std::map<std::string, std::vector<double>> particles_data;
-      fill_vectors_from_file(particles_data,
-                             insertion_files.at(current_file_id),
-                             ";");
+      const std::string &file_name = insertion_files.at(current_file_id);
+      const std::string  file_extension =
+        std::filesystem::path(file_name).extension().string();
+      unsigned int n_particles_in_file_this_proc;
+      if (file_extension == ".vtu" || file_extension == ".pvtu")
+        {
+          read_vtu_particles_data(file_name, communicator, particles_data);
+          n_particles_in_file_this_proc = particles_data["p_x"].size();
+        }
+      else
+        {
+          fill_vectors_from_file(particles_data, file_name, ";");
+          n_particles_in_file_this_proc =
+            this_mpi_process == 0 ? particles_data["p_x"].size() : 0;
+        }
       current_file_id++;
       current_file_id = current_file_id % number_of_files;
 
-      // Number of particles in the file
-      unsigned int n_total_particles_to_insert = particles_data["p_x"].size();
+      // Number of particles in the file read by the processors of lower rank
+      // and number of particles in the file
+      const auto [n_particles_in_file_lower_procs, n_particles_in_file] =
+        Utilities::MPI::partial_and_total_sum(n_particles_in_file_this_proc,
+                                              communicator);
 
       // Adjusting the value in case we exceed the maximum number of particle in
-      // the simulation.
-      n_total_particles_to_insert =
-        std::min(remaining_particles_of_each_type, n_total_particles_to_insert);
-
-      // Processor 0 will be the only one inserting particles
-      MPI_Comm communicator = triangulation.get_mpi_communicator();
-      auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
+      // the simulation. Only the first particles of the file are inserted.
+      const unsigned int n_total_particles_to_insert =
+        std::min(remaining_particles_of_each_type, n_particles_in_file);
       const unsigned int n_particles_to_insert_this_proc =
-        this_mpi_process == 0 ? n_total_particles_to_insert : 0;
+        std::min(n_particles_in_file_this_proc,
+                 n_total_particles_to_insert -
+                   std::min(n_particles_in_file_lower_procs,
+                            n_total_particles_to_insert));
 
       std::vector<Point<dim>> insertion_points_on_proc_this_step;
       insertion_points_on_proc_this_step.reserve(
         n_particles_to_insert_this_proc);
 
-      if (this_mpi_process == 0)
+      for (unsigned int p = 0; p < n_particles_to_insert_this_proc; ++p)
         {
-          for (unsigned int p = 0; p < n_particles_to_insert_this_proc; ++p)
+          if constexpr (dim == 2)
             {
-              if constexpr (dim == 2)
-                {
-                  insertion_points_on_proc_this_step.emplace_back(Point<dim>(
-                    {particles_data["p_x"][p], particles_data["p_y"][p]}));
-                }
+              insertion_points_on_proc_this_step.emplace_back(Point<dim>(
+                {particles_data["p_x"][p], particles_data["p_y"][p]}));
+            }
 
-              if constexpr (dim == 3)
-                {
-                  insertion_points_on_proc_this_step.emplace_back(
-                    Point<dim>({particles_data["p_x"][p],
-                                particles_data["p_y"][p],
-                                particles_data["p_z"][p]}));
-                }
+          if constexpr (dim == 3)
+            {
+              insertion_points_on_proc_this_step.emplace_back(
+                Point<dim>({particles_data["p_x"][p],
+                            particles_data["p_y"][p],
+                            particles_data["p_z"][p]}));
             }
         }
 
@@ -198,6 +221,47 @@ InsertionFile<dim, PropertiesIndex>::
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+InsertionFile<dim, PropertiesIndex>::read_vtu_particles_data(
+  const std::string                          &file_name,
+  const MPI_Comm                             &mpi_communicator,
+  std::map<std::string, std::vector<double>> &particles_data)
+{
+  // Arrays of the .vtu files to read and keys under which their components
+  // are stored. The names of the arrays are the ones used to write the
+  // particles, and the keys are the column names of the insertion text files.
+  const std::vector<std::pair<std::string, int>> properties_name =
+    ParticleProperties<dim, PropertiesIndex>::get_properties_name();
+  const std::vector<std::string> coordinate_keys = {"p_x", "p_y", "p_z"};
+
+  std::map<std::string, std::vector<std::string>> array_keys;
+  array_keys["Points"] =
+    std::vector<std::string>(coordinate_keys.begin(),
+                             coordinate_keys.begin() + dim);
+  array_keys[properties_name[PropertiesIndex::v_x].first]     = {"v_x",
+                                                                 "v_y",
+                                                                 "v_z"};
+  array_keys[properties_name[PropertiesIndex::omega_x].first] = {"w_x",
+                                                                 "w_y",
+                                                                 "w_z"};
+  array_keys[properties_name[PropertiesIndex::dp].first]      = {"diameters"};
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    array_keys[properties_name[PropertiesIndex::T].first] = {"T"};
+
+  // Every process lists the .vtu files, since the .pvtu file is small
+  const std::vector<std::string> vtu_file_names = get_vtu_file_names(file_name);
+
+  // Each process reads a contiguous block of .vtu files
+  const IndexSet vtu_files_this_proc =
+    Utilities::MPI::create_evenly_distributed_partitioning(
+      mpi_communicator, vtu_file_names.size());
+  for (const auto vtu_file_id : vtu_files_this_proc)
+    fill_vectors_from_vtu(particles_data,
+                          vtu_file_names[vtu_file_id],
+                          array_keys);
 }
 
 template class InsertionFile<2, DEM::DEMProperties::PropertiesIndex>;

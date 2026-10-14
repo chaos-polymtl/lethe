@@ -35,6 +35,9 @@ file(COPY restart_sliding_files/restart_sliding_1.triangulation_variable.data DE
 file(COPY periodic_gmsh_files/pipe.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_periodic_boundary_gmsh.${_build_type}")
 file(COPY load_balancing_solid_object_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_balancing_solid_object.${_build_type}")
 file(COPY insert_file_3d_files/particles.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_file_3d.${_build_type}")
+file(COPY insert_file_vtu_3d_files/particles.00001.pvtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_file_vtu_3d.${_build_type}")
+file(COPY insert_file_vtu_3d_files/particles.00001.00000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_file_vtu_3d.${_build_type}")
+file(COPY insert_file_vtu_3d_files/particles.00001.00001.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_file_vtu_3d.${_build_type}")
 file(COPY moving_solid_surface_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/moving_solid_surface_dmt.${_build_type}")
 file(COPY moving_solid_surface_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/moving_solid_surface_hmlo.${_build_type}")
 file(COPY moving_solid_surface_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/moving_solid_surface_jkr.${_build_type}")
@@ -84,6 +87,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-particles/sliding_in_box.debug PROPERTIES TIMEOUT 3000)
   set_tests_properties(lethe-particles/load_balancing_solid_object.mpirun=2.debug PROPERTIES TIMEOUT 3000)	
   set_tests_properties(lethe-particles/insert_file_3d.mpirun=2.debug PROPERTIES TIMEOUT 3000)
+  set_tests_properties(lethe-particles/insert_file_vtu_3d.mpirun=2.debug PROPERTIES TIMEOUT 3000)
 endif()
 
 

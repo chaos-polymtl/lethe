@@ -68,7 +68,23 @@ public:
     std::map<std::string, std::vector<double>> &particles_data,
     std::vector<std::vector<double>>           &particle_properties);
 
-
+  /**
+   * @brief Read the particles stored in the .vtu files that a .vtu or a .pvtu
+   * file refers to. The .vtu files are split in contiguous blocks among the
+   * processes and each process reads its block, so that the particles read by
+   * the processes, taken in the order of the ranks, are in the order of the
+   * files.
+   *
+   * @param[in] file_name Path to the .vtu or .pvtu file.
+   * @param[in] mpi_communicator MPI communicator of the triangulation.
+   * @param[out] particles_data Data of the particles read by this process,
+   * stored under the same keys as the data read from an insertion text file.
+   */
+  void
+  read_vtu_particles_data(
+    const std::string                          &file_name,
+    const MPI_Comm                             &mpi_communicator,
+    std::map<std::string, std::vector<double>> &particles_data);
 
   /**
    * @brief Serialize the file insertion object to an output archive.
