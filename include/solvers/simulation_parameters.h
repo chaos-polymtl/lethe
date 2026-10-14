@@ -586,7 +586,8 @@ private:
                                                       "tracer",
                                                       "CLS",
                                                       "cahn hilliard",
-                                                      "void fraction"};
+                                                      "void fraction",
+                                                      "solid phase"};
   std::vector<std::string> linear_physics_names    = {"electromagnetics"};
   // Names of subequations within CLS that inherits from PhysicsSolver
   std::vector<std::string> cls_subequations_names = {
