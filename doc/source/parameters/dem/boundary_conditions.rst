@@ -20,7 +20,7 @@ In multiphysic DEM (``solver type = dem_mp`` in the :doc:`model_parameters` subs
       set boundary id         = 0
 
       # Boundary type
-      # Choices are fixed_wall|outlet|rotational|translational
+      # Choices are fixed_wall|outlet|rotational|translational|periodic
       set type                = rotational
 
       # Rotational speed magnitude
