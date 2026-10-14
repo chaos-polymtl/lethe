@@ -54,7 +54,7 @@ for folder in ${lethe_fluid[@]}; do
 done
 
 # Folders with the lethe-particles syntax
-lethe_particles=("examples/dem")
+lethe_particles=("examples/dem" "examples/dem-mp")
 
 for folder in ${lethe_particles[@]}; do
   for file in $(find "$folder" -type f -name "*.prm"); do
@@ -63,7 +63,7 @@ for folder in ${lethe_particles[@]}; do
 done
 
 # Folders with the lethe-fluid-particles syntax
-lethe_fluid_particles=("examples/unresolved-cfd-dem")
+lethe_fluid_particles=("examples/unresolved-cfd-dem" "examples/unresolved-cfd-dem-multiphysics")
 
 for folder in ${lethe_fluid_particles[@]}; do
   for file in $(find "$folder" -type f -name "*.prm"); do
