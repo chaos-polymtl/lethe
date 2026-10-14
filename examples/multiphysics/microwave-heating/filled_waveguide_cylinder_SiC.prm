@@ -24,14 +24,6 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# Mesh Adaptation
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = none
-end
-
-#---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
 
@@ -273,11 +265,11 @@ end
 #---------------------------------------------------
 
 subsection dimensionality
-  set length           = 0.01 #meter
-  set mass             = 1    #kilogramm
-  set time             = 1    #second
-  set temperature      = 1    #kelvin
-  set electric current = 0.01 #ampere
+  set length           = 0.01
+  set mass             = 1
+  set time             = 1
+  set temperature      = 1
+  set electric current = 0.01
 end
 
 #---------------------------------------------------
