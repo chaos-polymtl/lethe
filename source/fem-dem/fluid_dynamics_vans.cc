@@ -446,6 +446,9 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_matrix()
         }
     }
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.enable_mortar();
+
   scratch_data.enable_void_fraction(*particle_projector.fe,
                                     *this->cell_quadrature,
                                     *this->mapping);
@@ -472,6 +475,16 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_matrix()
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
+
+  // Add mortar entries
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      this->computing_timer.enter_subsection("Assemble matrix (mortar)");
+      this->mortar_coupling_operator->add_system_matrix_entries(
+        this->system_matrix);
+      this->computing_timer.leave_subsection("Assemble matrix (mortar)");
+    }
+
   this->system_matrix.compress(VectorOperation::add);
 }
 
@@ -510,6 +523,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_matrix(
         this->multiphysics->get_filtered_solution(PhysicsID::CLS),
         this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
+
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters);
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
@@ -687,6 +704,9 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
     particle_handler.n_global_max_particles_per_cell(),
     this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.enable_mortar();
+
   WorkStream::run(
     this->dof_handler->begin_active(),
     this->dof_handler->end(),
@@ -696,6 +716,21 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
+
+  // Add mortar entries
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      this->computing_timer.enter_subsection("Assemble RHS (mortar)");
+      // Change sign of RHS to be compatible with mortar coupling terms
+      this->system_rhs.compress(VectorOperation::add);
+      this->system_rhs *= -1.0;
+      this->mortar_coupling_operator->vmult_add(this->system_rhs,
+                                                this->evaluation_point);
+      // Return RHS to original sign
+      this->system_rhs *= -1.0;
+
+      this->computing_timer.leave_subsection("Assemble RHS (mortar)");
+    }
 
   this->system_rhs.compress(VectorOperation::add);
 
@@ -738,6 +773,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
         this->multiphysics->get_filtered_solution(PhysicsID::CLS),
         this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
+  
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters);
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),

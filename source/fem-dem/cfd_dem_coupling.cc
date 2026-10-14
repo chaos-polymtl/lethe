@@ -908,22 +908,26 @@ void
 CFDDEMSolver<dim, PropertiesIndex>::connect_lost_particles_signal()
 {
   this->particle_handler.signals.particle_lost.connect(
-      [this](const typename Particles::ParticleIterator<dim> &particle, 
-        const typename parallel::distributed::Triangulation<dim, dim>::active_cell_iterator &cell) {
-          this->track_lost_particles(particle, cell);
-      });
+    [this](const typename Particles::ParticleIterator<dim> &particle,
+           const typename parallel::distributed::Triangulation<dim, dim>::
+             active_cell_iterator &cell) {
+      this->track_lost_particles(particle, cell);
+    });
 }
 
 template <int dim, typename PropertiesIndex>
 void
 CFDDEMSolver<dim, PropertiesIndex>::track_lost_particles(
   const typename Particles::ParticleIterator<dim> &particle,
-  const typename parallel::distributed::Triangulation<dim, dim>::active_cell_iterator &cell)
+  const typename parallel::distributed::Triangulation<dim,
+                                                      dim>::active_cell_iterator
+    &cell)
 {
   typename dem_data_structures<dim>::lost_particle_data lost_particle;
-  lost_particle.id = particle->get_id();
+  lost_particle.id       = particle->get_id();
   lost_particle.location = particle->get_location();
-  lost_particle.properties.assign(particle->get_properties().begin(), particle->get_properties().end());
+  lost_particle.properties.assign(particle->get_properties().begin(),
+                                  particle->get_properties().end());
   this->lost_particles_data.push_back(lost_particle);
 }
 // DLH
@@ -1673,11 +1677,12 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
       "To run a steady simulation of a fluid-particle mixture, the lethe-fluid-vans application should be used."));
 
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
-  
+
   // ADAM
-  if (this->cfd_dem_simulation_parameters.cfd_parameters.mortar_parameters.enable)
-  {
-    // Mortar load balancing
+  if (this->cfd_dem_simulation_parameters.cfd_parameters.mortar_parameters
+        .enable)
+    {
+      // Mortar load balancing
       this->connect_mortar_weight_signals();
       this->connect_lost_particles_signal();
 
@@ -1685,15 +1690,17 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
         *this->triangulation,
         this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
         this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
-        this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters.restart ||
+        this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+            .restart ||
           this->cfd_dem_simulation_parameters.void_fraction->read_dem,
-        this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.periodic_boundaries,
+        this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
+          .periodic_boundaries,
         this->cfd_dem_simulation_parameters.cfd_parameters.mortar_parameters);
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
       this->rotate_rotor_mapping(true);
-  }
+    }
   else
     read_mesh_and_manifolds(
       *this->triangulation,
