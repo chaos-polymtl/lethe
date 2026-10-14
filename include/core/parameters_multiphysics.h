@@ -540,6 +540,7 @@ namespace Parameters
     bool CLS              = false;
     bool cahn_hilliard    = false;
     bool electromagnetics = false;
+    bool solid_phase      = false;
 
     // subparameters for heat_transfer
     bool viscous_dissipation    = false;
