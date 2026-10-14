@@ -470,8 +470,9 @@
 <ul class="simple">
 <li><p>Mesh file: <code class="docutils literal notranslate"><span class="pre">cylinder.msh</span></code> and <code class="docutils literal notranslate"><span class="pre">support.msh</span></code></p></li>
 <li><p>Python file to generate mesh files: <code class="docutils literal notranslate"><span class="pre">generate_meshes.py</span></code></p></li>
-<li><p>Parameters files for the problem: <code class="docutils literal notranslate"><span class="pre">granuheap.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">granuheap_multicase.prm</span></code></p></li>
-<li><p>Post-processing python files: <code class="docutils literal notranslate"><span class="pre">post_processing.py</span></code>, <code class="docutils literal notranslate"><span class="pre">post_processing_multicase.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">post_processing_functions.py</span></code>.</p></li>
+<li><p>Parameter file for the problem: <code class="docutils literal notranslate"><span class="pre">granuheap.prm</span></code></p></li>
+<li><p>Parameter file for case generation: <code class="docutils literal notranslate"><span class="pre">granuheap_multicase.tpl</span></code></p></li>
+<li><p>Post-processing python files: <code class="docutils literal notranslate"><span class="pre">post_processing.py</span></code>, <code class="docutils literal notranslate"><span class="pre">post_processing_multicase.py</span></code> and <code class="docutils literal notranslate"><span class="pre">post_processing_functions.py</span></code>.</p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
@@ -669,7 +670,7 @@ end
 </section>
 <section id="running-multiple-cases">
 <h3>Running multiple cases<a class="headerlink" href="#running-multiple-cases" title="Link to this heading">#</a></h3>
-<p>Three files are needed to create and launch multiple simulations; <code class="docutils literal notranslate"><span class="pre">generate_cases_locally.py</span></code>, <code class="docutils literal notranslate"><span class="pre">granuheap_multicase.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">launch_lethe_locally.py</span></code>. For more information, visit <a class="reference external" href="../../../tools/automatic_launch/automatic_launch.html">How to Automatically Create and Launch Lethe Simulations</a></p>
+<p>Three files are needed to create and launch multiple simulations; <code class="docutils literal notranslate"><span class="pre">generate_cases_locally.py</span></code>, <code class="docutils literal notranslate"><span class="pre">granuheap_multicase.tpl</span></code> and <code class="docutils literal notranslate"><span class="pre">launch_lethe_locally.py</span></code>. For more information, visit <a class="reference external" href="../../../tools/automatic_launch/automatic_launch.html">How to Automatically Create and Launch Lethe Simulations</a></p>
 <p>In this case, we run 3 different values of <code class="docutils literal notranslate"><span class="pre">rolling</span> <span class="pre">friction</span></code> and 4 different values of <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">energy</span></code>, for a total of 12 simulations.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>number_of_cases = 4
 

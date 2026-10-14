@@ -470,8 +470,9 @@
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/bubble-detachment-shear-flow</span></code>).</p>
 <ul class="simple">
 <li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">bubble-detachment-shear-flow.prm</span></code></p></li>
+<li><p>Parameter file for case generation: <code class="docutils literal notranslate"><span class="pre">parametric_sweep/bubble-detachment-shear-flow.tpl</span></code></p></li>
 <li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">multiple_folders_bubble_detachment_post_processing.py</span></code> (using the functions of <code class="docutils literal notranslate"><span class="pre">functions_bubble_detachment_post_processing.py</span></code>)</p></li>
-<li><p>Parametric sweep generation files : <code class="docutils literal notranslate"><span class="pre">generate_cases_locally.py</span></code>, <code class="docutils literal notranslate"><span class="pre">launch_lethe.sh</span></code> and <code class="docutils literal notranslate"><span class="pre">launch_lethe_cluster.py</span></code></p></li>
+<li><p>Parametric sweep generation files : <code class="docutils literal notranslate"><span class="pre">parametric_sweep/generate_cases_locally.py</span></code>, <code class="docutils literal notranslate"><span class="pre">parametric_sweep/launch_lethe.sh</span></code> and <code class="docutils literal notranslate"><span class="pre">parametric_sweep/launch_lethe_cluster.py</span></code></p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
@@ -766,12 +767,12 @@ end
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
 <p>The simulation may be run locally by calling <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> by invoking:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span> mpirun -np 10 lethe-fluid jurins-law-2d.prm
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span> mpirun -np 10 lethe-fluid bubble-detachment-shear-flow.prm
 </pre></div>
 </div>
 <p>to run the simulation using ten CPU cores.</p>
-<p>Though we highly advise you to run the simulation on a computational cluster (such as Narval, Béluga, etc.). To do so, a python script (<code class="docutils literal notranslate"><span class="pre">generate_cases_locally.py</span></code>) is included to generate automatically the cases with the correct parameters and physical properties locally. The script works with a <code class="docutils literal notranslate"><span class="pre">.prm</span></code> template (<code class="docutils literal notranslate"><span class="pre">bubble-detachment-shear-flow.prm</span></code>) and a <code class="docutils literal notranslate"><span class="pre">.sh</span></code> file (<code class="docutils literal notranslate"><span class="pre">launch_lethe.sh</span></code>) containing the information to launch the simulation on Narval.
-To use the python script, invoke:</p>
+<p>However, we highly advise you to run the simulation on a computational cluster (such as Narval, Béluga, etc.). To do so, a python script (<code class="docutils literal notranslate"><span class="pre">generate_cases_locally.py</span></code>) is included in the <code class="docutils literal notranslate"><span class="pre">parametric_sweep</span></code> folder to generate automatically the cases with the correct parameters and physical properties locally. The script works with a parameter file template (<code class="docutils literal notranslate"><span class="pre">bubble-detachment-shear-flow.tpl</span></code>) and a <code class="docutils literal notranslate"><span class="pre">.sh</span></code> file (<code class="docutils literal notranslate"><span class="pre">launch_lethe.sh</span></code>) containing the information to launch the simulation on Narval.
+To use the python script, invoke from the <code class="docutils literal notranslate"><span class="pre">parametric_sweep</span></code> folder:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span> python3 generate_cases_locally.py
 </pre></div>
 </div>
