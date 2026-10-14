@@ -161,7 +161,7 @@ test()
         if (particle.get_id() != id)
           continue;
         const Point<dim> particle_location = particle.get_location();
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           location[d] = particle_location[d];
         accumulated_displacement =
           contact_outcome.force[particle.get_local_index()];
