@@ -27,6 +27,7 @@ Usage
 #############################################################################
 
 import argparse
+import inspect
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -164,7 +165,12 @@ def count_faces_and_edges(mesh):
     # the same boundary extraction twice (once for faces, once for edges).
     n_cells = mesh.n_cells
     cleaned = mesh.clean()
-    boundary_surface = cleaned.extract_surface(algorithm="dataset_surface")
+    # PyVista < 0.47 has no ``algorithm`` argument and always uses the
+    # vtkDataSetSurfaceFilter, which is what "dataset_surface" selects.
+    if "algorithm" in inspect.signature(cleaned.extract_surface).parameters:
+        boundary_surface = cleaned.extract_surface(algorithm="dataset_surface")
+    else:
+        boundary_surface = cleaned.extract_surface()
 
     n_face_boundary = boundary_surface.n_cells
 

@@ -7,7 +7,7 @@
 . ../../../contrib/validation/validation_functions.sh
 
 # Store filenames of all plots in a variable (space-seperated)
-plots="fichera_oven_convergence.pdf"
+plots="fichera_oven_convergence_cell.pdf fichera_oven_convergence_dofs.pdf"
 
 # Store filenames of all data files in a variable (space-seperated)
 data="solution-fichera-oven.dat"
@@ -26,6 +26,10 @@ action_fichera="mpirun -np $n_proc lethe-fluid fichera-oven.prm"
 recreate_folder "$folder"
 
 { time $action_fichera ; } &> "$folder/log-fichera"
+
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
 
 # Process the simulation
 python3 ./fichera-oven.py --validate

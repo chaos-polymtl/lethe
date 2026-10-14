@@ -10,6 +10,9 @@
 # Store filenames of all plots in a variable (space-seperated)
 plots="lethe-rotating-drum-comparison-depth.pdf lethe-rotating-drum-comparison-free-surface.pdf"
 
+# Store filenames of all data files in a variable (space-seperated)
+data="solution-depth-velocity.dat solution-free-surface-velocity.dat"
+
 # Default path
 output_root="./"
 
@@ -35,10 +38,14 @@ action="mpirun -np $n_proc lethe-particles rotating-drum.prm"
 show_animation $pid "---> Running simulation"
 wait $pid
 
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
 python3 post_processing_rotating_drum.py  -f ./ --validate
 
 # Copy the information to the log folder
 cp $plots $folder
+cp $data $folder
 
 # Append the information to the report
 magick -density 300  $output_root/report.pdf $plots -quality 100 $output_root/temporary.pdf

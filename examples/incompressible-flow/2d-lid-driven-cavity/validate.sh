@@ -28,6 +28,9 @@ recreate_folder "$folder"
 
 { time $action ; } &> "$folder/log"
 
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
 python3 post_process_Reynolds_400.py --validate
 
         # Copy the information to the log folder

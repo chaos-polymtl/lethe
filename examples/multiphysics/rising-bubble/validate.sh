@@ -32,6 +32,10 @@ recreate_folder "$folder"
 { time $action_alge ; } &> "$folder/log-alge"
 
 
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
+
 # Process the simulation
 python3 ./rising-bubble.py -p rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1 --validate
 

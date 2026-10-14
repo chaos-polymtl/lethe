@@ -28,6 +28,10 @@ recreate_folder "$folder"
 { time $action_sharp ; } &> "$folder/log-sharp"
 
 
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
+
 # Process the simulation
 python3 ./post-process-sedimentation-1-cuboid.py --validate
 

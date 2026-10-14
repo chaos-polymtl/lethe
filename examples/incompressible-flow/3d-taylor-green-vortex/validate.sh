@@ -28,6 +28,10 @@ action="mpirun -np $n_proc lethe-fluid-matrix-free tgv-matrix-free-validation.pr
 recreate_folder "$folder"
 
 { time $action ; } &> "$folder/log"
+
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
 python3 calculate_dissipation_rate_constant_cfl.py -f output/  -i kinetic_energy.dat
 python3 plot_dissipation_rate.py -ke output/ke_rate.dat -ens output/enstrophy.dat -v 0.000625 --validate
 

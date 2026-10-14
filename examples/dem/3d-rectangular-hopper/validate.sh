@@ -33,6 +33,9 @@ gmsh -3 hopper_structured.geo > "$folder/log-mesh"
 show_animation $pid "---> Running regular simulation"
 wait $pid
 
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
 python3 hopper_post_processing.py -f . --prm hopper.prm --validate
 
 # Copy the information to the log folder
@@ -57,6 +60,9 @@ gmsh -3 hopper_structured_periodic.geo > "$folder/log-mesh"
 show_animation $pid "---> Running periodic BC simulation" 
 wait $pid
 
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
 python3 hopper_post_processing.py -f . --prm hopper_periodic.prm --validate
 
 # Copy the information to the log folder

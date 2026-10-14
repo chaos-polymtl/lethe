@@ -33,6 +33,10 @@ recreate_folder "$folder"
 { time $action_cfddem ; } &> "$folder/log-cfddem"
 
 
+# Remove the outputs of a previous post-processing, so that they are not
+# reported again if this one fails
+rm -f $plots $data
+
 # Process the simulation
 python3 ./fluidized-bed-postprocessing.py -f ./ --validate
 
