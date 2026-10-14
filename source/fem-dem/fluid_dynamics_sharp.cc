@@ -28,6 +28,8 @@
 
 #include <deal.II/lac/full_matrix.h>
 
+#include <boost/signals2/connection.hpp>
+
 #include <numbers>
 
 // Constructor for class FluidDynamicsSharp
@@ -162,11 +164,16 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
               // fluid is always solved inside the particle.
               if (particles[p].shape->additional_info_on_shape == "iges")
                 {
-                  cell_is_cut =
-                    cell_cut_by_p_absolute_distance(cell, support_points, p);
-                  particle_id_which_cuts_this_cell = p;
-                  if (cell_is_cut)
+                  if (cell_cut_by_p_absolute_distance(cell, support_points, p))
                     {
+                      // We only register the particle with the lowest id as
+                      // the particle by which this cell is cut if the cell is
+                      // cut by multiple particles.
+                      if (particles_cutting_this_cell.size() == 0)
+                        {
+                          cell_is_cut                      = true;
+                          particle_id_which_cuts_this_cell = p;
+                        }
                       particles_cutting_this_cell.push_back(p);
                     }
                 }
@@ -372,8 +379,11 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
   // triangulation refinement steps are done.
   bool update_precalculations_flag  = false;
   bool remove_superfluous_data_flag = false;
-  this->triangulation->signals.post_refinement.connect(
-    [&update_precalculations_flag]() { update_precalculations_flag = true; });
+  // The slot captures a local variable, so the connection is scoped to
+  // disconnect it when leaving this function.
+  const boost::signals2::scoped_connection post_refinement_connection =
+    this->triangulation->signals.post_refinement.connect(
+      [&update_precalculations_flag]() { update_precalculations_flag = true; });
 
   //  This function applies the various refinement steps depending on the
   //  parameters and the state.
@@ -785,10 +795,10 @@ FluidDynamicsSharp<dim>::define_particles()
     }
   else
     {
+      // The number of particles is defined by the file, not by the "number of
+      // particles" parameter.
       load_particles_from_file();
-      for (unsigned int i = 0;
-           i < this->simulation_parameters.particlesParameters->nb_particles;
-           ++i)
+      for (unsigned int i = 0; i < particles.size(); ++i)
         {
           if (particles[i].integrate_motion == true)
             {
@@ -1064,9 +1074,9 @@ FluidDynamicsSharp<dim>::force_on_ib()
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
-  Assert(this->simulation_parameters.physical_properties_manager
-           .density_is_constant(),
-         RequiresConstantDensity("FluidDynamicsSharp<dim>::force_on_ib"));
+  AssertThrow(this->simulation_parameters.physical_properties_manager
+                .density_is_constant(),
+              RequiresConstantDensity("FluidDynamicsSharp<dim>::force_on_ib"));
 
   unsigned int degree =
     this->simulation_parameters.particlesParameters->stencil_degree;
@@ -1135,8 +1145,6 @@ FluidDynamicsSharp<dim>::force_on_ib()
       particles[i].fluid_torque          = 0;
     }
 
-  std::vector<double> total_area(particles.size());
-  std::vector<double> nb_evaluation(particles.size());
   // Loop over all the cell
   for (const auto &cell : cell_iterator)
     {
@@ -1553,7 +1561,6 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                   fluid_viscous_stress = 0;
                                   fluid_pressure       = 0;
 
-                                  double local_weight = 0;
                                   // Integrate
                                   for (unsigned int i = 0;
                                        i < local_face_dof_indices.size();
@@ -1574,14 +1581,6 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                             fe_face_projection_values
                                               .shape_value(i, q) *
                                             local_face_pressure_tensor[i];
-
-                                          total_area[p] +=
-                                            fe_face_projection_values.JxW(q) *
-                                            fe_face_projection_values
-                                              .shape_value(i, q);
-                                          local_weight +=
-                                            fe_face_projection_values
-                                              .shape_value(i, q);
                                         }
                                     }
 
@@ -1609,16 +1608,6 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                       viscous_force  = 0;
                                       pressure_force = 0;
                                     }
-                                  if (force.norm() > 0)
-                                    {
-                                      nb_evaluation[p] += local_weight;
-                                    }
-
-                                  if (force.norm() > 0)
-                                    {
-                                      nb_evaluation[p] += local_weight;
-                                    }
-
 
                                   // Add the local contribution of this surface
                                   // cell.
@@ -1676,10 +1665,6 @@ FluidDynamicsSharp<dim>::force_on_ib()
       particles[i].fluid_torque =
         Utilities::MPI::sum(particles[i].fluid_torque, this->mpi_communicator) *
         fluid_density;
-      total_area[i] =
-        Utilities::MPI::sum(total_area[i], this->mpi_communicator);
-      nb_evaluation[i] =
-        Utilities::MPI::sum(nb_evaluation[i], this->mpi_communicator);
     }
 }
 
@@ -1702,10 +1687,6 @@ FluidDynamicsSharp<dim>::write_force_ib()
             std::ofstream output(filename.c_str());
 
             table_p[p].write_text(output);
-            std::string filename_residual =
-              this->simulation_parameters.simulation_control.output_folder +
-              "residual" + ".dat";
-            std::ofstream output_residual(filename_residual.c_str());
           }
         MPI_Barrier(this->mpi_communicator);
       }
@@ -2157,13 +2138,13 @@ FluidDynamicsSharp<dim>::integrate_particles()
   // will be moved to a new class that tests the parameter combination in the
   // parameter initialization.
 
-  Assert(!(this->simulation_parameters.physical_properties_manager
-             .is_non_newtonian() and
-           this->simulation_parameters.particlesParameters
-             ->enable_lubrication_force and
-           some_particles_are_coupled),
-         RequiresConstantViscosity(
-           "FluidDynamicsSharp<dim>::integrate_particles"));
+  AssertThrow(!(this->simulation_parameters.physical_properties_manager
+                  .is_non_newtonian() and
+                this->simulation_parameters.particlesParameters
+                  ->enable_lubrication_force and
+                some_particles_are_coupled),
+              RequiresConstantViscosity(
+                "FluidDynamicsSharp<dim>::integrate_particles"));
 
   double h_min =
     dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
@@ -2177,11 +2158,10 @@ FluidDynamicsSharp<dim>::integrate_particles()
   particle_residual = 0;
   if (some_particles_are_coupled && time > 0)
     {
-      Assert(this->simulation_parameters.physical_properties_manager
-               .density_is_constant(),
-             RequiresConstantDensity(
-               "FluidDynamicsSharp<dim>::integrate_particles"));
-      this->simulation_parameters.physical_properties_manager.get_density(0);
+      AssertThrow(this->simulation_parameters.physical_properties_manager
+                    .density_is_constant(),
+                  RequiresConstantDensity(
+                    "FluidDynamicsSharp<dim>::integrate_particles"));
       auto density_model =
         this->simulation_parameters.physical_properties_manager.get_density(0);
       double fluid_density = density_model->value(field_values);
@@ -2372,8 +2352,10 @@ FluidDynamicsSharp<dim>::integrate_particles()
                     << "particle " << p
                     << " is now outside the domain we do not update this particle. Position: "
                     << particles[p].position[0] << ", "
-                    << particles[p].position[1] << ", "
-                    << particles[p].position[2] << std::endl;
+                    << particles[p].position[1];
+                  if constexpr (dim == 3)
+                    this->pcout << ", " << particles[p].position[2];
+                  this->pcout << std::endl;
                   save_particle_state_is_used = true;
                 }
 
@@ -3491,10 +3473,14 @@ FluidDynamicsSharp<dim>::sharp_edge()
 
               // Set the new equation for the first pressure DOFs of the
               // cell. this is the new reference pressure inside a
-              // particle
+              // particle. As for the other pressure DOFs, the rhs is divided
+              // by the pressure_scaling_factor since the pressure DOFs are
+              // rescaled in the newton correction.
               this->system_matrix.add(inside_index, inside_index, sum_line);
               this->system_rhs(inside_index) =
-                0 - this->evaluation_point(inside_index) * sum_line;
+                -this->evaluation_point(inside_index) * sum_line /
+                this->simulation_parameters.stabilization
+                  .pressure_scaling_factor;
             }
         }
     }
@@ -4829,6 +4815,32 @@ FluidDynamicsSharp<dim>::load_particles_from_file()
   particles.resize(particles_data["type"].size());
 
   this->pcout << "Particles found: " << particles.size() << std::endl;
+
+  // The inertia is given either as a single value, when it is uniform around
+  // each axis, or as the 9 components of the inertia matrix separated by ":".
+  const auto parse_inertia = [](const std::string &inertia_str) {
+    const std::vector<double> inertia_list = Utilities::string_to_double(
+      Utilities::split_string_list(inertia_str, ":"));
+    Tensor<2, 3> inertia;
+    if (inertia_list.size() == 9)
+      {
+        for (unsigned int i = 0; i < 3; ++i)
+          for (unsigned int j = 0; j < 3; ++j)
+            inertia[i][j] = inertia_list[3 * i + j];
+      }
+    else if (inertia_list.size() == 1)
+      {
+        for (unsigned int i = 0; i < 3; ++i)
+          inertia[i][i] = inertia_list[0];
+      }
+    else
+      {
+        throw(std::runtime_error(
+          " Invalid inertia matrix. The inertia is given as a 3 by 3 matrix or a single value if the inertia is uniform around each axis."));
+      }
+    return inertia;
+  };
+
   // Implement the data  in the particles.
   if constexpr (dim == 2)
     {
@@ -4860,14 +4872,16 @@ FluidDynamicsSharp<dim>::load_particles_from_file()
           std::string toReplace   = ":";
           std::string replacement = ";";
 
-          // Find the position of the substring to replace
-          size_t pos = shape_arguments_str.find(toReplace);
-
           // Check if the substring is found
-          if (pos != std::string::npos)
+          size_t pos = shape_arguments_str.find(toReplace);
+          while (pos != std::string::npos)
             {
               // Replace the substring
               shape_arguments_str.replace(pos, toReplace.length(), replacement);
+
+              // Find next occurrence of the substring
+              pos =
+                shape_arguments_str.find(toReplace, pos + replacement.length());
             }
           particles[p_i].initialize_shape(shape_type, shape_arguments_str);
 
@@ -4902,49 +4916,8 @@ FluidDynamicsSharp<dim>::load_particles_from_file()
           particles[p_i].omega[2] =
             Utilities::string_to_double(particles_data["omega_z"][p_i]);
 
-          std::vector<std::string> inertia_str_list =
-            Utilities::split_string_list(particles_data["inertia"][p_i], ":");
-          if (inertia_str_list.size() == 9)
-            {
-              std::vector<double> inertia_list =
-                Utilities::string_to_double(inertia_str_list);
-              particles[p_i].inertia[0][0] = inertia_list[0];
-              particles[p_i].inertia[0][1] = inertia_list[1];
-              particles[p_i].inertia[0][2] = inertia_list[2];
-              particles[p_i].inertia[1][0] = inertia_list[3];
-              particles[p_i].inertia[1][1] = inertia_list[4];
-              particles[p_i].inertia[1][2] = inertia_list[5];
-              particles[p_i].inertia[2][0] = inertia_list[6];
-              particles[p_i].inertia[2][1] = inertia_list[7];
-              particles[p_i].inertia[2][2] = inertia_list[8];
-            }
-          else if (inertia_str_list.size() == 1)
-            {
-              // If only one inertia value is given, we assume that the
-              // inertia is uniform in all axes.
-              std::vector<double> inertia_list =
-                Utilities::string_to_double(inertia_str_list);
-              particles[p_i].inertia[0][0] = inertia_list[0];
-              particles[p_i].inertia[0][1] = 0;
-              particles[p_i].inertia[0][2] = 0;
-              particles[p_i].inertia[1][0] = 0;
-              particles[p_i].inertia[1][1] = inertia_list[0];
-              particles[p_i].inertia[1][2] = 0;
-              particles[p_i].inertia[2][0] = 0;
-              particles[p_i].inertia[2][1] = 0;
-              particles[p_i].inertia[2][2] = inertia_list[0];
-            }
-          else
-            {
-              throw(std::runtime_error(
-                " Invalid inertia matrix. The inertia is given as a 3 by 3 matrices or a single value if the inertia is uniform around each axis."));
-            }
-          particles[p_i].inertia[0][0] =
-            Utilities::string_to_double(particles_data["inertia"][p_i]);
-          particles[p_i].inertia[1][1] =
-            Utilities::string_to_double(particles_data["inertia"][p_i]);
-          particles[p_i].inertia[2][2] =
-            Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia =
+            parse_inertia(particles_data["inertia"][p_i]);
 
           particles[p_i].pressure_location[0] =
             Utilities::string_to_double(particles_data["pressure_x"][p_i]);
@@ -5056,12 +5029,8 @@ FluidDynamicsSharp<dim>::load_particles_from_file()
           particles[p_i].omega[2] =
             Utilities::string_to_double(particles_data["omega_z"][p_i]);
 
-          particles[p_i].inertia[0][0] =
-            Utilities::string_to_double(particles_data["inertia"][p_i]);
-          particles[p_i].inertia[1][1] =
-            Utilities::string_to_double(particles_data["inertia"][p_i]);
-          particles[p_i].inertia[2][2] =
-            Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia =
+            parse_inertia(particles_data["inertia"][p_i]);
 
           particles[p_i].pressure_location[0] =
             Utilities::string_to_double(particles_data["pressure_x"][p_i]);
@@ -5221,8 +5190,7 @@ FluidDynamicsSharp<dim>::solve()
                             this->mpi_communicator);
     }
 
-  if (this->simulation_parameters.particlesParameters->calculate_force_ib)
-    this->finish_simulation();
+  this->finish_simulation();
 }
 
 // Pre-compile the 2D and 3D versopm solver to ensure that the library is
