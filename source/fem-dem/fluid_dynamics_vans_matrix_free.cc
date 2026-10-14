@@ -5,6 +5,7 @@
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
 #include <core/manifolds.h>
+#include <core/parameters.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -575,6 +576,19 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
     !this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
     ExcMessage("The VANS matrix-free solver does not support simplex meshes."));
 
+  // After a mesh adaptation, the void fraction is recomputed on the new mesh,
+  // but its previous time steps are not transferred: they are reset to zero by
+  // setup_dofs(). Mesh adaptation is therefore only valid with the steady
+  // method, which does not use the previous void fractions.
+  AssertThrow(
+    nsparam.cfd_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none ||
+      nsparam.cfd_parameters.simulation_control.method ==
+        Parameters::SimulationControl::TimeSteppingMethod::steady,
+    ExcMessage(
+      "Mesh adaptation is only supported with the steady time-stepping method "
+      "in the VANS and CFD-DEM solvers at the moment."));
+
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
@@ -1074,7 +1088,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 
       this->iterate();
       this->postprocess(false);
-      this->finish_time_step();
+      this->finish_time_step_fd();
 
       if (this->simulation_parameters.timer.type ==
           Parameters::Timer::Type::iteration)

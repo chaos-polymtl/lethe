@@ -34,6 +34,19 @@ FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
       this->pcout)
   , has_periodic_boundaries(false)
 {
+  // After a mesh adaptation, the void fraction is recomputed on the new mesh,
+  // but its previous time steps are not transferred: they are reset to zero by
+  // setup_dofs(). Mesh adaptation is therefore only valid with the steady
+  // method, which does not use the previous void fractions.
+  AssertThrow(
+    nsparam.cfd_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none ||
+      nsparam.cfd_parameters.simulation_control.method ==
+        Parameters::SimulationControl::TimeSteppingMethod::steady,
+    ExcMessage(
+      "Mesh adaptation is only supported with the steady time-stepping method "
+      "in the VANS and CFD-DEM solvers at the moment."));
+
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
