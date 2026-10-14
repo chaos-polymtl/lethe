@@ -204,7 +204,7 @@ InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
 
       // Particles without contact are not displaced
       const double displacement_norm = particle_displacement.norm();
-      if (!(displacement_norm > 0.))
+      if (displacement_norm == 0.)
         continue;
 
       // Limit the displacement to prevent particles from crossing each other
