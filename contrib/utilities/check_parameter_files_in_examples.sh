@@ -68,8 +68,9 @@ lethe_fluid_particles=("examples/unresolved-cfd-dem" "examples/unresolved-cfd-de
 for folder in ${lethe_fluid_particles[@]}; do
   for file in $(find "$folder" -type f -name "*.prm"); do
     # If "particles" is in the filename this is a
-    # lethe-particles file
-    if [[ "$file" == *"particles"* ]];then
+    # lethe-particles file. Only the basename is tested, since the
+    # folder of a CFD-DEM example may also contain "particles"
+    if [[ "$(basename "$file")" == *"particles"* ]];then
         check_parameter_file "$file" lethe-particles
     #else we assume it's a CFD-DEM file
     else
