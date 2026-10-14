@@ -25,11 +25,12 @@ action_fichera="mpirun -np $n_proc lethe-fluid fichera-oven.prm"
 
 recreate_folder "$folder"
 
-{ time $action_fichera ; } &> "$folder/log-fichera"
-
-# Remove the outputs of a previous post-processing, so that they are not
-# reported again if this one fails
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
 rm -f $plots $data
+
+{ time $action_fichera ; } &> "$folder/log-fichera"
 
 # Process the simulation
 python3 ./fichera-oven.py --validate

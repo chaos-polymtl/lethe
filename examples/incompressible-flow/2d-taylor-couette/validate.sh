@@ -26,11 +26,13 @@ folder="$output_root/2d-taylor-couette"
 action="mpirun -np $n_proc lethe-fluid taylor-couette.prm" 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 { time $action ; } &> "$folder/log"
 
-# Remove the outputs of a previous post-processing, so that they are not
-# reported again if this one fails
-rm -f $plots $data
 python3 postprocess_taylor_couette.py --validate
 
         # Copy the information to the log folder

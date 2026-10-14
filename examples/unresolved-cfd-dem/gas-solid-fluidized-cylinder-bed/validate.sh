@@ -27,13 +27,14 @@ action_cfddem="mpirun -np $n_proc lethe-fluid-particles-matrix-free mf-fluidized
 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 { time $action_packing ; } &> "$folder/log-packing"
 { time $action_cfddem ; } &> "$folder/log-cfddem"
 
-
-# Remove the outputs of a previous post-processing, so that they are not
-# reported again if this one fails
-rm -f $plots $data
 
 # Process the simulation
 python3 ./plot-pressure.py --validate --solver mf --filter qcm --drag semi-implicit --output-suffix mf-qcm-si

@@ -28,14 +28,15 @@ action_cfddem="mpirun -np $n_proc lethe-fluid-particles gas-solid-fluidized-bed.
 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 { time $action_create_gmsh ; } &> "$folder/log-mesh-conversion"
 { time $action_packing ; } &> "$folder/log-packing"
 { time $action_cfddem ; } &> "$folder/log-cfddem"
 
-
-# Remove the outputs of a previous post-processing, so that they are not
-# reported again if this one fails
-rm -f $plots $data
 
 # Process the simulation
 python3 ./fluidized-bed-postprocessing.py -f ./ --validate

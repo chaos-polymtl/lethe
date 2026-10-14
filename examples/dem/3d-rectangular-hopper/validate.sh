@@ -26,6 +26,11 @@ folder="$output_root/3d-rectangular-hopper"
 action="mpirun -np $n_proc lethe-particles hopper.prm" 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 # Recreate the mesh
 gmsh -3 hopper_structured.geo > "$folder/log-mesh"
 
@@ -33,9 +38,6 @@ gmsh -3 hopper_structured.geo > "$folder/log-mesh"
 show_animation $pid "---> Running regular simulation"
 wait $pid
 
-# Remove the outputs of a previous post-processing, so that they are not
-# reported again if this one fails
-rm -f $plots $data
 python3 hopper_post_processing.py -f . --prm hopper.prm --validate
 
 # Copy the information to the log folder
@@ -53,6 +55,11 @@ folder="$output_root/3d-rectangular-hopper-periodic"
 action="mpirun -np $n_proc lethe-particles hopper_periodic.prm" 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 # Recreate the mesh
 gmsh -3 hopper_structured_periodic.geo > "$folder/log-mesh"
 
@@ -60,9 +67,6 @@ gmsh -3 hopper_structured_periodic.geo > "$folder/log-mesh"
 show_animation $pid "---> Running periodic BC simulation" 
 wait $pid
 
-# Remove the outputs of a previous post-processing, so that they are not
-# reported again if this one fails
-rm -f $plots $data
 python3 hopper_post_processing.py -f . --prm hopper_periodic.prm --validate
 
 # Copy the information to the log folder
