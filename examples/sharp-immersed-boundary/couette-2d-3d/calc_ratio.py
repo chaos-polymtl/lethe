@@ -14,7 +14,7 @@ def get_fx(filename):
 
 
 Fx0 = get_fx("out_ref/force_ref.02.dat")
-Fx = get_fx("out/force_7p_eps0.02.dat")
+Fx = get_fx("out_2d/force_7p_eps0.02.dat")
 
 print("========== FORCES ==========")
 print(f"Fx0 (sans particules) = {Fx0:.6f}")

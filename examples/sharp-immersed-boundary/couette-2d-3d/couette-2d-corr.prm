@@ -10,7 +10,7 @@ subsection simulation control
   set output name        = couette_ex1_b_particles_eps0
   set output frequency   = 1
   set subdivision        = 1
-  set output path        = out/
+  set output path        = out_2d/
 end
 
 subsection physical properties
