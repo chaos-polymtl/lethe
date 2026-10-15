@@ -1964,8 +1964,7 @@ namespace Parameters
         prm.get_bool("enable bubble function velocity");
       enable_bubble_function_pressure =
         prm.get_bool("enable bubble function pressure");
-      solid_phase_degree =
-        prm.get_integer("solid phase degree");
+      solid_phase_degree = prm.get_integer("solid phase degree");
     }
     prm.leave_subsection();
   }

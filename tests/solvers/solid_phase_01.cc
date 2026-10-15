@@ -10,11 +10,6 @@
  * - enabling the solid phase with a standard Navier-Stokes solver throws.
  */
 
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/tria.h>
-
 #include <core/multiphysics.h>
 #include <core/parameters.h>
 #include <core/simulation_control.h>
@@ -22,11 +17,16 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/simulation_parameters.h>
 
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/tria.h>
+
+#include <../tests/tests.h>
+
 #include <exception>
 #include <memory>
 #include <vector>
-
-#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -67,7 +67,7 @@ test()
 
   // Under VANS, the solid phase must be active and share its fields
   {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters,
+    MultiphysicsInterface<dim>   multiphysics(solver_parameters,
                                             tria,
                                             simulation_control,
                                             pcout,
@@ -87,8 +87,7 @@ test()
       multiphysics.get_dof_handler(PhysicsID::solid_phase);
     deallog << "Solid phase components: "
             << solid_dof_handler.get_fe().n_components() << std::endl;
-    deallog << "Solid phase DoFs: " << solid_dof_handler.n_dofs()
-            << std::endl;
+    deallog << "Solid phase DoFs: " << solid_dof_handler.n_dofs() << std::endl;
   }
 
   // Without VANS, enabling the solid phase must throw

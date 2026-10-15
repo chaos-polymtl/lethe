@@ -58,11 +58,11 @@ SolidPhase<dim>::SolidPhase(
     simulation_parameters.fem_parameters.solid_phase_degree;
 
   // Solid velocity (dim components) followed by the solid volume fraction
-  fe = std::make_shared<FESystem<dim>>(FE_Q<dim>(degree),
+  fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(degree),
                                        dim,
                                        FE_Q<dim>(degree),
                                        1);
-  mapping = std::make_shared<MappingQ<dim>>(std::max(degree, 1u));
+  mapping         = std::make_shared<MappingQ<dim>>(std::max(degree, 1u));
   cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
   face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
 
@@ -176,7 +176,7 @@ void
 SolidPhase<dim>::compute_error_estimate(
   [[maybe_unused]] const std::pair<const Variable,
                                    Parameters::MultipleAdaptationParameters>
-                                    &ivar,
+                                         &ivar,
   [[maybe_unused]] dealii::Vector<float> &estimated_error_per_cell)
 {
   AssertThrow(false,

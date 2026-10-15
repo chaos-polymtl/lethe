@@ -202,7 +202,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
         (nsparam.linear_solver.at(PhysicsID::electromagnetics).verbosity !=
          Parameters::Verbosity::quiet) ?
           Parameters::Verbosity::verbose :
-          Parameters::Verbosity::quiet; 
+          Parameters::Verbosity::quiet;
 
       active_physics.push_back(PhysicsID::electromagnetics);
       physics[PhysicsID::electromagnetics] =
@@ -212,7 +212,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
                                                    p_simulation_control);
     }
 
-  
+
   if (multiphysics_parameters.solid_phase)
     {
       // The solid phase exists in the volume-averaged formulation
