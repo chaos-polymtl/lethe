@@ -48,6 +48,8 @@ public:
   struct ContactInfo
   {
     Tensor<1, 3> normal_vector;
+    // For a particle-wall contact, the point of the wall that defines the
+    // plane used to represent the wall.
     Point<3>     contact_point;
     double       normal_overlap;
     double       normal_relative_velocity;

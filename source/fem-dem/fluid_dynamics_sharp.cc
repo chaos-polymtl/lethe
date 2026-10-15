@@ -2104,6 +2104,57 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 
 template <int dim>
 void
+FluidDynamicsSharp<dim>::apply_prescribed_particle_motion(
+  IBParticle<dim> &particle,
+  const double     time,
+  const double     dt) const
+{
+  if (this->simulation_parameters.particlesParameters
+        ->load_particles_from_file == false)
+    {
+      particle.f_position->set_time(time);
+      particle.f_velocity->set_time(time);
+      particle.f_omega->set_time(time);
+      particle.f_orientation->set_time(time);
+
+      particle.position[0] = particle.f_position->value(particle.position, 0);
+      particle.position[1] = particle.f_position->value(particle.position, 1);
+      particle.velocity[0] = particle.f_velocity->value(particle.position, 0);
+      particle.velocity[1] = particle.f_velocity->value(particle.position, 1);
+      particle.omega[0]    = particle.f_omega->value(particle.position, 0);
+      particle.omega[1]    = particle.f_omega->value(particle.position, 1);
+      particle.omega[2]    = particle.f_omega->value(particle.position, 2);
+      particle.orientation[0] =
+        particle.f_orientation->value(particle.position, 0);
+      particle.orientation[1] =
+        particle.f_orientation->value(particle.position, 1);
+      particle.orientation[2] =
+        particle.f_orientation->value(particle.position, 2);
+      if constexpr (dim == 3)
+        {
+          particle.position[2] =
+            particle.f_position->value(particle.position, 2);
+          particle.velocity[2] =
+            particle.f_velocity->value(particle.position, 2);
+        }
+    }
+  else
+    {
+      // The velocity and angular velocity of a particle loaded from a file are
+      // constant. The new state is computed from the state at the start of the
+      // time step, so that it does not change when this function is called at
+      // each Newton iteration.
+      for (int d = 0; d < dim; ++d)
+        particle.position[d] =
+          particle.previous_positions[0][d] + particle.velocity[d] * dt;
+      particle.orientation =
+        particle.previous_orientation[0] + particle.omega * dt;
+    }
+}
+
+
+template <int dim>
+void
 FluidDynamicsSharp<dim>::integrate_particles()
 {
   particle_residual = 0;
@@ -2533,57 +2584,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
             }
           else
             {
-              if (this->simulation_parameters.particlesParameters
-                    ->load_particles_from_file == false)
-                {
-                  particles[p].f_position->set_time(time);
-                  particles[p].f_velocity->set_time(time);
-                  particles[p].f_omega->set_time(time);
-                  particles[p].f_orientation->set_time(time);
-
-                  particles[p].position[0] =
-                    particles[p].f_position->value(particles[p].position, 0);
-                  particles[p].position[1] =
-                    particles[p].f_position->value(particles[p].position, 1);
-                  particles[p].velocity[0] =
-                    particles[p].f_velocity->value(particles[p].position, 0);
-                  particles[p].velocity[1] =
-                    particles[p].f_velocity->value(particles[p].position, 1);
-                  particles[p].omega[0] =
-                    particles[p].f_omega->value(particles[p].position, 0);
-                  particles[p].omega[1] =
-                    particles[p].f_omega->value(particles[p].position, 1);
-                  particles[p].omega[2] =
-                    particles[p].f_omega->value(particles[p].position, 2);
-                  particles[p].orientation[0] =
-                    particles[p].f_orientation->value(particles[p].position, 0);
-                  particles[p].orientation[1] =
-                    particles[p].f_orientation->value(particles[p].position, 1);
-                  particles[p].orientation[2] =
-                    particles[p].f_orientation->value(particles[p].position, 2);
-                  if constexpr (dim == 3)
-                    {
-                      particles[p].position[2] =
-                        particles[p].f_position->value(particles[p].position,
-                                                       2);
-                      particles[p].velocity[2] =
-                        particles[p].f_velocity->value(particles[p].position,
-                                                       2);
-                    }
-                }
-              else
-                {
-                  particles[p].position[0] += particles[p].velocity[0] * dt;
-                  particles[p].position[1] += particles[p].velocity[1] * dt;
-                  particles[p].orientation[0] = particles[p].omega[0] * dt;
-                  particles[p].orientation[1] = particles[p].omega[1] * dt;
-                  particles[p].orientation[2] = particles[p].omega[2] * dt;
-
-                  if constexpr (dim == 3)
-                    {
-                      particles[p].position[2] += particles[p].velocity[2] * dt;
-                    }
-                }
+              apply_prescribed_particle_motion(particles[p], time, dt);
               if (particles[p].position != particles[p].previous_positions[0] ||
                   particles[p].orientation !=
                     particles[p].previous_orientation[0])
@@ -2619,55 +2620,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
       // particle dynamics is not integrated.
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
-          if (this->simulation_parameters.particlesParameters
-                ->load_particles_from_file == false)
-            {
-              particles[p].f_position->set_time(time);
-              particles[p].f_velocity->set_time(time);
-              particles[p].f_omega->set_time(time);
-              particles[p].f_orientation->set_time(time);
-
-              particles[p].position[0] =
-                particles[p].f_position->value(particles[p].position, 0);
-              particles[p].position[1] =
-                particles[p].f_position->value(particles[p].position, 1);
-              particles[p].velocity[0] =
-                particles[p].f_velocity->value(particles[p].position, 0);
-              particles[p].velocity[1] =
-                particles[p].f_velocity->value(particles[p].position, 1);
-              particles[p].omega[0] =
-                particles[p].f_omega->value(particles[p].position, 0);
-              particles[p].omega[1] =
-                particles[p].f_omega->value(particles[p].position, 1);
-              particles[p].omega[2] =
-                particles[p].f_omega->value(particles[p].position, 2);
-              particles[p].orientation[0] =
-                particles[p].f_orientation->value(particles[p].position, 0);
-              particles[p].orientation[1] =
-                particles[p].f_orientation->value(particles[p].position, 1);
-              particles[p].orientation[2] =
-                particles[p].f_orientation->value(particles[p].position, 2);
-              if constexpr (dim == 3)
-                {
-                  particles[p].position[2] =
-                    particles[p].f_position->value(particles[p].position, 2);
-                  particles[p].velocity[2] =
-                    particles[p].f_velocity->value(particles[p].position, 2);
-                }
-            }
-          else
-            {
-              particles[p].position[0] += particles[p].velocity[0] * dt;
-              particles[p].position[1] += particles[p].velocity[1] * dt;
-              particles[p].orientation[0] = particles[p].omega[0] * dt;
-              particles[p].orientation[1] = particles[p].omega[1] * dt;
-              particles[p].orientation[2] = particles[p].omega[2] * dt;
-
-              if constexpr (dim == 3)
-                {
-                  particles[p].position[2] += particles[p].velocity[2] * dt;
-                }
-            }
+          apply_prescribed_particle_motion(particles[p], time, dt);
           if (particles[p].position != particles[p].previous_positions[0] ||
               particles[p].orientation != particles[p].previous_orientation[0])
             particles[p].clear_shape_cache();
@@ -3236,13 +3189,11 @@ FluidDynamicsSharp<dim>::build_contact_containers(
 
       for (const auto &[boundary_id, contact_info] : contacts)
         {
-          // The contact map can keep history for contacts that have just ended
-          // so tangential displacement can be reset consistently. The DEM
-          // post-processing path only needs contacts that are still physically
-          // active (those with a positive overlap).
-          if (contact_info.normal_overlap <= 0.)
-            continue;
-
+          // Every wall that has been a contact candidate of the particle is
+          // exported, whether the particle touches it or not. As in the DEM,
+          // the collision log computes the overlap from the position of the
+          // particle and the plane of the wall: a positive overlap starts a
+          // collision and a negative one ends it.
           particle_wall_contact_info<dim> dem_contact_info;
           dem_contact_info.particle          = particle_it->second;
           dem_contact_info.normal_vector     = contact_info.normal_vector;

@@ -1,0 +1,15 @@
+
+DEAL::Dimension 2
+DEAL::Integrated particle position is exact: true
+DEAL::Integrated particle velocity is exact: true
+DEAL::Integrated particle angular velocity is exact: true
+DEAL::Integrated particle orientation is exact: true
+DEAL::Prescribed particle position is exact: true
+DEAL::Prescribed particle orientation is exact: true
+DEAL::Dimension 3
+DEAL::Integrated particle position is exact: true
+DEAL::Integrated particle velocity is exact: true
+DEAL::Integrated particle angular velocity is exact: true
+DEAL::Integrated particle orientation is exact: true
+DEAL::Prescribed particle position is exact: true
+DEAL::Prescribed particle orientation is exact: true
