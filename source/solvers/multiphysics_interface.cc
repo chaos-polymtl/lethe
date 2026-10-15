@@ -6,6 +6,7 @@
 #include <solvers/cls.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/solid_phase.h>
 #include <solvers/tracer.h>
 
 #include <deal.II/base/exceptions.h>
@@ -84,6 +85,12 @@ DeclExceptionMsg(CahnHilliardWithHeatTransferError,
 DeclExceptionMsg(CahnHilliardWithThermalBuoyancyForceError,
                  "Cahn-Hilliard and thermal buoyancy force are both activated. "
                  "This combination is not currently supported.");
+
+DeclExceptionMsg(
+  SolidPhaseWithoutVANSError,
+  "The \"solid phase\" physics (Euler-Euler model) is enabled, but the fluid "
+  "dynamics solver does not solve the volume-averaged Navier-Stokes (VANS) "
+  "equations. The solid phase can only be used with a VANS solver.");
 
 DeclException1(
   PhysicsVANSFormNotImplementedError,
@@ -195,7 +202,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
         (nsparam.linear_solver.at(PhysicsID::electromagnetics).verbosity !=
          Parameters::Verbosity::quiet) ?
           Parameters::Verbosity::verbose :
-          Parameters::Verbosity::quiet;
+          Parameters::Verbosity::quiet; 
 
       active_physics.push_back(PhysicsID::electromagnetics);
       physics[PhysicsID::electromagnetics] =
@@ -203,6 +210,24 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
                                                    nsparam,
                                                    p_triangulation,
                                                    p_simulation_control);
+    }
+
+  
+  if (multiphysics_parameters.solid_phase)
+    {
+      // The solid phase exists in the volume-averaged formulation
+      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::VANS,
+                  SolidPhaseWithoutVANSError());
+      verbosity[PhysicsID::solid_phase] =
+        (nsparam.physics_solving_strategy.at(PhysicsID::solid_phase)
+             .verbosity != Parameters::Verbosity::quiet ||
+         nsparam.linear_solver.at(PhysicsID::solid_phase).verbosity !=
+           Parameters::Verbosity::quiet) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet;
+      active_physics.push_back(PhysicsID::solid_phase);
+      physics[PhysicsID::solid_phase] = std::make_shared<SolidPhase<dim>>(
+        this, nsparam, p_triangulation, p_simulation_control);
     }
 }
 
