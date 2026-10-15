@@ -869,10 +869,11 @@ FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
      if (cell->is_locally_owned())
         cell_index(cell->active_cell_index()) = cell->global_active_cell_index();
 
-  solution_output_structs.emplace_back(
-        std::in_place_type<OutputStructCellVector>,
-        cell_index,
-        "cell_index");
+  if (this->cfd_dem_simulation_parameters.void_fraction->output_qcm)
+      solution_output_structs.emplace_back(
+            std::in_place_type<OutputStructCellVector>,
+            cell_index,
+            "cell_index");
   if (this->cfd_dem_simulation_parameters.void_fraction
         ->project_particle_velocity)
     {

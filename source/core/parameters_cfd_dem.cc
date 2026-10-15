@@ -93,6 +93,10 @@ namespace Parameters
       Patterns::Tools::Convert<bool>::to_string(project_particle_velocity),
       Patterns::Bool(),
       "Specify whether the particle velocity is projected using QCM");
+    prm.declare_entry("output qcm",
+                      Patterns::Tools::Convert<bool>::to_string(output_qcm),
+                      Patterns::Bool(),
+                      "Output QCM quadrature points nad QCM filter characteristics");
 
     prm.leave_subsection();
   }
@@ -125,6 +129,8 @@ namespace Parameters
     n_quadrature_points = prm.get_integer("n quadrature points");
 
     project_particle_velocity = prm.get_bool("project particle velocity");
+
+    output_qcm = prm.get_bool("output qcm");
 
     prm.leave_subsection();
   }
