@@ -17,10 +17,14 @@ The previous runs are the folders next to the current run that contain a
 current_git_hash.txt file, ordered by the modification time of that file.
 
 The result is written as a Markdown report in the run folder and printed on
-the standard output. If the environment variable
-LETHE_VALIDATION_SLACK_WEBHOOK contains the URL of a Slack incoming webhook,
-a summary of every case, with a legend of the symbols it uses, is also posted
-to Slack.
+the standard output. The diffs of the data files that changed since the
+previous run are written next to the report, in comparison_diffs/<case>.diff.
+If the environment variable LETHE_VALIDATION_SLACK_WEBHOOK contains the URL of
+a Slack incoming webhook, a summary of every case, with a legend of the
+symbols it uses, is also posted to Slack. It is followed by one message per
+case that changed or has a problem, which gives an excerpt of the diff of
+every changed file and, for a case with a problem, the end of its section of
+the Slurm log (slurm_log.txt in the run folder).
 
 Usage:
   python3 compare_validation_runs.py --current <run folder> [options]
@@ -29,6 +33,7 @@ Run with --help for the list of options.
 """
 
 import argparse
+import difflib
 import fnmatch
 import json
 import math
@@ -36,6 +41,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
@@ -79,6 +85,26 @@ WALL_TIME_REGEX = re.compile(r"^real\s+(?:(\d+)h)?(\d+)m([\d.]+)s\s*$",
 MAX_COMMITS_LISTED = 15
 GIT_TIMEOUT_SECONDS = 60
 SLACK_TIMEOUT_SECONDS = 30
+
+# Folder, next to the report, where the diffs of the changed cases are written
+DIFF_FOLDER_NAME = "comparison_diffs"
+
+# Output of the Slurm job, copied into the run folder by the job script
+SLURM_LOG_NAME = "slurm_log.txt"
+
+# Lines written by validate_lethe.sh before and after every case
+PROCESSING_REGEX = re.compile(r"^---> Processing (\S+) using")
+FINISHED_REGEX = re.compile(r"^\s*Finished processing")
+
+# Size of the end of the Slurm log shown for a case with a problem
+MAX_LOG_EXCERPT_LINES = 30
+MAX_LOG_LINE_LENGTH = 300
+
+# Slack recommends messages of at most 4000 characters, and incoming webhooks
+# accept about one message per second
+MAX_SLACK_DIFF_LINES = 20
+MAX_SLACK_MESSAGE_LENGTH = 4000
+SLACK_SECONDS_BETWEEN_MESSAGES = 1.0
 
 # Status of one data file compared with the same file of a reference run
 IDENTICAL = "identical"
@@ -140,6 +166,9 @@ VERDICTS = {
 }
 SEVERITY = list(VERDICTS)
 
+# Verdicts of the cases that are detailed in a message of their own
+DETAILED_VERDICTS = ("problem", "changed", "reverted")
+
 
 @dataclass
 class Run:
@@ -166,11 +195,16 @@ class FileComparison:
     max_relative_difference: float = 0.0
     line: int = 0
     detail: str = ""
+    # Paths of the file in the reference and in the current run, if it exists
+    reference_path: Path = None
+    current_path: Path = None
 
     def describe(self):
         if self.status == CHANGED:
+            difference = format_relative_difference(
+                self.max_relative_difference)
             return (f"{self.name}: changed, max. relative difference "
-                    f"{self.max_relative_difference:.1e} (line {self.line})")
+                    f"{difference} (line {self.line})")
         if self.detail:
             return f"{self.name}: {self.status}, {self.detail}"
         return f"{self.name}: {self.status}"
@@ -207,14 +241,20 @@ class ReferenceComparison:
             return "same values"
         if outcome == "changed":
             if self.max_relative_difference > 0.0:
-                return (f"changed (max. rel. diff. "
-                        f"{self.max_relative_difference:.1e})")
+                difference = format_relative_difference(
+                    self.max_relative_difference)
+                return f"changed (max. rel. diff. {difference})"
             return "changed (new files)"
         return ", ".join(sorted({f.status for f in self.files
                                  if f.status in (STRUCTURE_CHANGED, MISSING)}))
 
     def differences(self):
         return [f for f in self.files if f.status != IDENTICAL]
+
+    def changes(self):
+        """Return the files whose values differ from the reference."""
+        return [f for f in self.files
+                if f.status not in (IDENTICAL, SAME_VALUES)]
 
 
 @dataclass
@@ -227,6 +267,11 @@ class CaseResult:
     previous_wall_time: float = None
     wall_time_flagged: bool = False
     verdict: str = "unchanged"
+    # Diff of every changed data file with the previous run, as a dict
+    # file name -> lines
+    diffs: dict = field(default_factory=dict)
+    # End of the section of the Slurm log of a case with a problem
+    log_excerpt: list = field(default_factory=list)
 
 #############################################################################
 # Discovery of the runs and cases
@@ -312,6 +357,13 @@ def relative_difference(a, b, floor):
     return abs(a - b) / max(abs(a), abs(b), floor)
 
 
+def format_relative_difference(difference):
+    """Return a relative difference as a percentage, e.g. "1.09%"."""
+    if not math.isfinite(difference):
+        return "non-finite"
+    return f"{100.0 * difference:.3g}%"
+
+
 def compare_data_file(name, current_path, reference_path):
     """Compare a data file of the current run with the one of a reference."""
     current_bytes = current_path.read_bytes()
@@ -368,17 +420,156 @@ def compare_case_with_reference(case_path, reference, case_name, rtol):
     files = []
     for name in sorted(current_files.keys() | reference_files.keys()):
         if name not in reference_files:
-            files.append(FileComparison(name, NEW))
+            comparison = FileComparison(name, NEW)
         elif name not in current_files:
-            files.append(FileComparison(name, MISSING))
+            comparison = FileComparison(name, MISSING)
         else:
             comparison = compare_data_file(name, current_files[name],
                                            reference_files[name])
             if (comparison.status == SAME_VALUES and
                     comparison.max_relative_difference > rtol):
                 comparison.status = CHANGED
-            files.append(comparison)
+        comparison.reference_path = reference_files.get(name)
+        comparison.current_path = current_files.get(name)
+        files.append(comparison)
     return ReferenceComparison(run=reference, files=files)
+
+#############################################################################
+# Diffs and Slurm log
+#############################################################################
+
+
+def diff_lines(reference_path, current_path, reference_label, current_label):
+    """Return the unified diff, without context, of two versions of a file.
+
+    When both versions have the same number of lines, as when only values
+    changed, every changed line gets a hunk of its own, so that each old line
+    is directly followed by the new one. Otherwise, the usual unified diff is
+    returned. In both cases, the diff can be applied with patch.
+    """
+    reference = reference_path.read_text(encoding="utf-8",
+                                         errors="replace").splitlines()
+    current = current_path.read_text(encoding="utf-8",
+                                     errors="replace").splitlines()
+    if len(reference) != len(current):
+        return list(difflib.unified_diff(reference, current, reference_label,
+                                         current_label, n=0, lineterm=""))
+
+    lines = []
+    for number, (old, new) in enumerate(zip(reference, current), start=1):
+        if old != new:
+            lines += [f"@@ -{number} +{number} @@", f"-{old}", f"+{new}"]
+    if not lines:
+        return []
+    return [f"--- {reference_label}", f"+++ {current_label}"] + lines
+
+
+def case_diffs(case, current):
+    """Return the diffs of the changed data files of a case.
+
+    The files are compared with the previous run that contains the case. The
+    result is a dict file name -> lines of the diff.
+    """
+    if not case.comparisons:
+        return {}
+    reference = case.comparisons[0].run
+    diffs = {}
+    for comparison in case.comparisons[0].files:
+        if comparison.status not in (CHANGED, STRUCTURE_CHANGED):
+            continue
+        lines = diff_lines(
+            comparison.reference_path, comparison.current_path,
+            f"{reference.name}/{case.name}/{comparison.name}",
+            f"{current.name}/{case.name}/{comparison.name}")
+        if lines:
+            diffs[comparison.name] = lines
+    return diffs
+
+
+def diff_excerpt(lines, max_lines):
+    """Return the beginning of a diff and the number of lines left out.
+
+    The diff is cut between two hunks, so that an old line is never shown
+    without the new one, unless its first hunk alone is too long.
+    """
+    if len(lines) <= max_lines:
+        return lines, 0
+    hunk_starts = [index for index, line in enumerate(lines)
+                   if line.startswith("@@ ")]
+    fitting = [start for start in hunk_starts[1:] if start <= max_lines]
+    end = fitting[-1] if fitting else max_lines
+    return lines[:end], len(lines) - end
+
+
+def read_slurm_log_sections(run_path):
+    """Return the lines of the Slurm log written for every case of a run.
+
+    The result is a dict case name -> lines, where the case name is the last
+    component of the path printed by validate_lethe.sh. Only the text after
+    the last carriage return of a line is kept, as a terminal shows it, so
+    that the progress animation of validate.sh takes a single line.
+    Returns an empty dict if the run has no Slurm log.
+    """
+    # The bytes are decoded explicitly, since reading in text mode would turn
+    # the carriage returns into line breaks
+    try:
+        content = (run_path / SLURM_LOG_NAME).read_bytes().decode(
+            "utf-8", errors="replace")
+    except OSError:
+        return {}
+
+    sections = {}
+    section = None
+    for line in content.split("\n"):
+        frames = [frame for frame in line.split("\r") if frame.strip()]
+        line = frames[-1].rstrip() if frames else ""
+        match = PROCESSING_REGEX.match(line)
+        if match:
+            section = sections[Path(match.group(1)).name] = []
+        if section is None:
+            continue
+        section.append(line)
+        if FINISHED_REGEX.match(line):
+            section = None
+    return sections
+
+
+def log_excerpt(sections, case_name):
+    """Return the end of the section of the Slurm log of a case.
+
+    A case written in a folder with another name than its example, such as
+    3d-rectangular-hopper-periodic, gets the section of the example whose
+    name is the longest prefix of its own.
+    """
+    names = [name for name in sections
+             if case_name == name or case_name.startswith(name + "-")]
+    if not names:
+        return []
+    lines = sections[max(names, key=len)][-MAX_LOG_EXCERPT_LINES:]
+    return [line if len(line) <= MAX_LOG_LINE_LENGTH
+            else line[:MAX_LOG_LINE_LENGTH] + "…" for line in lines]
+
+
+def write_diffs(cases, folder):
+    """Write the diffs of every case into folder/<case>.diff.
+
+    The diffs of a previous comparison are removed first. Returns a dict
+    case name -> path of its diff.
+    """
+    if folder.is_dir():
+        for old_diff in folder.glob("*.diff"):
+            old_diff.unlink()
+    paths = {}
+    for case in cases:
+        if not case.diffs:
+            continue
+        folder.mkdir(exist_ok=True)
+        path = folder / f"{case.name}.diff"
+        path.write_text("".join("\n".join(lines) + "\n"
+                                for lines in case.diffs.values()),
+                        encoding="utf-8")
+        paths[case.name] = path
+    return paths
 
 #############################################################################
 # Wall time
@@ -459,32 +650,38 @@ def compare_cases(current, previous_runs, rtol, time_threshold):
     names = set(current.cases)
     if previous_runs:
         names |= set(previous_runs[0].cases)
+    log_sections = read_slurm_log_sections(current.path)
 
     results = []
     for name in sorted(names):
         references = [run for run in previous_runs if name in run.cases][:2]
         if name not in current.cases:
-            results.append(CaseResult(name=name,
-                                      problems=["case missing from this run"],
-                                      comparisons=[], verdict="problem"))
-            continue
+            case = CaseResult(name=name,
+                              problems=["case missing from this run"],
+                              comparisons=[], verdict="problem")
+        else:
+            case_path = current.cases[name]
+            case = CaseResult(
+                name=name,
+                problems=find_problems(case_path),
+                comparisons=[compare_case_with_reference(case_path, reference,
+                                                         name, rtol)
+                             for reference in references],
+                wall_time=read_wall_time(case_path))
+            if references:
+                case.previous_wall_time = read_wall_time(
+                    references[0].cases[name])
+            change = wall_time_change(case)
+            case.wall_time_flagged = (
+                change is not None and abs(change) > time_threshold and
+                max(case.wall_time, case.previous_wall_time) >
+                MIN_TIMED_SECONDS)
+            case.verdict = decide_verdict(case)
 
-        case_path = current.cases[name]
-        case = CaseResult(
-            name=name,
-            problems=find_problems(case_path),
-            comparisons=[compare_case_with_reference(case_path, reference,
-                                                     name, rtol)
-                         for reference in references],
-            wall_time=read_wall_time(case_path))
-        if references:
-            case.previous_wall_time = read_wall_time(
-                references[0].cases[name])
-        change = wall_time_change(case)
-        case.wall_time_flagged = (
-            change is not None and abs(change) > time_threshold and
-            max(case.wall_time, case.previous_wall_time) > MIN_TIMED_SECONDS)
-        case.verdict = decide_verdict(case)
+        if case.verdict in DETAILED_VERDICTS:
+            case.diffs = case_diffs(case, current)
+        if case.verdict == "problem":
+            case.log_excerpt = log_excerpt(log_sections, name)
         results.append(case)
     return results
 
@@ -576,8 +773,11 @@ def legend_lines(cases, time_threshold):
     return lines
 
 
-def case_details(case):
-    """Return the lines that explain why a case is not unchanged."""
+def case_details(case, diff_path):
+    """Return the lines that explain why a case is not unchanged.
+
+    diff_path is the path of the diff of the case, or None if it has none.
+    """
     lines = [f"- {problem}" for problem in case.problems]
     for comparison in case.comparisons:
         differences = comparison.differences()
@@ -586,14 +786,19 @@ def case_details(case):
         lines.append(f"- vs {comparison.run.name} "
                      f"({comparison.run.short_hash}):")
         lines.extend(f"  - {f.describe()}" for f in differences)
+    if diff_path:
+        lines.append(f"- full diff: `{DIFF_FOLDER_NAME}/{diff_path.name}`")
     if case.wall_time_flagged:
         lines.append(f"- wall time {format_duration(case.previous_wall_time)}"
                      f" → {format_duration(case.wall_time)}")
+    if case.log_excerpt:
+        lines += [f"- end of the {SLURM_LOG_NAME} section of this case:", "",
+                  "```"] + case.log_excerpt + ["```"]
     return lines
 
 
 def build_markdown(current, previous_runs, cases, commits, repository,
-                   time_threshold):
+                   time_threshold, diff_paths):
     previous = previous_runs[0] if previous_runs else None
     before = previous_runs[1] if len(previous_runs) > 1 else None
 
@@ -636,7 +841,7 @@ def build_markdown(current, previous_runs, cases, commits, repository,
             timer = f" {WALL_TIME_SYMBOL}" if case.wall_time_flagged else ""
             lines += ["", f"### {verdict.symbol}{timer} {case.name}: "
                           f"{verdict.description}", ""]
-            lines += case_details(case)
+            lines += case_details(case, diff_paths.get(case.name))
 
     if commits is not None:
         lines += ["", f"## Commits since the previous run ({len(commits)})", ""]
@@ -660,7 +865,7 @@ def slack_reasons(case):
                            if f.status in (STRUCTURE_CHANGED, MISSING))
         return reasons
     if case.verdict in ("changed", "reverted"):
-        reasons = [difference_summary(case.comparisons[0])]
+        reasons = [f.describe() for f in case.comparisons[0].changes()]
         if case.verdict == "reverted":
             reasons.append(f"identical to {case.comparisons[1].run.name}")
         return reasons
@@ -670,10 +875,14 @@ def slack_reasons(case):
     return []
 
 
-def difference_summary(comparison):
-    if comparison.max_relative_difference > 0.0:
-        return f"max. rel. diff. {comparison.max_relative_difference:.1e}"
-    return "new data files"
+def escape_slack(text):
+    """Escape the characters that Slack interprets as markup."""
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def code_block(lines):
+    """Return lines as a Slack code block."""
+    return "```\n" + "\n".join(escape_slack(line) for line in lines) + "\n```"
 
 
 def build_slack_message(current, previous_runs, cases, commits,
@@ -690,7 +899,8 @@ def build_slack_message(current, previous_runs, cases, commits,
         if case.wall_time is not None or case.previous_wall_time is not None:
             reasons.append(f"wall time {wall_time_text(case)}")
         lines.append(f"{verdict.symbol} *{case.name}*: {verdict.label}"
-                     + (f" — {'; '.join(reasons)}" if reasons else ""))
+                     + (f" — {escape_slack('; '.join(reasons))}"
+                        if reasons else ""))
 
     url = compare_url(previous, current) if previous else None
     if url:
@@ -701,8 +911,92 @@ def build_slack_message(current, previous_runs, cases, commits,
     return "\n".join(lines)
 
 
+def has_slack_details(case):
+    """Return whether a case gets a detailed Slack message of its own.
+
+    Only the cases that changed or have a problem do, and only if there is
+    more to show than the summary: a diff or the end of the Slurm log.
+    """
+    return (case.verdict in DETAILED_VERDICTS and
+            bool(case.diffs or case.log_excerpt))
+
+
+def build_slack_detail_message(case, current, diff_path):
+    """Return the Slack message that details why a case changed or failed.
+
+    The message states what was compared, lists every changed data file and
+    gives the beginning of its diff and, for a case with a problem, the end of
+    its section of the Slurm log. Excerpts that would make the message longer
+    than MAX_SLACK_MESSAGE_LENGTH are left out, but every file is listed.
+    diff_path is the path of the full diff of the case, or None.
+    """
+    verdict = VERDICTS[case.verdict]
+    head = [f"{verdict.symbol} *{case.name}*: {verdict.description}"]
+    files = []
+    tail = []
+    if case.comparisons:
+        reference = case.comparisons[0].run
+        head.append(f"Data files of `{current.name}` (`{current.short_hash}`)"
+                    f" compared with `{reference.name}` "
+                    f"(`{reference.short_hash}`).")
+        if case.verdict == "reverted":
+            before = case.comparisons[1].run
+            head.append(f"They are identical to `{before.name}` "
+                        f"(`{before.short_hash}`).")
+        files = case.comparisons[0].changes()
+        url = compare_url(reference, current)
+        if url:
+            tail.append(f"<{url}|Changes since {reference.name}>")
+    head += [f"• {escape_slack(problem)}" for problem in case.problems]
+    if diff_path:
+        tail.insert(0, f"Full diff: `{diff_path}`")
+    omitted_note = "_Excerpts left out to keep this message short._"
+
+    # The text that is always shown. The excerpts are added while they fit.
+    length = len("\n".join(head + [f"• {escape_slack(f.describe())}"
+                                   for f in files] + tail + [omitted_note]))
+    omitted = False
+
+    log_block = []
+    if case.log_excerpt:
+        title = f"End of the {SLURM_LOG_NAME} section of this case:"
+        excerpt = case.log_excerpt
+        while excerpt:
+            block = [title, code_block(excerpt)]
+            if length + len("\n".join(block)) + 1 <= MAX_SLACK_MESSAGE_LENGTH:
+                log_block = block
+                length += len("\n".join(block)) + 1
+                break
+            excerpt = excerpt[1:]
+            omitted = True
+
+    lines = list(head)
+    for comparison in files:
+        lines.append(f"• {escape_slack(comparison.describe())}")
+        if comparison.name not in case.diffs:
+            continue
+        excerpt, n_left_out = diff_excerpt(case.diffs[comparison.name],
+                                           MAX_SLACK_DIFF_LINES)
+        if n_left_out:
+            excerpt = excerpt + [f"… {n_left_out} more lines"]
+        block = code_block(excerpt)
+        if length + len(block) + 1 <= MAX_SLACK_MESSAGE_LENGTH:
+            lines.append(block)
+            length += len(block) + 1
+        else:
+            omitted = True
+    lines += log_block
+    if omitted:
+        lines.append(omitted_note)
+    lines += tail
+    return "\n".join(lines)
+
+
 def post_to_slack(webhook_url, text):
-    """Post a message to a Slack incoming webhook. Never raises."""
+    """Post a message to a Slack incoming webhook.
+
+    Returns whether the message was posted. Never raises.
+    """
     request = urllib.request.Request(
         webhook_url, data=json.dumps({"text": text}).encode("utf-8"),
         headers={"Content-Type": "application/json"})
@@ -711,10 +1005,26 @@ def post_to_slack(webhook_url, text):
                                     timeout=SLACK_TIMEOUT_SECONDS) as response:
             response.read()
     except (urllib.error.URLError, OSError, ValueError) as error:
-        print(f"Warning: the summary could not be posted to Slack: {error}",
+        print(f"Warning: a message could not be posted to Slack: {error}",
               file=sys.stderr)
-        return
-    print("The summary was posted to Slack.")
+        return False
+    return True
+
+
+def post_messages_to_slack(webhook_url, messages):
+    """Post the summary and then the detailed messages to Slack.
+
+    The detailed messages are not posted if the summary could not be.
+    """
+    n_posted = 0
+    for index, message in enumerate(messages):
+        if index > 0:
+            time.sleep(SLACK_SECONDS_BETWEEN_MESSAGES)
+        if post_to_slack(webhook_url, message):
+            n_posted += 1
+        elif index == 0:
+            break
+    print(f"{n_posted} of {len(messages)} messages posted to Slack.")
 
 #############################################################################
 # Main
@@ -725,9 +1035,11 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Compare a Lethe validation run with the two previous "
                     "runs and report the differences.",
-        epilog=f"If the environment variable {SLACK_WEBHOOK_VARIABLE} "
-               "contains the URL of a Slack incoming webhook, a summary is "
-               "posted to Slack.")
+        epilog=f"The diffs of the changed data files are written next to the "
+               f"report, in {DIFF_FOLDER_NAME}/. If the environment variable "
+               f"{SLACK_WEBHOOK_VARIABLE} contains the URL of a Slack incoming "
+               "webhook, a summary is posted to Slack, followed by one message "
+               "per case that changed or has a problem.")
     parser.add_argument(
         "-c", "--current", type=Path, required=True,
         help="Folder of the run to check (the output folder of "
@@ -792,10 +1104,11 @@ def main():
     commits = (list_commits(args.repo, previous_runs[0], current)
                if previous_runs else None)
 
-    report = build_markdown(current, previous_runs, cases, commits,
-                            args.repo, args.time_threshold)
-    report_path = args.report or current.path / REPORT_NAME
+    report_path = (args.report or current.path / REPORT_NAME).resolve()
     try:
+        diff_paths = write_diffs(cases, report_path.parent / DIFF_FOLDER_NAME)
+        report = build_markdown(current, previous_runs, cases, commits,
+                                args.repo, args.time_threshold, diff_paths)
         report_path.write_text(report, encoding="utf-8")
     except OSError as error:
         print(f"Error: the report could not be written: {error}",
@@ -808,9 +1121,14 @@ def main():
     if args.no_slack:
         pass
     elif webhook_url:
-        post_to_slack(webhook_url,
-                      build_slack_message(current, previous_runs, cases,
-                                          commits, args.time_threshold))
+        messages = [build_slack_message(current, previous_runs, cases,
+                                        commits, args.time_threshold)]
+        messages += [build_slack_detail_message(case, current,
+                                                diff_paths.get(case.name))
+                     for case in sorted(cases,
+                                        key=lambda c: SEVERITY.index(c.verdict))
+                     if has_slack_details(case)]
+        post_messages_to_slack(webhook_url, messages)
     else:
         print(f"{SLACK_WEBHOOK_VARIABLE} is not set: nothing posted to Slack.")
     return 0

@@ -21,7 +21,7 @@ n_proc=16
 # Parse command-line arguments
 parse_command_line "$@"
 
-folder="$output_root/gas-solid-fluidized-bed-cylindrical"
+folder="$output_root/gas-solid-fluidized-cylinder-bed"
 action_packing="mpirun -np $n_proc lethe-particles packing-particles.prm" 
 action_cfddem="mpirun -np $n_proc lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA-semi-implicit.prm" 
 
