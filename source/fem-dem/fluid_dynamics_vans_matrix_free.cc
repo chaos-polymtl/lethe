@@ -817,6 +817,9 @@ template <int dim, typename PropertiesIndex>
 std::vector<OutputStruct<dim, LinearAlgebra::distributed::Vector<double>>>
 FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
 {
+  std::vector<OutputStruct<dim, LinearAlgebra::distributed::Vector<double>>>
+    solution_output_structs;
+
   // Make sure all of the particle-related vectors have adequate ghost values.
   particle_projector.void_fraction_solution.update_ghost_values();
   particle_projector.fluid_drag_on_particles.particle_field_solution
@@ -830,21 +833,13 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     component_interpretation = {
       DataComponentInterpretation::component_is_scalar};
-  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    void_fraction_struct(particle_projector.dof_handler,
-                         particle_projector.void_fraction_solution,
-                         name,
-                         component_interpretation);
-
-  // Output the cell indices if the QCM quadrature filters are
-  // written
-  Vector<float> cell_index(this->triangulation->n_active_cells());
-
-  for (const auto &cell : this->dof_handler->active_cell_iterators())
-    if (cell->is_locally_owned())
-      cell_index(cell->active_cell_index()) = cell->global_active_cell_index();
-
-  OutputStructCellVector cell_index_struct(cell_index, "cell_index");
+  solution_output_structs.emplace_back(
+    std::in_place_type<
+      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>>,
+    particle_projector.dof_handler,
+    particle_projector.void_fraction_solution,
+    name,
+    component_interpretation);
 
   // Since the information related to the particles are always 3-dimensional
   // (e.g. the velocity of the particles, the drag, etc.) we prevent the output
@@ -858,12 +853,14 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
         force_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
 
-      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-        particle_fluid_drag_struct(
-          particle_projector.fluid_drag_on_particles.dof_handler,
-          particle_projector.fluid_drag_on_particles.particle_field_solution,
-          force_names,
-          force_component_interpretation);
+      solution_output_structs.emplace_back(
+        std::in_place_type<
+          OutputStructSolution<dim,
+                               LinearAlgebra::distributed::Vector<double>>>,
+        particle_projector.fluid_drag_on_particles.dof_handler,
+        particle_projector.fluid_drag_on_particles.particle_field_solution,
+        force_names,
+        force_component_interpretation);
 
       std::vector<std::string> particle_velocity_names(dim,
                                                        "particle_velocity");
@@ -871,36 +868,46 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
         particle_velocity_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
 
-      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-        particle_velocity_struct(
-          particle_projector.particle_velocity.dof_handler,
-          particle_projector.particle_velocity.particle_field_solution,
-          particle_velocity_names,
-          particle_velocity_component_interpretation);
+      solution_output_structs.emplace_back(
+        std::in_place_type<
+          OutputStructSolution<dim,
+                               LinearAlgebra::distributed::Vector<double>>>,
+        particle_projector.particle_velocity.dof_handler,
+        particle_projector.particle_velocity.particle_field_solution,
+        particle_velocity_names,
+        particle_velocity_component_interpretation);
 
       std::vector<std::string> mtc_name(1, "momentum_transfer_coefficient");
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         mtc_component_interpretation(
           1, DataComponentInterpretation::component_is_scalar);
 
-      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-        mtc_struct(particle_projector.momentum_transfer_coefficient.dof_handler,
-                   particle_projector.momentum_transfer_coefficient
-                     .particle_field_solution,
-                   mtc_name,
-                   mtc_component_interpretation);
-
-
-      return {void_fraction_struct,
-              particle_fluid_drag_struct,
-              particle_velocity_struct,
-              mtc_struct,
-              cell_index_struct};
+      solution_output_structs.emplace_back(
+        std::in_place_type<
+          OutputStructSolution<dim,
+                               LinearAlgebra::distributed::Vector<double>>>,
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution,
+        mtc_name,
+        mtc_component_interpretation);
     }
-  else
+
+  // Output the cell indices if the QCM quadrature filters are written
+  if (this->cfd_dem_simulation_parameters.void_fraction->output_qcm)
     {
-      return {void_fraction_struct};
+      Vector<float> cell_index(this->triangulation->n_active_cells());
+
+      for (const auto &cell : this->dof_handler->active_cell_iterators())
+        if (cell->is_locally_owned())
+          cell_index(cell->active_cell_index()) =
+            cell->global_active_cell_index();
+
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructCellVector>, cell_index, "cell_index");
     }
+
+  return solution_output_structs;
 }
 
 template <int dim, typename PropertiesIndex>

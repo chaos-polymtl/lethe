@@ -5,13 +5,15 @@
 #define lethe_quadrature_points_data_out_h
 
 #include <deal.II/base/data_out_base.h>
-#include <deal.II/base/point.h>
-#include <deal.II/base/types.h>
+#include <deal.II/base/quadrature.h>
 
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/fe/mapping.h>
+
+#include <functional>
 #include <string>
 #include <vector>
-
-using namespace dealii;
 
 
 /**
@@ -27,18 +29,23 @@ class QuadraturePointsDataOut : public dealii::DataOutInterface<0, dim>
 {
 public:
   /**
-   * @brief Build point patches located at quadrature points for visualization.
+   * @brief Build one point patch per quadrature point of every locally owned
+   * cell. Each patch stores the filter radius, the filter diameter and the
+   * global active index of the cell that owns the quadrature point.
    *
-   * @param[in] location Position of the quadrature point in the real cell.
-   * @param[in] filter_radius Radius of the QCM filter centered at the
-   * quadrature point.
-   * @param[in] cell_index Global active index of the cell that owns the
-   * quadrature point.
+   * @param[in] dof_handler DoFHandler whose active cells are traversed.
+   * @param[in] mapping Mapping used to compute the quadrature point locations.
+   * @param[in] quadrature Quadrature rule defining the points in each cell.
+   * @param[in] filter_radius Function returning the filter radius of a cell.
    */
   void
-  build_patches(const dealii::Point<dim>              &location,
-                const double                           filter_radius,
-                const dealii::types::global_cell_index cell_index);
+  build_patches(
+    const dealii::DoFHandler<dim> &dof_handler,
+    const dealii::Mapping<dim>    &mapping,
+    const dealii::Quadrature<dim> &quadrature,
+    const std::function<
+      double(const typename dealii::DoFHandler<dim>::active_cell_iterator &)>
+      &filter_radius);
 
 private:
   /**

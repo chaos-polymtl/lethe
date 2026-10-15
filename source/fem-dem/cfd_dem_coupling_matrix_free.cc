@@ -1702,11 +1702,14 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
                                               this->pcout,
                                               this->mpi_communicator);
 
-  this->particle_projector.write_qcm_quadrature_points(
-    this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-      .output_folder,
-    "qcm_quadrature_points",
-    1);
+  if (this->cfd_dem_simulation_parameters.void_fraction->output_qcm)
+    {
+      this->particle_projector.write_qcm_quadrature_points(
+        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
+          .output_folder,
+        "qcm_quadrature_points",
+        1);
+    }
 
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
