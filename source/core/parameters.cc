@@ -2016,11 +2016,11 @@ namespace Parameters
   {
     prm.enter_subsection("forces");
     {
-      verbosity             = string_to_enum<Verbosity>(prm.get("verbosity"),
-                                            deprecated_verbosity_names(),
-                                            "verbosity");
-      calculate_force       = prm.get_bool("calculate force");
-      calculate_torque      = prm.get_bool("calculate torque");
+      verbosity        = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                                   deprecated_verbosity_names(),
+                                                   "verbosity");
+      calculate_force  = prm.get_bool("calculate force");
+      calculate_torque = prm.get_bool("calculate torque");
       force_output_name     = prm.get("force name");
       torque_output_name    = prm.get("torque name");
       output_precision      = prm.get_integer("output precision");
@@ -3734,9 +3734,8 @@ namespace Parameters
   void
   MeshAdaptation::declare_parameters(ParameterHandler &prm)
   {
-    const MeshAdaptation                defaults;
-    const MultipleAdaptationParameters &variable_defaults =
-      defaults.var_adaptation_param;
+    const MeshAdaptation               defaults;
+    const MultipleAdaptationParameters variable_defaults;
     prm.enter_subsection("mesh adaptation");
     {
       prm.declare_entry("initial refinement steps",
@@ -3878,13 +3877,13 @@ namespace Parameters
             string_to_enum<MultipleAdaptationParameters::ErrorEstimator>(
               strategy_vec[i]);
 
-          var_adaptation_param.coarsening_fraction =
+          adaptation_parameters.coarsening_fraction =
             Utilities::string_to_double(coars_vec[i]);
-          var_adaptation_param.refinement_fraction =
+          adaptation_parameters.refinement_fraction =
             Utilities::string_to_double(refin_vec[i]);
 
           // defining adaptation map for this variable
-          variables[vars] = var_adaptation_param;
+          variables[variable] = adaptation_parameters;
         }
       // Verify that the user did not specify both electric_field or
       // magnetic_field with electromagnetic_fields

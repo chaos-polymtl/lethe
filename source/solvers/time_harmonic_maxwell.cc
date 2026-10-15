@@ -114,10 +114,16 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
     physical_properties_manager.get_number_of_fluids() +
     physical_properties_manager.get_number_of_solids() - 1;
 
+  // The DPG error estimator is only needed when it is the error estimator of
+  // the electromagnetic fields.
+  const auto &adaptation_variables =
+    this->simulation_parameters.mesh_adaptation.variables;
+  const auto electromagnetic_adaptation =
+    adaptation_variables.find(Variable::electromagnetic_fields);
   needs_dpg_error_estimator =
-    this->simulation_parameters.mesh_adaptation.var_adaptation_param
-      .error_estimator ==
-    Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg;
+    (electromagnetic_adaptation != adaptation_variables.end()) &&
+    (electromagnetic_adaptation->second.error_estimator ==
+     Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg);
 
   needs_temperature = false;
   for (unsigned int material_id = 0; material_id <= number_of_material_ids;
