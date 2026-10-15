@@ -14,6 +14,8 @@
 #ifndef lethe_multiphysics_h
 #define lethe_multiphysics_h
 
+#include <deal.II/base/exceptions.h>
+
 #include <algorithm>
 #include <string>
 
