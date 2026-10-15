@@ -715,10 +715,6 @@ VANSOperator<dim, number>::do_cell_integral_local(
                 gradient_result[i][k] += tau * value[k] * vf_value *
                                          ((*bdf_coefs)[0] * previous_values[i] +
                                           previous_time_derivatives[i]);
-
-              // +(βu)τ(δu·∇)v
-              gradient_result[i][k] +=
-                beta_momentum_transfer * previous_values[i] * tau * value[k];
             }
         }
 
@@ -864,7 +860,9 @@ VANSOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::gradient_type gradient_result;
           typename FECellIntegrator::hessian_type  hessian_result;
 
-          value_result[dim] = 0;
+          // +(q,∂t ɛ)
+          value_result[dim] = vf_time_derivative;
+
           // Weak form
           for (int i = 0; i < dim; ++i)
             {
@@ -885,8 +883,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
                 {
                   value_result[i] += vf_value * ((*bdf_coefs)[0] * value[i] +
                                                  previous_time_derivatives[i]);
-                  // +(q,∂t ɛ)
-                  value_result[dim] += vf_time_derivative;
                 }
 
               // +(q,ɛ∇·u)
@@ -941,16 +937,15 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ))
           if (cfd_dem_parameters.grad_div == true)
             {
+              // Strong form of the continuity equation ∂tɛ+ɛ∇·u+u·∇ɛ
+              auto continuity_residual = vf_time_derivative;
+              for (int k = 0; k < dim; ++k)
+                continuity_residual +=
+                  vf_value * gradient[k][k] + value[k] * vf_gradient[k];
+
               for (int i = 0; i < dim; ++i)
-                {
-                  for (int k = 0; k < dim; ++k)
-                    {
-                      gradient_result[i][i] +=
-                        grad_div_gamma(cell, q) *
-                        (vf_value * gradient[k][k] + value[k] * vf_gradient[k] +
-                         vf_time_derivative);
-                    }
-                }
+                gradient_result[i][i] +=
+                  grad_div_gamma(cell, q) * continuity_residual;
             }
 
           // SUPG term
