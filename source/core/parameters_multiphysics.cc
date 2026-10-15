@@ -97,6 +97,11 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
       Patterns::Bool(),
       "Time harmonic electromagnetics calculation <true|false>");
 
+    prm.declare_entry("solid phase",
+                      "false",
+                      Patterns::Bool(),
+                      "Euler-Euler solid phase calculation <true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       Patterns::Tools::Convert<bool>::to_string(
@@ -136,7 +141,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     CLS              = prm.get_bool("cls");
     cahn_hilliard    = prm.get_bool("cahn hilliard");
     electromagnetics = prm.get_bool("electromagnetics");
-
+    solid_phase      = prm.get_bool("solid phase");
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");
     thermal_buoyancy_force = prm.get_bool("thermal buoyancy force");

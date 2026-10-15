@@ -114,6 +114,10 @@ public:
       {
         announce_string(pcout, "Electromagnetics");
       }
+    else if (physics_id == PhysicsID::solid_phase)
+      {
+        announce_string(pcout, "Solid Phase");
+      }
     else
       {
         AssertThrow(
@@ -1040,7 +1044,8 @@ private:
                                             {heat_transfer, false},
                                             {tracer, false},
                                             {cahn_hilliard, true},
-                                            {electromagnetics, true}};
+                                            {electromagnetics, true},
+                                            {solid_phase, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.

@@ -35,6 +35,9 @@ This subsection specifies the characteristics of the finite element method used 
     # bubble enrichment function
     set enable bubble function velocity = false
     set enable bubble function pressure = false
+
+    #interpolation degree solid phase
+    set solid phase degree = 1
   end
 
 
@@ -57,6 +60,8 @@ This subsection specifies the characteristics of the finite element method used 
 * ``phase cahn hilliard degree`` and ``potential cahn hilliard degree`` specify the polynomial degree for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The degrees chosen should be equal. They are left as two separate parameters for debugging purposes.
 
 * ``electromagnetics trial degree`` and ``electromagnetics test degree`` specify the polynomial degree for the trial and test functions in the time-harmonic Maxwell equations. The trial function is the degree that will determine the accuracy of the solution, while the test function is used by the DPG method to solve the system.
+
+* ``solid phase degree`` specifies the polynomial degree of the solid velocity and solid volume fraction of the Euler-Euler model.
 
 .. important:: 
   
