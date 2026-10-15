@@ -228,7 +228,7 @@ for i in "${!cases[@]}"; do
   echo "---> Processing ${cases[i]} using ${n_procs[i]} cores"
   cd $lethe_path/${cases[i]}
   # Remove any PDF artifacts to ensure that previous post-processing outputs are not used in the generation of the report
-  rm *.pdf
+  rm -f *.pdf
   # Proceed with the validation case
   bash validate.sh -p $output_path -np ${n_procs[i]}
   echo "     Finished processing ${cases[i]}"
