@@ -27,6 +27,9 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     # Electromagnetics
     set electromagnetics                = false
     set microwave heating               = false
+
+    #Euler-Euler model for solid phase
+    set solid phase                     = false
   end
 
 
@@ -81,3 +84,10 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 .. seealso::
 
   The electromagnetic solver can be used on its own, an example is available in :doc:`../../examples/multiphysics/waveguide/waveguide`.
+
+
+* ``solid phase``: enables the solid phase of the Euler-Euler model, in which the particles are treated as an interpenetrating continuum described by a solid velocity and a solid volume fraction. It can only be enabled with a volume-averaged Navier-Stokes (VANS) solver.
+
+.. warning::
+
+  The solid phase is under development. Its fields are allocated, written to the output files and checkpointed, but its equations are not solved yet.
