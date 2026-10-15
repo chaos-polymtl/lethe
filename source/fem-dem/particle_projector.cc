@@ -1988,45 +1988,46 @@ ParticleProjector<dim,
 
 template <int dim, typename PropertiesIndex>
 void
-ParticleProjector<dim, PropertiesIndex>::write_qcm_quadrature_points(const std::string &folder,
+ParticleProjector<dim, PropertiesIndex>::write_qcm_quadrature_points(
+  const std::string &folder,
   const std::string &prefix,
-                              const unsigned int group_files)
-  {
-    FEValues<dim>                fe_values(*mapping,
-                                           *fe,
-                                           *quadrature,
-                                           update_quadrature_points);
-    QuadraturePointsDataOut<dim> qp_out;
+  const unsigned int group_files)
+{
+  FEValues<dim> fe_values(*mapping, *fe, *quadrature, update_quadrature_points);
+  QuadraturePointsDataOut<dim> qp_out;
 
-    const double qcm_smoothing_length = void_fraction_parameters->qcm_smoothing_length;
+  const double qcm_smoothing_length =
+    void_fraction_parameters->qcm_smoothing_length;
 
-    for (const auto &cell : dof_handler.active_cell_iterators())
-      {
-        if (!cell->is_locally_owned())
-          continue;
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
 
-        fe_values.reinit(cell);
+      fe_values.reinit(cell);
 
-        // Same filter length as in the QCM void fraction calculation
-        const double filter_length =
-          (qcm_smoothing_length > 1e-16) ?
-            0.5 * qcm_smoothing_length :
-            calculate_filter_length_from_cell_measure(cell->measure());
+      // Same filter length as in the QCM void fraction calculation
+      const double filter_length =
+        (qcm_smoothing_length > 1e-16) ?
+          0.5 * qcm_smoothing_length :
+          calculate_filter_length_from_cell_measure(cell->measure());
 
-        for (const auto &q : fe_values.get_quadrature_points())
-          qp_out.build_patches(q, filter_length, cell->global_active_cell_index());
-      }
+      for (const auto &q : fe_values.get_quadrature_points())
+        qp_out.build_patches(q,
+                             filter_length,
+                             cell->global_active_cell_index());
+    }
 
-    PVDHandler pvd_handler;
-    write_vtu_and_pvd(pvd_handler,
-                              qp_out,
-                              folder,
-                              prefix,
-                              /*time*/ 0.,
-                              /*iter*/ 0,
-                              group_files,
-                              triangulation->get_mpi_communicator());
-  }
+  PVDHandler pvd_handler;
+  write_vtu_and_pvd(pvd_handler,
+                    qp_out,
+                    folder,
+                    prefix,
+                    /*time*/ 0.,
+                    /*iter*/ 0,
+                    group_files,
+                    triangulation->get_mpi_communicator());
+}
 // Pre-compile the 2D and 3D ParticleProjector solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging
