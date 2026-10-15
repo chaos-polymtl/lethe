@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_gls_sharp_h
@@ -251,6 +251,25 @@ private:
    */
   void
   integrate_particles();
+
+  /**
+   * @brief Apply the prescribed motion of a particle whose dynamics is not
+   * integrated, at the end of the current time step. The motion is given by
+   * the functions of the particle subsection or, if the particles are loaded
+   * from a file, by the constant velocity and angular velocity of the
+   * particle.
+   *
+   * @param[in,out] particle Particle whose position, orientation, velocity and
+   * angular velocity are updated.
+   *
+   * @param[in] time Time at the end of the current time step.
+   *
+   * @param[in] dt Current time step.
+   */
+  void
+  apply_prescribed_particle_motion(IBParticle<dim> &particle,
+                                   const double     time,
+                                   const double     dt) const;
 
   /**
    * @brief
