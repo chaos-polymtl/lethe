@@ -26,7 +26,6 @@ template <int dim>
 class QuadraturePointsDataOut : public dealii::DataOutInterface<0, dim>
 {
 public:
-
   /**
    * @brief Build point patches located at quadrature points for visualization.
    *
@@ -37,11 +36,11 @@ public:
    * quadrature point.
    */
   void
-  build_patches(const dealii::Point<dim> &location,
-            const double              filter_radius,
-            const dealii::types::global_cell_index cell_index);
+  build_patches(const dealii::Point<dim>              &location,
+                const double                           filter_radius,
+                const dealii::types::global_cell_index cell_index);
 
-  private:
+private:
   /**
    * @brief Implementation of the corresponding function of the base class.
    */

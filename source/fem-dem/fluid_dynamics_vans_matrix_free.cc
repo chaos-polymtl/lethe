@@ -859,14 +859,14 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
                          particle_projector.void_fraction_solution,
                          name,
                          component_interpretation);
-    
-  // Output the cell indices if the QCM quadrature filters are 
+
+  // Output the cell indices if the QCM quadrature filters are
   // written
   Vector<float> cell_index(this->triangulation->n_active_cells());
 
   for (const auto &cell : this->dof_handler->active_cell_iterators())
-     if (cell->is_locally_owned())
-        cell_index(cell->active_cell_index()) = cell->global_active_cell_index();
+    if (cell->is_locally_owned())
+      cell_index(cell->active_cell_index()) = cell->global_active_cell_index();
 
   OutputStructCellVector cell_index_struct(cell_index, "cell_index");
 
