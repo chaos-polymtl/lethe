@@ -3777,7 +3777,7 @@ namespace Parameters
 
       prm.declare_entry(
         "variable",
-        enum_to_string(defaults.vars),
+        enum_to_string(Variable::velocity),
         Patterns::List(Patterns::Selection(
           enum_to_selection<Variable>(deprecated_adaptation_variable_names))),
         "Variable(s) for error estimation. " + enum_to_choices<Variable>() +
@@ -3868,12 +3868,14 @@ namespace Parameters
       for (std::vector<int>::size_type i = 0; i != var_vec.size(); ++i)
         {
           // Parsing variable for this index
-          vars = string_to_enum<Variable>(var_vec[i],
-                                          deprecated_adaptation_variable_names,
-                                          "variable");
+          const Variable variable =
+            string_to_enum<Variable>(var_vec[i],
+                                     deprecated_adaptation_variable_names,
+                                     "variable");
 
           // Parsing strategy for this variable
-          var_adaptation_param.error_estimator =
+          MultipleAdaptationParameters adaptation_parameters;
+          adaptation_parameters.error_estimator =
             string_to_enum<MultipleAdaptationParameters::ErrorEstimator>(
               strategy_vec[i]);
 
