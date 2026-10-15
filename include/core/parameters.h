@@ -1839,9 +1839,6 @@ namespace Parameters
 
     // Map containing the refinement variables
     std::map<Variable, MultipleAdaptationParameters> variables;
-    // declaration for parsing variables
-    Variable                     vars = Variable::velocity;
-    MultipleAdaptationParameters var_adaptation_param;
 
     /// Decision factor for adaptive refinement (number or fraction)
     enum class FractionType : std::int8_t
