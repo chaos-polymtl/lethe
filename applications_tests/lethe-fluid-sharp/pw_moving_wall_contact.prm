@@ -5,7 +5,8 @@
 # DESCRIPTION:
 # This test checks that Sharp-IB particle-wall contact uses translational DEM
 # wall boundary conditions by applying tangential wall motion to a frictional
-# particle-wall contact.
+# particle-wall contact. The particle starts with a small overlap (1e-3) with
+# the wall, so the contact ejects it at a moderate velocity (about 30 m/s).
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -135,7 +136,7 @@ subsection particles
   subsection particle info 0
     set integrate motion = true
     subsection position
-      set Function expression = 5;0.72
+      set Function expression = 5;0.749
     end
     subsection velocity
       set Function expression = 0;0

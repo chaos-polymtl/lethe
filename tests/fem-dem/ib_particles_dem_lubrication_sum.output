@@ -1,0 +1,11 @@
+
+DEAL::Dimension 2
+DEAL::Pair lubrication forces are non-zero: true
+DEAL::Lubrication force on each particle is the sum over its neighbors: true
+DEAL::Wall lubrication forces are non-zero: true
+DEAL::Lubrication force near a corner is the sum over the two walls: true
+DEAL::Dimension 3
+DEAL::Pair lubrication forces are non-zero: true
+DEAL::Lubrication force on each particle is the sum over its neighbors: true
+DEAL::Wall lubrication forces are non-zero: true
+DEAL::Lubrication force near a corner is the sum over the two walls: true
