@@ -838,7 +838,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
               if !GeometryInfo
                 <dim>::is_inside_unit_cell(candidate_unit_closest_point_in_face,
-                                           tol)
+                                           tol) || !converged
                 {
                   converged = false;
                   continue;
@@ -855,11 +855,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
             }
         }
 
-        if !converged
-        {
-          // the solution will be on an edge
-          
-        }
+        // if !converged
+        // {
+        //   // the solution will be on an edge
+        //   if constexpr (dim == 3)
+        //   {
+
+        //   }
+        // }
     }
   else
     {
@@ -954,28 +957,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               Point<dim> unit_closest_point =
                 mapping->transform_real_to_unit_cell(cell, closest_point);
 
-              bool converged = newton_raphson_method_for_minimization(
+              bool converged = compute_closet_point_in_reference_cell(
                 unit_point, *fe, cell_dof_values, unit_closest_point);
-
-              bool outside = false;
-
-
-              for (unsigned int jj = 0; jj < dim; ++jj)
-                {
-                  double closest_point_i = unit_closest_point[jj];
-
-                  if (((closest_point_i) < 0.0 - 1e-10) ||
-                      ((closest_point_i) > 1 + 1e-10))
-                    {
-                      outside = true;
-                      break;
-                    }
-                }
-
-              if (outside)
-                {
-                  converged = false;
-                }
+              
 
               if (converged)
                 {
