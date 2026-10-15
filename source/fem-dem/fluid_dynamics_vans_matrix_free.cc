@@ -859,6 +859,16 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
                          particle_projector.void_fraction_solution,
                          name,
                          component_interpretation);
+    
+  // Output the cell indices if the QCM quadrature filters are 
+  // written
+  Vector<float> cell_index(this->triangulation->n_active_cells());
+
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+     if (cell->is_locally_owned())
+        cell_index(cell->active_cell_index()) = cell->global_active_cell_index();
+
+  OutputStructCellVector cell_index_struct(cell_index, "cell_index");
 
   // Since the information related to the particles are always 3-dimensional
   // (e.g. the velocity of the particles, the drag, etc.) we prevent the output
@@ -908,7 +918,8 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
       return {void_fraction_struct,
               particle_fluid_drag_struct,
               particle_velocity_struct,
-              mtc_struct};
+              mtc_struct,
+              cell_index_struct};
     }
   else
     {
