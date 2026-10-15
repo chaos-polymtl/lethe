@@ -2016,11 +2016,11 @@ namespace Parameters
   {
     prm.enter_subsection("forces");
     {
-      verbosity        = string_to_enum<Verbosity>(prm.get("verbosity"),
-                                                   deprecated_verbosity_names(),
-                                                   "verbosity");
-      calculate_force  = prm.get_bool("calculate force");
-      calculate_torque = prm.get_bool("calculate torque");
+      verbosity             = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                            deprecated_verbosity_names(),
+                                            "verbosity");
+      calculate_force       = prm.get_bool("calculate force");
+      calculate_torque      = prm.get_bool("calculate torque");
       force_output_name     = prm.get("force name");
       torque_output_name    = prm.get("torque name");
       output_precision      = prm.get_integer("output precision");
