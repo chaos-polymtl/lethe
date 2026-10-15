@@ -1,0 +1,13 @@
+
+DEAL::Active physics under VANS (expected: fluid, solid phase)
+DEAL::0
+DEAL::7
+DEAL::Solid phase components: 3
+DEAL::Solid phase DoFs: 75
+DEAL::Solid phase correctly threw without VANS
+DEAL::Active physics under VANS (expected: fluid, solid phase)
+DEAL::0
+DEAL::7
+DEAL::Solid phase components: 4
+DEAL::Solid phase DoFs: 500
+DEAL::Solid phase correctly threw without VANS
