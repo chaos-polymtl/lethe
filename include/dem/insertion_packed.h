@@ -5,8 +5,10 @@
 #define lethe_insertion_packed_h
 
 #include <dem/insertion.h>
+#include <dem/particle_interaction_outcomes.h>
 
 #include <random>
+#include <vector>
 
 using namespace dealii;
 
@@ -77,45 +79,31 @@ public:
   }
 
   /**
-   * @brief Updates the previous positions of particles in all locally owned cells.
+   * @brief Displace the locally owned particles by the displacements
+   * accumulated by the shift contact models.
    *
-   * This method iterates through all active cells in the triangulation,
-   * identifying locally owned cells. For each particle in these cells, it
-   * retrieves the current particle position and stores it into the particle's
-   * properties. The position is stored within certain indices that are
-   * conventionally designated as velocity components (v_x, v_y, and v_z for 3D
-   * configurations). This allows the tracking of previous particle positions
-   * without additional data structures. This function is required for the
-   * packed insertion method.
-   *
-   * @param[out] particle_handler The particle handler of particles which are
-   * being inserted.
-   *
-   */
-  static void
-  update_previous_position(Particles::ParticleHandler<dim> &particle_handler);
-
-  /**
-   * @brief Restricts the displacement of particles to a maximum allowable
-   * value, preventing excessive movement during the simulation.
-   *
-   * This method iterates over all particles and checks their displacement
-   * norm relative to their previous positions. If the displacement exceeds
-   * the maximum particle diameter, their positions are clamped such that
-   * the displacement does not exceed this threshold. The displacement
-   * values are updated accordingly for each particle.
+   * Each contact of a particle adds a displacement to the entry of that
+   * particle in the force container of the contact outcomes. Each particle is
+   * moved by the sum of the displacements of its contacts, limited to a
+   * maximum norm, and the norm of the applied displacement is added to the
+   * displacement used by the dynamic contact detection. The force container is
+   * then reset to zero for the next pseudo-time step.
    *
    * @param[in,out] particle_handler The particle handler of particles which are
    * being inserted.
-   * @param[in] max_disp Maximum displacement that a particle is able to move
-   * during a single pseudo time-step.
-   * @param[in] displacements Vector that stored the displacement of each
-   * particle since the last contact detection time step.
+   * @param[in] max_displacement Maximum displacement of a particle during a
+   * single pseudo-time step.
+   * @param[in,out] contact_outcome Contact outcomes holding the accumulated
+   * displacements of the particles.
+   * @param[in,out] displacements Displacement of each particle since the last
+   * contact detection step. The norm of the applied displacement is added.
    */
   static void
-  clamp_displacement(Particles::ParticleHandler<dim> &particle_handler,
-                     const double                     max_disp,
-                     std::vector<double>             &displacements);
+  apply_shift_displacement(
+    Particles::ParticleHandler<dim>              &particle_handler,
+    const double                                  max_displacement,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
+    std::vector<double>                          &displacements);
 
 private:
   /**
