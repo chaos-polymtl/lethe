@@ -882,6 +882,19 @@ FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
     std::vector<std::string>{"void_fraction"},
     std::vector<DataComponentInterpretation::DataComponentInterpretation>{
       DataComponentInterpretation::component_is_scalar});
+  
+  // Output the cell indices if the QCM quadrature filters are 
+  // written
+  Vector<float> cell_index(this->triangulation->n_active_cells());
+
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+     if (cell->is_locally_owned())
+        cell_index(cell->active_cell_index()) = cell->global_active_cell_index();
+
+  solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructCellVector>,
+        cell_index,
+        "cell_index");
   if (this->cfd_dem_simulation_parameters.void_fraction
         ->project_particle_velocity)
     {
