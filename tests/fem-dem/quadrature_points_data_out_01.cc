@@ -52,7 +52,8 @@ test()
   });
 
   // The gnuplot header contains the date and the time at which the file was
-  // written. These lines are dropped to keep the output deterministic, along
+  // written and other comments not useful to the output. These lines
+  // are dropped to keep the output deterministic adn shorter, along 
   // with the blank lines separating the points.
   std::stringstream gnuplot_output;
   qp_out.write_gnuplot(gnuplot_output);
