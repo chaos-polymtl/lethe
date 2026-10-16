@@ -649,7 +649,7 @@ CFDDEMSolver<dim, PropertiesIndex>::read_checkpoint()
        i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
-      (*this->particle_projector.previous_void_fraction)[i] =
+      this->particle_projector.previous_void_fraction->at(i) =
         vf_distributed_previous_solutions[i];
     }
 
@@ -892,7 +892,7 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
        i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
-      (*this->particle_projector.previous_void_fraction)[i] =
+      this->particle_projector.previous_void_fraction->at(i) =
         vf_distributed_previous_solutions[i];
     }
 

@@ -580,14 +580,11 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
   // but its previous time steps are not transferred: they are reset to zero by
   // setup_dofs(). Mesh adaptation is therefore only valid with the steady
   // method, which does not use the previous void fractions.
-  AssertThrow(
-    param.cfd_parameters.mesh_adaptation.type ==
-        Parameters::MeshAdaptation::Type::none ||
-      param.cfd_parameters.simulation_control.method ==
-        Parameters::SimulationControl::TimeSteppingMethod::steady,
-    ExcMessage(
-      "Mesh adaptation is only supported with the steady time-stepping method "
-      "in the VANS and CFD-DEM solvers at the moment."));
+  AssertThrow(param.cfd_parameters.mesh_adaptation.type ==
+                  Parameters::MeshAdaptation::Type::none ||
+                param.cfd_parameters.simulation_control.method ==
+                  Parameters::SimulationControl::TimeSteppingMethod::steady,
+              NotSupportedMeshAdaptationMethod());
 
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :

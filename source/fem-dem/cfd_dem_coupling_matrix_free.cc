@@ -681,7 +681,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
       convert_vector_dealii_to_trilinos(
         this->particle_projector.void_fraction_locally_owned,
         this->particle_projector.void_fraction_previous_solution[i]);
-      (*this->particle_projector.previous_void_fraction)[i] =
+      this->particle_projector.previous_void_fraction->at(i) =
         this->particle_projector.void_fraction_locally_owned;
 #endif
     }
@@ -1008,7 +1008,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
       convert_vector_dealii_to_trilinos(
         this->particle_projector.void_fraction_locally_owned,
         this->particle_projector.void_fraction_previous_solution[i]);
-      (*this->particle_projector.previous_void_fraction)[i] =
+      this->particle_projector.previous_void_fraction->at(i) =
         this->particle_projector.void_fraction_locally_owned;
 #endif
     }

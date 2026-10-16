@@ -38,14 +38,11 @@ FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
   // but its previous time steps are not transferred: they are reset to zero by
   // setup_dofs(). Mesh adaptation is therefore only valid with the steady
   // method, which does not use the previous void fractions.
-  AssertThrow(
-    nsparam.cfd_parameters.mesh_adaptation.type ==
-        Parameters::MeshAdaptation::Type::none ||
-      nsparam.cfd_parameters.simulation_control.method ==
-        Parameters::SimulationControl::TimeSteppingMethod::steady,
-    ExcMessage(
-      "Mesh adaptation is only supported with the steady time-stepping method "
-      "in the VANS and CFD-DEM solvers at the moment."));
+  AssertThrow(nsparam.cfd_parameters.mesh_adaptation.type ==
+                  Parameters::MeshAdaptation::Type::none ||
+                nsparam.cfd_parameters.simulation_control.method ==
+                  Parameters::SimulationControl::TimeSteppingMethod::steady,
+              NotSupportedMeshAdaptationMethod());
 
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
@@ -1103,19 +1100,19 @@ FluidDynamicsVANS<dim, PropertiesIndex>::monitor_mass_conservation()
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               fe_values_void_fraction.get_function_values(
-                (*this->particle_projector.previous_void_fraction)[0],
+                this->particle_projector.previous_void_fraction->at(0),
                 p1_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 fe_values_void_fraction.get_function_values(
-                  (*this->particle_projector.previous_void_fraction)[1],
+                  this->particle_projector.previous_void_fraction->at(1),
                   p2_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 fe_values_void_fraction.get_function_values(
-                  (*this->particle_projector.previous_void_fraction)[2],
+                  this->particle_projector.previous_void_fraction->at(2),
                   p3_void_fraction_values);
             }
 

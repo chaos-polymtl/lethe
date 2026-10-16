@@ -160,7 +160,7 @@ test()
 {
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-  deallog << "Dimension " << dim << std::endl;
+  deallog << "  Dimension " << dim << std::endl;
 
   // Unit square/cube, refined enough to be split between the MPI processes.
   std::shared_ptr<parallel::distributed::Triangulation<dim>> tria =
@@ -243,7 +243,7 @@ test()
     multiphysics.set_previous_solutions(PhysicsID::void_fraction,
                                         previous_void_fraction);
 
-    deallog << "Void fraction registered under VANS" << std::endl;
+    deallog << "  Void fraction registered under VANS" << std::endl;
 
     // From here on, the fields are only accessed through the interface
     const DoFHandler<dim> &interface_dof_handler =
@@ -318,13 +318,13 @@ test()
     try
       {
         multiphysics.get_solution(PhysicsID::void_fraction);
-        deallog << "get_solution did NOT throw under the standard "
+        deallog << "  get_solution did NOT throw under the standard "
                    "formulation (unexpected)"
                 << std::endl;
       }
     catch (const std::exception &)
       {
-        deallog << "get_solution correctly threw under the standard "
+        deallog << "  get_solution correctly threw under the standard "
                    "formulation"
                 << std::endl;
       }

@@ -34,6 +34,12 @@
 
 using namespace dealii;
 
+DeclExceptionMsg(
+  NotSupportedMeshAdaptationMethod,
+  "Mesh adaptation is only supported with the steady time-stepping method "
+  "in the VANS and CFD-DEM solvers at the moment because the void fraction "
+  "field is not yet updated during mesh adaptation.");
+
 /**                                                                                         \
  * @brief Calculate the area of intersection between a circular (2D) particle and a circle. \
  *                                                                                          \
