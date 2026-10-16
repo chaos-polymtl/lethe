@@ -17,8 +17,8 @@ Fx0 = get_fx("out_ref/force_ref.02.dat")
 Fx = get_fx("out_2d/force_7p_eps0.02.dat")
 
 print("========== FORCES ==========")
-print(f"Fx0 (sans particules) = {Fx0:.6f}")
-print(f"Fx  (avec particules) = {Fx:.6f}")
+print(f"Fx0 (without particles) = {Fx0:.6f}")
+print(f"Fx  (with particles) = {Fx:.6f}")
 
 
 mu_fluide = 10.0
