@@ -1,0 +1,7 @@
+
+DEAL::2D real, n = (1, 0): OK
+DEAL::2D real, n = (1, 1)/sqrt(2): OK
+DEAL::2D complex, n = (0, 1): OK
+DEAL::3D real, n = (0, 0, 1): OK
+DEAL::3D real, n = (1, 1, 1)/sqrt(3): OK
+DEAL::3D complex, n = (0, 0, 1): OK

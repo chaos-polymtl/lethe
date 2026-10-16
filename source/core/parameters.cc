@@ -3734,9 +3734,8 @@ namespace Parameters
   void
   MeshAdaptation::declare_parameters(ParameterHandler &prm)
   {
-    const MeshAdaptation                defaults;
-    const MultipleAdaptationParameters &variable_defaults =
-      defaults.var_adaptation_param;
+    const MeshAdaptation               defaults;
+    const MultipleAdaptationParameters variable_defaults;
     prm.enter_subsection("mesh adaptation");
     {
       prm.declare_entry("initial refinement steps",
@@ -3778,7 +3777,7 @@ namespace Parameters
 
       prm.declare_entry(
         "variable",
-        enum_to_string(defaults.vars),
+        enum_to_string(Variable::velocity),
         Patterns::List(Patterns::Selection(
           enum_to_selection<Variable>(deprecated_adaptation_variable_names))),
         "Variable(s) for error estimation. " + enum_to_choices<Variable>() +
@@ -3869,22 +3868,24 @@ namespace Parameters
       for (std::vector<int>::size_type i = 0; i != var_vec.size(); ++i)
         {
           // Parsing variable for this index
-          vars = string_to_enum<Variable>(var_vec[i],
-                                          deprecated_adaptation_variable_names,
-                                          "variable");
+          const Variable variable =
+            string_to_enum<Variable>(var_vec[i],
+                                     deprecated_adaptation_variable_names,
+                                     "variable");
 
           // Parsing strategy for this variable
-          var_adaptation_param.error_estimator =
+          MultipleAdaptationParameters adaptation_parameters;
+          adaptation_parameters.error_estimator =
             string_to_enum<MultipleAdaptationParameters::ErrorEstimator>(
               strategy_vec[i]);
 
-          var_adaptation_param.coarsening_fraction =
+          adaptation_parameters.coarsening_fraction =
             Utilities::string_to_double(coars_vec[i]);
-          var_adaptation_param.refinement_fraction =
+          adaptation_parameters.refinement_fraction =
             Utilities::string_to_double(refin_vec[i]);
 
           // defining adaptation map for this variable
-          variables[vars] = var_adaptation_param;
+          variables[variable] = adaptation_parameters;
         }
       // Verify that the user did not specify both electric_field or
       // magnetic_field with electromagnetic_fields
