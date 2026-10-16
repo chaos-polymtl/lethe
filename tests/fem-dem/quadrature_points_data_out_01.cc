@@ -12,7 +12,7 @@
  * to the quadrature points of that cell.
  */
 
-#include <core/quadrature_points_data_out.h>
+#include <fem-dem/quadrature_points_data_out.h>
 
 #include <deal.II/base/quadrature_lib.h>
 
