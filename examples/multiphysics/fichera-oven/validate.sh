@@ -7,7 +7,7 @@
 . ../../../contrib/validation/validation_functions.sh
 
 # Store filenames of all plots in a variable (space-seperated)
-plots="fichera_oven_convergence.pdf"
+plots="fichera_oven_convergence_cell.pdf fichera_oven_convergence_dofs.pdf"
 
 # Store filenames of all data files in a variable (space-seperated)
 data="solution-fichera-oven.dat"
@@ -24,6 +24,11 @@ folder="$output_root/fichera-oven"
 action_fichera="mpirun -np $n_proc lethe-fluid fichera-oven.prm" 
 
 recreate_folder "$folder"
+
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
 
 { time $action_fichera ; } &> "$folder/log-fichera"
 

@@ -26,6 +26,11 @@ folder="$output_root/3d-rectangular-hopper"
 action="mpirun -np $n_proc lethe-particles hopper.prm" 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 # Recreate the mesh
 gmsh -3 hopper_structured.geo > "$folder/log-mesh"
 
@@ -49,6 +54,11 @@ cp $output_root/temporary.pdf $output_root/report.pdf
 folder="$output_root/3d-rectangular-hopper-periodic"
 action="mpirun -np $n_proc lethe-particles hopper_periodic.prm" 
 recreate_folder "$folder"
+
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
 
 # Recreate the mesh
 gmsh -3 hopper_structured_periodic.geo > "$folder/log-mesh"

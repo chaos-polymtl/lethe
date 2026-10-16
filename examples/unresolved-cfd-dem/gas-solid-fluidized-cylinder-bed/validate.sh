@@ -21,11 +21,16 @@ n_proc=16
 # Parse command-line arguments
 parse_command_line "$@"
 
-folder="$output_root/gas-solid-fluidized-bed-cylindrical"
+folder="$output_root/gas-solid-fluidized-cylinder-bed"
 action_packing="mpirun -np $n_proc lethe-particles packing-particles.prm" 
 action_cfddem="mpirun -np $n_proc lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA-semi-implicit.prm" 
 
 recreate_folder "$folder"
+
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
 
 { time $action_packing ; } &> "$folder/log-packing"
 { time $action_cfddem ; } &> "$folder/log-cfddem"

@@ -27,6 +27,9 @@
 #
 # Notes:
 # - The program needs to be launched from the main folder of lethe
+# - Once all the cases are done, compare_validation_runs.py compares the results
+#   with the previous runs stored next to the output folder. Set the environment
+#   variable LETHE_VALIDATION_SLACK_WEBHOOK to post the summary to Slack.
 #
 # -----------------------------------------------------------------------------
 
@@ -225,11 +228,17 @@ for i in "${!cases[@]}"; do
   echo "---> Processing ${cases[i]} using ${n_procs[i]} cores"
   cd $lethe_path/${cases[i]}
   # Remove any PDF artifacts to ensure that previous post-processing outputs are not used in the generation of the report
-  rm *.pdf
+  rm -f *.pdf
   # Proceed with the validation case
   bash validate.sh -p $output_path -np ${n_procs[i]}
   echo "     Finished processing ${cases[i]}"
   cd $lethe_path
   date +"%Y-%m-%d: %H:%M"
 done
+
+# Compare the results with the previous runs stored next to the output folder.
+# The summary is posted to Slack if LETHE_VALIDATION_SLACK_WEBHOOK is set.
+echo "-----------------------------"
+echo "Comparing with the previous validation runs..."
+python3 "$lethe_path/contrib/validation/compare_validation_runs.py" --current "$output_path" --repo "$lethe_path"
 

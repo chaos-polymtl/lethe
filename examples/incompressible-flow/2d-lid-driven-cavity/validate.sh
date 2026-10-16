@@ -26,6 +26,11 @@ folder="$output_root/2d-lid-driven-cavity"
 action="mpirun -np $n_proc lethe-fluid cavity.prm" 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 { time $action ; } &> "$folder/log"
 
 python3 post_process_Reynolds_400.py --validate

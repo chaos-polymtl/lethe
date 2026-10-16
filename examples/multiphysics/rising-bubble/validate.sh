@@ -27,6 +27,11 @@ action_geo="mpirun -np $n_proc lethe-fluid rising-bubble-geo.prm"
 action_alge="mpirun -np $n_proc lethe-fluid rising-bubble-alge.prm" 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 { time $action_proj ; } &> "$folder/log-proj"
 { time $action_geo ; } &> "$folder/log-geo"
 { time $action_alge ; } &> "$folder/log-alge"

@@ -25,6 +25,11 @@ action_sharp="mpirun -np $n_proc lethe-fluid-sharp sedimentation-1-cuboid.prm"
 
 recreate_folder "$folder"
 
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+
 { time $action_sharp ; } &> "$folder/log-sharp"
 
 
