@@ -651,6 +651,8 @@ namespace InterfaceTools
       const Point<dim>          &unit_point,
       const FiniteElement<dim>  &fe,
       const std::vector<double> &dof_values,
+      const unsigned int         element_dim,
+      const std::vector<bool>   &free_coordinates,
       Point<dim>                &unit_closest_point);
 
     bool

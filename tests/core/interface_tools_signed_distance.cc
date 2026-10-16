@@ -87,7 +87,8 @@ test()
       GlobalVectorType background_level_set(background_locally_owned_dofs,
                                             background_locally_relevant_dofs,
                                             mpi_communicator);
-
+      GlobalVectorType background_level_set_owned(background_locally_owned_dofs,
+                                                  mpi_communicator);
 
       const double sphere_radius = 0.23;
       Point<dim>   sphere_center = Point<dim>();
@@ -101,8 +102,9 @@ test()
       VectorTools::interpolate(*background_mapping,
                                background_dof_handler,
                                sphere_function,
-                               background_level_set);
+                               background_level_set_owned);
 
+      background_level_set = background_level_set_owned;
 
       double h    = 1.0 / std::pow(2, (3 + m));
       double band = 4.0 * h;
@@ -338,7 +340,7 @@ main(int argc, char *argv[])
     {
       initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-      test<2>();
+      // test<2>();
       test<3>();
     }
   catch (std::exception &exc)

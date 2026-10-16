@@ -584,8 +584,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   compute_signed_distance_from_distance();
 
   // Conserve local and global volume
-  // compute_cell_wise_volume_correction();
-  // conserve_global_volume();
+  compute_cell_wise_volume_correction();
+  conserve_global_volume();
 
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
@@ -729,7 +729,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
     {
       hessian             = 0.0;
       residual            = 0.0;
-      const double lambda = current_solution[dim];
+      const double lambda = current_solution[element_dim];
       for (unsigned int k = 0; k < dof_values.size(); ++k)
         {
           const auto value_k = fe.shape_value(k, unit_closest_point);
@@ -737,11 +737,11 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           const auto hess_k  = fe.shape_grad_grad(k, unit_closest_point);
           for (unsigned int i = 0; i < element_dim; ++i)
             {
-              const unsigned int i_free_coordinate_id = free_coordinate_id[i];
+              const unsigned int i_free_coordinate_id = free_coordinate_ids[i];
               for (unsigned int j = 0; j < element_dim; ++j)
                 {
                   const unsigned int j_free_coordinate_id =
-                    free_coordinate_id[j];
+                    free_coordinate_ids[j];
 
                   hessian(i, j) +=
                     lambda * dof_values[k] *
@@ -762,7 +762,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
       for (unsigned int i = 0; i < element_dim; ++i)
         {
-          const unsigned int i_free_coordinate_id = free_coordinate_id[i];
+          const unsigned int i_free_coordinate_id = free_coordinate_ids[i];
 
           residual[i] -= current_solution[i] - unit_point[i_free_coordinate_id];
           hessian[i][i] += 1.0;
@@ -783,7 +783,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
       for (unsigned int i = 0; i < element_dim; ++i)
         {
-          const unsigned int i_free_coordinate_id = free_coordinate_id[i];
+          const unsigned int i_free_coordinate_id = free_coordinate_ids[i];
 
           unit_closest_point[i_free_coordinate_id] = current_solution[i];
         }
@@ -805,18 +805,21 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   std::vector<bool> free_coordinates(dim, true);
   Point<dim>        candidate_unit_closest_point = unit_point;
 
+  bool found = false;
   bool converged =
     newton_raphson_method_for_minimization(unit_point,
                                            fe,
-                                           cell_dof_values,
+                                           dof_values,
+                                           dim,
                                            free_coordinates,
                                            candidate_unit_closest_point);
 
-  const double tol = 1e-11;
-  if !GeometryInfo
-    <dim>::is_inside_unit_cell(candidate_unit_closest_point, tol)
+  const double tol = 1e-10;
+  if (!GeometryInfo<dim>::is_inside_unit_cell(candidate_unit_closest_point,
+                                              tol) ||
+      !converged)
     {
-      double best_distance = max_distance;
+      double best_distance = std::numeric_limits<double>::max();
       for (unsigned int i = 0; i < dim; i++)
         {
           free_coordinates.assign(dim, true);
@@ -825,51 +828,106 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           // two faces in each direction
           for (const double face_coordinate : {0.0, 1.0})
             {
-              Point<dim> candidate_unit_closest_point_in_face =
-                unit_point;
+              Point<dim> candidate_unit_closest_point_in_face = unit_point;
 
               candidate_unit_closest_point_in_face[i] = face_coordinate;
               converged = newton_raphson_method_for_minimization(
                 unit_point,
                 fe,
-                cell_dof_values,
+                dof_values,
+                dim - 1,
                 free_coordinates,
                 candidate_unit_closest_point_in_face);
 
-              if !GeometryInfo
-                <dim>::is_inside_unit_cell(candidate_unit_closest_point_in_face,
-                                           tol) || !converged
+              if (!GeometryInfo<dim>::is_inside_unit_cell(
+                    candidate_unit_closest_point_in_face, tol) ||
+                  !converged)
                 {
-                  converged = false;
+                  // found = false;
                   continue;
                 }
-              
-                // It is possible to have a closest point solution in more than one face.
-                // We need to select the one minimizing the distance.
-                double candidate_distance = unit_point.distance(candidate_unit_closest_point_in_face) 
-                if (candidate_distance < distance)
+
+              // It is possible to have a closest point solution in more than
+              // one face. We need to select the one minimizing the distance.
+              double candidate_distance =
+                unit_point.distance(candidate_unit_closest_point_in_face);
+              if (candidate_distance < best_distance)
                 {
-                  distance = candidate_distance;
+                  best_distance      = candidate_distance;
                   unit_closest_point = candidate_unit_closest_point_in_face;
+                  found              = true;
                 }
             }
         }
 
-        // if !converged
-        // {
-        //   // the solution will be on an edge
-        //   if constexpr (dim == 3)
-        //   {
+      if (!found)
+        {
+          best_distance = std::numeric_limits<double>::max();
+          // the solution will be on an edge
+          if constexpr (dim == 3)
+            {
+              for (unsigned int i = 0; i < dim; i++)
+                {
+                  free_coordinates.assign(dim, false);
+                  free_coordinates[i] = true;
 
-        //   }
-        // }
+                  unsigned int first_edge_coordinate_id  = (i + 1) % dim;
+                  unsigned int second_edge_coordinate_id = (i + 2) % dim;
+
+
+                  for (const double first_edge_coordinate : {0.0, 1.0})
+                    {
+                      for (const double second_edge_coordinate : {0.0, 1.0})
+                        {
+                          Point<dim> candidate_unit_closest_point_in_edge =
+                            unit_point;
+
+                          candidate_unit_closest_point_in_edge
+                            [first_edge_coordinate_id] = first_edge_coordinate;
+                          candidate_unit_closest_point_in_edge
+                            [second_edge_coordinate_id] =
+                              second_edge_coordinate;
+
+                          converged = newton_raphson_method_for_minimization(
+                            unit_point,
+                            fe,
+                            dof_values,
+                            1,
+                            free_coordinates,
+                            candidate_unit_closest_point_in_edge);
+
+                          if (!GeometryInfo<dim>::is_inside_unit_cell(
+                                candidate_unit_closest_point_in_edge, tol) ||
+                              !converged)
+                            {
+                              // found = false;
+                              continue;
+                            }
+
+                          // It is possible to have a closest point solution in
+                          // more than one edge. We need to select the one
+                          // minimizing the distance.
+                          double candidate_distance = unit_point.distance(
+                            candidate_unit_closest_point_in_edge);
+                          if (candidate_distance < best_distance)
+                            {
+                              best_distance = candidate_distance;
+                              unit_closest_point =
+                                candidate_unit_closest_point_in_edge;
+                              found = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
   else
     {
       unit_closest_point = candidate_unit_closest_point;
-      return converged;
+      return true;
     }
-  return true;
+  return found;
 }
 
 template <int dim, typename VectorType>
@@ -959,7 +1017,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
               bool converged = compute_closet_point_in_reference_cell(
                 unit_point, *fe, cell_dof_values, unit_closest_point);
-              
+
 
               if (converged)
                 {
@@ -996,13 +1054,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   // DoF coordinates
   std::map<types::global_dof_index, Point<dim>> dof_support_points =
     DoFTools::map_dofs_to_support_points(*mapping, dof_handler);
-
-  const double sphere_radius = 0.25;
-  Point<dim>   sphere_center = Point<dim>();
-  for (int n = 0; n < dim; n++)
-    {
-      sphere_center[n] = 0.5;
-    }
 
   // Loop over the intersected cells (volume cells)
   for (auto &intersected_cell : interface_reconstruction_cells)
