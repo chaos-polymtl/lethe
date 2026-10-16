@@ -162,9 +162,11 @@ LetheGridTools::find_cell_around_point_with_tree(
   const unsigned int n_global_levels =
     dof_handler.get_triangulation().n_global_levels();
   const unsigned int max_lvl_search =
-    (n_global_levels > 4 ? n_global_levels - 2 : n_global_levels);
+    (n_global_levels > 5 ? n_global_levels - 2 : n_global_levels);
 
-  while (lvl < max_lvl_search && !cell_found_on_level_search)
+  // Preserve the original level-search order. Stopping at the first coarse
+  // match changes which cell supplies velocity gradients at shared faces.
+  while (lvl < max_lvl_search)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(lvl);
 

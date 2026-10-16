@@ -59,30 +59,20 @@ SharpIBPeriodicBoundaries<dim>::parse_dem_periodic_configuration(
   PeriodicConfiguration parsed_configuration;
 
   AssertThrow(
-    dem_boundary_conditions.periodic_neighbor_id.size() <= 1 &&
-      dem_boundary_conditions.periodic_direction.size() <= 1,
+    dem_boundary_conditions.periodic_boundaries.size() <= 1,
     dealii::ExcMessage(
       "Sharp-IB periodic coupling currently supports exactly one DEM periodic "
       "boundary pair."));
 
-  if (dem_boundary_conditions.periodic_neighbor_id.empty())
+  if (dem_boundary_conditions.periodic_boundaries.empty())
     return parsed_configuration;
 
   const auto periodic_pair =
-    dem_boundary_conditions.periodic_neighbor_id.begin();
-  const auto direction_it =
-    dem_boundary_conditions.periodic_direction.find(periodic_pair->first);
-
-  AssertThrow(
-    direction_it != dem_boundary_conditions.periodic_direction.end(),
-    dealii::ExcMessage(
-      "Sharp-IB periodic coupling requires the DEM periodic direction to be "
-      "defined for the principal periodic boundary id."));
-
+    dem_boundary_conditions.periodic_boundaries.begin();
   parsed_configuration.enabled    = true;
   parsed_configuration.boundary_0 = periodic_pair->first;
-  parsed_configuration.boundary_1 = periodic_pair->second;
-  parsed_configuration.direction  = direction_it->second;
+  parsed_configuration.boundary_1 = periodic_pair->second.neighbor_id;
+  parsed_configuration.direction  = periodic_pair->second.direction;
 
   return parsed_configuration;
 }
@@ -117,9 +107,9 @@ SharpIBPeriodicBoundaries<dim>::parse_cfd_periodic_configuration(
   parsed_configuration.enabled    = true;
   parsed_configuration.boundary_0 = boundary_id;
   parsed_configuration.boundary_1 =
-    cfd_boundary_conditions.periodic_neighbor_id.at(boundary_id);
+    cfd_boundary_conditions.periodic_boundaries.at(boundary_id).neighbor_id;
   parsed_configuration.direction =
-    cfd_boundary_conditions.periodic_direction.at(boundary_id);
+    cfd_boundary_conditions.periodic_boundaries.at(boundary_id).direction;
 
   return parsed_configuration;
 }
@@ -157,6 +147,12 @@ SharpIBPeriodicBoundaries<dim>::validate_matching_configurations(
 
   AssertThrow(dem_configuration.enabled == cfd_configuration.enabled,
               dealii::ExcMessage(error_message.str()));
+
+  AssertThrow(dem_configuration.direction < dim &&
+                cfd_configuration.direction < dim,
+              dealii::ExcMessage(
+                "Sharp-IB periodic direction must be smaller than the spatial "
+                "dimension."));
 
   AssertThrow(dem_configuration.boundary_0 == cfd_configuration.boundary_0 &&
                 dem_configuration.boundary_1 == cfd_configuration.boundary_1 &&

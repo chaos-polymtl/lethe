@@ -44,7 +44,7 @@ Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0.023
    Number of degrees of freedom: 22952
    Volume of triangulation:      6.400e+04
 particle 0 position 2.000e+01 1.000e+00 2.000e+01
-particle 0 velocity 2.595e-01 6.793e-03 -5.716e-06
+particle 0 velocity 2.595e-01 6.792e-03 -5.716e-06
 particle 1 position 1.900e+01 2.870e+00 2.000e+01
 particle 1 velocity -1.194e-01 -6.492e-01 -3.771e-05
 +------------------------------------------+

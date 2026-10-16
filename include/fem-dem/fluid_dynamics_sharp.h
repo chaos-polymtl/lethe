@@ -554,6 +554,24 @@ private:
   }
 
   /**
+   * @brief Sharp may keep the outer nonlinear iteration active because of the
+   * particle-coupling residual even when the assembled fluid residual is
+   * already below tolerance.
+   *
+   * In that situation, the inner fluid linear solve is unnecessary and may be
+   * skipped while the outer coupled iteration continues.
+   *
+   * @return `true` because Sharp allows skipping the inner fluid linear solve
+   * once the assembled fluid residual is already below the nonlinear
+   * tolerance.
+   */
+  bool
+  allow_skip_linear_solve_when_residual_is_below_tolerance() const override
+  {
+    return true;
+  }
+
+  /**
    * @brief Update cached geometric data for every immersed particle.
    */
   void
@@ -866,15 +884,17 @@ private:
   std::map<typename DoFHandler<dim>::active_cell_iterator, InsideCellInfo>
     cells_inside_map;
   /*
-   * Cache of stencil cells already located for a specific
-   * (DoF, particle, periodic frame) tuple during sharp_edge().
+   * Cache of stencil cells and the coordinate shifts used to locate them.
+   * Translated images use (DoF, particle, periodic frame) keys. The primary
+   * frame retains the shared per-DoF cache with zero particle/frame keys.
    *
    * The periodic frame is part of the key because the same DoF can be reached
    * from different wrapped images of the same particle near the periodic
    * interface, and those frames can require different stencil cells.
    */
   std::map<PeriodicFrameDofCacheKey,
-           typename DoFHandler<dim>::active_cell_iterator>
+           std::pair<typename DoFHandler<dim>::active_cell_iterator,
+                     Tensor<1, dim>>>
     ib_done;
 
   // Special assembler of the cells inside an IB particle

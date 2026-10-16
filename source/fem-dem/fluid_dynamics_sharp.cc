@@ -36,6 +36,8 @@
 #include <boost/signals2/connection.hpp>
 
 #include <algorithm>
+#include <cmath>
+#include <limits>
 #include <numbers>
 
 // Constructor for class FluidDynamicsSharp
@@ -1354,8 +1356,13 @@ FluidDynamicsSharp<dim>::force_on_ib()
                    cut_cell_info.cutting_particle_frames)
                 {
                   const unsigned int p = particle_frame.particle_id;
-                  const int          particle_frame_index =
+                  const int particle_frame_index =
                     get_periodic_frame_index(particle_frame.periodic_shift);
+                  // Preserve the primary-frame per-DoF cache. Distinguish
+                  // translated particle images without changing existing IB
+                  // assembly or force reuse away from the periodic interface.
+                  const unsigned int cache_particle_id =
+                    particle_frame_index != 0 ? p : 0;
                   const Point<dim> saved_force_particle_pos =
                     particles[p].position;
                   set_particle_position_from_periodic_shift(
@@ -1452,16 +1459,12 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                   .first;
                               const PeriodicFrameDofCacheKey force_cache_key = {
                                 local_face_dof_indices[i],
-                                p,
+                                cache_particle_id,
                                 particle_frame_index};
-                              // Check if that dof already have been used to
-                              // extrapolate the fluid stress tensor on the IB
-                              // surface for this exact particle frame. The
-                              // same DoF can be revisited from a different
-                              // wrapped image of the same particle near the
-                              // periodic interface, so the cache key must
-                              // include both the particle id and the discrete
-                              // periodic frame index.
+                              // Reuse primary-frame stresses as before, while
+                              // keeping translated images separate by particle
+                              // and periodic frame. Shared multi-particle DoFs
+                              // still require a fresh evaluation below.
                               if (force_eval.find(force_cache_key) ==
                                     force_eval.end() or
                                   dof_with_more_then_one_particle
@@ -1489,7 +1492,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                       const PeriodicFrameDofCacheKey
                                         stencil_cache_key = {
                                           local_face_dof_indices[i],
-                                          p,
+                                          cache_particle_id,
                                           particle_frame_index};
                                       // Check if we already have the cell used
                                       // to define the IB constraint of that
@@ -1556,10 +1559,16 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                               if (!found)
                                                 cell_2 = cell;
                                             }
-                                          ib_done[stencil_cache_key] = cell_2;
+                                          ib_done[stencil_cache_key] =
+                                            {cell_2, force_periodic_shift};
                                         }
                                       else
-                                        cell_2 = cached_stencil_cell->second;
+                                        {
+                                          cell_2 =
+                                            cached_stencil_cell->second.first;
+                                          force_periodic_shift =
+                                            cached_stencil_cell->second.second;
+                                        }
 
                                       cell_2->get_dof_indices(
                                         local_dof_indices_2);
@@ -3731,6 +3740,73 @@ FluidDynamicsSharp<dim>::sharp_edge()
           Point<dim> pressure_reference_location =
             particles[p].pressure_location + particles[p].position;
 
+          if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+            {
+              // Select the same interior pressure node on every rank. The
+              // first owned vertex of the reference cell can lie outside the
+              // particle, and changes when the mesh is repartitioned.
+              using Candidate = std::pair<
+                double, std::pair<Point<dim>, types::global_dof_index>>;
+              Candidate best{std::numeric_limits<double>::max(),
+                             {Point<dim>(), numbers::invalid_dof_index}};
+              const unsigned int direction =
+                sharp_ib_periodic_boundaries.get_periodic_direction();
+              const double length =
+                periodic_domain_upper - periodic_domain_lower;
+              const auto less = [](const Candidate &a, const Candidate &b) {
+                if (a.first != b.first)
+                  return a.first < b.first;
+                for (unsigned int d = 0; d < dim; ++d)
+                  if (a.second.first[d] != b.second.first[d])
+                    return a.second.first[d] < b.second.first[d];
+                return a.second.second < b.second.second;
+              };
+              for (const auto &candidate_cell : cell_iterator)
+                if (candidate_cell->is_locally_owned())
+                  {
+                    candidate_cell->get_dof_indices(local_dof_indices);
+                    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                      {
+                        const auto index = local_dof_indices[i];
+                        if (this->fe->system_to_component_index(i).first != dim ||
+                            !this->locally_owned_dofs.is_element(index) ||
+                            this->zero_constraints.is_constrained(index) ||
+                            this->nonzero_constraints.is_constrained(index))
+                          continue;
+                        Point<dim> point = support_points.at(index);
+                        point[direction] -=
+                          std::round((point[direction] -
+                                      particles[p].position[direction]) /
+                                     length) * length;
+                        if (particles[p].get_levelset(point) >= 0.0)
+                          continue;
+                        Candidate candidate{
+                          point.distance_square(pressure_reference_location),
+                          {support_points.at(index), index}};
+                        if (less(candidate, best))
+                          best = candidate;
+                      }
+                  }
+              const auto candidates =
+                Utilities::MPI::all_gather(this->mpi_communicator, best);
+              for (const auto &candidate : candidates)
+                if (less(candidate, best))
+                  best = candidate;
+              AssertThrow(best.second.second != numbers::invalid_dof_index,
+                          ExcMessage("No unconstrained pressure node lies inside "
+                                     "the periodic particle. Refine the mesh."));
+              const auto index = best.second.second;
+              if (this->locally_owned_dofs.is_element(index))
+                {
+                  const double scale = std::pow(dr, dim) / dt;
+                  this->system_matrix.clear_row(index);
+                  this->system_matrix.add(index, index, scale);
+                  this->system_rhs(index) =
+                    -this->evaluation_point(index) * scale;
+                }
+              continue;
+            }
+
 
           const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
             *this->dof_handler, pressure_reference_location);
@@ -3857,9 +3933,11 @@ FluidDynamicsSharp<dim>::sharp_edge()
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
                   unsigned int global_index_overwrite = local_dof_indices[i];
+                  const unsigned int cache_particle_id =
+                    periodic_frame_index != 0 ? ib_particle_id : 0;
                   const PeriodicFrameDofCacheKey stencil_cache_key = {
                     global_index_overwrite,
-                    ib_particle_id,
+                    cache_particle_id,
                     periodic_frame_index};
                   if (ib_done.find(stencil_cache_key) == ib_done.end())
                     {
@@ -4091,7 +4169,8 @@ FluidDynamicsSharp<dim>::sharp_edge()
                             }
 
                           stencil_cell->get_dof_indices(local_dof_indices_2);
-                          ib_done[stencil_cache_key] = stencil_cell;
+                          ib_done[stencil_cache_key] =
+                            {stencil_cell, stencil_periodic_shift};
 
                           bool skip_stencil = false;
 
@@ -5675,6 +5754,23 @@ FluidDynamicsSharp<dim>::add_matrix_entry_with_periodic_expansion(
   // rank-dependent.
   if (!this->locally_owned_dofs.is_element(row_dof))
     return;
+
+  // Preserve the nonperiodic Sharp assembly. Its condensed sparsity has
+  // no off-diagonal entries involving constrained DoFs; constraints are
+  // distributed after solving. Skip those known absent entries explicitly
+  // instead of attempting insertion and suppressing arbitrary exceptions.
+  if (!sharp_ib_periodic_boundaries.is_periodic_enabled())
+    {
+      if (row_dof != col_dof &&
+          (this->zero_constraints.is_constrained(row_dof) ||
+           this->nonzero_constraints.is_constrained(row_dof) ||
+           this->zero_constraints.is_constrained(col_dof) ||
+           this->nonzero_constraints.is_constrained(col_dof)))
+        return;
+
+      this->system_matrix.add(row_dof, col_dof, value);
+      return;
+    }
 
   // When sharp_edge() writes IB stencil or constraint equations, the column
   // DoF may be a periodic slave whose entry is not in the sparsity pattern
