@@ -3,11 +3,11 @@
 
 #include <core/lethe_grid_tools.h>
 #include <core/pvd_handler.h>
-#include <core/quadrature_points_data_out.h>
 #include <core/solutions_output.h>
 #include <core/vector.h>
 
 #include <fem-dem/particle_projector.h>
+#include <fem-dem/quadrature_points_data_out.h>
 #include <fem-dem/vans_assemblers.h>
 
 #include <deal.II/base/timer.h>

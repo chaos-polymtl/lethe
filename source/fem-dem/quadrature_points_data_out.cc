@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/quadrature_points_data_out.h>
+#include <fem-dem/quadrature_points_data_out.h>
 
 #include <deal.II/fe/fe_values.h>
 
