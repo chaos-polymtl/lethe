@@ -5,6 +5,7 @@
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
 #include <core/manifolds.h>
+#include <core/parameters.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -154,8 +155,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       };
 
       this->mg_transfer_ls_void_fraction->build(
-        particle_projector.dof_handler,
-        make_level_partitioner(particle_projector.dof_handler));
+        *particle_projector.dof_handler,
+        make_level_partitioner(*particle_projector.dof_handler));
       this->mg_transfer_ls_pf_force->build(
         particle_projector.fluid_force_on_particles_two_way_coupling
           .dof_handler,
@@ -201,12 +202,12 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         .update_ghost_values();
 
       this->mg_transfer_ls_void_fraction->interpolate_to_mg(
-        particle_projector.dof_handler,
+        *particle_projector.dof_handler,
         mg_void_fraction_solution,
         particle_projector.void_fraction_solution);
 
       this->mg_transfer_ls_void_fraction->interpolate_to_mg(
-        particle_projector.dof_handler,
+        *particle_projector.dof_handler,
         mg_time_derivative_void_fraction,
         time_derivative_void_fraction);
 
@@ -251,7 +252,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                 &(*this->mg_operators[l])))
             {
               mf_operator->compute_void_fraction(
-                particle_projector.dof_handler,
+                *particle_projector.dof_handler,
                 mg_void_fraction_solution[h_level],
                 mg_time_derivative_void_fraction[h_level]);
 
@@ -292,7 +293,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
           this->void_fraction_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->void_fraction_dof_handlers[l].distribute_dofs(
-            particle_projector.dof_handler.get_fe());
+            particle_projector.dof_handler->get_fe());
 
           // Particle-fluid force
           this->pf_force_dof_handlers[l].reinit(
@@ -386,7 +387,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       // Build transfer operator for every field
       this->mg_transfer_gc_void_fraction->build(
-        particle_projector.dof_handler, [&](const auto l, auto &vec) {
+        *particle_projector.dof_handler, [&](const auto l, auto &vec) {
           vec.reinit(
             this->void_fraction_dof_handlers[l].locally_owned_dofs(),
             DoFTools::extract_locally_active_dofs(
@@ -460,12 +461,12 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       // Void fraction
       this->mg_transfer_gc_void_fraction->interpolate_to_mg(
-        particle_projector.dof_handler,
+        *particle_projector.dof_handler,
         mg_void_fraction_solution,
         particle_projector.void_fraction_solution);
 
       this->mg_transfer_gc_void_fraction->interpolate_to_mg(
-        particle_projector.dof_handler,
+        *particle_projector.dof_handler,
         mg_time_derivative_void_fraction,
         time_derivative_void_fraction);
 
@@ -575,6 +576,16 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
     !this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
     ExcMessage("The VANS matrix-free solver does not support simplex meshes."));
 
+  // After a mesh adaptation, the void fraction is recomputed on the new mesh,
+  // but its previous time steps are not transferred: they are reset to zero by
+  // setup_dofs(). Mesh adaptation is therefore only valid with the steady
+  // method, which does not use the previous void fractions.
+  AssertThrow(param.cfd_parameters.mesh_adaptation.type ==
+                  Parameters::MeshAdaptation::Type::none ||
+                param.cfd_parameters.simulation_control.method ==
+                  Parameters::SimulationControl::TimeSteppingMethod::steady,
+              NotSupportedMeshAdaptationMethod());
+
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
@@ -619,9 +630,22 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::setup_dofs()
 
   // Initialize the time derivative of the void fraction.
   this->time_derivative_void_fraction.reinit(
-    particle_projector.dof_handler.locally_owned_dofs(),
-    DoFTools::extract_locally_relevant_dofs(particle_projector.dof_handler),
+    this->particle_projector.dof_handler->locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(
+      *this->particle_projector.dof_handler),
     this->mpi_communicator);
+
+  // Provide the void fraction dof_handler and present solution to the
+  // multiphysics interface
+  this->multiphysics->set_dof_handler(PhysicsID::void_fraction,
+                                      particle_projector.dof_handler);
+  this->multiphysics->set_mapping(PhysicsID::void_fraction,
+                                  particle_projector.mapping);
+  this->multiphysics->set_solution(
+    PhysicsID::void_fraction,
+    particle_projector.void_fraction_locally_relevant);
+  this->multiphysics->set_previous_solutions(
+    PhysicsID::void_fraction, particle_projector.previous_void_fraction);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -831,7 +855,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
     component_interpretation = {
       DataComponentInterpretation::component_is_scalar};
   OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    void_fraction_struct(particle_projector.dof_handler,
+    void_fraction_struct(*particle_projector.dof_handler,
                          particle_projector.void_fraction_solution,
                          name,
                          component_interpretation);
@@ -1039,7 +1063,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
                                  "Prepare MF operator for VANS");
 
             mf_operator->compute_void_fraction(
-              particle_projector.dof_handler,
+              *particle_projector.dof_handler,
               particle_projector.void_fraction_solution,
               this->time_derivative_void_fraction);
 
@@ -1061,7 +1085,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 
       this->iterate();
       this->postprocess(false);
-      this->finish_time_step();
+      this->finish_time_step_fd();
 
       if (this->simulation_parameters.timer.type ==
           Parameters::Timer::Type::iteration)

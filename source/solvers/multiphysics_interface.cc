@@ -375,6 +375,24 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
     MicrowaveHeatingWithoutElectromagneticsError(microwave_heating_enabled));
 }
 
+template <int dim>
+bool
+MultiphysicsInterface<dim>::is_field_available(const PhysicsID physics_id) const
+{
+  // Check if the physics_id is in active_physics
+  if (std::ranges::find(active_physics, physics_id) != active_physics.end())
+    return true;
+
+  // Special case for void fraction in VANS, since the void fraction is not an
+  // active physics but would be available as a field in the multiphysics
+  // interface when the fluid dynamics formulation is VANS.
+  if (physics_id == PhysicsID::void_fraction &&
+      this->fluid_dynamics_formulation == FluidDynamicsFormulation::VANS)
+    return true;
+
+  return false;
+}
+
 template void
 MultiphysicsInterface<2>::postprocess_probes(
   const Mapping<2>         &mapping,

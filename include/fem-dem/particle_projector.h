@@ -34,6 +34,12 @@
 
 using namespace dealii;
 
+DeclExceptionMsg(
+  NotSupportedMeshAdaptationMethod,
+  "Mesh adaptation is only supported with the steady time-stepping method "
+  "in the VANS and CFD-DEM solvers at the moment because the void fraction "
+  "field is not yet updated during mesh adaptation.");
+
 /**                                                                                         \
  * @brief Calculate the area of intersection between a circular (2D) particle and a circle. \
  *                                                                                          \
@@ -288,7 +294,7 @@ public:
     const bool                       simplex,
     const ConditionalOStream        &pcout)
     : PhysicsLinearSubequationsSolver(pcout)
-    , dof_handler(*triangulation)
+    , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
     , triangulation(triangulation)
     , void_fraction_parameters(input_parameters)
     , linear_solver_parameters(linear_solver_parameters)
@@ -347,6 +353,12 @@ public:
                 "An invalid quadrature rule was provided to the ParticleProject class."));
           }
       }
+
+    // Initialize the void fraction previous solution vector
+    previous_void_fraction = std::make_shared<std::vector<GlobalVectorType>>();
+
+    // Initialize the void fraction current solution vector
+    void_fraction_locally_relevant = std::make_shared<GlobalVectorType>();
 
     AssertThrow(
       !void_fraction_parameters->project_particle_velocity ||
@@ -445,13 +457,14 @@ public:
   void
   percolate_void_fraction()
   {
-    for (unsigned int i = previous_void_fraction.size() - 1; i > 0; --i)
+    for (unsigned int i = previous_void_fraction->size() - 1; i > 0; --i)
       {
-        previous_void_fraction[i] = previous_void_fraction[i - 1];
+        (*this->previous_void_fraction)[i] =
+          (*this->previous_void_fraction)[i - 1];
         void_fraction_previous_solution[i] =
           void_fraction_previous_solution[i - 1];
       }
-    previous_void_fraction[0]          = void_fraction_locally_relevant;
+    (*this->previous_void_fraction)[0] = *this->void_fraction_locally_relevant;
     void_fraction_previous_solution[0] = void_fraction_solution;
   }
 
@@ -465,8 +478,8 @@ public:
   initialize_void_fraction(const double time)
   {
     calculate_void_fraction(time);
-    for (auto &previous_solution : this->previous_void_fraction)
-      previous_solution = void_fraction_locally_relevant;
+    for (auto &previous_solution : *this->previous_void_fraction)
+      previous_solution = *this->void_fraction_locally_relevant;
 
     for (auto &previous_solution : this->void_fraction_previous_solution)
       previous_solution = void_fraction_solution;
@@ -508,8 +521,9 @@ public:
     fluid_drag_on_particles.particle_field_solution.update_ghost_values();
   }
 
-  /// DoFHandler that manages the void fraction
-  DoFHandler<dim> dof_handler;
+  /// DoFHandler that manages the void fraction, it is a shared pointer because
+  /// it is used by the multiphysics interface
+  std::shared_ptr<DoFHandler<dim>> dof_handler;
 
   /// Mapping for the void fraction
   std::shared_ptr<Mapping<dim>> mapping;
@@ -518,11 +532,13 @@ public:
   std::shared_ptr<Quadrature<dim>> quadrature;
 
   /// The solutions are made public instead of using getters
-  /// Solution of the void fraction at previous time steps
-  std::vector<GlobalVectorType> previous_void_fraction;
+  /// Solution of the void fraction at previous time steps, it is a shared
+  /// pointer because it is used by the multiphysics interface
+  std::shared_ptr<std::vector<GlobalVectorType>> previous_void_fraction;
 
-  /// Fully distributed (including locally relevant) solution
-  GlobalVectorType void_fraction_locally_relevant;
+  /// Fully distributed (including locally relevant) solution, it is a shared
+  /// pointer because it is used by the multiphysics interface
+  std::shared_ptr<GlobalVectorType> void_fraction_locally_relevant;
 
   /// Locally owned solution of the void fraction
   GlobalVectorType void_fraction_locally_owned;
