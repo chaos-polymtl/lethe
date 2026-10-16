@@ -584,8 +584,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   compute_signed_distance_from_distance();
 
   // Conserve local and global volume
-  compute_cell_wise_volume_correction();
-  conserve_global_volume();
+  // compute_cell_wise_volume_correction();
+  // conserve_global_volume();
 
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
@@ -768,12 +768,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           hessian[i][i] += 1.0;
         }
 
+      
       if (residual.l2_norm() < 1e-12)
         {
           converged = true;
           break;
         }
 
+      // hessian.print_formatted(std::cout);
       if (std::abs(hessian.determinant()) < 1e-16)
         return false;
 
@@ -799,6 +801,8 @@ bool
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   compute_closet_point_in_reference_cell(const Point<dim>          &unit_point,
                                          const FiniteElement<dim>  &fe,
+                                         const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                         const NonMatching::MeshClassifier<dim> &mesh_classifier,
                                          const std::vector<double> &dof_values,
                                          Point<dim> &unit_closest_point)
 {
@@ -820,6 +824,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
       !converged)
     {
       double best_distance = std::numeric_limits<double>::max();
+
+      unsigned int face_id = 0;
       for (unsigned int i = 0; i < dim; i++)
         {
           free_coordinates.assign(dim, true);
@@ -828,6 +834,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           // two faces in each direction
           for (const double face_coordinate : {0.0, 1.0})
             {
+              const NonMatching::LocationToLevelSet face_location =
+              mesh_classifier.location_to_level_set(cell, face_id);
+              face_id += 1;
+
+              if (face_location != NonMatching::LocationToLevelSet::intersected)
+                {
+                  continue;
+                }
               Point<dim> candidate_unit_closest_point_in_face = unit_point;
 
               candidate_unit_closest_point_in_face[i] = face_coordinate;
@@ -860,9 +874,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
             }
         }
 
-      if (!found)
-        {
-          best_distance = std::numeric_limits<double>::max();
+      // if (!found)
+        // {
+          // best_distance = std::numeric_limits<double>::max();
           // the solution will be on an edge
           if constexpr (dim == 3)
             {
@@ -920,7 +934,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                     }
                 }
             }
-        }
+        // }
     }
   else
     {
@@ -1016,7 +1030,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                 mapping->transform_real_to_unit_cell(cell, closest_point);
 
               bool converged = compute_closet_point_in_reference_cell(
-                unit_point, *fe, cell_dof_values, unit_closest_point);
+                unit_point, *fe, cell, mesh_classifier, cell_dof_values, unit_closest_point);
 
 
               if (converged)

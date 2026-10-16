@@ -659,6 +659,8 @@ namespace InterfaceTools
     compute_closet_point_in_reference_cell(
       const Point<dim>          &unit_point,
       const FiniteElement<dim>  &fe,
+      const typename DoFHandler<dim>::active_cell_iterator &cell,
+      const NonMatching::MeshClassifier<dim> &mesh_classifier,
       const std::vector<double> &dof_values,
       Point<dim>                &unit_closest_point);
 

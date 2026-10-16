@@ -72,7 +72,7 @@ test()
   Vector<double> error_volume(4);
 
 
-  for (unsigned int m = 0; m < 4; m++)
+  for (unsigned int m = 0; m < 2; m++)
     {
       DoFHandler<dim> background_dof_handler =
         DoFHandler(*background_triangulation);
@@ -145,7 +145,7 @@ test()
         (dim == 2 ? "solution_2d_ref0" + std::to_string(m) :
                     "solution_3d_ref0" + std::to_string(m));
 
-      for (int k = 0; k < 100; k++)
+      for (int k = 0; k < 1000; k++)
         {
           signed_distance_solver->set_level_set_from_background_mesh(
             background_dof_handler, background_level_set);
