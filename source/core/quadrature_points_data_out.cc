@@ -16,9 +16,9 @@ QuadraturePointsDataOut<dim>::build_patches(
     &filter_radius)
 {
   patches.clear();
-  patches.reserve(
-    dof_handler.get_triangulation().n_locally_owned_active_cells() *
-    quadrature.size());
+  // Upper bound: also counts the ghost and artificial cells stored locally
+  patches.reserve(dof_handler.get_triangulation().n_active_cells() *
+                  quadrature.size());
 
   dealii::FEValues<dim> fe_values(mapping,
                                   dof_handler.get_fe(),
