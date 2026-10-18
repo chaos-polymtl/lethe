@@ -33,15 +33,15 @@ jobs:
   #
   # What runs on a pull request, depending on where its changed files are
   # (the first case that matches applies):
-  #   - changes only in doc/
+  #   - changes only in doc/ and release_notes/
   #       --> Check_prm_indent, doc
-  #   - changes in doc/ and contrib/
+  #   - changes in doc/, release_notes/ and contrib/
   #       --> Check_indent, Check_prm_indent, doc
-  #   - changes in doc/, contrib/ and examples/
+  #   - changes in doc/, release_notes/, contrib/ and examples/
   #       --> Check_indent, Check_prm_indent, doc,
   #           then CI-Clang-tidy-v20, CI-Parameter-files-examples
   #   - at least one file elsewhere (source/, include/, tests/,
-  #     applications_tests/, CMakeLists.txt, .github/, release_notes/, ...)
+  #     applications_tests/, CMakeLists.txt, .github/, ...)
   #       --> Check_indent, Check_prm_indent, doc,
   #           then CI-Clang-tidy-v20, CI-Parameter-files-examples, CI-Debug,
   #           CI-Warnings, CI-Release, CI-Lethe-with-dealii-vectors
@@ -91,14 +91,14 @@ jobs:
             if echo "${files}" | grep -qvE "^($1)/"; then echo true; else echo false; fi
           }
 
-          # Check_indent ignores doc/
-          echo "indent=$(changed_outside 'doc')" >> "${GITHUB_OUTPUT}"
-          # CI-Clang-tidy-v20 and CI-Parameter-files-examples ignore doc/ and
-          # contrib/
-          echo "tidy=$(changed_outside 'doc|contrib')" >> "${GITHUB_OUTPUT}"
+          # Check_indent ignores doc/ and release_notes/
+          echo "indent=$(changed_outside 'doc|release_notes')" >> "${GITHUB_OUTPUT}"
+          # CI-Clang-tidy-v20 and CI-Parameter-files-examples ignore doc/,
+          # release_notes/ and contrib/
+          echo "tidy=$(changed_outside 'doc|release_notes|contrib')" >> "${GITHUB_OUTPUT}"
           # CI-Debug, CI-Warnings, CI-Release and CI-Lethe-with-dealii-vectors
-          # ignore doc/, contrib/ and examples/
-          echo "build=$(changed_outside 'doc|contrib|examples')" >> "${GITHUB_OUTPUT}"
+          # ignore doc/, release_notes/, contrib/ and examples/
+          echo "build=$(changed_outside 'doc|release_notes|contrib|examples')" >> "${GITHUB_OUTPUT}"
 
   #
   # Checks
