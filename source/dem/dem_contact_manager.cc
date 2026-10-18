@@ -295,7 +295,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_broad_search(
   const Particles::ParticleHandler<dim> &particle_handler,
   BoundaryCellsInformation<dim>         &boundary_cell_object,
   const typename dem_data_structures<dim>::solid_surfaces_mesh_information
-                                                      solid_surfaces_mesh_info,
+                                                     &solid_surfaces_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim>   &floating_walls,
   const double                                        simulation_time,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)

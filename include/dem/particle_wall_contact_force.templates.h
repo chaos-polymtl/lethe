@@ -300,51 +300,61 @@ ParticleWallContactForce<dim,
           // Loop on every particle using their contact info
           for (auto &&contact_info : map_info | boost::adaptors::map_values)
             {
+              // Defining local variables which will be used to check the
+              // contact and to store it in the contact record
+              auto        &particle            = contact_info.particle;
+              auto         particle_properties = particle->get_properties();
+              const double particle_radius =
+                0.5 * particle_properties[PropertiesIndex::dp];
+              const Point<dim> particle_location = particle->get_location();
+
               // We check the contact between the triangle and the particle.
-              auto particle_triangle_information = LetheGridTools::
-                find_particle_triangle_projection<dim, PropertiesIndex>(
-                  triangle_data, contact_info.particle);
+              // The normal overlap exceeds the force calculation threshold
+              // distance only if the particle center is closer to the
+              // triangle than the cutoff distance given here.
+              auto particle_triangle_information =
+                LetheGridTools::find_particle_triangle_projection(
+                  triangle_data,
+                  particle_location,
+                  particle_radius - force_calculation_threshold_distance);
 
               const auto &[pass_distance_check,
                            projection_point,
                            normal_vector,
                            contact_indicator] = particle_triangle_information;
 
-              // If the particle is close enough to the triangle in
-              // the direction normal to the triangle.
-              if (pass_distance_check)
+              // The particle is too far from the plane of the triangle to be
+              // in contact with it.
+              if (!pass_distance_check)
                 {
-                  // Defining local variables which will be used to store
-                  // the contact in the contact record
-                  auto        &particle            = contact_info.particle;
-                  auto         particle_properties = particle->get_properties();
-                  Point<3>     particle_location_3d = get_location(particle);
-                  const double particle_triangle_distance =
-                    particle_location_3d.distance(projection_point);
-
-                  // Find normal overlap
-                  const double normal_overlap =
-                    0.5 * particle_properties[PropertiesIndex::dp] -
-                    particle_triangle_distance;
-
-                  // The contact is potentially valid, thus we need to store
-                  // it in the contact record.
-                  if (normal_overlap > force_calculation_threshold_distance)
-                    {
-                      // Update information in the contact_info
-                      contact_info.normal_vector     = normal_vector;
-                      contact_info.point_on_boundary = projection_point;
-                      contact_info.boundary_id       = solid_counter;
-
-                      contact_record[particle->get_local_index()].emplace_back(
-                        triangle_cell_iterator,
-                        normal_overlap,
-                        contact_indicator,
-                        &contact_info);
-                    }
-                  else
-                    clear_contact_info(contact_info);
+                  clear_contact_info(contact_info);
+                  continue;
                 }
+
+              const double particle_triangle_distance =
+                get_location(particle).distance(projection_point);
+
+              // Find normal overlap
+              const double normal_overlap =
+                particle_radius - particle_triangle_distance;
+
+              // The contact is potentially valid, thus we need to store
+              // it in the contact record.
+              if (normal_overlap > force_calculation_threshold_distance)
+                {
+                  // Update information in the contact_info
+                  contact_info.normal_vector     = normal_vector;
+                  contact_info.point_on_boundary = projection_point;
+                  contact_info.boundary_id       = solid_counter;
+
+                  contact_record[particle->get_local_index()].emplace_back(
+                    triangle_cell_iterator,
+                    normal_overlap,
+                    contact_indicator,
+                    &contact_info);
+                }
+              else
+                clear_contact_info(contact_info);
             }
         }
       // Every contact between this solid object and the particles are
@@ -355,8 +365,11 @@ ParticleWallContactForce<dim,
       // Loop on every particle / contact record
       for (auto &[particle_index, this_contact_record] : contact_record)
         {
-          // Loop on every contact in the contact record
+          // Loop on every contact in the contact record. Double contacts
+          // involve at least two contacts, so the loop stops once a single
+          // contact is left.
           for (auto C1 = this_contact_record.begin();
+               this_contact_record.size() > 1 &&
                C1 != this_contact_record.end();)
             {
               // Extract the information of C1

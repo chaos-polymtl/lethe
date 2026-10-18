@@ -173,7 +173,7 @@ particle_solid_surfaces_contact_search(
               auto cut_cells = floating_mesh_iterator->second;
 
               // Get neighbors of the background cell
-              auto cell_list = cells_total_neighbor_list.at(
+              const auto &cell_list = cells_total_neighbor_list.at(
                 background_cell->global_active_cell_index());
 
               // Loop through neighbors
@@ -190,6 +190,9 @@ particle_solid_surfaces_contact_search(
                   // If the main cell is not empty
                   if (particles_exist_in_cell)
                     {
+                      // Get the contact candidates of the cut cell
+                      auto &cut_cell_candidates = candidates[cut_cells];
+
                       // Loop through particles in the main cell and build
                       // contact candidate pairs
                       for (typename Particles::ParticleHandler<
@@ -199,7 +202,7 @@ particle_solid_surfaces_contact_search(
                            particle_in_cell_iterator != particles_in_cell.end();
                            ++particle_in_cell_iterator)
                         {
-                          candidates[cut_cells].insert(
+                          cut_cell_candidates.insert(
                             {particle_in_cell_iterator->get_id(),
                              particle_in_cell_iterator});
                         }
@@ -381,7 +384,7 @@ particle_solid_surfaces_contact_search(
               auto cut_cells = floating_mesh_iterator->second;
 
               // Get neighbors of the background cell
-              auto cell_list = cells_total_neighbor_list.at(
+              const auto &cell_list = cells_total_neighbor_list.at(
                 background_cell->global_active_cell_index());
 
               // Loop through neighbors
@@ -402,6 +405,9 @@ particle_solid_surfaces_contact_search(
                     dim>::particle_iterator_range particles_in_cell =
                     particle_handler.particles_in_cell(cell_iterator);
 
+                  // Get the contact candidates of the cut cell
+                  auto &cut_cell_candidates = candidates[cut_cells];
+
                   // Loop through particles in the main cell and build
                   // contact candidate pairs
                   for (auto particle_in_cell_iterator =
@@ -409,7 +415,7 @@ particle_solid_surfaces_contact_search(
                        particle_in_cell_iterator != particles_in_cell.end();
                        ++particle_in_cell_iterator)
                     {
-                      candidates[cut_cells].insert(
+                      cut_cell_candidates.insert(
                         {particle_in_cell_iterator->get_id(),
                          particle_in_cell_iterator});
                     }

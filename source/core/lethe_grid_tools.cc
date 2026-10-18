@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/dem_properties.h>
 #include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -14,7 +13,9 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <cmath>
+#include <tuple>
 #include <utility>
+#include <vector>
 
 template <int dim>
 void
@@ -1245,14 +1246,15 @@ LetheGridTools::prepare_triangle_projection_data(
   return triangle_data;
 }
 
-template <int dim, typename PropertiesIndex>
+template <int dim>
 std::tuple<bool,
            Point<3>,
            Tensor<1, 3>,
            LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::find_particle_triangle_projection(
-  const TriangleProjectionData<dim>      &triangle_data,
-  const Particles::ParticleIterator<dim> &particle)
+  const TriangleProjectionData<dim> &triangle_data,
+  const Point<dim>                  &particle_position,
+  const double                       cutoff_distance)
 {
   // Variable declarations
   bool pass_distance_check;
@@ -1270,9 +1272,7 @@ LetheGridTools::find_particle_triangle_projection(
   const double det = triangle_data.det;
 
   // Pre-allocation for speed
-  const double radius = particle->get_properties()[PropertiesIndex::dp] * 0.5;
-  const Point<dim>     particle_position = particle->get_location();
-  const Tensor<1, dim> vector_to_plane   = p_0 - particle_position;
+  const Tensor<1, dim> vector_to_plane = p_0 - particle_position;
 
   ParticleTriangleContactIndicator contact_indicator;
   // A bool variable for region 0
@@ -1283,11 +1283,15 @@ LetheGridTools::find_particle_triangle_projection(
   if (vector_to_plane * unit_normal > 0)
     unit_normal *= -1.0;
 
-  double distance_squared = scalar_product(vector_to_plane, unit_normal);
+  // Distance between the particle center and the plane of the triangle. The
+  // normal vector points toward the particle, so the scalar product is
+  // negative or zero.
+  const double distance_to_plane =
+    -scalar_product(vector_to_plane, unit_normal);
 
-  // If the particle is too far from the plane, set distance squared as an
-  // arbitrary distance and continue
-  if (distance_squared > (radius * radius))
+  // If the particle is too far from the plane, it is also too far from the
+  // triangle
+  if (distance_to_plane > cutoff_distance)
     {
       // We return right away since the particle is too far from the triangle
       // anyways.
@@ -1486,81 +1490,23 @@ template LetheGridTools::TriangleProjectionData<3>
 LetheGridTools::prepare_triangle_projection_data<3>(
   const std::vector<Point<3>> &triangle);
 
-// input dim == 2
 template std::tuple<bool,
                     Point<3>,
                     Tensor<1, 3>,
                     LetheGridTools::ParticleTriangleContactIndicator>
-LetheGridTools::
-  find_particle_triangle_projection<2, DEM::DEMProperties::PropertiesIndex>(
-    const LetheGridTools::TriangleProjectionData<2> &triangle_data,
-    const Particles::ParticleIterator<2>            &particle);
-
-template std::tuple<bool,
-                    Point<3>,
-                    Tensor<1, 3>,
-                    LetheGridTools::ParticleTriangleContactIndicator>
-LetheGridTools::
-  find_particle_triangle_projection<2, DEM::CFDDEMProperties::PropertiesIndex>(
-    const LetheGridTools::TriangleProjectionData<2> &triangle_data,
-    const Particles::ParticleIterator<2>            &particle);
-
-template std::tuple<bool,
-                    Point<3>,
-                    Tensor<1, 3>,
-                    LetheGridTools::ParticleTriangleContactIndicator>
-LetheGridTools::
-  find_particle_triangle_projection<2, DEM::DEMMPProperties::PropertiesIndex>(
-    const LetheGridTools::TriangleProjectionData<2> &triangle_data,
-    const Particles::ParticleIterator<2>            &particle);
-
-template std::tuple<bool,
-                    Point<3>,
-                    Tensor<1, 3>,
-                    LetheGridTools::ParticleTriangleContactIndicator>
-LetheGridTools::find_particle_triangle_projection<
-  2,
-  DEM::CFDDEMMPProperties::PropertiesIndex>(
+LetheGridTools::find_particle_triangle_projection<2>(
   const LetheGridTools::TriangleProjectionData<2> &triangle_data,
-  const Particles::ParticleIterator<2>            &particle);
-
-// input dim == 3
-template std::tuple<bool,
-                    Point<3>,
-                    Tensor<1, 3>,
-                    LetheGridTools::ParticleTriangleContactIndicator>
-LetheGridTools::
-  find_particle_triangle_projection<3, DEM::DEMProperties::PropertiesIndex>(
-    const LetheGridTools::TriangleProjectionData<3> &triangle_data,
-    const Particles::ParticleIterator<3>            &particle);
+  const Point<2>                                  &particle_position,
+  const double                                     cutoff_distance);
 
 template std::tuple<bool,
                     Point<3>,
                     Tensor<1, 3>,
                     LetheGridTools::ParticleTriangleContactIndicator>
-LetheGridTools::
-  find_particle_triangle_projection<3, DEM::CFDDEMProperties::PropertiesIndex>(
-    const LetheGridTools::TriangleProjectionData<3> &triangle_data,
-    const Particles::ParticleIterator<3>            &particle);
-
-template std::tuple<bool,
-                    Point<3>,
-                    Tensor<1, 3>,
-                    LetheGridTools::ParticleTriangleContactIndicator>
-LetheGridTools::
-  find_particle_triangle_projection<3, DEM::DEMMPProperties::PropertiesIndex>(
-    const LetheGridTools::TriangleProjectionData<3> &triangle_data,
-    const Particles::ParticleIterator<3>            &particle);
-
-template std::tuple<bool,
-                    Point<3>,
-                    Tensor<1, 3>,
-                    LetheGridTools::ParticleTriangleContactIndicator>
-LetheGridTools::find_particle_triangle_projection<
-  3,
-  DEM::CFDDEMMPProperties::PropertiesIndex>(
+LetheGridTools::find_particle_triangle_projection<3>(
   const LetheGridTools::TriangleProjectionData<3> &triangle_data,
-  const Particles::ParticleIterator<3>            &particle);
+  const Point<3>                                  &particle_position,
+  const double                                     cutoff_distance);
 
 
 template <int dim>
