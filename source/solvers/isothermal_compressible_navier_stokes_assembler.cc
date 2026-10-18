@@ -106,9 +106,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            (density * velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
-             grad_phi_p_j - dynamic_viscosity * laplacian_phi_u_j +
-             mass_source * phi_u_j);
+            (density * velocity_gradient * phi_u_j +
+             density * grad_phi_u_j * velocity + grad_phi_p_j -
+             dynamic_viscosity * laplacian_phi_u_j + mass_source * phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
@@ -161,7 +161,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
                     phi_p_i * density * div_phi_u_j;
 
                   // PSPG GLS term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  local_matrix_ij +=
+                    tau / density * (strong_jac * grad_phi_p_i);
                 }
 
               // momentum equation
@@ -342,6 +343,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
   auto &strong_jacobian = copy_data.strong_jacobian;
   auto &local_matrix    = copy_data.local_matrix;
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+
   // Time stepping information
   const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
@@ -375,7 +379,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
           const Tensor<1, dim> &phi_u_i = scratch_data.phi_u[q][i];
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const double         &phi_p_j = scratch_data.phi_p[q][j];
+              const double phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) +=

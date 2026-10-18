@@ -332,6 +332,9 @@ GLSIsothermalCompressibleNavierStokesCLSAssemblerBDF<dim>::assemble_matrix(
   auto &strong_jacobian = copy_data.strong_jacobian;
   auto &local_matrix    = copy_data.local_matrix;
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+
   // Time stepping information
   const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
@@ -370,7 +373,8 @@ GLSIsothermalCompressibleNavierStokesCLSAssemblerBDF<dim>::assemble_matrix(
           const Tensor<1, dim> &phi_u_i = scratch_data.phi_u[q][i];
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const double          phi_p_j = scratch_data.phi_p[q][j];
+              const double phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) +=

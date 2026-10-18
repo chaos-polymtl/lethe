@@ -724,7 +724,9 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
+   * @brief assemble_matrix Adds the buoyancy force to the strong residual used
+   * by the stabilization terms of the Jacobian. The force does not depend on
+   * the velocity or the pressure, so nothing is added to the local matrix.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */

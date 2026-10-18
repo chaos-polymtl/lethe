@@ -810,9 +810,32 @@ template class PhaseChangeCarmanKozenyCLSAssembler<3>;
 template <int dim>
 void
 GLSNavierStokesCLSAssemblerSTF<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim> & /*scratch_data*/,
-  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
-{}
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // The surface tension force does not depend on the velocity or the pressure,
+  // so it has no contribution to the Jacobian. However, it must still be added
+  // to the strong residual since the SUPG term of the Jacobian depends on it.
+  const unsigned int n_q_points = scratch_data.n_q_points;
+
+  auto &strong_residual = copy_data.strong_residual;
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const Tensor<1, dim> &phase_gradient_value_q =
+        scratch_data.phase_gradient_values[q];
+
+      const Tensor<1, dim> normalized_phase_indicator_gradient =
+        phase_gradient_value_q / (phase_gradient_value_q.norm() + 1e-15);
+
+      const Tensor<1, dim> surface_tension_force =
+        -scratch_data.surface_tension[q] * scratch_data.curvature_values[q] *
+        normalized_phase_indicator_gradient *
+        scratch_data.filtered_phase_gradient_values[q].norm();
+
+      strong_residual[q] += surface_tension_force;
+    }
+}
 
 template <int dim>
 void
@@ -880,9 +903,45 @@ template class GLSNavierStokesCLSAssemblerSTF<3>;
 template <int dim>
 void
 GLSNavierStokesCLSAssemblerMarangoni<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim> & /*scratch_data*/,
-  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
-{}
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // The surface tension and Marangoni forces do not depend on the velocity or
+  // the pressure, so they have no contribution to the Jacobian. However, they
+  // must still be added to the strong residual since the SUPG term of the
+  // Jacobian depends on it.
+  const unsigned int n_q_points = scratch_data.n_q_points;
+
+  auto &strong_residual = copy_data.strong_residual;
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const Tensor<1, dim> &phase_gradient_value_q =
+        scratch_data.phase_gradient_values[q];
+
+      const double filtered_phase_gradient_norm =
+        scratch_data.filtered_phase_gradient_values[q].norm();
+
+      const Tensor<1, dim> normalized_phase_indicator_gradient =
+        phase_gradient_value_q / (phase_gradient_value_q.norm() + 1e-15);
+
+      const Tensor<1, dim> &temperature_gradient =
+        scratch_data.temperature_gradients[q];
+
+      const Tensor<1, dim> surface_tension_force =
+        -scratch_data.surface_tension[q] * scratch_data.curvature_values[q] *
+        normalized_phase_indicator_gradient * filtered_phase_gradient_norm;
+
+      const Tensor<1, dim> marangoni_effect =
+        -scratch_data.surface_tension_gradient[q] *
+        (temperature_gradient -
+         normalized_phase_indicator_gradient *
+           (normalized_phase_indicator_gradient * temperature_gradient)) *
+        filtered_phase_gradient_norm;
+
+      strong_residual[q] += marangoni_effect + surface_tension_force;
+    }
+}
 
 template <int dim>
 void
@@ -969,9 +1028,42 @@ template class GLSNavierStokesCLSAssemblerMarangoni<3>;
 template <int dim>
 void
 NavierStokesCLSAssemblerEvaporation<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim> & /*scratch_data*/,
-  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
-{}
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // The recoil pressure force does not depend on the velocity or the pressure,
+  // so it has no contribution to the Jacobian. However, it must still be added
+  // to the strong residual since the SUPG term of the Jacobian depends on it.
+  const unsigned int n_q_points = scratch_data.n_q_points;
+
+  auto &strong_residual = copy_data.strong_residual;
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Only temporary, should change if the evaporation also depends on the
+      // species concentration
+      std::map<field, double> field_value;
+      if (this->evaporation_model->depends_on(field::temperature))
+        {
+          field_value[field::temperature] = scratch_data.temperature_values[q];
+        }
+
+      const double recoil_pressure =
+        this->evaporation_model->momentum_flux(field_value);
+
+      const Tensor<1, dim> &phase_gradient_value_q =
+        scratch_data.phase_gradient_values[q];
+
+      const Tensor<1, dim> normalized_phase_indicator_gradient =
+        phase_gradient_value_q / (phase_gradient_value_q.norm() + 1e-15);
+
+      const Tensor<1, dim> recoil_pressure_force =
+        recoil_pressure * normalized_phase_indicator_gradient *
+        scratch_data.filtered_phase_gradient_values[q].norm();
+
+      strong_residual[q] -= recoil_pressure_force;
+    }
+}
 
 template <int dim>
 void
@@ -1217,7 +1309,7 @@ GLSNavierStokesCLSAssemblerNonNewtonianCore<dim>::assemble_matrix(
                   shear_rate_magnitude *
                   scalar_product(grad_phi_u_j_non_newtonian, shear_rate) *
                   scalar_product(shear_rate, grad_phi_u_i) +
-                density_eq * velocity_gradient_x_phi_u_j[j] * 0.5 * phi_u_i +
+                density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j;
 
@@ -1391,9 +1483,23 @@ template class GLSNavierStokesCLSAssemblerNonNewtonianCore<3>;
 template <int dim>
 void
 ThermalBuoyancyAssemblyCLS<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim> & /*scratch_data*/,
-  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
-{}
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // The buoyancy force does not depend on the velocity or the pressure, so it
+  // has no contribution to the Jacobian. However, it must still be added to the
+  // strong residual since the SUPG term of the Jacobian depends on it.
+  const unsigned int n_q_points = scratch_data.n_q_points;
+
+  auto &strong_residual = copy_data.strong_residual;
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      strong_residual[q] +=
+        scratch_data.force[q] * scratch_data.density_thermal_expansion[q] *
+        (scratch_data.temperature_values[q] - reference_temperature);
+    }
+}
 
 template <int dim>
 void
