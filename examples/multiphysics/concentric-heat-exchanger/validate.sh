@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This script automates the validation process for the concentric heat
+# exchanger example in Lethe.
+
+# Load the validation functions
+. ../../../contrib/validation/validation_functions.sh
+
+# Store filenames of all plots in a variable (space-seperated)
+plots="temperature_along_line.pdf"
+
+# Store filenames of all data files in a variable (space-seperated)
+# The heat fluxes on every boundary are stored to monitor the energy balance
+data="solution-temperature-along-line.dat output/heat_flux_fluid.dat"
+
+# Default path
+output_root="./"
+# Default number of cores
+n_proc=16
+
+# Parse command-line arguments
+parse_command_line "$@"
+
+folder="$output_root/concentric-heat-exchanger"
+action="mpirun -np $n_proc lethe-fluid concentric-heat-exchanger.prm"
+
+recreate_folder "$folder"
+
+# Remove the outputs of a previous run, so that they are not reported again
+# if this run fails. This must be done before the simulation, which writes
+# some of these files.
+rm -f $plots $data
+rm -f output/out*
+
+# Create the mesh
+gmsh -3 concentric-cylinders.geo -o concentric-cylinders.msh > "$folder/log-mesh"
+
+{ time $action ; } &> "$folder/log"
+
+# Process the simulation
+python3 ./plot_temperature_over_line.py --validate
+
+# Copy the information to the log folder
+cp $plots $folder
+cp $data $folder
+
+# Append the information to the report
+magick -density 300  $output_root/report.pdf $plots  -quality 100 $output_root/temporary.pdf
+cp $output_root/temporary.pdf $output_root/report.pdf

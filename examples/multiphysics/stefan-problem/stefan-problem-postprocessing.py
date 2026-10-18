@@ -6,6 +6,11 @@ from scipy.optimize import fsolve
 from scipy.special import erf
 import matplotlib.pyplot as plt
 import pyvista as pv
+import argparse
+
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the Stefan problem')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 #Physical properties
 Cp=1
@@ -53,7 +58,14 @@ plt.plot(x,T_analytical,"--",lw=2,label="Analytical solution")
 plt.xlabel("x")
 plt.ylabel("T")
 plt.legend()
-plt.savefig("lethe-stefan-comparison.png", dpi=300)
-plt.show()
+if (not args.validate):
+    plt.savefig("lethe-stefan-comparison.png", dpi=300)
+    plt.show()
+else:
+    # Store the plotted profiles so that they can be compared between validation runs
+    np.savetxt("solution-temperature.dat",
+               np.column_stack((x, T, T_analytical)),
+               header="x T T_analytical")
+    plt.savefig("lethe-stefan-comparison.pdf")
 
 
