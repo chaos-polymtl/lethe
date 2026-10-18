@@ -1085,6 +1085,9 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 
       this->iterate();
       this->postprocess(false);
+      // The void fraction must be percolated at the end of the time step,
+      // otherwise its time derivative is always evaluated with respect to the
+      // initial void fraction.
       this->finish_time_step_fd();
 
       if (this->simulation_parameters.timer.type ==
