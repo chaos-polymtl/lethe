@@ -16,7 +16,7 @@ examples/dem/3d-rotating-drum 128
 examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed 128
 examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed 128
 examples/sharp-immersed-boundary/sedimentation-1-cuboid 128
-examples/incompressible-flow/2d-taylor-couette-nitsche 1
+examples/incompressible-flow/2d-taylor-couette-nitsche 128
 examples/multiphysics/stefan-problem 1
 examples/multiphysics/rayleigh-benard-convection 128
 examples/multiphysics/concentric-heat-exchanger 128

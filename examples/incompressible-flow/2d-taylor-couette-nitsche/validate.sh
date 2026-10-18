@@ -16,7 +16,7 @@ data="solution-torque-error.dat"
 # Default path
 output_root="./"
 # Default number of cores
-n_proc=1
+n_proc=16
 
 # Parse command-line arguments
 parse_command_line "$@"
