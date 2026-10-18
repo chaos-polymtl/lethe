@@ -552,8 +552,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
       typename FECellIntegrator::hessian_type  hessian;
 
       // The strong form of the residual requires both the laplacian
-      // and the gradient of the divergence of the velocity field.
-      if (this->enable_hessians_residual)
+      // and the gradient of the divergence of the velocity field. The
+      // hessians are only evaluated if they are enabled in the Jacobian. This
+      // flag differs from the residual one on the multigrid levels.
+      if (this->enable_hessians_jacobian)
         {
           hessian_diagonal = integrator.get_hessian_diagonal(q);
           hessian          = integrator.get_hessian(q);
