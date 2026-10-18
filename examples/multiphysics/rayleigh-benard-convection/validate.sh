@@ -30,12 +30,12 @@ recreate_folder "$folder"
 # if this run fails. This must be done before the simulation, which writes
 # some of these files.
 rm -f $plots $data
-rm -f output/rayleigh-benard_convection*
+rm -f output_10k/rayleigh-benard_convection*
 
 { time $action ; } &> "$folder/log"
 
 # Process the simulation
-python3 ./rayleigh-benard-convection.py -f ./output -Ra 10k --validate
+python3 ./rayleigh-benard-convection.py -f ./output_10k -Ra 10k --validate
 
 # Copy the information to the log folder
 cp $plots $folder

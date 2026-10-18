@@ -268,12 +268,12 @@ Post-processing
 ---------------
 A Python post-processing code called ``single_particle_sedimentation.py`` is provided with this example. It is used to plot the velocity and void fraction. The script uses the `PyVista <https://docs.pyvista.org/>`_ library to plot the results.
 
-Running the script is as simple as launching the following command:
+Running the script is as simple as launching the following command from the folder of the example:
 
 .. code-block:: text
   :class: copy-button
 
-   python3 single_particle_sedimentation.py --particle_pvd $PATH_TO_YOUR_PARTICLE_PVD --fluid_pvd $PATH_TO_YOUR_FLUID_PVD
+   python3 single_particle_sedimentation.py --particle_pvd output/result__particles.pvd --fluid_pvd output/result_.pvd
 
 
 
