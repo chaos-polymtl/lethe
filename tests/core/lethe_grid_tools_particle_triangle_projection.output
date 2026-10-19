@@ -1,49 +1,49 @@
 
-DEAL::Face region, above the plane
+DEAL::  Face region, above the plane
 DEAL::  Distance check: pass, contact type: face
 DEAL::  Projection point: 0.250000 0.250000 0.000000
 DEAL::  Normal vector: 0.000000 0.000000 1.000000
-DEAL::Face region, under the plane
+DEAL::  Face region, under the plane
 DEAL::  Distance check: pass, contact type: face
 DEAL::  Projection point: 0.250000 0.250000 0.000000
 DEAL::  Normal vector: 0.000000 0.000000 -1.000000
-DEAL::Face region, just closer than the cutoff
+DEAL::  Face region, just closer than the cutoff
 DEAL::  Distance check: pass, contact type: face
 DEAL::  Projection point: 0.250000 0.250000 0.000000
 DEAL::  Normal vector: 0.000000 0.000000 1.000000
-DEAL::Face region, just farther than the cutoff
+DEAL::  Face region, just farther than the cutoff
 DEAL::  Distance check: fail, contact type: none
 DEAL::  Projection point: 0.000000 0.000000 0.000000
 DEAL::  Normal vector: 0.000000 0.000000 0.000000
-DEAL::Face region, farther than the cutoff under the plane
+DEAL::  Face region, farther than the cutoff under the plane
 DEAL::  Distance check: fail, contact type: none
 DEAL::  Projection point: 0.000000 0.000000 0.000000
 DEAL::  Normal vector: 0.000000 0.000000 0.000000
-DEAL::Edge region of edge 1-2
+DEAL::  Edge region of edge 1-2
 DEAL::  Distance check: pass, contact type: edge
 DEAL::  Projection point: 0.500000 0.500000 0.000000
 DEAL::  Normal vector: 0.700140 0.700140 0.140028
-DEAL::Edge region of edge 0-1
+DEAL::  Edge region of edge 0-1
 DEAL::  Distance check: pass, contact type: edge
 DEAL::  Projection point: 0.500000 0.000000 0.000000
 DEAL::  Normal vector: 0.000000 -0.970143 0.242536
-DEAL::Edge region of edge 0-2
+DEAL::  Edge region of edge 0-2
 DEAL::  Distance check: pass, contact type: edge
 DEAL::  Projection point: 0.000000 0.500000 0.000000
 DEAL::  Normal vector: -0.970143 0.000000 0.242536
-DEAL::Vertex region of vertex 0
+DEAL::  Vertex region of vertex 0
 DEAL::  Distance check: pass, contact type: vertex
 DEAL::  Projection point: 0.000000 0.000000 0.000000
 DEAL::  Normal vector: -0.696311 -0.696311 0.174078
-DEAL::Vertex region of vertex 1
+DEAL::  Vertex region of vertex 1
 DEAL::  Distance check: pass, contact type: vertex
 DEAL::  Projection point: 1.000000 0.000000 0.000000
 DEAL::  Normal vector: 0.937043 -0.312348 0.156174
-DEAL::Vertex region of vertex 2
+DEAL::  Vertex region of vertex 2
 DEAL::  Distance check: pass, contact type: vertex
 DEAL::  Projection point: 0.000000 1.000000 0.000000
 DEAL::  Normal vector: -0.312348 0.937043 0.156174
-DEAL::In the plane, far from the triangle
+DEAL::  In the plane, far from the triangle
 DEAL::  Distance check: pass, contact type: edge
 DEAL::  Projection point: 0.500000 0.500000 0.000000
 DEAL::  Normal vector: 0.707107 0.707107 0.000000

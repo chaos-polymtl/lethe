@@ -79,19 +79,21 @@ test()
   const double cutoff_distance = 0.1;
 
   const std::vector<std::pair<std::string, Point<3>>> particles = {
-    {"Face region, above the plane", Point<3>(0.25, 0.25, 0.05)},
-    {"Face region, under the plane", Point<3>(0.25, 0.25, -0.05)},
-    {"Face region, just closer than the cutoff", Point<3>(0.25, 0.25, 0.0999)},
-    {"Face region, just farther than the cutoff", Point<3>(0.25, 0.25, 0.1001)},
-    {"Face region, farther than the cutoff under the plane",
+    {"  Face region, above the plane", Point<3>(0.25, 0.25, 0.05)},
+    {"  Face region, under the plane", Point<3>(0.25, 0.25, -0.05)},
+    {"  Face region, just closer than the cutoff",
+     Point<3>(0.25, 0.25, 0.0999)},
+    {"  Face region, just farther than the cutoff",
+     Point<3>(0.25, 0.25, 0.1001)},
+    {"  Face region, farther than the cutoff under the plane",
      Point<3>(0.25, 0.25, -0.15)},
-    {"Edge region of edge 1-2", Point<3>(0.75, 0.75, 0.05)},
-    {"Edge region of edge 0-1", Point<3>(0.5, -0.2, 0.05)},
-    {"Edge region of edge 0-2", Point<3>(-0.2, 0.5, 0.05)},
-    {"Vertex region of vertex 0", Point<3>(-0.2, -0.2, 0.05)},
-    {"Vertex region of vertex 1", Point<3>(1.3, -0.1, 0.05)},
-    {"Vertex region of vertex 2", Point<3>(-0.1, 1.3, 0.05)},
-    {"In the plane, far from the triangle", Point<3>(2., 2., 0.)}};
+    {"  Edge region of edge 1-2", Point<3>(0.75, 0.75, 0.05)},
+    {"  Edge region of edge 0-1", Point<3>(0.5, -0.2, 0.05)},
+    {"  Edge region of edge 0-2", Point<3>(-0.2, 0.5, 0.05)},
+    {"  Vertex region of vertex 0", Point<3>(-0.2, -0.2, 0.05)},
+    {"  Vertex region of vertex 1", Point<3>(1.3, -0.1, 0.05)},
+    {"  Vertex region of vertex 2", Point<3>(-0.1, 1.3, 0.05)},
+    {"  In the plane, far from the triangle", Point<3>(2., 2., 0.)}};
 
   for (const auto &[description, particle_position] : particles)
     {
