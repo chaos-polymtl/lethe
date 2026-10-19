@@ -315,7 +315,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>  <span class="comment">// Set up the local and ghost cells (if ASC enabled)</span></div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>  sparse_contacts_object.update_local_and_ghost_cell_set(</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    this-&gt;particle_projector.dof_handler);</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    *this-&gt;particle_projector.dof_handler);</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>  particle_wall_contact_force_object =</div>
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    set_particle_wall_contact_force_model&lt;dim, PropertiesIndex&gt;(</div>
@@ -577,20 +577,20 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>  <span class="comment">// Void Fraction</span></div>
 <div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>  std::vector&lt;const GlobalVectorType *&gt; vf_set_transfer;</div>
 <div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>  vf_set_transfer.push_back(</div>
-<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>    &amp;this-&gt;particle_projector.void_fraction_locally_relevant);</div>
+<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>    &amp;(*this-&gt;particle_projector.void_fraction_locally_relevant));</div>
 <div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0;</div>
-<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>       i &lt; this-&gt;particle_projector.previous_void_fraction.size();</div>
+<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>       i &lt; this-&gt;particle_projector.previous_void_fraction-&gt;size();</div>
 <div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>       ++i)</div>
 <div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>    {</div>
 <div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>      vf_set_transfer.push_back(</div>
-<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>        &amp;this-&gt;particle_projector.previous_void_fraction[i]);</div>
+<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>        &amp;this-&gt;particle_projector.previous_void_fraction-&gt;at(i));</div>
 <div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>    }</div>
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span> </div>
 <div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>  this-&gt;multiphysics-&gt;write_checkpoint();</div>
 <div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span> </div>
 <div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span>  <span class="comment">// Prepare for Serialization</span></div>
 <div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; vf_system_trans_vectors(</div>
-<div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span>    this-&gt;particle_projector.dof_handler);</div>
+<div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span>    *this-&gt;particle_projector.dof_handler);</div>
 <div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span>  vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);</div>
 <div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span> </div>
 <div class="line"><a id="l00482" name="l00482"></a><span class="lineno">  482</span>  <span class="keywordflow">if</span> (<span class="keyword">auto</span> parallel_triangulation =</div>
@@ -732,7 +732,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span> </div>
 <div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>  <span class="comment">// Void Fraction Vectors</span></div>
 <div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>  std::vector&lt;GlobalVectorType *&gt; vf_system(</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>    1 + this-&gt;particle_projector.previous_void_fraction.size());</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>    1 + this-&gt;particle_projector.previous_void_fraction-&gt;size());</div>
 <div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span> </div>
 <div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> vf_distributed_system(</div>
 <div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>    this-&gt;particle_projector.locally_owned_dofs, this-&gt;mpi_communicator);</div>
@@ -742,10 +742,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>  std::vector&lt;GlobalVectorType&gt; vf_distributed_previous_solutions;</div>
 <div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span> </div>
 <div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>  vf_distributed_previous_solutions.reserve(</div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>    this-&gt;particle_projector.previous_void_fraction.size());</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>    this-&gt;particle_projector.previous_void_fraction-&gt;size());</div>
 <div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span> </div>
 <div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0;</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>       i &lt; this-&gt;particle_projector.previous_void_fraction.size();</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>       i &lt; this-&gt;particle_projector.previous_void_fraction-&gt;size();</div>
 <div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>       ++i)</div>
 <div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    {</div>
 <div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>      vf_distributed_previous_solutions.emplace_back(</div>
@@ -755,17 +755,17 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>    }</div>
 <div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span> </div>
 <div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; vf_system_trans_vectors(</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>    this-&gt;particle_projector.dof_handler);</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>    *this-&gt;particle_projector.dof_handler);</div>
 <div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span> </div>
 <div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>  vf_system_trans_vectors.deserialize(vf_system);</div>
 <div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span> </div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>  this-&gt;particle_projector.void_fraction_locally_relevant =</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>  *this-&gt;particle_projector.void_fraction_locally_relevant =</div>
 <div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>    vf_distributed_system;</div>
 <div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0;</div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>       i &lt; this-&gt;particle_projector.previous_void_fraction.size();</div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>       i &lt; this-&gt;particle_projector.previous_void_fraction-&gt;size();</div>
 <div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>       ++i)</div>
 <div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>    {</div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>      this-&gt;particle_projector.previous_void_fraction[i] =</div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>      this-&gt;particle_projector.previous_void_fraction-&gt;at(i) =</div>
 <div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>        vf_distributed_previous_solutions[i];</div>
 <div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>    }</div>
 <div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span> </div>
@@ -866,18 +866,18 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>  <span class="comment">// Void Fraction</span></div>
 <div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>  std::vector&lt;const GlobalVectorType *&gt; vf_set_transfer;</div>
 <div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>  vf_set_transfer.push_back(</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    &amp;this-&gt;particle_projector.void_fraction_locally_relevant);</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    &amp;(*this-&gt;particle_projector.void_fraction_locally_relevant));</div>
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0;</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>       i &lt; this-&gt;particle_projector.previous_void_fraction.size();</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>       i &lt; this-&gt;particle_projector.previous_void_fraction-&gt;size();</div>
 <div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>       ++i)</div>
 <div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>    {</div>
 <div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>      vf_set_transfer.push_back(</div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>        &amp;this-&gt;particle_projector.previous_void_fraction[i]);</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>        &amp;this-&gt;particle_projector.previous_void_fraction-&gt;at(i));</div>
 <div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>    }</div>
 <div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span> </div>
 <div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>  <span class="comment">// Prepare for Serialization</span></div>
 <div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>  SolutionTransfer&lt;dim, GlobalVectorType&gt; vf_system_trans_vectors(</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>    this-&gt;particle_projector.dof_handler);</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>    *this-&gt;particle_projector.dof_handler);</div>
 <div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>  vf_system_trans_vectors.prepare_for_coarsening_and_refinement(</div>
 <div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    vf_set_transfer);</div>
 <div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span> </div>
@@ -942,7 +942,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span> </div>
 <div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>  <span class="comment">// Update the local and ghost cells (if ASC enabled)</span></div>
 <div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>  sparse_contacts_object.update_local_and_ghost_cell_set(</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>    this-&gt;particle_projector.dof_handler);</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>    *this-&gt;particle_projector.dof_handler);</div>
 <div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
 <div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>  <span class="comment">// Velocity Vectors</span></div>
 <div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>  std::vector&lt;GlobalVectorType *&gt; x_system(1 +</div>
@@ -982,7 +982,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span> </div>
 <div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>  <span class="comment">// Void Fraction Vectors</span></div>
 <div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>  std::vector&lt;GlobalVectorType *&gt; vf_system(</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    1 + this-&gt;particle_projector.previous_void_fraction.size());</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    1 + this-&gt;particle_projector.previous_void_fraction-&gt;size());</div>
 <div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span> </div>
 <div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> vf_distributed_system(</div>
 <div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>    this-&gt;particle_projector.locally_owned_dofs, this-&gt;mpi_communicator);</div>
@@ -992,10 +992,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>  std::vector&lt;GlobalVectorType&gt; vf_distributed_previous_solutions;</div>
 <div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span> </div>
 <div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>  vf_distributed_previous_solutions.reserve(</div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>    this-&gt;particle_projector.previous_void_fraction.size());</div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>    this-&gt;particle_projector.previous_void_fraction-&gt;size());</div>
 <div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span> </div>
 <div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0;</div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>       i &lt; this-&gt;particle_projector.previous_void_fraction.size();</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>       i &lt; this-&gt;particle_projector.previous_void_fraction-&gt;size();</div>
 <div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>       ++i)</div>
 <div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>    {</div>
 <div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>      vf_distributed_previous_solutions.emplace_back(</div>
@@ -1006,13 +1006,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span> </div>
 <div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>  vf_system_trans_vectors.interpolate(vf_system);</div>
 <div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span> </div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>  this-&gt;particle_projector.void_fraction_locally_relevant =</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>  *this-&gt;particle_projector.void_fraction_locally_relevant =</div>
 <div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>    vf_distributed_system;</div>
 <div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0;</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>       i &lt; this-&gt;particle_projector.previous_void_fraction.size();</div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>       i &lt; this-&gt;particle_projector.previous_void_fraction-&gt;size();</div>
 <div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>       ++i)</div>
 <div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>    {</div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>      this-&gt;particle_projector.previous_void_fraction[i] =</div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>      this-&gt;particle_projector.previous_void_fraction-&gt;at(i) =</div>
 <div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>        vf_distributed_previous_solutions[i];</div>
 <div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>    }</div>
 <div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span> </div>
@@ -1382,8 +1382,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>      <span class="keywordtype">double</span>             total_volume_fluid, total_volume_particles;</div>
 <div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span>      std::tie(total_volume_fluid, total_volume_particles) =</div>
 <div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>        <a class="code hl_function" href="postprocessing__cfd__dem_8h.html#a1ee6b8e55653fc306f9a7a8919043cbf">calculate_fluid_and_particle_volumes</a>(</div>
-<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>          this-&gt;particle_projector.dof_handler,</div>
-<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>          this-&gt;particle_projector.void_fraction_locally_relevant,</div>
+<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>          *this-&gt;particle_projector.dof_handler,</div>
+<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>          *this-&gt;particle_projector.void_fraction_locally_relevant,</div>
 <div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span>          *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>          *this-&gt;mapping);</div>
 <div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span>      this-&gt;table_phase_volumes.add_value(</div>
@@ -1442,9 +1442,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>        this-&gt;simulation_parameters.flow_control.flow_direction;</div>
 <div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>      <span class="keywordtype">double</span> average_velocity = <a class="code hl_function" href="postprocessing__cfd_8h.html#a885519f82401f5f66cb4f0363b9715a9">calculate_average_velocity</a>(</div>
 <div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>        *this-&gt;dof_handler,</div>
-<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>        this-&gt;particle_projector.dof_handler,</div>
+<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>        *this-&gt;particle_projector.dof_handler,</div>
 <div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>        *this-&gt;present_solution,</div>
-<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>        this-&gt;particle_projector.void_fraction_locally_relevant,</div>
+<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>        *this-&gt;particle_projector.void_fraction_locally_relevant,</div>
 <div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>        flow_direction,</div>
 <div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>        *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>        *this-&gt;mapping);</div>
@@ -1741,7 +1741,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01593" name="l01593"></a><span class="lineno"> 1593</span> </div>
 <div class="line"><a id="l01594" name="l01594"></a><span class="lineno"> 1594</span>      <span class="comment">// Identify the mobility status of particles (if ASC enabled)</span></div>
 <div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span>      sparse_contacts_object.identify_mobility_status(</div>
-<div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span>        this-&gt;particle_projector.dof_handler,</div>
+<div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span>        *this-&gt;particle_projector.dof_handler,</div>
 <div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>        this-&gt;particle_handler,</div>
 <div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>        (*this-&gt;triangulation).n_active_cells(),</div>
 <div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>        this-&gt;mpi_communicator);</div>
@@ -1937,7 +1937,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01787" name="l01787"></a><span class="lineno"> 1787</span>                      <span class="comment">// Output mobility status vector</span></div>
 <div class="line"><a id="l01788" name="l01788"></a><span class="lineno"> 1788</span>                      visualization_object.print_intermediate_format(</div>
 <div class="line"><a id="l01789" name="l01789"></a><span class="lineno"> 1789</span>                        mobility_status,</div>
-<div class="line"><a id="l01790" name="l01790"></a><span class="lineno"> 1790</span>                        this-&gt;particle_projector.dof_handler,</div>
+<div class="line"><a id="l01790" name="l01790"></a><span class="lineno"> 1790</span>                        *this-&gt;particle_projector.dof_handler,</div>
 <div class="line"><a id="l01791" name="l01791"></a><span class="lineno"> 1791</span>                        this-&gt;mpi_communicator,</div>
 <div class="line"><a id="l01792" name="l01792"></a><span class="lineno"> 1792</span>                        this-&gt;pcout);</div>
 <div class="line"><a id="l01793" name="l01793"></a><span class="lineno"> 1793</span>                    }</div>
