@@ -1,0 +1,369 @@
+# =============================================================================
+# Couette Flow With Twenty Fixed Spheres (3D Sharp Immersed Boundary)
+# =============================================================================
+# Steady Couette flow between two parallel plates (y = 0 and y = 30) with
+# streamwise (x) and spanwise (z) periodicity. Twenty rigid spheres of radius
+# R = 1 sit in the midplane z = 10 with random (x, y) centers. Particle
+# velocities follow the Couette profile u = y/20 so that each sphere is in
+# equilibrium with the undisturbed shear.
+#
+# Domain: 75 x 30 x 20. Fluid: nu = 10, rho = 1. Walls use weak Dirichlet
+# (beta = 10). Navier-Stokes is not assembled inside particles. Wall forces
+# compared to the Einstein dilute limit mu (1 + 5/2 phi) with F0 = 750 for the empty channel.
+# =============================================================================
+
+set dimension = 3
+
+set dimension = 3
+
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 0
+  set output name       = couette-3d-20p
+  set output frequency  = 1
+  set subdivision       = 1
+  set output path       = ./out_20p/
+end
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 10
+    set density             = 1
+  end
+end
+
+subsection timer
+  set type = iteration
+end
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 25,10,10 : 0,0,0 : 75,30,20 : true
+  set initial refinement = 2
+end
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id                 = 0
+    set type               = periodic
+    set periodic id        = 1
+    set periodic direction = 0
+  end
+  subsection bc 1
+    set id   = 2
+    set type = function_weak
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+    set beta = 10
+  end
+  subsection bc 2
+    set id   = 3
+    set type = function_weak
+    subsection u
+      set Function expression = 1.5
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+    set beta = 10
+  end
+  subsection bc 3
+    set id                 = 4
+    set type               = periodic
+    set periodic id        = 5
+    set periodic direction = 2
+  end
+end
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = y/20; 0; 0; 0
+  end
+end
+
+subsection particles
+  set assemble Navier-Stokes inside particles = false
+  set number of particles                     = 20
+  subsection extrapolation function
+    set length ratio   = 2
+    set stencil degree = 2
+  end
+  subsection local mesh refinement
+    set initial refinement                = 2
+    set refine mesh inside radius factor  = 0.7
+    set refine mesh outside radius factor = 1.2
+  end
+  subsection particle info 0
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 25.520628; 6.969531; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.348477; 0; 0
+    end
+  end
+  subsection particle info 1
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 47.763544; 5.166035; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.258302; 0; 0
+    end
+  end
+  subsection particle info 2
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 39.939976; 11.910845; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.595542; 0; 0
+    end
+  end
+  subsection particle info 3
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 7.443927; 15.171022; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.758551; 0; 0
+    end
+  end
+  subsection particle info 4
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 8.250169; 5.586399; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.279320; 0; 0
+    end
+  end
+  subsection particle info 5
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 32.367305; 22.517599; 10.000000
+    end
+    subsection velocity
+      set Function expression = 1.125880; 0; 0
+    end
+  end
+  subsection particle info 6
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 46.165459; 25.297306; 10.000000
+    end
+    subsection velocity
+      set Function expression = 1.264865; 0; 0
+    end
+  end
+  subsection particle info 7
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 69.885347; 4.571402; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.228570; 0; 0
+    end
+  end
+  subsection particle info 8
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 61.875855; 10.161014; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.508051; 0; 0
+    end
+  end
+  subsection particle info 9
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 13.309346; 6.209221; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.310461; 0; 0
+    end
+  end
+  subsection particle info 10
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 24.476764; 22.270906; 10.000000
+    end
+    subsection velocity
+      set Function expression = 1.113545; 0; 0
+    end
+  end
+  subsection particle info 11
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 15.789394; 16.876804; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.843840; 0; 0
+    end
+  end
+  subsection particle info 12
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 46.946116; 12.065143; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.603257; 0; 0
+    end
+  end
+  subsection particle info 13
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 40.746624; 4.944146; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.247207; 0; 0
+    end
+  end
+  subsection particle info 14
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 24.862008; 16.967923; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.848396; 0; 0
+    end
+  end
+  subsection particle info 15
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 34.316538; 10.394641; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.519732; 0; 0
+    end
+  end
+  subsection particle info 16
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 57.517805; 19.576872; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.978844; 0; 0
+    end
+  end
+  subsection particle info 17
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 39.213362; 23.628162; 10.000000
+    end
+    subsection velocity
+      set Function expression = 1.181408; 0; 0
+    end
+  end
+  subsection particle info 18
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 53.102280; 10.122569; 10.000000
+    end
+    subsection velocity
+      set Function expression = 0.506128; 0; 0
+    end
+  end
+  subsection particle info 19
+    set type             = sphere
+    set shape arguments  = 1
+    set integrate motion = false
+    subsection position
+      set Function expression = 50.780085; 17.170507; 10.000000
+      `    end
+      subsection velocity
+        set Function expression = 0.858525; 0; 0
+      end
+    end
+  end
+
+  subsection mesh adaptation
+    set type = none
+  end
+
+  subsection forces
+    set verbosity             = verbose
+    set calculate force       = true
+    set calculate torque      = false
+    set force name            = force_20p_3d
+    set calculation frequency = 1
+    set output frequency      = 1
+  end
+
+  subsection non-linear solver
+    subsection fluid dynamics
+      set tolerance      = 1e-4
+      set max iterations = 10
+      set verbosity      = verbose
+    end
+  end
+
+  subsection linear solver
+    subsection fluid dynamics
+      set method                                = gmres
+      set max iters                             = 5000
+      set max krylov vectors                    = 1000
+      set relative residual                     = 1e-2
+      set minimum residual                      = 1e-8
+      set preconditioner                        = ilu
+      set ilu preconditioner fill               = 2
+      set ilu preconditioner relative tolerance = 1.00
+      set verbosity                             = verbose
+    end
+  end
