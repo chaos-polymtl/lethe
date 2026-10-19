@@ -199,8 +199,11 @@ InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
         contact_outcome.force[particle_id];
 
       Tensor<1, dim> particle_displacement;
-      for (int d = 0; d < dim; ++d)
-        particle_displacement[d] = accumulated_displacement[d];
+      if constexpr (dim == 2)
+        particle_displacement = tensor_nd_to_2d(accumulated_displacement);
+      else if constexpr (dim == 3)
+        particle_displacement = accumulated_displacement;
+
 
       // Particles without contact are not displaced
       const double displacement_norm = particle_displacement.norm();

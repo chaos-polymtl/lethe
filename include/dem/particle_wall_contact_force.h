@@ -1119,6 +1119,8 @@ private:
         // convention (i -> j), the forces are thus calculated on the wall
         const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
 
+        // TODO: 1.02 and 0.01 are arbitrary values. These values could be
+        // input parameters from a parameter file.
         normal_displacement =
           (1.02 * normal_overlap +
            0.01 * particle_properties[PropertiesIndex::dp]) *
