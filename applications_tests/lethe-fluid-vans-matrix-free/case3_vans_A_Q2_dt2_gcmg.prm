@@ -53,7 +53,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : false
-  set initial refinement = 5
+  set initial refinement = 4
 end
 
 #---------------------------------------------------
