@@ -98,6 +98,17 @@ public:
     const LinearAlgebra::distributed::Vector<double>
       &momentum_transfer_coefficient_solution);
 
+  /**
+   * @brief Precompute the forcing term at the quadrature points. In addition to
+   * the momentum forcing term, this also precomputes the mass source term,
+   * which is the last component of the forcing function. As in the
+   * matrix-based solvers, the mass source term is added to the continuity
+   * equation and its momentum (mass source times velocity) is added to the
+   * momentum equation.
+   */
+  void
+  compute_forcing_term() override;
+
 protected:
   /**
    * @brief Store relevant values of the vector of the last newton step to use it
@@ -149,6 +160,10 @@ protected:
   /// Table with correct alignment for vectorization to store the values of the
   /// time deriative of the void fraction
   Table<2, VectorizedArray<number>> time_derivative_void_fraction;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// mass source term, which is the last component of the forcing function
+  Table<2, VectorizedArray<number>> mass_source_terms;
 
   /// Table with correct alignment for vectorization to store the values of the
   /// particle-fluid forces (without drag). These are the resulting forces
