@@ -860,7 +860,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::gather_output_hook()
   solution_output_structs.emplace_back(
     std::in_place_type<
       OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>>,
-    particle_projector.dof_handler,
+    *particle_projector.dof_handler,
     particle_projector.void_fraction_solution,
     name,
     component_interpretation);

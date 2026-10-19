@@ -1999,7 +1999,7 @@ ParticleProjector<dim, PropertiesIndex>::write_qcm_quadrature_points(
   const double qcm_smoothing_length =
     void_fraction_parameters->qcm_smoothing_length;
   qp_out.build_patches(
-    dof_handler, *mapping, *quadrature, [&](const auto &cell) {
+    *dof_handler, *mapping, *quadrature, [&](const auto &cell) {
       // Same filter length as in the QCM void fraction calculation
       return (qcm_smoothing_length > 1e-16) ?
                0.5 * qcm_smoothing_length :
