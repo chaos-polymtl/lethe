@@ -40,6 +40,7 @@ If the problem being simulated has a source, it can be added in this section. Th
 
   * In 2D, the first two terms are the source terms for  the :math:`x`, :math:`y` component of the momentum equation. The third term is the mass source term. 
   * In 3D, the first three terms are for the :math:`x`, :math:`y` and :math:`z` component of the momentum equation and the fourth term is for the mass source term.
+  * The mass source term :math:`m` is added to the continuity equation and its momentum, :math:`m\mathbf{u}`, is added to the momentum equation. The mass source term is ignored by ``lethe-fluid-matrix-free``, but it is supported by ``lethe-fluid-vans-matrix-free`` and ``lethe-fluid-particles-matrix-free``.
 
   .. tip::
 
@@ -47,7 +48,7 @@ If the problem being simulated has a source, it can be added in this section. Th
 
   .. tip::
 
-	If you are using the ``lethe-fluid-matrix-free`` application the usage of a source term significantly affects performance. If you are not using it, we advice you to disable it explicitly by setting ``enable = false``.
+	If you are using the ``lethe-fluid-matrix-free`` application the usage of a source term significantly affects performance, since it is evaluated at every quadrature point at each time step. If you are not using it, we advice you to disable it explicitly by setting ``enable = false``.
 
 * ``subsection heat transfer``: defines the parameters for a heat source term. This source term is defined by a ``Function expression`` and can depend on both space (``x``, ``y`` and, if 3D, ``z``) and time (``t``). See :ref:`ex function`.
 

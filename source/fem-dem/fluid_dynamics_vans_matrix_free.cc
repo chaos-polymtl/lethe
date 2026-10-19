@@ -1013,8 +1013,13 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
   while (this->simulation_control->integrate())
     {
       if (this->forcing_function)
-        this->forcing_function->set_time(
-          this->simulation_control->get_current_time());
+        {
+          this->forcing_function->set_time(
+            this->simulation_control->get_current_time());
+          // The forcing term is precomputed by the operator, it must be
+          // recomputed for a time-dependent forcing function to be accounted.
+          this->system_operator->compute_forcing_term();
+        }
 
       this->update_boundary_conditions();
       this->multiphysics->update_boundary_conditions();

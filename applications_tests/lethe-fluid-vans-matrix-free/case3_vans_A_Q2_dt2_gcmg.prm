@@ -1,0 +1,183 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This test is the model A counterpart of the case3_vans test of
+# lethe-fluid-vans. It is a transient manufactured solution with a
+# time-dependent void fraction that requires a mass source term. It tests the
+# time derivative of the void fraction, the mass source term and the
+# time-dependent source term of the VANS matrix-free solver.
+# Contrary to case3_vans, the time-dependent part of the void fraction has a
+# zero mean over the domain. Since the velocity is imposed on the whole
+# boundary, this keeps the discrete global mass balance consistent.
+# This test is identical to case3_vans_A_Q2_dt1_gcmg, but with half the time
+# step.
+# Q2 elements are used so that the spatial error is small compared to the
+# time error.
+# The source term was generated with the
+# python/mms/mms_source_terms/mms_vans_2d_modelA_transient.py script of the
+# lethe-utils repository.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method               = bdf2
+  set output name          = mms2d_
+  set output frequency     = 0
+  set startup time scaling = 0.6
+  set time end             = 1
+  set time step            = 0.05
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1.000
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : false
+  set initial refinement = 5
+end
+
+#---------------------------------------------------
+# Void Fraction
+#---------------------------------------------------
+
+subsection void fraction
+  set mode = function
+  subsection function
+    set Function expression = (1 - 0.1*cos(2*pi*t)*sin(pi*x)*sin(pi*y))/exp(1)
+  end
+end
+
+#---------------------------------------------------
+# CFD-DEM
+#---------------------------------------------------
+
+subsection cfd-dem
+  set grad div                      = false
+  set vans model                    = modelA
+  set void fraction time derivative = true
+  set pressure force                = false
+  set shear force                   = false
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree      = 2
+  set pressure degree      = 2
+  set void fraction degree = 2
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = cos(pi*x)*cos(pi*y); cos(pi*x)*cos(pi*y); 0
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number                = 1
+  set time dependent        = true
+  set fix pressure constant = true
+
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = cos(2*pi*t)*cos(pi*x)*cos(pi*y)
+    end
+    subsection v
+      set Function expression = cos(2*pi*t)*cos(pi*x)*cos(pi*y)
+    end
+  end
+end
+
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set Function expression = pi*(2*pi*(0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*cos(2*pi*t)*cos(pi*x)*cos(pi*y) + pi*(0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*cos(2*pi*t)*cos(pi*(x + y)) - 2*(0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*sin(2*pi*t)*cos(pi*x)*cos(pi*y) - (0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*sin(pi*x)*cos(2*pi*t)^2*cos(pi*x)*cos(pi*y)^2 - (0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x)^2*cos(pi*y) + (0.2*sin(pi*t)^4*sin(2*pi*(x + y)) - 0.05*sin(2*pi*(x + y)) + 0.45*sin(pi*(-2*t + x + y)) + 0.05*sin(2*pi*(-t + x + y)) + 0.05*sin(2*pi*(t + x + y)) - 0.05*sin(pi*(2*t - x + y)) - 0.05*sin(pi*(2*t + x - y)) + 0.55*sin(pi*(2*t + x + y)))*cos(2*pi*t)*cos(pi*x)*cos(pi*y))/(0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)  ;  pi*(2*pi*(0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*cos(2*pi*t)*cos(pi*x)*cos(pi*y) + pi*(0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*cos(2*pi*t)*cos(pi*(x + y)) - 2*(0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*sin(2*pi*t)*cos(pi*x)*cos(pi*y) - (0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*sin(pi*x)*cos(2*pi*t)^2*cos(pi*x)*cos(pi*y)^2 - (0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x)^2*cos(pi*y) + (0.2*sin(pi*t)^4*sin(2*pi*(x + y)) - 0.05*sin(2*pi*(x + y)) + 0.45*sin(pi*(-2*t + x + y)) + 0.05*sin(2*pi*(-t + x + y)) + 0.05*sin(2*pi*(t + x + y)) - 0.05*sin(pi*(2*t - x + y)) - 0.05*sin(pi*(2*t + x - y)) + 0.55*sin(pi*(2*t + x + y)))*cos(2*pi*t)*cos(pi*x)*cos(pi*y))/(0.1*sin(pi*x)*sin(pi*y)*cos(2*pi*t) - 1)  ;  pi*(-0.05*(1 - cos(2*pi*t))^2*sin(2*pi*(x + y)) + 0.05*sin(2*pi*(x + y)) - 0.45*sin(pi*(-2*t + x + y)) - 0.05*sin(2*pi*(-t + x + y)) - 0.05*sin(2*pi*(t + x + y)) + 0.05*sin(pi*(2*t - x + y)) + 0.05*sin(pi*(2*t + x - y)) - 0.55*sin(pi*(2*t + x + y)))*exp(-1)
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = cos(2*pi*t)*cos(pi*x)*cos(pi*y); cos(2*pi*t)*cos(pi*x)*cos(pi*y); 0
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-8
+    set max iterations = 10
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method                          = gmres
+    set relative residual               = 1e-3
+    set minimum residual                = 1e-11
+    set preconditioner                  = gcmg
+    set verbosity                       = quiet
+    set mg verbosity                    = quiet
+    set mg smoother iterations          = 1
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = additive_schwarz_method
+    set eig estimation verbosity        = quiet
+    set mg coarse grid solver           = direct
+  end
+end
