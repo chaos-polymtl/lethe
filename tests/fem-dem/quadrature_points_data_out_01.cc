@@ -16,6 +16,8 @@
 
 #include <deal.II/base/quadrature_lib.h>
 
+#include <deal.II/distributed/tria.h>
+
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -34,7 +36,7 @@ void
 test()
 {
   // Unit cube refined once: 2^dim cells
-  Triangulation<dim> triangulation;
+  parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
   GridGenerator::hyper_cube(triangulation, 0., 1.);
   triangulation.refine_global(1);
 
@@ -46,9 +48,12 @@ test()
   MappingQ<dim> mapping(1);
   QGauss<dim>   quadrature(2);
 
+  // Give every cell a different, arbitrary filter radius linked to its index,
+  // so that a radius attached to the wrong cell shows up in the output. The +1
+  // avoids a zero radius for the first cell
   QuadraturePointsDataOut<dim> qp_out;
   qp_out.build_patches(dof_handler, mapping, quadrature, [](const auto &cell) {
-    return 0.1 * (cell->active_cell_index() + 1);
+    return (cell->global_active_cell_index() + 1.);
   });
 
   // The gnuplot header contains the date and the time at which the file was
@@ -75,7 +80,8 @@ main()
 {
   try
     {
-      initlog();
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+      MPILogInitAll                    all;
       test<2>();
       test<3>();
     }
