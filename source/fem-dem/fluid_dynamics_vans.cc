@@ -34,6 +34,16 @@ FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
       this->pcout)
   , has_periodic_boundaries(false)
 {
+  // After a mesh adaptation, the void fraction is recomputed on the new mesh,
+  // but its previous time steps are not transferred: they are reset to zero by
+  // setup_dofs(). Mesh adaptation is therefore only valid with the steady
+  // method, which does not use the previous void fractions.
+  AssertThrow(nsparam.cfd_parameters.mesh_adaptation.type ==
+                  Parameters::MeshAdaptation::Type::none ||
+                nsparam.cfd_parameters.simulation_control.method ==
+                  Parameters::SimulationControl::TimeSteppingMethod::steady,
+              NotSupportedMeshAdaptationMethod());
+
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
@@ -68,6 +78,18 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
+  // Provide the void fraction dof_handler and present solution to the
+  // multiphysics interface
+  this->multiphysics->set_dof_handler(PhysicsID::void_fraction,
+                                      particle_projector.dof_handler);
+  this->multiphysics->set_mapping(PhysicsID::void_fraction,
+                                  particle_projector.mapping);
+  this->multiphysics->set_solution(
+    PhysicsID::void_fraction,
+    particle_projector.void_fraction_locally_relevant);
+  this->multiphysics->set_previous_solutions(
+    PhysicsID::void_fraction, particle_projector.previous_void_fraction);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -180,12 +202,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::vertices_cell_mapping()
   // Find all the cells around each vertex
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
 
-  LetheGridTools::vertices_cell_mapping(this->particle_projector.dof_handler,
+  LetheGridTools::vertices_cell_mapping(*this->particle_projector.dof_handler,
                                         vertices_to_cell);
 
   if (has_periodic_boundaries)
     LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
-      this->particle_projector.dof_handler, vertices_to_periodic_cell);
+      *this->particle_projector.dof_handler, vertices_to_periodic_cell);
 }
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
@@ -515,12 +537,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_matrix(
     &(*(this->triangulation)),
     cell->level(),
     cell->index(),
-    &this->particle_projector.dof_handler);
+    &(*this->particle_projector.dof_handler));
 
   scratch_data.reinit_void_fraction(
     void_fraction_cell,
-    particle_projector.void_fraction_locally_relevant,
-    particle_projector.previous_void_fraction);
+    *this->particle_projector.void_fraction_locally_relevant,
+    *this->particle_projector.previous_void_fraction);
 
   scratch_data.calculate_physical_properties();
 
@@ -532,7 +554,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_matrix(
         *phase_cell,
         this->evaluation_point,
         (*this->previous_solutions)[0],
-        this->particle_projector.void_fraction_locally_relevant,
+        *this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
         this->multiphysics->get_filtered_solution(PhysicsID::CLS));
@@ -544,7 +566,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_matrix(
         void_fraction_cell,
         this->evaluation_point,
         (*this->previous_solutions)[0],
-        this->particle_projector.void_fraction_locally_relevant,
+        *this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
@@ -743,12 +765,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
     &(*(this->triangulation)),
     cell->level(),
     cell->index(),
-    &this->particle_projector.dof_handler);
+    &(*this->particle_projector.dof_handler));
 
   scratch_data.reinit_void_fraction(
     void_fraction_cell,
-    particle_projector.void_fraction_locally_relevant,
-    particle_projector.previous_void_fraction);
+    *this->particle_projector.void_fraction_locally_relevant,
+    *this->particle_projector.previous_void_fraction);
 
   scratch_data.calculate_physical_properties();
 
@@ -760,7 +782,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
         *phase_cell,
         this->evaluation_point,
         (*this->previous_solutions)[0],
-        particle_projector.void_fraction_locally_relevant,
+        *this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
         this->multiphysics->get_filtered_solution(PhysicsID::CLS));
@@ -772,7 +794,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
         void_fraction_cell,
         this->evaluation_point,
         (*this->previous_solutions)[0],
-        particle_projector.void_fraction_locally_relevant,
+        *this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
@@ -855,8 +877,8 @@ FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-    particle_projector.dof_handler,
-    particle_projector.void_fraction_locally_relevant,
+    *this->particle_projector.dof_handler,
+    *this->particle_projector.void_fraction_locally_relevant,
     std::vector<std::string>{"void_fraction"},
     std::vector<DataComponentInterpretation::DataComponentInterpretation>{
       DataComponentInterpretation::component_is_scalar});
@@ -1044,15 +1066,15 @@ FluidDynamicsVANS<dim, PropertiesIndex>::monitor_mass_conservation()
             &(*this->triangulation),
             cell->level(),
             cell->index(),
-            &this->particle_projector.dof_handler);
+            &(*this->particle_projector.dof_handler));
           fe_values_void_fraction.reinit(void_fraction_cell);
 
           // Gather void fraction (values, gradient)
           fe_values_void_fraction.get_function_values(
-            particle_projector.void_fraction_locally_relevant,
+            *this->particle_projector.void_fraction_locally_relevant,
             present_void_fraction_values);
           fe_values_void_fraction.get_function_gradients(
-            particle_projector.void_fraction_locally_relevant,
+            *this->particle_projector.void_fraction_locally_relevant,
             present_void_fraction_gradients);
 
           fe_values.reinit(cell);
@@ -1078,19 +1100,19 @@ FluidDynamicsVANS<dim, PropertiesIndex>::monitor_mass_conservation()
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               fe_values_void_fraction.get_function_values(
-                particle_projector.previous_void_fraction[0],
+                this->particle_projector.previous_void_fraction->at(0),
                 p1_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 fe_values_void_fraction.get_function_values(
-                  particle_projector.previous_void_fraction[1],
+                  this->particle_projector.previous_void_fraction->at(1),
                   p2_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 fe_values_void_fraction.get_function_values(
-                  particle_projector.previous_void_fraction[2],
+                  this->particle_projector.previous_void_fraction->at(2),
                   p3_void_fraction_values);
             }
 

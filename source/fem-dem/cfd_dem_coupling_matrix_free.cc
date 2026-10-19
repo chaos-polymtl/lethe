@@ -201,7 +201,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::initialize_dem_parameters()
 
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(
-    this->particle_projector.dof_handler);
+    *this->particle_projector.dof_handler);
 
   particle_wall_contact_force_object =
     set_particle_wall_contact_force_model<dim, PropertiesIndex>(
@@ -474,7 +474,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
 
   // Prepare for Serialization
   SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
-    this->particle_projector.dof_handler);
+    *this->particle_projector.dof_handler);
   vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
 
   if (auto parallel_triangulation =
@@ -627,7 +627,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
 
   // Void Fraction Vectors
   std::vector<VectorType *> vf_system(
-    1 + this->particle_projector.previous_void_fraction.size());
+    1 + this->particle_projector.previous_void_fraction->size());
 
   VectorType vf_distributed_system(
     this->particle_projector.locally_owned_dofs,
@@ -639,10 +639,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
   std::vector<VectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
-    this->particle_projector.previous_void_fraction.size());
+    this->particle_projector.previous_void_fraction->size());
 
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
@@ -653,7 +653,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
     }
 
   SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
-    this->particle_projector.dof_handler);
+    *this->particle_projector.dof_handler);
 
   vf_system_trans_vectors.deserialize(vf_system);
 
@@ -665,12 +665,12 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
     this->particle_projector.void_fraction_locally_owned,
     this->particle_projector.void_fraction_solution);
 
-  this->particle_projector.void_fraction_locally_relevant =
+  *this->particle_projector.void_fraction_locally_relevant =
     this->particle_projector.void_fraction_locally_owned;
 #endif
 
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
       this->particle_projector.void_fraction_previous_solution[i] =
@@ -681,7 +681,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
       convert_vector_dealii_to_trilinos(
         this->particle_projector.void_fraction_locally_owned,
         this->particle_projector.void_fraction_previous_solution[i]);
-      this->particle_projector.previous_void_fraction[i] =
+      this->particle_projector.previous_void_fraction->at(i) =
         this->particle_projector.void_fraction_locally_owned;
 #endif
     }
@@ -828,7 +828,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
 
   // Prepare for Serialization
   SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
-    this->particle_projector.dof_handler);
+    *this->particle_projector.dof_handler);
   vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
     vf_set_transfer);
 
@@ -935,7 +935,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
 
   // Void Fraction Vectors
   std::vector<VectorType *> vf_system(
-    1 + this->particle_projector.previous_void_fraction.size());
+    1 + this->particle_projector.previous_void_fraction->size());
 
   VectorType vf_distributed_system(
     this->particle_projector.locally_owned_dofs,
@@ -947,10 +947,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
   std::vector<VectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
-    this->particle_projector.previous_void_fraction.size());
+    this->particle_projector.previous_void_fraction->size());
 
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
@@ -986,12 +986,12 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
     this->particle_projector.void_fraction_locally_owned,
     this->particle_projector.void_fraction_solution);
 
-  this->particle_projector.void_fraction_locally_relevant =
+  *this->particle_projector.void_fraction_locally_relevant =
     this->particle_projector.void_fraction_locally_owned;
 #endif
 
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
       // Refresh the ghost values before storing, for the same reason as the
@@ -1008,7 +1008,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
       convert_vector_dealii_to_trilinos(
         this->particle_projector.void_fraction_locally_owned,
         this->particle_projector.void_fraction_previous_solution[i]);
-      this->particle_projector.previous_void_fraction[i] =
+      this->particle_projector.previous_void_fraction->at(i) =
         this->particle_projector.void_fraction_locally_owned;
 #endif
     }
@@ -1276,8 +1276,8 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::postprocess_cfd_dem()
       double             total_volume_fluid, total_volume_particles;
       std::tie(total_volume_fluid, total_volume_particles) =
         calculate_fluid_and_particle_volumes(
-          this->particle_projector.dof_handler,
-          this->particle_projector.void_fraction_locally_relevant,
+          *this->particle_projector.dof_handler,
+          *this->particle_projector.void_fraction_locally_relevant,
           *this->cell_quadrature,
           *this->mapping);
       this->table_phase_volumes.add_value(
@@ -1335,7 +1335,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::dynamic_flow_control()
         this->simulation_parameters.flow_control.flow_direction;
       double average_velocity = calculate_average_velocity(
         *this->dof_handler,
-        this->particle_projector.dof_handler,
+        *this->particle_projector.dof_handler,
         *this->present_solution,
         this->particle_projector.void_fraction_solution,
         flow_direction,
@@ -1618,7 +1618,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::dem_contact_build()
 
       // Identify the mobility status of particles (if ASC enabled)
       sparse_contacts_object.identify_mobility_status(
-        this->particle_projector.dof_handler,
+        *this->particle_projector.dof_handler,
         this->particle_handler,
         (*this->triangulation).n_active_cells(),
         this->mpi_communicator);
@@ -1801,7 +1801,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
             "Prepare MF operator for VANS");
 
           mf_operator->compute_void_fraction(
-            this->particle_projector.dof_handler,
+            *this->particle_projector.dof_handler,
             this->particle_projector.void_fraction_solution,
             this->time_derivative_void_fraction);
 

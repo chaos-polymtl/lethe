@@ -36,7 +36,9 @@ enum PhysicsID : unsigned int
   CLS = 3,
   /// Cahn-Hilliard (Phase indicator, Potential)
   cahn_hilliard = 4,
-  /// Void fraction
+  /// Void fraction (not an auxiliary physics). Computed by the particle
+  /// projector of the VANS solvers and registered by them in the
+  /// multiphysics interface. Only available with the VANS formulation.
   void_fraction = 5,
   /// Time-harmonic electromagnetics (Electric field, Magnetic field)
   electromagnetics = 6

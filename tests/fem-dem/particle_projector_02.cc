@@ -257,7 +257,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   if (output_vtu)
     {
       DataOut<3> data_out;
-      data_out.add_data_vector(particle_projector.dof_handler,
+      data_out.add_data_vector(*particle_projector.dof_handler,
                                particle_projector.void_fraction_solution,
                                "void_fraction");
       data_out.add_data_vector(
