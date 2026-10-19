@@ -1551,6 +1551,8 @@ private:
       0.5 * (particle_one_properties[PropertiesIndex::dp] +
              particle_two_properties[PropertiesIndex::dp]);
 
+    // TODO: 0.501 and 0.01 values should be parameters declared in the
+    // parameter file
     normal_displacement =
       (0.501 * normal_overlap + 0.01 * mean_diameter) * normal_unit_vector;
 
