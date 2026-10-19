@@ -317,14 +317,16 @@ ParticleWallContactForce<dim,
                   triangle_data,
                   particle_location,
                   particle_radius - force_calculation_threshold_distance);
+            // If we are using the DMT model, a force may need to be calculated
+            // even if the particle and the triangle are not touching.
 
               const auto &[pass_distance_check,
                            projection_point,
                            normal_vector,
                            contact_indicator] = particle_triangle_information;
 
-              // The particle is too far from the plane of the triangle to be
-              // in contact with it.
+              // The particle is too far from the triangle, there is no force
+              // calculation.
               if (!pass_distance_check)
                 {
                   clear_contact_info(contact_info);

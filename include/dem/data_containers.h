@@ -148,7 +148,7 @@ namespace DEM
       typename Triangulation<dim - 1, dim>::active_cell_iterator,
       ankerl::unordered_dense::map<types::particle_index,
                                    Particles::ParticleIterator<dim>>,
-      /* mapped_type */ cut_cell_comparison<dim>>
+      cut_cell_comparison<dim>>
       particle_floating_wall_from_mesh_candidates;
 
     // <cell iterator, <particle id, particle-wall info>>
@@ -156,7 +156,7 @@ namespace DEM
       typename Triangulation<dim - 1, dim>::active_cell_iterator,
       ankerl::unordered_dense::map<types::particle_index,
                                    particle_wall_contact_info<dim>>,
-      /* mapped_type */ cut_cell_comparison<dim>>
+      cut_cell_comparison<dim>>
       particle_triangle_cell_from_mesh_potentially_in_contact;
 
     // [<cell iterator, <particle id, particle iterator>>]
