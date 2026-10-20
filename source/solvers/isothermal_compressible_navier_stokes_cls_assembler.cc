@@ -104,9 +104,8 @@ GLSIsothermalCompressibleNavierStokesCLSAssemblerCore<dim>::assemble_matrix(
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
-      // Pressure scaling factor
-      const double pressure_scaling_factor =
-        scratch_data.pressure_scaling_factor;
+      // The pressure scaling factor is not applied, since SimulationParameters
+      // rejects any factor other than 1 when the density is not constant.
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -115,9 +114,7 @@ GLSIsothermalCompressibleNavierStokesCLSAssemblerCore<dim>::assemble_matrix(
           const auto &phi_u_j           = scratch_data.phi_u[q][j];
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
-
-          const auto &grad_phi_p_j =
-            scratch_data.grad_phi_p[q][j] * pressure_scaling_factor;
+          const auto &grad_phi_p_j      = scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
             (density_eq * velocity_gradient * phi_u_j +
@@ -149,10 +146,8 @@ GLSIsothermalCompressibleNavierStokesCLSAssemblerCore<dim>::assemble_matrix(
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
               const auto &shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
-              const auto &phi_p_j =
-                scratch_data.phi_p[q][j] * pressure_scaling_factor;
-              const auto &grad_phi_p_j =
-                scratch_data.grad_phi_p[q][j] * pressure_scaling_factor;
+              const auto &phi_p_j      = scratch_data.phi_p[q][j];
+              const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -332,9 +327,6 @@ GLSIsothermalCompressibleNavierStokesCLSAssemblerBDF<dim>::assemble_matrix(
   auto &strong_jacobian = copy_data.strong_jacobian;
   auto &local_matrix    = copy_data.local_matrix;
 
-  // Pressure scaling factor
-  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
-
   // Time stepping information
   const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
@@ -373,8 +365,7 @@ GLSIsothermalCompressibleNavierStokesCLSAssemblerBDF<dim>::assemble_matrix(
           const Tensor<1, dim> &phi_u_i = scratch_data.phi_u[q][i];
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const double phi_p_j =
-                pressure_scaling_factor * scratch_data.phi_p[q][j];
+              const double          phi_p_j = scratch_data.phi_p[q][j];
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) +=

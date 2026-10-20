@@ -19,6 +19,8 @@
 #include <solvers/source_terms.h>
 #include <solvers/tracer_drift_velocity.h>
 
+#include <cmath>
+
 template <int dim>
 class SimulationParameters
 {
@@ -490,6 +492,24 @@ public:
                 "thermal independence of the density, which is incompatible with the\n "
                 "thermal buoyancy force."));
           }
+      }
+
+    // The isothermal compressible assemblers, which are used whenever the
+    // density is not constant, do not apply the pressure scaling factor to the
+    // pressure columns of the Jacobian. The pressure degrees of freedom of the
+    // Newton correction would nevertheless be rescaled after the linear solve,
+    // so the factor is rejected rather than ignored.
+    if (!physical_properties_manager.density_is_constant())
+      {
+        constexpr double pressure_scaling_tolerance = 1e-8;
+        AssertThrow(
+          std::abs(stabilization.pressure_scaling_factor - 1.) <
+            pressure_scaling_tolerance,
+          ExcMessage(
+            "Inconsistency in .prm!\n "
+            "The 'pressure scaling factor' parameter of the 'stabilization'\n "
+            "subsection is not supported with a non-constant density model\n "
+            "(isothermal_ideal_gas). Set it to 1."));
       }
 
     if (simulation_control.adapt_with_capillary_time_step_ratio)
