@@ -1797,9 +1797,23 @@ template class LaplaceAssembly<3>;
 template <int dim>
 void
 ThermalBuoyancyAssembly<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim> & /*scratch_data*/,
-  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
-{}
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // The buoyancy force does not depend on the velocity or the pressure, so it
+  // has no contribution to the Jacobian. However, it must still be added to the
+  // strong residual since the SUPG term of the Jacobian depends on it.
+  const unsigned int n_q_points = scratch_data.n_q_points;
+
+  auto &strong_residual = copy_data.strong_residual;
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      strong_residual[q] +=
+        scratch_data.force[q] * scratch_data.thermal_expansion[q] *
+        (scratch_data.temperature_values[q] - reference_temperature);
+    }
+}
 
 
 
