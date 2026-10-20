@@ -63,7 +63,7 @@ In this example, we are simulating a rectangular-based tank. We use the deal.II 
 
 
 .. note::
-    The domain is 20x40x20 times the particle diameter and is divided into 15x30x15 cells. The cell size is thus :math:`S_c = 4/3 \, d_p`, that is, the particle diameter is 75% of the cell size.
+    The domain is divided into 15x30x15 cells, so that the particle diameter is 75% of the cell size (:math:`S_c = 4/3 \, d_p`).
 
 .. important::
     The grid of the particle insertion needs to be the same used in the unresolved CFD-DEM simulation. If you wish to use another mesh refinement, the particle insertion mesh needs to be adapted accordingly.
