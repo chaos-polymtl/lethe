@@ -474,10 +474,11 @@ now using immersed boundaries to represent the inner cylinder. This example demo
 </section>
 <section id="files-used-in-this-example">
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
-<p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/incompressible-flow/2d-taylor-couette-nitsche</span></code>).</p>
+<p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/incompressible-flow/2d-taylor-couette-nitsche</span></code>).</p>
 <ul class="simple">
 <li><p>Parameter file with uniform mesh refinement: <code class="docutils literal notranslate"><span class="pre">uniform-taylor-couette-nitsche.prm</span></code></p></li>
 <li><p>Parameter file with adaptive mesh refinement: <code class="docutils literal notranslate"><span class="pre">adaptive-taylor-couette-nitsche.prm</span></code></p></li>
+<li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">postprocess_taylor_couette_nitsche.py</span></code></p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
@@ -732,6 +733,10 @@ Running the simulation with finer meshes lead to this results.</p>
 </pre></div>
 </div>
 <p>We see that even for a small number of cells (~18k), the error on the torque is less than 0.5%.</p>
+<p>The torques on both cylinders and the L2 error of the velocity can be plotted against the number of cells, along with the analytical torque, by launching the following command in the folder of the simulation:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 postprocess_taylor_couette_nitsche.py
+</pre></div>
+</div>
 </section>
 </section>
 <section id="possibilities-for-extension">

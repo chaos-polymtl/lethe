@@ -521,7 +521,7 @@ time step is modified during the simulation to keep the maximum value of the CFL
   set output name                    = rayleigh-benard_convection
   set output control                 = time
   set output time frequency          = 0.5
-  set output path                    = ./output/
+  set output path                    = ./output_10k/
 end
 </pre></div>
 </div>
@@ -597,8 +597,12 @@ run in parallel using mpirun. The first simulation takes
 <p>The following animation shows the evolution of the temperature field with the flow direction for the simulation at <span class="math notranslate nohighlight">\(Ra=10^6\)</span> when starting from a zero temperature initial condition:</p>
 <iframe width="640" height="360" src="https://www.youtube.com/embed/NSJJpPauiXo" frameborder="0" allowfullscreen></iframe><p>Below, we also present the velocity profiles at steady-state of our simulation compared to the ones presented by Ouertatani <em>et al.</em> <a class="footnote-reference brackets" href="#ouertatani" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> as a verification of the Lethe software.</p>
 <p><a class="reference internal" href="../../../_images/solution-rayleigh-uy.png"><img alt="fig1" src="../../../_images/solution-rayleigh-uy.png" style="width: 45%;" /></a> <a class="reference internal" href="../../../_images/solution-rayleigh-xv.png"><img alt="fig2" src="../../../_images/solution-rayleigh-xv.png" style="width: 47%;" /></a></p>
-<p>The results can be postprocessed using the provided Python script (<code class="docutils literal notranslate"><span class="pre">rayleigh-benard-convection.py</span></code>). Here is an example of how to call the script:</p>
+<p>The results can be postprocessed using the provided Python script (<code class="docutils literal notranslate"><span class="pre">rayleigh-benard-convection.py</span></code>). Each output folder is given with <code class="docutils literal notranslate"><span class="pre">-f</span></code> and its Rayleigh number with <code class="docutils literal notranslate"><span class="pre">-Ra</span></code>, in the same order. The simulations at <span class="math notranslate nohighlight">\(Ra=10^4\)</span> and <span class="math notranslate nohighlight">\(Ra=10^6\)</span> write their results in <code class="docutils literal notranslate"><span class="pre">./output_10k/</span></code> and <code class="docutils literal notranslate"><span class="pre">./output_1M/</span></code> respectively, so both are postprocessed with:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 rayleigh-benard-convection.py -f ./output_10k -f ./output_1M -Ra 10k -Ra 1M
+</pre></div>
+</div>
+<p>A single simulation can also be postprocessed on its own, for instance the one at <span class="math notranslate nohighlight">\(Ra=10^4\)</span>:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 rayleigh-benard-convection.py -f ./output_10k -Ra 10k
 </pre></div>
 </div>
 <p>This script extracts the velocity in the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> directions at the mid-width (<span class="math notranslate nohighlight">\(x=0.5\)</span>) and mid-height (<span class="math notranslate nohighlight">\(y=0.5\)</span>) respectively and create the above plots.</p>
