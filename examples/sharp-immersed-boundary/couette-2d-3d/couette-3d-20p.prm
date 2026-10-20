@@ -21,7 +21,6 @@ subsection simulation control
   set number mesh adapt = 0
   set output name       = couette-3d-20p
   set output frequency  = 1
-  set subdivision       = 1
   set output path       = ./out_20p/
 end
 
