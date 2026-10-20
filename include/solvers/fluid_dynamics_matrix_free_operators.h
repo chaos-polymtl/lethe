@@ -54,12 +54,14 @@ struct TimeSteppingData
  * @tparam Number Abstract type for number across the class (i.e., double).
  * @param function Function to evaluate.
  * @param p_vectorized Batch of points to evaluate function at.
+ * @param component Component of the function to evaluate.
  * @return VectorizedArray<Number> Batch of evaluated values.
  */
 template <int dim, typename Number>
 VectorizedArray<Number>
 evaluate_function(const Function<dim>                       &function,
-                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+                  const Point<dim, VectorizedArray<Number>> &p_vectorized,
+                  const unsigned int                         component = 0)
 {
   VectorizedArray<Number> result;
   for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
@@ -67,7 +69,7 @@ evaluate_function(const Function<dim>                       &function,
       Point<dim> p;
       for (int d = 0; d < dim; ++d)
         p[d] = p_vectorized[d][v];
-      result[v] = function.value(p);
+      result[v] = function.value(p, component);
     }
   return result;
 }
@@ -272,9 +274,13 @@ public:
   compute_solid_cell_mask();
 
   /**
-   * @brief Precompute forcing term.
+   * @brief Precompute forcing term at the quadrature points. This is called
+   * when the operator is initialized and must be called again whenever the
+   * time of the forcing function changes, since the forcing function is
+   * otherwise only evaluated at the time at which the operator was
+   * initialized.
    */
-  void
+  virtual void
   compute_forcing_term();
 
 
