@@ -335,9 +335,9 @@ namespace LetheGridTools
   /**
    * @brief Finds the contact point between a triangle (defined using three
    * vertices) and a particle center, the normal contact vector and the contact
-   * type. The particle center is first compared to the plane form by the
-   * triangle. If the particle is farther from the plane than the define
-   * cutoff distance, the function return right away with a
+   * type. The particle center is first compared to the plane formed by the
+   * triangle. If the particle is farther from the plane than the defined
+   * cutoff distance, the function returns right away with a
    * "pass_distance_check = false". Otherwise, the full contact point
    * calculation is taken from  Geometric Tools for
    * Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to triangle.
