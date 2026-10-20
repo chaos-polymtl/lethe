@@ -15,7 +15,7 @@ Features
 
 - Solver: ``lethe-fluid-sharp``
 - Couette flow in two and three dimensions
-- Sharp-edge immersed boundary methods, at fixed centers
+- Sharp-edge immersed boundary methods for static particles
 - Solid fraction varied by the particle radius
 
 ---------------------------
