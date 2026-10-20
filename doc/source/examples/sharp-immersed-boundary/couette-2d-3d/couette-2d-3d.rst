@@ -358,7 +358,6 @@ equations inside the spheres.
 
     python3 epsilon_2d.py
     python3 epsilon_3d.py
-    mpirun -np 4 lethe-fluid-sharp couette_ref.prm
     mpirun -np 4 lethe-fluid-sharp couette-2d-corr.prm
     mpirun -np 4 lethe-fluid-sharp couette-3d-20p.prm
     python3 calc_ratio.py
