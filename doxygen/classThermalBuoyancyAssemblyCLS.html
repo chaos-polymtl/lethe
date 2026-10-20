@@ -136,7 +136,7 @@ class ThermalBuoyancyAssemblyCLS&lt; dim &gt;</div><p>Assembles the thermal buoy
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00610">610</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00619">619</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a55fdb4b00d19c7e41b80182d951b6fa4" name="a55fdb4b00d19c7e41b80182d951b6fa4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a55fdb4b00d19c7e41b80182d951b6fa4">&#9670;&#160;</a></span>ThermalBuoyancyAssemblyCLS()</h2>
@@ -174,7 +174,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00613">613</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00622">622</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -215,7 +215,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_matrix Assembles the matrix </p>
+<p>assemble_matrix Adds the buoyancy force to the strong residual used by the stabilization terms of the Jacobian. The force does not depend on the velocity or the pressure, so nothing is added to the local matrix. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -224,7 +224,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html#l01393">1393</a> of file <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html">navier_stokes_cls_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html#l01485">1485</a> of file <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html">navier_stokes_cls_assemblers.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01500">NavierStokesScratchData&lt; dim &gt;::density_thermal_expansion</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01552">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01545">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01680">NavierStokesScratchData&lt; dim &gt;::temperature_values</a>.</p>
 
 </div>
 </div>
@@ -273,7 +275,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html#l01400">1400</a> of file <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html">navier_stokes_cls_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html#l01506">1506</a> of file <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html">navier_stokes_cls_assemblers.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01500">NavierStokesScratchData&lt; dim &gt;::density_thermal_expansion</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01552">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01556">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00204">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01544">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01545">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01580">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01680">NavierStokesScratchData&lt; dim &gt;::temperature_values</a>.</p>
 
@@ -302,7 +304,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00641">641</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00652">652</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -328,7 +330,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00640">640</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00651">651</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
 
 </div>
 </div>
