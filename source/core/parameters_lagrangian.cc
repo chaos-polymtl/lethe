@@ -1647,9 +1647,10 @@ namespace Parameters
               // Read the rotational vector from a list of doubles
               Tensor<1, 3> rotational_vector =
                 value_string_to_tensor<3>(prm.get("rotational vector"));
-              AssertThrow(rotational_vector.norm() != 0.,
-                          ExcMessage(
-                            "Invalid rotational vector. Its norm cannot be equal to zero."));
+              AssertThrow(
+                rotational_vector.norm() != 0.,
+                ExcMessage(
+                  "Invalid rotational vector. Its norm cannot be equal to zero."));
               // Read the point from a list of doubles
               Tensor<1, 3> point_on_rotation_axis_tensor =
                 value_string_to_tensor<3>(
