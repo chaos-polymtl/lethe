@@ -41,6 +41,7 @@ from lethe_pyvista_tools import *
 
 parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 3d-heated-packed-bed example')
 parser.add_argument("-f", "--folder", type=str, help="Folder path. This folder is the folder which contains the .prm file.", required=True)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
 
 # Simulation folder
@@ -153,5 +154,12 @@ plt.grid()
 plt.ylim(19,34)
 plt.xlabel('Time (s) after packing')
 plt.ylabel('Temperature (°C)')
-plt.savefig('mean-temperatures')
-plt.show()
+if (not args.validate):
+    plt.savefig('mean-temperatures')
+    plt.show()
+else:
+    # Store the plotted mean temperatures so that they can be compared between validation runs
+    np.savetxt("solution-mean-temperatures.dat",
+               np.column_stack((time[start:], temperature)),
+               header=f"t T(h={heights[0]:.3f}) T(h={heights[1]:.3f}) T(h={heights[2]:.3f})")
+    plt.savefig('mean-temperatures.pdf')

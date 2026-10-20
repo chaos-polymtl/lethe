@@ -21,7 +21,7 @@ subsection simulation control
   set output name                    = rayleigh-benard_convection
   set output control                 = time
   set output time frequency          = 0.05
-  set output path                    = ./output/
+  set output path                    = ./output_1M/
 end
 
 #---------------------------------------------------

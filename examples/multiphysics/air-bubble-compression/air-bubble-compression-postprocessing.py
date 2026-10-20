@@ -6,6 +6,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import argparse
 
 import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
@@ -17,8 +18,14 @@ from lethe_pyvista_tools import *
 # Run script : python3 path_to_air-bubble-compression-postprocessing.py path_to_case prm_file_name
 
 #Take case path as argument
-simulation_path = sys.argv[1]
-prm_file_name = sys.argv[2]
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the air bubble compression example')
+parser.add_argument("simulation_path", type=str, help="Path to the folder which contains the .prm file")
+parser.add_argument("prm_file_name", type=str, help="Name of the .prm file")
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
+
+simulation_path = args.simulation_path
+prm_file_name = args.prm_file_name
 
 # Name the save path
 save_path = simulation_path
@@ -78,7 +85,10 @@ plt.xlabel('Time [s]')
 plt.ylabel(r'Density [kg/m$^3$]')
 plt.legend(loc="best")
 plt.tight_layout()
-plt.savefig(f'{simulation_path}/figure-' + figure_name + '-density.png', dpi=300)
+if (not args.validate):
+    plt.savefig(f'{simulation_path}/figure-' + figure_name + '-density.png', dpi=300)
+else:
+    plt.savefig(f'{simulation_path}/figure-' + figure_name + '-density.pdf')
 
 # Plot pressure
 fig1 = plt.figure(figsize=(9.5, 6))
@@ -89,6 +99,18 @@ plt.xlabel('Time [s]')
 plt.ylabel('Pressure [Pa]')
 plt.legend(loc="best")
 plt.tight_layout()
-plt.savefig(f'{simulation_path}/figure-' + figure_name + '-pressure.png', dpi=300)
+if (not args.validate):
+    plt.savefig(f'{simulation_path}/figure-' + figure_name + '-pressure.png', dpi=300)
+    plt.show()
+else:
+    plt.savefig(f'{simulation_path}/figure-' + figure_name + '-pressure.pdf')
 
-plt.show()
+    # Store the plotted values, with the analytical solution at the same
+    # times, so that they can be compared between validation runs
+    np.savetxt(f'{simulation_path}/solution-density-pressure.dat',
+               np.column_stack((time_list,
+                                np.ravel(density),
+                                np.interp(time_list, analytical_time, analytical_density),
+                                np.ravel(pressure),
+                                np.interp(time_list, analytical_time, analytical_pressure))),
+               header="t density density_analytical pressure pressure_analytical")

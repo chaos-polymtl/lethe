@@ -88,7 +88,7 @@ The time integration is handled by a 1st order backward differentiation scheme t
       set output name                    = rayleigh-benard_convection
       set output control                 = time
       set output time frequency          = 0.5
-      set output path                    = ./output/
+      set output path                    = ./output_10k/
     end
 
 Multiphysics
@@ -193,12 +193,19 @@ Below, we also present the velocity profiles at steady-state of our simulation c
 .. |fig2| image:: images/solution-rayleigh-xv.png
     :width: 47%
 
-The results can be postprocessed using the provided Python script (``rayleigh-benard-convection.py``). Here is an example of how to call the script:
+The results can be postprocessed using the provided Python script (``rayleigh-benard-convection.py``). Each output folder is given with ``-f`` and its Rayleigh number with ``-Ra``, in the same order. The simulations at :math:`Ra=10^4` and :math:`Ra=10^6` write their results in ``./output_10k/`` and ``./output_1M/`` respectively, so both are postprocessed with:
 
 .. code-block:: text
   :class: copy-button
 
   python3 rayleigh-benard-convection.py -f ./output_10k -f ./output_1M -Ra 10k -Ra 1M
+
+A single simulation can also be postprocessed on its own, for instance the one at :math:`Ra=10^4`:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 rayleigh-benard-convection.py -f ./output_10k -Ra 10k
 
 This script extracts the velocity in the :math:`x` and :math:`y` directions at the mid-width (:math:`x=0.5`) and mid-height (:math:`y=0.5`) respectively and create the above plots.
 
