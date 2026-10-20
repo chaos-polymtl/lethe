@@ -12,7 +12,6 @@
 # compared to the Einstein dilute limit mu (1 + 5/2 phi) with F0 = 750 for the empty channel.
 # =============================================================================
 
-
 set dimension = 3
 
 subsection simulation control
@@ -355,12 +354,12 @@ end
 subsection linear solver
   subsection fluid dynamics
     set method                                = gmres
-    set max iters                             = 5000
+    set max iters                             = 1000
     set max krylov vectors                    = 1000
     set relative residual                     = 1e-2
     set minimum residual                      = 1e-8
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 2
+    set ilu preconditioner fill               = 0
     set ilu preconditioner relative tolerance = 1.00
     set verbosity                             = verbose
   end
