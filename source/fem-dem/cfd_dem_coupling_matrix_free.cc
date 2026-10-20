@@ -1709,7 +1709,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
           .output_folder,
         "qcm_quadrature_points",
         this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-        .group_files);
+          .group_files);
     }
 
   // Only needed if other physics apart from fluid dynamics are enabled.
