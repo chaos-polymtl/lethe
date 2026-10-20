@@ -68,8 +68,9 @@ test()
   std::string line;
   while (std::getline(gnuplot_output, line))
     {
-      const bool is_comment       = line.rfind("#", 0) == 0;
-      const bool is_column_header = line.rfind("# <", 0) == 0;
+      const bool is_comment       = line.starts_with('#');
+      const bool is_column_header = line.starts_with("# <");
+
       if (line.empty() || (is_comment && !is_column_header))
         continue;
       deallog << line << std::endl;
