@@ -40,10 +40,9 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/solution_transfer.h>
 
-#include <memory.h>
-
 #include <algorithm>
 #include <complex>
+#include <memory>
 #include <ranges>
 
 
