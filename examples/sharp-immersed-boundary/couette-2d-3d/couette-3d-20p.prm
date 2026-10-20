@@ -326,44 +326,44 @@ subsection particles
     set integrate motion = false
     subsection position
       set Function expression = 50.780085; 17.170507; 10.000000
-      `    end
-      subsection velocity
-        set Function expression = 0.858525; 0; 0
-      end
+    end
+    subsection velocity
+      set Function expression = 0.858525; 0; 0
     end
   end
+end
 
-  subsection mesh adaptation
-    set type = none
-  end
+subsection mesh adaptation
+  set type = none
+end
 
-  subsection forces
-    set verbosity             = verbose
-    set calculate force       = true
-    set calculate torque      = false
-    set force name            = force_20p_3d
-    set calculation frequency = 1
-    set output frequency      = 1
-  end
+subsection forces
+  set verbosity             = verbose
+  set calculate force       = true
+  set calculate torque      = false
+  set force name            = force_20p_3d
+  set calculation frequency = 1
+  set output frequency      = 1
+end
 
-  subsection non-linear solver
-    subsection fluid dynamics
-      set tolerance      = 1e-4
-      set max iterations = 10
-      set verbosity      = verbose
-    end
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set max iterations = 10
+    set verbosity      = verbose
   end
+end
 
-  subsection linear solver
-    subsection fluid dynamics
-      set method                                = gmres
-      set max iters                             = 5000
-      set max krylov vectors                    = 1000
-      set relative residual                     = 1e-2
-      set minimum residual                      = 1e-8
-      set preconditioner                        = ilu
-      set ilu preconditioner fill               = 2
-      set ilu preconditioner relative tolerance = 1.00
-      set verbosity                             = verbose
-    end
+subsection linear solver
+  subsection fluid dynamics
+    set method                                = gmres
+    set max iters                             = 5000
+    set max krylov vectors                    = 1000
+    set relative residual                     = 1e-2
+    set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 2
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = verbose
   end
+end
