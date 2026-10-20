@@ -1253,7 +1253,7 @@
 <g id="Node000071" class="node">
 <title>Node71</title>
 <g id="a_Node000071"><a xlink:href="lethe__grid__tools_8h.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="2356,-486.5 2228,-486.5 2228,-467.5 2356,-467.5 2356,-486.5"/>
+<polygon fill="#fff0f0" stroke="red" points="2356,-486.5 2228,-486.5 2228,-467.5 2356,-467.5 2356,-486.5"/>
 <text text-anchor="middle" x="2292" y="-474.5" font-family="Helvetica,sans-Serif" font-size="10.00">core/lethe_grid_tools.h</text>
 </a>
 </g>
