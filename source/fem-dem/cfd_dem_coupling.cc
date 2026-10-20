@@ -1687,7 +1687,8 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
       this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
         .output_folder,
       "qcm_quadrature_points",
-      1);
+      this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
+        .group_files);
 
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
