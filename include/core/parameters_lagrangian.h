@@ -903,7 +903,7 @@ namespace Parameters
      * @brief Parameters for grid (mesh) motion in DEM simulations.
      *
      * This class defines the type and parameters of the grid motion, which
-     * can be translational, rotational, or none.
+     * can be translational, rotational or none.
      *
      * @tparam dim Number of spatial dimensions.
      */

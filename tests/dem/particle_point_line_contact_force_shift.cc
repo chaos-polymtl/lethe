@@ -139,7 +139,7 @@ test()
 
   // Evaluate the contacts with the shift model
   ParticlePointLineForce<dim, PropertiesIndex> shift_force_object;
-  auto evaluate_contacts = [&]() {
+  auto                                         evaluate_contacts = [&]() {
     shift_force_object.calculate_particle_point_shift_displacement(
       points_in_contact, contact_outcome.force);
     shift_force_object.calculate_particle_line_shift_displacement(
@@ -154,8 +154,7 @@ test()
               << " after the contact evaluation" << std::endl;
       deallog << "  location: " << particle.get_location() << std::endl;
       deallog << "  accumulated displacement: "
-              << contact_outcome.force[particle.get_local_index()]
-              << std::endl;
+              << contact_outcome.force[particle.get_local_index()] << std::endl;
     }
   deallog << "Number of contacts: "
           << shift_force_object.get_number_of_contacts() << std::endl;
@@ -168,8 +167,7 @@ test()
     {
       const Point<dim> location = particle.get_location();
       deallog << "Particle " << particle.get_id()
-              << " location after the displacement: " << location
-              << std::endl;
+              << " location after the displacement: " << location << std::endl;
     }
 
   // Particle 0 is compared with the vertex at the origin and particle 1 with
