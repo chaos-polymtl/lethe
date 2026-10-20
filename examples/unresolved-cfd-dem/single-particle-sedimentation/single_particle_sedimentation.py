@@ -37,9 +37,7 @@ def show_or_save(figure_name):
 convert_m_to_cm = 100
 # Data:
 dp = 0.002663
-Vp = 4/3 * np.pi * (0.5 * dp)**3
 rhop = 1029.
-Mp = rhop * Vp
 
 # Constants:
 nu = 0.0000008379
@@ -51,36 +49,10 @@ g = -9.81
 dt = 0.05
 t_end = 2
 initial_position = 0.08
-initial_urel = 0.
 
 # Calculate the analytical solution
-analytical_time = np.arange(0, t_end, dt)
-analytical_velocity = np.zeros_like(analytical_time)
-analytical_position = np.zeros_like(analytical_time)
-analytical_position[0] = initial_position
-
-i = 1
-current_t = dt
-while current_t <= t_end:
-    # Calculate forces
-    Fg = fg(Mp, g)
-    Fb = fb(Vp, rhof, g)
-    Fd = dallavalle(dp, rhof, mu, analytical_velocity[i-1])
-
-    # Calculate acceleration
-    a = (Fb - Fd + Fg) / Mp
-
-    # Calculate velocity
-    analytical_velocity[i] = analytical_velocity[i-1] + a * dt
-
-    # Calculate position
-    analytical_position[i] = analytical_position[i-1] + analytical_velocity[i] * dt
-
-    # Calculate time
-    current_t += dt
-    analytical_time[i] = current_t
-
-    i += 1
+analytical_time, analytical_velocity, analytical_position = analytical_solution(
+    dp, rhop, rhof, mu, g, dt, t_end, initial_position)
 
 # Get simulated and analytical particle position
 time, position = get_time_position_from_simulation(args.particle_pvd)
