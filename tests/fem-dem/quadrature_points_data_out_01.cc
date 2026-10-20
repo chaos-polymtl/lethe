@@ -14,6 +14,7 @@
 
 #include <fem-dem/quadrature_points_data_out.h>
 
+#include <deal.II/base/mpi.h>
 #include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/distributed/tria.h>
@@ -24,7 +25,6 @@
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/tria.h>
 
 #include <../tests/tests.h>
 
@@ -35,10 +35,11 @@ template <int dim>
 void
 test()
 {
-  // Unit cube refined once: 2^dim cells
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
-  GridGenerator::hyper_cube(triangulation, 0., 1.);
-  triangulation.refine_global(1);
+  // 2x2 cells in 2D and 2x2x2 cells in 3D, with a side of 0.5. Each cell is a
+  // separate coarse cell that doesn't share the same parent, so p4est can split
+  // them between ranks.
+  GridGenerator::subdivided_hyper_cube(triangulation, 2, 0., 1.);
 
   FE_Q<dim>       fe(1);
   DoFHandler<dim> dof_handler(triangulation);
@@ -58,7 +59,7 @@ test()
 
   // The gnuplot header contains the date and the time at which the file was
   // written and other comments not useful to the output. These lines
-  // are dropped to keep the output deterministic adn shorter, along 
+  // are dropped to keep the output deterministic and shorter, along
   // with the blank lines separating the points.
   std::stringstream gnuplot_output;
   qp_out.write_gnuplot(gnuplot_output);
@@ -76,7 +77,7 @@ test()
 }
 
 int
-main()
+main(int argc, char **argv)
 {
   try
     {
