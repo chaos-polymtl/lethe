@@ -310,7 +310,7 @@ namespace Parameters
        * @param[in,out] prm The parameter handler.
        */
       static void
-      declareDefaultEntry(ParameterHandler &prm);
+      declare_default_entry(ParameterHandler &prm);
 
       /**
        * @brief Parse the physical properties for a given particle type.
@@ -771,7 +771,7 @@ namespace Parameters
        * @param[in,out] prm The parameter handler.
        */
       static void
-      declareDefaultEntry(ParameterHandler &prm);
+      declare_default_entry(ParameterHandler &prm);
 
       /**
        * @brief Parse parameters for a single floating wall.
@@ -877,9 +877,13 @@ namespace Parameters
        * condition.
        *
        * @param[in,out] prm The parameter handler.
+       *
+       * @param[in] default_boundary_id Default value of the boundary id. This
+       * corresponds to the number of the boundary condition subsection.
        */
       static void
-      declareDefaultEntry(ParameterHandler &prm);
+      declare_default_entry(ParameterHandler        &prm,
+                            const types::boundary_id default_boundary_id);
 
       /**
        * @brief Parse boundary condition parameters for a single boundary.

@@ -81,7 +81,7 @@ namespace Parameters
             prm.enter_subsection("particle type " +
                                  Utilities::int_to_string(counter, 1));
             {
-              declareDefaultEntry(prm);
+              declare_default_entry(prm);
             }
             prm.leave_subsection();
           }
@@ -274,7 +274,7 @@ namespace Parameters
     }
 
     void
-    LagrangianPhysicalProperties::declareDefaultEntry(ParameterHandler &prm)
+    LagrangianPhysicalProperties::declare_default_entry(ParameterHandler &prm)
     {
       // Defines the type of distribution
       declare_enum_entry(prm,
@@ -1339,7 +1339,7 @@ namespace Parameters
             prm.enter_subsection("wall " +
                                  Utilities::int_to_string(counter, 1));
             {
-              declareDefaultEntry(prm);
+              declare_default_entry(prm);
             }
             prm.leave_subsection();
           }
@@ -1441,7 +1441,7 @@ namespace Parameters
 
     template <int dim>
     void
-    FloatingWalls<dim>::declareDefaultEntry(ParameterHandler &prm)
+    FloatingWalls<dim>::declare_default_entry(ParameterHandler &prm)
     {
       prm.declare_entry("point on wall",
                         "0., 0., 0.",
@@ -1513,7 +1513,7 @@ namespace Parameters
             prm.enter_subsection("boundary condition " +
                                  Utilities::int_to_string(counter, 1));
             {
-              declareDefaultEntry(prm);
+              declare_default_entry(prm, counter);
             }
             prm.leave_subsection();
           }
@@ -1544,9 +1544,13 @@ namespace Parameters
     }
 
     void
-    BCDEM::declareDefaultEntry(ParameterHandler &prm)
+    BCDEM::declare_default_entry(ParameterHandler        &prm,
+                                 const types::boundary_id default_boundary_id)
     {
-      prm.declare_entry("boundary id", "0", Patterns::Integer(), "Boundary ID");
+      prm.declare_entry("boundary id",
+                        Utilities::to_string(default_boundary_id, 1),
+                        Patterns::List(Patterns::Integer()),
+                        "Boundary ID");
       prm.declare_entry(
         "type",
         "fixed_wall",
@@ -1616,102 +1620,110 @@ namespace Parameters
     void
     BCDEM::parse_boundary_conditions(ParameterHandler &prm)
     {
-      const unsigned int boundary_id   = prm.get_integer("boundary id");
-      const std::string  boundary_type = prm.get("type");
+      std::vector<types::boundary_id> boundary_ids =
+        convert_string_to_vector<types::boundary_id>(prm, "boundary id");
+      const std::string boundary_type = prm.get("type");
 
-      if (boundary_type == "outlet")
+      for (const auto boundary_id : boundary_ids)
         {
-          this->outlet_boundaries.insert(boundary_id);
-        }
-      else if (boundary_type == "translational")
-        {
-          Tensor<1, 3> translational_velocity;
-          translational_velocity[0] = prm.get_double("speed x");
-          translational_velocity[1] = prm.get_double("speed y");
-          translational_velocity[2] = prm.get_double("speed z");
-
-          this->boundary_translational_velocity[boundary_id] =
-            translational_velocity;
-        }
-      else if (boundary_type == "rotational")
-        {
-          double rotational_speed = prm.get_double("rotational speed");
-
-          // Read the rotational vector from a list of doubles
-          Tensor<1, 3> rotational_vector =
-            value_string_to_tensor<3>(prm.get("rotational vector"));
-          if (rotational_vector.norm() == 0.)
+          if (boundary_type == "outlet")
             {
-              throw(std::runtime_error(
-                "Invalid rotational vector. Its norm cannot be equal to zero."));
+              this->outlet_boundaries.insert(boundary_id);
             }
-          // Read the point from a list of doubles
-          Tensor<1, 3> point_on_rotation_axis_tensor =
-            value_string_to_tensor<3>(prm.get("point on rotational vector"));
-
-          this->boundary_rotational_speed[boundary_id] = rotational_speed;
-          this->boundary_rotational_vector[boundary_id] =
-            rotational_vector / rotational_vector.norm();
-          this->point_on_rotation_axis[boundary_id] =
-            point_on_rotation_axis_tensor;
-        }
-      else if (boundary_type == "fixed_wall")
-        {
-          // Fixed walls are the default: they are not stored in any container.
-        }
-      else if (boundary_type == "periodic")
-        {
-          // Periodic boundary conditions are keyed by the principal periodic
-          // boundary id (periodic id 0) rather than the "boundary id" field.
-          const types::boundary_id periodic_id_0 =
-            prm.get_integer("periodic id 0");
-          this->periodic_boundaries[periodic_id_0] = {
-            .neighbor_id =
-              static_cast<types::boundary_id>(prm.get_integer("periodic id 1")),
-            .direction =
-              static_cast<unsigned int>(prm.get_integer("periodic direction"))};
-        }
-      else
-        {
-          AssertThrow(false, ExcMessage("Invalid DEM boundary condition type"));
-        }
-
-      // Thermal boundary type, used only in multiphysic DEM. Only the walls,
-      // which particles can touch, have a thermal boundary type.
-      const bool is_wall = boundary_type == "fixed_wall" ||
-                           boundary_type == "translational" ||
-                           boundary_type == "rotational";
-      const WallThermalBoundaryType thermal_type =
-        string_to_enum<WallThermalBoundaryType>(
-          prm.get("thermal boundary type"));
-
-      if (is_wall)
-        {
-          this->thermal_boundary_type[boundary_id] = thermal_type;
-
-          if (thermal_type == WallThermalBoundaryType::temperature)
+          else if (boundary_type == "translational")
             {
-              // Temperature imposed on the boundary
-              auto wall_temperature_function_parsed =
-                std::make_shared<Functions::ParsedFunction<3>>(1);
-              prm.enter_subsection("wall temperature");
-              wall_temperature_function_parsed->parse_parameters(prm);
-              prm.leave_subsection();
+              Tensor<1, 3> translational_velocity;
+              translational_velocity[0] = prm.get_double("speed x");
+              translational_velocity[1] = prm.get_double("speed y");
+              translational_velocity[2] = prm.get_double("speed z");
 
-              this->boundary_temperature[boundary_id] =
-                wall_temperature_function_parsed;
+              this->boundary_translational_velocity[boundary_id] =
+                translational_velocity;
             }
-        }
-      else
-        {
-          // The outlet and periodic boundaries are not walls: the particles
-          // cannot touch them, so they cannot be something else than adiabatic.
-          AssertThrow(
-            thermal_type == WallThermalBoundaryType::adiabatic,
-            ExcMessage(
-              "Invalid DEM boundary condition with an imposed temperature. Only "
-              "the fixed_wall, translational and rotational boundary types can "
-              "have the temperature thermal boundary type."));
+          else if (boundary_type == "rotational")
+            {
+              double rotational_speed = prm.get_double("rotational speed");
+
+              // Read the rotational vector from a list of doubles
+              Tensor<1, 3> rotational_vector =
+                value_string_to_tensor<3>(prm.get("rotational vector"));
+              AssertThrow(
+                rotational_vector.norm() != 0.,
+                ExcMessage(
+                  "Invalid rotational vector. Its norm cannot be equal to zero."));
+              // Read the point from a list of doubles
+              Tensor<1, 3> point_on_rotation_axis_tensor =
+                value_string_to_tensor<3>(
+                  prm.get("point on rotational vector"));
+
+              this->boundary_rotational_speed[boundary_id] = rotational_speed;
+              this->boundary_rotational_vector[boundary_id] =
+                rotational_vector / rotational_vector.norm();
+              this->point_on_rotation_axis[boundary_id] =
+                point_on_rotation_axis_tensor;
+            }
+          else if (boundary_type == "fixed_wall")
+            {
+              // Fixed walls are the default: they are not stored in any
+              // container.
+            }
+          else if (boundary_type == "periodic")
+            {
+              // Periodic boundary conditions are keyed by the principal
+              // periodic boundary id (periodic id 0) rather than the "boundary
+              // id" field.
+              const types::boundary_id periodic_id_0 =
+                prm.get_integer("periodic id 0");
+              this->periodic_boundaries[periodic_id_0] = {
+                .neighbor_id = static_cast<types::boundary_id>(
+                  prm.get_integer("periodic id 1")),
+                .direction = static_cast<unsigned int>(
+                  prm.get_integer("periodic direction"))};
+            }
+          else
+            {
+              AssertThrow(false,
+                          ExcMessage("Invalid DEM boundary condition type"));
+            }
+
+          // Thermal boundary type, used only in multiphysic DEM. Only the
+          // walls, which particles can touch, have a thermal boundary type.
+          const bool is_wall = boundary_type == "fixed_wall" ||
+                               boundary_type == "translational" ||
+                               boundary_type == "rotational";
+          const WallThermalBoundaryType thermal_type =
+            string_to_enum<WallThermalBoundaryType>(
+              prm.get("thermal boundary type"));
+
+          if (is_wall)
+            {
+              this->thermal_boundary_type[boundary_id] = thermal_type;
+
+              if (thermal_type == WallThermalBoundaryType::temperature)
+                {
+                  // Temperature imposed on the boundary
+                  auto wall_temperature_function_parsed =
+                    std::make_shared<Functions::ParsedFunction<3>>(1);
+                  prm.enter_subsection("wall temperature");
+                  wall_temperature_function_parsed->parse_parameters(prm);
+                  prm.leave_subsection();
+
+                  this->boundary_temperature[boundary_id] =
+                    wall_temperature_function_parsed;
+                }
+            }
+          else
+            {
+              // The outlet and periodic boundaries are not walls: the particles
+              // cannot touch them, so they cannot be something else than
+              // adiabatic.
+              AssertThrow(
+                thermal_type == WallThermalBoundaryType::adiabatic,
+                ExcMessage(
+                  "Invalid DEM boundary condition with an imposed temperature. Only "
+                  "the fixed_wall, translational and rotational boundary types can "
+                  "have the temperature thermal boundary type."));
+            }
         }
     }
 
