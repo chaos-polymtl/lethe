@@ -10,14 +10,6 @@
 #include <cmath>
 #include <complex>
 
-
-using namespace dealii;
-
-DeclException1(InvalidVoidFraction,
-               double,
-               << "Invalid void fraction: " << arg1
-               << ". The void fraction must be between 0 and 1.");
-
 DeclException1(InvalidPhysicalPropertyReal,
                double,
                << "Invalid physical property value: " << arg1
