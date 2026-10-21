@@ -815,11 +815,16 @@ namespace Parameters
       unsigned int number_of_dem_boundary_conditions = 0;
 
       /// Boundary ids designated as outlets. A boundary's DEM boundary
-      /// condition type is encoded by which container holds it: outlets here,
-      /// translational/rotational boundaries in the motion maps below, and
-      /// periodic boundaries in periodic_boundaries. Fixed walls (the default)
-      /// appear in none of these containers.
+      /// condition type is encoded by which container holds it: outlets and
+      /// none here, translational/rotational boundaries in the motion maps
+      /// below, and periodic boundaries in periodic_boundaries. Fixed walls
+      /// (the default) appear in none of these containers.
       std::set<types::boundary_id> outlet_boundaries;
+
+      /// Boundary ids designated as none. This boundary type is used in CFD-DEM
+      /// simulations using the mortar method, since mortar boundaries should not
+      /// be considered as walls in the DEM simulation.
+      std::set<types::boundary_id> none_boundaries;
 
       /// Translational velocity of each translational boundary, keyed by the
       /// mesh boundary id. Only translational boundaries have an entry.
