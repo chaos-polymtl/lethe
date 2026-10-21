@@ -82,7 +82,14 @@ public:
   inline double
   transform_signed_distance(const double signed_distance) override
   {
-    return 0.5 - 0.5 * tanh(signed_distance / tanh_thickness);
+    if (signed_distance <= -tanh_thickness)
+      return 1.0;
+    else if (signed_distance >= tanh_thickness)
+      return 0.0;
+    else
+      return -1.0/(2*tanh_thickness)*signed_distance+0.5;
+
+    // return 0.5 - 0.5 * tanh(signed_distance / tanh_thickness);
   }
 
 private:

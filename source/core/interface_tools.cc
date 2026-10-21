@@ -517,11 +517,34 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs()
   volume_correction.reinit(locally_owned_dofs,
                            locally_active_dofs,
                            mpi_communicator);
+                           
+  distance_correction.reinit(locally_owned_dofs, locally_active_dofs, mpi_communicator);
+
+  n_intersected_cell_arround_dof_for_volume_correction.reinit(locally_owned_dofs,
+                           locally_active_dofs,
+                           mpi_communicator);     
+  
+
 
   constraints.clear();
   constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
   constraints.close();
+
+      DynamicSparsityPattern dsp(locally_relevant_dofs);
+    DoFTools::make_sparsity_pattern(dof_handler,
+                                    dsp,
+                                    constraints,
+                                    /*keep_constrained_dofs =*/false);
+  SparsityTools::distribute_sparsity_pattern(dsp,
+                                             this->locally_owned_dofs,
+                                             mpi_communicator,
+                                             this->locally_relevant_dofs);
+  system_matrix_volume_correction.reinit(locally_owned_dofs,
+                                        locally_owned_dofs,
+                                        dsp,
+                                        mpi_communicator);
+  system_rhs_volume_correction.reinit(locally_owned_dofs, mpi_communicator);
 }
 
 template <int dim, typename VectorType>
@@ -562,6 +585,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   interface_reconstruction_cells.clear();
   intersected_dofs.clear();
 
+  dof_closest_point.clear();
+
   initialize_distance();
 
   // Identify intersected cells and compute the interface reconstruction.
@@ -583,16 +608,30 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   updated value)*/
   compute_signed_distance_from_distance();
 
-  // Conserve local and global volume
-  // compute_cell_wise_volume_correction();
-  // conserve_global_volume();
+
+
 
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
   compute_second_neighbors_distance();
 
+
+        
   // Compute signed distance from distance (all DoFs have updated value)
   compute_signed_distance_from_distance();
+
+ 
+
+
+    // Conserve local and global volume
+  compute_cell_wise_volume_correction();
+  conserve_global_volume();
+
+   double global_volume, surface;
+
+    std::tie(global_volume, surface) =
+        integrate_volume_and_surface(dof_handler, *fe, signed_distance_with_ghost, 0.0);
+        pcout << "global_volume after compute_signed_distance_from_distance = " << global_volume << std::endl;
 
   // Update ghost values to regain reading ability.
   update_ghost_values();
@@ -649,6 +688,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::zero_out_ghost_values()
   distance.zero_out_ghost_values();
   distance_with_ghost.zero_out_ghost_values();
   volume_correction.zero_out_ghost_values();
+  distance_correction.zero_out_ghost_values();
+
+  n_intersected_cell_arround_dof_for_volume_correction.zero_out_ghost_values();
 }
 
 template <int dim, typename VectorType>
@@ -663,6 +705,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::update_ghost_values()
   distance.update_ghost_values();
   distance_with_ghost.update_ghost_values();
   volume_correction.update_ghost_values();
+  distance_correction.update_ghost_values();
+
+  n_intersected_cell_arround_dof_for_volume_correction.update_ghost_values();
 }
 
 template <int dim, typename VectorType>
@@ -949,7 +994,24 @@ void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   compute_first_neighbors_distance_minimization()
 {
-  NonMatching::MeshClassifier<dim> mesh_classifier(dof_handler, level_set);
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+
+  VectorType level_set_vector_owned_copy(dof_handler.locally_owned_dofs(),
+                                         mpi_communicator);
+
+  level_set_vector_owned_copy = level_set;
+
+  level_set_vector_owned_copy.add(-iso_level);
+
+  VectorType level_set_vector_relevant_copy(
+    dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(dof_handler),
+    mpi_communicator);
+
+  level_set_vector_relevant_copy = level_set_vector_owned_copy;
+
+  NonMatching::MeshClassifier<dim> mesh_classifier(dof_handler, level_set_vector_relevant_copy);
   mesh_classifier.reclassify();
 
   const unsigned int dofs_per_cell = fe->n_dofs_per_cell();
@@ -981,7 +1043,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                                     region_update_flags,
                                                     mesh_classifier,
                                                     dof_handler,
-                                                    level_set);
+                                                    level_set_vector_relevant_copy);
 
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
@@ -1003,7 +1065,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
             &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
 
-          cell->get_dof_values(level_set,
+          cell->get_dof_values(level_set_vector_relevant_copy,
                                cell_dof_values.begin(),
                                cell_dof_values.end());
 
@@ -1042,17 +1104,93 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                   Tensor<1, dim> point_closest_point_vec =
                     point - closest_point;
 
-                  distance(dof_indices[i]) =
-                    std::min(std::abs(distance(dof_indices[i])),
-                             std::abs(point_closest_point_vec.norm()));
+                  // distance(dof_indices[i]) =
+                  //   std::min(std::abs(distance(dof_indices[i])),
+                  //            std::abs(point_closest_point_vec.norm()));
+                  
+                  if (std::abs(point_closest_point_vec.norm()) < std::abs(distance(dof_indices[i])))
+                  {
+                    distance(dof_indices[i]) = std::abs(point_closest_point_vec.norm());
+                    dof_closest_point[dof_indices[i]] = std::pair(cell_index,unit_closest_point);
 
-                  intersected_dofs.insert(dof_indices[i]);
+
+                  }           
+
                 }
+                  intersected_dofs.insert(dof_indices[i]);
+
             }
         }
     }
 
   exchange_distance();
+
+  // compute_signed_distance_from_distance();
+
+  // distance_correction = 0.0;
+
+  // FEPointEvaluation<1, dim> fe_point_evaluation_values_only(*mapping,
+  //                                                           *fe,
+  //                                                           update_values);
+
+  //   for (const auto &cell : dof_handler.active_cell_iterators())
+  //   {
+  //     if ((cell->is_locally_owned()))
+  //       {
+  //         non_matching_fe_values.reinit(cell);
+
+  //         const NonMatching::LocationToLevelSet cell_location =
+  //           mesh_classifier.location_to_level_set(cell);
+
+  //         if (cell_location != NonMatching::LocationToLevelSet::intersected)
+  //           continue;
+
+  //         const unsigned int cell_index = cell->global_active_cell_index();
+
+  //         cell->get_dof_indices(dof_indices);
+
+  //         cell->get_dof_values(signed_distance_with_ghost,
+  //                              cell_dof_values.begin(),
+  //                              cell_dof_values.end());
+          
+                    
+  //         for (unsigned int i = 0; i < dofs_per_cell; ++i)
+  //           {
+  //             auto cell_id_closet_point = dof_closest_point.at(dof_indices[i]);
+
+  //             if (cell_id_closet_point.first == cell_index)
+  //             {
+  //                 std::vector<Point<dim>> tmp(1);
+  //                 tmp[0] = cell_id_closet_point.second;
+
+  //                 fe_point_evaluation_values_only.reinit(cell, tmp);
+  //                 fe_point_evaluation_values_only.evaluate(
+  //                   cell_dof_values, EvaluationFlags::values);
+
+  //                 double shift = fe_point_evaluation_values_only.get_value(0);
+
+  //                 // std::cout << shift << std::endl;
+
+  //                 distance_correction[dof_indices[i]] = -shift;
+                  
+  //             }
+  //           }
+  //       }
+  //     }
+
+  //     // volume_correction.compress(VectorOperation::add);
+  //     // volume_correction.update_ghost_values();
+
+  //     signed_distance_with_ghost.add(1, distance_correction);
+  //     signed_distance_with_ghost.update_ghost_values();
+
+  //     for (auto p : this->locally_active_dofs)
+  //       {
+  //         signed_distance(p) = signed_distance_with_ghost(p);
+  //         distance(p)        = abs(signed_distance(p));
+  //       }
+
+  //     exchange_distance();
 }
 
 template <int dim, typename VectorType>
@@ -1275,10 +1413,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               const unsigned int cell_index = cell->global_active_cell_index();
 
               // If the cell is intersected, the distance is already computed.
-              // if (interface_reconstruction_vertices.contains(cell_index))
-              //   {
-              //     continue;
-              //   }
+              if (interface_reconstruction_vertices.contains(cell_index))
+                {
+                  continue;
+                }
 
               cell->get_dof_indices(dof_indices);
               cell->get_dof_values(distance_with_ghost,
@@ -1593,12 +1731,17 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   // Re-initialize volume_correction vector.
   volume_correction = 0.0;
+  n_intersected_cell_arround_dof_for_volume_correction = 0.0;
+
+  Vector<double> eta_cell(dof_handler.get_triangulation().n_active_cells());
+
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           const unsigned int cell_index = cell->global_active_cell_index();
+          const unsigned int cell_index_local = cell->active_cell_index();
 
           // The cell is not intersected, no need to correct the volume
           if (!interface_reconstruction_vertices.contains(cell_index))
@@ -1698,8 +1841,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
             {
               // If the cell is almost full or empty, we stop correcting the
               // volume.
-              if (inside_cell_volume_nm1 < tol * cell_size ||
-                  inside_cell_volume_nm1 > (cell_size - tol * cell_size))
+              if (inside_cell_volume_nm1 < tol * cell_volume ||
+                  inside_cell_volume_nm1 > (cell_volume - tol * cell_volume))
                 {
                   eta_n = 0.0;
                   break;
@@ -1733,21 +1876,169 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               eta_n = 0.0;
             }
 
+          
+          eta_cell[cell_index_local] = eta_n;
+ 
           std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
           cell->get_dof_indices(dof_indices);
 
           // L2 projection of the cell-wise (discontinuous) correction to have
           // a continuous correction at the DoFs.
-          for (unsigned int i = 0; i < dofs_per_cell; ++i)
-            {
-              volume_correction(dof_indices[i]) += eta_n * n_cells_per_dofs_inv;
-            }
+          // for (unsigned int i = 0; i < dofs_per_cell; ++i)
+          //   {
+          //     volume_correction(dof_indices[i]) += eta_n;
+
+          //     n_intersected_cell_arround_dof_for_volume_correction(dof_indices[i]) += 1.0;
+          //   }
         }
     } // End loop on cells.
 
-  volume_correction.compress(VectorOperation::add);
+  n_intersected_cell_arround_dof_for_volume_correction.compress(VectorOperation::add);
+  n_intersected_cell_arround_dof_for_volume_correction.update_ghost_values();
+
+  // for (auto p : this->locally_active_dofs)
+  //   {
+  //     volume_correction(p) /= (n_intersected_cell_arround_dof_for_volume_correction(p) + 1e-16);
+  //   }
+
+    compute_volume_correction_L2_projection(eta_cell);
+
+  // volume_correction.compress(VectorOperation::add);
   volume_correction.update_ghost_values();
+
 }
+
+/**
+   * @brief Compute the L2 projection of the cell-wise correction.
+   *
+   * @param[in] eta_cell Cell-wise correction of the signed distance
+   *
+   * @param[in] mpi_communicator MPI communicator
+   */
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction_L2_projection(
+  const  Vector<double> &eta_cell)
+  {
+    const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+
+    system_matrix_volume_correction = 0;
+  system_rhs_volume_correction    = 0;
+
+  FEValues<dim> fe_values(*mapping, *this->fe,
+                          QGauss<dim>(fe->degree + 2),
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+
+  const unsigned int dofs_per_cell = fe->n_dofs_per_cell();
+  const unsigned int n_q_points    = fe_values.get_quadrature().size();
+
+  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>     cell_rhs(dofs_per_cell);
+
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          const unsigned int local_cell_index = cell->active_cell_index();
+          const unsigned int global_cell_index = cell->global_active_cell_index();
+
+
+          // The cell is not intersected, no need to correct the volume
+          if (interface_reconstruction_vertices.find(global_cell_index) ==
+              interface_reconstruction_vertices.end())
+            {
+              continue;
+            }
+
+          fe_values.reinit(cell);
+
+          cell_matrix = 0;
+          cell_rhs    = 0;
+
+          for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
+            {
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                  {
+                    cell_matrix(i, j) += (fe_values.shape_value(i, q_point) *
+                                          fe_values.shape_value(j, q_point) *
+                                          fe_values.JxW(q_point));
+                  }
+
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  cell_rhs(i) +=
+                    (fe_values.shape_value(i, q_point) *
+                      eta_cell[local_cell_index] * fe_values.JxW(q_point));
+                }
+            }
+          cell->get_dof_indices(local_dof_indices);
+
+          constraints.distribute_local_to_global(
+            cell_matrix,
+            cell_rhs,
+            local_dof_indices,
+            system_matrix_volume_correction,
+            system_rhs_volume_correction);
+        }
+    }
+
+  system_matrix_volume_correction.compress(VectorOperation::add);
+  system_rhs_volume_correction.compress(VectorOperation::add);
+
+  // Solve system
+  const double       linear_solver_tolerance = 1e-12;
+  const unsigned int max_iterations          = 100;
+
+  GlobalVectorType completely_distributed_volume_correction(
+    this->locally_owned_dofs, mpi_communicator);
+
+  SolverControl solver_control(max_iterations,
+                                linear_solver_tolerance);
+
+  // TrilinosWrappers::SolverCG solver(solver_control);
+
+  SolverCG<GlobalVectorType> solver(solver_control);
+
+  const double ilu_fill = 0.0;
+  const double ilu_atol = 1e-12;
+  const double ilu_rtol = 1.0;
+
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner =
+    std::make_shared<TrilinosWrappers::PreconditionILU>();
+  ilu_preconditioner->initialize(system_matrix_volume_correction,
+                                  preconditionerOptions);
+
+  solver.solve(system_matrix_volume_correction,
+                completely_distributed_volume_correction,
+                system_rhs_volume_correction,
+                *ilu_preconditioner);
+
+  // Convert completely_distributed_volume_correction to dealii vector
+  this->constraints.distribute(completely_distributed_volume_correction);
+
+
+
+#ifndef LETHE_USE_LDV
+LinearAlgebra::distributed::Vector<double> tmp_volume_correction(
+  this->locally_owned_dofs, mpi_communicator);
+
+  convert_vector_trilinos_to_dealii(tmp_volume_correction,
+  completely_distributed_volume_correction);
+
+  volume_correction = tmp_volume_correction;
+#else
+  volume_correction = completely_distributed_volume_correction;
+#endif
+
+  }
 
 template <int dim, typename VectorType>
 void
@@ -1856,6 +2147,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   // If the secant method does not converge, do not correct.
   if (secant_it >= secant_max_it)
     C_n = 0.0;
+
 
   if (verbosity != Parameters::Verbosity::quiet)
     {
@@ -1979,6 +2271,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::gather_output_hook()
 
   return solution_output_structs;
 }
+
 
 template class InterfaceTools::SignedDistanceSolver<2, GlobalVectorType>;
 template class InterfaceTools::SignedDistanceSolver<3, GlobalVectorType>;

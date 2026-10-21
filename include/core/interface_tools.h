@@ -22,6 +22,12 @@
 #include <deal.II/fe/mapping_fe.h>
 
 #include <deal.II/lac/lapack_full_matrix.h>
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_vector.h>
+#include <deal.II/lac/solver_control.h>
+#include <deal.II/lac/trilinos_solver.h>
+#include <deal.II/lac/solver_cg.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
@@ -692,6 +698,10 @@ namespace InterfaceTools
     void
     compute_cell_wise_volume_correction();
 
+    void
+    compute_volume_correction_L2_projection(
+    const Vector<double> &eta_cell);
+
     /**
      * @brief Correct the global volume to match the volume englobed by the given level
      * of the level_set field
@@ -1147,6 +1157,9 @@ namespace InterfaceTools
     /// Value of the correction to apply to the signed_distance to match the
     /// cell-wise volume encompassed by the level 0 of level_set
     LinearAlgebra::distributed::Vector<double> volume_correction;
+    LinearAlgebra::distributed::Vector<double> n_intersected_cell_arround_dof_for_volume_correction;
+
+    LinearAlgebra::distributed::Vector<double> distance_correction;
 
     /// Hanging node constraints
     AffineConstraints<double> constraints;
@@ -1160,6 +1173,11 @@ namespace InterfaceTools
     /// (volume cell)
     std::map<types::global_cell_index, std::vector<CellData<dim - 1>>>
       interface_reconstruction_cells;
+
+    std::map<types::global_dof_index, std::pair<types::global_cell_index,Point<dim>>>
+      dof_closest_point;
+
+
 
     /// Set of DoFs belonging to intersected cells
     std::set<types::global_dof_index> intersected_dofs;
@@ -1176,6 +1194,9 @@ namespace InterfaceTools
 
     LAPACKFullMatrix<double> hessian_matrix;
     LAPACKFullMatrix<double> H_x_transformation_jacobian;
+
+    TrilinosWrappers::SparseMatrix system_matrix_volume_correction;
+    GlobalVectorType                system_rhs_volume_correction;
   };
 
 
