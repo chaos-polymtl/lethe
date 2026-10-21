@@ -7,8 +7,9 @@
 # boundary conditions by applying opposite tangential wall motion to two
 # frictional particle-wall contacts on opposite walls. Each particle starts
 # with a small overlap (1e-3) with its wall, so the contact ejects it at a
-# moderate velocity (about 30 m/s). The fluid is nearly massless, so the
-# tangential velocity of each particle comes from the friction of its wall.
+# moderate velocity (about 30 m/s). The fluid is much lighter than the
+# particles, so the tangential velocity of each particle comes mostly from the
+# friction of its wall.
 # All the walls are no-slip, so the pressure is fixed at one node.
 #-------------------------------------------------------------------------------
 

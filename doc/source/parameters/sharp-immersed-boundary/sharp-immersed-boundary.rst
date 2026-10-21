@@ -167,10 +167,10 @@ This subsection contains the parameters related to the sharp immersed boundary s
     * The ``DEM coupling frequency`` parameter controls the number of iterations done on the DEM side for each CFD time step. It's necessary to use a much smaller time step for the particle dynamics than for the fluid in case of contact between the particles. The particle collision happens at a much smaller time-scale than the fluid dynamics.
 
     .. note::
-        The DEM ``post-processing`` subsection documented in :doc:`../dem/post-processing` is partially available for Sharp resolved CFD-DEM simulations. Force-chain output is rebuilt from the current Sharp-IB particles and follows the same output cadence as the fluid results. Particle-wall collision statistics are also available for Sharp-IB and are accumulated throughout the run before being written at the end of the simulation. The start and the end of a collision are detected from the state of the particles at the end of each CFD time step. Since the contacts are resolved by the DEM sub-steps, a collision that starts and ends within a single CFD time step is not recorded.
+        The DEM ``post-processing`` subsection documented in :doc:`../dem/post-processing` is partially available for Sharp resolved CFD-DEM simulations. Force-chain output is rebuilt from the current Sharp-IB particles and follows the same output cadence as the fluid results.
 
     .. note::
-        DEM lagrangian post-processing is not supported for ``lethe-fluid-sharp``. If it is enabled in the input file, the solver throws an error at startup.
+        DEM lagrangian post-processing and particle-wall collision statistics are not supported for ``lethe-fluid-sharp``. If either of them is enabled in the input file, the solver throws an error at startup.
 
     * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
     
