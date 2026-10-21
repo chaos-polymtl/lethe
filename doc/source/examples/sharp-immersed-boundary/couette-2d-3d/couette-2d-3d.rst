@@ -28,7 +28,9 @@ All files are in ``examples/sharp-immersed-boundary/couette-2d-3d``.
 - ``epsilon_2d.py``
 - ``epsilon_3d.py``
 - ``calc_ratio.py``
-- ``generate_arrangements_3d.py``
+- Base 2D parameter file: ``couette-2d-corr.prm``
+- 2D case generation Python script: ``epsilon_2d.py``
+- Postprocessing Python script :``calc_ratio.py``
 
 -----------------------
 Description of the Case
