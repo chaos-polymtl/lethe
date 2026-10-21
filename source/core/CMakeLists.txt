@@ -6,6 +6,7 @@ add_library(lethe-core
   density_model.cc
   dimensionality.cc
   electric_conductivity_model.cc
+  effective_medium_model.cc
   electric_permittivity_model.cc
   evaporation_model.cc
   grid_birmingham_fluidized_bed.cc
@@ -60,6 +61,7 @@ add_library(lethe-core
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
   ../../include/core/electric_conductivity_model.h
+  ../../include/core/effective_medium_model.h
   ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
