@@ -124,9 +124,7 @@ moves at 1.5, so the shear rate is again 0.05. A box of
 :math:`50 \times 20 \times 20` would match the two-dimensional channel with an
 extruded depth, but the twenty midplane centers used here need a larger
 streamwise period, and the gap is kept at 30 so that the same shear rate is
-obtained with a top-wall speed of 1.5. Increasing the spanwise depth from 20
-to 30 led to GMRES failures in practice, so :math:`L_z = 20` is retained. The
-empty-channel force is
+obtained with a top-wall speed of 1.5. The empty-channel force is
 
 .. math::
     F_{x,0} = 10 \times 0.05 \times 75 \times 20 = 750.
