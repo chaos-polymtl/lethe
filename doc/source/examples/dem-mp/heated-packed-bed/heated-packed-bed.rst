@@ -263,7 +263,7 @@ For the loading stage:
       set time step         = 2.5e-5
       set time end          = 6
       set log frequency     = 2000
-      set output frequency  = 2000
+      set output frequency  = 10000
       set output path       = ./output/
       set output boundaries = true
     end
@@ -276,22 +276,23 @@ For the stage where gravity is changed:
       set time step         = 2.5e-5
       set time end          = 7
       set log frequency     = 2000
-      set output frequency  = 2000
+      set output frequency  = 10000
       set output path       = ./output/
       set output boundaries = true
     end
 
-For the heating stage:
+For the heating stage, the time step is increased to :math:`1` s. Since this stage is restarted from the checkpoint of the previous stage, ``override time step on restart`` must be set to ``true``, otherwise the time step stored in the checkpoint (:math:`2.5 \times 10^{-5}` s) would be used.
 
 .. code-block:: text
 
     subsection simulation control
-      set time step         = 1
-      set time end          = 4007
-      set log frequency     = 10
-      set output frequency  = 10
-      set output path       = ./output/
-      set output boundaries = true
+      set time step                     = 1
+      set time end                      = 4007
+      set log frequency                 = 10
+      set output frequency              = 50
+      set output path                   = ./output/
+      set output boundaries             = true
+      set override time step on restart = true
     end
 
 
