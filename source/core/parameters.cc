@@ -1154,6 +1154,7 @@ namespace Parameters
   {
     fluids.resize(max_fluids);
     solids.resize(max_solids);
+    unresolved_particles.resize(max_particles);
     material_interactions.resize(max_material_interactions);
 
     prm.enter_subsection("physical properties");
@@ -1181,6 +1182,20 @@ namespace Parameters
         {
           solids[i_solid].declare_parameters(prm, "solid", i_solid);
         }
+
+      // Definition of the unresolved particles in the simulation
+      for (unsigned int i_particle = 0; i_particle < max_particles;
+           ++i_particle)
+        {
+          unresolved_particles[i_particle].declare_parameters(
+            prm, "unresolved particle", i_particle);
+        }
+
+      prm.declare_entry("number of unresolved particles",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          number_of_unresolved_particles),
+                        Patterns::Integer(),
+                        "Number of unresolved particles");
 
       prm.declare_entry(
         "reference temperature",
@@ -1773,6 +1788,32 @@ namespace Parameters
         mobility_cahn_hilliard_parameters.declare_parameters(prm);
       }
       prm.leave_subsection();
+
+      // Fluid-particles interactions
+      prm.enter_subsection("fluid-particles interaction");
+      {
+        prm.declare_entry("fluid id",
+                          "0",
+                          Patterns::Integer(),
+                          "ID of the fluid interacting with the solid");
+        prm.declare_entry("particles id",
+                          "0",
+                          Patterns::Integer(),
+                          "ID of the particles interacting with the fluid");
+
+        // Effective medium model
+        declare_enum_entry(
+          prm,
+          "electric effective medium model",
+          electric_effective_medium_model,
+          "Model used for the calculation of the effective electric properties.");
+        declare_enum_entry(
+          prm,
+          "magnetic effective medium model",
+          magnetic_effective_medium_model,
+          "Model used for the calculation of the effective magnetic properties`.");
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -1819,7 +1860,8 @@ namespace Parameters
           }
           prm.leave_subsection();
         }
-      else // Solid-fluid interactions
+      else if (material_interaction_type ==
+               MaterialInteractionsType::fluid_solid)
         {
           prm.enter_subsection("fluid-solid interaction");
           std::pair<unsigned int, unsigned int> fluid_solid_interaction;
@@ -1836,6 +1878,26 @@ namespace Parameters
             "surface tension model");
           surface_tension_parameters.parse_parameters(prm, dimensions);
 
+          prm.leave_subsection();
+        }
+      else if (material_interaction_type ==
+               MaterialInteractionsType::fluid_particles)
+        {
+          prm.enter_subsection("fluid-particles interaction");
+          std::pair<unsigned int, unsigned int> fluid_particles_interaction;
+          fluid_particles_interaction.first  = prm.get_integer("fluid id");
+          fluid_particles_interaction.second = prm.get_integer("particles id");
+          fluid_particles_interaction_with_material_interaction_id.first =
+            fluid_particles_interaction;
+          fluid_particles_interaction_with_material_interaction_id.second = id;
+
+          // Effective medium model
+          electric_effective_medium_model =
+            string_to_enum<EffectiveMediumModelType>(
+              prm.get("electric permittivity effective medium model"));
+          magnetic_effective_medium_model =
+            string_to_enum<EffectiveMediumModelType>(
+              prm.get("magnetic permeability effective medium model"));
           prm.leave_subsection();
         }
     }
