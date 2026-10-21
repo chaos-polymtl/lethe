@@ -23,9 +23,13 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/single-particle-sedimentation``).
 
 - Parameter file for initial particles generation: ``initial-particles.prm``
-- Parameter file for CFD-DEM simulation of the Boycott effect: ``single-particle-sedimentation.prm``
+- Parameter file for CFD-DEM simulation of the single particle sedimentation: ``single-particle-sedimentation.prm``
 - Post-processing script: ``single_particle_sedimentation.py``
 - Module for post-processing script: ``single_particle_sedimentation_funcs.py``
+- Parameter file templates for the parametric study: ``parametric_study/initial-particles.tpl`` and ``parametric_study/single-particle-sedimentation.tpl``
+- Script to generate the cases of the parametric study: ``parametric_study/generate_cases.py``
+- Script to launch the cases of the parametric study: ``parametric_study/launch_cases.sh``
+- Script to plot the results of the parametric study: ``parametric_study/plot_parametric_study.py``
 
 
 -----------------------
@@ -54,12 +58,12 @@ In this example, we are simulating a rectangular-based tank. We use the deal.II 
     subsection mesh
       set type           = dealii
       set grid type      = subdivided_hyper_rectangle
-      set grid arguments = 20,40,20:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:false
+      set grid arguments = 15,30,15:-0.02663,0,-0.02663:0.02663,0.10652,0.02663:false
     end
 
 
 .. note::
-    The grid is 20x40x20 times the particle diameter.
+    The domain is divided into 15x30x15 cells, so that the particle diameter is 75% of the cell size (:math:`S_c = 4/3 \, d_p`).
 
 .. important::
     The grid of the particle insertion needs to be the same used in the unresolved CFD-DEM simulation. If you wish to use another mesh refinement, the particle insertion mesh needs to be adapted accordingly.
@@ -276,6 +280,32 @@ Running the script is as simple as launching the following command from the fold
    python3 single_particle_sedimentation.py --particle_pvd output/result__particles.pvd --fluid_pvd output/result_.pvd
 
 
+-------------------------------
+Running the Parametric Study
+-------------------------------
+
+The results presented below were obtained by repeating this simulation with 4 different meshes and 3 different void fraction smoothing lengths. All the files required to reproduce this parametric study are located in the ``parametric_study`` folder of the example. The ``initial-particles.tpl`` and ``single-particle-sedimentation.tpl`` files are templates of the two parameter files of the example in which the number of cells and the L2 smoothing length of the void fraction are variables. The ``generate_cases.py`` script uses the `Jinja2 <https://jinja.palletsprojects.com/>`_ library to fill these templates and creates one folder per case:
+
+.. code-block:: text
+  :class: copy-button
+
+  cd parametric_study
+  python3 generate_cases.py
+
+The cases can then be launched one after the other with the ``launch_cases.sh`` script. For each case, the particle is first inserted with ``lethe-particles`` and its sedimentation is then simulated with ``lethe-fluid-particles``. The number of cores used by each simulation is given as an argument. For example, to use 8 cores:
+
+.. code-block:: text
+  :class: copy-button
+
+  bash launch_cases.sh 8
+
+The 12 cases take approximately 7 minutes to run on 16 cores. Once all the simulations are finished, the figures of the following section are generated with:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 plot_parametric_study.py
+
 
 --------
 Results
@@ -283,26 +313,26 @@ Results
 
 This example is meant to assess QCM's mesh independency. For this, we need to explain some limitations of our unresolved CFD-DEM approach, namely:
 
-* Currently, when looping through the cells, we can only access to information about particles inside the current cell or its immediate neighbors. This is a common limitation as accessing higher neighborhood layers can be computationally expensive. Hence, the finest element we use is of the same size of the particle (:math:`S_c/d_p \geq 1.0`, where :math:`S_c` is the characteristic size of our element and :math:`d_p` is the particle's diameter).
-* We do not want our quadrature sphere size to change with the element size. So, we set the ``qcm sphere equal cell volume`` to ``false`` and set the sphere diameter to be twice the particle's diameter for all mesh refinements (:math:`D_\text{qcm}/d_p = 2.0` corresponding to an approximated maximum quadrature sphere size :math:`D_\text{qcm}` we can have for the finest mesh :math:`S_c/d_p = 1.0`).
+* Currently, when looping through the cells, we can only access to information about particles inside the current cell or its immediate neighbors. This is a common limitation as accessing higher neighborhood layers can be computationally expensive. Hence, the elements cannot be smaller than the particle (:math:`S_c/d_p \geq 1.0`, where :math:`S_c` is the characteristic size of our element and :math:`d_p` is the particle's diameter). In this example, the finest mesh has :math:`S_c/d_p \approx 1.33`, that is, the particle diameter is 75% of the element size.
+* We do not want our quadrature sphere size to change with the element size. So, we set the ``qcm sphere equal cell volume`` to ``false`` and set the sphere diameter to be twice the particle's diameter for all mesh refinements (:math:`D_\text{qcm}/d_p = 2.0`). For the finest mesh (:math:`S_c/d_p \approx 1.33`), the diameter of the quadrature sphere is 1.5 times the element size, which remains below the approximate maximum quadrature sphere size allowed by the previous limitation (:math:`D_\text{qcm} \approx 2 S_c`).
 * Regardless of the QCM sphere size, we need to guarantee the spheres together cover our entire domain so that we conserve mass (i.e., have all particles accounted for while calculating the void fraction). However, if we use the same number and size of QCM spheres for all meshes, we will eventually have uncovered regions in our domain. To avoid this, we increase the number of quadrature points used in the void fraction calculation by applying ``set n quadrature points = 5`` (this number can be increased for coarser meshes). We use the same number of quadrature points for all mesh refinements to avoid any bias in the results.
 * To improve domain coverage, we use Gauss-Lobatto quadrature rule as the quadrature points are more evenly distributed than the default Gauss quadrature.
-* Lastly, we need to consistently refine our meshes so that the particle falls in the same relative position to our degrees of freedom. This is important because if we analyze how our void fraction value evolves in a line conciding with the particle's falling trajectory, the magnitudes of the projected void fraction will vary with how far the particle is from the degrees of freedom.
+* Lastly, we need to consistently refine our meshes so that the particle falls in the same relative position to our degrees of freedom. This is important because if we analyze how our void fraction value evolves in a line conciding with the particle's falling trajectory, the magnitudes of the projected void fraction will vary with how far the particle is from the degrees of freedom. For this reason, all meshes have an odd number of cells in the :math:`x` and :math:`z` directions (15, 11, 9 and 7), so that the particle always falls along a line of cell centers.
 
-The above factors considered, we can now analyse the results. First, we show a video of the particle falling in the fluid for the finest mesh. The arrows stand for the velocity of the surrounding fluid. 
+The above factors considered, we can now analyse the results. First, we show a video of the particle falling in the fluid. The arrows stand for the velocity of the surrounding fluid. 
 
 .. raw:: html
     
     <iframe width="560" height="315" src="https://www.youtube.com/embed/LgpIKRKKEmQ" title="Particle sedimentation in water with Unresolved CFD-DEM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-The same simulation is run for 4 different mesh refinements, :math:`S_c/d_p = \{1.0, 1.7, 2.0, 3.3\}`; and 3 different void fraction smoothing lengths, :math:`L/d_p = \{2, 5, 10\}`. First, we compare the results of the particle velocity with the analytical solution using Dallavalle's drag correlation. As shown in the following figure, all results are close to the expected analytical results. Specifically, the coarser the mesh and the smaller the smoothing length, the results approximate better the analytical solution. However, the difference is incipient, which indicates any solution would be valid.
+The same simulation is run for 4 different mesh refinements, :math:`S_c/d_p = \{1.33, 1.82, 2.22, 2.86\}`, corresponding to 15, 11, 9 and 7 cells in the :math:`x` and :math:`z` directions; and 3 different void fraction smoothing lengths, :math:`L/d_p = \{2, 5, 10\}`. First, we compare the results of the particle velocity with the analytical solution using Dallavalle's drag correlation. As shown in the following figure, all simulations reach a terminal velocity slightly above the analytical one (:math:`2.99` cm/s). The coarser the mesh and the smaller the smoothing length, the closer the results are to the analytical solution: the deviation ranges from 0.7% for :math:`S_c/d_p = 2.86` and :math:`L/d_p = 2` to 5.3% for :math:`S_c/d_p = 1.33` and :math:`L/d_p = 10`. The terminal velocity thus remains within 6% of the analytical solution for all cases.
 
 .. image:: images/terminal_velocity.png
     :alt: terminal velocity of the particle
     :align: center
 
 
-We also compare the void fraction convergence in a line conciding with the particle's falling trajectory. As shown in the following figure, regardless of the void fraction smoothing length, the void fraction converges with the mesh refinement, which is a good indicator of the QCM's mesh independence.
+We also compare the void fraction in a line coinciding with the particle's falling trajectory at the end of the simulation (:math:`t = 2` s). As shown in the following figure, the particle creates a local drop of the void fraction whose depth decreases as the smoothing length increases: on the finest mesh, the minimum void fraction is :math:`0.992` for :math:`L/d_p = 2` and :math:`0.9996` for :math:`L/d_p = 10`. For all smoothing lengths, the drop becomes deeper as the mesh is refined. For :math:`L/d_p = 2`, the finest mesh yields a significantly deeper drop than the other meshes. As the smoothing length increases, the profiles obtained with the different meshes get closer to one another: for :math:`L/d_p = 10`, the minimum void fraction varies by less than 0.02% between the finest and the coarsest mesh. A larger smoothing length thus makes the void fraction less sensitive to the mesh.
 
 .. image:: images/voidfraction_convergence.png
     :alt: void fraction convergence in a line conciding with the particle's falling trajectory
