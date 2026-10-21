@@ -642,7 +642,8 @@ namespace Parameters
     enum class MaterialInteractionsType : std::int8_t
     {
       fluid_fluid,
-      fluid_solid
+      fluid_solid,
+      fluid_particles
     } material_interaction_type = MaterialInteractionsType::fluid_fluid;
 
     // Surface tension models
@@ -662,10 +663,28 @@ namespace Parameters
     } mobility_cahn_hilliard_model = MobilityCahnHilliardModel::constant;
     MobilityCahnHilliardParameters mobility_cahn_hilliard_parameters;
 
+    // Effective medium model for calculating effective properties of a
+    // composite material.
+    enum class EffectiveMediumModelType : std::int8_t
+    {
+      /// No effective medium model is applied; the properties of the fluid
+      /// phase are used directly.
+      none,
+      /// Bruggeman effective medium model
+      bruggeman
+    };
+
+    EffectiveMediumModelType electric_effective_medium_model =
+      EffectiveMediumModelType::none;
+    EffectiveMediumModelType magnetic_effective_medium_model =
+      EffectiveMediumModelType::none;
+
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interaction_with_material_interaction_id;
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_solid_interaction_with_material_interaction_id;
+    std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
+      fluid_particles_interaction_with_material_interaction_id;
 
     /**
      * @brief Declare the parameters.
@@ -715,7 +734,13 @@ namespace Parameters
     unsigned int                  number_of_solids = 0;
     static constexpr unsigned int max_solids       = 1;
 
-    // Fluid-fluid or fluid-solid interactions
+    // Particles properties when there are unresolved suspensions in the flow
+    std::vector<Material>         unresolved_particles;
+    unsigned int                  number_of_unresolved_particles = 0;
+    static constexpr unsigned int max_particles =
+      1; // Monodisperse particles only for now
+
+    // Fluid-fluid, fluid-solid, or fluid-particles interactions
     std::vector<MaterialInteractions> material_interactions;
     unsigned int                      number_of_material_interactions = 0;
     static constexpr unsigned int     max_material_interactions       = 3;
@@ -723,7 +748,8 @@ namespace Parameters
       fluid_fluid_interactions_with_material_interaction_ids;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_solid_interactions_with_material_interaction_ids;
-
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int>
+      fluid_particles_interactions_with_material_interaction_ids;
     /*
      * Reference Temperature for all physical properties of fluids and solids.
      * Currently, this is only used by the thermal expansion models.
