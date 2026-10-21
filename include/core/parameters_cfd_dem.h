@@ -308,6 +308,24 @@ namespace Parameters
     bool project_particle_forces = false;
 
     /**
+     * @brief Effective medium model type for calculating effective properties of a composite material.
+     *
+     */
+    enum class EffectiveMediumModelType
+    {
+      /// No effective medium model is applied; the properties of the fluid
+      /// phase are used directly.
+      none,
+      /// Bruggeman effective medium model
+      bruggeman
+    };
+
+    /// Effective medium model type used for calculating effective properties of
+    /// a composite material.
+    EffectiveMediumModelType effective_medium_model_type =
+      EffectiveMediumModelType::none;
+
+    /**
      * @brief Declare the parameters in the parameter handler.
      *
      * @param[in,out] prm The parameter handler.
