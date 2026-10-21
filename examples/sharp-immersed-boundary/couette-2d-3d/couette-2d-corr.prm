@@ -56,7 +56,7 @@ subsection boundary conditions
 
   subsection bc 1
     set id   = 2
-    set type = function_weak # better to use function_weak with the sharp edge IB
+    set type = function_weak
     subsection u
       set Function expression = 0
     end
