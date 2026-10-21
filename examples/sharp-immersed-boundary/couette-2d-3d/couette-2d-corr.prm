@@ -252,7 +252,7 @@ subsection particles
 end
 
 subsection mesh adaptation
-  set type = adaptive # If y ou want mesh adaptation to work with particles you need to  have the type be adaptive, otherwise it won't adapt
+  set type = adaptive
 end
 
 subsection non-linear solver
