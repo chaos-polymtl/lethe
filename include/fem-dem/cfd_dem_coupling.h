@@ -212,21 +212,22 @@ protected:
   /**
    * @brief Connect the signal for lost particles to the particle handler.
    *
-   * Connects the signal emitted when particles are lost, which is used to 
+   * Connects the signal emitted when particles are lost, which is used to
    * reinsert particles when crossing the mortar interface.
    */
   void
   connect_lost_particles_signal();
 
   /**
-   * @brief 
+   * @brief
    *
-   * 
+   *
    */
   void
   track_lost_particles(
     const typename Particles::ParticleIterator<dim> &particle,
-    const typename parallel::distributed::Triangulation<dim, dim>::active_cell_iterator &cell);
+    const typename parallel::distributed::Triangulation<dim, dim>::
+      active_cell_iterator &cell);
 
   /**
    * @brief Check if particles need to be inserted and perform insertion.
@@ -472,7 +473,8 @@ protected:
   BoundaryCellsInformation<dim> boundary_cell_object;
 
   // Vector to store lost particle data for reinsertion
-  std::vector<typename dem_data_structures<dim>::lost_particle_data> lost_particles_data;
+  std::vector<typename dem_data_structures<dim>::lost_particle_data>
+    lost_particles_data;
 
   /// Mesh information for solid surfaces in contact with particles
   typename dem_data_structures<dim>::solid_surfaces_mesh_information

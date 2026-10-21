@@ -135,8 +135,8 @@ namespace DEM
     struct lost_particle_data
     {
       types::particle_index id;
-      Point<dim> location;
-      std::vector<double> properties;
+      Point<dim>            location;
+      std::vector<double>   properties;
     };
 
     // <particle id, (particle one iterator, <particle id, particle-particle
