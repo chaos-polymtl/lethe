@@ -14,7 +14,6 @@
 #include <solvers/postprocessing_cfd.h>
 
 #include <dem/force_chains_visualization.h>
-#include <dem/log_collision_data.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/update_local_particle_containers.h>
 #include <dem/visualization.h>
@@ -3115,15 +3114,12 @@ FluidDynamicsSharp<dim>::build_contact_containers(
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     &local_adjacent_particles,
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_wall_in_contact) const
+    &ghost_adjacent_particles) const
 {
   local_adjacent_particles.clear();
   ghost_adjacent_particles.clear();
-  particle_wall_in_contact.clear();
 
-  // Convert the Sharp-IB contact maps into the DEM containers expected by the
+  // Convert the Sharp-IB contact map into the DEM containers expected by the
   // existing DEM post-processing utilities.
   const auto &pp_contact_map = ib_dem.get_particle_particle_contact_map();
   for (const auto &[particle_id, contacts] : pp_contact_map)
@@ -3172,41 +3168,6 @@ FluidDynamicsSharp<dim>::build_contact_containers(
             }
         }
     }
-
-  const auto &pw_contact_map = ib_dem.get_particle_wall_contact_map();
-  for (const auto &[particle_id, contacts] : pw_contact_map)
-    {
-      // The particle-wall contact map is also replicated through ghosted
-      // particles near subdomain boundaries. Restricting this loop to locally
-      // owned particles gives a single owner rank for each exported
-      // particle-wall contact.
-      if (local_particle_ids.find(particle_id) == local_particle_ids.end())
-        continue;
-
-      const auto particle_it = particle_container.find(particle_id);
-      if (particle_it == particle_container.end())
-        continue;
-
-      for (const auto &[boundary_id, contact_info] : contacts)
-        {
-          // Every wall that has been a contact candidate of the particle is
-          // exported, whether the particle touches it or not. As in the DEM,
-          // the collision log computes the overlap from the position of the
-          // particle and the plane of the wall: a positive overlap starts a
-          // collision and a negative one ends it.
-          particle_wall_contact_info<dim> dem_contact_info;
-          dem_contact_info.particle          = particle_it->second;
-          dem_contact_info.normal_vector     = contact_info.normal_vector;
-          dem_contact_info.point_on_boundary = contact_info.contact_point;
-          dem_contact_info.boundary_id       = boundary_id;
-          dem_contact_info.tangential_displacement =
-            contact_info.tangential_displacement;
-          dem_contact_info.rolling_resistance_spring_torque =
-            contact_info.rolling_resistance_spring_torque;
-
-          particle_wall_in_contact[particle_id][boundary_id] = dem_contact_info;
-        }
-    }
 }
 
 template <int dim>
@@ -3221,11 +3182,8 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
   const bool write_particle_output = output_iteration;
   const bool write_force_chains =
     output_iteration && dem_parameters.post_processing.force_chains;
-  const bool log_particle_wall_collisions =
-    dem_parameters.post_processing.particle_wall_collision_statistics;
 
-  if (!(write_particle_output || write_force_chains ||
-        log_particle_wall_collisions))
+  if (!(write_particle_output || write_force_chains))
     return;
 
   Particles::ParticleHandler<dim, dim> particle_handler(
@@ -3244,25 +3202,12 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
     local_adjacent_particles;
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    particle_wall_in_contact;
 
-  if (write_force_chains || log_particle_wall_collisions)
+  if (write_force_chains)
     build_contact_containers(particle_container,
                              local_particle_ids,
                              local_adjacent_particles,
-                             ghost_adjacent_particles,
-                             particle_wall_in_contact);
-
-  if (log_particle_wall_collisions)
-    {
-      log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
-        dem_parameters,
-        particle_wall_in_contact,
-        this->simulation_control->get_current_time(),
-        ongoing_collision_log,
-        collision_event_log);
-    }
+                             ghost_adjacent_particles);
 
   if (write_particle_output)
     {
@@ -5040,6 +4985,13 @@ FluidDynamicsSharp<dim>::solve()
       "DEM lagrangian post-processing is not supported for lethe-fluid-sharp. "
       "Disable it in the DEM post-processing subsection."));
 
+  AssertThrow(!cfd_dem_parameters.dem_parameters.post_processing
+                 .particle_wall_collision_statistics,
+              ExcMessage(
+                "DEM particle-wall collision statistics are not supported for "
+                "lethe-fluid-sharp. Disable them in the DEM post-processing "
+                "subsection."));
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,
@@ -5131,14 +5083,6 @@ FluidDynamicsSharp<dim>::solve()
       finish_time_step_particles();
       write_force_ib();
       this->finish_time_step();
-    }
-
-  if (cfd_dem_parameters.dem_parameters.post_processing
-        .particle_wall_collision_statistics)
-    {
-      write_collision_stats(cfd_dem_parameters.dem_parameters,
-                            collision_event_log,
-                            this->mpi_communicator);
     }
 
   this->finish_simulation();

@@ -794,18 +794,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               // the wall, consistent with the contact model.
               Tensor<1, 3> contact_normal = -normal;
 
-              // Store the state of the contact with this wall, whether the
-              // particle touches it or not. The collision log uses the plane
-              // of the wall to detect both the start and the end of a
-              // collision.
-              auto &wall_contact_info =
-                pw_contact_map[particle.particle_id]
-                              [boundary_cell.boundary_index];
-              wall_contact_info.normal_overlap = normal_overlap;
-              wall_contact_info.normal_vector  = normal;
-              wall_contact_info.contact_point =
-                point_nd_to_3d(point_on_boundary);
-
 
               // Keep the last contact point as an initial guess for the
               // next contact point.
@@ -846,6 +834,13 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                                   wall_velocity,
                                   wall_angular_velocity,
                                   wall_rotation_axis_point);
+
+                  pw_contact_map[particle.particle_id]
+                                [boundary_cell.boundary_index]
+                                  .normal_overlap = normal_overlap;
+                  pw_contact_map[particle.particle_id]
+                                [boundary_cell.boundary_index]
+                                  .normal_vector = normal;
 
                   ObjectProperties particle_properties;
                   particle_properties.object_friction_coefficient =

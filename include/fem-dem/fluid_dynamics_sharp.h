@@ -12,7 +12,6 @@
 #include <solvers/fluid_dynamics_matrix_based.h>
 
 #include <dem/data_containers.h>
-#include <dem/log_collision_data.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/visualization.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
@@ -305,7 +304,8 @@ private:
     std::unordered_set<unsigned int> &local_particle_ids) const;
 
   /**
-   * @brief Build DEM-style contact containers for Sharp-IB particles.
+   * @brief Build the DEM-style particle-particle contact containers of the
+   * Sharp-IB particles, used for the force-chain output.
    *
    * @param particle_container Map from particle ids to particle iterators in
    * the temporary particle handler.
@@ -315,8 +315,6 @@ private:
    * particles are locally owned.
    * @param ghost_adjacent_particles Particle-particle contacts involving a
    * ghost particle.
-   * @param particle_wall_in_contact Particle-wall contacts for locally owned
-   * particles.
    */
   void
   build_contact_containers(
@@ -326,9 +324,7 @@ private:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-      &particle_wall_in_contact) const;
+      &ghost_adjacent_particles) const;
 
   /**
    * @brief Fill DEM particle properties from a Sharp-IB particle state.
@@ -735,10 +731,6 @@ private:
   // Object used to sub-time step the particle dynamics to allow contact between
   // particles.
   IBParticlesDEM<dim> ib_dem;
-
-  // DEM-style collision data used by Sharp post-processing.
-  OngoingCollisionLog<dim>   ongoing_collision_log;
-  CompletedCollisionLog<dim> collision_event_log;
 
   // Function that describes all solids signed distance functions together
   std::shared_ptr<Shape<dim>> combined_shapes;

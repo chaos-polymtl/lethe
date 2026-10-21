@@ -48,8 +48,6 @@ public:
   struct ContactInfo
   {
     Tensor<1, 3> normal_vector;
-    // For a particle-wall contact, the point of the wall that defines the
-    // plane used to represent the wall.
     Point<3>     contact_point;
     double       normal_overlap;
     double       normal_relative_velocity;
@@ -266,16 +264,6 @@ public:
   get_particle_particle_contact_map() const
   {
     return pp_contact_map;
-  }
-
-  /**
-   * @brief Return the particle-wall contact map built for the IB DEM
-   * coupling.
-   */
-  const std::map<unsigned int, std::map<unsigned int, ContactInfo>> &
-  get_particle_wall_contact_map() const
-  {
-    return pw_contact_map;
   }
 
 private:
