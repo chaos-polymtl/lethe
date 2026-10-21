@@ -1601,9 +1601,9 @@ namespace Parameters
         "type",
         "fixed_wall",
         Patterns::Selection(
-          "fixed_wall|outlet|translational|rotational|periodic"),
+          "fixed_wall|outlet|translational|rotational|periodic|none"),
         "Type of boundary condition. "
-        "Choices are <fixed_wall|outlet|translational|rotational|periodic>.");
+        "Choices are <fixed_wall|outlet|translational|rotational|periodic|none>.");
 
       prm.declare_entry("speed x",
                         "0.",
@@ -1725,6 +1725,10 @@ namespace Parameters
                   prm.get_integer("periodic id 1")),
                 .direction = static_cast<unsigned int>(
                   prm.get_integer("periodic direction"))};
+            }
+          else if (boundary_type == "none")
+            {
+              this->none_boundaries.insert(boundary_id);
             }
           else
             {
