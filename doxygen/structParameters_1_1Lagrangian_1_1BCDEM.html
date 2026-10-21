@@ -112,8 +112,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a17adb8849bddf009f06ca4fcc4e5011a" id="r_a17adb8849bddf009f06ca4fcc4e5011a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#a17adb8849bddf009f06ca4fcc4e5011a">declareDefaultEntry</a> (ParameterHandler &amp;prm)</td></tr>
-<tr class="separator:a17adb8849bddf009f06ca4fcc4e5011a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93d74fb89661b4f8fe9fca09469f633a" id="r_a93d74fb89661b4f8fe9fca09469f633a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#a93d74fb89661b4f8fe9fca09469f633a">declare_default_entry</a> (ParameterHandler &amp;prm, const types::boundary_id default_boundary_id)</td></tr>
+<tr class="separator:a93d74fb89661b4f8fe9fca09469f633a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -147,6 +147,55 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00811">811</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a93d74fb89661b4f8fe9fca09469f633a" name="a93d74fb89661b4f8fe9fca09469f633a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93d74fb89661b4f8fe9fca09469f633a">&#9670;&#160;</a></span>declare_default_entry()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Parameters::Lagrangian::BCDEM::declare_default_entry </td>
+          <td>(</td>
+          <td class="paramtype">ParameterHandler &amp;&#160;</td>
+          <td class="paramname"><em>prm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const types::boundary_id&#160;</td>
+          <td class="paramname"><em>default_boundary_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Declare default parameter entries for a single boundary condition. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">default_boundary_id</td><td>Default value of the boundary id. This corresponds to the number of the boundary condition subsection. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01547">1547</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceParameters_1_1Lagrangian.html#aa61feba8bf151b57b21fc33554d32cbcaecc572378821e873d5ada6b243eb2167">Parameters::Lagrangian::adiabatic</a>, and <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>.</p>
+
+</div>
+</div>
 <a id="a7853655667b9041229b1cc0b3ac4ca9b" name="a7853655667b9041229b1cc0b3ac4ca9b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7853655667b9041229b1cc0b3ac4ca9b">&#9670;&#160;</a></span>declare_parameters()</h2>
 
@@ -173,45 +222,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01499">1499</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8cc_source.html#l01547">declareDefaultEntry()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00895">max_number_of_dem_boundary_conditions</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00815">number_of_dem_boundary_conditions</a>.</p>
-
-</div>
-</div>
-<a id="a17adb8849bddf009f06ca4fcc4e5011a" name="a17adb8849bddf009f06ca4fcc4e5011a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17adb8849bddf009f06ca4fcc4e5011a">&#9670;&#160;</a></span>declareDefaultEntry()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Parameters::Lagrangian::BCDEM::declareDefaultEntry </td>
-          <td>(</td>
-          <td class="paramtype">ParameterHandler &amp;&#160;</td>
-          <td class="paramname"><em>prm</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Declare default parameter entries for a single boundary condition. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01547">1547</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="namespaceParameters_1_1Lagrangian.html#aa61feba8bf151b57b21fc33554d32cbcaecc572378821e873d5ada6b243eb2167">Parameters::Lagrangian::adiabatic</a>, and <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8cc_source.html#l01547">declare_default_entry()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00899">max_number_of_dem_boundary_conditions</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00815">number_of_dem_boundary_conditions</a>.</p>
 
 </div>
 </div>
@@ -239,7 +250,7 @@ Static Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01617">1617</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01621">1621</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters_1_1Lagrangian.html#aa61feba8bf151b57b21fc33554d32cbcaecc572378821e873d5ada6b243eb2167">Parameters::Lagrangian::adiabatic</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00831">boundary_rotational_speed</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00835">boundary_rotational_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00853">boundary_temperature</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00827">boundary_translational_velocity</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00822">outlet_boundaries</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00857">periodic_boundaries</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00839">point_on_rotation_axis</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#aa61feba8bf151b57b21fc33554d32cbcaeef438f7e448aa48c1f8db568d27b591">Parameters::Lagrangian::temperature</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00847">thermal_boundary_type</a>.</p>
 
@@ -271,7 +282,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01525">1525</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00815">number_of_dem_boundary_conditions</a>, and <a class="el" href="parameters__lagrangian_8cc_source.html#l01617">parse_boundary_conditions()</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00815">number_of_dem_boundary_conditions</a>, and <a class="el" href="parameters__lagrangian_8cc_source.html#l01621">parse_boundary_conditions()</a>.</p>
 
 </div>
 </div>
@@ -365,7 +376,7 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Maximum number of boundary condition subsections declared in the parameter handler. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00895">895</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00899">899</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
