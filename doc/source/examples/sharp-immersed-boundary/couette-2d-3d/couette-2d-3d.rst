@@ -23,12 +23,12 @@ Files Used in This Example
 
 All files are in ``examples/sharp-immersed-boundary/couette-2d-3d``.
 
-- ``couette-2d-corr.prm``
+- ``couette-2d-7p.prm``
 - ``couette-3d-20p.prm``
 - ``epsilon_2d.py``
 - ``epsilon_3d.py``
 - ``calc_ratio.py``
-- Base 2D parameter file: ``couette-2d-corr.prm``
+- Base 2D parameter file: ``couette-2d-7p.prm``
 - 2D case generation Python script: ``epsilon_2d.py``
 - Postprocessing Python script :``calc_ratio.py``
 
@@ -148,7 +148,7 @@ imposition of the plates (``function_weak``, ``beta = 10``).
 Parameter File
 ----------------------
 
-``couette-2d-corr.prm`` is a steady solve at :math:`\mu = 10`.
+``couette-2d-7p.prm`` is a steady solve at :math:`\mu = 10`.
 ``epsilon_2d.py`` changes only the radius, the output name and the force name.
 ``couette-3d-20p.prm`` is the three-dimensional base file with twenty spheres.
 
@@ -336,7 +336,7 @@ solid fraction :math:`\phi`, computes the matching radius and writes one
 parameter file. The output name, the force name and the output path change
 with :math:`\phi`.
 
-``epsilon_2d.py`` starts from ``couette-2d-corr.prm``. Seven discs give
+``epsilon_2d.py`` starts from ``couette-2d-7p.prm``. Seven discs give
 
 .. math::
     \phi = \frac{7\pi R^{2}}{50 \times 20}.
@@ -358,7 +358,7 @@ equations inside the spheres.
 
     python3 epsilon_2d.py
     python3 epsilon_3d.py
-    mpirun -np 4 lethe-fluid-sharp couette-2d-corr.prm
+    mpirun -np 4 lethe-fluid-sharp couette-2d-7p.prm
     mpirun -np 4 lethe-fluid-sharp couette-3d-20p.prm
     python3 calc_ratio.py
 
