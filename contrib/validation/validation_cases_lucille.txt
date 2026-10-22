@@ -22,7 +22,7 @@ examples/multiphysics/rayleigh-benard-convection 128
 examples/multiphysics/concentric-heat-exchanger 128
 examples/multiphysics/air-bubble-compression 128
 examples/multiphysics/water-injection-in-a-closed-cell 128
-examples/multiphysics/jurins-law-2d 128
+examples/multiphysics/jurins-law-2d 64
 examples/dem-mp/3d-heated-packed-bed 128
 examples/unresolved-cfd-dem/cylindrical-packed-bed 128
 examples/unresolved-cfd-dem/single-particle-sedimentation 128
