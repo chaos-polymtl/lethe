@@ -47,8 +47,9 @@ args, leftovers=parser.parse_known_args()
 # Simulation folder
 folder=args.folder
 
-# Starting vtu id (heating starts)
-start = 139 # 7s
+# End time of the loading and flipping stages (heating starts at the end of flipping)
+t_load_end = 6.0
+t_flip_end = 7.0
 
 # Height (z) of the heating wall
 h_top = 0.2
@@ -65,9 +66,17 @@ ignore_data = ['type', 'omega','specific_heat']
 particle = lethe_pyvista_tools(folder, prm_file, pvd_name, ignore_data=ignore_data)
 time = np.array(particle.time_list)
 
-# Get kinetic knergy at the end of the first two stages 
+# Vtu ids at the end of the loading and flipping stages, found from the output
+# times so that they do not depend on the output frequency
+i_load_end = np.argmin(np.abs(time - t_load_end))
+i_flip_end = np.argmin(np.abs(time - t_flip_end))
+
+# Starting vtu id (heating starts)
+start = i_flip_end
+
+# Get kinetic knergy at the end of the first two stages
 K = []
-for i in [118,138]:
+for i in [i_load_end, i_flip_end]:
     df_load = particle.get_df(i)
     vx = df_load['velocity'][:, 0]
     vy = df_load['velocity'][:, 1]
@@ -82,8 +91,8 @@ total_volume = 0.105 * 0.1 * h_top
 porosity = 1 - (particle_number * particle_volume) / total_volume
 print('\n')
 print('=' * 80)
-print(f"At t = {time[118]} s, kinetic energy: {K[0]} J")
-print(f"At t = {time[138]} s, kinetic energy: {K[1]} J")
+print(f"At t = {time[i_load_end]} s, kinetic energy: {K[0]} J")
+print(f"At t = {time[i_flip_end]} s, kinetic energy: {K[1]} J")
 print(f"Total porosity: {porosity:.4f} %")
 print('=' * 80)
 print('\n')
