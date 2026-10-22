@@ -33,9 +33,10 @@ def get_deltaH(output_path,prm):
     # Take case path as argument and store it
 
     # Define list of VTU files
+    # The boundaries files written by "output boundaries" do not contain the phase_order field
     list_vtu = os.listdir(output_path)
-    pvd_file = [x for x in list_vtu if (x.endswith('.pvd'))]
-    list_vtu = [x for x in list_vtu if ("pvtu" in x)]
+    pvd_file = [x for x in list_vtu if (x.endswith('.pvd') and "boundaries" not in x)]
+    list_vtu = [x for x in list_vtu if ("pvtu" in x and "boundaries" not in x)]
     list_vtu = set(list_vtu)
 
     # Sort VTU files to ensure they are in the same order as the time step

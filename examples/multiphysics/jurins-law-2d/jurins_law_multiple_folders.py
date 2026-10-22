@@ -6,7 +6,7 @@ Postprocessing code for Jurin's law example
 This code extracts the difference in height between the meniscus
 and the fluid on the side.
 
-Quick user guide: 
+Quick user guide:
 
 This python script is used to plot the difference in height between the meniscus
 and the fluid on the side for different cases of capillary rise.
@@ -23,15 +23,18 @@ How to use this script?
 # Modules
 # -------------------------------------------
 
-from postprocessing_jurins_law_dimensioned import get_deltaH, analytical_solution
+import argparse
 import os
 import sys
-import argparse
+
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import cm
-from matplotlib.lines import Line2D
 import numpy as np
+from matplotlib.lines import Line2D
+from matplotlib.pyplot import cm
 from natsort import os_sorted
+
+from postprocessing_jurins_law_dimensioned import (analytical_solution,
+                                                   get_deltaH)
 
 parser = argparse.ArgumentParser(description="Arguments for the post-processing of the Jurin's law example")
 parser.add_argument("rootdir", type=str, help="Folder which contains one output folder per simulation")
@@ -66,7 +69,7 @@ root, dirs, files = next(os.walk(rootdir, topdown=True))
 
 for dir in dirs:
     folder_name_list.append(str(root + "/" + dir))
-    
+
 folder_name_list = os_sorted(folder_name_list)
 dirs = os_sorted(dirs)
 
@@ -77,14 +80,14 @@ class parametres():
     sigma = 7.3e-2
     rho_l = 2.00e3
     r = 1e-3
-    
-    
+
+
 prm=parametres()
 
 pparams=dict(xlabel=r'$t \text{[s]}$', ylabel=r'$\Delta H \text{[mm]}$')
 
 with plt.style.context(plot_styles):
-      
+
 
    fig = plt.figure()
    ax = fig.add_subplot(111)
@@ -108,7 +111,7 @@ with plt.style.context(plot_styles):
              np.savetxt(f"solution-height-difference-{label_loop}.dat",
                         np.column_stack((time_list, deltaH, np.full(len(deltaH), a_solution))),
                         header="t deltaH deltaH_analytical")
-       
+
    handles, labels = plt.gca().get_legend_handles_labels()
    line = Line2D([0], [0], label='Analytical', color='k',ls='dotted')
    handles.append(line)
