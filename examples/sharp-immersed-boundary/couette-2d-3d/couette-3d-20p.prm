@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
 # =============================================================================
 # Couette Flow With Twenty Fixed Spheres (3D Sharp Immersed Boundary)
 # =============================================================================
@@ -14,6 +20,10 @@
 
 set dimension = 3
 
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
 subsection simulation control
   set method            = steady
   set number mesh adapt = 0
@@ -22,6 +32,10 @@ subsection simulation control
   set output path       = ./out_20p/
 end
 
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity = 10
@@ -29,14 +43,26 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
 subsection timer
   set type = iteration
 end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
 
 subsection FEM
   set velocity degree = 1
   set pressure degree = 1
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -44,6 +70,10 @@ subsection mesh
   set grid arguments     = 25,10,10 : 0,0,0 : 75,30,20 : true
   set initial refinement = 2
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 4
@@ -89,12 +119,20 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
 subsection initial conditions
   set type = nodal
   subsection uvwp
     set Function expression = y/20; 0; 0; 0
   end
 end
+
+#---------------------------------------------------
+# IB Particles
+#---------------------------------------------------
 
 subsection particles
   set assemble Navier-Stokes inside particles = false
@@ -104,7 +142,7 @@ subsection particles
     set stencil degree = 2
   end
   subsection local mesh refinement
-    set initial refinement                = 2
+    set initial refinement                = 4
     set refine mesh inside radius factor  = 0.7
     set refine mesh outside radius factor = 1.2
   end
@@ -330,9 +368,17 @@ subsection particles
   end
 end
 
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
 subsection mesh adaptation
   set type = none
 end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
 
 subsection forces
   set verbosity             = verbose
@@ -343,6 +389,10 @@ subsection forces
   set output frequency      = 1
 end
 
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
 subsection non-linear solver
   subsection fluid dynamics
     set tolerance      = 1e-4
@@ -350,6 +400,10 @@ subsection non-linear solver
     set verbosity      = verbose
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics
@@ -360,6 +414,7 @@ subsection linear solver
     set minimum residual                      = 1e-8
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-10
     set ilu preconditioner relative tolerance = 1.00
     set verbosity                             = verbose
   end
