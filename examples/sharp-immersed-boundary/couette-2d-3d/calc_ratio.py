@@ -1,6 +1,13 @@
-#Compare wall force (and effective viscosity) with and without particles
-#against the Einstein dilute-suspension model in 2D Couette flow.
+#!/usr/bin/env python3
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+"""Compare wall force (and effective viscosity) with and without particles
+against the Einstein dilute-suspension model in 2D Couette flow.
+"""
 
+#---------------------------------------------------
+# Imports
+#---------------------------------------------------
 import argparse
 import math
 
@@ -37,15 +44,19 @@ def parse_args():
 def main():
     args = parse_args()
 
-    # --- Wall forces from Lethe output ---------------------------------
-    Fx0 = get_fx(args.force_ref)          # empty channel (reference)
-    Fx = get_fx(args.force_particles)     # channel with fixed particles
+    #---------------------------------------------------
+    # Wall Forces
+    #---------------------------------------------------
+    Fx0 = get_fx(args.force_ref)
+    Fx = get_fx(args.force_particles)
 
     print("========== FORCES ==========")
     print(f"Fx0 (no particles)   = {Fx0:.6f}")
     print(f"Fx  (with particles) = {Fx:.6f}")
 
-    # --- Physical and geometric parameters -----------------------------
+    #---------------------------------------------------
+    # Physical and Geometric Parameters
+    #---------------------------------------------------
     mu_fluid = 10.0
     rho_fluid = 1.0
     rho_particle = 1.0
@@ -56,7 +67,6 @@ def main():
     Lx = 50.0
     Ly = 20.0
 
-    # Area fraction of particles in the 2D domain
     A_domain = Lx * Ly
     A_particles = n_particles * math.pi * r_particle**2
     phi = A_particles / A_domain
@@ -67,8 +77,9 @@ def main():
     print(f"phi             = {phi:.6f}")
     print(f"phi (%)         = {phi * 100:.3f} %")
 
-    # --- Einstein dilute-limit viscosity -------------------------------
-    # mu_E = mu (1 + 5/2 phi)  for spheres in 3D; used here as reference
+    #---------------------------------------------------
+    # Einstein Dilute-Limit Viscosity
+    #---------------------------------------------------
     mu_einstein = mu_fluid * (1.0 + 2.5 * phi)
     increase_einstein = ((mu_einstein - mu_fluid) / mu_fluid) * 100.0
 
@@ -77,9 +88,9 @@ def main():
     print(f"mu Einstein     = {mu_einstein:.6f}")
     print(f"increase        = {increase_einstein:.3f} %")
 
-    # --- Effective viscosity inferred from wall force ------------------
-    # In Couette flow, wall shear force scales with viscosity, so
-    # mu_sim / mu_fluid = Fx / Fx0
+    #---------------------------------------------------
+    # Effective Viscosity from Simulation
+    #---------------------------------------------------
     force_ratio = Fx / Fx0
     mu_sim = mu_fluid * force_ratio
     increase_sim = ((mu_sim - mu_fluid) / mu_fluid) * 100.0
@@ -89,7 +100,9 @@ def main():
     print(f"mu simulation   = {mu_sim:.6f}")
     print(f"increase        = {increase_sim:.3f} %")
 
-    # --- Comparison ----------------------------------------------------
+    #---------------------------------------------------
+    # Comparison
+    #---------------------------------------------------
     difference = mu_sim - mu_einstein
     relative_error = abs(mu_sim - mu_einstein) / mu_einstein * 100.0
 
@@ -99,7 +112,9 @@ def main():
     print(f"difference      = {difference:.6f}")
     print(f"relative error  = {relative_error:.3f} %")
 
-    # Mixture density (particles and fluid have equal density here)
+    #---------------------------------------------------
+    # Effective Density
+    #---------------------------------------------------
     rho_eff = (1.0 - phi) * rho_fluid + phi * rho_particle
 
     print("\n========== EFFECTIVE DENSITY ==========")
