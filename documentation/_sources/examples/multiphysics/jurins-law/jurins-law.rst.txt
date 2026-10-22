@@ -23,8 +23,8 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/multiphysics/jurins-law-2d``).
 
-- Pointwise mesh file: ``jurins-law-2d-dimensioned.pw``
-- Mesh file: ``jurins-law-2d-mesh-dimensioned.msh``
+- Pointwise mesh file: ``mesh/jurins-law-2d-dimensioned.pw``
+- Mesh file: ``mesh/jurins-law-2d-mesh-dimensioned.msh``
 - Parameter file: ``jurins-law-2d.prm``
 - Postprocessing Python script: ``jurins_law_multiple_folders.py`` (using the functions of ``postprocessing_jurins_law_dimensioned.py``)
 
@@ -63,7 +63,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`0.0005 \ \text{s}`. Time-step adaptation is enabled using ``adapt time step to respect CFL` = true`` and the max CFL is :math:`0.8`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain.
+Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`0.0005 \ \text{s}`. Time-step adaptation is enabled using ``adapt time step to respect CFL = true`` and the max CFL is :math:`0.8`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain.
 
 .. code-block:: text
 
@@ -114,9 +114,9 @@ In the ``mesh`` subsection, we specify the mesh used in this example. The struct
 .. code-block:: text
 
     subsection mesh
-        set type               = gmsh
-        set file name          = ./jurins-law-2d-mesh-dimensioned.msh
-        set initial refinement = 2
+      set type               = gmsh
+      set file name          = ./mesh/jurins-law-2d-mesh-dimensioned.msh
+      set initial refinement = 2
     end
 
 Mesh Adaptation
@@ -127,7 +127,7 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                     = adaptive 
+      set type                     = adaptive
       set error estimator          = kelly
       set variable                 = phase_cahn_hilliard
       set fraction type            = fraction
@@ -135,7 +135,7 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
       set min refinement level     = 2
       set frequency                = 1
       set fraction refinement      = 0.99
-      set fraction coarsening      = 0.1
+      set fraction coarsening      = 0.01
       set initial refinement steps = 2
     end
 
@@ -151,12 +151,12 @@ The ``physical properties`` subsection defines the physical properties of the fl
     subsection physical properties
       set number of fluids = 2
       subsection fluid 0
-        set kinematic viscosity        = 8e-5
-        set density                    = 1
+        set kinematic viscosity = 8e-5
+        set density             = 1
       end
-        subsection fluid 1
-        set kinematic viscosity        = 1e-4
-        set density                    = 2000
+      subsection fluid 1
+        set kinematic viscosity = 1e-4
+        set density             = 2000
       end
       set number of material interactions = 1
       subsection material interaction 0
@@ -188,13 +188,13 @@ In the ``cahn hilliard`` subsection, we set the ``potential smoothing coefficien
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need only need to initialize the phase field in the ``cahn hilliard`` subsection. The chemical potential field is set to :math:`0` uniformly. The interface is initialized with the equilibrium interface thickness, which requires to know the value of :math:`\epsilon` that is outputted at every iteration. Here, :math:`\epsilon = 0.04419`.
+In the ``initial conditions`` subsection, we only need to initialize the phase field in the ``cahn hilliard`` subsection. The chemical potential field is set to :math:`0` uniformly. The phase field is initialized with a hyperbolic tangent profile centered at :math:`y = 4`, with an interface thickness :math:`\epsilon = 0.02`. This is thinner than the interface thickness determined automatically by the solver from the size of the smallest cell (:math:`\epsilon = 0.04419` at the maximum refinement level), which is outputted at every iteration.
 
 .. code-block:: text
 
     subsection initial conditions
       subsection cahn hilliard
-        set Function expression = tanh((y-4)/(sqrt(2)*0.04419));0
+        set Function expression = tanh((y-4)/(1.41*2e-2));0
       end
     end
 
@@ -259,7 +259,7 @@ In the ``source term`` subsection, we define the gravitational acceleration. Sin
 
     subsection source term
       subsection fluid dynamics
-        set Function expression = 0; 0; -9810; 0
+        set Function expression = 0; -9810; 0
       end
     end
 

@@ -470,8 +470,8 @@
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/jurins-law-2d</span></code>).</p>
 <ul class="simple">
-<li><p>Pointwise mesh file: <code class="docutils literal notranslate"><span class="pre">jurins-law-2d-dimensioned.pw</span></code></p></li>
-<li><p>Mesh file: <code class="docutils literal notranslate"><span class="pre">jurins-law-2d-mesh-dimensioned.msh</span></code></p></li>
+<li><p>Pointwise mesh file: <code class="docutils literal notranslate"><span class="pre">mesh/jurins-law-2d-dimensioned.pw</span></code></p></li>
+<li><p>Mesh file: <code class="docutils literal notranslate"><span class="pre">mesh/jurins-law-2d-mesh-dimensioned.msh</span></code></p></li>
 <li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">jurins-law-2d.prm</span></code></p></li>
 <li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">jurins_law_multiple_folders.py</span></code> (using the functions of <code class="docutils literal notranslate"><span class="pre">postprocessing_jurins_law_dimensioned.py</span></code>)</p></li>
 </ul>
@@ -506,7 +506,7 @@ The computational domain is described in the following figure (not to scale):</p
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>Time integration is handled by a 1st order backward differentiation scheme (<cite>bdf1</cite>), for a <span class="math notranslate nohighlight">\(0.5 \ \text{s}\)</span> simulation time with an initial time step of <span class="math notranslate nohighlight">\(0.0005 \ \text{s}\)</span>. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">to</span> <span class="pre">respect</span> <span class="pre">CFL`</span> <span class="pre">=</span> <span class="pre">true</span></code> and the max CFL is <span class="math notranslate nohighlight">\(0.8\)</span>. <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">boundaries</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to get a <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> file containing the indices of the boundaries of the domain.</p>
+<p>Time integration is handled by a 1st order backward differentiation scheme (<cite>bdf1</cite>), for a <span class="math notranslate nohighlight">\(0.5 \ \text{s}\)</span> simulation time with an initial time step of <span class="math notranslate nohighlight">\(0.0005 \ \text{s}\)</span>. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">to</span> <span class="pre">respect</span> <span class="pre">CFL</span> <span class="pre">=</span> <span class="pre">true</span></code> and the max CFL is <span class="math notranslate nohighlight">\(0.8\)</span>. <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">boundaries</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to get a <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> file containing the indices of the boundaries of the domain.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method                         = bdf1
   set output name                    = jurins-law-2d
@@ -549,9 +549,9 @@ end
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection, we specify the mesh used in this example. The structured mesh used in this example was designed using Fidelity Pointwise. The source file is <code class="docutils literal notranslate"><span class="pre">jurins-law-2d-dimensioned.pw</span></code>. It was then exported into a readable format: <code class="docutils literal notranslate"><span class="pre">jurins-law-2d-mesh-dimensioned.msh</span></code>. The initial refinement is set to <span class="math notranslate nohighlight">\(2\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-    set type               = gmsh
-    set file name          = ./jurins-law-2d-mesh-dimensioned.msh
-    set initial refinement = 2
+  set type               = gmsh
+  set file name          = ./mesh/jurins-law-2d-mesh-dimensioned.msh
+  set initial refinement = 2
 end
 </pre></div>
 </div>
@@ -568,7 +568,7 @@ end
   set min refinement level     = 2
   set frequency                = 1
   set fraction refinement      = 0.99
-  set fraction coarsening      = 0.1
+  set fraction coarsening      = 0.01
   set initial refinement steps = 2
 end
 </pre></div>
@@ -584,12 +584,12 @@ end
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
   set number of fluids = 2
   subsection fluid 0
-    set kinematic viscosity        = 8e-5
-    set density                    = 1
+    set kinematic viscosity = 8e-5
+    set density             = 1
   end
-    subsection fluid 1
-    set kinematic viscosity        = 1e-4
-    set density                    = 2000
+  subsection fluid 1
+    set kinematic viscosity = 1e-4
+    set density             = 2000
   end
   set number of material interactions = 1
   subsection material interaction 0
@@ -619,10 +619,10 @@ end
 </section>
 <section id="initial-conditions">
 <h3>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, we need only need to initialize the phase field in the <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> subsection. The chemical potential field is set to <span class="math notranslate nohighlight">\(0\)</span> uniformly. The interface is initialized with the equilibrium interface thickness, which requires to know the value of <span class="math notranslate nohighlight">\(\epsilon\)</span> that is outputted at every iteration. Here, <span class="math notranslate nohighlight">\(\epsilon = 0.04419\)</span>.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, we only need to initialize the phase field in the <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> subsection. The chemical potential field is set to <span class="math notranslate nohighlight">\(0\)</span> uniformly. The phase field is initialized with a hyperbolic tangent profile centered at <span class="math notranslate nohighlight">\(y = 4\)</span>, with an interface thickness <span class="math notranslate nohighlight">\(\epsilon = 0.02\)</span>. This is thinner than the interface thickness determined automatically by the solver from the size of the smallest cell (<span class="math notranslate nohighlight">\(\epsilon = 0.04419\)</span> at the maximum refinement level), which is outputted at every iteration.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
   subsection cahn hilliard
-    set Function expression = tanh((y-4)/(sqrt(2)*0.04419));0
+    set Function expression = tanh((y-4)/(1.41*2e-2));0
   end
 end
 </pre></div>
@@ -681,7 +681,7 @@ end
 <p>In the <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">term</span></code> subsection, we define the gravitational acceleration. Since the unit length is the millimeter, the usual value of <span class="math notranslate nohighlight">\(g\)</span> needs to be multiplied by <span class="math notranslate nohighlight">\(1000\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection source term
   subsection fluid dynamics
-    set Function expression = 0; 0; -9810; 0
+    set Function expression = 0; -9810; 0
   end
 end
 </pre></div>
