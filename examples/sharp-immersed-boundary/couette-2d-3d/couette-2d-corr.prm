@@ -1,8 +1,5 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-
-# Listing of Parameters
-#----------------------
 
 # =============================================================================
 # Couette Flow With Seven Fixed Circles (2D Sharp Immersed Boundary)
@@ -16,6 +13,9 @@
 # refinement around the immersed boundaries is enabled (adaptive mesh type).
 # =============================================================================
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
 
 #---------------------------------------------------
@@ -25,7 +25,7 @@ set dimension = 2
 subsection simulation control
   set method            = steady
   set number mesh adapt = 0
-  set output name       = couette_ex1_b_particles_eps0
+  set output name       = couette-2d-7p
   set output frequency  = 1
   set subdivision       = 1
   set output path       = out_2d/
