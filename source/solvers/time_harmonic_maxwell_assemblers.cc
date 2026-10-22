@@ -80,8 +80,7 @@ compute_waveguide_port_incident_fields(
 
 
   // Also verify that those transverse vectors are perpendicular to the normal
-  // of the
-  // face and form an orthogonal basis.
+  // of the face and form an orthogonal basis.
   if ((std::abs(normal * e_t1) > 1e-12) || (std::abs(normal * e_t2) > 1e-12))
     AssertThrow(
       false,
@@ -239,7 +238,6 @@ get_waveguide_port_index(
   return waveguide_port_index;
 }
 
-
 template <int dim>
 TimeHarmonicMaxwellAssemblerCore<dim>::TimeHarmonicMaxwellAssemblerCore(
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters)
@@ -352,6 +350,10 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_rhs(
 {
   Vector<double> &l_vector = copy_data.l_vector;
 
+  // We return early because there are no volume source terms in the
+  // time-harmonic Maxwell equations at the moment.
+  return;
+
   // Loop over the quadrature points of the cell. No volume source term is
   // considered at the moment, so the interior load vector is zero.
   for (unsigned int q = 0; q < scratch_data.n_q_points; ++q)
@@ -416,7 +418,6 @@ TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_rhs(
   const TimeHarmonicMaxwellScratchData<dim> & /*scratch_data*/,
   DPGCopyData & /*copy_data*/)
 {}
-
 
 template <int dim>
 TimeHarmonicMaxwellAssemblerRobinBC<dim>::TimeHarmonicMaxwellAssemblerRobinBC(

@@ -227,7 +227,7 @@ public:
  * \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$, \f$M_4 = B^\dagger G^{-1}\f$ and
  * \f$M_5 = \hat{B}^\dagger G^{-1}\f$, and stores either the condensed skeleton
  * system (assembly) or the reconstructed interior solution (interior
- *reconstruction).
+ * reconstruction).
  **/
 class DPGCopyData
 {
@@ -278,7 +278,7 @@ public:
   /**
    * @brief Resets the uncondensed local system to zero. The \f$M_1\f$ matrix
    * is also reset since LAPACKFullMatrix keeps track of its inverse status and
-   * forbids to invert it again if it has already been inverted.
+   * forbids inverting it again if it has already been inverted.
    */
   void
   reset()
@@ -307,13 +307,13 @@ public:
   LAPACKFullMatrix<double> M3_matrix;
   // Static condensation matrix 4 \f$M_4 = B^\dagger G^{-1}\f$
   LAPACKFullMatrix<double> M4_matrix;
-  // Static condensation matrix 5 \f$M_5 = \hat{B}^\dagger G^{-1} B\f$
+  // Static condensation matrix 5 \f$M_5 = \hat{B}^\dagger G^{-1}\f$
   LAPACKFullMatrix<double> M5_matrix;
-  // Temporary matrices products M_2^\dagger M_1^{-1}
+  // Temporary matrix products M_2^\dagger M_1^{-1}
   LAPACKFullMatrix<double> tmp_matrix_M2M1;
-  // Temporary matrices products M_2^\dagger M_1^{-1} M_2
+  // Temporary matrix products M_2^\dagger M_1^{-1} M_2
   LAPACKFullMatrix<double> tmp_matrix_M2M1M2;
-  // Temporary matrices products M_2^\dagger M_1^{-1} M_4
+  // Temporary matrix products M_2^\dagger M_1^{-1} M_4
   LAPACKFullMatrix<double> tmp_matrix_M2M1M4;
 
   // Cell condensed skeleton system
@@ -346,7 +346,7 @@ public:
 
   // Boolean used to indicate if the cell being assembled is local or not
   // This information is used to indicate to the copy_local_to_global function
-  // if it should indeed copy or not. It replace the call to the function
+  // if it should indeed copy or not. It replaces the call to the function
   // cell->is_locally_owned().
   bool cell_is_local;
 };

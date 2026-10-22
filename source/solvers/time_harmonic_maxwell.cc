@@ -2053,7 +2053,7 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
 
   // The time-harmonic Maxwell system is assembled again every time it is
   // solved (i.e., at each coupling step), so the global system needs to be
-  // reset before the assembly, even when the setup dofs is not called again.
+  // reset before the assembly, even when the setup_dofs() is not called again.
   this->system_matrix = 0;
   this->system_rhs    = 0;
 

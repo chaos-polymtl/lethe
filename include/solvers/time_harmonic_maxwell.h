@@ -487,8 +487,7 @@ private:
    * the linear system on the skeleton only. The local DPG system of each cell
    * is assembled again to compute the interior solution
    * \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ and the DPG residual
-   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ when the dpg error
-   * estimator is activated. The latter is only used to compute the error
+   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ when the DPG error
    * estimate on the cell and is not stored anywhere else.
    */
   void

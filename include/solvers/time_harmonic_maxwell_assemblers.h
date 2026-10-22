@@ -45,7 +45,7 @@ using TimeHarmonicMaxwellFaceAssemblerBase =
 
 /**
  * @brief Check if a boundary condition type of the time-harmonic Maxwell
- * equations is a Robin boundary condition, that is applied weakly through the
+ * equations is a Robin boundary condition, which is applied weakly through the
  * assembly.
  *
  * @param[in] type Boundary condition type.
@@ -286,7 +286,7 @@ public:
    * Maxwell physics.
    *
    * @param[in] waveguide_ports_electric_amplitudes Electric field amplitudes of
-   * all the waveguide ports. They are normalized  by their maximum
+   * all the waveguide ports. They are normalized by their maximum
    * to get the relative amplitudes of the ports during initialization.
    */
   TimeHarmonicMaxwellAssemblerRobinBC(
