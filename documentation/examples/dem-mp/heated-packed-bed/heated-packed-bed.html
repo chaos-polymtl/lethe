@@ -481,9 +481,9 @@ More information regarding the Multiphysics DEM parameters and the heat transfer
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
 <p>This example is run in three stages.</p>
-<p>First, during the loading stage (<span class="math notranslate nohighlight">\(0-6\)</span> s), <span class="math notranslate nohighlight">\(8849\)</span> particles are inserted with a temperature of <span class="math notranslate nohighlight">\(20°C\)</span> in a rectangular box. In this part of the simulation, <span class="math notranslate nohighlight">\(g = 9.81 \mathbf{e_x}\)</span> because we insert the particles from the side of the box. When particles are sufficiently static, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation. Just before the end of this stage, at <span class="math notranslate nohighlight">\(t = 5.95\)</span> s, the kinetic energy of the packed bed is <span class="math notranslate nohighlight">\(3\times10^{-10}\)</span> J, which is lower than the <span class="math notranslate nohighlight">\(1\times10^{-7}\)</span> J criterion used by Beaulieu for a stable packed bed.</p>
-<p>The second stage (<span class="math notranslate nohighlight">\(6-7\)</span> s) is where gravity is changed to <span class="math notranslate nohighlight">\(g = -9.81 \mathbf{e_z}\)</span> to be in the same direction as the experiment from Beaulieu <a class="footnote-reference brackets" href="#beaulieu2020" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. We let the particle bed restructure for <span class="math notranslate nohighlight">\(1\)</span> s. At <span class="math notranslate nohighlight">\(t = 6.95\)</span> s, the kinetic energy of the packed bed is <span class="math notranslate nohighlight">\(1\times10^{-9}\)</span> J.</p>
-<p>Finally, during the heating stage (<span class="math notranslate nohighlight">\(7-4000\)</span> s), the temperature of a solid surface placed on top on the packed bed is set to <span class="math notranslate nohighlight">\(53°C\)</span> and the particles are heated through this top wall. During this last part of the simulation, particle motion is disabled.</p>
+<p>First, during the loading stage (<span class="math notranslate nohighlight">\(0-6\)</span> s), <span class="math notranslate nohighlight">\(8849\)</span> particles are inserted with a temperature of <span class="math notranslate nohighlight">\(20°C\)</span> in a rectangular box. In this part of the simulation, <span class="math notranslate nohighlight">\(g = 9.81 \mathbf{e_x}\)</span> because we insert the particles from the side of the box. When particles are sufficiently static, we use a solid surface to even out the particles on the side of the packed bed. Then, a second solid surface is placed on the side to close the box and keep the particles in place for the next stage of the simulation. At the end of this stage, at <span class="math notranslate nohighlight">\(t = 6\)</span> s, the kinetic energy of the packed bed is <span class="math notranslate nohighlight">\(1\times10^{-10}\)</span> J, which is lower than the <span class="math notranslate nohighlight">\(1\times10^{-7}\)</span> J criterion used by Beaulieu for a stable packed bed.</p>
+<p>The second stage (<span class="math notranslate nohighlight">\(6-7\)</span> s) is where gravity is changed to <span class="math notranslate nohighlight">\(g = -9.81 \mathbf{e_z}\)</span> to be in the same direction as the experiment from Beaulieu <a class="footnote-reference brackets" href="#beaulieu2020" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. We let the particle bed restructure for <span class="math notranslate nohighlight">\(1\)</span> s. At the end of this stage, at <span class="math notranslate nohighlight">\(t = 7\)</span> s, the kinetic energy of the packed bed is <span class="math notranslate nohighlight">\(7\times10^{-8}\)</span> J, which is still lower than the <span class="math notranslate nohighlight">\(1\times10^{-7}\)</span> J criterion.</p>
+<p>Finally, during the heating stage (<span class="math notranslate nohighlight">\(7-4007\)</span> s), the temperature of a solid surface placed on top on the packed bed is set to <span class="math notranslate nohighlight">\(53°C\)</span> and the particles are heated through this top wall. During this last part of the simulation, particle motion is disabled.</p>
 <a class="reference internal image-reference" href="../../../_images/heated-steel-rake.png"><img alt="../../../_images/heated-steel-rake.png" src="../../../_images/heated-steel-rake.png" style="width: 400px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/heated-steel-side.png"><img alt="../../../_images/heated-steel-side.png" src="../../../_images/heated-steel-side.png" style="width: 400px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/heated-steel-final.png"><img alt="../../../_images/heated-steel-final.png" class="align-center" src="../../../_images/heated-steel-final.png" style="width: 400px;" /></a>
@@ -605,7 +605,7 @@ end
 </section>
 <section id="solid-objects">
 <h3>Solid Objects<a class="headerlink" href="#solid-objects" title="Link to this heading">#</a></h3>
-<p>Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from <span class="math notranslate nohighlight">\(7\)</span> s to <span class="math notranslate nohighlight">\(4000\)</span> s, with a temperature of <span class="math notranslate nohighlight">\(53°C\)</span>. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within it when the direction of the gravity is changed. The second and third walls are both set to <code class="docutils literal notranslate"><span class="pre">adiabatic</span></code>, meaning that they are insulated and do not provide any heat transfer.</p>
+<p>Three solid surfaces are used in this example. The first one is the one used to heat the packed bed from <span class="math notranslate nohighlight">\(7\)</span> s to <span class="math notranslate nohighlight">\(4007\)</span> s, with a temperature of <span class="math notranslate nohighlight">\(53°C\)</span>. The second one is used to even the particles on the side of the packed bed. The last one closes the box to maintain the particles within it when the direction of the gravity is changed. The second and third walls are both set to <code class="docutils literal notranslate"><span class="pre">adiabatic</span></code>, meaning that they are insulated and do not provide any heat transfer.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection solid objects
   subsection solid surfaces
     set number of solids = 3
@@ -675,7 +675,7 @@ end
   set time step         = 2.5e-5
   set time end          = 6
   set log frequency     = 2000
-  set output frequency  = 2000
+  set output frequency  = 10000
   set output path       = ./output/
   set output boundaries = true
 end
@@ -686,20 +686,21 @@ end
   set time step         = 2.5e-5
   set time end          = 7
   set log frequency     = 2000
-  set output frequency  = 2000
+  set output frequency  = 10000
   set output path       = ./output/
   set output boundaries = true
 end
 </pre></div>
 </div>
-<p>For the heating stage:</p>
+<p>For the heating stage, the time step is increased to <span class="math notranslate nohighlight">\(1\)</span> s. Since this stage is restarted from the checkpoint of the previous stage, <code class="docutils literal notranslate"><span class="pre">override</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">on</span> <span class="pre">restart</span></code> must be set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, otherwise the time step stored in the checkpoint (<span class="math notranslate nohighlight">\(2.5 \times 10^{-5}\)</span> s) would be used.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set time step         = 1
-  set time end          = 4007
-  set log frequency     = 10
-  set output frequency  = 10
-  set output path       = ./output/
-  set output boundaries = true
+  set time step                     = 1
+  set time end                      = 4007
+  set log frequency                 = 10
+  set output frequency              = 50
+  set output path                   = ./output/
+  set output boundaries             = true
+  set override time step on restart = true
 end
 </pre></div>
 </div>
