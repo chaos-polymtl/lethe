@@ -143,7 +143,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     cahn_hilliard            = prm.get_bool("cahn hilliard");
     electromagnetics         = prm.get_bool("electromagnetics");
     continuum_solid_dynamics = prm.get_bool("continuum solid dynamics");
-    
+
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");
     thermal_buoyancy_force = prm.get_bool("thermal buoyancy force");
