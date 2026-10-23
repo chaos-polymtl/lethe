@@ -15,6 +15,7 @@ add_library(lethe-solvers
   cls_phase_gradient_projection.cc
   cls_scratch_data.cc
   cls_subequations_interface.cc
+  continuum_solid_dynamics.cc
   flow_control.cc
   fluid_dynamics_block.cc
   fluid_dynamics_matrix_based.cc
@@ -41,7 +42,6 @@ add_library(lethe-solvers
   signed_distance_transformation.cc
   simulation_parameters.cc
   solid_constraints.cc
-  continuum_solid_dynamics.cc
   source_terms.cc
   stabilization.cc
   time_harmonic_maxwell.cc
@@ -68,6 +68,7 @@ add_library(lethe-solvers
   ../../include/solvers/cls_scratch_data.h
   ../../include/solvers/cls_subequations.h
   ../../include/solvers/cls_subequations_interface.h
+  ../../include/solvers/continuum_solid_dynamics.h
   ../../include/solvers/copy_data.h
   ../../include/solvers/flow_control.h
   ../../include/solvers/fluid_dynamics_block.h
@@ -99,7 +100,6 @@ add_library(lethe-solvers
   ../../include/solvers/signed_distance_transformation.h
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/solid_constraints.h
-  ../../include/solvers/continuum_solid_dynamics.h
   ../../include/solvers/source_terms.h
   ../../include/solvers/stabilization.h
   ../../include/solvers/time_harmonic_maxwell.h
