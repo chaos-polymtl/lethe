@@ -4,9 +4,11 @@ Couette Flow with Immersed Particles
 
 This example tests Einstein's dilute viscosity on a Couette flow with rigid
 particles, in two and three dimensions. The wall shear force is compared with
-:math:`\mu(1 + \tfrac{5}{2}\phi)`. The comparison shows where that formula is
-sufficient, and where the measured viscosity falls below it. A short overview
-of Einstein's viscosity law for dilute suspensions is given in
+:math:`\mu(1 + 2\phi)` in two dimensions [#brady1984]_ and with
+:math:`\mu(1 + \tfrac{5}{2}\phi)` in three dimensions [#einstein1906]_,
+[#einstein1911]_. The comparison shows where those formulae are sufficient,
+and where the measured viscosity departs from them. A short overview of
+Einstein's viscosity law for dilute suspensions is given in
 [#wikieinstein]_.
 
 ----------------------------------
@@ -23,14 +25,13 @@ Files Used in This Example
 
 All files are in ``examples/sharp-immersed-boundary/couette-2d-3d``.
 
-- ``couette-2d-7p.prm``
-- ``couette-3d-20p.prm``
-- ``epsilon_2d.py``
-- ``epsilon_3d.py``
-- ``calc_ratio.py``
 - Base 2D parameter file: ``couette-2d-7p.prm``
+- Base 3D parameter file: ``couette-3d-20p.prm``
 - 2D case generation Python script: ``epsilon_2d.py``
-- Postprocessing Python script :``calc_ratio.py``
+- 3D case generation Python script: ``epsilon_3d.py``
+- Arrangement generation Python script: ``generate_arrangements_3d.py``
+- 2D postprocessing Python script: ``plot_viscosity_2d.py``
+- 3D postprocessing Python script: ``plot_viscosity_3d.py``
 
 -----------------------
 Description of the Case
@@ -63,14 +64,20 @@ The relation is written with the intrinsic viscosity :math:`[\eta]`
 [#wikiintrinsic]_:
 
 .. math::
-    \frac{\mu_{eff}}{\mu} = 1 + [\eta]\,\phi, \qquad [\eta] = \frac{5}{2}.
+    \frac{\mu_{eff}}{\mu} = 1 + [\eta]\,\phi,
+    \qquad
+    [\eta] = 2 \text{ in 2D (discs)},
+    \quad
+    [\eta] = \tfrac{5}{2} \text{ in 3D (spheres)}.
 
 This is a dilute result: particles interact with the flow, not with each
 other. It is expected to be accurate at a few percent, and to drift once
-:math:`\phi` is large. The coefficient :math:`5/2` was derived for spheres.
-The two-dimensional runs still use it, so that both geometries are judged by
-the same formula. The force on the moving plate is negative, because the fluid
-resists the motion. The curves use the absolute value.
+:math:`\phi` is large. The coefficient :math:`5/2` was derived for spheres
+[#einstein1906]_, [#einstein1911]_. The two-dimensional analogue for circular
+discs is :math:`[\eta] = 2` [#brady1984]_. The force on the moving plate is
+negative, because the fluid resists the motion. The effective viscosity
+plotted in the figures is obtained from the absolute wall force,
+:math:`\mu_{\mathrm{eff}} = \mu\,|F_x|/F_0`.
 
 Two-Dimensional Channel
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,18 +157,8 @@ Parameter File
 
 ``couette-2d-7p.prm`` is a steady solve at :math:`\mu = 10`.
 ``epsilon_2d.py`` changes only the radius, the output name and the force name.
-``couette-3d-20p.prm`` is the three-dimensional base file with twenty spheres.
-
-Simulation Control
-~~~~~~~~~~~~~~~~~~
-
-.. code-block:: text
-
-    subsection simulation control
-      set method           = steady
-      set output name      = couette_ex1_b_particles_eps0
-      set output path      = out_2d/
-    end
+The same structure is used in three dimensions, starting from
+``couette-3d-20p.prm`` and ``epsilon_3d.py``.
 
 Mesh
 ~~~~
@@ -178,23 +175,17 @@ that each side receives a boundary id.
       set initial refinement = 2
     end
 
-The three-dimensional grid uses the same construction on
-:math:`75 \times 30 \times 20`.
-
-.. code-block:: text
-
-    subsection mesh
-      set type               = dealii
-      set grid type          = subdivided_hyper_rectangle
-      set grid arguments     = 25,10,10 : 0,0,0 : 75,30,20 : true
-      set initial refinement = 2
-    end
+In three dimensions the same construction is used on
+:math:`75 \times 30 \times 20`, with
+``grid arguments = 25,10,10 : 0,0,0 : 75,30,20 : true``.
+The extra periodic direction in :math:`z` is what requires the third pair of
+grid arguments.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-In two dimensions the streamwise direction is periodic. The plates are imposed
-weakly, with ``beta = 10``.
+The streamwise direction is periodic. The plates are imposed weakly, with
+``beta = 10``.
 
 .. code-block:: text
 
@@ -208,7 +199,7 @@ weakly, with ``beta = 10``.
       end
       subsection bc 1
         set id   = 2
-        set type = function weak
+        set type = function_weak
         subsection u
           set Function expression = 0
         end
@@ -219,7 +210,7 @@ weakly, with ``beta = 10``.
       end
       subsection bc 2
         set id   = 3
-        set type = function weak
+        set type = function_weak
         subsection u
           set Function expression = 1
         end
@@ -230,9 +221,9 @@ weakly, with ``beta = 10``.
       end
     end
 
-In three dimensions a periodic pair is added in :math:`z` (ids 4 and 5,
-direction 2). The bottom plate (id 2) is fixed and the top plate (id 3) moves
-at 1.5. The plates use ``function weak`` with ``beta = 10``.
+In three dimensions a second periodic pair is added in :math:`z` (ids 4 and 5,
+direction 2), and the top-wall speed is 1.5 so that the shear rate remains
+:math:`0.05`. The plates still use ``function_weak`` with ``beta = 10``.
 
 Particles
 ~~~~~~~~~
@@ -268,35 +259,10 @@ The six other particles repeat this block at the centers listed above.
       end
     end
 
-``couette-3d-20p.prm`` contains twenty spheres of radius 1 at random midplane
-centers. The velocity is the Couette value at each particle center.
-
-.. code-block:: text
-
-    subsection particles
-      set assemble Navier-Stokes inside particles = false
-      set number of particles                     = 20
-      subsection extrapolation function
-        set length ratio   = 2
-        set stencil degree = 2
-      end
-      subsection local mesh refinement
-        set initial refinement                = 2
-        set refine mesh inside radius factor  = 0.7
-        set refine mesh outside radius factor = 1.2
-      end
-      subsection particle info 0
-        set type             = sphere
-        set shape arguments  = 1
-        set integrate motion = false
-        subsection position
-          set Function expression = 25.520628; 6.969531; 10.000000
-        end
-        subsection velocity
-          set Function expression = 0.348477; 0; 0
-        end
-      end
-    end
+In three dimensions ``number of particles`` is 20, ``stencil degree`` is 2,
+and each sphere is placed in the midplane :math:`z = 10` with the Couette
+velocity at its center. Twenty spheres are used so that a dilute
+:math:`\phi` can still be reached without overlapping.
 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
@@ -307,7 +273,9 @@ Mesh Adaptation
       set type = adaptive
     end
 
-``couette-3d-20p.prm`` sets this type to ``none``.
+In three dimensions this type is set to ``none``. The near-particle
+refinement is applied once at the start of the run, which is enough for the
+dilute 3D cases and avoids the cost of Kelly adaptation.
 
 Forces
 ~~~~~~
@@ -318,60 +286,74 @@ Lethe writes one force file per boundary id. ``.02.dat`` is the bottom plate
 .. code-block:: text
 
     subsection forces
+      set verbosity             = verbose
       set calculate force       = true
       set calculate torque      = false
       set force name            = force_7p_eps0
+      set output precision      = 10
       set calculation frequency = 1
       set output frequency      = 1
     end
 
-The three-dimensional file uses ``force_20p_3d``.
+In three dimensions the force name is ``force_20p_3d``.
+
+--------------------------------
+Generating the Parameter Files
+--------------------------------
+
+Using the following command:
+
+.. code-block:: text
+
+    python3 epsilon_2d.py
+
+writes one parameter file per solid fraction
+(:math:`\phi = 2\,\%`, :math:`4\,\%`, :math:`5\,\%` and :math:`15\,\%`),
+with the matching particle radius, output name and force name.
+
+The same applies in three dimensions with ``python3 epsilon_3d.py``
+(:math:`\phi = 0.2\,\%`, :math:`0.5\,\%` and :math:`0.8\,\%`).
+Four midplane layouts (D1–D4) are obtained with
+``python3 generate_arrangements_3d.py``.
 
 ---------------------------
 Running the Simulation
 ---------------------------
 
-The centers stay fixed. A script reads the base parameter file and, for each
-solid fraction :math:`\phi`, computes the matching radius and writes one
-parameter file. The output name, the force name and the output path change
-with :math:`\phi`.
-
-``epsilon_2d.py`` starts from ``couette-2d-7p.prm``. Seven discs give
-
-.. math::
-    \phi = \frac{7\pi R^{2}}{50 \times 20}.
-
-The script builds the cases :math:`\phi = 2\,\%`, :math:`4\,\%`,
-:math:`5\,\%` and :math:`15\,\%`.
-
-``epsilon_3d.py`` starts from ``couette-3d-20p.prm``. Twenty spheres give
-
-.. math::
-    \phi = \frac{20 \times \tfrac{4}{3}\pi R^{3}}{75 \times 30 \times 20}.
-
-The same centers overlap above about :math:`1\,\%`, so the script stops at
-:math:`0.2\,\%`, :math:`0.5\,\%` and :math:`0.8\,\%`. Those runs use
-``function weak`` with ``beta = 10``, and do not assemble the Navier–Stokes
-equations inside the spheres.
+Once the files are created, the base cases are launched with:
 
 .. code-block:: text
 
-    python3 epsilon_2d.py
-    python3 epsilon_3d.py
     mpirun -np 4 lethe-fluid-sharp couette-2d-7p.prm
     mpirun -np 4 lethe-fluid-sharp couette-3d-20p.prm
-    python3 calc_ratio.py
 
-Each file written by the script is then run with ``lethe-fluid-sharp``. A
-three-dimensional case takes about one minute on 4 MPI ranks. The
+Each file written by the generation scripts is then run the same way.
+A three-dimensional case takes about one minute on 4 MPI ranks. The
 two-dimensional cases take longer because of the local refinement.
+
+---------------
+Postprocessing
+---------------
+
+A Python postprocessing script is provided for each geometry. It reads the
+wall force of the solid-fraction sweep, builds
+:math:`\mu_{\mathrm{eff}} = \mu\,|F_x|/F_0`, and writes the viscosity figure.
+
+.. code-block:: text
+
+    python3 plot_viscosity_2d.py
+    python3 plot_viscosity_3d.py
+
+The two-dimensional script compares the measured viscosity with
+:math:`\mu(1+2\phi)`. The three-dimensional script uses :math:`F_0 = 750`
+and :math:`\mu(1+\tfrac{5}{2}\phi)`.
 
 -----------------------
 Results and Discussion
 -----------------------
 
 The two-dimensional curve compares the measured viscosity with
-:math:`\mu(1 + \tfrac{5}{2}\phi)`.
+:math:`\mu(1 + 2\phi)` [#brady1984]_.
 
 .. figure:: images/viscosity-2d.png
     :alt: Effective viscosity against solid fraction in two dimensions
@@ -379,11 +361,10 @@ The two-dimensional curve compares the measured viscosity with
     :width: 600px
 
     Effective viscosity of the two-dimensional sweep. The curve is
-    :math:`\mu(1+\tfrac{5}{2}\phi)`.
+    :math:`\mu(1+2\phi)`.
 
-The points stay on the curve up to 5 %, where the error is still 0.75 %. At
-15 % the simulation falls below the curve, 13.626 against 13.750. Five percent
-is the highest fraction at which the formula can be used as is.
+The points stay close to the curve up to 5 %. At 15 % the simulation lies
+above the curve, 13.626 against 13.000.
 
 The three-dimensional curve uses the viscosity :math:`10\,|F_x|/750` from the
 twenty-particle weak-wall sweeps at :math:`0.2\,\%`, :math:`0.5\,\%` and
@@ -432,7 +413,6 @@ spread between arrangements is below 0.2 %. In the dilute limit the wall force
 is therefore controlled by :math:`\phi`, not by the particle layout, as
 expected from Einstein's theory.
 
-
 Reynolds-Number Dependence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -453,10 +433,7 @@ wall force as :math:`\mu_{\mathrm{sim}} = \nu\,|F_x|/F_{x,0}`.
 Over this range the ratio :math:`\mu_{\mathrm{sim}}/\mu_{E}` stays close to
 1.0045 (relative error about 0.45 %). No measurable Reynolds-number
 dependence appears. The dilute Couette response is therefore consistent with
-Einstein's Stokes assumption for arrangement D4 .
-
-
-
+Einstein's Stokes assumption for arrangement D4.
 
 -------------------------
 Possibility for Extension
@@ -465,9 +442,9 @@ Possibility for Extension
 The present study stays in the dilute, Stokes regime. Several extensions
 follow naturally from the runs already performed.
 
-At higher solid fractions the measured viscosity falls below
-:math:`\mu(1+\tfrac{5}{2}\phi)`. A quadratic closure
-:math:`\mu_{eff}/\mu = 1 + \tfrac{5}{2}\phi + k\phi^{2}` can be fitted on the
+At higher solid fractions the two-dimensional viscosity lies above
+:math:`\mu(1+2\phi)`. A quadratic closure
+:math:`\mu_{eff}/\mu = 1 + 2\phi + k\phi^{2}` can be fitted on the
 two-dimensional sweep, and the coefficient :math:`k` related to the minimum
 gap between neighbouring particles.
 
@@ -492,6 +469,11 @@ References
    Bestimmung der Moleküldimensionen," *Ann. Phys.*, vol. 339, no. 3,
    pp. 591–592, 1911, doi:
    `10.1002/andp.19113390313 <https://doi.org/10.1002/andp.19113390313>`_.
+
+.. [#brady1984] J. F. Brady, "The Einstein viscosity correction in
+   :math:`n` dimensions," *Int. J. Multiphase Flow*, vol. 10, no. 1,
+   pp. 113–114, 1984, doi:
+   `10.1016/0301-9322(83)90064-2 <https://doi.org/10.1016/0301-9322(83)90064-2>`_.
 
 .. [#wikiintrinsic] "Intrinsic viscosity," *Wikipedia*. [Online]. Available:
    `https://en.wikipedia.org/wiki/Intrinsic_viscosity
