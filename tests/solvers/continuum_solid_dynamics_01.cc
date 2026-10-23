@@ -11,7 +11,7 @@
  * - its solution survives a mesh refinement;
  * - its solution can be written to and read from a checkpoint;
  * - enabling it with a standard Navier-Stokes solver throws
- *   SolidPhaseWithoutVANSError.
+ *   ContinuumSolidDynamicsWithoutVANSError.
  */
 
 #include <core/multiphysics.h>
@@ -19,9 +19,9 @@
 #include <core/parameters.h>
 #include <core/simulation_control.h>
 
+#include <solvers/continuum_solid_dynamics.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/simulation_parameters.h>
-#include <solvers/solid_phase.h>
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/mpi.h>
@@ -36,12 +36,12 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/tria.h>
 
+#include <../tests/tests.h>
+
 #include <memory>
 #include <string>
 #include <variant>
 #include <vector>
-
-#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -79,8 +79,8 @@ test()
   solver_parameters.declare(dummy_handler, size_of_subsections);
   solver_parameters.parse(dummy_handler);
 
-  solver_parameters.multiphysics.fluid_dynamics = true;
-  solver_parameters.multiphysics.solid_phase    = true;
+  solver_parameters.multiphysics.fluid_dynamics           = true;
+  solver_parameters.multiphysics.continuum_solid_dynamics = true;
 
   std::shared_ptr<SimulationControl> simulation_control =
     std::make_shared<SimulationControlTransient>(
@@ -94,7 +94,7 @@ test()
 
   // Registration, DoFs, output and checkpoint writing under VANS
   {
-    auto tria = make_triangulation<dim>(2);
+    auto                       tria = make_triangulation<dim>(2);
     MultiphysicsInterface<dim> multiphysics(solver_parameters,
                                             tria,
                                             simulation_control,
@@ -110,15 +110,13 @@ test()
     multiphysics.set_initial_conditions();
 
     const DoFHandler<dim> &solid_dof_handler =
-      multiphysics.get_dof_handler(PhysicsID::solid_phase);
+      multiphysics.get_dof_handler(PhysicsID::continuum_solid_dynamics);
     deallog << "Solid phase components: "
             << solid_dof_handler.get_fe().n_components() << std::endl;
-    deallog << "Solid phase DoFs: " << solid_dof_handler.n_dofs()
-            << std::endl;
+    deallog << "Solid phase DoFs: " << solid_dof_handler.n_dofs() << std::endl;
 
     // Output hook
-    const auto output_structs =
-      multiphysics.gather_output_hook_global_vector();
+    const auto output_structs = multiphysics.gather_output_hook_global_vector();
     deallog << "Number of output structures: " << output_structs.size()
             << std::endl;
     if (const auto *solution_output =
@@ -144,13 +142,14 @@ test()
     multiphysics.setup_dofs();
     multiphysics.read_checkpoint();
     deallog << "Solid phase DoFs after restart: "
-            << multiphysics.get_dof_handler(PhysicsID::solid_phase).n_dofs()
+            << multiphysics.get_dof_handler(PhysicsID::continuum_solid_dynamics)
+                 .n_dofs()
             << std::endl;
   }
 
   // Mesh adaptation
   {
-    auto tria = make_triangulation<dim>(2);
+    auto                       tria = make_triangulation<dim>(2);
     MultiphysicsInterface<dim> multiphysics(solver_parameters,
                                             tria,
                                             simulation_control,
@@ -169,14 +168,15 @@ test()
     multiphysics.post_mesh_adaptation();
 
     deallog << "Solid phase DoFs after refinement: "
-            << multiphysics.get_dof_handler(PhysicsID::solid_phase).n_dofs()
+            << multiphysics.get_dof_handler(PhysicsID::continuum_solid_dynamics)
+                 .n_dofs()
             << std::endl;
   }
 
   // Without VANS, enabling the solid phase must throw
   try
     {
-      auto tria = make_triangulation<dim>(2);
+      auto                       tria = make_triangulation<dim>(2);
       MultiphysicsInterface<dim> multiphysics(
         solver_parameters,
         tria,
@@ -186,7 +186,7 @@ test()
       deallog << "Solid phase did NOT throw without VANS (unexpected)"
               << std::endl;
     }
-  catch (const SolidPhaseWithoutVANSError &)
+  catch (const ContinuumSolidDynamicsWithoutVANSError &)
     {
       deallog << "Solid phase correctly threw without VANS" << std::endl;
     }

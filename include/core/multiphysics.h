@@ -45,7 +45,7 @@ enum PhysicsID : unsigned int
   /// Time-harmonic electromagnetics (Electric field, Magnetic field)
   electromagnetics = 6,
   /// Euler-Euler solid phase (solid velocity, solid volume fraction)
-  solid_phase = 7
+  continuum_solid_dynamics = 7
 };
 
 /**
@@ -110,8 +110,8 @@ get_physics_id(std::string physics_name)
     return PhysicsID::void_fraction;
   else if (physics_name == "electromagnetics")
     return PhysicsID::electromagnetics;
-  else if (physics_name == "solid phase")
-    return PhysicsID::solid_phase;
+  else if (physics_name == "continuum solid dynamics")
+    return PhysicsID::continuum_solid_dynamics;
   else
     AssertThrow(false,
                 dealii::StandardExceptions::ExcMessage(

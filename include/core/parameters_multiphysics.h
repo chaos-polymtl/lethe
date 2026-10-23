@@ -534,13 +534,13 @@ namespace Parameters
   template <int dim>
   struct Multiphysics
   {
-    bool fluid_dynamics   = true;
-    bool heat_transfer    = false;
-    bool tracer           = false;
-    bool CLS              = false;
-    bool cahn_hilliard    = false;
-    bool electromagnetics = false;
-    bool solid_phase      = false;
+    bool fluid_dynamics           = true;
+    bool heat_transfer            = false;
+    bool tracer                   = false;
+    bool CLS                      = false;
+    bool cahn_hilliard            = false;
+    bool electromagnetics         = false;
+    bool continuum_solid_dynamics = false;
 
     // subparameters for heat_transfer
     bool viscous_dissipation    = false;

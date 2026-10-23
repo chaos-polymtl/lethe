@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @file solid_phase.h
+ * @file continuum_solid_dynamics.h
  * @brief Auxiliary physics for the solid phase of the Euler-Euler (two-fluid)
  * model.
  *
@@ -17,8 +17,8 @@
  * assembled yet, so should_solve_auxiliary_physics() returns false.
  */
 
-#ifndef lethe_solid_phase_h
-#define lethe_solid_phase_h
+#ifndef lethe_continuum_solid_dynamics_h
+#define lethe_continuum_solid_dynamics_h
 
 #include <core/multiphysics.h>
 #include <core/output_struct.h>
@@ -30,11 +30,10 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/simulation_parameters.h>
 
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/quadrature.h>
 #include <deal.II/base/timer.h>
-#include <deal.II/base/exceptions.h>
-
 
 #include <deal.II/distributed/tria_base.h>
 
@@ -53,13 +52,13 @@
 #include <vector>
 
 /**
-* @brief Exception thrown when the solid phase is enabled with a fluid
-* dynamics solver that does not solve the volume-averaged Navier-Stokes
-* equations.
-*/
+ * @brief Exception thrown when the solid phase is enabled with a fluid
+ * dynamics solver that does not solve the volume-averaged Navier-Stokes
+ * equations.
+ */
 DeclExceptionMsg(
-  SolidPhaseWithoutVANSError,
-  "The \"solid phase\" physics (Euler-Euler model) is enabled, but the fluid "
+  ContinuumSolidDynamicsWithoutVANSError,
+  "The \"continuum solid dynamics\" physics (Euler-Euler model) is enabled, but the fluid "
   "dynamics solver does not solve the volume-averaged Navier-Stokes (VANS) "
   "equations. The solid phase can only be used with a VANS solver.");
 
@@ -73,7 +72,7 @@ DeclExceptionMsg(
  * @tparam dim Number of spatial dimensions.
  */
 template <int dim>
-class SolidPhase : public AuxiliaryPhysics<dim, GlobalVectorType>
+class ContinuumSolidDynamics : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
 public:
   /**
@@ -85,11 +84,12 @@ public:
    * @param[in] p_triangulation Distributed triangulation shared by all physics.
    * @param[in] p_simulation_control Simulation control (time stepping).
    */
-  SolidPhase(MultiphysicsInterface<dim>      *multiphysics_interface,
-             const SimulationParameters<dim> &p_simulation_parameters,
-             const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                      &p_triangulation,
-             const std::shared_ptr<SimulationControl> &p_simulation_control);
+  ContinuumSolidDynamics(
+    MultiphysicsInterface<dim>      *multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                             &p_triangulation,
+    const std::shared_ptr<SimulationControl> &p_simulation_control);
 
   /**
    * @brief Gather the solid velocity and solid volume fraction for output.

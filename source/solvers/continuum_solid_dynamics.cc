@@ -4,7 +4,7 @@
 #include <core/bdf.h>
 #include <core/utilities.h>
 
-#include <solvers/solid_phase.h>
+#include <solvers/continuum_solid_dynamics.h>
 
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -30,7 +30,7 @@
 #include <utility>
 
 template <int dim>
-SolidPhase<dim>::SolidPhase(
+ContinuumSolidDynamics<dim>::ContinuumSolidDynamics(
   MultiphysicsInterface<dim>      *multiphysics_interface,
   const SimulationParameters<dim> &p_simulation_parameters,
   const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
@@ -38,7 +38,7 @@ SolidPhase<dim>::SolidPhase(
   const std::shared_ptr<SimulationControl> &p_simulation_control)
   : AuxiliaryPhysics<dim, GlobalVectorType>(
       p_simulation_parameters.physics_solving_strategy.at(
-        PhysicsID::solid_phase))
+        PhysicsID::continuum_solid_dynamics))
   , multiphysics(multiphysics_interface)
   , computing_timer(p_triangulation->get_mpi_communicator(),
                     this->pcout,
@@ -87,7 +87,7 @@ SolidPhase<dim>::SolidPhase(
 
 template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
-SolidPhase<dim>::gather_output_hook()
+ContinuumSolidDynamics<dim>::gather_output_hook()
 {
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
 
@@ -111,11 +111,11 @@ SolidPhase<dim>::gather_output_hook()
 
 template <int dim>
 void
-SolidPhase<dim>::finish_simulation()
+ContinuumSolidDynamics<dim>::finish_simulation()
 {
   if (simulation_parameters.timer.type == Parameters::Timer::Type::end)
     {
-      announce_string(this->pcout, "Solid Phase");
+      announce_string(this->pcout, "Continuum Solid Dynamics");
       this->pcout << std::defaultfloat;
       computing_timer.print_summary();
       this->pcout << std::scientific;
@@ -124,7 +124,7 @@ SolidPhase<dim>::finish_simulation()
 
 template <int dim>
 void
-SolidPhase<dim>::percolate_time_vectors()
+ContinuumSolidDynamics<dim>::percolate_time_vectors()
 {
   for (unsigned int i = previous_solutions->size() - 1; i > 0; --i)
     (*previous_solutions)[i] = (*previous_solutions)[i - 1];
@@ -133,14 +133,14 @@ SolidPhase<dim>::percolate_time_vectors()
 
 template <int dim>
 void
-SolidPhase<dim>::postprocess([[maybe_unused]] bool first_iteration)
+ContinuumSolidDynamics<dim>::postprocess([[maybe_unused]] bool first_iteration)
 {}
 
 template <int dim>
 void
-SolidPhase<dim>::output_per_iteration_timer()
+ContinuumSolidDynamics<dim>::output_per_iteration_timer()
 {
-  announce_string(this->pcout, "Solid Phase");
+  announce_string(this->pcout, "Continuum Solid Dynamics");
   this->pcout << std::defaultfloat;
   computing_timer.print_summary();
   this->pcout << std::scientific;
@@ -149,7 +149,7 @@ SolidPhase<dim>::output_per_iteration_timer()
 
 template <int dim>
 void
-SolidPhase<dim>::pre_mesh_adaptation()
+ContinuumSolidDynamics<dim>::pre_mesh_adaptation()
 {
   solution_transfer->prepare_for_coarsening_and_refinement(*present_solution);
   for (unsigned int i = 0; i < previous_solutions->size(); ++i)
@@ -159,7 +159,7 @@ SolidPhase<dim>::pre_mesh_adaptation()
 
 template <int dim>
 void
-SolidPhase<dim>::post_mesh_adaptation()
+ContinuumSolidDynamics<dim>::post_mesh_adaptation()
 {
   const auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -180,7 +180,7 @@ SolidPhase<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-SolidPhase<dim>::compute_error_estimate(
+ContinuumSolidDynamics<dim>::compute_error_estimate(
   [[maybe_unused]] const std::pair<const Variable,
                                    Parameters::MultipleAdaptationParameters>
                                          &ivar,
@@ -193,7 +193,7 @@ SolidPhase<dim>::compute_error_estimate(
 
 template <int dim>
 void
-SolidPhase<dim>::write_checkpoint()
+ContinuumSolidDynamics<dim>::write_checkpoint()
 {
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
@@ -209,7 +209,7 @@ SolidPhase<dim>::write_checkpoint()
 
 template <int dim>
 void
-SolidPhase<dim>::read_checkpoint()
+ContinuumSolidDynamics<dim>::read_checkpoint()
 {
   const auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading solid phase checkpoint" << std::endl;
@@ -236,14 +236,14 @@ SolidPhase<dim>::read_checkpoint()
 
 template <int dim>
 std::vector<OutputStructTableHandler>
-SolidPhase<dim>::gather_tables()
+ContinuumSolidDynamics<dim>::gather_tables()
 {
   return std::vector<OutputStructTableHandler>();
 }
 
 template <int dim>
 void
-SolidPhase<dim>::define_constraints()
+ContinuumSolidDynamics<dim>::define_constraints()
 {
   nonzero_constraints.clear();
   nonzero_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
@@ -258,7 +258,7 @@ SolidPhase<dim>::define_constraints()
 
 template <int dim>
 void
-SolidPhase<dim>::setup_dofs()
+ContinuumSolidDynamics<dim>::setup_dofs()
 {
   dof_handler->distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(*dof_handler);
@@ -303,16 +303,18 @@ SolidPhase<dim>::setup_dofs()
               << dof_handler->n_dofs() << std::endl;
 
   // Share the solid phase fields with the other physics (e.g. VANS)
-  multiphysics->set_dof_handler(PhysicsID::solid_phase, dof_handler);
-  multiphysics->set_mapping(PhysicsID::solid_phase, mapping);
-  multiphysics->set_solution(PhysicsID::solid_phase, present_solution);
-  multiphysics->set_previous_solutions(PhysicsID::solid_phase,
+  multiphysics->set_dof_handler(PhysicsID::continuum_solid_dynamics,
+                                dof_handler);
+  multiphysics->set_mapping(PhysicsID::continuum_solid_dynamics, mapping);
+  multiphysics->set_solution(PhysicsID::continuum_solid_dynamics,
+                             present_solution);
+  multiphysics->set_previous_solutions(PhysicsID::continuum_solid_dynamics,
                                        previous_solutions);
 }
 
 template <int dim>
 void
-SolidPhase<dim>::set_initial_conditions()
+ContinuumSolidDynamics<dim>::set_initial_conditions()
 {
   // Zero until solid phase initial conditions are added to the parameters
   *present_solution = 0.;
@@ -321,7 +323,7 @@ SolidPhase<dim>::set_initial_conditions()
 
 template <int dim>
 void
-SolidPhase<dim>::solve_linear_system()
+ContinuumSolidDynamics<dim>::solve_linear_system()
 {
   AssertThrow(false,
               ExcMessage("The solid phase linear solver is not implemented "
@@ -330,7 +332,7 @@ SolidPhase<dim>::solve_linear_system()
 
 template <int dim>
 void
-SolidPhase<dim>::assemble_system_matrix()
+ContinuumSolidDynamics<dim>::assemble_system_matrix()
 {
   AssertThrow(false,
               ExcMessage("The solid phase system matrix assembly is not "
@@ -339,7 +341,7 @@ SolidPhase<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-SolidPhase<dim>::assemble_system_rhs()
+ContinuumSolidDynamics<dim>::assemble_system_rhs()
 {
   AssertThrow(false,
               ExcMessage("The solid phase right-hand side assembly is not "
@@ -348,7 +350,7 @@ SolidPhase<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-SolidPhase<dim>::output_newton_update_norms()
+ContinuumSolidDynamics<dim>::output_newton_update_norms()
 {
   this->pcout << "\t  ||dx||_L2 = " << std::setw(6) << newton_update.l2_norm()
               << std::setw(6)
@@ -358,13 +360,14 @@ SolidPhase<dim>::output_newton_update_norms()
 
 template <int dim>
 double
-SolidPhase<dim>::get_residual_rescale_metric() const
+ContinuumSolidDynamics<dim>::get_residual_rescale_metric() const
 {
-  return simulation_parameters.linear_solver.at(PhysicsID::solid_phase)
+  return simulation_parameters.linear_solver
+             .at(PhysicsID::continuum_solid_dynamics)
              .rescale_residual_by_volume ?
            std::sqrt(GridTools::volume(*triangulation, *mapping)) :
            1.;
 }
 
-template class SolidPhase<2>;
-template class SolidPhase<3>;
+template class ContinuumSolidDynamics<2>;
+template class ContinuumSolidDynamics<3>;
