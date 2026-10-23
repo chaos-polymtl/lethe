@@ -20,8 +20,8 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-turbulent-taylor-couette``).
 
 - Parameter file: ``tc-matrix-free.prm``
-- Reference data files from Wang and Jourdan (2021): [#wang2021]_ (``enstrophy_wang_p%.dat``)
-- Postprocessing Python scripts: ``tc-postprocessing.py`` and ``tc-functions.py``
+- Reference data files from Wang and Jourdan (2021): [#wang2021]_ (``references/enstrophy_wang_p%.tsv``)
+- Postprocessing Python scripts: ``tc-postprocessing.py`` and ``tc_functions.py``
 
 ------------------------
 Description of the Case
