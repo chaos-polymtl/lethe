@@ -97,10 +97,11 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
       Patterns::Bool(),
       "Time harmonic electromagnetics calculation <true|false>");
 
-    prm.declare_entry("solid phase",
-                      "false",
-                      Patterns::Bool(),
-                      "Euler-Euler solid phase calculation <true|false>");
+    prm.declare_entry(
+      "solid phase",
+      Patterns::Tools::Convert<bool>::to_string(solid_phase),
+      Patterns::Bool(),
+      "Euler-Euler solid phase calculation <true|false>");
 
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
