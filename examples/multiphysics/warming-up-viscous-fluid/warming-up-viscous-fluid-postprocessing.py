@@ -8,6 +8,11 @@ from lethe_pyvista_tools import *
 import matplotlib.pyplot as plt
 import numpy as np
 import pyvista as pv
+import argparse
+
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the warming up of a viscous fluid')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 """
 FUNCTION
@@ -78,6 +83,8 @@ plt.ylim(0, 90)
 plt.xlim(0, 7)
 plt.grid(True, linestyle='--', alpha=0.5)
 plt.legend()
+if (args.validate):
+    plt.savefig("warming-up-temperature.pdf")
 
 """
 PLOTS FOR ERROR
@@ -90,4 +97,13 @@ plt.ylabel('L2 norm of the error on temperature (-)', fontsize=12)
 plt.xlim(0, 7)
 plt.grid(True, linestyle='--', alpha=0.5)
 
-plt.show()
+if (not args.validate):
+    plt.show()
+else:
+    plt.savefig("warming-up-error.pdf")
+    # Store the plotted temperatures and errors with respect to the analytical
+    # solution so that they can be compared between validation runs
+    np.savetxt("solution-temperature.dat",
+               np.column_stack((time_list, mean_temp_list, min_temp_list,
+                                max_temp_list, sim_error)),
+               header="time T_mean T_min T_max L2_error")

@@ -21,9 +21,10 @@ Features
 Files Used In This Example
 --------------------------
 
-The file mentioned below is located in the example's folder (``examples/multiphysics/waveguide``).
+All files mentioned below are located in the example's folder (``examples/multiphysics/waveguide``).
 
 - Base case parameter file (:math:`\mathrm{f=2.45 GHz}` and :math:`\mathrm{TE}_{10}`): ``waveguide.prm``
+- Postprocessing Python script: ``waveguide-postprocessing.py``
 
 
 
@@ -377,5 +378,13 @@ Here is the error of the default setting simulation in function of the element s
     :alt: final graph
     :align: center
 
-As expected, the error is :math:`\mathcal{O}(h^{p+1})` in the :math:`\|L^2\|` norm for the interior trial space, which verifies the implementation of the solver. 
+As expected, the error is :math:`\mathcal{O}(h^{p+1})` in the :math:`\|L^2\|` norm for the interior trial space, which verifies the implementation of the solver.
+
+At the end of the simulation, Lethe prints the table of the :math:`L^2` errors on the real and imaginary parts of the electric and magnetic fields, with their convergence rates. The script ``waveguide-postprocessing.py`` reads this table from the output of the simulation and plots the errors with the expected order of convergence. To use it, write the output of the simulation in a file, then launch the script with the degree of the trial space:
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 10 lethe-fluid waveguide.prm | tee log
+  python3 waveguide-postprocessing.py --log log --degree 1 
 

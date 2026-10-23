@@ -18,6 +18,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+import argparse
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
 from lethe_pyvista_tools import *
 #############################################################################
@@ -25,14 +26,12 @@ from lethe_pyvista_tools import *
 #############################################################################
 # Run script: python3 path_to_capillary-wave-postprocess.py path_to_case prm_file_name path_to_analytical_solution_csv_file
 
-# Check the number of input arguments
-if len(sys.argv)!=4:
-    print("********************************************************************************\n"
-          "Incorrect number of arguments\n"
-          "Run script with: \n"
-          "\t path_to_capillary-wave-postprocess.py path_to_case prm_file_name path_to_analytical_solution_csv_file\n"
-          "********************************************************************************\n")
-    exit(1)
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the capillary wave')
+parser.add_argument("simulation_path", type=str, help="Path to the case")
+parser.add_argument("prm_file_name", type=str, help="Name of the parameter file")
+parser.add_argument("analytical_path", type=str, help="Path to the csv file of the analytical solution")
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 #############################################################################
 #----------------------------------
@@ -40,9 +39,9 @@ if len(sys.argv)!=4:
 # quantities of interest
 #----------------------------------
 # Parse arguments
-simulation_path = sys.argv[1]
-prm_file_name = sys.argv[2]
-analytical_path = sys.argv[3]
+simulation_path = args.simulation_path
+prm_file_name = args.prm_file_name
+analytical_path = args.analytical_path
 
 # Name of the pvd file
 time_step_multiplier = prm_file_name[19:-4]
@@ -115,13 +114,22 @@ plt.ylabel('Relative amplitude')
 plt.ticklabel_format(axis='both', style='sci', scilimits=(4,-9))
 plt.legend(loc="best")
 plt.tight_layout()
-plt.savefig(f'{simulation_path}/figure-' + figure_name + '.png',dpi=300)
+if (not args.validate):
+    plt.savefig(f'{simulation_path}/figure-' + figure_name + '.png',dpi=300)
 
-#----------------------------------
-# Write csv file with values
-#----------------------------------
-lethe_df = pd.DataFrame({'t': time_list, 'a/a0': relative_amplitude})
-lethe_df.to_csv(f'{simulation_path}/lethe-' + figure_name + '.csv', index=False)
+    #----------------------------------
+    # Write csv file with values
+    #----------------------------------
+    lethe_df = pd.DataFrame({'t': time_list, 'a/a0': relative_amplitude})
+    lethe_df.to_csv(f'{simulation_path}/lethe-' + figure_name + '.csv', index=False)
+else:
+    plt.savefig("capillary-wave-amplitude.pdf")
+    # Store the relative amplitude and the analytical solution at the same
+    # times so that they can be compared between validation runs
+    np.savetxt("solution-amplitude.dat",
+               np.column_stack((time_list, relative_amplitude,
+                                np.interp(time_list, analytical_time, analytical_solution))),
+               header="t a/a0 a/a0_prosperetti")
 
 #############################################################################
 #----------------------------------

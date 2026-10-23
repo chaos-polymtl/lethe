@@ -16,9 +16,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
 import pandas as pd
+import argparse
 
 import os
-import sys
 #############################################################################
 
 #############################################################################
@@ -40,7 +40,11 @@ total_volume = 1 * 0.714
 temperature_limit = 29.7
 
 #Take case path as argument and store it
-output_path = sys.argv[1]
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the melting cavity')
+parser.add_argument("output_path", type=str, help="Folder which contains the results of the simulation")
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
+output_path = args.output_path
 
 # Read the pvd file to extract the times
 reader = pv.get_reader(f"{output_path}/melting.pvd")
@@ -148,8 +152,16 @@ ax0.set_ylabel(r'$\delta x$')
 ax0.set_xlabel(r'$\tau$')
 ax0.set_xlim([0, 0.07])
 ax0.legend(loc="upper left")
-fig0.savefig(f'./xmax-t.png')
-plt.show()
+if (not args.validate):
+    fig0.savefig(f'./xmax-t.png')
+    plt.show()
+else:
+    fig0.savefig("xmax-t.pdf")
+    # Store the plotted interface positions so that they can be compared
+    # between validation runs
+    np.savetxt("solution-front-position.dat",
+               np.column_stack((time_list, x_list_top, x_list_mid, x_list_bot)),
+               header="tau x_top x_mid x_bot")
 plt.close()
 
 #Load melted volume
@@ -170,6 +182,15 @@ ax1.set_ylabel(r'melted volume fraction')
 ax1.set_xlabel(r'$\tau$')
 ax1.set_xlim([0, 0.07])
 ax1.legend(loc="upper left")
-fig1.savefig(f'./melted-volume-fraction.png')
-plt.show()
+if (not args.validate):
+    fig1.savefig(f'./melted-volume-fraction.png')
+    plt.show()
+else:
+    fig1.savefig("melted-volume-fraction.pdf")
+    # Store the plotted melted volume fractions. The geometric melt volume is
+    # interpolated at the times of the algebraic one, in case they differ.
+    np.savetxt("solution-melt-fraction.dat",
+               np.column_stack((t_list_alge * time_scaling, melt_frac_alge,
+                                np.interp(t_list_alge, t_list_geo, melt_frac_geo))),
+               header="tau melt_fraction_alge melt_fraction_geo")
 plt.close()
