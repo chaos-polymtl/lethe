@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
 #include <core/utilities.h>
@@ -25,6 +27,7 @@
 #include <cmath>
 #include <iomanip>
 #include <string>
+#include <utility>
 
 template <int dim>
 SolidPhase<dim>::SolidPhase(
@@ -55,15 +58,18 @@ SolidPhase<dim>::SolidPhase(
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
 
-  const unsigned int degree =
-    simulation_parameters.fem_parameters.solid_phase_degree;
+  const unsigned int velocity_degree =
+    simulation_parameters.fem_parameters.solid_velocity_degree;
+  const unsigned int volume_fraction_degree =
+    simulation_parameters.fem_parameters.solid_volume_fraction_degree;
 
   // Solid velocity (dim components) followed by the solid volume fraction
-  fe              = std::make_shared<FESystem<dim>>(FE_Q<dim>(degree),
+  fe = std::make_shared<FESystem<dim>>(FE_Q<dim>(velocity_degree),
                                        dim,
-                                       FE_Q<dim>(degree),
+                                       FE_Q<dim>(volume_fraction_degree),
                                        1);
-  mapping         = std::make_shared<MappingQ<dim>>(std::max(degree, 1u));
+  // fe->degree is the highest degree of the two fields
+  mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
   cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
   face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
 
