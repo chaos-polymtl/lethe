@@ -1970,8 +1970,7 @@ namespace Parameters
         prm.get_bool("enable bubble function velocity");
       enable_bubble_function_pressure =
         prm.get_bool("enable bubble function pressure");
-      solid_velocity_degree = 
-        prm.get_integer("solid velocity degree");
+      solid_velocity_degree = prm.get_integer("solid velocity degree");
       solid_volume_fraction_degree =
         prm.get_integer("solid volume fraction degree");
     }
