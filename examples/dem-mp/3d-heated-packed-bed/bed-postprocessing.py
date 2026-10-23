@@ -146,18 +146,18 @@ for i_h, h in enumerate(heights):
     plt.fill_between(t1, T1, T2_interp, color=colors[i_h], alpha=0.2, linewidth=0.7)
 
     # Plot
-    line1, = plt.plot(time[start:],temperature[:, i_h], color=colors[i_h],label= f"Lethe")
-    line2, = plt.plot(reference_data_sim['t'],reference_data_sim['T'], '--', color=colors[i_h], label= f"Beaulieu simulation")
-    line3, = plt.plot(reference_data_exp['t'],reference_data_exp['T'], '.', color=colors[i_h], label= f"Beaulieu experiment")
+    plt.plot(time[start:],temperature[:, i_h], color=colors[i_h])
+    plt.plot(reference_data_sim['t'],reference_data_sim['T'], '--', color=colors[i_h])
+    plt.plot(reference_data_exp['t'],reference_data_exp['T'], '.', color=colors[i_h])
 
-# Add color legend
+# Add line style legend (in black) and color legend
+style_lethe = mlines.Line2D([], [], color='k', label="Lethe")
+style_sim   = mlines.Line2D([], [], color='k', linestyle='--', label="Beaulieu simulation")
+style_exp   = mlines.Line2D([], [], color='k', marker='.', linestyle='None', label="Beaulieu experiment")
 color_one   = mlines.Line2D([], [], color=colors[0], marker='s', linestyle='None', label=f"$h_1 = {heights[0]:.3f}$ m")
 color_two   = mlines.Line2D([], [], color=colors[1], marker='s', linestyle='None', label=f"$h_2 = {heights[1]:.3f}$ m")
 color_three = mlines.Line2D([], [], color=colors[2], marker='s', linestyle='None', label=f"$h_3 = {heights[2]:.3f}$ m")
-legend = plt.legend(handles=[line1, line2, line3, color_one, color_two, color_three],loc='upper left',fontsize=18)
-legend.legend_handles[0].set_color('k')
-legend.legend_handles[1].set_color('k')
-legend.legend_handles[2].set_color('k')
+plt.legend(handles=[style_lethe, style_sim, style_exp, color_one, color_two, color_three],loc='upper left',fontsize=18)
 
 plt.grid()
 plt.ylim(19,34)

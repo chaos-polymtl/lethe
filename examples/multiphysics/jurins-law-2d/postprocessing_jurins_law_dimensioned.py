@@ -70,8 +70,10 @@ def get_deltaH(output_path,prm):
         sim = pv.read(f"{output_path}/{vtu_file}")
     
         sampled_data_meniscus = sim.sample_over_line(a_meniscus, b_meniscus, resolution=1000)
-        phase_meniscus = pd.DataFrame(sampled_data_meniscus["phase_order"])
-        points_meniscus = pd.DataFrame(sampled_data_meniscus.points)
+        # The pyvista arrays are converted to plain numpy arrays, since pandas
+        # otherwise uses their name (if any) as the column label
+        phase_meniscus = pd.DataFrame(np.asarray(sampled_data_meniscus["phase_order"]))
+        points_meniscus = pd.DataFrame(np.asarray(sampled_data_meniscus.points))
     
         # Find min 'y' in phase > phase_limit (MENISCUS)
         fluid1_points_meniscus = points_meniscus[phase_meniscus[0] < phase_limit].values
@@ -81,8 +83,8 @@ def get_deltaH(output_path,prm):
         
         for i in range(0, 1):
             sampled_data_side = sim.sample_over_line(side_lines[i][0], side_lines[i][1],     resolution=1000)
-            phase_side = pd.DataFrame(sampled_data_side["phase_order"])
-            points_side = pd.DataFrame(sampled_data_side.points)
+            phase_side = pd.DataFrame(np.asarray(sampled_data_side["phase_order"]))
+            points_side = pd.DataFrame(np.asarray(sampled_data_side.points))
             
             # Find min 'y' in phase > phase_limit (SIDE)
             fluid1_points_side = points_side[phase_side[0] < phase_limit].values
