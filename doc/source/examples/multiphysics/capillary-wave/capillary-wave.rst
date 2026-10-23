@@ -304,7 +304,7 @@ After generating the analytical solution file, the results can be postprocessed 
 with ``./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv`` being the path to the analytical solution csv file.
 
 .. important::
-    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing_pyvista.html>`_ for details.
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/figure-TSM-0_95.png                                                                           |

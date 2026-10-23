@@ -15,6 +15,7 @@
 # folder in Lethe to sys
 
 import sys
+import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 # Path to the module
@@ -26,6 +27,10 @@ sys.path.append(path_to_module)
 
 # This line imports all lethe_pyvista_tools functionalities
 from lethe_pyvista_tools import *
+
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the oblique wall impact')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 # Proprieties
 r_p = 0.1
@@ -80,16 +85,24 @@ plt.plot(theta_rebound_exp,theta_out_exp,'s',color="black",label="Kharaz, Gorham
 plt.legend()
 plt.xlabel("Angle")
 plt.ylabel("Rebound angle")
-plt.savefig("rebound.png",dpi=300)
-plt.show()
+if (not args.validate):
+    plt.savefig("rebound.png",dpi=300)
+    plt.show()
+else:
+    plt.savefig("rebound.pdf")
+    plt.close()
 
 plt.plot(theta,omega_out,'-',color="black",label="Lethe")
 plt.plot(theta_omega_exp,omega_exp,'s',color="black",label="Kharaz, Gorham, and Salman")
 plt.legend()
 plt.ylabel("Angular velocity")
 plt.xlabel("Angle")
-plt.savefig("omega.png",dpi=300)
-plt.show()
+if (not args.validate):
+    plt.savefig("omega.png",dpi=300)
+    plt.show()
+else:
+    plt.savefig("omega.pdf")
+    plt.close()
 
 plt.plot(theta,restitution_out,'-',color="black",label="Lethe")
 plt.plot(theta_restitution_exp,restitution_exp,'s',color="black",label="Kharaz, Gorham, and Salman")
@@ -98,5 +111,15 @@ plt.plot(theta_restitution_mfix,restitution_mfix,'^',color="black",label="MFIX")
 plt.legend()
 plt.ylabel("Tangential coefficient of restitution")
 plt.xlabel("Angle")
-plt.savefig("coeff_restitution.png",dpi=300)
-plt.show()
+if (not args.validate):
+    plt.savefig("coeff_restitution.png",dpi=300)
+    plt.show()
+else:
+    plt.savefig("coeff_restitution.pdf")
+    plt.close()
+
+    # Store the plotted rebound properties so that they can be compared
+    # between validation runs
+    np.savetxt("solution-rebound.dat",
+               np.column_stack((theta, theta_out, omega_out, restitution_out)),
+               header="theta rebound_angle omega tangential_restitution")
