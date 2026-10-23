@@ -1904,6 +1904,19 @@ namespace Parameters
         "interpolation degree for the test space of the electromagnetics physics (time-harmonic Maxwell equations).");
 
       prm.declare_entry(
+        "solid velocity degree",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.solid_velocity_degree),
+        Patterns::Integer(1),
+        "interpolation degree of the solid velocity of the Euler-Euler model.");
+      prm.declare_entry(
+        "solid volume fraction degree",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.solid_volume_fraction_degree),
+        Patterns::Integer(1),
+        "interpolation degree of the solid volume fraction of the Euler-Euler model.");
+
+      prm.declare_entry(
         "tracer uses dg",
         Patterns::Tools::Convert<bool>::to_string(defaults.tracer_uses_dg),
         Patterns::Bool(),
@@ -1957,6 +1970,9 @@ namespace Parameters
         prm.get_bool("enable bubble function velocity");
       enable_bubble_function_pressure =
         prm.get_bool("enable bubble function pressure");
+      solid_velocity_degree = prm.get_integer("solid velocity degree");
+      solid_volume_fraction_degree =
+        prm.get_integer("solid volume fraction degree");
     }
     prm.leave_subsection();
   }

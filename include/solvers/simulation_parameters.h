@@ -601,13 +601,15 @@ public:
 private:
   Parameters::PhysicalProperties physical_properties;
   // names for the physics supported by Lethe
-  std::vector<std::string> nonlinear_physics_names = {"fluid dynamics",
-                                                      "heat transfer",
-                                                      "tracer",
-                                                      "CLS",
-                                                      "cahn hilliard",
-                                                      "void fraction"};
-  std::vector<std::string> linear_physics_names    = {"electromagnetics"};
+  std::vector<std::string> nonlinear_physics_names = {
+    "fluid dynamics",
+    "heat transfer",
+    "tracer",
+    "CLS",
+    "cahn hilliard",
+    "void fraction",
+    "continuum solid dynamics"};
+  std::vector<std::string> linear_physics_names = {"electromagnetics"};
   // Names of subequations within CLS that inherits from PhysicsSolver
   std::vector<std::string> cls_subequations_names = {
     "CLS PDE-based interface reinitialization"};

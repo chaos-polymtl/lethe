@@ -4,6 +4,7 @@
 #include "solvers/time_harmonic_maxwell.h"
 #include <solvers/cahn_hilliard.h>
 #include <solvers/cls.h>
+#include <solvers/continuum_solid_dynamics.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>
@@ -203,6 +204,28 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
                                                    nsparam,
                                                    p_triangulation,
                                                    p_simulation_control);
+    }
+
+
+  if (multiphysics_parameters.continuum_solid_dynamics)
+    {
+      // The solid phase exists in the volume-averaged formulation
+      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::VANS,
+                  ContinuumSolidDynamicsWithoutVANSError());
+      verbosity[PhysicsID::continuum_solid_dynamics] =
+        (nsparam.physics_solving_strategy
+             .at(PhysicsID::continuum_solid_dynamics)
+             .verbosity != Parameters::Verbosity::quiet ||
+         nsparam.linear_solver.at(PhysicsID::continuum_solid_dynamics)
+             .verbosity != Parameters::Verbosity::quiet) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet;
+      active_physics.push_back(PhysicsID::continuum_solid_dynamics);
+      physics[PhysicsID::continuum_solid_dynamics] =
+        std::make_shared<ContinuumSolidDynamics<dim>>(this,
+                                                      nsparam,
+                                                      p_triangulation,
+                                                      p_simulation_control);
     }
 }
 
