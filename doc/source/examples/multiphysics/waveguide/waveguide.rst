@@ -386,5 +386,5 @@ At the end of the simulation, Lethe prints the table of the :math:`L^2` errors o
   :class: copy-button
 
   mpirun -np 10 lethe-fluid waveguide.prm | tee log
-  python3 waveguide-postprocessing.py --log log --degree 1 
+  python3 waveguide-postprocessing.py --log log --degree 1
 
