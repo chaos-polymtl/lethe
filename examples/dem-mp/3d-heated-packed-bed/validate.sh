@@ -32,7 +32,9 @@ recreate_folder "$folder"
 # reported again if this run fails. This must be done before the simulation,
 # which writes some of these files.
 rm -f $plots $data
-rm -f output/out* dem_mp*
+# The output folder is removed as a whole, since the number of files it
+# contains on many cores exceeds the maximal argument list length of rm.
+rm -rf output dem_mp*
 
 # Create the meshes of the solid surfaces
 for surface in square-top square-rake square-side; do
