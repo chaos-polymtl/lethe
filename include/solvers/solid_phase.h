@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 /**
  * @file solid_phase.h
  * @brief Auxiliary physics for the solid phase of the Euler-Euler (two-fluid)
@@ -30,6 +33,8 @@
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/quadrature.h>
 #include <deal.II/base/timer.h>
+#include <deal.II/base/exceptions.h>
+
 
 #include <deal.II/distributed/tria_base.h>
 
@@ -46,6 +51,17 @@
 
 #include <memory>
 #include <vector>
+
+/**
+* @brief Exception thrown when the solid phase is enabled with a fluid
+* dynamics solver that does not solve the volume-averaged Navier-Stokes
+* equations.
+*/
+DeclExceptionMsg(
+  SolidPhaseWithoutVANSError,
+  "The \"solid phase\" physics (Euler-Euler model) is enabled, but the fluid "
+  "dynamics solver does not solve the volume-averaged Navier-Stokes (VANS) "
+  "equations. The solid phase can only be used with a VANS solver.");
 
 /**
  * @brief Solid phase of the Euler-Euler model, solved as an auxiliary physics

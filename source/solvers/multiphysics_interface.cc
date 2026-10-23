@@ -86,12 +86,6 @@ DeclExceptionMsg(CahnHilliardWithThermalBuoyancyForceError,
                  "Cahn-Hilliard and thermal buoyancy force are both activated. "
                  "This combination is not currently supported.");
 
-DeclExceptionMsg(
-  SolidPhaseWithoutVANSError,
-  "The \"solid phase\" physics (Euler-Euler model) is enabled, but the fluid "
-  "dynamics solver does not solve the volume-averaged Navier-Stokes (VANS) "
-  "equations. The solid phase can only be used with a VANS solver.");
-
 DeclException1(
   PhysicsVANSFormNotImplementedError,
   std::string,
