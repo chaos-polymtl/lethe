@@ -81,9 +81,10 @@ var searchData=
   ['is_5foutput_5fiteration_78',['is_output_iteration',['../classSimulationControl.html#a037f676d4e45242bb481e0a4a71e2dc9',1,'SimulationControl::is_output_iteration()'],['../classSimulationControlTransient.html#ac1951b02a3fe1c7a7a2536c0dc08d513',1,'SimulationControlTransient::is_output_iteration()']]],
   ['is_5fphase_5fchange_5frheological_5fmodel_79',['is_phase_change_rheological_model',['../classRheologicalModel.html#a26fb2b35a4e972c3400adb684a242590',1,'RheologicalModel']]],
   ['is_5frefinement_5fstep_80',['is_refinement_step',['../classSimulationControl.html#a27da5a4ba94690b63404c50a2ec188b5',1,'SimulationControl']]],
-  ['is_5fsdirk_81',['is_sdirk',['../classSimulationControl.html#a106da443da26004eca4875cee8060207',1,'SimulationControl']]],
-  ['is_5fsteady_82',['is_steady',['../classSimulationControl.html#a45b192d153891f41442f863f1a082ed9',1,'SimulationControl::is_steady()'],['../time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d',1,'is_steady():&#160;time_integration_utilities.h']]],
-  ['is_5fstored_5fat_5fthe_5fsame_5findex_83',['is_stored_at_the_same_index',['../namespaceDEM.html#a7d860d523c8964d7ff5d28121a3cdcc5',1,'DEM']]],
-  ['is_5fverbose_5fiteration_84',['is_verbose_iteration',['../classSimulationControl.html#a0d7540a21443e8833003fb39da2a2f4d',1,'SimulationControl']]],
-  ['iterate_85',['iterate',['../classNavierStokesBase.html#a98a7f846709b83df0ea64c361fee192c',1,'NavierStokesBase::iterate()'],['../classFluidDynamicsVANS.html#a1d4424a58116155524bc542a4c7d1d8d',1,'FluidDynamicsVANS::iterate()'],['../classSubSimulationControlDEM.html#aeeda439fa3dbb380d8e4e13ca811d5cf',1,'SubSimulationControlDEM::iterate()']]]
+  ['is_5frobin_5fboundary_5ftype_81',['is_robin_boundary_type',['../time__harmonic__maxwell__assemblers_8h.html#a96e13bfff3faebb7dff41e57bc7c1494',1,'time_harmonic_maxwell_assemblers.h']]],
+  ['is_5fsdirk_82',['is_sdirk',['../classSimulationControl.html#a106da443da26004eca4875cee8060207',1,'SimulationControl']]],
+  ['is_5fsteady_83',['is_steady',['../classSimulationControl.html#a45b192d153891f41442f863f1a082ed9',1,'SimulationControl::is_steady()'],['../time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d',1,'is_steady():&#160;time_integration_utilities.h']]],
+  ['is_5fstored_5fat_5fthe_5fsame_5findex_84',['is_stored_at_the_same_index',['../namespaceDEM.html#a7d860d523c8964d7ff5d28121a3cdcc5',1,'DEM']]],
+  ['is_5fverbose_5fiteration_85',['is_verbose_iteration',['../classSimulationControl.html#a0d7540a21443e8833003fb39da2a2f4d',1,'SimulationControl']]],
+  ['iterate_86',['iterate',['../classNavierStokesBase.html#a98a7f846709b83df0ea64c361fee192c',1,'NavierStokesBase::iterate()'],['../classFluidDynamicsVANS.html#a1d4424a58116155524bc542a4c7d1d8d',1,'FluidDynamicsVANS::iterate()'],['../classSubSimulationControlDEM.html#aeeda439fa3dbb380d8e4e13ca811d5cf',1,'SubSimulationControlDEM::iterate()']]]
 ];

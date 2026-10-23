@@ -104,7 +104,7 @@ Include dependency graph for tensors_and_points_dimension_manipulation.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="tensors__and__points__dimension__manipulation_8h__dep__incl.svg" width="5603" height="828"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="tensors__and__points__dimension__manipulation_8h__dep__incl.svg" width="6106" height="828"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="tensors__and__points__dimension__manipulation_8h_source.html">Go to the source code of this file.</a></p>
@@ -123,6 +123,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a9adf59d1cce57d834b665e224d1f95ab" id="r_a9adf59d1cce57d834b665e224d1f95ab"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a9adf59d1cce57d834b665e224d1f95ab"><td class="memTemplItemLeft" align="right" valign="top">Point&lt; 2 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="tensors__and__points__dimension__manipulation_8h.html#a9adf59d1cce57d834b665e224d1f95ab">point_nd_to_2d</a> (const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a9adf59d1cce57d834b665e224d1f95ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1df71c0a0c32db8a1f321801f407c07f" id="r_a1df71c0a0c32db8a1f321801f407c07f"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
+<tr class="memitem:a1df71c0a0c32db8a1f321801f407c07f"><td class="memTemplItemLeft" align="right" valign="top">DEAL_II_ALWAYS_INLINE Tensor&lt; 1, dim, Number &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="tensors__and__points__dimension__manipulation_8h.html#a1df71c0a0c32db8a1f321801f407c07f">tangential_component</a> (const Tensor&lt; 1, dim, Number &gt; &amp;tensor, const Tensor&lt; 1, dim &gt; &amp;normal)</td></tr>
+<tr class="separator:a1df71c0a0c32db8a1f321801f407c07f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a9adf59d1cce57d834b665e224d1f95ab" name="a9adf59d1cce57d834b665e224d1f95ab"></a>
@@ -198,6 +201,75 @@ template&lt;int dim&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>point_3d Three-dimensional output point </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">69</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
+
+</div>
+</div>
+<a id="a1df71c0a0c32db8a1f321801f407c07f" name="a1df71c0a0c32db8a1f321801f407c07f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1df71c0a0c32db8a1f321801f407c07f">&#9670;&#160;</a></span>tangential_component()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DEAL_II_ALWAYS_INLINE Tensor&lt; 1, dim, Number &gt; tangential_component </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, dim, Number &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tensor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the tangential component of a vector on a surface defined by its unit normal vector, which removes the normal component of the vector. In 3D, it computes: </p>
+<p class="formulaDsp">
+\[
+\mathbf{t} = \mathbf{n} \times (\mathbf{v} \times \mathbf{n})
+\]
+</p>
+<p> In 2D, the unit tangent \(\boldsymbol{\tau}\) is the unit normal rotated by 90 degrees (cross_product_2d), and it computes:  </p><p class="formulaDsp">
+\[
+\mathbf{t} = (\mathbf{v} \cdot \boldsymbol{\tau}) \boldsymbol{\tau}
+\]
+</p>
+<p> Both expressions are equal to \(\mathbf{v} - (\mathbf{v} \cdot \mathbf{n}) \mathbf{n}\).</p>
+<dl class="section note"><dt>Note</dt><dd>This operation gives the tangential trace of a field, for instance the traces in \(H^{-1/2}(\mathrm{curl})\), where only the tangential components are continuous across interfaces.</dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Spatial dimension </td></tr>
+    <tr><td class="paramname">Number</td><td>Type of the vector</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">tensor</td><td>Vector whose tangential component is computed. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Unit normal vector of the surface.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The tangential component of the vector. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00131">131</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
 
 </div>
 </div>

@@ -1,9 +1,13 @@
 <map id="PhysicsFaceAssemblerBase&lt; ScratchDataType, CopyDataType &gt;" name="PhysicsFaceAssemblerBase&lt; ScratchDataType, CopyDataType &gt;">
-<area shape="rect" id="Node000001" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="5,55,268,95"/>
-<area shape="rect" id="Node000002" href="$classCLSAssemblerSIPG.html" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="336,5,537,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="255,50,369,28,370,33,256,55"/>
-<area shape="rect" id="Node000003" href="$classTracerAssemblerBoundaryNitsche.html" title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace..." alt="" coords="316,55,557,95"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="282,73,316,73,316,78,282,78"/>
-<area shape="rect" id="Node000004" href="$classTracerAssemblerSIPG.html" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="357,119,517,159"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="245,96,357,120,356,125,244,101"/>
+<area shape="rect" id="Node000001" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="5,119,268,159"/>
+<area shape="rect" id="Node000002" href="$classCLSAssemblerSIPG.html" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="337,5,538,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,110,242,74,315,41,359,28,360,33,317,46,244,79,182,114"/>
+<area shape="rect" id="Node000003" href="$classTimeHarmonicMaxwellAssemblerRobinBC.html" title="Class that assembles the Robin boundary conditions of the time&#45;harmonic Maxwell equations (silver_mul..." alt="" coords="316,55,559,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="244,114,342,93,343,98,245,119"/>
+<area shape="rect" id="Node000004" href="$classTimeHarmonicMaxwellAssemblerSkeleton.html" title="Class that assembles the skeleton terms of the ultraweak DPG formulation of the time&#45;harmonic Maxwell..." alt="" coords="316,119,559,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="282,137,316,137,316,142,282,142"/>
+<area shape="rect" id="Node000005" href="$classTracerAssemblerBoundaryNitsche.html" title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace..." alt="" coords="317,183,558,223"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="245,160,343,181,342,186,244,165"/>
+<area shape="rect" id="Node000006" href="$classTracerAssemblerSIPG.html" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="357,247,517,287"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="183,164,245,199,317,233,358,247,356,252,315,238,243,204,180,169"/>
 </map>

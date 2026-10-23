@@ -15,6 +15,7 @@ var searchData=
   ['dimensionality_12',['Dimensionality',['../classParameters_1_1Dimensionality.html',1,'Parameters']]],
   ['distribution_13',['Distribution',['../classDistribution.html',1,'']]],
   ['divergencepostprocessor_14',['DivergencePostprocessor',['../classDivergencePostprocessor.html',1,'']]],
-  ['dynamicflowcontrol_15',['DynamicFlowControl',['../structParameters_1_1DynamicFlowControl.html',1,'Parameters']]],
-  ['dynamicviscositypostprocessor_16',['DynamicViscosityPostprocessor',['../classDynamicViscosityPostprocessor.html',1,'']]]
+  ['dpgcopydata_15',['DPGCopyData',['../classDPGCopyData.html',1,'']]],
+  ['dynamicflowcontrol_16',['DynamicFlowControl',['../structParameters_1_1DynamicFlowControl.html',1,'Parameters']]],
+  ['dynamicviscositypostprocessor_17',['DynamicViscosityPostprocessor',['../classDynamicViscosityPostprocessor.html',1,'']]]
 ];

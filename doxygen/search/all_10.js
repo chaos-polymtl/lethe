@@ -8,7 +8,7 @@ var searchData=
   ['object_5frolling_5ffriction_5fcoefficient_5',['object_rolling_friction_coefficient',['../structIBParticlesDEM_1_1ObjectProperties.html#a2f15a15da1fbe93d0851552a92e7e626',1,'IBParticlesDEM::ObjectProperties']]],
   ['object_5fyoungs_5fmodulus_6',['object_youngs_modulus',['../structIBParticlesDEM_1_1ObjectProperties.html#ad67674d2d52e0237ce505c1cb51b6466',1,'IBParticlesDEM::ObjectProperties']]],
   ['objectproperties_7',['ObjectProperties',['../structIBParticlesDEM_1_1ObjectProperties.html',1,'IBParticlesDEM']]],
-  ['omega_8',['omega',['../structcollision__log.html#a6049bc9f302e520262370265fbe89e04',1,'collision_log::omega'],['../namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81',1,'DEM::omega'],['../classIBParticle.html#a18ad182002a118ee2c1abb8fb2c21b0c',1,'IBParticle::omega']]],
+  ['omega_8',['omega',['../classTimeHarmonicMaxwellAssemblerCore.html#a3a039e3a724446c4d98511fda9872b72',1,'TimeHarmonicMaxwellAssemblerCore::omega'],['../namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81',1,'DEM::omega'],['../structcollision__log.html#a6049bc9f302e520262370265fbe89e04',1,'collision_log::omega'],['../classIBParticle.html#a18ad182002a118ee2c1abb8fb2c21b0c',1,'IBParticle::omega']]],
   ['omega_5fcontact_5fimpulsion_9',['omega_contact_impulsion',['../classIBParticle.html#af1454ad4345b667a9bbe2ccd6cfa6adf',1,'IBParticle']]],
   ['omega_5fimpulsion_10',['omega_impulsion',['../classIBParticle.html#af49f49bdcd9d2813782c19f7433f9382',1,'IBParticle']]],
   ['omega_5fimpulsion_5fiter_11',['omega_impulsion_iter',['../classIBParticle.html#acd42a94c485822dc08475ba79faef870',1,'IBParticle']]],

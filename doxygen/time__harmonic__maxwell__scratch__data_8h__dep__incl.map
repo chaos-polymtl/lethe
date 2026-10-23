@@ -1,0 +1,18 @@
+<map id="/home/runner/work/lethe/lethe/include/solvers/time_harmonic_maxwell_scratch_data.h" name="/home/runner/work/lethe/lethe/include/solvers/time_harmonic_maxwell_scratch_data.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="248,5,435,75"/>
+<area shape="rect" id="Node000002" href="$time__harmonic__maxwell_8h.html" title=" " alt="" coords="323,240,522,295"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="346,88,353,139,369,191,383,216,400,238,396,242,379,219,364,193,348,140,341,89"/>
+<area shape="rect" id="Node000006" href="$time__harmonic__maxwell__scratch__data_8cc.html" title=" " alt="" coords="5,343,192,412"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="311,88,125,344,121,341,306,85"/>
+<area shape="rect" id="Node000007" href="$time__harmonic__maxwell__assemblers_8h.html" title=" " alt="" coords="379,123,565,192"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="392,82,435,120,432,124,388,86"/>
+<area shape="rect" id="Node000003" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="216,350,408,405"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="388,306,341,352,337,348,384,303"/>
+<area shape="rect" id="Node000004" href="$time__harmonic__maxwell_8cc.html" title=" " alt="" coords="432,350,637,405"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="462,303,509,348,505,352,458,306"/>
+<area shape="rect" id="Node000005" href="$time__harmonic__maxwell__assemblers_8cc.html" title=" " alt="" coords="661,343,848,412"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="517,296,662,343,660,348,516,302"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="332,302,193,348,191,342,330,297"/>
+<area shape="poly" id="edge7_Node000007_Node000002" title=" " alt="" coords="453,205,437,241,432,239,449,203"/>
+<area shape="poly" id="edge8_Node000007_Node000005" title=" " alt="" coords="528,198,713,340,709,345,525,202"/>
+</map>
