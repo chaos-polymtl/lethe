@@ -44,7 +44,7 @@ enum PhysicsID : unsigned int
   void_fraction = 5,
   /// Time-harmonic electromagnetics (Electric field, Magnetic field)
   electromagnetics = 6,
-  /// Euler-euler solid phase (volume fraction, velocity)
+  /// Euler-Euler solid phase (solid velocity, solid volume fraction)
   solid_phase = 7
 };
 
