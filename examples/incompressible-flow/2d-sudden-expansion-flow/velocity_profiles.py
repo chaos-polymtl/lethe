@@ -12,7 +12,9 @@ import matplotlib.pyplot as plt
 import pyvista as pv
 import re
 import os
+import sys
 import argparse
+from matplotlib.backends.backend_pdf import PdfPages
 
 ########################################
 ########################################
@@ -22,6 +24,7 @@ import argparse
 # Parse Reynolds number
 parser = argparse.ArgumentParser(description='Arguments to compute the velocity distribution at outlet')
 parser.add_argument("-Re", "--Reynolds", type=int, help="Reynolds number (only 70 and 610 supported)", required=True)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 
 args, leftovers = parser.parse_known_args()
 Re = args.Reynolds
@@ -124,13 +127,46 @@ elif (Re == 610):
 data = pv.read(file)
 data .set_active_vectors("velocity")
 
+# In validation mode, all the figures are saved in a single PDF file
+if (args.validate):
+    pdf_pages = PdfPages(f'sudden-expansion-Re{Re}.pdf')
+
+def save_figure(png_name):
+    if (not args.validate):
+        plt.savefig(png_name, bbox_inches='tight')
+    else:
+        pdf_pages.savefig(bbox_inches='tight')
+        plt.close()
+
+# Sample the velocity profiles at every cross section
+profiles = []
+for row in range(a.shape[0]):
+    data_cross_section = data.sample_over_line(a[int(row),:], b[int(row),:], resolution=1000)
+    profiles.append((np.array(data_cross_section["Distance"]),
+                     np.array(data_cross_section["velocity"][:,0])))
+
+# At Re = 610, the wall to which the jet attaches is set by round-off errors,
+# so the solution can be the mirror image of the one of Durst et al. In
+# validation mode, the profiles are mirrored with respect to the axis of the
+# channel when this brings them closer to the numerical results of Durst et
+# al., so that the comparison does not depend on that wall.
+if (args.validate and Re == 610):
+    error_direct = 0
+    error_mirrored = 0
+    for row, (y, u) in enumerate(profiles):
+        y_ref = ref_Re610[row][:,0]
+        u_ref = ref_Re610[row][:,1]
+        error_direct += np.sum((np.interp(y_ref, y, u/u_max_Re610) - u_ref)**2)
+        error_mirrored += np.sum((np.interp(y_ref, y, u[::-1]/u_max_Re610) - u_ref)**2)
+    if (error_mirrored < error_direct):
+        print("The jet attaches to the other wall, the velocity profiles are mirrored")
+        profiles = [(y, u[::-1]) for (y, u) in profiles]
+
 for row in range(a.shape[0]):
     plt.figure()
     # Data
-    data_cross_section = data.sample_over_line(a[int(row),:], b[int(row),:], resolution=1000)
-    y = data_cross_section["Distance"]
-    u = data_cross_section["velocity"][:,0]
-    
+    y, u = profiles[row]
+
     if(Re == 70):
         # Graph
         plt.plot(y, u/u_max_Re70, label="Lethe", linewidth=2.0, color='c')
@@ -149,7 +185,7 @@ for row in range(a.shape[0]):
         plt.legend()
         plt.title(f'Re = 70, x = {a[int(row),0]:.3f} m')
         plt.axis([0,2*h,0,1])
-        plt.savefig(f'Reynolds70-{row}.png', bbox_inches='tight')
+        save_figure(f'Reynolds70-{row}.png')
     elif(Re == 610):
         # Graph
         plt.plot(y, u/u_max_Re610, label="Lethe", linewidth=2.0, color='c')
@@ -164,7 +200,7 @@ for row in range(a.shape[0]):
         plt.legend()
         plt.title(f'Re = 610, x = {a[int(row),0]:.3f} m')
         plt.axis([0,2*h,-0.25,1])
-        plt.savefig(f'Reynolds610-{row}.png', bbox_inches='tight')
+        save_figure(f'Reynolds610-{row}.png')
 
 # Velocity profile at outlet
 # Comparison with Poiseuille analytical solution
@@ -191,6 +227,21 @@ plt.axis([0,2*h,0,1])
 
 # Save plot
 if (Re == 70):
-    plt.savefig('Reynolds70-poiseuille.png', bbox_inches='tight')
+    save_figure('Reynolds70-poiseuille.png')
 elif (Re == 610):
-    plt.savefig('Reynolds610-poiseuille.png', bbox_inches='tight')
+    save_figure('Reynolds610-poiseuille.png')
+
+if (args.validate):
+    pdf_pages.close()
+
+    # Store the plotted profiles so that they can be compared between
+    # validation runs
+    u_max = u_max_Re70 if (Re == 70) else u_max_Re610
+    np.savetxt(f'solution-Re{Re}-profiles.dat',
+               np.vstack([np.column_stack((np.full_like(y, a[row,0]), y, u/u_max))
+                          for row, (y, u) in enumerate(profiles)]),
+               header="x y u/u_max")
+    np.savetxt(f'solution-Re{Re}-outlet.dat',
+               np.column_stack((y_outlet, u_outlet,
+                                np.interp(y_outlet, y_out_an+h, u_out_an))),
+               header="y u u_poiseuille")

@@ -26,6 +26,7 @@ end
 subsection restart
   set checkpoint = true
   set frequency  = 100000
+  set filename   = sandpile_constant
 end
 
 #---------------------------------------------------
