@@ -1,0 +1,17 @@
+<map id="/home/runner/work/lethe/lethe/include/fem&#45;dem/quadrature_points_data_out.h" name="/home/runner/work/lethe/lethe/include/fem&#45;dem/quadrature_points_data_out.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="573,5,793,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,164,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="573,51,392,76,178,110,177,105,392,71,572,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="189,115,373,141"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="574,62,344,115,343,110,573,57"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="397,115,583,141"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="630,62,527,112,525,107,628,58"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="607,115,759,141"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="686,60,686,101,681,101,681,60"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="784,115,871,141"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="725,58,800,106,797,110,722,62"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="895,115,954,141"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="758,58,884,106,889,108,887,112,882,110,756,63"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="979,115,1041,141"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="794,56,879,79,967,105,973,108,971,113,965,111,878,84,793,61"/>
+</map>

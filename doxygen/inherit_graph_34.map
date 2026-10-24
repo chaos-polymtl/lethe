@@ -1,9 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,77,184,102"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,109,184,134"/>
 <area shape="rect" id="Node000001" href="$structFluidDynamicsSharp_1_1Visualization__IB.html" title="Defines a struct with methods that allow the generation of a visualisation of the IB_particles...." alt="" coords="251,5,441,45"/>
-<area shape="poly" id="edge48_Node000000_Node000001" title=" " alt="" coords="158,71,266,43,267,48,159,76"/>
+<area shape="poly" id="edge48_Node000000_Node000001" title=" " alt="" coords="131,100,231,55,267,43,269,48,233,60,133,105"/>
 <area shape="rect" id="Node000002" href="$classInterfaceTools_1_1InterfaceReconstructionDataOut.html" title="Interface to build the patches of the interface reconstruction vertices for visualization...." alt="" coords="232,69,460,109"/>
-<area shape="poly" id="edge49_Node000000_Node000002" title=" " alt="" coords="198,87,232,87,232,92,198,92"/>
-<area shape="rect" id="Node000003" href="$classVisualization.html" title="Building patches of particle properties for visualization. This function is taken from Aspect and dea..." alt="" coords="271,133,421,173"/>
-<area shape="poly" id="edge50_Node000000_Node000003" title=" " alt="" coords="159,103,271,132,270,137,158,108"/>
+<area shape="poly" id="edge49_Node000000_Node000002" title=" " alt="" coords="197,106,232,101,232,106,198,111"/>
+<area shape="rect" id="Node000003" href="$classQuadraturePointsDataOut.html" title="Build point patches located at quadrature points for visualization, for example to display the QCM fi..." alt="" coords="251,133,441,173"/>
+<area shape="poly" id="edge50_Node000000_Node000003" title=" " alt="" coords="198,132,252,139,251,144,197,137"/>
+<area shape="rect" id="Node000004" href="$classVisualization.html" title="Building patches of particle properties for visualization. This function is taken from Aspect and dea..." alt="" coords="271,197,421,237"/>
+<area shape="poly" id="edge51_Node000000_Node000004" title=" " alt="" coords="133,138,233,183,271,196,269,201,231,188,131,143"/>
 </map>

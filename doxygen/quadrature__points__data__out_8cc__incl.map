@@ -1,0 +1,21 @@
+<map id="/home/runner/work/lethe/lethe/source/fem&#45;dem/quadrature_points_data_out.cc" name="/home/runner/work/lethe/lethe/source/fem&#45;dem/quadrature_points_data_out.cc">
+<area shape="rect" id="Node000001" title=" " alt="" coords="661,5,887,60"/>
+<area shape="rect" id="Node000002" href="$quadrature__points__data__out_8h.html" title=" " alt="" coords="605,108,762,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="750,62,713,100,709,96,746,58"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="787,115,945,141"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="802,58,847,103,843,107,798,62"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,196,164,236"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="605,141,415,164,178,199,177,193,414,159,604,135"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="189,203,373,229"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="605,149,348,203,347,198,604,143"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="397,203,583,229"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="642,150,529,200,527,195,640,146"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="607,203,759,229"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="686,148,686,189,681,189,681,148"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="784,203,871,229"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="716,146,798,194,795,199,714,150"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="895,203,954,229"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="746,145,884,194,889,195,887,200,882,198,744,151"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="979,203,1041,229"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="763,144,877,170,967,193,973,196,972,201,965,199,876,175,762,149"/>
+</map>
