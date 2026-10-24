@@ -521,6 +521,19 @@ public:
     fluid_drag_on_particles.particle_field_solution.update_ghost_values();
   }
 
+  /**
+   * @brief Write the location of the QCM quadrature points and the radius of
+   * the filter centered at each of them for visualization.
+   *
+   * @param[in] folder Output folder.
+   * @param[in] prefix Prefix for the output files.
+   * @param[in] group_files Number of files the output is grouped into.
+   */
+  void
+  write_qcm_quadrature_points(const std::string &folder,
+                              const std::string &prefix,
+                              const unsigned int group_files);
+
   /// DoFHandler that manages the void fraction, it is a shared pointer because
   /// it is used by the multiphysics interface
   std::shared_ptr<DoFHandler<dim>> dof_handler;
