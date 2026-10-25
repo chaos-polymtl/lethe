@@ -120,7 +120,7 @@ with plt.style.context(['science', 'ieee']):
    # Legend settings
    ax0.set(**pparam0)
    ax0.grid( which='major', color='silver', linestyle='--')
-   fig0.legend(loc='outside center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.4, 0.5))
+   fig0.legend(loc='center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.4, 0.5))
    y_ticks = [0.5, 0.6, 0.8,1.0, 1.2]
    ax0.set_yticks(y_ticks)
    ax0.set_xlim([0,3])
@@ -192,7 +192,7 @@ with plt.style.context(['science', 'ieee']):
    ax3.set_xlim([0.1,0.9])
    ax3.set_ylim([0.8,1.4])
    ax3.set(**pparam3)
-   fig3.legend(loc='outside center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.4, 0.5))
+   fig3.legend(loc='center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.4, 0.5))
    
    # Save figures
    fig3.savefig("bubble-contour.pdf",format="pdf",dpi=500)
