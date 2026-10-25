@@ -310,9 +310,7 @@ private:
     else if (fluid_with_phase_change == Parameters::FluidIndicator::fluid_1)
       enable_phase_change_vector[1] = true;
     else // fluid_with_phase_change == Parameters::FluidIndicator::both
-      std::fill(enable_phase_change_vector.begin(),
-                enable_phase_change_vector.end(),
-                true);
+      enable_phase_change_vector.assign(n_fluids, true);
     return enable_phase_change_vector;
   }
 
@@ -540,7 +538,7 @@ public:
       {
         if (dim == 2)
           {
-            for (unsigned int k = 0; k < dim; ++k)
+            for (int k = 0; k < dim; ++k)
               {
                 grad_shear_rate[d] +=
                   2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
@@ -553,7 +551,7 @@ public:
           }
         else
           {
-            for (unsigned int k = 0; k < dim; ++k)
+            for (int k = 0; k < dim; ++k)
               {
                 grad_shear_rate[d] +=
                   2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /

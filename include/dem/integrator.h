@@ -26,11 +26,9 @@ public:
    * the index to the velocity property, the force property and the acceleration
    * property manually
    */
-  Integrator()
-  {}
+  Integrator() = default;
 
-  virtual ~Integrator()
-  {}
+  virtual ~Integrator() = default;
 
   /**
    * @brief Integrate the opening step of the scheme, which is carried out once,

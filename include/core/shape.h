@@ -1699,7 +1699,7 @@ public:
   superquadric_gradient(const Point<dim> &centered_point) const
   {
     Point<dim> gradient{};
-    for (unsigned int d = 0; d < dim; d++)
+    for (int d = 0; d < dim; d++)
       {
         // For cases where the coordinate is of value 0, we avoid computing the
         // gradient. That is an issue when the exponent is lower than or equal

@@ -242,7 +242,7 @@ namespace Parameters
                              Utilities::int_to_string(spacedim) +
                              " dimensional point."));
 
-      for (unsigned int i = 0; i < spacedim; ++i)
+      for (int i = 0; i < spacedim; ++i)
         {
           center_of_rotation[i] = temp.at(i);
         }
@@ -268,8 +268,7 @@ namespace Parameters
   class Nitsche
   {
   public:
-    Nitsche()
-    {}
+    Nitsche() = default;
 
     /**
      * @brief Declare the parameters in the parameter handler.
@@ -365,8 +364,7 @@ namespace Parameters
   class RigidSolidObject
   {
   public:
-    RigidSolidObject()
-    {}
+    RigidSolidObject() = default;
 
     /**
      * @brief Declare the parameters in the parameter handler.
@@ -501,7 +499,7 @@ namespace Parameters
                              Utilities::int_to_string(spacedim) +
                              " dimensional point."));
 
-      for (unsigned int i = 0; i < spacedim; ++i)
+      for (int i = 0; i < spacedim; ++i)
         {
           center_of_rotation[i] = temp.at(i);
         }
@@ -537,8 +535,7 @@ namespace Parameters
   class DEMSolidObjects
   {
   public:
-    DEMSolidObjects()
-    {}
+    DEMSolidObjects() = default;
 
     /**
      * @brief Declare the parameters in the parameter handler.

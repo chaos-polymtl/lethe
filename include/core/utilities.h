@@ -1120,6 +1120,7 @@ std::vector<key>
 extract_keys_from_map(const std::map<key, val> &map)
 {
   std::vector<key> keys;
+  keys.reserve(map.size());
   for (const auto &pair : map)
     keys.push_back(pair.first);
   return keys;
@@ -1139,6 +1140,7 @@ std::vector<val>
 extract_values_from_map(const std::map<key, val> &map)
 {
   std::vector<val> values;
+  values.reserve(map.size());
   for (const auto &pair : map)
     values.push_back(pair.second);
   return values;
@@ -1333,21 +1335,21 @@ convert_string_to_vector(const ParameterHandler &prm,
   std::string              full_str = prm.get(entry_string);
   std::vector<std::string> vector_of_string(
     Utilities::split_string_list(full_str));
-  if constexpr (std::is_same<T, int>::value)
+  if constexpr (std::is_same_v<T, int>)
     {
       std::vector<T> vector = Utilities::string_to_int(vector_of_string);
       return vector;
     }
-  if constexpr (std::is_same<T, double>::value)
+  if constexpr (std::is_same_v<T, double>)
     {
       std::vector<T> vector = Utilities::string_to_double(vector_of_string);
       return vector;
     }
-  if constexpr (std::is_same<T, std::string>::value)
+  if constexpr (std::is_same_v<T, std::string>)
     {
       return vector_of_string;
     }
-  if constexpr (std::is_same<T, types::boundary_id>::value)
+  if constexpr (std::is_same_v<T, types::boundary_id>)
     {
       std::vector<int> vector_int = Utilities::string_to_int(vector_of_string);
       std::vector<T>   vector;

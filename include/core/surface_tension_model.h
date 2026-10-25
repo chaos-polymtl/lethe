@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_surface_tension_model_h
@@ -6,6 +6,8 @@
 
 #include <core/interface_property_model.h>
 #include <core/phase_change.h>
+
+#include <algorithm>
 
 /**
  * @brief Abstract class that allows to calculate the
@@ -79,9 +81,7 @@ public:
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
-    std::fill(property_vector.begin(),
-              property_vector.end(),
-              surface_tension_coefficient);
+    std::ranges::fill(property_vector, surface_tension_coefficient);
   }
 
   /**
@@ -117,7 +117,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   }
 
 private:
@@ -221,11 +221,9 @@ public:
     std::vector<double> &jacobian_vector) override
   {
     if (id == field::temperature)
-      std::fill(jacobian_vector.begin(),
-                jacobian_vector.end(),
-                surface_tension_gradient);
+      std::ranges::fill(jacobian_vector, surface_tension_gradient);
     else
-      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+      std::ranges::fill(jacobian_vector, 0);
   }
 
 protected:
@@ -393,7 +391,7 @@ public:
             }
       }
     else
-      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+      std::ranges::fill(jacobian_vector, 0);
   }
 
 private:

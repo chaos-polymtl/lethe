@@ -19,6 +19,7 @@
 
 #include <boost/math/special_functions.hpp>
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <vector>
@@ -115,8 +116,7 @@ class ParticleWallContactForce
 public:
   ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters);
 
-  virtual ~ParticleWallContactForce()
-  {}
+  virtual ~ParticleWallContactForce() = default;
 
   /**
    * @brief Calculate the contact outcomes for particle-wall contacts
@@ -476,11 +476,9 @@ protected:
         // This way, force_calculation_threshold_distance can be set
         // to const variable, which should make the code faster.
         const double max_effective_hamaker_constant =
-          *(std::max_element(this->effective_hamaker_constant.begin(),
-                             this->effective_hamaker_constant.end()));
+          *(std::ranges::max_element(this->effective_hamaker_constant));
         const double min_effective_surface_energy =
-          *(std::min_element(this->effective_surface_energy.begin(),
-                             this->effective_surface_energy.end()));
+          *(std::ranges::min_element(this->effective_surface_energy));
 
         // Return the critical delta_0. We put a minus sign in front of since a
         // positive overlap means that there is contact.
@@ -1264,17 +1262,17 @@ private:
    * or vertex shared by adjacent triangles), so more than one candidate can
    * be stored for the same particle.
    */
-  typedef std::vector<particle_triangle_contact_candidate>
-    particle_triangle_contact_description;
+  using particle_triangle_contact_description =
+    std::vector<particle_triangle_contact_candidate>;
 
   /**
    * @brief Contact record for one solid object, mapping the local index of
    * every particle with at least one contact candidate against this solid's
    * triangles to its particle_triangle_contact_description.
    */
-  typedef ankerl::unordered_dense::map<types::particle_index,
-                                       particle_triangle_contact_description>
-    particle_triangle_contact_record;
+  using particle_triangle_contact_record =
+    ankerl::unordered_dense::map<types::particle_index,
+                                 particle_triangle_contact_description>;
 
   /**
    * @brief Every solid-object is associated with a contact record. This

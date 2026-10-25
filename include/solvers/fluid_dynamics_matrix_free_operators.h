@@ -122,7 +122,7 @@ evaluate_function(const Function<dim>                       &function,
       Point<dim> p;
       for (int d = 0; d < dim; ++d)
         p[d] = p_vectorized[d][v];
-      for (unsigned int d = 0; d < components; ++d)
+      for (int d = 0; d < components; ++d)
         result[d][v] = function.value(p, d);
     }
   return result;

@@ -31,6 +31,7 @@
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <utility>
@@ -203,9 +204,8 @@ public:
     if (verbosity.at(physics_id) != Parameters::Verbosity::quiet)
       announce_physics(physics_id);
 
-    AssertThrow(std::find(active_physics.begin(),
-                          active_physics.end(),
-                          physics_id) != active_physics.end(),
+    AssertThrow(std::ranges::find(active_physics, physics_id) !=
+                  active_physics.end(),
                 ExcInternalError());
 
     physics[physics_id]->time_stepping_method = time_stepping_method;
@@ -227,9 +227,8 @@ public:
     if (verbosity.at(physics_id) != Parameters::Verbosity::quiet)
       announce_physics(physics_id);
 
-    AssertThrow(std::find(active_physics.begin(),
-                          active_physics.end(),
-                          physics_id) != active_physics.end(),
+    AssertThrow(std::ranges::find(active_physics, physics_id) !=
+                  active_physics.end(),
                 ExcInternalError());
 
     block_physics[physics_id]->time_stepping_method = time_stepping_method;
@@ -482,9 +481,8 @@ public:
   void
   solve_linear_system(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
 
     physics[physics_id]->solve_linear_system();
@@ -571,9 +569,8 @@ public:
   const GlobalVectorType &
   get_filtered_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *physics_filtered_solutions[physics_id];
   }
@@ -587,9 +584,8 @@ public:
   const GlobalBlockVectorType &
   get_block_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *block_physics_solutions[physics_id];
   }
@@ -603,9 +599,8 @@ public:
   const GlobalVectorType &
   get_time_average_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *physics_time_average_solutions[physics_id];
   }
@@ -619,9 +614,8 @@ public:
   const GlobalBlockVectorType &
   get_block_time_average_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *block_physics_time_average_solutions[physics_id];
   }
@@ -715,9 +709,8 @@ public:
   const std::vector<GlobalBlockVectorType> &
   get_block_previous_solutions(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *block_physics_previous_solutions[physics_id];
   }
@@ -807,9 +800,8 @@ public:
     const PhysicsID                   physics_id,
     std::shared_ptr<GlobalVectorType> filtered_solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     physics_filtered_solutions[physics_id] =
       std::move(filtered_solution_vector);
@@ -829,9 +821,8 @@ public:
   set_time_average_solution(const PhysicsID                   physics_id,
                             std::shared_ptr<GlobalVectorType> solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     physics_time_average_solutions[physics_id] = std::move(solution_vector);
   }
@@ -848,9 +839,8 @@ public:
   set_block_solution(const PhysicsID                        physics_id,
                      std::shared_ptr<GlobalBlockVectorType> solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     block_physics_solutions[physics_id] = std::move(solution_vector);
   }
@@ -870,9 +860,8 @@ public:
     const PhysicsID                        physics_id,
     std::shared_ptr<GlobalBlockVectorType> solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     block_physics_time_average_solutions[physics_id] =
       std::move(solution_vector);
@@ -912,9 +901,8 @@ public:
     std::shared_ptr<std::vector<GlobalBlockVectorType>>
       previous_solutions_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     block_physics_previous_solutions[physics_id] =
       std::move(previous_solutions_vector);

@@ -14,6 +14,7 @@
 
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace dealii;
@@ -2047,7 +2048,7 @@ NavierStokesPressureFunctionDefined<dim>::value(
   const Point<dim>  &point,
   const unsigned int component) const
 {
-  if (component == dim)
+  if (std::cmp_equal(component, dim))
     {
       return p->value(point);
     }

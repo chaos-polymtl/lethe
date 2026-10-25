@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_interface_property_model_h
@@ -38,7 +38,7 @@ public:
   /**
    * @brief  Default destructor.
    */
-  virtual ~InterfacePropertyModel(){};
+  virtual ~InterfacePropertyModel() = default;
 
   /**
    * @brief Returns true if the InterfacePropertyModel depends on a field, false if not.

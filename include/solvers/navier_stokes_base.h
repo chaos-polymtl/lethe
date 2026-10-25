@@ -131,8 +131,7 @@ protected:
                    const FluidDynamicsFormulation fluid_dynamics_formulation =
                      FluidDynamicsFormulation::standard);
 
-  virtual ~NavierStokesBase()
-  {}
+  virtual ~NavierStokesBase() = default;
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved

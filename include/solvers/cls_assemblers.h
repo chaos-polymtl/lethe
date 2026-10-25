@@ -220,8 +220,7 @@ template <int dim>
 class CLSAssemblerDGCore : public CLSAssemblerBase<dim>
 {
 public:
-  CLSAssemblerDGCore()
-  {}
+  CLSAssemblerDGCore() = default;
 
   /**
    * @brief Assemble the matrix
@@ -258,8 +257,7 @@ template <int dim>
 class CLSAssemblerSIPG : public CLSFaceAssemblerBase<dim>
 {
 public:
-  CLSAssemblerSIPG()
-  {}
+  CLSAssemblerSIPG() = default;
 
   /**
    * @brief Interface to call the matrix assembly

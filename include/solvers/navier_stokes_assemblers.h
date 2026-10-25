@@ -213,7 +213,7 @@ public:
       {
         if (dim == 2)
           {
-            for (unsigned int k = 0; k < dim; ++k)
+            for (int k = 0; k < dim; ++k)
               {
                 grad_shear_rate[d] +=
                   2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
@@ -226,7 +226,7 @@ public:
           }
         else
           {
-            for (unsigned int k = 0; k < dim; ++k)
+            for (int k = 0; k < dim; ++k)
               {
                 grad_shear_rate[d] +=
                   2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /

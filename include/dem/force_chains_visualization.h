@@ -117,8 +117,7 @@ class ParticlesForceChains
 public:
   ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters);
 
-  virtual ~ParticlesForceChains()
-  {}
+  virtual ~ParticlesForceChains() = default;
 
 public:
   /**

@@ -318,7 +318,7 @@ private:
     void
     serialize(Archive &ar, const unsigned int /*version*/)
     {
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           ar &normal_vector;
           ar &point_on_boundary;

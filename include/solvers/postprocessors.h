@@ -121,9 +121,9 @@ public:
           input_data.solution_gradients.size());
         std::vector<Tensor<2, dim>> strain_rate_tensor(
           input_data.solution_gradients.size());
-        for (unsigned int j = 0; j < dim; j++)
+        for (int j = 0; j < dim; j++)
           {
-            for (unsigned int k = 0; k < dim; k++)
+            for (int k = 0; k < dim; k++)
               {
                 vorticity_vector[p][j][k] =
                   0.5 * ((input_data.solution_gradients[p][j][k]) -
@@ -133,9 +133,9 @@ public:
                          input_data.solution_gradients[p][k][j]);
               }
           }
-        for (unsigned int m = 0; m < dim; m++)
+        for (int m = 0; m < dim; m++)
           {
-            for (unsigned int n = 0; n < dim; n++)
+            for (int n = 0; n < dim; n++)
               {
                 p1 += (vorticity_vector[p][m][n]) * (vorticity_vector[p][m][n]);
                 r1 +=
@@ -890,7 +890,7 @@ private:
         AssertDimension(computed_quantities[p].size(), dim);
         field_values[field::temperature] = inputs.solution_values[p];
 
-        for (unsigned int i = 0; i < dim; ++i)
+        for (int i = 0; i < dim; ++i)
           {
             computed_quantities[p][i] =
               -thermal_conductivity_model->value(field_values) *

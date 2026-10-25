@@ -74,8 +74,7 @@ public:
    * @brief AuxiliaryPhysics - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  virtual ~AuxiliaryPhysics()
-  {}
+  virtual ~AuxiliaryPhysics() = default;
 
   /**
    * @brief Gather and return vector of output structs that are particular to some applications.
