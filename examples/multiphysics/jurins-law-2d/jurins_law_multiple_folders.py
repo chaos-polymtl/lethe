@@ -118,7 +118,7 @@ with plt.style.context(plot_styles):
    box = ax.get_position()
    ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
    ax.set_ylim([-4,4])
-   fig.legend(loc='outside center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.13, 0.5),handles=handles)
+   fig.legend(loc='center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.13, 0.5),handles=handles)
    ax.set(**pparams)
    fig.savefig('height_differences.pdf',format="pdf",dpi=500)
    fig.savefig('height_differences.png',format="png",dpi=500)
