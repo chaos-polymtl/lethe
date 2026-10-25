@@ -24,7 +24,8 @@ template <int dim>
 ConservativeLevelSet<dim>::ConservativeLevelSet(
   MultiphysicsInterface<dim>      *multiphysics_interface,
   const SimulationParameters<dim> &p_simulation_parameters,
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
+  const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                    &p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control)
   : AuxiliaryPhysics<dim, GlobalVectorType>(
       p_simulation_parameters.physics_solving_strategy.at(PhysicsID::CLS))

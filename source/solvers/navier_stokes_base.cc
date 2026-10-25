@@ -2213,7 +2213,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
-  std::string checkpoint_file_prefix)
+  const std::string &checkpoint_file_prefix)
 {
   const std::string filename = checkpoint_file_prefix + ".triangulation";
   check_file_exists(filename,

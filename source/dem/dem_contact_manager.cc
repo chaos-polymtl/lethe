@@ -19,7 +19,7 @@ void
 DEMContactManager<dim, PropertiesIndex>::execute_cell_neighbors_search(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const typename dem_data_structures<dim>::periodic_boundaries_cells_info
-    periodic_boundaries_cells_information)
+    &periodic_boundaries_cells_information)
 {
   // Get action manager
   auto *action_manager = DEMActionManager::get_action_manager();

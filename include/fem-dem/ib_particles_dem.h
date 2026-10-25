@@ -84,7 +84,7 @@ public:
   void
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
              const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-               floating_walls_parameters,
+               &floating_walls_parameters,
              const std::shared_ptr<Parameters::Lagrangian::BCDEM>
                                                 &boundary_conditions_parameters,
              const MPI_Comm                     &mpi_communicator_input,

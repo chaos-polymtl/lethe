@@ -17,6 +17,8 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <utility>
+
 /**
  * @brief Generalized solver for CLS linear subequations.
  *
@@ -59,7 +61,7 @@ public:
     , subequation_id(p_subequation_id)
     , subequations_interface(p_subequations_interface)
     , simulation_parameters(p_simulation_parameters)
-    , triangulation(p_triangulation)
+    , triangulation(std::move(p_triangulation))
     , dof_handler(std::make_shared<DoFHandler<dim>>(*this->triangulation))
     , linear_solver_verbosity(
         p_simulation_parameters.linear_solver.at(PhysicsID::CLS).verbosity)

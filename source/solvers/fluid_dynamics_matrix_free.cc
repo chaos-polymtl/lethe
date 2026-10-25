@@ -787,10 +787,10 @@ void
 MFNavierStokesPreconditionGMGBase<dim>::reinit(
   const std::shared_ptr<Mapping<dim>>              &mapping,
   const std::shared_ptr<Quadrature<dim>>           &cell_quadrature,
-  const std::shared_ptr<Function<dim>>              forcing_function,
+  const std::shared_ptr<Function<dim>>             &forcing_function,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const std::shared_ptr<FESystem<dim>>              fe)
+  const std::shared_ptr<FESystem<dim>>             &fe)
 {
   AssertThrow(*cell_quadrature ==
                 QGauss<dim>(this->dof_handler.get_fe().degree + 1),

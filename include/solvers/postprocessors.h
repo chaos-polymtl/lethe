@@ -10,6 +10,7 @@
 
 #include <deal.II/numerics/data_postprocessor.h>
 
+#include <utility>
 #include <vector>
 
 using namespace dealii;
@@ -360,7 +361,7 @@ public:
     : DataPostprocessorScalar<dim>("kinematic_viscosity" +
                                      Utilities::to_string(fluid_id, 2),
                                    update_gradients)
-    , rheological_model(rheological_model)
+    , rheological_model(std::move(rheological_model))
   {}
 
   /**
@@ -444,7 +445,7 @@ public:
     : DataPostprocessorScalar<dim>("dynamic_viscosity_" +
                                      Utilities::to_string(fluid_id, 2),
                                    update_gradients)
-    , rheological_model(rheological_model)
+    , rheological_model(std::move(rheological_model))
     , density_ref(density_ref)
   {}
 
@@ -618,7 +619,7 @@ public:
    *
    * @param[in] shape Geometrical entity.
    */
-  LevelsetPostprocessor(const std::shared_ptr<Shape<dim>> shape)
+  LevelsetPostprocessor(const std::shared_ptr<Shape<dim>> &shape)
     : DataPostprocessorScalar<dim>("levelset", update_quadrature_points)
     , shape(shape)
   {}
@@ -673,7 +674,7 @@ public:
    *
    * @param[in] shape Geometrical entity.
    */
-  LevelsetGradientPostprocessor(const std::shared_ptr<Shape<dim>> shape)
+  LevelsetGradientPostprocessor(const std::shared_ptr<Shape<dim>> &shape)
     : DataPostprocessorVector<dim>(std::string("levelset_gradient"),
                                    update_values | update_quadrature_points)
     , shape(shape)
@@ -745,7 +746,7 @@ public:
     : DataPostprocessorScalar<dim>("density_" +
                                      Utilities::to_string(material_id, 2),
                                    update_values)
-    , density_model(p_density_model)
+    , density_model(std::move(p_density_model))
   {}
 
   /**

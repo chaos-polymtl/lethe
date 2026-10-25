@@ -62,13 +62,13 @@ public:
    * @param face_quadrature_formula The face quadrature formula
    *
    */
-  HeatTransferScratchData(const PhysicalPropertiesManager properties_manager,
-                          const FiniteElement<dim>       &fe_ht,
-                          const Quadrature<dim>          &quadrature,
-                          const Mapping<dim>             &mapping,
-                          const FiniteElement<dim>       &fe_fd,
-                          const Quadrature<dim - 1>      &face_quadrature,
-                          const double                    delta_T_ref)
+  HeatTransferScratchData(const PhysicalPropertiesManager &properties_manager,
+                          const FiniteElement<dim>        &fe_ht,
+                          const Quadrature<dim>           &quadrature,
+                          const Mapping<dim>              &mapping,
+                          const FiniteElement<dim>        &fe_fd,
+                          const Quadrature<dim - 1>       &face_quadrature,
+                          const double                     delta_T_ref)
     : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,

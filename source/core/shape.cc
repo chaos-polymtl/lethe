@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/shape.h>
@@ -262,7 +262,7 @@ template <int dim>
 double
 Shape<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
   return this->value(evaluation_point);
@@ -272,7 +272,7 @@ template <int dim>
 Tensor<1, dim>
 Shape<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
   return this->gradient(evaluation_point);
@@ -428,8 +428,8 @@ Sphere<dim>::local_curvature_radius(Point<dim> p)
 template <int dim>
 double
 Sphere<dim>::local_curvature_radius_with_cell_guess(
-  const Point<dim>                                     p,
-  const typename DoFHandler<dim>::active_cell_iterator cell)
+  const Point<dim>                                      p,
+  const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   (void)cell;
   return (this->position - p).norm();
@@ -592,7 +592,7 @@ template <int dim>
 double
 Superquadric<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component = 0*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -666,7 +666,7 @@ template <int dim>
 Tensor<1, dim>
 Superquadric<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -753,7 +753,7 @@ template <int dim>
 double
 OpenCascadeShape<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
@@ -903,7 +903,7 @@ template <int dim>
 Tensor<1, dim>
 OpenCascadeShape<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
@@ -1313,8 +1313,8 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim>                                     &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int /*component*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -1405,8 +1405,8 @@ CompositeShape<dim>::gradient(const Point<dim> &evaluation_point,
 template <int dim>
 Tensor<1, dim>
 CompositeShape<dim>::gradient_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim>                                     &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int /*component*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -1634,8 +1634,8 @@ RBFShape<dim>::RBFShape(const std::string  &shape_arguments_str,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim>                                     &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int /*component*/)
 {
   double bounding_box_distance = bounding_box->value(evaluation_point);
@@ -1664,8 +1664,8 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim>                                     &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int /*component*/)
 {
   Point<dim>     centered_point        = evaluation_point;
@@ -2337,7 +2337,7 @@ RBFShape<dim>::evaluate_basis_function_derivative(
 template <int dim>
 void
 RBFShape<dim>::swap_iterable_nodes(
-  const typename DoFHandler<dim>::active_cell_iterator cell)
+  const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);

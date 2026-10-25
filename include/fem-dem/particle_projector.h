@@ -32,6 +32,8 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <utility>
+
 using namespace dealii;
 
 DeclExceptionMsg(
@@ -296,7 +298,7 @@ public:
     : PhysicsLinearSubequationsSolver(pcout)
     , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
     , triangulation(triangulation)
-    , void_fraction_parameters(input_parameters)
+    , void_fraction_parameters(std::move(input_parameters))
     , linear_solver_parameters(linear_solver_parameters)
     , particle_handler(particle_handler)
     , particle_have_been_projected(false)

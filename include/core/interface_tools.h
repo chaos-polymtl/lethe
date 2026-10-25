@@ -27,6 +27,7 @@
 #include <deal.II/non_matching/fe_immersed_values.h>
 
 #include <iostream>
+#include <utility>
 
 using namespace dealii;
 
@@ -490,15 +491,15 @@ namespace InterfaceTools
      *
      */
     SignedDistanceSolver(
-      std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                          background_triangulation,
+      const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                         &background_triangulation,
       std::shared_ptr<FiniteElement<dim>> background_fe,
       const double                        p_max_distance,
       const double                        p_iso_level,
       const double                        p_scaling,
       const Parameters::Verbosity         p_verbosity)
       : dof_handler(*background_triangulation)
-      , fe(background_fe)
+      , fe(std::move(background_fe))
       , max_distance(p_max_distance)
       , iso_level(p_iso_level * p_scaling)
       , scaling(p_scaling)

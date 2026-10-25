@@ -33,6 +33,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 
 using namespace dealii;
 
@@ -64,8 +65,8 @@ public:
    */
   MultiphysicsInterface(
     const SimulationParameters<dim> &nsparam,
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                       p_triangulation,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                      &p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control,
     ConditionalOStream                &p_pcout,
     const FluidDynamicsFormulation     p_fluid_dynamics_formulation =
@@ -736,7 +737,7 @@ public:
   {
     AssertThrow(is_field_available(physics_id),
                 PhysicsIDNotAvailable(physics_id));
-    physics_dof_handler[physics_id] = dof_handler;
+    physics_dof_handler[physics_id] = std::move(dof_handler);
   }
 
   /**
@@ -753,7 +754,7 @@ public:
   {
     AssertThrow(is_field_available(physics_id),
                 PhysicsIDNotAvailable(physics_id));
-    physics_mapping[physics_id] = mapping;
+    physics_mapping[physics_id] = std::move(mapping);
   }
 
 
@@ -768,7 +769,7 @@ public:
   set_solid(std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>>
               solids_input)
   {
-    solids = solids_input;
+    solids = std::move(solids_input);
   }
 
   /**
@@ -786,7 +787,7 @@ public:
   {
     AssertThrow(is_field_available(physics_id),
                 PhysicsIDNotAvailable(physics_id));
-    physics_solutions[physics_id] = solution_vector;
+    physics_solutions[physics_id] = std::move(solution_vector);
   }
 
   /**
@@ -810,7 +811,8 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    physics_filtered_solutions[physics_id] = filtered_solution_vector;
+    physics_filtered_solutions[physics_id] =
+      std::move(filtered_solution_vector);
   }
 
 
@@ -831,7 +833,7 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    physics_time_average_solutions[physics_id] = solution_vector;
+    physics_time_average_solutions[physics_id] = std::move(solution_vector);
   }
 
   /**
@@ -850,7 +852,7 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    block_physics_solutions[physics_id] = solution_vector;
+    block_physics_solutions[physics_id] = std::move(solution_vector);
   }
 
   /**
@@ -872,7 +874,8 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    block_physics_time_average_solutions[physics_id] = solution_vector;
+    block_physics_time_average_solutions[physics_id] =
+      std::move(solution_vector);
   }
 
   /**
@@ -890,7 +893,8 @@ public:
   {
     AssertThrow(is_field_available(physics_id),
                 PhysicsIDNotAvailable(physics_id));
-    physics_previous_solutions[physics_id] = previous_solutions_vector;
+    physics_previous_solutions[physics_id] =
+      std::move(previous_solutions_vector);
   }
 
   /**
@@ -912,7 +916,8 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    block_physics_previous_solutions[physics_id] = previous_solutions_vector;
+    block_physics_previous_solutions[physics_id] =
+      std::move(previous_solutions_vector);
   }
 
   /**

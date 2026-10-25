@@ -11,6 +11,8 @@
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/physics_assemblers.h>
 
+#include <utility>
+
 /*
  * Exceptions used to capture incoherent setup of assemblers
  */
@@ -146,7 +148,7 @@ class GLSNavierStokesAssemblerSRF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesAssemblerSRF(Parameters::VelocitySource velocity_sources)
-    : velocity_sources(velocity_sources)
+    : velocity_sources(std::move(velocity_sources))
   {}
 
   /**

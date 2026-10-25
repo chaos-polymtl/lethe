@@ -34,6 +34,7 @@
 #include <deal.II/numerics/solution_transfer.h>
 
 #include <map>
+#include <utility>
 
 /*
  * Implementation of tracer as an auxiliary physics.
@@ -55,8 +56,8 @@ class Tracer : public AuxiliaryPhysics<dim, GlobalVectorType>
 public:
   Tracer(MultiphysicsInterface<dim>      *multiphysics_interface,
          const SimulationParameters<dim> &p_simulation_parameters,
-         std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                            p_triangulation,
+         const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                           &p_triangulation,
          std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.physics_solving_strategy.at(PhysicsID::tracer))
@@ -67,7 +68,7 @@ public:
                       TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
-    , simulation_control(p_simulation_control)
+    , simulation_control(std::move(p_simulation_control))
     , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   {
     this->pcout << std::setprecision(simulation_control->get_log_precision())

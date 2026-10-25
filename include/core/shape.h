@@ -35,6 +35,7 @@
 
 #include <cfloat>
 #include <memory>
+#include <utility>
 
 using namespace dealii;
 
@@ -117,9 +118,9 @@ public:
    */
   virtual double
   value_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int                                   component = 0);
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                    component = 0);
 
   /**
    * @brief Return the smoothed maximum of two variables used for shape contact calculation.
@@ -1026,9 +1027,9 @@ public:
    */
   virtual Tensor<1, dim>
   gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int                                   component = 0);
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                    component = 0);
 
 
   /**
@@ -1098,8 +1099,8 @@ public:
    */
   virtual double
   local_curvature_radius_with_cell_guess(
-    const Point<dim>                                     p,
-    const typename DoFHandler<dim>::active_cell_iterator cell)
+    const Point<dim>                                      p,
+    const typename DoFHandler<dim>::active_cell_iterator &cell)
   {
     double curvature = 0;
     double epsilone  = 1e-6 * this->effective_radius;
@@ -1475,8 +1476,8 @@ public:
    */
   virtual double
   local_curvature_radius_with_cell_guess(
-    const Point<dim>                                     p,
-    const typename DoFHandler<dim>::active_cell_iterator cell) override;
+    const Point<dim>                                      p,
+    const typename DoFHandler<dim>::active_cell_iterator &cell) override;
 
 
 private:
@@ -1611,8 +1612,8 @@ public:
    */
   double
   value_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
     [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
@@ -1638,8 +1639,8 @@ public:
    */
   Tensor<1, dim>
   gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int component = 0) override;
 
   /**
@@ -2122,7 +2123,7 @@ public:
     const Tensor<1, 3> &orientation)
     : Shape<dim>(0., position, orientation)
     , constituents(constituents)
-    , operations(operations)
+    , operations(std::move(operations))
   {
     Point<dim> point_max;
     Point<dim> point_min;
@@ -2299,8 +2300,8 @@ public:
    */
   double
   value_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
     [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
@@ -2320,8 +2321,8 @@ public:
    */
   Tensor<1, dim>
   gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int component = 0) override;
 
   /**
@@ -2530,8 +2531,8 @@ public:
    */
   double
   value_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int component = 0) override;
 
   /**
@@ -2557,8 +2558,8 @@ public:
    */
   Tensor<1, dim>
   gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int component = 0) override;
 
   /**
@@ -2701,7 +2702,7 @@ public:
   double
   value_with_cell_guess(
     const Point<dim> &evaluation_point,
-    [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator cell,
+    [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator &cell,
     [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
@@ -2712,8 +2713,8 @@ public:
    */
   Tensor<1, dim>
   gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const Point<dim>                                     &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int component = 0) override;
 
   /**
@@ -3151,7 +3152,7 @@ public:
    */
   void
   swap_iterable_nodes(
-    const typename DoFHandler<dim>::active_cell_iterator cell);
+    const typename DoFHandler<dim>::active_cell_iterator &cell);
 
 private:
   std::string                          filename;

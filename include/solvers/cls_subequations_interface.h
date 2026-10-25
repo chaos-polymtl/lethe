@@ -8,6 +8,8 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_subequations_solver.h>
 
+#include <utility>
+
 using namespace dealii;
 
 DeclExceptionMsg(
@@ -59,8 +61,8 @@ public:
   CLSSubequationsInterface(
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                              p_triangulation,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                             &p_triangulation,
     const std::shared_ptr<SimulationControl> &p_simulation_control)
     : pcout(p_pcout)
   {
@@ -87,8 +89,8 @@ public:
   void
   initialize_subequations(
     const SimulationParameters<dim> &p_simulation_parameters,
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                              p_triangulation,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                             &p_triangulation,
     const std::shared_ptr<SimulationControl> &p_simulation_control);
 
   /**
@@ -300,7 +302,7 @@ public:
                            this->active_subequations.end(),
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
-    this->subequations_dof_handler[subequation_id] = dof_handler;
+    this->subequations_dof_handler[subequation_id] = std::move(dof_handler);
   }
 
   /**
@@ -321,7 +323,7 @@ public:
                            this->active_subequations.end(),
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
-    this->subequations_solutions[subequation_id] = solution_vector;
+    this->subequations_solutions[subequation_id] = std::move(solution_vector);
   }
 
   /**
