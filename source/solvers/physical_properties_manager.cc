@@ -202,8 +202,15 @@ PhysicalPropertiesManager::initialize(
           physical_properties.solids[s]));
     }
 
-  // For each pair of interacting materials (fluid-fluid or fluid-solid), append
-  // physical properties
+  // The effective medium models are indexed by the material interaction id.
+  // The interactions that do not define a mixture keep an empty entry.
+  effective_electric_permittivity_real.resize(number_of_material_interactions);
+  effective_electric_permittivity_imag.resize(number_of_material_interactions);
+  effective_magnetic_permeability_real.resize(number_of_material_interactions);
+  effective_magnetic_permeability_imag.resize(number_of_material_interactions);
+
+  // For each pair of interacting materials (fluid-fluid, fluid-solid or
+  // fluid-particles), append physical properties
   for (unsigned int i = 0; i < number_of_material_interactions; ++i)
     {
       surface_tension.push_back(SurfaceTensionModel::model_cast(
@@ -215,5 +222,37 @@ PhysicalPropertiesManager::initialize(
       mobility_cahn_hilliard.push_back(MobilityCahnHilliardModel::model_cast(
         physical_properties.material_interactions[i]));
       establish_fields_required_by_model(*mobility_cahn_hilliard[i]);
+
+      // A fluid-particles interaction defines a mixture whose properties are
+      // given by effective medium models.
+      if (physical_properties.material_interactions[i]
+            .material_interaction_type ==
+          Parameters::MaterialInteractions::MaterialInteractionsType::
+            fluid_particles)
+        {
+          effective_electric_permittivity_real[i] =
+            EffectiveMediumModel::model_cast_real(
+              physical_properties,
+              i,
+              EffectiveMediumProperty::electric_permittivity);
+
+          effective_electric_permittivity_imag[i] =
+            EffectiveMediumModel::model_cast_imag(
+              physical_properties,
+              i,
+              EffectiveMediumProperty::electric_permittivity);
+
+          effective_magnetic_permeability_real[i] =
+            EffectiveMediumModel::model_cast_real(
+              physical_properties,
+              i,
+              EffectiveMediumProperty::magnetic_permeability);
+
+          effective_magnetic_permeability_imag[i] =
+            EffectiveMediumModel::model_cast_imag(
+              physical_properties,
+              i,
+              EffectiveMediumProperty::magnetic_permeability);
+        }
     }
 }

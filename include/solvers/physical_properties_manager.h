@@ -5,6 +5,7 @@
 #define lethe_physical_properties_manager_h
 
 #include <core/density_model.h>
+#include <core/effective_medium_model.h>
 #include <core/electric_conductivity_model.h>
 #include <core/electric_permittivity_model.h>
 #include <core/magnetic_permeability_model.h>
@@ -359,7 +360,7 @@ public:
   /**
    * @brief Returns the vector of all real part magnetic permeability models defined in the problem.
    * @return A vector of shared pointer, each one them pointing to a
-   * ElectricPermittivityModel.
+   * MagneticPermeabilityModel.
    */
   std::vector<std::shared_ptr<MagneticPermeabilityModel>>
   get_magnetic_permeability_real_vector() const
@@ -370,12 +371,89 @@ public:
   /**
    * @brief Returns the vector of all imaginary part magnetic permeability models defined in the problem.
    * @return A vector of shared pointer, each one them pointing to a
-   * ElectricPermittivityModel.
+   * MagneticPermeabilityModel.
    */
   std::vector<std::shared_ptr<MagneticPermeabilityModel>>
   get_magnetic_permeability_imag_vector() const
   {
     return magnetic_permeability_imag;
+  }
+
+  /**
+   * @brief Returns the effective medium model of the real part of the electric
+   * permittivity of the mixture defined by a material interaction.
+   * @param material_interaction_id Index of the material interaction. It must
+   * be a fluid-particles interaction.
+   * @return A shared pointer to an EffectiveMediumModel.
+   */
+  std::shared_ptr<EffectiveMediumModel>
+  get_effective_electric_permittivity_real(
+    const unsigned int material_interaction_id) const
+  {
+    AssertThrow(effective_electric_permittivity_real.at(
+                  material_interaction_id) != nullptr,
+                ExcMessage("The material interaction does not define an "
+                           "effective medium model. Only fluid-particles "
+                           "interactions do."));
+    return effective_electric_permittivity_real[material_interaction_id];
+  }
+
+  /**
+   * @brief Returns the effective medium model of the imaginary part of the electric
+   * permittivity of the mixture defined by a material interaction.
+   * @param material_interaction_id Index of the material interaction. It must
+   * be a fluid-particles interaction.
+   * @return A shared pointer to an EffectiveMediumModel.
+   */
+  std::shared_ptr<EffectiveMediumModel>
+  get_effective_electric_permittivity_imag(
+    const unsigned int material_interaction_id) const
+  {
+    AssertThrow(effective_electric_permittivity_imag.at(
+                  material_interaction_id) != nullptr,
+                ExcMessage("The material interaction does not define an "
+                           "effective medium model. Only fluid-particles "
+                           "interactions do."));
+    return effective_electric_permittivity_imag[material_interaction_id];
+  }
+
+
+  /**
+   * @brief Returns the effective medium model of the real part of the magnetic
+   * permeability of the mixture defined by a material interaction.
+   * @param material_interaction_id Index of the material interaction. It must
+   * be a fluid-particles interaction.
+   * @return A shared pointer to an EffectiveMediumModel.
+   */
+  std::shared_ptr<EffectiveMediumModel>
+  get_effective_magnetic_permeability_real(
+    const unsigned int material_interaction_id) const
+  {
+    AssertThrow(effective_magnetic_permeability_real.at(
+                  material_interaction_id) != nullptr,
+                ExcMessage("The material interaction does not define an "
+                           "effective medium model. Only fluid-particles "
+                           "interactions do."));
+    return effective_magnetic_permeability_real[material_interaction_id];
+  }
+
+  /**
+   * @brief Returns the effective medium model of the imaginary part of the magnetic
+   * permeability of the mixture defined by a material interaction.
+   * @param material_interaction_id Index of the material interaction. It must
+   * be a fluid-particles interaction.
+   * @return A shared pointer to an EffectiveMediumModel.
+   */
+  std::shared_ptr<EffectiveMediumModel>
+  get_effective_magnetic_permeability_imag(
+    const unsigned int material_interaction_id) const
+  {
+    AssertThrow(effective_magnetic_permeability_imag.at(
+                  material_interaction_id) != nullptr,
+                ExcMessage("The material interaction does not define an "
+                           "effective medium model. Only fluid-particles "
+                           "interactions do."));
+    return effective_magnetic_permeability_imag[material_interaction_id];
   }
 
   double
@@ -529,6 +607,14 @@ private:
     magnetic_permeability_real;
   std::vector<std::shared_ptr<MagneticPermeabilityModel>>
     magnetic_permeability_imag;
+  std::vector<std::shared_ptr<EffectiveMediumModel>>
+    effective_electric_permittivity_real;
+  std::vector<std::shared_ptr<EffectiveMediumModel>>
+    effective_electric_permittivity_imag;
+  std::vector<std::shared_ptr<EffectiveMediumModel>>
+    effective_magnetic_permeability_real;
+  std::vector<std::shared_ptr<EffectiveMediumModel>>
+    effective_magnetic_permeability_imag;
 
   std::map<field, bool> required_fields;
 
