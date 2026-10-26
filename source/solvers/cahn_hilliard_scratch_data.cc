@@ -107,7 +107,9 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
           mobility_cahn_hilliard_model->vector_value(fields,
                                                      mobility_cahn_hilliard);
           mobility_cahn_hilliard_model->vector_jacobian(
-            fields, phase_order_cahn_hilliard, mobility_cahn_hilliard_gradient);
+            fields,
+            field::phase_order_cahn_hilliard,
+            mobility_cahn_hilliard_gradient);
 
           break;
         }
