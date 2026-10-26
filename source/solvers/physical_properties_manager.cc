@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/physical_properties_manager.h>
@@ -60,6 +60,8 @@ PhysicalPropertiesManager::initialize(
   required_fields[field::phase_order_cahn_hilliard] = false;
   required_fields[field::levelset]                  = false;
   required_fields[field::tracer_concentration]      = false;
+  required_fields[field::void_fraction]             = false;
+  required_fields[field::particle_temperature]      = false;
 
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
