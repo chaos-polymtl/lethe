@@ -4,11 +4,16 @@
 #ifndef lethe_effective_medium_model_h
 #define lethe_effective_medium_model_h
 
-#include <core/parameters_cfd_dem.h>
+#include <core/parameters.h>
+#include <core/physical_property_model.h>
+
+#include <deal.II/base/exceptions.h>
 
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <memory>
+#include <vector>
 
 DeclException1(InvalidPhysicalPropertyReal,
                double,
@@ -22,7 +27,7 @@ DeclException1(
   << ". The physical property values must be in the upper-half right quadrant of the complex plane.");
 
 template <typename ValueType>
-class EffectiveMediumModel
+class EffectiveMediumModel : public PhysicalPropertyModel
 {
 public:
   /**
@@ -32,11 +37,13 @@ public:
 
   /**
    * @brief Creates an instance of the effective medium model based on the parameters.
-   * @param[in] cfd_dem_parameters The CFD-DEM parameters.
+   * @param[in] material_interaction_parameters Parameters for the effective
+   * medium model.
    * @return A shared pointer to the created effective medium model.
    */
   static std::shared_ptr<EffectiveMediumModel<ValueType>>
-  model_cast(const Parameters::CFDDEM &cfd_dem_parameters);
+  model_cast(
+    const Parameters::MaterialInteractions &material_interaction_parameters);
 
   /**
    * @brief Calculates the value of a physical property for a mixture of two materials.

@@ -455,9 +455,18 @@ public:
           .find(fluid_solid_material_interaction)
           ->second;
       }
+    else if (material_interaction_type ==
+             material_interactions_type::fluid_particles)
+      {
+        std::pair<unsigned int, unsigned int>
+          fluid_particle_material_interaction(material_0_id, material_1_id);
+        return fluid_solid_interactions_with_material_interaction_ids
+          .find(fluid_particle_material_interaction)
+          ->second;
+      }
     else
       throw(std::runtime_error(
-        "Invalid type of material interaction. The choices are <fluid_fluid|fluid_solid>"));
+        "Invalid type of material interaction. The choices are <fluid_fluid|fluid_solid|fluid_particle>"));
   }
 
   double
