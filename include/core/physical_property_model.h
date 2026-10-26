@@ -34,7 +34,7 @@ DeclException2(PhysicialPropertyModelFieldUndefined,
  * and the suffix _p2 implies that the field is at time t_dt (previous two
  * steps).
  */
-enum field : int
+enum class field : int
 {
   shear_rate,
   temperature,
@@ -79,14 +79,14 @@ public:
    */
   PhysicalPropertyModel()
   {
-    model_depends_on[shear_rate]                = false;
-    model_depends_on[temperature]               = false;
-    model_depends_on[temperature_p1]            = false;
-    model_depends_on[temperature_p2]            = false;
-    model_depends_on[pressure]                  = false;
-    model_depends_on[phase_order_cahn_hilliard] = false;
-    model_depends_on[levelset]                  = false;
-    model_depends_on[tracer_concentration]      = false;
+    model_depends_on[field::shear_rate]                = false;
+    model_depends_on[field::temperature]               = false;
+    model_depends_on[field::temperature_p1]            = false;
+    model_depends_on[field::temperature_p2]            = false;
+    model_depends_on[field::pressure]                  = false;
+    model_depends_on[field::phase_order_cahn_hilliard] = false;
+    model_depends_on[field::levelset]                  = false;
+    model_depends_on[field::tracer_concentration]      = false;
   }
 
   /**
