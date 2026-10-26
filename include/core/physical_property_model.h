@@ -45,8 +45,7 @@ enum class field : int
   phase_order_cahn_hilliard_filtered,
   levelset,
   tracer_concentration,
-  void_fraction,       // local void fraction of a mixture from VANS
-  particle_temperature // particle-phase temperature projected from DEM to CFD
+  void_fraction
 };
 
 inline void
@@ -90,7 +89,6 @@ public:
     model_depends_on[field::levelset]                  = false;
     model_depends_on[field::tracer_concentration]      = false;
     model_depends_on[field::void_fraction]             = false;
-    model_depends_on[field::particle_temperature]      = false;
   }
 
   /**
