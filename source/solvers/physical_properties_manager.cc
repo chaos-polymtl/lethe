@@ -64,7 +64,6 @@ PhysicalPropertiesManager::initialize(
   required_fields[field::levelset]                  = false;
   required_fields[field::tracer_concentration]      = false;
   required_fields[field::void_fraction]             = false;
-  required_fields[field::particle_temperature]      = false;
 
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
