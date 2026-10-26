@@ -293,9 +293,9 @@ EffectiveMediumModel::get_model_type(
   switch (property)
     {
       case EffectiveMediumProperty::electric_permittivity:
-        return interaction.electric_effective_medium_model;
+        return interaction.electric_permittivity_effective_medium_model;
       case EffectiveMediumProperty::magnetic_permeability:
-        return interaction.magnetic_effective_medium_model;
+        return interaction.magnetic_permeability_effective_medium_model;
     }
 
   AssertThrow(false,

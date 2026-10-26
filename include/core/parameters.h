@@ -674,9 +674,9 @@ namespace Parameters
       bruggeman
     };
 
-    EffectiveMediumModelType electric_effective_medium_model =
+    EffectiveMediumModelType electric_permittivity_effective_medium_model =
       EffectiveMediumModelType::none;
-    EffectiveMediumModelType magnetic_effective_medium_model =
+    EffectiveMediumModelType magnetic_permeability_effective_medium_model =
       EffectiveMediumModelType::none;
 
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
