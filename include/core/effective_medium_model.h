@@ -239,6 +239,19 @@ private:
   double
   get_component(const std::complex<double> mixture_property) const;
 
+  /**
+   * @brief Returns the effective medium model chosen in a material interaction
+   * for a mixture property.
+   *
+   * @param[in] interaction Parameters of the material interaction.
+   * @param[in] property Mixture property calculated by the model.
+   *
+   * @return Type of the effective medium model of the property.
+   */
+  static Parameters::MaterialInteractions::EffectiveMediumModelType
+  get_model_type(const Parameters::MaterialInteractions &interaction,
+                 const EffectiveMediumProperty           property);
+
   /// Mixture property calculated by the model
   const EffectiveMediumProperty property;
 

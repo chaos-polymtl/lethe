@@ -30,6 +30,11 @@ DeclException1(NumberOfSolidsError,
                << "Number of solids: " << arg1
                << " is larger than 1. This is currently not supported.");
 
+DeclException1(NumberOfUnresolvedParticlesError,
+               int,
+               << "Number of unresolved particles: " << arg1
+               << " is larger than 1. This is currently not supported.");
+
 DeclException1(NumberOfMaterialInteractionsError,
                int,
                << "Number of material interactions: " << arg1
@@ -1248,6 +1253,19 @@ namespace Parameters
       AssertThrow(number_of_solids <= max_solids,
                   NumberOfSolidsError(number_of_solids));
 
+      number_of_unresolved_particles =
+        prm.get_integer("number of unresolved particles");
+      AssertThrow(number_of_unresolved_particles <= max_particles,
+                  NumberOfUnresolvedParticlesError(
+                    number_of_unresolved_particles));
+      for (unsigned int i_particle = 0;
+           i_particle < number_of_unresolved_particles;
+           ++i_particle)
+        {
+          unresolved_particles[i_particle].parse_parameters(
+            prm, "unresolved particle", i_particle, dimensions);
+        }
+
       // Definition of interactions between materials
       number_of_material_interactions =
         prm.get_integer("number of material interactions");
@@ -1261,16 +1279,31 @@ namespace Parameters
         {
           material_interactions[i_material_interaction].parse_parameters(
             prm, i_material_interaction, dimensions);
+
+          // fluid-fluid interactions
           if (material_interactions[i_material_interaction]
                 .material_interaction_type ==
               MaterialInteractions::MaterialInteractionsType::fluid_fluid)
             fluid_fluid_interactions_with_material_interaction_ids.insert(
               material_interactions[i_material_interaction]
                 .fluid_fluid_interaction_with_material_interaction_id);
-          else // fluid-solid interaction
+
+          // fluid-solid interactions
+          else if (material_interactions[i_material_interaction]
+                     .material_interaction_type ==
+                   MaterialInteractions::MaterialInteractionsType::fluid_solid)
             fluid_solid_interactions_with_material_interaction_ids.insert(
               material_interactions[i_material_interaction]
                 .fluid_solid_interaction_with_material_interaction_id);
+
+          // fluid-particle interactions
+          else if (material_interactions[i_material_interaction]
+                     .material_interaction_type ==
+                   MaterialInteractions::MaterialInteractionsType::
+                     fluid_particle)
+            fluid_particle_interactions_with_material_interaction_ids.insert(
+              material_interactions[i_material_interaction]
+                .fluid_particle_interaction_with_material_interaction_id);
         }
 
       reference_temperature = prm.get_double("reference temperature");
@@ -1795,7 +1828,7 @@ namespace Parameters
         prm.declare_entry("fluid id",
                           "0",
                           Patterns::Integer(),
-                          "ID of the fluid interacting with the solid");
+                          "ID of the fluid interacting with the particles");
         prm.declare_entry("particles id",
                           "0",
                           Patterns::Integer(),
@@ -1804,13 +1837,13 @@ namespace Parameters
         // Effective medium model
         declare_enum_entry(
           prm,
-          "electric effective medium model",
-          electric_effective_medium_model,
+          "electric permittivity effective medium model",
+          electric_permittivity_effective_medium_model,
           "Model used for the calculation of the effective electric properties.");
         declare_enum_entry(
           prm,
-          "magnetic effective medium model",
-          magnetic_effective_medium_model,
+          "magnetic permeability effective medium model",
+          magnetic_permeability_effective_medium_model,
           "Model used for the calculation of the effective magnetic properties`.");
       }
       prm.leave_subsection();
