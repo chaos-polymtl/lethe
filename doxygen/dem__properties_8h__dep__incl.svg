@@ -241,7 +241,7 @@
 <g id="Node000272" class="node">
 <title>Node272</title>
 <g id="a_Node000272"><a xlink:href="particle__interaction__outcomes_8h.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="1069.5,-448 922.5,-448 922.5,-407 1069.5,-407 1069.5,-448"/>
+<polygon fill="#fff0f0" stroke="red" points="1069.5,-448 922.5,-448 922.5,-407 1069.5,-407 1069.5,-448"/>
 <text text-anchor="start" x="930.5" y="-436" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text text-anchor="start" x="930.5" y="-425" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/dem/particle</text>
 <text text-anchor="middle" x="996" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">_interaction_outcomes.h</text>

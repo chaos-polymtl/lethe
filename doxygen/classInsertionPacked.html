@@ -120,10 +120,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:acce9ab375263bf5caa7bb7527420f3f1" id="r_acce9ab375263bf5caa7bb7527420f3f1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionPacked.html#acce9ab375263bf5caa7bb7527420f3f1">update_previous_position</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler)</td></tr>
-<tr class="separator:acce9ab375263bf5caa7bb7527420f3f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25d29683c0af3dd6c68f415742b1df26" id="r_a25d29683c0af3dd6c68f415742b1df26"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionPacked.html#a25d29683c0af3dd6c68f415742b1df26">clamp_displacement</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double max_disp, std::vector&lt; double &gt; &amp;displacements)</td></tr>
-<tr class="separator:a25d29683c0af3dd6c68f415742b1df26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15e276503eb8184fe01bed42ead1db5d" id="r_a15e276503eb8184fe01bed42ead1db5d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionPacked.html#a15e276503eb8184fe01bed42ead1db5d">apply_shift_displacement</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double max_displacement, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome, std::vector&lt; double &gt; &amp;displacements)</td></tr>
+<tr class="separator:a15e276503eb8184fe01bed42ead1db5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -171,7 +169,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
 class InsertionPacked&lt; dim, PropertiesIndex &gt;</div>
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00014">14</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00016">16</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a7747ccd63cae2b210ec152ea0769d5a6" name="a7747ccd63cae2b210ec152ea0769d5a6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7747ccd63cae2b210ec152ea0769d5a6">&#9670;&#160;</a></span>InsertionPacked()</h2>
@@ -218,15 +216,15 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00013">13</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00017">17</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__packed_8h_source.html#l00137">InsertionPacked&lt; dim, PropertiesIndex &gt;::axis_max</a>, <a class="el" href="insertion__packed_8h_source.html#l00137">InsertionPacked&lt; dim, PropertiesIndex &gt;::axis_min</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00479">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::direction_sequence</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00484">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::insertion_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00487">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::insertion_box_point_2</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::insertion_info</a>.</p>
+<p class="reference">References <a class="el" href="insertion__packed_8h_source.html#l00125">InsertionPacked&lt; dim, PropertiesIndex &gt;::axis_max</a>, <a class="el" href="insertion__packed_8h_source.html#l00125">InsertionPacked&lt; dim, PropertiesIndex &gt;::axis_min</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00479">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::direction_sequence</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00484">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::insertion_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00487">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::insertion_box_point_2</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::insertion_info</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a25d29683c0af3dd6c68f415742b1df26" name="a25d29683c0af3dd6c68f415742b1df26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a25d29683c0af3dd6c68f415742b1df26">&#9670;&#160;</a></span>clamp_displacement()</h2>
+<a id="a15e276503eb8184fe01bed42ead1db5d" name="a15e276503eb8184fe01bed42ead1db5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15e276503eb8184fe01bed42ead1db5d">&#9670;&#160;</a></span>apply_shift_displacement()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -237,7 +235,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classInsertionPacked.html">InsertionPacked</a>&lt; dim, PropertiesIndex &gt;::clamp_displacement </td>
+          <td class="memname">void <a class="el" href="classInsertionPacked.html">InsertionPacked</a>&lt; dim, PropertiesIndex &gt;::apply_shift_displacement </td>
           <td>(</td>
           <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
@@ -246,7 +244,13 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>max_disp</em>, </td>
+          <td class="paramname"><em>max_displacement</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;&#160;</td>
+          <td class="paramname"><em>contact_outcome</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -267,18 +271,21 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Restricts the displacement of particles to a maximum allowable value, preventing excessive movement during the simulation. </p>
-<p>This method iterates over all particles and checks their displacement norm relative to their previous positions. If the displacement exceeds the maximum particle diameter, their positions are clamped such that the displacement does not exceed this threshold. The displacement values are updated accordingly for each particle.</p>
+<p>Displace the locally owned particles by the displacements accumulated by the shift contact models. </p>
+<p>Each contact of a particle adds a displacement to the entry of that particle in the force container of the contact outcomes. Each particle is moved by the sum of the displacements of its contacts, limited to a maximum norm, and the norm of the applied displacement is added to the displacement used by the dynamic contact detection. The force container is then reset to zero for the next pseudo-time step.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">particle_handler</td><td>The particle handler of particles which are being inserted. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">max_disp</td><td>Maximum displacement that a particle is able to move during a single pseudo time-step. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">displacements</td><td>Vector that stored the displacement of each particle since the last contact detection time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_displacement</td><td>Maximum displacement of a particle during a single pseudo-time step. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">contact_outcome</td><td>Contact outcomes holding the accumulated displacements of the particles. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">displacements</td><td>Displacement of each particle since the last contact detection step. The norm of the applied displacement is added. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00203">203</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00186">186</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="particle__interaction__outcomes_8h_source.html#l00025">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::force</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00050">tensor_nd_to_2d()</a>.</p>
 
 </div>
 </div>
@@ -318,7 +325,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#ae7c88428e0a6aaf1c41c5799f26a1896">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00074">74</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00076">76</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 
 </div>
 </div>
@@ -374,7 +381,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00240">240</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00228">228</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00479">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::direction_sequence</a>.</p>
 
@@ -434,7 +441,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#acc31a2b8a42ff47cd608039dd3c6e063">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00052">52</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00056">56</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00184">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00138">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>.</p>
 
@@ -476,46 +483,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#addda914be05260ece7ad5c1f9b6e53ed">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00061">61</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
-
-</div>
-</div>
-<a id="acce9ab375263bf5caa7bb7527420f3f1" name="acce9ab375263bf5caa7bb7527420f3f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acce9ab375263bf5caa7bb7527420f3f1">&#9670;&#160;</a></span>update_previous_position()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename PropertiesIndex &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classInsertionPacked.html">InsertionPacked</a>&lt; dim, PropertiesIndex &gt;::update_previous_position </td>
-          <td>(</td>
-          <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>particle_handler</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Updates the previous positions of particles in all locally owned cells. </p>
-<p>This method iterates through all active cells in the triangulation, identifying locally owned cells. For each particle in these cells, it retrieves the current particle position and stores it into the particle's properties. The position is stored within certain indices that are conventionally designated as velocity components (v_x, v_y, and v_z for 3D configurations). This allows the tracking of previous particle positions without additional data structures. This function is required for the packed insertion method.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">particle_handler</td><td>The particle handler of particles which are being inserted. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00184">184</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00063">63</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 
 </div>
 </div>
@@ -544,7 +512,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Function used to insert particles inside or outside an arbitrary shape. </p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00140">140</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00128">128</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 
 </div>
 </div>
@@ -570,7 +538,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00137">137</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00125">125</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 
 </div>
 </div>
@@ -596,7 +564,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00137">137</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00125">125</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 
 </div>
 </div>
