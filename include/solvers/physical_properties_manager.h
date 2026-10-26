@@ -42,7 +42,8 @@ DeclException1(
 enum material_interactions_type
 {
   fluid_fluid,
-  fluid_solid
+  fluid_solid,
+  fluid_particles
 };
 
 
@@ -460,13 +461,13 @@ public:
       {
         std::pair<unsigned int, unsigned int>
           fluid_particle_material_interaction(material_0_id, material_1_id);
-        return fluid_solid_interactions_with_material_interaction_ids
+        return fluid_particles_interactions_with_material_interaction_ids
           .find(fluid_particle_material_interaction)
           ->second;
       }
     else
       throw(std::runtime_error(
-        "Invalid type of material interaction. The choices are <fluid_fluid|fluid_solid|fluid_particle>"));
+        "Invalid type of material interaction. The choices are <fluid_fluid|fluid_solid|fluid_particles>"));
   }
 
   double
@@ -554,6 +555,8 @@ private:
     fluid_fluid_interactions_with_material_interaction_ids;
   std::map<std::pair<unsigned int, unsigned int>, unsigned int>
     fluid_solid_interactions_with_material_interaction_ids;
+  std::map<std::pair<unsigned int, unsigned int>, unsigned int>
+    fluid_particles_interactions_with_material_interaction_ids;
 };
 
 #endif

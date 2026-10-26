@@ -45,6 +45,9 @@ PhysicalPropertiesManager::initialize(
     physical_properties.fluid_fluid_interactions_with_material_interaction_ids;
   fluid_solid_interactions_with_material_interaction_ids =
     physical_properties.fluid_solid_interactions_with_material_interaction_ids;
+  fluid_particles_interactions_with_material_interaction_ids =
+    physical_properties
+      .fluid_particles_interactions_with_material_interaction_ids;
   reference_temperature = physical_properties.reference_temperature;
 
   non_newtonian_flow       = false;
