@@ -14,6 +14,8 @@
 #ifndef lethe_multiphysics_h
 #define lethe_multiphysics_h
 
+#include <deal.II/base/exceptions.h>
+
 #include <algorithm>
 #include <string>
 
@@ -41,7 +43,9 @@ enum PhysicsID : unsigned int
   /// multiphysics interface. Only available with the VANS formulation.
   void_fraction = 5,
   /// Time-harmonic electromagnetics (Electric field, Magnetic field)
-  electromagnetics = 6
+  electromagnetics = 6,
+  /// Euler-Euler solid phase (solid velocity, solid volume fraction)
+  continuum_solid_dynamics = 7
 };
 
 /**
@@ -106,6 +110,8 @@ get_physics_id(std::string physics_name)
     return PhysicsID::void_fraction;
   else if (physics_name == "electromagnetics")
     return PhysicsID::electromagnetics;
+  else if (physics_name == "continuum solid dynamics")
+    return PhysicsID::continuum_solid_dynamics;
   else
     AssertThrow(false,
                 dealii::StandardExceptions::ExcMessage(

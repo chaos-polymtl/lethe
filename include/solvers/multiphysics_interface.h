@@ -120,6 +120,10 @@ public:
       {
         announce_string(pcout, "Electromagnetics");
       }
+    else if (physics_id == PhysicsID::continuum_solid_dynamics)
+      {
+        announce_string(pcout, "Continuum Solid Dynamics");
+      }
     else
       {
         AssertThrow(
@@ -1038,7 +1042,8 @@ private:
                                             {heat_transfer, false},
                                             {tracer, false},
                                             {cahn_hilliard, true},
-                                            {electromagnetics, true}};
+                                            {electromagnetics, true},
+                                            {continuum_solid_dynamics, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.

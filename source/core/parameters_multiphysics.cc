@@ -97,6 +97,12 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
       Patterns::Bool(),
       "Time harmonic electromagnetics calculation <true|false>");
 
+    prm.declare_entry("continuum solid dynamics",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        continuum_solid_dynamics),
+                      Patterns::Bool(),
+                      "Euler-Euler solid phase calculation <true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       Patterns::Tools::Convert<bool>::to_string(
@@ -130,12 +136,13 @@ Parameters::Multiphysics<dim>::parse_parameters(
 {
   prm.enter_subsection("multiphysics");
   {
-    fluid_dynamics   = prm.get_bool("fluid dynamics");
-    heat_transfer    = prm.get_bool("heat transfer");
-    tracer           = prm.get_bool("tracer");
-    CLS              = prm.get_bool("cls");
-    cahn_hilliard    = prm.get_bool("cahn hilliard");
-    electromagnetics = prm.get_bool("electromagnetics");
+    fluid_dynamics           = prm.get_bool("fluid dynamics");
+    heat_transfer            = prm.get_bool("heat transfer");
+    tracer                   = prm.get_bool("tracer");
+    CLS                      = prm.get_bool("cls");
+    cahn_hilliard            = prm.get_bool("cahn hilliard");
+    electromagnetics         = prm.get_bool("electromagnetics");
+    continuum_solid_dynamics = prm.get_bool("continuum solid dynamics");
 
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");
