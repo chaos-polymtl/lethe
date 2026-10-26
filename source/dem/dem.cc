@@ -554,11 +554,6 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
 
       action_manager->particle_insertion_step();
     }
-
-  if (parameters.insertion_info.insertion_method ==
-      InsertionInfo<dim>::InsertionMethod::packed)
-    InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-      particle_handler);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -591,19 +586,40 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
           contact_outcome);
     }
 
-  particle_point_line_contact_force_object
-    .calculate_particle_point_contact_force(
-      &contact_manager.get_particle_points_in_contact(),
-      parameters.lagrangian_physical_properties,
-      force);
-
-  if constexpr (dim == 3)
+  // Particle-point and particle-line contacts. Boundary points and lines are
+  // part of the walls, so they use the shift model with the packed insertion
+  // method, like the particle-wall contacts. The displacements are accumulated
+  // in the force container.
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
     {
       particle_point_line_contact_force_object
-        .calculate_particle_line_contact_force(
-          &contact_manager.get_particle_lines_in_contact(),
+        .calculate_particle_point_shift_displacement(
+          contact_manager.get_particle_points_in_contact(), force);
+
+      if constexpr (dim == 3)
+        {
+          particle_point_line_contact_force_object
+            .calculate_particle_line_shift_displacement(
+              contact_manager.get_particle_lines_in_contact(), force);
+        }
+    }
+  else // If this is a regular DEM simulation
+    {
+      particle_point_line_contact_force_object
+        .calculate_particle_point_contact_force(
+          &contact_manager.get_particle_points_in_contact(),
           parameters.lagrangian_physical_properties,
           force);
+
+      if constexpr (dim == 3)
+        {
+          particle_point_line_contact_force_object
+            .calculate_particle_line_contact_force(
+              &contact_manager.get_particle_lines_in_contact(),
+              parameters.lagrangian_physical_properties,
+              force);
+        }
     }
 }
 
@@ -1096,8 +1112,11 @@ DEMSolver<dim, PropertiesIndex>::packed_insertion_report_and_status()
   unsigned int number_of_pp_contact_on_proc =
     particle_particle_contact_force_object->get_number_of_contacts();
 
+  // Boundary points and lines are part of the walls, so their contacts are
+  // counted as particle-wall contacts
   unsigned int number_of_pw_contact_on_proc =
-    particle_wall_contact_force_object->get_number_of_contacts();
+    particle_wall_contact_force_object->get_number_of_contacts() +
+    particle_point_line_contact_force_object.get_number_of_contacts();
 
   const unsigned int total_number_of_pp_contacts =
     Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
@@ -1121,11 +1140,14 @@ DEMSolver<dim, PropertiesIndex>::packed_insertion_report_and_status()
 
   particle_particle_contact_force_object->reset_number_of_contacts();
   particle_wall_contact_force_object->reset_number_of_contacts();
+  particle_point_line_contact_force_object.reset_number_of_contacts();
 
-  InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
-    particle_handler, maximum_particle_diameter, displacement);
-  InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-    particle_handler);
+  // Displace the particles using the displacements accumulated by the shift
+  // contact models. A particle may not move by more than the largest particle
+  // diameter during a pseudo-time step. This is important, otherwise a particle
+  // could move to a non-neighboring cell within one pseudo-time step.
+  InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
+    particle_handler, maximum_particle_diameter, contact_outcome, displacement);
 
   // Packed insertion is enabled and simulation will continue.
   return false;
