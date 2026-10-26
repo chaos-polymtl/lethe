@@ -1300,10 +1300,10 @@ namespace Parameters
           else if (material_interactions[i_material_interaction]
                      .material_interaction_type ==
                    MaterialInteractions::MaterialInteractionsType::
-                     fluid_particle)
-            fluid_particle_interactions_with_material_interaction_ids.insert(
+                     fluid_particles)
+            fluid_particles_interactions_with_material_interaction_ids.insert(
               material_interactions[i_material_interaction]
-                .fluid_particle_interaction_with_material_interaction_id);
+                .fluid_particles_interaction_with_material_interaction_id);
         }
 
       reference_temperature = prm.get_double("reference temperature");
@@ -1844,7 +1844,7 @@ namespace Parameters
           prm,
           "magnetic permeability effective medium model",
           magnetic_permeability_effective_medium_model,
-          "Model used for the calculation of the effective magnetic properties`.");
+          "Model used for the calculation of the effective magnetic properties.");
       }
       prm.leave_subsection();
     }
@@ -1925,10 +1925,10 @@ namespace Parameters
           fluid_particles_interaction_with_material_interaction_id.second = id;
 
           // Effective medium model
-          electric_effective_medium_model =
+          electric_permittivity_effective_medium_model =
             string_to_enum<EffectiveMediumModelType>(
               prm.get("electric permittivity effective medium model"));
-          magnetic_effective_medium_model =
+          magnetic_permeability_effective_medium_model =
             string_to_enum<EffectiveMediumModelType>(
               prm.get("magnetic permeability effective medium model"));
           prm.leave_subsection();
