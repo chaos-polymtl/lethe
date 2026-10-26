@@ -89,17 +89,8 @@ EffectiveMediumModel::model_cast_real(
   const Parameters::MaterialInteractions &interaction =
     physical_properties.material_interactions.at(material_interaction_id);
 
-  // Assign the effective medium model type based on the property being
-  // calculated
-  Parameters::MaterialInteractions::EffectiveMediumModelType model_type;
-  if (property == EffectiveMediumProperty::electric_permittivity)
-    model_type = interaction.electric_effective_medium_model;
-  else if (property == EffectiveMediumProperty::magnetic_permeability)
-    model_type = interaction.magnetic_effective_medium_model;
-  else
-    AssertThrow(false,
-                ExcMessage("Invalid effective medium property. The choices are "
-                           "<electric_permittivity|magnetic_permeability>"));
+  const Parameters::MaterialInteractions::EffectiveMediumModelType model_type =
+    get_model_type(interaction, property);
 
   if (model_type ==
       Parameters::MaterialInteractions::EffectiveMediumModelType::none)
@@ -127,17 +118,8 @@ EffectiveMediumModel::model_cast_imag(
   const Parameters::MaterialInteractions &interaction =
     physical_properties.material_interactions.at(material_interaction_id);
 
-  // Assign the effective medium model type based on the property being
-  // calculated
-  Parameters::MaterialInteractions::EffectiveMediumModelType model_type;
-  if (property == EffectiveMediumProperty::electric_permittivity)
-    model_type = interaction.electric_effective_medium_model;
-  else if (property == EffectiveMediumProperty::magnetic_permeability)
-    model_type = interaction.magnetic_effective_medium_model;
-  else
-    AssertThrow(false,
-                ExcMessage("Invalid effective medium property. The choices are "
-                           "<electric_permittivity|magnetic_permeability>"));
+  const Parameters::MaterialInteractions::EffectiveMediumModelType model_type =
+    get_model_type(interaction, property);
 
   if (model_type ==
       Parameters::MaterialInteractions::EffectiveMediumModelType::none)
@@ -301,6 +283,25 @@ EffectiveMediumModel::get_component(
 {
   return (component == Component::real) ? std::real(mixture_property) :
                                           std::imag(mixture_property);
+}
+
+Parameters::MaterialInteractions::EffectiveMediumModelType
+EffectiveMediumModel::get_model_type(
+  const Parameters::MaterialInteractions &interaction,
+  const EffectiveMediumProperty           property)
+{
+  switch (property)
+    {
+      case EffectiveMediumProperty::electric_permittivity:
+        return interaction.electric_effective_medium_model;
+      case EffectiveMediumProperty::magnetic_permeability:
+        return interaction.magnetic_effective_medium_model;
+    }
+
+  AssertThrow(false,
+              ExcMessage("Invalid effective medium property. The choices are "
+                         "<electric_permittivity|magnetic_permeability>"));
+  return Parameters::MaterialInteractions::EffectiveMediumModelType::none;
 }
 
 BruggemanEffectiveMediumModel::BruggemanEffectiveMediumModel(
