@@ -1,0 +1,7 @@
+<map id="/home/runner/work/lethe/lethe/include/solvers/continuum_solid_dynamics.h" name="/home/runner/work/lethe/lethe/include/solvers/continuum_solid_dynamics.h">
+<area shape="rect" id="Node000001" title="Auxiliary physics for the solid phase of the Euler&#45;Euler (two&#45;fluid) model." alt="" coords="123,5,338,60"/>
+<area shape="rect" id="Node000002" href="$continuum__solid__dynamics_8cc.html" title=" " alt="" coords="5,108,227,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,71,148,110,144,106,189,67"/>
+<area shape="rect" id="Node000003" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="251,108,443,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="273,67,318,106,315,110,270,71"/>
+</map>

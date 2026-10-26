@@ -483,6 +483,10 @@
   # bubble enrichment function
   set enable bubble function velocity = false
   set enable bubble function pressure = false
+
+  # interpolation degrees of the solid phase (Euler-Euler model)
+  set solid velocity degree        = 1
+  set solid volume fraction degree = 1
 end
 </pre></div>
 </div>
@@ -507,6 +511,7 @@ end
 <p>The test function degree needs to be at least one degree higher than the trial space for the linear system to be well-posed. It can be set to a higher value than the minimum required, but this will increase the computational cost, and no significant improvement in accuracy has been observed in our experience.</p>
 </div>
 <ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">solid</span> <span class="pre">velocity</span> <span class="pre">degree</span></code> and <code class="docutils literal notranslate"><span class="pre">solid</span> <span class="pre">volume</span> <span class="pre">fraction</span> <span class="pre">degree</span></code> specify the polynomial degree of the solid velocity and of the solid volume fraction of the Euler-Euler model.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">bubble</span> <span class="pre">function</span> <span class="pre">velocity</span></code> and <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">bubble</span> <span class="pre">function</span> <span class="pre">pressure</span></code> specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/004578259400721X">Franca and Farhat 1995</a> and <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/004578259290102P">Brezzi et al 1992</a> for more detail.</p></li>
 </ul>
 <div class="admonition warning">

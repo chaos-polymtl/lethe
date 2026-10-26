@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../structLetheGridTools_1_1TriangleProjectionData.html#aeeb687b37daa968e5d09f4257e11bb54',1,'LetheGridTools::TriangleProjectionData::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
+  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../structLetheGridTools_1_1TriangleProjectionData.html#aeeb687b37daa968e5d09f4257e11bb54',1,'LetheGridTools::TriangleProjectionData::b']]],
   ['b_201_20b_20gamma_20gamma_1',['|   b    1-b-gamma  gamma|',['../sdirk_8cc.html#autotoc_md2',1,'']]],
   ['b_5fhat_5fmatrix_2',['B_hat_matrix',['../classDPGCopyData.html#a3c52cd59fb51143f251cb607490ba349',1,'DPGCopyData']]],
   ['b_5fi_3',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],

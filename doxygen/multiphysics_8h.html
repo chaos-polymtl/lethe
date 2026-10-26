@@ -95,17 +95,18 @@ $(function() {
   <div class="headertitle"><div class="title">multiphysics.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
+<div class="textblock"><code>#include &lt;deal.II/base/exceptions.h&gt;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for multiphysics.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="multiphysics_8h__incl.svg" width="252" height="124"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="multiphysics_8h__incl.svg" width="387" height="124"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="multiphysics_8h__dep__incl.svg" width="4779" height="1019"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="multiphysics_8h__dep__incl.svg" width="4676" height="1004"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="multiphysics_8h_source.html">Go to the source code of this file.</a></p>
@@ -121,6 +122,7 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">cahn_hilliard</a> = 4
 , <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> = 5
 , <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a9ef5b8e8c97fff3ce7f675ca8d82ef3a">electromagnetics</a> = 6
+, <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a8e850192410dab47698910ff083c9728">continuum_solid_dynamics</a> = 7
 <br />
  }</td></tr>
 <tr class="separator:ae14bb720bc9a37edc36fb8d90df712c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -188,7 +190,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00051">51</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00055">55</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -221,9 +223,11 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2a9ef5b8e8c97fff3ce7f675ca8d82ef3a" name="ae14bb720bc9a37edc36fb8d90df712c2a9ef5b8e8c97fff3ce7f675ca8d82ef3a"></a>electromagnetics&#160;</td><td class="fielddoc"><p>Time-harmonic electromagnetics (Electric field, Magnetic field) </p>
 </td></tr>
+<tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2a8e850192410dab47698910ff083c9728" name="ae14bb720bc9a37edc36fb8d90df712c2a8e850192410dab47698910ff083c9728"></a>continuum_solid_dynamics&#160;</td><td class="fielddoc"><p>Euler-Euler solid phase (solid velocity, solid volume fraction) </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00026">26</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00028">28</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -271,7 +275,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00064">64</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00068">68</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -302,9 +306,9 @@ Functions</h2></td></tr>
 
 <p>Utility function used for parsing physics-based parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00093">93</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00097">97</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00038">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00036">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00044">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00029">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00031">heat_transfer</a>, <a class="el" href="multiphysics_8h_source.html#l00033">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00042">void_fraction</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00040">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00048">continuum_solid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="multiphysics_8h_source.html#l00035">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00044">void_fraction</a>.</p>
 
 </div>
 </div>
@@ -353,7 +357,7 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00133">133</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00139">139</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda00c53276617bee8b9d1ea3ed7edc0ff3">chemical_potential_cahn_hilliard</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2">electric_field</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda2b10330fe7e35354ff14a91b5af1c176">electromagnetic_fields</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda8732c340b849ed4f600a10f719097755">magnetic_field</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093">pressure</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaeef438f7e448aa48c1f8db568d27b591">temperature</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">tracer</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -404,9 +408,9 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00180">180</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00186">186</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00133">get_variable_string()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00139">get_variable_string()</a>.</p>
 
 </div>
 </div>

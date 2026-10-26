@@ -35,6 +35,10 @@ This subsection specifies the characteristics of the finite element method used 
     # bubble enrichment function
     set enable bubble function velocity = false
     set enable bubble function pressure = false
+
+    # interpolation degrees of the solid phase (Euler-Euler model)
+    set solid velocity degree        = 1
+    set solid volume fraction degree = 1
   end
 
 
@@ -61,6 +65,8 @@ This subsection specifies the characteristics of the finite element method used 
 .. important:: 
   
   The test function degree needs to be at least one degree higher than the trial space for the linear system to be well-posed. It can be set to a higher value than the minimum required, but this will increase the computational cost, and no significant improvement in accuracy has been observed in our experience. 
+
+* ``solid velocity degree`` and ``solid volume fraction degree`` specify the polynomial degree of the solid velocity and of the solid volume fraction of the Euler-Euler model.
 
 * ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  `Franca and Farhat 1995 <https://www.sciencedirect.com/science/article/abs/pii/004578259400721X>`_ and `Brezzi et al 1992 <https://www.sciencedirect.com/science/article/abs/pii/004578259290102P>`_ for more detail.
 

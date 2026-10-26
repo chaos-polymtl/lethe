@@ -476,6 +476,9 @@
   # Electromagnetics
   set electromagnetics                = false
   set microwave heating               = false
+
+  #Euler-Euler model for solid phase
+  set continuum solid dynamics        = false
 end
 </pre></div>
 </div>
@@ -534,6 +537,13 @@ end
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>The electromagnetic solver can be used on its own, an example is available in <a class="reference internal" href="../../examples/multiphysics/waveguide/waveguide.html"><span class="doc">Waveguide</span></a>.</p>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">continuum</span> <span class="pre">solid</span> <span class="pre">dynamics</span></code>: enables the solid phase of the Euler-Euler model, in which the particles are treated as an interpenetrating continuum described by a solid velocity and a solid volume fraction. It can only be enabled with a volume-averaged Navier-Stokes (VANS) solver.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The solid phase is under development. Its fields are allocated, written to the output files and checkpointed, but its equations are not solved yet.</p>
 </div>
 </section>
 

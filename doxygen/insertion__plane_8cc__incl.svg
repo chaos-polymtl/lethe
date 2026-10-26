@@ -720,7 +720,7 @@
 <g id="Node000052" class="node">
 <title>Node52</title>
 <g id="a_Node000052"><a xlink:href="multiphysics_8h.html" target="_top" xlink:title="Identifiers for multiphysics modules and their solution fields.">
-<polygon fill="white" stroke="#666666" points="1611.5,-145.5 1499.5,-145.5 1499.5,-126.5 1611.5,-126.5 1611.5,-145.5"/>
+<polygon fill="#fff0f0" stroke="red" points="1611.5,-145.5 1499.5,-145.5 1499.5,-126.5 1611.5,-126.5 1611.5,-145.5"/>
 <text text-anchor="middle" x="1555.5" y="-133.5" font-family="Helvetica,sans-Serif" font-size="10.00">core/multiphysics.h</text>
 </a>
 </g>

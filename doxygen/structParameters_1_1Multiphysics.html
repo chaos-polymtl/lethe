@@ -120,6 +120,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a36e064149ae125041f1b102dd8ad694f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a157ef94fd5d4a03424412ad8fce8b9fa" id="r_a157ef94fd5d4a03424412ad8fce8b9fa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Multiphysics.html#a157ef94fd5d4a03424412ad8fce8b9fa">electromagnetics</a> = false</td></tr>
 <tr class="separator:a157ef94fd5d4a03424412ad8fce8b9fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a190b7e354aa45a802ae2b322ad4e8d07" id="r_a190b7e354aa45a802ae2b322ad4e8d07"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Multiphysics.html#a190b7e354aa45a802ae2b322ad4e8d07">continuum_solid_dynamics</a> = false</td></tr>
+<tr class="separator:a190b7e354aa45a802ae2b322ad4e8d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5f40e82793b3826f7ccba17921184b4" id="r_ac5f40e82793b3826f7ccba17921184b4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Multiphysics.html#ac5f40e82793b3826f7ccba17921184b4">viscous_dissipation</a> = false</td></tr>
 <tr class="separator:ac5f40e82793b3826f7ccba17921184b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ced31b4307f13159f5afa464daf55b4" id="r_a5ced31b4307f13159f5afa464daf55b4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Multiphysics.html#a5ced31b4307f13159f5afa464daf55b4">thermal_buoyancy_force</a> = false</td></tr>
@@ -159,7 +161,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00065">65</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00038">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00044">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00029">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00031">heat_transfer</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">tracer</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00040">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00048">continuum_solid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, and <a class="el" href="multiphysics_8h_source.html#l00035">tracer</a>.</p>
 
 </div>
 </div>
@@ -191,9 +193,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00127">127</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00133">133</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00038">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00044">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00029">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00031">heat_transfer</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00185">Parameters::CLS::parse_parameters()</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">tracer</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00040">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00048">continuum_solid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00192">Parameters::CLS::parse_parameters()</a>, and <a class="el" href="multiphysics_8h_source.html#l00035">tracer</a>.</p>
 
 </div>
 </div>
@@ -230,7 +232,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00550">550</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00551">551</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -266,7 +268,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00549">549</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00550">550</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+
+</div>
+</div>
+<a id="a190b7e354aa45a802ae2b322ad4e8d07" name="a190b7e354aa45a802ae2b322ad4e8d07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a190b7e354aa45a802ae2b322ad4e8d07">&#9670;&#160;</a></span>continuum_solid_dynamics</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="structParameters_1_1Multiphysics.html">Parameters::Multiphysics</a>&lt; dim &gt;::continuum_solid_dynamics = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00543">543</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -338,7 +358,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00547">547</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00548">548</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -356,7 +376,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00546">546</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00547">547</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -374,7 +394,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00551">551</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00552">552</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -410,7 +430,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00545">545</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00546">546</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
