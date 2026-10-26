@@ -69,10 +69,12 @@ for i in range(len(fluids.list_vtu)):
     # Store results in 'df'
     df = fluids.get_df(i)
 
-    # Extract phase values and points over the center line
+    # Extract phase values and points over the center line. The pyvista
+    # arrays are converted to plain numpy arrays, since pandas otherwise uses
+    # their name (if any) as the column label
     sampled_data = df.sample_over_line(H_a, H_b, resolution=5000)
-    phase_over_line = pd.DataFrame(sampled_data["phase"].copy())
-    points_over_line = pd.DataFrame(sampled_data.points.copy())
+    phase_over_line = pd.DataFrame(np.array(sampled_data["phase"]))
+    points_over_line = pd.DataFrame(np.array(sampled_data.points))
 
     # Find highest point of fluid 1
     fluid1_points = points_over_line[phase_over_line[0] > phase_limit].values
@@ -107,7 +109,7 @@ figure_name = figure_name.replace('.', '')
 plt.rcParams['font.size'] = '18'
 fig0 = plt.figure(figsize=(12, 8))
 ax0 = fig0.add_subplot(111)
-plt.plot(time_list, relative_amplitude, "s", mfc='none', label=f'Lethe — $\Delta t= {time_step_multiplier} \Delta t_\sigma$')
+plt.plot(time_list, relative_amplitude, "s", mfc='none', label=rf'Lethe — $\Delta t= {time_step_multiplier} \Delta t_\sigma$')
 plt.plot(analytical_time, analytical_solution, "--k", linewidth=2, label=f'Prosperetti (1981)')
 plt.xlabel('Time')
 plt.ylabel('Relative amplitude')

@@ -70,9 +70,11 @@ for i in range(0, len(list_vtu)):
     #Select a data to apply the slice   
     exec(f'df = df_{i}')
 
-    #find max 'x' in which phase > 0
-    points = pd.DataFrame(df.points[:, 0])
-    phase  = pd.DataFrame(df['filtered_phase'])
+    #find max 'x' in which phase > 0. The pyvista arrays are converted to
+    #plain numpy arrays, since pandas otherwise uses their name (if any) as
+    #the column label
+    points = pd.DataFrame(np.asarray(df.points[:, 0]))
+    phase  = pd.DataFrame(np.asarray(df['filtered_phase']))
 
     x_max = max(points[phase[0] > phase_limit].values)[0]
     x_list.append(x_max)
