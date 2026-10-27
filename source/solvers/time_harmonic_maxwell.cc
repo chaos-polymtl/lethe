@@ -133,11 +133,21 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   for (unsigned int material_id = 0; material_id <= number_of_material_ids;
        ++material_id)
     {
-      needs_temperature =
-        needs_temperature ||
+      const bool material_needs_temperature =
         electromagnetic_properties_depend_on(physical_properties_manager,
                                              material_id,
                                              field::temperature);
+
+      // The temperature of an effective medium (e.g., the temperature of the
+      // particles in unresolved CFD-DEM simulations) is not available yet, so
+      // its electromagnetic properties must not depend on the temperature.
+      AssertThrow(
+        !(material_needs_temperature &&
+          physical_properties_manager.is_effective_medium(0, material_id)),
+        ExcMessage(
+          "Temperature-dependent electromagnetic properties are not supported yet for an effective medium (fluid-dispersed phase interaction). Use temperature-independent electromagnetic property models for the fluid and the unresolved dispersed phase."));
+
+      needs_temperature = needs_temperature || material_needs_temperature;
       needs_void_fraction =
         needs_void_fraction ||
         electromagnetic_properties_depend_on(physical_properties_manager,
