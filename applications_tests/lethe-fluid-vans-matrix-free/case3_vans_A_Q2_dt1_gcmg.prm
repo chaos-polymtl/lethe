@@ -7,8 +7,11 @@
 # time derivative of the void fraction, the mass source term and the
 # time-dependent source term of the VANS matrix-free solver.
 # Contrary to case3_vans, the time-dependent part of the void fraction has a
-# zero mean over the domain. Since the velocity is imposed on the whole
-# boundary, this keeps the discrete global mass balance consistent.
+# zero mean over the domain. Essentially, the integral of the time derivative
+# of the void fraction over the closed domain is zero.
+# Since the velocity is imposed on the whole
+# boundary as Dirichlet boundary condition,
+# this keeps the discrete global mass balance consistent.
 # The case3_vans_A_Q2_dt2_gcmg test is identical, but with half the time
 # step.
 # Q2 elements are used so that the spatial error is small compared to the
