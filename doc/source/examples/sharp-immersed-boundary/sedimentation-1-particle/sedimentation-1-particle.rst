@@ -360,7 +360,7 @@ to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
 
 .. warning:: 
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
-    This simulation takes :math:`\sim \, 4` hours on :math:`14` processes.
+    This simulation takes :math:`\sim \, 8` hours on :math:`16` processes.
 
 ---------------
 Results
