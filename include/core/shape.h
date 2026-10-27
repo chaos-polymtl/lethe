@@ -1099,7 +1099,7 @@ public:
    */
   virtual double
   local_curvature_radius_with_cell_guess(
-    const Point<dim>                                      p,
+    const Point<dim>                                      &p,
     const typename DoFHandler<dim>::active_cell_iterator &cell)
   {
     double curvature = 0;
@@ -1476,7 +1476,7 @@ public:
    */
   virtual double
   local_curvature_radius_with_cell_guess(
-    const Point<dim>                                      p,
+    const Point<dim>                                      &p,
     const typename DoFHandler<dim>::active_cell_iterator &cell) override;
 
 
