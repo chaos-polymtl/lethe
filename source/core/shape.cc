@@ -428,7 +428,7 @@ Sphere<dim>::local_curvature_radius(Point<dim> p)
 template <int dim>
 double
 Sphere<dim>::local_curvature_radius_with_cell_guess(
-  const Point<dim>                                      p,
+  const Point<dim>                                     &p,
   const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   (void)cell;
