@@ -48,7 +48,7 @@ If the problem being simulated has a source, it can be added in this section. Th
 
   .. tip::
 
-	If you are using the ``lethe-fluid-matrix-free`` application the usage of a source term significantly affects performance, since it is evaluated at every quadrature point at each time step. If you are not using it, we advice you to disable it explicitly by setting ``enable = false``.
+	If you are using the ``lethe-fluid-matrix-free`` application the usage of a source term significantly affects performance, since it is evaluated at every quadrature point at each time step. If you are not using it, we advise you to disable it explicitly by setting ``enable = false``.
 
 * ``subsection heat transfer``: defines the parameters for a heat source term. This source term is defined by a ``Function expression`` and can depend on both space (``x``, ``y`` and, if 3D, ``z``) and time (``t``). See :ref:`ex function`.
 

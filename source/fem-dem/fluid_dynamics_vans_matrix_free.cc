@@ -1017,7 +1017,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
           this->forcing_function->set_time(
             this->simulation_control->get_current_time());
           // The forcing term is precomputed by the operator, it must be
-          // recomputed for a time-dependent forcing function to be accounted.
+          // recomputed for a time-dependent forcing function to be accounted for.
           this->system_operator->compute_forcing_term();
         }
 

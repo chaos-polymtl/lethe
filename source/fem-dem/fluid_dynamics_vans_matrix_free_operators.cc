@@ -497,18 +497,16 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
  * \+ (v, ε ∂t δu)  -> Time derivative
  * \+ (v, ε (u·∇)δu) + (v, ε (δu·∇)u) -> Advection
  * \- (∇·v, ε δp) - (v,δp∇ε) -> Pressure
- * \+ (v, βu) -> Drag force (this is positive because f_pf = - beta(u-v))
+ * \+ (v, βδu) -> Drag force (this is positive because f_pf = - beta(u-v))
  * \+ (v, m δu) -> Momentum of the mass source m
- * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)   -> Viscous term  ---> There are currently
- * two terms missing here which would be:
- *\+ ε*ν(∇v,∇δu^T)  +  ν(v,∇ε·∇δu^T)
+ * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)  + ε*ν(∇v,∇δu^T)  +  ν(v,∇ε·∇δu^T)
  * plus three additional terms in the case of
  * SUPG-PSPG stabilization:
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu +βδu + mδu)τ·∇q (PSPG
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu -νɛ∇(∇·δu) +βδu + mδu)τ·∇q (PSPG
  * Jacobian)
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu +βδu + mδu)τu·∇v (SUPG
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu -νɛ∇(∇·δu) +βδu + mδu)τu·∇v (SUPG
  * Jacobian P.1)
- * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf - f_pf + mu)τδu·∇v (SUPG
+ * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -νɛ∇(∇·u) -  εf - f_pf + mu)τδu·∇v (SUPG
  * Jacobian P.2), in the case of additional grad-div stabilization
  * \+ (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term)
  */
