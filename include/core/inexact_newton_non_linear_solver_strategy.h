@@ -158,6 +158,7 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
               local_evaluation_point.add(alpha, newton_update);
               solver->apply_constraints();
               evaluation_point = local_evaluation_point;
+              solver->assemble_system_rhs();
 
               if (this->params.verbosity != Parameters::Verbosity::quiet)
                 {
