@@ -101,8 +101,8 @@ Inheritance diagram for VANSAssemblerVorticalTorque&lt; dim, PropertiesIndex &gt
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a54ba3804a811372e8f60138a060ce20b" id="r_a54ba3804a811372e8f60138a060ce20b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerVorticalTorque.html#a54ba3804a811372e8f60138a060ce20b">VANSAssemblerVorticalTorque</a> ()</td></tr>
-<tr class="separator:a54ba3804a811372e8f60138a060ce20b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cf8542e9013c1bff61c5c6322e9921e" id="r_a3cf8542e9013c1bff61c5c6322e9921e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerVorticalTorque.html#a3cf8542e9013c1bff61c5c6322e9921e">VANSAssemblerVorticalTorque</a> ()=default</td></tr>
+<tr class="separator:a3cf8542e9013c1bff61c5c6322e9921e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18ba19476cc6ef95de26043eddee4472" id="r_a18ba19476cc6ef95de26043eddee4472"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerVorticalTorque.html#a18ba19476cc6ef95de26043eddee4472">calculate_particle_fluid_interactions</a> (<a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data) override</td></tr>
 <tr class="separator:a18ba19476cc6ef95de26043eddee4472"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classParticleFluidAssemblerBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classParticleFluidAssemblerBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase&lt; dim, PropertiesIndex &gt;</a></td></tr>
@@ -128,10 +128,10 @@ class VANSAssemblerVorticalTorque&lt; dim, PropertiesIndex &gt;</div><p>Assemble
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00788">788</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00785">785</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a54ba3804a811372e8f60138a060ce20b" name="a54ba3804a811372e8f60138a060ce20b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54ba3804a811372e8f60138a060ce20b">&#9670;&#160;</a></span>VANSAssemblerVorticalTorque()</h2>
+<a id="a3cf8542e9013c1bff61c5c6322e9921e" name="a3cf8542e9013c1bff61c5c6322e9921e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cf8542e9013c1bff61c5c6322e9921e">&#9670;&#160;</a></span>VANSAssemblerVorticalTorque()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -150,14 +150,12 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Default constructor. </p>
-
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00795">795</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -200,7 +198,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l01941">1941</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01518">NavierStokesScratchData&lt; dim &gt;::density_at_particle_location</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00410">PhysicalPropertiesManager::density_is_constant()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01661">NavierStokesScratchData&lt; dim &gt;::fluid_velocity_curls_at_particle_location_3d</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00398">PhysicalPropertiesManager::is_non_newtonian()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01530">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity_at_particle_location</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01668">NavierStokesScratchData&lt; dim &gt;::pic</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01486">NavierStokesScratchData&lt; dim &gt;::properties_manager</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01518">NavierStokesScratchData&lt; dim &gt;::density_at_particle_location</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00412">PhysicalPropertiesManager::density_is_constant()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01661">NavierStokesScratchData&lt; dim &gt;::fluid_velocity_curls_at_particle_location_3d</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00400">PhysicalPropertiesManager::is_non_newtonian()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01530">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity_at_particle_location</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01668">NavierStokesScratchData&lt; dim &gt;::pic</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01486">NavierStokesScratchData&lt; dim &gt;::properties_manager</a>.</p>
 
 </div>
 </div>

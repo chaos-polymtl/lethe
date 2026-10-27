@@ -111,22 +111,22 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:afd65777a054d80408e8bfffc25dc9fd0" id="r_afd65777a054d80408e8bfffc25dc9fd0"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:afd65777a054d80408e8bfffc25dc9fd0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#afd65777a054d80408e8bfffc25dc9fd0">reinit</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_solutions, const Function&lt; dim &gt; *source_function)</td></tr>
 <tr class="separator:afd65777a054d80408e8bfffc25dc9fd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f81a61cac9e16d445fd2ca0a62effce" id="r_a9f81a61cac9e16d445fd2ca0a62effce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a9f81a61cac9e16d445fd2ca0a62effce">reinit_signed_distance</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; immersed_solid_shape)</td></tr>
-<tr class="separator:a9f81a61cac9e16d445fd2ca0a62effce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9dd951cb9959ca1b22014951ed83f0cb" id="r_a9dd951cb9959ca1b22014951ed83f0cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a9dd951cb9959ca1b22014951ed83f0cb">reinit_signed_distance_at_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; immersed_solid_shape)</td></tr>
-<tr class="separator:a9dd951cb9959ca1b22014951ed83f0cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a562036bff335d8380ca8430c00ede811" id="r_a562036bff335d8380ca8430c00ede811"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
-<tr class="memitem:a562036bff335d8380ca8430c00ede811"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;velocity_solution, const <a class="el" href="classParameters_1_1ALE.html">Parameters::ALE</a>&lt; dim &gt; &amp;ale, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; drift_velocity)</td></tr>
-<tr class="separator:a562036bff335d8380ca8430c00ede811"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1101a3f8dcda44fd5b4736c061c9610e" id="r_a1101a3f8dcda44fd5b4736c061c9610e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a1101a3f8dcda44fd5b4736c061c9610e">reinit_signed_distance</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;immersed_solid_shape)</td></tr>
+<tr class="separator:a1101a3f8dcda44fd5b4736c061c9610e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3501a2cfcc1db1b24c5ac68e1b4b36e" id="r_ae3501a2cfcc1db1b24c5ac68e1b4b36e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#ae3501a2cfcc1db1b24c5ac68e1b4b36e">reinit_signed_distance_at_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;immersed_solid_shape)</td></tr>
+<tr class="separator:ae3501a2cfcc1db1b24c5ac68e1b4b36e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4a4b3a2863c979d92848184f5d79514" id="r_af4a4b3a2863c979d92848184f5d79514"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:af4a4b3a2863c979d92848184f5d79514"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#af4a4b3a2863c979d92848184f5d79514">reinit_velocity</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;velocity_solution, const <a class="el" href="classParameters_1_1ALE.html">Parameters::ALE</a>&lt; dim &gt; &amp;ale, const std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &amp;drift_velocity)</td></tr>
+<tr class="separator:af4a4b3a2863c979d92848184f5d79514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a311d51f1f37b5aff280f41b9f8f654a3" id="r_a311d51f1f37b5aff280f41b9f8f654a3"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:a311d51f1f37b5aff280f41b9f8f654a3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a311d51f1f37b5aff280f41b9f8f654a3">reinit_internal_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, const unsigned int &amp;sub_face_no, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;neigh_cell, const unsigned int &amp;neigh_face_no, const unsigned int &amp;neigh_sub_face_no, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution)</td></tr>
 <tr class="separator:a311d51f1f37b5aff280f41b9f8f654a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49b549f09cbfbcbac3664af0797370cb" id="r_a49b549f09cbfbcbac3664af0797370cb"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:a49b549f09cbfbcbac3664af0797370cb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a49b549f09cbfbcbac3664af0797370cb">reinit_boundary_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, const unsigned int &amp;<a class="el" href="classTracerScratchData.html#a1d371284515b118b0a535e5354f0cba6">boundary_index</a>, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution)</td></tr>
 <tr class="separator:a49b549f09cbfbcbac3664af0797370cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a07de89a6abd253c1ec6366532aff67" id="r_a7a07de89a6abd253c1ec6366532aff67"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
-<tr class="memitem:a7a07de89a6abd253c1ec6366532aff67"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a7a07de89a6abd253c1ec6366532aff67">reinit_face_velocity</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const unsigned int &amp;face_no, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;velocity_solution, const <a class="el" href="classParameters_1_1ALE.html">Parameters::ALE</a>&lt; dim &gt; &amp;ale, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; drift_velocity)</td></tr>
-<tr class="separator:a7a07de89a6abd253c1ec6366532aff67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f23e06565ddb1f518a8cef6c506e4ac" id="r_a2f23e06565ddb1f518a8cef6c506e4ac"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a2f23e06565ddb1f518a8cef6c506e4ac"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a2f23e06565ddb1f518a8cef6c506e4ac">reinit_face_velocity</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const unsigned int &amp;face_no, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;velocity_solution, const <a class="el" href="classParameters_1_1ALE.html">Parameters::ALE</a>&lt; dim &gt; &amp;ale, const std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &amp;drift_velocity)</td></tr>
+<tr class="separator:a2f23e06565ddb1f518a8cef6c506e4ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad1d29284d5e890a1f49f547911434bf" id="r_aad1d29284d5e890a1f49f547911434bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#aad1d29284d5e890a1f49f547911434bf">reinit_mortar</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;mortar_parameters, const double &amp;time)</td></tr>
 <tr class="separator:aad1d29284d5e890a1f49f547911434bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38a988f74cd354f234fa11b8095df9b5" id="r_a38a988f74cd354f234fa11b8095df9b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a38a988f74cd354f234fa11b8095df9b5">calculate_face_physical_properties</a> ()</td></tr>
@@ -439,7 +439,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="tracer__scratch__data_8h_source.html#l00576">576</a> of file <a class="el" href="tracer__scratch__data_8h_source.html">tracer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00404">PhysicalPropertiesManager::field_is_required()</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00602">TracerScratchData&lt; dim &gt;::fields</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00155">PhysicalPropertiesManager::get_tracer_diffusivity()</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00601">TracerScratchData&lt; dim &gt;::properties_manager</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00658">TracerScratchData&lt; dim &gt;::sdf_values</a>, <a class="el" href="physical__property__model_8h_source.html#l00051">set_field_vector()</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00604">TracerScratchData&lt; dim &gt;::tracer_diffusivity_face</a>.</p>
+<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00406">PhysicalPropertiesManager::field_is_required()</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00602">TracerScratchData&lt; dim &gt;::fields</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00157">PhysicalPropertiesManager::get_tracer_diffusivity()</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00601">TracerScratchData&lt; dim &gt;::properties_manager</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00658">TracerScratchData&lt; dim &gt;::sdf_values</a>, <a class="el" href="physical__property__model_8h_source.html#l00051">set_field_vector()</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00604">TracerScratchData&lt; dim &gt;::tracer_diffusivity_face</a>.</p>
 
 </div>
 </div>
@@ -602,8 +602,8 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 </div>
 </div>
-<a id="a7a07de89a6abd253c1ec6366532aff67" name="a7a07de89a6abd253c1ec6366532aff67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a07de89a6abd253c1ec6366532aff67">&#9670;&#160;</a></span>reinit_face_velocity()</h2>
+<a id="a2f23e06565ddb1f518a8cef6c506e4ac" name="a2f23e06565ddb1f518a8cef6c506e4ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f23e06565ddb1f518a8cef6c506e4ac">&#9670;&#160;</a></span>reinit_face_velocity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -642,7 +642,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>drift_velocity</em>&#160;</td>
         </tr>
         <tr>
@@ -820,8 +820,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a9f81a61cac9e16d445fd2ca0a62effce" name="a9f81a61cac9e16d445fd2ca0a62effce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f81a61cac9e16d445fd2ca0a62effce">&#9670;&#160;</a></span>reinit_signed_distance()</h2>
+<a id="a1101a3f8dcda44fd5b4736c061c9610e" name="a1101a3f8dcda44fd5b4736c061c9610e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1101a3f8dcda44fd5b4736c061c9610e">&#9670;&#160;</a></span>reinit_signed_distance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -840,7 +840,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>immersed_solid_shape</em>&#160;</td>
         </tr>
         <tr>
@@ -867,12 +867,12 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="tracer__scratch__data_8h_source.html#l00225">225</a> of file <a class="el" href="tracer__scratch__data_8h_source.html">tracer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00615">TracerScratchData&lt; dim &gt;::fe_values_tracer</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00404">PhysicalPropertiesManager::field_is_required()</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00620">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00601">TracerScratchData&lt; dim &gt;::properties_manager</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00625">TracerScratchData&lt; dim &gt;::quadrature_points</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00658">TracerScratchData&lt; dim &gt;::sdf_values</a>.</p>
+<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00615">TracerScratchData&lt; dim &gt;::fe_values_tracer</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00406">PhysicalPropertiesManager::field_is_required()</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00620">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00601">TracerScratchData&lt; dim &gt;::properties_manager</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00625">TracerScratchData&lt; dim &gt;::quadrature_points</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00658">TracerScratchData&lt; dim &gt;::sdf_values</a>.</p>
 
 </div>
 </div>
-<a id="a9dd951cb9959ca1b22014951ed83f0cb" name="a9dd951cb9959ca1b22014951ed83f0cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9dd951cb9959ca1b22014951ed83f0cb">&#9670;&#160;</a></span>reinit_signed_distance_at_face()</h2>
+<a id="ae3501a2cfcc1db1b24c5ac68e1b4b36e" name="ae3501a2cfcc1db1b24c5ac68e1b4b36e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3501a2cfcc1db1b24c5ac68e1b4b36e">&#9670;&#160;</a></span>reinit_signed_distance_at_face()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -897,7 +897,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>immersed_solid_shape</em>&#160;</td>
         </tr>
         <tr>
@@ -925,12 +925,12 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="tracer__scratch__data_8h_source.html#l00255">255</a> of file <a class="el" href="tracer__scratch__data_8h_source.html">tracer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00626">TracerScratchData&lt; dim &gt;::face_quadrature_points</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00616">TracerScratchData&lt; dim &gt;::fe_interface_values_tracer</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00404">PhysicalPropertiesManager::field_is_required()</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00601">TracerScratchData&lt; dim &gt;::properties_manager</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00658">TracerScratchData&lt; dim &gt;::sdf_values</a>.</p>
+<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00626">TracerScratchData&lt; dim &gt;::face_quadrature_points</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00616">TracerScratchData&lt; dim &gt;::fe_interface_values_tracer</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00406">PhysicalPropertiesManager::field_is_required()</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00601">TracerScratchData&lt; dim &gt;::properties_manager</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00658">TracerScratchData&lt; dim &gt;::sdf_values</a>.</p>
 
 </div>
 </div>
-<a id="a562036bff335d8380ca8430c00ede811" name="a562036bff335d8380ca8430c00ede811"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a562036bff335d8380ca8430c00ede811">&#9670;&#160;</a></span>reinit_velocity()</h2>
+<a id="af4a4b3a2863c979d92848184f5d79514" name="af4a4b3a2863c979d92848184f5d79514"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4a4b3a2863c979d92848184f5d79514">&#9670;&#160;</a></span>reinit_velocity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -963,7 +963,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>drift_velocity</em>&#160;</td>
         </tr>
         <tr>

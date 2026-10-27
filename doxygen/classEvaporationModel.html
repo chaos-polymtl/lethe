@@ -103,10 +103,10 @@ Inheritance diagram for EvaporationModel:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a487277401c1e24e6de30784ed1627f9d" id="r_a487277401c1e24e6de30784ed1627f9d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEvaporationModel.html#a487277401c1e24e6de30784ed1627f9d">EvaporationModel</a> ()</td></tr>
-<tr class="separator:a487277401c1e24e6de30784ed1627f9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1ff082e23271eb9dc0c67e226578ae1" id="r_af1ff082e23271eb9dc0c67e226578ae1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEvaporationModel.html#af1ff082e23271eb9dc0c67e226578ae1">~EvaporationModel</a> ()</td></tr>
-<tr class="separator:af1ff082e23271eb9dc0c67e226578ae1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6cfe42a89971b142ac67b774f52f3b6" id="r_aa6cfe42a89971b142ac67b774f52f3b6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEvaporationModel.html#aa6cfe42a89971b142ac67b774f52f3b6">EvaporationModel</a> ()=default</td></tr>
+<tr class="separator:aa6cfe42a89971b142ac67b774f52f3b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ee037c35172b36d25be0e036fe7fbc2" id="r_a4ee037c35172b36d25be0e036fe7fbc2"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEvaporationModel.html#a4ee037c35172b36d25be0e036fe7fbc2">~EvaporationModel</a> ()=default</td></tr>
+<tr class="separator:a4ee037c35172b36d25be0e036fe7fbc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a293f41a2841af8d6cf13ae07a02f249b" id="r_a293f41a2841af8d6cf13ae07a02f249b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEvaporationModel.html#a293f41a2841af8d6cf13ae07a02f249b">depends_on</a> (const <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> &amp;id)</td></tr>
 <tr class="separator:a293f41a2841af8d6cf13ae07a02f249b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a160196770f256f261bd931fca4015033" id="r_a160196770f256f261bd931fca4015033"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEvaporationModel.html#a160196770f256f261bd931fca4015033">mass_flux</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;field_values)=0</td></tr>
@@ -145,10 +145,10 @@ Protected Attributes</h2></td></tr>
 <p>The EvaporativeModel is the parent class, and its children are specific types of evaporative models, e.g., constant, temperature dependent. The selected model is instantiated in the assemblers' constructor (<a class="el" href="classNavierStokesCLSAssemblerEvaporation.html" title="Assembles the momentum source due to evaporation for the Navier-Stokes equations.">NavierStokesCLSAssemblerEvaporation</a> and/or <a class="el" href="classHeatTransferAssemblerCLSEvaporation.html" title="Class that assembles the evaporation sink for the heat transfer solver at the free surface (air/metal...">HeatTransferAssemblerCLSEvaporation</a>), using the model_cast method according to the evaporation model parameters.</p>
 <p>The assemblers call the required method of the <a class="el" href="classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu...">EvaporationModel</a> for either the assembly of the rhs or matrix terms. Hence, no matter the selected evaporation model, the same assembler is called, avoiding repetitions of the assembler classes. </p>
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00034">34</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00036">36</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a487277401c1e24e6de30784ed1627f9d" name="a487277401c1e24e6de30784ed1627f9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a487277401c1e24e6de30784ed1627f9d">&#9670;&#160;</a></span>EvaporationModel()</h2>
+<a id="aa6cfe42a89971b142ac67b774f52f3b6" name="aa6cfe42a89971b142ac67b774f52f3b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6cfe42a89971b142ac67b774f52f3b6">&#9670;&#160;</a></span>EvaporationModel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -165,17 +165,15 @@ Protected Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00037">37</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
-
 </div>
 </div>
-<a id="af1ff082e23271eb9dc0c67e226578ae1" name="af1ff082e23271eb9dc0c67e226578ae1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af1ff082e23271eb9dc0c67e226578ae1">&#9670;&#160;</a></span>~EvaporationModel()</h2>
+<a id="a4ee037c35172b36d25be0e036fe7fbc2" name="a4ee037c35172b36d25be0e036fe7fbc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ee037c35172b36d25be0e036fe7fbc2">&#9670;&#160;</a></span>~EvaporationModel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -192,14 +190,12 @@ Protected Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Default virual destructor. Does not do anything. </p>
-
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00043">43</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
 
 </div>
 </div>
@@ -237,9 +233,9 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Boolean stating if the <a class="el" href="classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu...">EvaporationModel</a> depends on the field. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00061">61</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00062">62</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="evaporation__model_8h_source.html#l00192">model_depends_on</a>.</p>
+<p class="reference">References <a class="el" href="evaporation__model_8h_source.html#l00193">model_depends_on</a>.</p>
 
 </div>
 </div>
@@ -759,7 +755,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00192">192</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00193">193</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
 
 </div>
 </div>

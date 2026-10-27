@@ -775,481 +775,469 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span><span class="comment">   * @brief Default constructor.</span></div>
 <div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00640" data-start="{" data-end="}">
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno"><a class="line" href="classVANSAssemblerSaffmanMei.html#a91a5d8c8fcaf4af47c7ab1f56a26ad8b">  640</a></span>  <a class="code hl_function" href="classVANSAssemblerSaffmanMei.html#a91a5d8c8fcaf4af47c7ab1f56a26ad8b">VANSAssemblerSaffmanMei</a>()</div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>  {}</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno"><a class="line" href="classVANSAssemblerSaffmanMei.html#afb214534dc0609b681fa280069b4761a">  640</a></span>  <a class="code hl_function" href="classVANSAssemblerSaffmanMei.html#afb214534dc0609b681fa280069b4761a">VANSAssemblerSaffmanMei</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span><span class="comment"></span> </div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span><span class="comment">   * @brief Calculate the Saffman-Mei lift force on particles.</span></div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>  <a class="code hl_function" href="classVANSAssemblerSaffmanMei.html#a2e661753ccae48683464851ace9d529c">calculate_particle_fluid_interactions</a>(</div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>};</div>
 </div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span><span class="comment"></span> </div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span><span class="comment">   * @brief Calculate the Saffman-Mei lift force on particles.</span></div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>  <a class="code hl_function" href="classVANSAssemblerSaffmanMei.html#a2e661753ccae48683464851ace9d529c">calculate_particle_fluid_interactions</a>(</div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>};</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span><span class="comment"></span> </div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span><span class="comment"> * @brief Assembler for the lift force using the Magnus model.</span></div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span><span class="comment"> * This implementation follows the formulation in the book &quot;Multiphase Flows</span></div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span><span class="comment"> * with Droplets and Particles&quot; by Crowe et al. (2011).</span></div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span><span class="comment"> * The Magnus lift force is computed as:</span></div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span><span class="comment"> * \mathbf{F}_L = \frac{\pi}{8} d_p^2 \, C_m \, \rho_f \,</span></div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span><span class="comment"> *   \|\mathbf{u}_r\| \left(\hat{\boldsymbol{\omega}}_p \times</span></div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="comment"> *   \mathbf{u}_r\right)</span></div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span><span class="comment"> * where \f$ \hat{\boldsymbol{\omega}}_p =</span></div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span><span class="comment"> * \boldsymbol{\omega}_p / \|\boldsymbol{\omega}_p\| \f$ is the unit rotational</span></div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span><span class="comment"> * vector. The spin parameter is defined as:</span></div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span><span class="comment"> * \Omega_s = \frac{d_p \|\boldsymbol{\omega}_p\|}{2 \|\mathbf{u}_r\|}</span></div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span><span class="comment"> * The Magnus lift coefficient \f$ C_m \f$ is computed as:</span></div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span><span class="comment"> * For \f$ 1 &lt; \Omega_s &lt; 6 \f$ and \f$ 10 &lt; \text{Re}_p &lt; 140 \f$</span></div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span><span class="comment"> * (Oesterle and Dinh, 1998):</span></div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span><span class="comment"> * C_m = 0.45 + (2\Omega_s - 0.45)</span></div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span><span class="comment"> *       \exp\!\left(-0.075 \, \Omega_s^{0.4} \, \text{Re}_p^{0.7}\right)</span></div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span><span class="comment"> * Otherwise:</span></div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span><span class="comment"> * C_m = 2 \Omega_s</span></div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span><span class="comment"> * where \f$ d_p \f$ is the particle diameter, \f$ \rho_f \f$ is the fluid</span></div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span><span class="comment"> * density, \f$ \mathbf{u}_r \f$ is the relative velocity between the fluid and</span></div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span><span class="comment"> * the particle, \f$ \boldsymbol{\omega}_p \f$ is the particle angular velocity,</span></div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span><span class="comment"> * and \f$ \text{Re}_p \f$ is the particle Reynolds number.</span></div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span><span class="comment"> * ParticleHandler.</span></div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="foldopen" id="foldopen00698" data-start="{" data-end="};">
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno"><a class="line" href="classVANSAssemblerMagnus.html">  698</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerMagnus.html">VANSAssemblerMagnus</a></div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>{</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span><span class="comment">   * @brief Default constructor.</span></div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno"><a class="line" href="classVANSAssemblerMagnus.html#a40537fac662b06566e8d83e6995cc9a7">  705</a></span>  <a class="code hl_function" href="classVANSAssemblerMagnus.html#a40537fac662b06566e8d83e6995cc9a7">VANSAssemblerMagnus</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span><span class="comment"></span> </div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span><span class="comment">   * @brief Calculate the Magnus lift force on particles.</span></div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>  <a class="code hl_function" href="classVANSAssemblerMagnus.html#ab3194f7fcc474473d9d98c094038c73c">calculate_particle_fluid_interactions</a>(</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>};</div>
 </div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span><span class="comment"></span> </div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span><span class="comment"> * @brief Assembler for the lift force using the Magnus model.</span></div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span><span class="comment"> * This implementation follows the formulation in the book &quot;Multiphase Flows</span></div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span><span class="comment"> * with Droplets and Particles&quot; by Crowe et al. (2011).</span></div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span><span class="comment"> * The Magnus lift force is computed as:</span></div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span><span class="comment"> * \mathbf{F}_L = \frac{\pi}{8} d_p^2 \, C_m \, \rho_f \,</span></div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="comment"> *   \|\mathbf{u}_r\| \left(\hat{\boldsymbol{\omega}}_p \times</span></div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span><span class="comment"> *   \mathbf{u}_r\right)</span></div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span><span class="comment"> * where \f$ \hat{\boldsymbol{\omega}}_p =</span></div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span><span class="comment"> * \boldsymbol{\omega}_p / \|\boldsymbol{\omega}_p\| \f$ is the unit rotational</span></div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span><span class="comment"> * vector. The spin parameter is defined as:</span></div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span><span class="comment"> * \Omega_s = \frac{d_p \|\boldsymbol{\omega}_p\|}{2 \|\mathbf{u}_r\|}</span></div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span><span class="comment"> * The Magnus lift coefficient \f$ C_m \f$ is computed as:</span></div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span><span class="comment"> * For \f$ 1 &lt; \Omega_s &lt; 6 \f$ and \f$ 10 &lt; \text{Re}_p &lt; 140 \f$</span></div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span><span class="comment"> * (Oesterle and Dinh, 1998):</span></div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span><span class="comment"> * C_m = 0.45 + (2\Omega_s - 0.45)</span></div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span><span class="comment"> *       \exp\!\left(-0.075 \, \Omega_s^{0.4} \, \text{Re}_p^{0.7}\right)</span></div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span><span class="comment"> * Otherwise:</span></div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span><span class="comment"> * C_m = 2 \Omega_s</span></div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span><span class="comment"> * where \f$ d_p \f$ is the particle diameter, \f$ \rho_f \f$ is the fluid</span></div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span><span class="comment"> * density, \f$ \mathbf{u}_r \f$ is the relative velocity between the fluid and</span></div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span><span class="comment"> * the particle, \f$ \boldsymbol{\omega}_p \f$ is the particle angular velocity,</span></div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span><span class="comment"> * and \f$ \text{Re}_p \f$ is the particle Reynolds number.</span></div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span><span class="comment"> * ParticleHandler.</span></div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="foldopen" id="foldopen00699" data-start="{" data-end="};">
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno"><a class="line" href="classVANSAssemblerMagnus.html">  699</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerMagnus.html">VANSAssemblerMagnus</a></div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>{</div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span><span class="comment">   * @brief Default constructor.</span></div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00706" data-start="{" data-end="}">
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno"><a class="line" href="classVANSAssemblerMagnus.html#a289d835116789d18816c32f4c6aa0b2d">  706</a></span>  <a class="code hl_function" href="classVANSAssemblerMagnus.html#a289d835116789d18816c32f4c6aa0b2d">VANSAssemblerMagnus</a>()</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>  {}</div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span><span class="comment"></span> </div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span><span class="comment"> * @brief Assembler for the viscous dissipative torque due to particle rotation</span></div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span><span class="comment"> * as defined by Derksen (2004).</span></div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span><span class="comment"> * The viscous torque due to particle rotation is:</span></div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span><span class="comment"> * \mathbf{M}_{\text{viscous}} = -\frac{\pi}{2} d_p^3 \mu</span></div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span><span class="comment"> *   \boldsymbol{\omega}_p</span></div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span><span class="comment"> * where \f$ d_p \f$ is the particle diameter, \f$ \mu = \nu \rho_f \f$ is</span></div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span><span class="comment"> * the dynamic viscosity, and \f$ \boldsymbol{\omega}_p \f$ is the particle</span></div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span><span class="comment"> * angular velocity. This torque opposes the particle rotation.</span></div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span><span class="comment"> * @note The complete model described by Derksen is composed of</span></div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span><span class="comment"> * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque.</span></div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span><span class="comment"> * ParticleHandler.</span></div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="foldopen" id="foldopen00741" data-start="{" data-end="};">
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno"><a class="line" href="classVANSAssemblerViscousTorque.html">  741</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerViscousTorque.html">VANSAssemblerViscousTorque</a></div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>{</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span><span class="comment">   * @brief Default constructor.</span></div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno"><a class="line" href="classVANSAssemblerViscousTorque.html#a7ec8ddfb6b5ccf583178931248322e5f">  748</a></span>  <a class="code hl_function" href="classVANSAssemblerViscousTorque.html#a7ec8ddfb6b5ccf583178931248322e5f">VANSAssemblerViscousTorque</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="comment"></span> </div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span><span class="comment">   * @brief Calculate the viscous torque dissipation on particles.</span></div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>  <a class="code hl_function" href="classVANSAssemblerViscousTorque.html#ac1e16c3d42cad73a951710d059d1eb77">calculate_particle_fluid_interactions</a>(</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>};</div>
 </div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span><span class="comment"></span> </div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span><span class="comment">   * @brief Calculate the Magnus lift force on particles.</span></div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>  <a class="code hl_function" href="classVANSAssemblerMagnus.html#ab3194f7fcc474473d9d98c094038c73c">calculate_particle_fluid_interactions</a>(</div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>};</div>
-</div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span><span class="comment"></span> </div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span><span class="comment"> * @brief Assembler for the viscous dissipative torque due to particle rotation</span></div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span><span class="comment"> * as defined by Derksen (2004).</span></div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span><span class="comment"> * The viscous torque due to particle rotation is:</span></div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span><span class="comment"> * \mathbf{M}_{\text{viscous}} = -\frac{\pi}{2} d_p^3 \mu</span></div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span><span class="comment"> *   \boldsymbol{\omega}_p</span></div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span><span class="comment"> * where \f$ d_p \f$ is the particle diameter, \f$ \mu = \nu \rho_f \f$ is</span></div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span><span class="comment"> * the dynamic viscosity, and \f$ \boldsymbol{\omega}_p \f$ is the particle</span></div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span><span class="comment"> * angular velocity. This torque opposes the particle rotation.</span></div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span><span class="comment"> * @note The complete model described by Derksen is composed of</span></div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span><span class="comment"> * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque.</span></div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span><span class="comment"> * ParticleHandler.</span></div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="foldopen" id="foldopen00743" data-start="{" data-end="};">
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno"><a class="line" href="classVANSAssemblerViscousTorque.html">  743</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerViscousTorque.html">VANSAssemblerViscousTorque</a></div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>{</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span><span class="comment">   * @brief Default constructor.</span></div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00750" data-start="{" data-end="}">
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno"><a class="line" href="classVANSAssemblerViscousTorque.html#a6b62d846b8f044293d54c7c34ba48d7e">  750</a></span>  <a class="code hl_function" href="classVANSAssemblerViscousTorque.html#a6b62d846b8f044293d54c7c34ba48d7e">VANSAssemblerViscousTorque</a>()</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>  {}</div>
-</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span><span class="comment"></span> </div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span><span class="comment">   * @brief Calculate the viscous torque dissipation on particles.</span></div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>  <a class="code hl_function" href="classVANSAssemblerViscousTorque.html#ac1e16c3d42cad73a951710d059d1eb77">calculate_particle_fluid_interactions</a>(</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>};</div>
-</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment"></span> </div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="comment"> * @brief Assembler for the viscous dissipative torque due to fluid vorticity</span></div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span><span class="comment"> * as defined by Derksen (2004).</span></div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span><span class="comment"> * The viscous torque due to the fluid vorticity is:</span></div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span><span class="comment"> * \mathbf{M}_{\text{vorticity}} = \frac{\pi}{2} d_p^3 \mu</span></div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span><span class="comment"> *   \boldsymbol{\omega}_f</span></div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span><span class="comment"> * where \f$ d_p \f$ is the particle diameter, \f$ \mu = \nu \rho_f \f$ is</span></div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span><span class="comment"> * the dynamic viscosity, and \f$ \boldsymbol{\omega}_f \f$ is the fluid</span></div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span><span class="comment"> * vorticity. This torque drives the particle rotation towards the local fluid</span></div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span><span class="comment"> * vorticity.</span></div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span><span class="comment"></span> </div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span><span class="comment"> * @brief Assembler for the viscous dissipative torque due to fluid vorticity</span></div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment"> * as defined by Derksen (2004).</span></div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="comment"> * The viscous torque due to the fluid vorticity is:</span></div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span><span class="comment"> * \mathbf{M}_{\text{vorticity}} = \frac{\pi}{2} d_p^3 \mu</span></div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span><span class="comment"> *   \boldsymbol{\omega}_f</span></div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span><span class="comment"> * where \f$ d_p \f$ is the particle diameter, \f$ \mu = \nu \rho_f \f$ is</span></div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><span class="comment"> * the dynamic viscosity, and \f$ \boldsymbol{\omega}_f \f$ is the fluid</span></div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span><span class="comment"> * vorticity. This torque drives the particle rotation towards the local fluid</span></div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span><span class="comment"> * vorticity.</span></div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span><span class="comment"> * @note The complete model described by Derksen is composed of</span></div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span><span class="comment"> * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque.</span></div>
 <div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span><span class="comment"> * @note The complete model described by Derksen is composed of</span></div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span><span class="comment"> * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque.</span></div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span><span class="comment"> * ParticleHandler.</span></div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="foldopen" id="foldopen00788" data-start="{" data-end="};">
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno"><a class="line" href="classVANSAssemblerVorticalTorque.html">  788</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerVorticalTorque.html">VANSAssemblerVorticalTorque</a></div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>{</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span><span class="comment">   * @brief Default constructor.</span></div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00795" data-start="{" data-end="}">
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno"><a class="line" href="classVANSAssemblerVorticalTorque.html#a54ba3804a811372e8f60138a060ce20b">  795</a></span>  <a class="code hl_function" href="classVANSAssemblerVorticalTorque.html#a54ba3804a811372e8f60138a060ce20b">VANSAssemblerVorticalTorque</a>()</div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>  {}</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span><span class="comment"> * ParticleHandler.</span></div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="foldopen" id="foldopen00785" data-start="{" data-end="};">
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno"><a class="line" href="classVANSAssemblerVorticalTorque.html">  785</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerVorticalTorque.html">VANSAssemblerVorticalTorque</a></div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>{</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span><span class="comment">   * @brief Default constructor.</span></div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno"><a class="line" href="classVANSAssemblerVorticalTorque.html#a3cf8542e9013c1bff61c5c6322e9921e">  792</a></span>  <a class="code hl_function" href="classVANSAssemblerVorticalTorque.html#a3cf8542e9013c1bff61c5c6322e9921e">VANSAssemblerVorticalTorque</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span><span class="comment"></span> </div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span><span class="comment">   * @brief Calculate the vortical torque on particles.</span></div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>  <a class="code hl_function" href="classVANSAssemblerVorticalTorque.html#a18ba19476cc6ef95de26043eddee4472">calculate_particle_fluid_interactions</a>(</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>};</div>
 </div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span><span class="comment"></span> </div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span><span class="comment">   * @brief Calculate the vortical torque on particles.</span></div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>  <a class="code hl_function" href="classVANSAssemblerVorticalTorque.html#a18ba19476cc6ef95de26043eddee4472">calculate_particle_fluid_interactions</a>(</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>};</div>
-</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment"></span> </div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> * @brief Assembler for the buoyancy force on particles in the VANS equations.</span></div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><span class="comment"> * The buoyancy force applied to each particle is computed as:</span></div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span><span class="comment"> * \mathbf{F}_b = -\rho_f \mathbf{g} \frac{\pi}{6} d_p^3</span></div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span><span class="comment"> * which is equivalent to \f$ -\rho_f \mathbf{g} V_p \f$, where \f$ V_p =</span></div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span><span class="comment"> * \frac{4}{3}\pi\left(\frac{d_p}{2}\right)^3 \f$ is the particle volume,</span></div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span><span class="comment"> * \f$ \rho_f \f$ is the fluid density, \f$ \mathbf{g} \f$ is the</span></div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span><span class="comment"> * gravitational acceleration, and \f$ d_p \f$ is the particle diameter.</span></div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span><span class="comment"> * @note The buoyancy force is stored as a one-way coupling force on the</span></div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span><span class="comment"> * particle and does not generate a reaction force on the fluid.</span></div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="comment"></span> </div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span><span class="comment"> * @brief Assembler for the buoyancy force on particles in the VANS equations.</span></div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment"> * The buoyancy force applied to each particle is computed as:</span></div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> * \mathbf{F}_b = -\rho_f \mathbf{g} \frac{\pi}{6} d_p^3</span></div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span><span class="comment"> * which is equivalent to \f$ -\rho_f \mathbf{g} V_p \f$, where \f$ V_p =</span></div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span><span class="comment"> * \frac{4}{3}\pi\left(\frac{d_p}{2}\right)^3 \f$ is the particle volume,</span></div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span><span class="comment"> * \f$ \rho_f \f$ is the fluid density, \f$ \mathbf{g} \f$ is the</span></div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span><span class="comment"> * gravitational acceleration, and \f$ d_p \f$ is the particle diameter.</span></div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span><span class="comment"> * @note The buoyancy force is stored as a one-way coupling force on the</span></div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span><span class="comment"> * particle and does not generate a reaction force on the fluid.</span></div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span><span class="comment"> * ParticleHandler.</span></div>
 <div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span><span class="comment"> * ParticleHandler.</span></div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="foldopen" id="foldopen00831" data-start="{" data-end="};">
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno"><a class="line" href="classVANSAssemblerBuoyancy.html">  831</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerBuoyancy.html">VANSAssemblerBuoyancy</a></div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>{</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span><span class="comment">   * @brief Construct a VANSAssemblerBuoyancy object.</span></div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span><span class="comment">   * @param[in] p_gravity The gravity acceleration vector applied to the</span></div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span><span class="comment">   * particles.</span></div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00841" data-start="{" data-end="}">
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno"><a class="line" href="classVANSAssemblerBuoyancy.html#a909ef9954e85db102643d16f5c14c082">  841</a></span>  <a class="code hl_function" href="classVANSAssemblerBuoyancy.html#a909ef9954e85db102643d16f5c14c082">VANSAssemblerBuoyancy</a>(<span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;p_gravity)</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>    : <a class="code hl_variable" href="classVANSAssemblerBuoyancy.html#afd12853b2b55727df156231c062e08ba">gravity</a>(p_gravity)</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>  {}</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="foldopen" id="foldopen00827" data-start="{" data-end="};">
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno"><a class="line" href="classVANSAssemblerBuoyancy.html">  827</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerBuoyancy.html">VANSAssemblerBuoyancy</a></div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>{</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span><span class="comment">   * @brief Construct a VANSAssemblerBuoyancy object.</span></div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="comment">   * @param[in] p_gravity The gravity acceleration vector applied to the</span></div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span><span class="comment">   * particles.</span></div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00837" data-start="{" data-end="}">
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno"><a class="line" href="classVANSAssemblerBuoyancy.html#a909ef9954e85db102643d16f5c14c082">  837</a></span>  <a class="code hl_function" href="classVANSAssemblerBuoyancy.html#a909ef9954e85db102643d16f5c14c082">VANSAssemblerBuoyancy</a>(<span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;p_gravity)</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>    : <a class="code hl_variable" href="classVANSAssemblerBuoyancy.html#afd12853b2b55727df156231c062e08ba">gravity</a>(p_gravity)</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>  {}</div>
 </div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span><span class="comment"></span> </div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span><span class="comment">   * @brief Calculate the buoyancy force on particles.</span></div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>  <a class="code hl_function" href="classVANSAssemblerBuoyancy.html#a42ed6235f5a0a0d6bb462292e25c16d2">calculate_particle_fluid_interactions</a>(</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span><span class="comment"></span> </div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span><span class="comment">   * @brief Calculate the buoyancy force on particles.</span></div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>  <a class="code hl_function" href="classVANSAssemblerBuoyancy.html#a42ed6235f5a0a0d6bb462292e25c16d2">calculate_particle_fluid_interactions</a>(</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span><span class="comment"></span> </div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span><span class="comment">  /// Gravity acceleration applied to the particles.</span></div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno"><a class="line" href="classVANSAssemblerBuoyancy.html#afd12853b2b55727df156231c062e08ba">  851</a></span><span class="comment"></span>  <span class="keyword">const</span> Tensor&lt;1, 3&gt; <a class="code hl_variable" href="classVANSAssemblerBuoyancy.html#afd12853b2b55727df156231c062e08ba">gravity</a>;</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>};</div>
+</div>
 <div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span><span class="comment"></span> </div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span><span class="comment">  /// Gravity acceleration applied to the particles.</span></div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno"><a class="line" href="classVANSAssemblerBuoyancy.html#afd12853b2b55727df156231c062e08ba">  855</a></span><span class="comment"></span>  <span class="keyword">const</span> Tensor&lt;1, 3&gt; <a class="code hl_variable" href="classVANSAssemblerBuoyancy.html#afd12853b2b55727df156231c062e08ba">gravity</a>;</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>};</div>
-</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span><span class="comment"></span> </div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span><span class="comment"> * @brief Assembler for the pressure force on particles.</span></div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span><span class="comment"> * The undisturbed pressure force applied to each particle is computed as:</span></div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="comment"> * \mathbf{F}_p = -\rho_f V_p \nabla p</span></div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span><span class="comment"> * where \f$ \rho_f \f$ is the fluid density, \f$ V_p = \frac{\pi}{6} d_p^3</span></div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span><span class="comment"> * \f$ is the particle volume, \f$ d_p \f$ is the particle diameter, and</span></div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span><span class="comment"> * \f$ \nabla p \f$ is the fluid pressure gradient evaluated at the particle</span></div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span><span class="comment"> * location.</span></div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span><span class="comment"> * @brief Assembler for the pressure force on particles.</span></div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span><span class="comment"> * The undisturbed pressure force applied to each particle is computed as:</span></div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span><span class="comment"> * \mathbf{F}_p = -\rho_f V_p \nabla p</span></div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span><span class="comment"> * where \f$ \rho_f \f$ is the fluid density, \f$ V_p = \frac{\pi}{6} d_p^3</span></div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="comment"> * \f$ is the particle volume, \f$ d_p \f$ is the particle diameter, and</span></div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span><span class="comment"> * \f$ \nabla p \f$ is the fluid pressure gradient evaluated at the particle</span></div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span><span class="comment"> * location.</span></div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span><span class="comment"> * @note When using VANS Model A, the pressure force is applied only to the</span></div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span><span class="comment"> * particle (one-way coupling). When using Model B, the pressure force is</span></div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span><span class="comment"> * also applied back on the fluid as a reaction force (two-way coupling).</span></div>
 <div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span><span class="comment"> * @note When using VANS Model A, the pressure force is applied only to the</span></div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span><span class="comment"> * particle (one-way coupling). When using Model B, the pressure force is</span></div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span><span class="comment"> * also applied back on the fluid as a reaction force (two-way coupling).</span></div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span><span class="comment"> * ParticleHandler.</span></div>
 <div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span><span class="comment"> * ParticleHandler.</span></div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="foldopen" id="foldopen00882" data-start="{" data-end="};">
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno"><a class="line" href="classVANSAssemblerPressureForce.html">  882</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerPressureForce.html">VANSAssemblerPressureForce</a></div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>{</div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="comment">   * @brief Construct a VANSAssemblerPressureForce object.</span></div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span><span class="comment">   * @param[in] cfd_dem CFD-DEM simulation parameters.</span></div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00891" data-start="{" data-end="}">
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno"><a class="line" href="classVANSAssemblerPressureForce.html#a51d2c7cdcc6b1537abac618e503af5f5">  891</a></span>  <a class="code hl_function" href="classVANSAssemblerPressureForce.html#a51d2c7cdcc6b1537abac618e503af5f5">VANSAssemblerPressureForce</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="code hl_variable" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">cfd_dem</a>)</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>    : <a class="code hl_variable" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">cfd_dem</a>(<a class="code hl_variable" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">cfd_dem</a>)</div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>  {}</div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="foldopen" id="foldopen00878" data-start="{" data-end="};">
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno"><a class="line" href="classVANSAssemblerPressureForce.html">  878</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerPressureForce.html">VANSAssemblerPressureForce</a></div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>{</div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span><span class="comment">   * @brief Construct a VANSAssemblerPressureForce object.</span></div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span><span class="comment">   * @param[in] cfd_dem CFD-DEM simulation parameters.</span></div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00887" data-start="{" data-end="}">
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno"><a class="line" href="classVANSAssemblerPressureForce.html#a51d2c7cdcc6b1537abac618e503af5f5">  887</a></span>  <a class="code hl_function" href="classVANSAssemblerPressureForce.html#a51d2c7cdcc6b1537abac618e503af5f5">VANSAssemblerPressureForce</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="code hl_variable" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">cfd_dem</a>)</div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>    : <a class="code hl_variable" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">cfd_dem</a>(<a class="code hl_variable" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">cfd_dem</a>)</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>  {}</div>
 </div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span><span class="comment"></span> </div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span><span class="comment">   * @brief Calculate the pressure force on particles.</span></div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>  <a class="code hl_function" href="classVANSAssemblerPressureForce.html#ae62fd11dfd360e8d1916f299f4524494">calculate_particle_fluid_interactions</a>(</div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span><span class="comment"></span> </div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span><span class="comment">   * @brief Calculate the pressure force on particles.</span></div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>  <a class="code hl_function" href="classVANSAssemblerPressureForce.html#ae62fd11dfd360e8d1916f299f4524494">calculate_particle_fluid_interactions</a>(</div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span><span class="comment"></span> </div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span><span class="comment">  /// CFD-DEM simulation parameters.</span></div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno"><a class="line" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">  901</a></span><span class="comment"></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="code hl_variable" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">cfd_dem</a>;</div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>};</div>
+</div>
 <div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span><span class="comment"></span> </div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span><span class="comment">  /// CFD-DEM simulation parameters.</span></div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno"><a class="line" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">  905</a></span><span class="comment"></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="code hl_variable" href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">cfd_dem</a>;</div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>};</div>
-</div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span><span class="comment"></span> </div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span><span class="comment"> * @brief Assembler for the shear force on particles.</span></div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><span class="comment"> * The undisturbed shear (viscous stress) force applied to each particle is</span></div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span><span class="comment"> * computed as:</span></div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span><span class="comment"> * \mathbf{F}_s = -V_p \mu \nabla^2 \mathbf{u}</span></div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span><span class="comment"> * \f]</span></div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span><span class="comment"> * where \f$ V_p = \frac{\pi}{6} d_p^3 \f$ is the particle volume, \f$ \mu =</span></div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span><span class="comment"> * \nu \rho_f \f$ is the dynamic viscosity, \f$ d_p \f$ is the particle</span></div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span><span class="comment"> * diameter, and \f$ \nabla^2 \mathbf{u} \f$ is the Laplacian of the fluid</span></div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span><span class="comment"> * velocity evaluated at the particle location.</span></div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span><span class="comment"> * @brief Assembler for the shear force on particles.</span></div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span><span class="comment"> * The undisturbed shear (viscous stress) force applied to each particle is</span></div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span><span class="comment"> * computed as:</span></div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span><span class="comment"> * \mathbf{F}_s = -V_p \mu \nabla^2 \mathbf{u}</span></div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span><span class="comment"> * where \f$ V_p = \frac{\pi}{6} d_p^3 \f$ is the particle volume, \f$ \mu =</span></div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span><span class="comment"> * \nu \rho_f \f$ is the dynamic viscosity, \f$ d_p \f$ is the particle</span></div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span><span class="comment"> * diameter, and \f$ \nabla^2 \mathbf{u} \f$ is the Laplacian of the fluid</span></div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span><span class="comment"> * velocity evaluated at the particle location.</span></div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span><span class="comment"> * @note When using VANS Model A, the shear force is applied only to the</span></div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span><span class="comment"> * particle (one-way coupling). When using Model B, the shear force is also</span></div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span><span class="comment"> * applied back on the fluid as a reaction force (two-way coupling).</span></div>
 <div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span><span class="comment"> * @note When using VANS Model A, the shear force is applied only to the</span></div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span><span class="comment"> * particle (one-way coupling). When using Model B, the shear force is also</span></div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span><span class="comment"> * applied back on the fluid as a reaction force (two-way coupling).</span></div>
+<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span><span class="comment"> * ParticleHandler.</span></div>
 <div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span><span class="comment"> * @tparam PropertiesIndex Index of the properties used within the</span></div>
-<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span><span class="comment"> * ParticleHandler.</span></div>
-<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="foldopen" id="foldopen00933" data-start="{" data-end="};">
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno"><a class="line" href="classVANSAssemblerShearForce.html">  933</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerShearForce.html">VANSAssemblerShearForce</a></div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>{</div>
-<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span><span class="comment">   * @brief Construct a VANSAssemblerShearForce object.</span></div>
-<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span><span class="comment">   * @param[in] cfd_dem CFD-DEM simulation parameters.</span></div>
-<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00942" data-start="{" data-end="}">
-<div class="line"><a id="l00942" name="l00942"></a><span class="lineno"><a class="line" href="classVANSAssemblerShearForce.html#a14d2207c6dda43a418f1253ffb90d8cd">  942</a></span>  <a class="code hl_function" href="classVANSAssemblerShearForce.html#a14d2207c6dda43a418f1253ffb90d8cd">VANSAssemblerShearForce</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="code hl_variable" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">cfd_dem</a>)</div>
-<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>    : <a class="code hl_variable" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">cfd_dem</a>(<a class="code hl_variable" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">cfd_dem</a>)</div>
-<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>  {}</div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="foldopen" id="foldopen00929" data-start="{" data-end="};">
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno"><a class="line" href="classVANSAssemblerShearForce.html">  929</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerShearForce.html">VANSAssemblerShearForce</a></div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>  : <span class="keyword">public</span> <a class="code hl_class" href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a>&lt;dim, PropertiesIndex&gt;</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>{</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span><span class="comment">   * @brief Construct a VANSAssemblerShearForce object.</span></div>
+<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span><span class="comment">   * @param[in] cfd_dem CFD-DEM simulation parameters.</span></div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00938" data-start="{" data-end="}">
+<div class="line"><a id="l00938" name="l00938"></a><span class="lineno"><a class="line" href="classVANSAssemblerShearForce.html#a14d2207c6dda43a418f1253ffb90d8cd">  938</a></span>  <a class="code hl_function" href="classVANSAssemblerShearForce.html#a14d2207c6dda43a418f1253ffb90d8cd">VANSAssemblerShearForce</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="code hl_variable" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">cfd_dem</a>)</div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>    : <a class="code hl_variable" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">cfd_dem</a>(<a class="code hl_variable" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">cfd_dem</a>)</div>
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>  {}</div>
 </div>
-<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span><span class="comment"></span> </div>
-<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span><span class="comment">   * @brief Calculate the shear force on particles.</span></div>
-<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>  <a class="code hl_function" href="classVANSAssemblerShearForce.html#a07fd41161792d3a1b8917c2623c7d873">calculate_particle_fluid_interactions</a>(</div>
-<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span><span class="comment"></span> </div>
+<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span><span class="comment">   * @brief Calculate the shear force on particles.</span></div>
+<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span><span class="comment">   * @param[in,out] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>  <a class="code hl_function" href="classVANSAssemblerShearForce.html#a07fd41161792d3a1b8917c2623c7d873">calculate_particle_fluid_interactions</a>(</div>
+<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span>    <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp;scratch_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span><span class="comment"></span> </div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span><span class="comment">  /// CFD-DEM simulation parameters.</span></div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno"><a class="line" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">  952</a></span><span class="comment"></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="code hl_variable" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">cfd_dem</a>;</div>
+<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>};</div>
+</div>
 <div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span><span class="comment"></span> </div>
-<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span><span class="comment">  /// CFD-DEM simulation parameters.</span></div>
-<div class="line"><a id="l00956" name="l00956"></a><span class="lineno"><a class="line" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">  956</a></span><span class="comment"></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="code hl_variable" href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">cfd_dem</a>;</div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>};</div>
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span><span class="comment"> * @brief Assembler for the fluid-particle interactions (FPI) in the VANS</span></div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span><span class="comment"> * equations, such as the drag force.</span></div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen00964" data-start="{" data-end="};">
+<div class="line"><a id="l00964" name="l00964"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPI.html">  964</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerFPI.html">VANSAssemblerFPI</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsAssemblerBase.html">NavierStokesAssemblerBase</a>&lt;dim&gt;</div>
+<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>{</div>
+<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span><span class="comment">   * @brief Construct a VANSAssemblerFPI object.</span></div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span><span class="comment">   * @param[in] cfd_dem CFD-DEM simulation parameters.</span></div>
+<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00972" data-start="{" data-end="}">
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPI.html#a8cbccf997391afa14bab4c8ad9aaf679">  972</a></span>  <a class="code hl_function" href="classVANSAssemblerFPI.html#a8cbccf997391afa14bab4c8ad9aaf679">VANSAssemblerFPI</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="code hl_variable" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">cfd_dem</a>)</div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>    : <a class="code hl_variable" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">cfd_dem</a>(<a class="code hl_variable" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">cfd_dem</a>)</div>
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>  {}</div>
 </div>
-<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span><span class="comment"></span> </div>
-<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span><span class="comment"> * @brief Assembler for the fluid-particle interactions (FPI) in the VANS</span></div>
-<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span><span class="comment"> * equations, such as the drag force.</span></div>
-<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen00968" data-start="{" data-end="};">
-<div class="line"><a id="l00968" name="l00968"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPI.html">  968</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerFPI.html">VANSAssemblerFPI</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsAssemblerBase.html">NavierStokesAssemblerBase</a>&lt;dim&gt;</div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>{</div>
-<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span><span class="comment">   * @brief Construct a VANSAssemblerFPI object.</span></div>
-<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span><span class="comment">   * @param[in] cfd_dem CFD-DEM simulation parameters.</span></div>
-<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00976" data-start="{" data-end="}">
-<div class="line"><a id="l00976" name="l00976"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPI.html#a8cbccf997391afa14bab4c8ad9aaf679">  976</a></span>  <a class="code hl_function" href="classVANSAssemblerFPI.html#a8cbccf997391afa14bab4c8ad9aaf679">VANSAssemblerFPI</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="code hl_variable" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">cfd_dem</a>)</div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>    : <a class="code hl_variable" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">cfd_dem</a>(<a class="code hl_variable" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">cfd_dem</a>)</div>
-<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>  {}</div>
+<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span><span class="comment"></span> </div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span><span class="comment">   * @brief Assemble the matrix.</span></div>
+<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
+<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>  <a class="code hl_function" href="classVANSAssemblerFPI.html#a0bc320c1208d0aea3f4d791da38109f7">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>                  <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span><span class="comment"></span> </div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span><span class="comment">   * @brief Assemble the right-hand side.</span></div>
+<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>  <a class="code hl_function" href="classVANSAssemblerFPI.html#af4b3b527107bf6cf8baa5cd1b5029483">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
+<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>               <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span><span class="comment"></span> </div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span><span class="comment">  /// CFD-DEM simulation parameters.</span></div>
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">  997</a></span><span class="comment"></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="code hl_variable" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">cfd_dem</a>;</div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>};</div>
 </div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span><span class="comment"></span> </div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span><span class="comment">   * @brief Assemble the matrix.</span></div>
-<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
-<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>  <a class="code hl_function" href="classVANSAssemblerFPI.html#a0bc320c1208d0aea3f4d791da38109f7">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
-<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>                  <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span><span class="comment"></span> </div>
-<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span><span class="comment">   * @brief Assemble the right-hand side.</span></div>
-<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
-<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>  <a class="code hl_function" href="classVANSAssemblerFPI.html#af4b3b527107bf6cf8baa5cd1b5029483">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
-<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>               <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
 <div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span><span class="comment"></span> </div>
-<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span><span class="comment">  /// CFD-DEM simulation parameters.</span></div>
-<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248"> 1001</a></span><span class="comment"></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="code hl_variable" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">cfd_dem</a>;</div>
-<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>};</div>
+<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span><span class="comment"> * @brief Assembler for the fluid-particle interactions (FPI) in the VANS</span></div>
+<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span><span class="comment"> * equations when the forces are projected from the particles to the fluid grid.</span></div>
+<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen01009" data-start="{" data-end="};">
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPIProjection.html"> 1009</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerFPIProjection.html">VANSAssemblerFPIProjection</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsAssemblerBase.html">NavierStokesAssemblerBase</a>&lt;dim&gt;</div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>{</div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span><span class="comment">   * @brief Construct a VANSAssemblerFPIProjection object.</span></div>
+<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span><span class="comment">   * @param[in] cfd_dem CFD-DEM simulation parameters.</span></div>
+<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen01017" data-start="{" data-end="}">
+<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPIProjection.html#ae28a3947fb3640db03394f03fa09baf4"> 1017</a></span>  <a class="code hl_function" href="classVANSAssemblerFPIProjection.html#ae28a3947fb3640db03394f03fa09baf4">VANSAssemblerFPIProjection</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="code hl_variable" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">cfd_dem</a>)</div>
+<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>    : <a class="code hl_variable" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">cfd_dem</a>(<a class="code hl_variable" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">cfd_dem</a>)</div>
+<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>  {}</div>
 </div>
-<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span><span class="comment"></span> </div>
-<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span><span class="comment"> * @brief Assembler for the fluid-particle interactions (FPI) in the VANS</span></div>
-<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span><span class="comment"> * equations when the forces are projected from the particles to the fluid grid.</span></div>
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen01013" data-start="{" data-end="};">
-<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPIProjection.html"> 1013</a></span><span class="keyword">class </span><a class="code hl_class" href="classVANSAssemblerFPIProjection.html">VANSAssemblerFPIProjection</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsAssemblerBase.html">NavierStokesAssemblerBase</a>&lt;dim&gt;</div>
-<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>{</div>
-<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span><span class="comment">   * @brief Construct a VANSAssemblerFPIProjection object.</span></div>
-<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span><span class="comment">   * @param[in] cfd_dem CFD-DEM simulation parameters.</span></div>
-<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen01021" data-start="{" data-end="}">
-<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPIProjection.html#ae28a3947fb3640db03394f03fa09baf4"> 1021</a></span>  <a class="code hl_function" href="classVANSAssemblerFPIProjection.html#ae28a3947fb3640db03394f03fa09baf4">VANSAssemblerFPIProjection</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="code hl_variable" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">cfd_dem</a>)</div>
-<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>    : <a class="code hl_variable" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">cfd_dem</a>(<a class="code hl_variable" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">cfd_dem</a>)</div>
-<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>  {}</div>
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span><span class="comment"></span> </div>
+<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span><span class="comment">   * @brief Assemble the matrix.</span></div>
+<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
+<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
+<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span>  <a class="code hl_function" href="classVANSAssemblerFPIProjection.html#adc624a70283246ce263aeef07ff4c1d6">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
+<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>                  <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span><span class="comment"></span> </div>
+<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span><span class="comment">   * @brief Assemble the right-hand side.</span></div>
+<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
+<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
+<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>  <a class="code hl_function" href="classVANSAssemblerFPIProjection.html#a62f92591a2aa55ebe12d0fd35bec05a3">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
+<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>               <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span><span class="comment"></span> </div>
+<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span><span class="comment">  /// CFD-DEM simulation parameters.</span></div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497"> 1042</a></span><span class="comment"></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="code hl_variable" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">cfd_dem</a>;</div>
+<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>};</div>
 </div>
-<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span><span class="comment"></span> </div>
-<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><span class="comment">   * @brief Assemble the matrix.</span></div>
-<div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
-<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
-<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>  <a class="code hl_function" href="classVANSAssemblerFPIProjection.html#adc624a70283246ce263aeef07ff4c1d6">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
-<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>                  <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span><span class="comment"></span> </div>
-<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span><span class="comment">   * @brief Assemble the right-hand side.</span></div>
-<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
-<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
-<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>  <a class="code hl_function" href="classVANSAssemblerFPIProjection.html#a62f92591a2aa55ebe12d0fd35bec05a3">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
-<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>               <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data) <span class="keyword">override</span>;</div>
 <div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span><span class="comment"></span> </div>
-<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span><span class="comment">  /// CFD-DEM simulation parameters.</span></div>
-<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"><a class="line" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497"> 1046</a></span><span class="comment"></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="code hl_variable" href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">cfd_dem</a>;</div>
-<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span>};</div>
-</div>
-<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span><span class="comment"></span> </div>
-<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span><span class="comment"> * @brief Calculate the grad-div stabilization constant \f$ \gamma \f$ for the</span></div>
-<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span><span class="comment"> * VANS equations.</span></div>
-<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span><span class="comment"> * The stabilization constant is computed as:</span></div>
-<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span><span class="comment"> * \f[</span></div>
-<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span><span class="comment"> * \gamma = \nu + c^* \|\mathbf{u}\|</span></div>
-<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span><span class="comment"> * @brief Calculate the grad-div stabilization constant \f$ \gamma \f$ for the</span></div>
+<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span><span class="comment"> * VANS equations.</span></div>
+<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span><span class="comment"> * The stabilization constant is computed as:</span></div>
+<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span><span class="comment"> * \f[</span></div>
+<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span><span class="comment"> * \gamma = \nu + c^* \|\mathbf{u}\|</span></div>
+<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span><span class="comment"> * \f]</span></div>
+<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span><span class="comment"> * where \f$ \nu \f$ is the kinematic viscosity, \f$ c^* \f$ is a scaling</span></div>
+<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span><span class="comment"> * constant with units of length, and \f$ \|\mathbf{u}\| \f$ is the magnitude</span></div>
+<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span><span class="comment"> * of the velocity at the quadrature point.</span></div>
 <div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span><span class="comment"> * where \f$ \nu \f$ is the kinematic viscosity, \f$ c^* \f$ is a scaling</span></div>
-<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span><span class="comment"> * constant with units of length, and \f$ \|\mathbf{u}\| \f$ is the magnitude</span></div>
-<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span><span class="comment"> * of the velocity at the quadrature point.</span></div>
-<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span><span class="comment"> * @param[in] velocity Magnitude of the velocity at the quadrature point.</span></div>
-<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span><span class="comment"> * @param[in] kinematic_viscosity Kinematic viscosity of the fluid.</span></div>
-<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span><span class="comment"> * @param[in] h The element size (unused).</span></div>
-<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span><span class="comment"> * @param[in] c_star Scaling constant with units of length.</span></div>
-<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span><span class="comment"> * @return The grad-div stabilization constant \f$ \gamma \f$.</span></div>
-<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen01070" data-start="{" data-end="}">
-<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"><a class="line" href="vans__assemblers_8h.html#ae801b45c8aa88b8de6787730af087b59"> 1070</a></span><a class="code hl_function" href="vans__assemblers_8h.html#ae801b45c8aa88b8de6787730af087b59">calculate_gamma</a>(<span class="keywordtype">double</span> <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>,</div>
-<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>                <span class="keywordtype">double</span> kinematic_viscosity,</div>
-<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span>                <span class="keywordtype">double</span> <span class="comment">/*h*/</span>,</div>
-<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span>                <span class="keywordtype">double</span> c_star)</div>
-<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span>{</div>
-<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span>  <span class="keywordflow">return</span> kinematic_viscosity + c_star * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>;</div>
-<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span>}</div>
+<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span><span class="comment"> * @param[in] velocity Magnitude of the velocity at the quadrature point.</span></div>
+<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span><span class="comment"> * @param[in] kinematic_viscosity Kinematic viscosity of the fluid.</span></div>
+<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span><span class="comment"> * @param[in] h The element size (unused).</span></div>
+<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span><span class="comment"> * @param[in] c_star Scaling constant with units of length.</span></div>
+<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span><span class="comment"> * @return The grad-div stabilization constant \f$ \gamma \f$.</span></div>
+<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen01066" data-start="{" data-end="}">
+<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"><a class="line" href="vans__assemblers_8h.html#ae801b45c8aa88b8de6787730af087b59"> 1066</a></span><a class="code hl_function" href="vans__assemblers_8h.html#ae801b45c8aa88b8de6787730af087b59">calculate_gamma</a>(<span class="keywordtype">double</span> <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>,</div>
+<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>                <span class="keywordtype">double</span> kinematic_viscosity,</div>
+<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>                <span class="keywordtype">double</span> <span class="comment">/*h*/</span>,</div>
+<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>                <span class="keywordtype">double</span> c_star)</div>
+<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>{</div>
+<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>  <span class="keywordflow">return</span> kinematic_viscosity + c_star * <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>;</div>
+<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span>}</div>
 </div>
-<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="acfd__dem__simulation__parameters_8h_html"><div class="ttname"><a href="cfd__dem__simulation__parameters_8h.html">cfd_dem_simulation_parameters.h</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html"><div class="ttname"><a href="classNavierStokesScratchData.html">NavierStokesScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for a Navier-Stokes equation....</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8h_source.html#l00055">navier_stokes_scratch_data.h:56</a></div></div>
 <div class="ttc" id="aclassParticleFluidAssemblerBase_html"><div class="ttname"><a href="classParticleFluidAssemblerBase.html">ParticleFluidAssemblerBase</a></div><div class="ttdoc">Interface for all assemblers of particle-fluid interactions in the VANS equations.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00042">vans_assemblers.h:43</a></div></div>
@@ -1267,10 +1255,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassVANSAssemblerBeetstra_html_a875a9a58cbbc60c9deae50dfd3ed5d2e"><div class="ttname"><a href="classVANSAssemblerBeetstra.html#a875a9a58cbbc60c9deae50dfd3ed5d2e">VANSAssemblerBeetstra::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00527">vans_assemblers.h:527</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerBeetstra_html_a9599a641d4cdafb171b80c4d01173858"><div class="ttname"><a href="classVANSAssemblerBeetstra.html#a9599a641d4cdafb171b80c4d01173858">VANSAssemblerBeetstra::VANSAssemblerBeetstra</a></div><div class="ttdeci">VANSAssemblerBeetstra(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerBeetstra object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00512">vans_assemblers.h:512</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerBeetstra_html_ac3fc5a23981505f2d6eed5f3c520cc5e"><div class="ttname"><a href="classVANSAssemblerBeetstra.html#ac3fc5a23981505f2d6eed5f3c520cc5e">VANSAssemblerBeetstra::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the particle-fluid interactions resulting from drag, using the Beetstra model....</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l01360">vans_assemblers.cc:1361</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerBuoyancy_html"><div class="ttname"><a href="classVANSAssemblerBuoyancy.html">VANSAssemblerBuoyancy</a></div><div class="ttdoc">Assembler for the buoyancy force on particles in the VANS equations.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00831">vans_assemblers.h:833</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerBuoyancy_html"><div class="ttname"><a href="classVANSAssemblerBuoyancy.html">VANSAssemblerBuoyancy</a></div><div class="ttdoc">Assembler for the buoyancy force on particles in the VANS equations.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00827">vans_assemblers.h:829</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerBuoyancy_html_a42ed6235f5a0a0d6bb462292e25c16d2"><div class="ttname"><a href="classVANSAssemblerBuoyancy.html#a42ed6235f5a0a0d6bb462292e25c16d2">VANSAssemblerBuoyancy::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the buoyancy force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l02006">vans_assemblers.cc:2007</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerBuoyancy_html_a909ef9954e85db102643d16f5c14c082"><div class="ttname"><a href="classVANSAssemblerBuoyancy.html#a909ef9954e85db102643d16f5c14c082">VANSAssemblerBuoyancy::VANSAssemblerBuoyancy</a></div><div class="ttdeci">VANSAssemblerBuoyancy(const Tensor&lt; 1, 3 &gt; &amp;p_gravity)</div><div class="ttdoc">Construct a VANSAssemblerBuoyancy object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00841">vans_assemblers.h:841</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerBuoyancy_html_afd12853b2b55727df156231c062e08ba"><div class="ttname"><a href="classVANSAssemblerBuoyancy.html#afd12853b2b55727df156231c062e08ba">VANSAssemblerBuoyancy::gravity</a></div><div class="ttdeci">const Tensor&lt; 1, 3 &gt; gravity</div><div class="ttdoc">Gravity acceleration applied to the particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00855">vans_assemblers.h:855</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerBuoyancy_html_a909ef9954e85db102643d16f5c14c082"><div class="ttname"><a href="classVANSAssemblerBuoyancy.html#a909ef9954e85db102643d16f5c14c082">VANSAssemblerBuoyancy::VANSAssemblerBuoyancy</a></div><div class="ttdeci">VANSAssemblerBuoyancy(const Tensor&lt; 1, 3 &gt; &amp;p_gravity)</div><div class="ttdoc">Construct a VANSAssemblerBuoyancy object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00837">vans_assemblers.h:837</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerBuoyancy_html_afd12853b2b55727df156231c062e08ba"><div class="ttname"><a href="classVANSAssemblerBuoyancy.html#afd12853b2b55727df156231c062e08ba">VANSAssemblerBuoyancy::gravity</a></div><div class="ttdeci">const Tensor&lt; 1, 3 &gt; gravity</div><div class="ttdoc">Gravity acceleration applied to the particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00851">vans_assemblers.h:851</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerCoreModelA_html"><div class="ttname"><a href="classVANSAssemblerCoreModelA.html">VANSAssemblerCoreModelA</a></div><div class="ttdoc">Assembler for the core of Model A of the Volume-Averaged Navier-Stokes (VANS) equations.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00134">vans_assemblers.h:135</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerCoreModelA_html_a1ea290d3a1387ad85b279f600b52138c"><div class="ttname"><a href="classVANSAssemblerCoreModelA.html#a1ea290d3a1387ad85b279f600b52138c">VANSAssemblerCoreModelA::SUPG</a></div><div class="ttdeci">const bool SUPG</div><div class="ttdoc">Flag indicating whether SUPG stabilization is used.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00172">vans_assemblers.h:172</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerCoreModelA_html_a715bfff0a75867c4310212be898fd5af"><div class="ttname"><a href="classVANSAssemblerCoreModelA.html#a715bfff0a75867c4310212be898fd5af">VANSAssemblerCoreModelA::simulation_control</a></div><div class="ttdeci">const std::shared_ptr&lt; SimulationControl &gt; simulation_control</div><div class="ttdoc">Shared pointer to the simulation control object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00175">vans_assemblers.h:175</a></div></div>
@@ -1293,15 +1281,15 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassVANSAssemblerDiFelice_html_a286b47b3ff9139189cb0133e5c0f2371"><div class="ttname"><a href="classVANSAssemblerDiFelice.html#a286b47b3ff9139189cb0133e5c0f2371">VANSAssemblerDiFelice::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the particle-fluid interactions resulting from drag, using the Di Felice model.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l00965">vans_assemblers.cc:966</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerDiFelice_html_ad62ed2096873e1d215dc50f8cfa05a09"><div class="ttname"><a href="classVANSAssemblerDiFelice.html#ad62ed2096873e1d215dc50f8cfa05a09">VANSAssemblerDiFelice::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00290">vans_assemblers.h:290</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerDiFelice_html_af80da0571bbc8ecd4b884630f6c09aee"><div class="ttname"><a href="classVANSAssemblerDiFelice.html#af80da0571bbc8ecd4b884630f6c09aee">VANSAssemblerDiFelice::VANSAssemblerDiFelice</a></div><div class="ttdeci">VANSAssemblerDiFelice(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerDiFelice object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00275">vans_assemblers.h:275</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerFPIProjection_html"><div class="ttname"><a href="classVANSAssemblerFPIProjection.html">VANSAssemblerFPIProjection</a></div><div class="ttdoc">Assembler for the fluid-particle interactions (FPI) in the VANS equations when the forces are project...</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01013">vans_assemblers.h:1014</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerFPIProjection_html_a4d6173ca0751662ced15c34582f58497"><div class="ttname"><a href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">VANSAssemblerFPIProjection::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01046">vans_assemblers.h:1046</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerFPIProjection_html"><div class="ttname"><a href="classVANSAssemblerFPIProjection.html">VANSAssemblerFPIProjection</a></div><div class="ttdoc">Assembler for the fluid-particle interactions (FPI) in the VANS equations when the forces are project...</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01009">vans_assemblers.h:1010</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerFPIProjection_html_a4d6173ca0751662ced15c34582f58497"><div class="ttname"><a href="classVANSAssemblerFPIProjection.html#a4d6173ca0751662ced15c34582f58497">VANSAssemblerFPIProjection::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01042">vans_assemblers.h:1042</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerFPIProjection_html_a62f92591a2aa55ebe12d0fd35bec05a3"><div class="ttname"><a href="classVANSAssemblerFPIProjection.html#a62f92591a2aa55ebe12d0fd35bec05a3">VANSAssemblerFPIProjection::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const NavierStokesScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsTensorCopyData&lt; dim &gt; &amp;copy_data) override</div><div class="ttdoc">Assemble the right-hand side.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l02393">vans_assemblers.cc:2393</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerFPIProjection_html_adc624a70283246ce263aeef07ff4c1d6"><div class="ttname"><a href="classVANSAssemblerFPIProjection.html#adc624a70283246ce263aeef07ff4c1d6">VANSAssemblerFPIProjection::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const NavierStokesScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsTensorCopyData&lt; dim &gt; &amp;copy_data) override</div><div class="ttdoc">Assemble the matrix.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l02328">vans_assemblers.cc:2328</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerFPIProjection_html_ae28a3947fb3640db03394f03fa09baf4"><div class="ttname"><a href="classVANSAssemblerFPIProjection.html#ae28a3947fb3640db03394f03fa09baf4">VANSAssemblerFPIProjection::VANSAssemblerFPIProjection</a></div><div class="ttdeci">VANSAssemblerFPIProjection(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerFPIProjection object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01021">vans_assemblers.h:1021</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerFPI_html"><div class="ttname"><a href="classVANSAssemblerFPI.html">VANSAssemblerFPI</a></div><div class="ttdoc">Assembler for the fluid-particle interactions (FPI) in the VANS equations, such as the drag force.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00968">vans_assemblers.h:969</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerFPIProjection_html_ae28a3947fb3640db03394f03fa09baf4"><div class="ttname"><a href="classVANSAssemblerFPIProjection.html#ae28a3947fb3640db03394f03fa09baf4">VANSAssemblerFPIProjection::VANSAssemblerFPIProjection</a></div><div class="ttdeci">VANSAssemblerFPIProjection(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerFPIProjection object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01017">vans_assemblers.h:1017</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerFPI_html"><div class="ttname"><a href="classVANSAssemblerFPI.html">VANSAssemblerFPI</a></div><div class="ttdoc">Assembler for the fluid-particle interactions (FPI) in the VANS equations, such as the drag force.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00964">vans_assemblers.h:965</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerFPI_html_a0bc320c1208d0aea3f4d791da38109f7"><div class="ttname"><a href="classVANSAssemblerFPI.html#a0bc320c1208d0aea3f4d791da38109f7">VANSAssemblerFPI::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const NavierStokesScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsTensorCopyData&lt; dim &gt; &amp;copy_data) override</div><div class="ttdoc">Assemble the matrix.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l02207">vans_assemblers.cc:2207</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerFPI_html_a2030d570f7def281687de747e71b8248"><div class="ttname"><a href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">VANSAssemblerFPI::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01001">vans_assemblers.h:1001</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerFPI_html_a8cbccf997391afa14bab4c8ad9aaf679"><div class="ttname"><a href="classVANSAssemblerFPI.html#a8cbccf997391afa14bab4c8ad9aaf679">VANSAssemblerFPI::VANSAssemblerFPI</a></div><div class="ttdeci">VANSAssemblerFPI(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerFPI object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00976">vans_assemblers.h:976</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerFPI_html_a2030d570f7def281687de747e71b8248"><div class="ttname"><a href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">VANSAssemblerFPI::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00997">vans_assemblers.h:997</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerFPI_html_a8cbccf997391afa14bab4c8ad9aaf679"><div class="ttname"><a href="classVANSAssemblerFPI.html#a8cbccf997391afa14bab4c8ad9aaf679">VANSAssemblerFPI::VANSAssemblerFPI</a></div><div class="ttdeci">VANSAssemblerFPI(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerFPI object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00972">vans_assemblers.h:972</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerFPI_html_af4b3b527107bf6cf8baa5cd1b5029483"><div class="ttname"><a href="classVANSAssemblerFPI.html#af4b3b527107bf6cf8baa5cd1b5029483">VANSAssemblerFPI::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const NavierStokesScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsTensorCopyData&lt; dim &gt; &amp;copy_data) override</div><div class="ttdoc">Assemble the right-hand side.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l02268">vans_assemblers.cc:2268</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerGidaspow_html"><div class="ttname"><a href="classVANSAssemblerGidaspow.html">VANSAssemblerGidaspow</a></div><div class="ttdoc">Assembler for the drag force using the Gidaspow model.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00560">vans_assemblers.h:562</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerGidaspow_html_a3c5c126bdf0a2ca687aaf0e2d527943d"><div class="ttname"><a href="classVANSAssemblerGidaspow.html#a3c5c126bdf0a2ca687aaf0e2d527943d">VANSAssemblerGidaspow::VANSAssemblerGidaspow</a></div><div class="ttdeci">VANSAssemblerGidaspow(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerGidaspow object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00569">vans_assemblers.h:569</a></div></div>
@@ -1311,12 +1299,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassVANSAssemblerKochHill_html_a461728be9555656ae5c759da94d6067f"><div class="ttname"><a href="classVANSAssemblerKochHill.html#a461728be9555656ae5c759da94d6067f">VANSAssemblerKochHill::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00466">vans_assemblers.h:466</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerKochHill_html_a64d652cb4a0a7bb97cc280cc3d511591"><div class="ttname"><a href="classVANSAssemblerKochHill.html#a64d652cb4a0a7bb97cc280cc3d511591">VANSAssemblerKochHill::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the particle-fluid interactions resulting from drag, using the Koch-Hill model.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l01246">vans_assemblers.cc:1247</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerKochHill_html_a82c3bfd81563a92223a7bae6c8201593"><div class="ttname"><a href="classVANSAssemblerKochHill.html#a82c3bfd81563a92223a7bae6c8201593">VANSAssemblerKochHill::VANSAssemblerKochHill</a></div><div class="ttdeci">VANSAssemblerKochHill(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerKochHill object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00451">vans_assemblers.h:451</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerMagnus_html"><div class="ttname"><a href="classVANSAssemblerMagnus.html">VANSAssemblerMagnus</a></div><div class="ttdoc">Assembler for the lift force using the Magnus model.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00699">vans_assemblers.h:701</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerMagnus_html_a289d835116789d18816c32f4c6aa0b2d"><div class="ttname"><a href="classVANSAssemblerMagnus.html#a289d835116789d18816c32f4c6aa0b2d">VANSAssemblerMagnus::VANSAssemblerMagnus</a></div><div class="ttdeci">VANSAssemblerMagnus()</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00706">vans_assemblers.h:706</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerMagnus_html"><div class="ttname"><a href="classVANSAssemblerMagnus.html">VANSAssemblerMagnus</a></div><div class="ttdoc">Assembler for the lift force using the Magnus model.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00698">vans_assemblers.h:700</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerMagnus_html_a40537fac662b06566e8d83e6995cc9a7"><div class="ttname"><a href="classVANSAssemblerMagnus.html#a40537fac662b06566e8d83e6995cc9a7">VANSAssemblerMagnus::VANSAssemblerMagnus</a></div><div class="ttdeci">VANSAssemblerMagnus()=default</div><div class="ttdoc">Default constructor.</div></div>
 <div class="ttc" id="aclassVANSAssemblerMagnus_html_ab3194f7fcc474473d9d98c094038c73c"><div class="ttname"><a href="classVANSAssemblerMagnus.html#ab3194f7fcc474473d9d98c094038c73c">VANSAssemblerMagnus::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the Magnus lift force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l01735">vans_assemblers.cc:1736</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerPressureForce_html"><div class="ttname"><a href="classVANSAssemblerPressureForce.html">VANSAssemblerPressureForce</a></div><div class="ttdoc">Assembler for the pressure force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00882">vans_assemblers.h:884</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerPressureForce_html_a51a80c2e9b95525007d0deb4c6d75c39"><div class="ttname"><a href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">VANSAssemblerPressureForce::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00905">vans_assemblers.h:905</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerPressureForce_html_a51d2c7cdcc6b1537abac618e503af5f5"><div class="ttname"><a href="classVANSAssemblerPressureForce.html#a51d2c7cdcc6b1537abac618e503af5f5">VANSAssemblerPressureForce::VANSAssemblerPressureForce</a></div><div class="ttdeci">VANSAssemblerPressureForce(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerPressureForce object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00891">vans_assemblers.h:891</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerPressureForce_html"><div class="ttname"><a href="classVANSAssemblerPressureForce.html">VANSAssemblerPressureForce</a></div><div class="ttdoc">Assembler for the pressure force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00878">vans_assemblers.h:880</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerPressureForce_html_a51a80c2e9b95525007d0deb4c6d75c39"><div class="ttname"><a href="classVANSAssemblerPressureForce.html#a51a80c2e9b95525007d0deb4c6d75c39">VANSAssemblerPressureForce::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00901">vans_assemblers.h:901</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerPressureForce_html_a51d2c7cdcc6b1537abac618e503af5f5"><div class="ttname"><a href="classVANSAssemblerPressureForce.html#a51d2c7cdcc6b1537abac618e503af5f5">VANSAssemblerPressureForce::VANSAssemblerPressureForce</a></div><div class="ttdeci">VANSAssemblerPressureForce(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerPressureForce object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00887">vans_assemblers.h:887</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerPressureForce_html_ae62fd11dfd360e8d1916f299f4524494"><div class="ttname"><a href="classVANSAssemblerPressureForce.html#ae62fd11dfd360e8d1916f299f4524494">VANSAssemblerPressureForce::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the pressure force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l02051">vans_assemblers.cc:2052</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerRong_html"><div class="ttname"><a href="classVANSAssemblerRong.html">VANSAssemblerRong</a></div><div class="ttdoc">Assembler for the drag force using the Rong model.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00321">vans_assemblers.h:323</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerRong_html_aad35bbbadf5774688225c6f3b0122ca0"><div class="ttname"><a href="classVANSAssemblerRong.html#aad35bbbadf5774688225c6f3b0122ca0">VANSAssemblerRong::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00345">vans_assemblers.h:345</a></div></div>
@@ -1324,24 +1312,24 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassVANSAssemblerRong_html_ad4f9e4e5fa7b7970c7109830746c2e1e"><div class="ttname"><a href="classVANSAssemblerRong.html#ad4f9e4e5fa7b7970c7109830746c2e1e">VANSAssemblerRong::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the particle-fluid interactions resulting from drag, using the Rong model.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l01064">vans_assemblers.cc:1064</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerSaffmanMei_html"><div class="ttname"><a href="classVANSAssemblerSaffmanMei.html">VANSAssemblerSaffmanMei</a></div><div class="ttdoc">Assembler for the lift force using the Saffman-Mei model.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00633">vans_assemblers.h:635</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerSaffmanMei_html_a2e661753ccae48683464851ace9d529c"><div class="ttname"><a href="classVANSAssemblerSaffmanMei.html#a2e661753ccae48683464851ace9d529c">VANSAssemblerSaffmanMei::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the Saffman-Mei lift force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l01582">vans_assemblers.cc:1583</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerSaffmanMei_html_a91a5d8c8fcaf4af47c7ab1f56a26ad8b"><div class="ttname"><a href="classVANSAssemblerSaffmanMei.html#a91a5d8c8fcaf4af47c7ab1f56a26ad8b">VANSAssemblerSaffmanMei::VANSAssemblerSaffmanMei</a></div><div class="ttdeci">VANSAssemblerSaffmanMei()</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00640">vans_assemblers.h:640</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerShearForce_html"><div class="ttname"><a href="classVANSAssemblerShearForce.html">VANSAssemblerShearForce</a></div><div class="ttdoc">Assembler for the shear force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00933">vans_assemblers.h:935</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerSaffmanMei_html_afb214534dc0609b681fa280069b4761a"><div class="ttname"><a href="classVANSAssemblerSaffmanMei.html#afb214534dc0609b681fa280069b4761a">VANSAssemblerSaffmanMei::VANSAssemblerSaffmanMei</a></div><div class="ttdeci">VANSAssemblerSaffmanMei()=default</div><div class="ttdoc">Default constructor.</div></div>
+<div class="ttc" id="aclassVANSAssemblerShearForce_html"><div class="ttname"><a href="classVANSAssemblerShearForce.html">VANSAssemblerShearForce</a></div><div class="ttdoc">Assembler for the shear force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00929">vans_assemblers.h:931</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerShearForce_html_a07fd41161792d3a1b8917c2623c7d873"><div class="ttname"><a href="classVANSAssemblerShearForce.html#a07fd41161792d3a1b8917c2623c7d873">VANSAssemblerShearForce::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the shear force on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l02125">vans_assemblers.cc:2126</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerShearForce_html_a14d2207c6dda43a418f1253ffb90d8cd"><div class="ttname"><a href="classVANSAssemblerShearForce.html#a14d2207c6dda43a418f1253ffb90d8cd">VANSAssemblerShearForce::VANSAssemblerShearForce</a></div><div class="ttdeci">VANSAssemblerShearForce(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerShearForce object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00942">vans_assemblers.h:942</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerShearForce_html_aef58ff09b5e5251bbf83e425da7b70f1"><div class="ttname"><a href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">VANSAssemblerShearForce::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00956">vans_assemblers.h:956</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerViscousTorque_html"><div class="ttname"><a href="classVANSAssemblerViscousTorque.html">VANSAssemblerViscousTorque</a></div><div class="ttdoc">Assembler for the viscous dissipative torque due to particle rotation as defined by Derksen (2004).</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00743">vans_assemblers.h:745</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerViscousTorque_html_a6b62d846b8f044293d54c7c34ba48d7e"><div class="ttname"><a href="classVANSAssemblerViscousTorque.html#a6b62d846b8f044293d54c7c34ba48d7e">VANSAssemblerViscousTorque::VANSAssemblerViscousTorque</a></div><div class="ttdeci">VANSAssemblerViscousTorque()</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00750">vans_assemblers.h:750</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerShearForce_html_a14d2207c6dda43a418f1253ffb90d8cd"><div class="ttname"><a href="classVANSAssemblerShearForce.html#a14d2207c6dda43a418f1253ffb90d8cd">VANSAssemblerShearForce::VANSAssemblerShearForce</a></div><div class="ttdeci">VANSAssemblerShearForce(const Parameters::CFDDEM &amp;cfd_dem)</div><div class="ttdoc">Construct a VANSAssemblerShearForce object.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00938">vans_assemblers.h:938</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerShearForce_html_aef58ff09b5e5251bbf83e425da7b70f1"><div class="ttname"><a href="classVANSAssemblerShearForce.html#aef58ff09b5e5251bbf83e425da7b70f1">VANSAssemblerShearForce::cfd_dem</a></div><div class="ttdeci">const Parameters::CFDDEM cfd_dem</div><div class="ttdoc">CFD-DEM simulation parameters.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00952">vans_assemblers.h:952</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerViscousTorque_html"><div class="ttname"><a href="classVANSAssemblerViscousTorque.html">VANSAssemblerViscousTorque</a></div><div class="ttdoc">Assembler for the viscous dissipative torque due to particle rotation as defined by Derksen (2004).</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00741">vans_assemblers.h:743</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerViscousTorque_html_a7ec8ddfb6b5ccf583178931248322e5f"><div class="ttname"><a href="classVANSAssemblerViscousTorque.html#a7ec8ddfb6b5ccf583178931248322e5f">VANSAssemblerViscousTorque::VANSAssemblerViscousTorque</a></div><div class="ttdeci">VANSAssemblerViscousTorque()=default</div><div class="ttdoc">Default constructor.</div></div>
 <div class="ttc" id="aclassVANSAssemblerViscousTorque_html_ac1e16c3d42cad73a951710d059d1eb77"><div class="ttname"><a href="classVANSAssemblerViscousTorque.html#ac1e16c3d42cad73a951710d059d1eb77">VANSAssemblerViscousTorque::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the viscous torque dissipation on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l01883">vans_assemblers.cc:1884</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerVorticalTorque_html"><div class="ttname"><a href="classVANSAssemblerVorticalTorque.html">VANSAssemblerVorticalTorque</a></div><div class="ttdoc">Assembler for the viscous dissipative torque due to fluid vorticity as defined by Derksen (2004).</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00788">vans_assemblers.h:790</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerVorticalTorque_html"><div class="ttname"><a href="classVANSAssemblerVorticalTorque.html">VANSAssemblerVorticalTorque</a></div><div class="ttdoc">Assembler for the viscous dissipative torque due to fluid vorticity as defined by Derksen (2004).</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00785">vans_assemblers.h:787</a></div></div>
 <div class="ttc" id="aclassVANSAssemblerVorticalTorque_html_a18ba19476cc6ef95de26043eddee4472"><div class="ttname"><a href="classVANSAssemblerVorticalTorque.html#a18ba19476cc6ef95de26043eddee4472">VANSAssemblerVorticalTorque::calculate_particle_fluid_interactions</a></div><div class="ttdeci">virtual void calculate_particle_fluid_interactions(NavierStokesScratchData&lt; dim &gt; &amp;scratch_data) override</div><div class="ttdoc">Calculate the vortical torque on particles.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8cc_source.html#l01941">vans_assemblers.cc:1942</a></div></div>
-<div class="ttc" id="aclassVANSAssemblerVorticalTorque_html_a54ba3804a811372e8f60138a060ce20b"><div class="ttname"><a href="classVANSAssemblerVorticalTorque.html#a54ba3804a811372e8f60138a060ce20b">VANSAssemblerVorticalTorque::VANSAssemblerVorticalTorque</a></div><div class="ttdeci">VANSAssemblerVorticalTorque()</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l00795">vans_assemblers.h:795</a></div></div>
+<div class="ttc" id="aclassVANSAssemblerVorticalTorque_html_a3cf8542e9013c1bff61c5c6322e9921e"><div class="ttname"><a href="classVANSAssemblerVorticalTorque.html#a3cf8542e9013c1bff61c5c6322e9921e">VANSAssemblerVorticalTorque::VANSAssemblerVorticalTorque</a></div><div class="ttdeci">VANSAssemblerVorticalTorque()=default</div><div class="ttdoc">Default constructor.</div></div>
 <div class="ttc" id="acopy__data_8h_html"><div class="ttname"><a href="copy__data_8h.html">copy_data.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">Variable::velocity</a></div><div class="ttdeci">@ velocity</div><div class="ttdoc">Velocity vector field from fluid dynamics.</div></div>
 <div class="ttc" id="anavier__stokes__assemblers_8h_html"><div class="ttname"><a href="navier__stokes__assemblers_8h.html">navier_stokes_assemblers.h</a></div></div>
 <div class="ttc" id="anavier__stokes__scratch__data_8h_html"><div class="ttname"><a href="navier__stokes__scratch__data_8h.html">navier_stokes_scratch_data.h</a></div></div>
 <div class="ttc" id="asimulation__control_8h_html"><div class="ttname"><a href="simulation__control_8h.html">simulation_control.h</a></div><div class="ttdoc">Simulation control classes for managing time-stepping and iteration control in Lethe.</div></div>
 <div class="ttc" id="astructParameters_1_1CFDDEM_html"><div class="ttname"><a href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a></div><div class="ttdoc">Parameters for the CFD-DEM coupled solver.</div><div class="ttdef"><b>Definition</b> <a href="parameters__cfd__dem_8h_source.html#l00243">parameters_cfd_dem.h:244</a></div></div>
-<div class="ttc" id="avans__assemblers_8h_html_ae801b45c8aa88b8de6787730af087b59"><div class="ttname"><a href="vans__assemblers_8h.html#ae801b45c8aa88b8de6787730af087b59">calculate_gamma</a></div><div class="ttdeci">double calculate_gamma(double velocity, double kinematic_viscosity, double, double c_star)</div><div class="ttdoc">Calculate the grad-div stabilization constant  for the VANS equations.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01070">vans_assemblers.h:1070</a></div></div>
+<div class="ttc" id="avans__assemblers_8h_html_ae801b45c8aa88b8de6787730af087b59"><div class="ttname"><a href="vans__assemblers_8h.html#ae801b45c8aa88b8de6787730af087b59">calculate_gamma</a></div><div class="ttdeci">double calculate_gamma(double velocity, double kinematic_viscosity, double, double c_star)</div><div class="ttdoc">Calculate the grad-div stabilization constant  for the VANS equations.</div><div class="ttdef"><b>Definition</b> <a href="vans__assemblers_8h_source.html#l01066">vans_assemblers.h:1066</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!--
 SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors

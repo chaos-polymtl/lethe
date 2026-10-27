@@ -103,8 +103,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac8a5f16e3b1f378fb28d61d27006e951" id="r_ac8a5f16e3b1f378fb28d61d27006e951"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#ac8a5f16e3b1f378fb28d61d27006e951">SignedDistanceSolver</a> (std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt; background_triangulation, std::shared_ptr&lt; FiniteElement&lt; dim &gt; &gt; background_fe, const double p_max_distance, const double p_iso_level, const double p_scaling, const <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Parameters::Verbosity</a> p_verbosity)</td></tr>
-<tr class="separator:ac8a5f16e3b1f378fb28d61d27006e951"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7642cd5668f6ec3529875536a5c3273f" id="r_a7642cd5668f6ec3529875536a5c3273f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a7642cd5668f6ec3529875536a5c3273f">SignedDistanceSolver</a> (const std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt; &amp;background_triangulation, std::shared_ptr&lt; FiniteElement&lt; dim &gt; &gt; background_fe, const double p_max_distance, const double p_iso_level, const double p_scaling, const <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Parameters::Verbosity</a> p_verbosity)</td></tr>
+<tr class="separator:a7642cd5668f6ec3529875536a5c3273f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a2f538e72870490a75dfd1ea4c32612" id="r_a7a2f538e72870490a75dfd1ea4c32612"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a7a2f538e72870490a75dfd1ea4c32612">setup_dofs</a> ()</td></tr>
 <tr class="separator:a7a2f538e72870490a75dfd1ea4c32612"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dd249772c4781c042e3b63360245859" id="r_a0dd249772c4781c042e3b63360245859"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a0dd249772c4781c042e3b63360245859">set_level_set_from_background_mesh</a> (const DoFHandler&lt; dim &gt; &amp;background_dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;background_level_set_vector)</td></tr>
@@ -240,8 +240,8 @@ class InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;</div><p>Solv
 
 <p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00469">469</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac8a5f16e3b1f378fb28d61d27006e951" name="ac8a5f16e3b1f378fb28d61d27006e951"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8a5f16e3b1f378fb28d61d27006e951">&#9670;&#160;</a></span>SignedDistanceSolver()</h2>
+<a id="a7642cd5668f6ec3529875536a5c3273f" name="a7642cd5668f6ec3529875536a5c3273f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7642cd5668f6ec3529875536a5c3273f">&#9670;&#160;</a></span>SignedDistanceSolver()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -254,7 +254,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
         <tr>
           <td class="memname"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html">InterfaceTools::SignedDistanceSolver</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::SignedDistanceSolver </td>
           <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>background_triangulation</em>, </td>
         </tr>
         <tr>

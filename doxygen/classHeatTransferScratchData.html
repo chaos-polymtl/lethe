@@ -102,8 +102,8 @@ Inheritance diagram for HeatTransferScratchData&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a53545fd09fb56659eacbe9f4fc617c8d" id="r_a53545fd09fb56659eacbe9f4fc617c8d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#a53545fd09fb56659eacbe9f4fc617c8d">HeatTransferScratchData</a> (const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> <a class="el" href="classHeatTransferScratchData.html#a709a386e8ac3eec733c96d2367d874da">properties_manager</a>, const FiniteElement&lt; dim &gt; &amp;fe_ht, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const FiniteElement&lt; dim &gt; &amp;fe_fd, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature, const double delta_T_ref)</td></tr>
-<tr class="separator:a53545fd09fb56659eacbe9f4fc617c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7340edb1c387fb7e1daf051b93853bcf" id="r_a7340edb1c387fb7e1daf051b93853bcf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#a7340edb1c387fb7e1daf051b93853bcf">HeatTransferScratchData</a> (const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;<a class="el" href="classHeatTransferScratchData.html#a709a386e8ac3eec733c96d2367d874da">properties_manager</a>, const FiniteElement&lt; dim &gt; &amp;fe_ht, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const FiniteElement&lt; dim &gt; &amp;fe_fd, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature, const double delta_T_ref)</td></tr>
+<tr class="separator:a7340edb1c387fb7e1daf051b93853bcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa4b7b3a2d5fd1212e99d3080365841e" id="r_aaa4b7b3a2d5fd1212e99d3080365841e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#aaa4b7b3a2d5fd1212e99d3080365841e">HeatTransferScratchData</a> (const <a class="el" href="classHeatTransferScratchData.html">HeatTransferScratchData</a>&lt; dim &gt; &amp;sd)</td></tr>
 <tr class="separator:aaa4b7b3a2d5fd1212e99d3080365841e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed94ad151a581846917929bf3e232401" id="r_aed94ad151a581846917929bf3e232401"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#aed94ad151a581846917929bf3e232401">allocate</a> () override</td></tr>
@@ -294,8 +294,8 @@ class HeatTransferScratchData&lt; dim &gt;</div><p>Class that stores the informa
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00043">43</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a53545fd09fb56659eacbe9f4fc617c8d" name="a53545fd09fb56659eacbe9f4fc617c8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53545fd09fb56659eacbe9f4fc617c8d">&#9670;&#160;</a></span>HeatTransferScratchData() <span class="overload">[1/2]</span></h2>
+<a id="a7340edb1c387fb7e1daf051b93853bcf" name="a7340edb1c387fb7e1daf051b93853bcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7340edb1c387fb7e1daf051b93853bcf">&#9670;&#160;</a></span>HeatTransferScratchData() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -308,7 +308,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classHeatTransferScratchData.html">HeatTransferScratchData</a>&lt; dim &gt;<a class="el" href="classHeatTransferScratchData.html">::HeatTransferScratchData</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;&#160;</td>
           <td class="paramname"><em>properties_manager</em>, </td>
         </tr>
         <tr>
@@ -843,7 +843,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00292">292</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00410">PhysicalPropertiesManager::density_is_constant()</a>, <a class="el" href="ale_8h_source.html#l00064">Parameters::ALE&lt; dim &gt;::enabled()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00566">HeatTransferScratchData&lt; dim &gt;::fe_values_fd</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00504">HeatTransferScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00564">HeatTransferScratchData&lt; dim &gt;::pressure</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00571">HeatTransferScratchData&lt; dim &gt;::pressure_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00468">HeatTransferScratchData&lt; dim &gt;::properties_manager</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00510">HeatTransferScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00563">HeatTransferScratchData&lt; dim &gt;::velocities</a>, <a class="el" href="ale_8h_source.html#l00056">Parameters::ALE&lt; dim &gt;::velocity</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00567">HeatTransferScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00412">PhysicalPropertiesManager::density_is_constant()</a>, <a class="el" href="ale_8h_source.html#l00064">Parameters::ALE&lt; dim &gt;::enabled()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00566">HeatTransferScratchData&lt; dim &gt;::fe_values_fd</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00504">HeatTransferScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00564">HeatTransferScratchData&lt; dim &gt;::pressure</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00571">HeatTransferScratchData&lt; dim &gt;::pressure_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00468">HeatTransferScratchData&lt; dim &gt;::properties_manager</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00510">HeatTransferScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00563">HeatTransferScratchData&lt; dim &gt;::velocities</a>, <a class="el" href="ale_8h_source.html#l00056">Parameters::ALE&lt; dim &gt;::velocity</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00567">HeatTransferScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>

@@ -68,7 +68,7 @@ var searchData=
   ['dem_5fstatistic_5fvariable_65',['dem_statistic_variable',['../namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2b',1,'DEM']]],
   ['demactionmanager_66',['demactionmanager',['../classDEMActionManager.html#a52395ec406d911df34d4f8c6752f64a0',1,'DEMActionManager::DEMActionManager(const DEMActionManager &amp;copy)=delete'],['../classDEMActionManager.html#ae8dc3e336f5bf4601dc03ff838adea55',1,'DEMActionManager::DEMActionManager()'],['../classDEMActionManager.html',1,'DEMActionManager']]],
   ['demcontactmanager_67',['DEMContactManager',['../classDEMContactManager.html',1,'']]],
-  ['demsolidobjects_68',['demsolidobjects',['../classParameters_1_1DEMSolidObjects.html#a5cd1979d413e84b14cd27355a3cdd365',1,'Parameters::DEMSolidObjects::DEMSolidObjects()'],['../classParameters_1_1DEMSolidObjects.html',1,'Parameters::DEMSolidObjects&lt; dim &gt;']]],
+  ['demsolidobjects_68',['demsolidobjects',['../classParameters_1_1DEMSolidObjects.html#aa079aeee7acf8836877ce500b266e271',1,'Parameters::DEMSolidObjects::DEMSolidObjects()'],['../classParameters_1_1DEMSolidObjects.html',1,'Parameters::DEMSolidObjects&lt; dim &gt;']]],
   ['demsolver_69',['demsolver',['../classDEMSolver.html',1,'DEMSolver&lt; dim, PropertiesIndex &gt;'],['../classDEMSolver.html#a98f6f11ba2a8d3176e79845f7263a526',1,'DEMSolver::DEMSolver()']]],
   ['demsolverparameters_70',['DEMSolverParameters',['../classDEMSolverParameters.html',1,'']]],
   ['demsubiterationlogic_71',['DEMSubIterationLogic',['../classSubSimulationControlDEM.html#a779f3e8fea85594fecbda36bd89ec7ae',1,'SubSimulationControlDEM']]],

@@ -97,10 +97,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5f51051c609b64ac39eaa02a65e4e870" id="r_a5f51051c609b64ac39eaa02a65e4e870"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a5f51051c609b64ac39eaa02a65e4e870">execute_cell_neighbors_search</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info periodic_boundaries_cells_information)</td></tr>
-<tr class="separator:a5f51051c609b64ac39eaa02a65e4e870"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68146a421b3913130fb364d21e84d534" id="r_a68146a421b3913130fb364d21e84d534"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a68146a421b3913130fb364d21e84d534">update_cell_neighbors</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info periodic_boundaries_cells_information)</td></tr>
-<tr class="separator:a68146a421b3913130fb364d21e84d534"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a550460d8d41d41b73529ec4dec6e28b9" id="r_a550460d8d41d41b73529ec4dec6e28b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a550460d8d41d41b73529ec4dec6e28b9">execute_cell_neighbors_search</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information)</td></tr>
+<tr class="separator:a550460d8d41d41b73529ec4dec6e28b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e8a3468aa26719e168ea678721083e3" id="r_a4e8a3468aa26719e168ea678721083e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a4e8a3468aa26719e168ea678721083e3">update_cell_neighbors</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information)</td></tr>
+<tr class="separator:a4e8a3468aa26719e168ea678721083e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03a33ccbab1db07d26c105677f4b0741" id="r_a03a33ccbab1db07d26c105677f4b0741"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#a03a33ccbab1db07d26c105677f4b0741">update_contacts</a> ()</td></tr>
 <tr class="separator:a03a33ccbab1db07d26c105677f4b0741"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa28c060306742dbaad81a3ba7c874aaa" id="r_aa28c060306742dbaad81a3ba7c874aaa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDEMContactManager.html#aa28c060306742dbaad81a3ba7c874aaa">update_local_particles_in_cells</a> (const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler)</td></tr>
@@ -217,8 +217,8 @@ class DEMContactManager&lt; dim, PropertiesIndex &gt;</div><p>Manage the numerou
 
 <p class="definition">Definition at line <a class="el" href="dem__contact__manager_8h_source.html#l00029">29</a> of file <a class="el" href="dem__contact__manager_8h_source.html">dem_contact_manager.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a5f51051c609b64ac39eaa02a65e4e870" name="a5f51051c609b64ac39eaa02a65e4e870"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f51051c609b64ac39eaa02a65e4e870">&#9670;&#160;</a></span>execute_cell_neighbors_search()</h2>
+<a id="a550460d8d41d41b73529ec4dec6e28b9" name="a550460d8d41d41b73529ec4dec6e28b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a550460d8d41d41b73529ec4dec6e28b9">&#9670;&#160;</a></span>execute_cell_neighbors_search()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -234,7 +234,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info&#160;</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info &amp;&#160;</td>
           <td class="paramname"><em>periodic_boundaries_cells_information</em>&#160;</td>
         </tr>
         <tr>
@@ -887,8 +887,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 </div>
 </div>
-<a id="a68146a421b3913130fb364d21e84d534" name="a68146a421b3913130fb364d21e84d534"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68146a421b3913130fb364d21e84d534">&#9670;&#160;</a></span>update_cell_neighbors()</h2>
+<a id="a4e8a3468aa26719e168ea678721083e3" name="a4e8a3468aa26719e168ea678721083e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e8a3468aa26719e168ea678721083e3">&#9670;&#160;</a></span>update_cell_neighbors()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -907,7 +907,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info&#160;</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info &amp;&#160;</td>
           <td class="paramname"><em>periodic_boundaries_cells_information</em>&#160;</td>
         </tr>
         <tr>

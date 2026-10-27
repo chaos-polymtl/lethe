@@ -27,7 +27,7 @@ var searchData=
   ['dem_5fiterator_24',['dem_iterator',['../classCFDDEMSolver.html#abd49d89e6bfa020e375b675f5a4dfead',1,'CFDDEMSolver::dem_iterator()'],['../classCFDDEMMatrixFree.html#ad185460f35f280b27f0f718596234705',1,'CFDDEMMatrixFree::dem_iterator()']]],
   ['dem_5fsetup_5fparameters_25',['dem_setup_parameters',['../classCFDDEMSolver.html#ab28512d40501aa2de5badc7bab939d6b',1,'CFDDEMSolver::dem_setup_parameters()'],['../classCFDDEMMatrixFree.html#a9968a687cf366ef49ace0ecbc1889c1b',1,'CFDDEMMatrixFree::dem_setup_parameters()']]],
   ['demactionmanager_26',['demactionmanager',['../classDEMActionManager.html#a52395ec406d911df34d4f8c6752f64a0',1,'DEMActionManager::DEMActionManager(const DEMActionManager &amp;copy)=delete'],['../classDEMActionManager.html#ae8dc3e336f5bf4601dc03ff838adea55',1,'DEMActionManager::DEMActionManager()']]],
-  ['demsolidobjects_27',['DEMSolidObjects',['../classParameters_1_1DEMSolidObjects.html#a5cd1979d413e84b14cd27355a3cdd365',1,'Parameters::DEMSolidObjects']]],
+  ['demsolidobjects_27',['DEMSolidObjects',['../classParameters_1_1DEMSolidObjects.html#aa079aeee7acf8836877ce500b266e271',1,'Parameters::DEMSolidObjects']]],
   ['demsolver_28',['DEMSolver',['../classDEMSolver.html#a98f6f11ba2a8d3176e79845f7263a526',1,'DEMSolver']]],
   ['density_5fis_5fconstant_29',['density_is_constant',['../classPhysicalPropertiesManager.html#a4fbf4cde6182467899c9cfab9a4bfdb0',1,'PhysicalPropertiesManager']]],
   ['densityconstant_30',['DensityConstant',['../classDensityConstant.html#a8260fc4b836e19dc9f2bb690c89f0319',1,'DensityConstant']]],

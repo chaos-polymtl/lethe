@@ -102,8 +102,8 @@ Inheritance diagram for LevelsetPostprocessor&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab774c7d3cd3ff56e4eb7c9d8f87c8496" id="r_ab774c7d3cd3ff56e4eb7c9d8f87c8496"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLevelsetPostprocessor.html#ab774c7d3cd3ff56e4eb7c9d8f87c8496">LevelsetPostprocessor</a> (const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; <a class="el" href="classLevelsetPostprocessor.html#a1e7cf9444dd8b1f890d9597415e4fd1c">shape</a>)</td></tr>
-<tr class="separator:ab774c7d3cd3ff56e4eb7c9d8f87c8496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfefef1f4603c3b65739525c7faf5e70" id="r_adfefef1f4603c3b65739525c7faf5e70"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLevelsetPostprocessor.html#adfefef1f4603c3b65739525c7faf5e70">LevelsetPostprocessor</a> (const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;<a class="el" href="classLevelsetPostprocessor.html#a1e7cf9444dd8b1f890d9597415e4fd1c">shape</a>)</td></tr>
+<tr class="separator:adfefef1f4603c3b65739525c7faf5e70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f2680caaee9dc7eca5ef07ae40f8e62" id="r_a0f2680caaee9dc7eca5ef07ae40f8e62"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLevelsetPostprocessor.html#a0f2680caaee9dc7eca5ef07ae40f8e62">evaluate_vector_field</a> (const DataPostprocessorInputs::Vector&lt; dim &gt; &amp;input_data, std::vector&lt; Vector&lt; double &gt; &gt; &amp;computed_quantities) const override</td></tr>
 <tr class="separator:a0f2680caaee9dc7eca5ef07ae40f8e62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -116,10 +116,10 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 class LevelsetPostprocessor&lt; dim &gt;</div><p>Compute level set field for a given shape within a domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessors_8h_source.html#l00613">613</a> of file <a class="el" href="postprocessors_8h_source.html">postprocessors.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessors_8h_source.html#l00614">614</a> of file <a class="el" href="postprocessors_8h_source.html">postprocessors.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab774c7d3cd3ff56e4eb7c9d8f87c8496" name="ab774c7d3cd3ff56e4eb7c9d8f87c8496"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab774c7d3cd3ff56e4eb7c9d8f87c8496">&#9670;&#160;</a></span>LevelsetPostprocessor()</h2>
+<a id="adfefef1f4603c3b65739525c7faf5e70" name="adfefef1f4603c3b65739525c7faf5e70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfefef1f4603c3b65739525c7faf5e70">&#9670;&#160;</a></span>LevelsetPostprocessor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -132,7 +132,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classLevelsetPostprocessor.html">LevelsetPostprocessor</a>&lt; dim &gt;<a class="el" href="classLevelsetPostprocessor.html">::LevelsetPostprocessor</a> </td>
           <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>shape</em></td><td>)</td>
           <td></td>
         </tr>
@@ -152,7 +152,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessors_8h_source.html#l00621">621</a> of file <a class="el" href="postprocessors_8h_source.html">postprocessors.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessors_8h_source.html#l00622">622</a> of file <a class="el" href="postprocessors_8h_source.html">postprocessors.h</a>.</p>
 
 </div>
 </div>
@@ -203,9 +203,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section note"><dt>Note</dt><dd><code>input_data</code> contains both velocity and pressure data since fluid dynamics in Lethe is solved in a monolithic way, but here only the positions of evaluation points are used. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessors_8h_source.html#l00640">640</a> of file <a class="el" href="postprocessors_8h_source.html">postprocessors.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessors_8h_source.html#l00641">641</a> of file <a class="el" href="postprocessors_8h_source.html">postprocessors.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessors_8h_source.html#l00660">LevelsetPostprocessor&lt; dim &gt;::shape</a>.</p>
+<p class="reference">References <a class="el" href="postprocessors_8h_source.html#l00661">LevelsetPostprocessor&lt; dim &gt;::shape</a>.</p>
 
 </div>
 </div>
@@ -234,7 +234,7 @@ template&lt;int dim&gt; </div>
 
 <p>Geometrical entity. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessors_8h_source.html#l00660">660</a> of file <a class="el" href="postprocessors_8h_source.html">postprocessors.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessors_8h_source.html#l00661">661</a> of file <a class="el" href="postprocessors_8h_source.html">postprocessors.h</a>.</p>
 
 </div>
 </div>

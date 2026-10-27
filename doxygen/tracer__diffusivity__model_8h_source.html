@@ -97,76 +97,76 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">tracer_diffusivity_model.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="tracer__diffusivity__model_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors</span></div>
+<a href="tracer__diffusivity__model_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_tracer_diffusivity_model_h</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#define lethe_tracer_diffusivity_model_h</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;<a class="code" href="physical__property__model_8h.html">core/physical_property_model.h</a>&gt;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment"> * @brief Abstract class that allows to calculates the</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment"> * tracer diffusivity.</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment"> */</span></div>
-<div class="foldopen" id="foldopen00013" data-start="{" data-end="};">
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="classTracerDiffusivityModel.html">   13</a></span><span class="keyword">class </span><a class="code hl_class" href="classTracerDiffusivityModel.html">TracerDiffusivityModel</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicalPropertyModel.html">PhysicalPropertyModel</a></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">   * @brief Instantiates and returns a pointer to a TracerDiffusivityModel object by casting it to</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">   * the proper child class</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">   * @param material_properties Parameters for a material</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="keyword">static</span> std::shared_ptr&lt;TracerDiffusivityModel&gt;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <a class="code hl_function" href="classTracerDiffusivityModel.html#ac95429cb2e3de075247691ad5870bfa0">model_cast</a>(<span class="keyword">const</span> <a class="code hl_class" href="classParameters_1_1Material.html">Parameters::Material</a> &amp;material_properties);</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>};</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment"></span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment"> * @brief Abstract class that allows to calculates the</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment"> * tracer diffusivity.</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00015" data-start="{" data-end="};">
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="classTracerDiffusivityModel.html">   15</a></span><span class="keyword">class </span><a class="code hl_class" href="classTracerDiffusivityModel.html">TracerDiffusivityModel</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicalPropertyModel.html">PhysicalPropertyModel</a></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">   * @brief Instantiates and returns a pointer to a TracerDiffusivityModel object by casting it to</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">   * the proper child class</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">   * @param material_properties Parameters for a material</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keyword">static</span> std::shared_ptr&lt;TracerDiffusivityModel&gt;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <a class="code hl_function" href="classTracerDiffusivityModel.html#ac95429cb2e3de075247691ad5870bfa0">model_cast</a>(<span class="keyword">const</span> <a class="code hl_class" href="classParameters_1_1Material.html">Parameters::Material</a> &amp;material_properties);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>};</div>
 </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment"></span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"> * @brief Constant tracer diffusivity.</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment"> */</span></div>
-<div class="foldopen" id="foldopen00030" data-start="{" data-end="};">
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="classConstantTracerDiffusivity.html">   30</a></span><span class="keyword">class </span><a class="code hl_class" href="classConstantTracerDiffusivity.html">ConstantTracerDiffusivity</a> : <span class="keyword">public</span> <a class="code hl_class" href="classTracerDiffusivityModel.html">TracerDiffusivityModel</a></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>{</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">   * @brief Default constructor</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00036" data-start="{" data-end="}">
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="classConstantTracerDiffusivity.html#ad539cd7ccba3339c8b9fe3b1a6e667c7">   36</a></span>  <a class="code hl_function" href="classConstantTracerDiffusivity.html#ad539cd7ccba3339c8b9fe3b1a6e667c7">ConstantTracerDiffusivity</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> p_tracer_diffusivity)</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    : <a class="code hl_variable" href="classConstantTracerDiffusivity.html#a3f751a3de3ac717019cbd37f65189d90">tracer_diffusivity</a>(p_tracer_diffusivity)</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  {}</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"></span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment"> * @brief Constant tracer diffusivity.</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00032" data-start="{" data-end="};">
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="classConstantTracerDiffusivity.html">   32</a></span><span class="keyword">class </span><a class="code hl_class" href="classConstantTracerDiffusivity.html">ConstantTracerDiffusivity</a> : <span class="keyword">public</span> <a class="code hl_class" href="classTracerDiffusivityModel.html">TracerDiffusivityModel</a></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>{</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">   * @brief Default constructor</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00038" data-start="{" data-end="}">
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="classConstantTracerDiffusivity.html#ad539cd7ccba3339c8b9fe3b1a6e667c7">   38</a></span>  <a class="code hl_function" href="classConstantTracerDiffusivity.html#ad539cd7ccba3339c8b9fe3b1a6e667c7">ConstantTracerDiffusivity</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> p_tracer_diffusivity)</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    : <a class="code hl_variable" href="classConstantTracerDiffusivity.html#a3f751a3de3ac717019cbd37f65189d90">tracer_diffusivity</a>(p_tracer_diffusivity)</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  {}</div>
 </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment"></span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">   * @brief value Calculates the tracer diffusivity</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">   * @param fields_value Value of the various fields on which the property may depend.</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment">   * @return value of the physical property calculated with the fields_value</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen00046" data-start="{" data-end="}">
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="classConstantTracerDiffusivity.html#ad605800fd3ef6f6fdd2ee0fe5c6dff1b">   46</a></span>  <a class="code hl_function" href="classConstantTracerDiffusivity.html#ad605800fd3ef6f6fdd2ee0fe5c6dff1b">value</a>(<span class="keyword">const</span> std::map&lt;field, double&gt; &amp; <span class="comment">/*fields_value*/</span>)<span class="keyword"> override</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="classConstantTracerDiffusivity.html#a3f751a3de3ac717019cbd37f65189d90">tracer_diffusivity</a>;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  };</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment"></span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment">   * @brief value Calculates the tracer diffusivity</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">   * @param fields_value Value of the various fields on which the property may depend.</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="comment">   * @return value of the physical property calculated with the fields_value</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen00048" data-start="{" data-end="}">
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="classConstantTracerDiffusivity.html#ad605800fd3ef6f6fdd2ee0fe5c6dff1b">   48</a></span>  <a class="code hl_function" href="classConstantTracerDiffusivity.html#ad605800fd3ef6f6fdd2ee0fe5c6dff1b">value</a>(<span class="keyword">const</span> std::map&lt;field, double&gt; &amp; <span class="comment">/*fields_value*/</span>)<span class="keyword"> override</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="classConstantTracerDiffusivity.html#a3f751a3de3ac717019cbd37f65189d90">tracer_diffusivity</a>;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  };</div>
 </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment"></span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment">   * @brief vector_value Calculates the vector of tracer diffusivity.</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">   * @param field_vectors Vectors of the fields on which the diffusivity may depend.</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">   * @param property_vector Vectors of the tracer diffusivity values</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00057" data-start="{" data-end="}">
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="classConstantTracerDiffusivity.html#a254a8b92dfbfec90adc59355f65a4764">   57</a></span>  <a class="code hl_function" href="classConstantTracerDiffusivity.html#a254a8b92dfbfec90adc59355f65a4764">vector_value</a>(<span class="keyword">const</span> std::map&lt;<a class="code hl_enumeration" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt;double&gt;&gt; &amp; <span class="comment">/*field_vectors*/</span>,</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>               std::vector&lt;double&gt; &amp;property_vector)<span class="keyword"> override</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    std::fill(property_vector.begin(),</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>              property_vector.end(),</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>              <a class="code hl_variable" href="classConstantTracerDiffusivity.html#a3f751a3de3ac717019cbd37f65189d90">tracer_diffusivity</a>);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment"></span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">   * @brief vector_value Calculates the vector of tracer diffusivity.</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment">   * @param field_vectors Vectors of the fields on which the diffusivity may depend.</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">   * @param property_vector Vectors of the tracer diffusivity values</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00059" data-start="{" data-end="}">
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="classConstantTracerDiffusivity.html#a254a8b92dfbfec90adc59355f65a4764">   59</a></span>  <a class="code hl_function" href="classConstantTracerDiffusivity.html#a254a8b92dfbfec90adc59355f65a4764">vector_value</a>(<span class="keyword">const</span> std::map&lt;<a class="code hl_enumeration" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt;double&gt;&gt; &amp; <span class="comment">/*field_vectors*/</span>,</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>               std::vector&lt;double&gt; &amp;property_vector)<span class="keyword"> override</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    std::ranges::fill(property_vector, <a class="code hl_variable" href="classConstantTracerDiffusivity.html#a3f751a3de3ac717019cbd37f65189d90">tracer_diffusivity</a>);</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  }</div>
 </div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment"></span> </div>
@@ -201,7 +201,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keyword">const</span> <a class="code hl_enumeration" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> <span class="comment">/*id*/</span>,</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    std::vector&lt;double&gt; &amp;jacobian_vector)<span class="keyword"> override</span></div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    std::ranges::fill(jacobian_vector, 0);</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  };</div>
 </div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
@@ -351,7 +351,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        <a class="code hl_function" href="classPhysicalPropertyModel.html#a6a1ac6f51bca0334ba605b3a556ec473">vector_numerical_jacobian</a>(field_vectors, <span class="keywordtype">id</span>, jacobian_vector);</div>
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>      }</div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.);</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>      std::ranges::fill(jacobian_vector, 0.);</div>
 <div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>  };</div>
 </div>
 <div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
@@ -525,7 +525,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>          }</div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>      }</div>
 <div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.0);</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>      std::ranges::fill(jacobian_vector, 0.0);</div>
 <div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>  }</div>
 </div>
 <div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span> </div>
@@ -538,13 +538,13 @@ $(document).ready(function() { init_codefold(0); });
 </div>
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span> </div>
 <div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassConstantTracerDiffusivity_html"><div class="ttname"><a href="classConstantTracerDiffusivity.html">ConstantTracerDiffusivity</a></div><div class="ttdoc">Constant tracer diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00030">tracer_diffusivity_model.h:31</a></div></div>
-<div class="ttc" id="aclassConstantTracerDiffusivity_html_a254a8b92dfbfec90adc59355f65a4764"><div class="ttname"><a href="classConstantTracerDiffusivity.html#a254a8b92dfbfec90adc59355f65a4764">ConstantTracerDiffusivity::vector_value</a></div><div class="ttdeci">void vector_value(const std::map&lt; field, std::vector&lt; double &gt; &gt; &amp;, std::vector&lt; double &gt; &amp;property_vector) override</div><div class="ttdoc">vector_value Calculates the vector of tracer diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00057">tracer_diffusivity_model.h:57</a></div></div>
+<div class="ttc" id="aclassConstantTracerDiffusivity_html"><div class="ttname"><a href="classConstantTracerDiffusivity.html">ConstantTracerDiffusivity</a></div><div class="ttdoc">Constant tracer diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00032">tracer_diffusivity_model.h:33</a></div></div>
+<div class="ttc" id="aclassConstantTracerDiffusivity_html_a254a8b92dfbfec90adc59355f65a4764"><div class="ttname"><a href="classConstantTracerDiffusivity.html#a254a8b92dfbfec90adc59355f65a4764">ConstantTracerDiffusivity::vector_value</a></div><div class="ttdeci">void vector_value(const std::map&lt; field, std::vector&lt; double &gt; &gt; &amp;, std::vector&lt; double &gt; &amp;property_vector) override</div><div class="ttdoc">vector_value Calculates the vector of tracer diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00059">tracer_diffusivity_model.h:59</a></div></div>
 <div class="ttc" id="aclassConstantTracerDiffusivity_html_a3f751a3de3ac717019cbd37f65189d90"><div class="ttname"><a href="classConstantTracerDiffusivity.html#a3f751a3de3ac717019cbd37f65189d90">ConstantTracerDiffusivity::tracer_diffusivity</a></div><div class="ttdeci">const double tracer_diffusivity</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00097">tracer_diffusivity_model.h:97</a></div></div>
 <div class="ttc" id="aclassConstantTracerDiffusivity_html_a65cd7c52e3b7261c453a8fe045946418"><div class="ttname"><a href="classConstantTracerDiffusivity.html#a65cd7c52e3b7261c453a8fe045946418">ConstantTracerDiffusivity::jacobian</a></div><div class="ttdeci">double jacobian(const std::map&lt; field, double &gt; &amp;, field) override</div><div class="ttdoc">jacobian Calculates the jacobian (the partial derivative) of the diffusivity with respect to a field</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00074">tracer_diffusivity_model.h:74</a></div></div>
 <div class="ttc" id="aclassConstantTracerDiffusivity_html_a6cf0803e52240b56e91a461c508df63e"><div class="ttname"><a href="classConstantTracerDiffusivity.html#a6cf0803e52240b56e91a461c508df63e">ConstantTracerDiffusivity::vector_jacobian</a></div><div class="ttdeci">void vector_jacobian(const std::map&lt; field, std::vector&lt; double &gt; &gt; &amp;, const field, std::vector&lt; double &gt; &amp;jacobian_vector) override</div><div class="ttdoc">vector_jacobian Calculates the derivative of the tracer diffusivity with respect to a field.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00088">tracer_diffusivity_model.h:88</a></div></div>
-<div class="ttc" id="aclassConstantTracerDiffusivity_html_ad539cd7ccba3339c8b9fe3b1a6e667c7"><div class="ttname"><a href="classConstantTracerDiffusivity.html#ad539cd7ccba3339c8b9fe3b1a6e667c7">ConstantTracerDiffusivity::ConstantTracerDiffusivity</a></div><div class="ttdeci">ConstantTracerDiffusivity(const double p_tracer_diffusivity)</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00036">tracer_diffusivity_model.h:36</a></div></div>
-<div class="ttc" id="aclassConstantTracerDiffusivity_html_ad605800fd3ef6f6fdd2ee0fe5c6dff1b"><div class="ttname"><a href="classConstantTracerDiffusivity.html#ad605800fd3ef6f6fdd2ee0fe5c6dff1b">ConstantTracerDiffusivity::value</a></div><div class="ttdeci">double value(const std::map&lt; field, double &gt; &amp;) override</div><div class="ttdoc">value Calculates the tracer diffusivity</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00046">tracer_diffusivity_model.h:46</a></div></div>
+<div class="ttc" id="aclassConstantTracerDiffusivity_html_ad539cd7ccba3339c8b9fe3b1a6e667c7"><div class="ttname"><a href="classConstantTracerDiffusivity.html#ad539cd7ccba3339c8b9fe3b1a6e667c7">ConstantTracerDiffusivity::ConstantTracerDiffusivity</a></div><div class="ttdeci">ConstantTracerDiffusivity(const double p_tracer_diffusivity)</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00038">tracer_diffusivity_model.h:38</a></div></div>
+<div class="ttc" id="aclassConstantTracerDiffusivity_html_ad605800fd3ef6f6fdd2ee0fe5c6dff1b"><div class="ttname"><a href="classConstantTracerDiffusivity.html#ad605800fd3ef6f6fdd2ee0fe5c6dff1b">ConstantTracerDiffusivity::value</a></div><div class="ttdeci">double value(const std::map&lt; field, double &gt; &amp;) override</div><div class="ttdoc">value Calculates the tracer diffusivity</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00048">tracer_diffusivity_model.h:48</a></div></div>
 <div class="ttc" id="aclassGaussianLevelsetTracerDiffusivity_html"><div class="ttname"><a href="classGaussianLevelsetTracerDiffusivity.html">GaussianLevelsetTracerDiffusivity</a></div><div class="ttdoc">Diffusivity that depends on the Gaussian of the level set.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00245">tracer_diffusivity_model.h:246</a></div></div>
 <div class="ttc" id="aclassGaussianLevelsetTracerDiffusivity_html_a1854b64714457bf12881d8d3c6afea64"><div class="ttname"><a href="classGaussianLevelsetTracerDiffusivity.html#a1854b64714457bf12881d8d3c6afea64">GaussianLevelsetTracerDiffusivity::vector_jacobian</a></div><div class="ttdeci">void vector_jacobian(const std::map&lt; field, std::vector&lt; double &gt; &gt; &amp;field_vectors, const field id, std::vector&lt; double &gt; &amp;jacobian_vector) override</div><div class="ttdoc">Compute the derivative of the diffusivity with respect to a field.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00369">tracer_diffusivity_model.h:369</a></div></div>
 <div class="ttc" id="aclassGaussianLevelsetTracerDiffusivity_html_a1ea04b543b6238f4118089b47f5bb6c5"><div class="ttname"><a href="classGaussianLevelsetTracerDiffusivity.html#a1ea04b543b6238f4118089b47f5bb6c5">GaussianLevelsetTracerDiffusivity::value</a></div><div class="ttdeci">double value(const std::map&lt; field, double &gt; &amp;field_values) override</div><div class="ttdoc">Compute the diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00278">tracer_diffusivity_model.h:278</a></div></div>
@@ -570,7 +570,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassTanhLevelsetTracerDiffusivity_html_ac7cdf4e5de66e51654d776152df88b1d"><div class="ttname"><a href="classTanhLevelsetTracerDiffusivity.html#ac7cdf4e5de66e51654d776152df88b1d">TanhLevelsetTracerDiffusivity::tracer_diffusivity_inside</a></div><div class="ttdeci">const double tracer_diffusivity_inside</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00237">tracer_diffusivity_model.h:237</a></div></div>
 <div class="ttc" id="aclassTanhLevelsetTracerDiffusivity_html_ae888edc64c20298644fe129058ab47ec"><div class="ttname"><a href="classTanhLevelsetTracerDiffusivity.html#ae888edc64c20298644fe129058ab47ec">TanhLevelsetTracerDiffusivity::value</a></div><div class="ttdeci">double value(const std::map&lt; field, double &gt; &amp;field_values) override</div><div class="ttdoc">Compute the diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00135">tracer_diffusivity_model.h:135</a></div></div>
 <div class="ttc" id="aclassTanhLevelsetTracerDiffusivity_html_aeadfab5d127fb17c1a41faac97537e3c"><div class="ttname"><a href="classTanhLevelsetTracerDiffusivity.html#aeadfab5d127fb17c1a41faac97537e3c">TanhLevelsetTracerDiffusivity::vector_value</a></div><div class="ttdeci">void vector_value(const std::map&lt; field, std::vector&lt; double &gt; &gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</div><div class="ttdoc">Compute a vector of diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00156">tracer_diffusivity_model.h:156</a></div></div>
-<div class="ttc" id="aclassTracerDiffusivityModel_html"><div class="ttname"><a href="classTracerDiffusivityModel.html">TracerDiffusivityModel</a></div><div class="ttdoc">Abstract class that allows to calculates the tracer diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00013">tracer_diffusivity_model.h:14</a></div></div>
+<div class="ttc" id="aclassTracerDiffusivityModel_html"><div class="ttname"><a href="classTracerDiffusivityModel.html">TracerDiffusivityModel</a></div><div class="ttdoc">Abstract class that allows to calculates the tracer diffusivity.</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8h_source.html#l00015">tracer_diffusivity_model.h:16</a></div></div>
 <div class="ttc" id="aclassTracerDiffusivityModel_html_ac95429cb2e3de075247691ad5870bfa0"><div class="ttname"><a href="classTracerDiffusivityModel.html#ac95429cb2e3de075247691ad5870bfa0">TracerDiffusivityModel::model_cast</a></div><div class="ttdeci">static std::shared_ptr&lt; TracerDiffusivityModel &gt; model_cast(const Parameters::Material &amp;material_properties)</div><div class="ttdoc">Instantiates and returns a pointer to a TracerDiffusivityModel object by casting it to the proper chi...</div><div class="ttdef"><b>Definition</b> <a href="tracer__diffusivity__model_8cc_source.html#l00007">tracer_diffusivity_model.cc:7</a></div></div>
 <div class="ttc" id="aphysical__property__model_8h_html"><div class="ttname"><a href="physical__property__model_8h.html">physical_property_model.h</a></div></div>
 <div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a></div><div class="ttdeci">field</div><div class="ttdef"><b>Definition</b> <a href="physical__property__model_8h_source.html#l00037">physical_property_model.h:38</a></div></div>

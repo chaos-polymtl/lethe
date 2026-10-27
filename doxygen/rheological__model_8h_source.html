@@ -97,7 +97,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">rheological_model.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="rheological__model_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors</span></div>
+<a href="rheological__model_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_rheological_model_h</span></div>
@@ -880,9 +880,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00690" name="l00690"></a><span class="lineno"><a class="line" href="rheological__model_8h.html#ae75fc07fc5d04fd29ba0409c9fbaffcb">  690</a></span><a class="code hl_function" href="rheological__model_8h.html#ae75fc07fc5d04fd29ba0409c9fbaffcb">calculate_shear_rate_magnitude</a>(<span class="keyword">const</span> Tensor&lt;2, dim&gt; <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>)</div>
 <div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>{</div>
 <div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>  <span class="keywordtype">double</span> shear_rate_magnitude = 0;</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
 <div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    {</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; dim; ++j)</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; dim; ++j)</div>
 <div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>        {</div>
 <div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>          shear_rate_magnitude += (<a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[i][j] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[j][i]);</div>
 <div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>        }</div>

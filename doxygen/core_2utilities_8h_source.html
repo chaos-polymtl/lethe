@@ -1268,468 +1268,470 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01120" name="l01120"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b"> 1120</a></span><a class="code hl_function" href="core_2utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b">extract_keys_from_map</a>(<span class="keyword">const</span> std::map&lt;key, val&gt; &amp;map)</div>
 <div class="line"><a id="l01121" name="l01121"></a><span class="lineno"> 1121</span>{</div>
 <div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span>  std::vector&lt;key&gt; keys;</div>
-<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;pair : map)</div>
-<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span>    keys.push_back(pair.first);</div>
-<div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span>  <span class="keywordflow">return</span> keys;</div>
-<div class="line"><a id="l01126" name="l01126"></a><span class="lineno"> 1126</span>}</div>
+<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span>  keys.reserve(map.size());</div>
+<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;pair : map)</div>
+<div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span>    keys.push_back(pair.first);</div>
+<div class="line"><a id="l01126" name="l01126"></a><span class="lineno"> 1126</span>  <span class="keywordflow">return</span> keys;</div>
+<div class="line"><a id="l01127" name="l01127"></a><span class="lineno"> 1127</span>}</div>
 </div>
-<div class="line"><a id="l01127" name="l01127"></a><span class="lineno"> 1127</span><span class="comment"></span> </div>
-<div class="line"><a id="l01128" name="l01128"></a><span class="lineno"> 1128</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"> 1129</span><span class="comment"> * @brief Extract the values from map object</span></div>
-<div class="line"><a id="l01130" name="l01130"></a><span class="lineno"> 1130</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01131" name="l01131"></a><span class="lineno"> 1131</span><span class="comment"> * @tparam key Key of the map. This template parameter is not used.</span></div>
-<div class="line"><a id="l01132" name="l01132"></a><span class="lineno"> 1132</span><span class="comment"> * @tparam val Value of the map.</span></div>
-<div class="line"><a id="l01133" name="l01133"></a><span class="lineno"> 1133</span><span class="comment"> * @param[in] map Map object from which the keys are extracted</span></div>
-<div class="line"><a id="l01134" name="l01134"></a><span class="lineno"> 1134</span><span class="comment"> * @return values Vector of values from the map</span></div>
-<div class="line"><a id="l01135" name="l01135"></a><span class="lineno"> 1135</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01136" name="l01136"></a><span class="lineno"> 1136</span> </div>
-<div class="line"><a id="l01137" name="l01137"></a><span class="lineno"> 1137</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> key, <span class="keyword">typename</span> val&gt;</div>
-<div class="line"><a id="l01138" name="l01138"></a><span class="lineno"> 1138</span>std::vector&lt;val&gt;</div>
-<div class="foldopen" id="foldopen01139" data-start="{" data-end="}">
-<div class="line"><a id="l01139" name="l01139"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a4a392cd214e737c300c8f727e465a409"> 1139</a></span><a class="code hl_function" href="core_2utilities_8h.html#a4a392cd214e737c300c8f727e465a409">extract_values_from_map</a>(<span class="keyword">const</span> std::map&lt;key, val&gt; &amp;map)</div>
-<div class="line"><a id="l01140" name="l01140"></a><span class="lineno"> 1140</span>{</div>
-<div class="line"><a id="l01141" name="l01141"></a><span class="lineno"> 1141</span>  std::vector&lt;val&gt; values;</div>
-<div class="line"><a id="l01142" name="l01142"></a><span class="lineno"> 1142</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;pair : map)</div>
-<div class="line"><a id="l01143" name="l01143"></a><span class="lineno"> 1143</span>    values.push_back(pair.second);</div>
-<div class="line"><a id="l01144" name="l01144"></a><span class="lineno"> 1144</span>  <span class="keywordflow">return</span> values;</div>
-<div class="line"><a id="l01145" name="l01145"></a><span class="lineno"> 1145</span>}</div>
+<div class="line"><a id="l01128" name="l01128"></a><span class="lineno"> 1128</span><span class="comment"></span> </div>
+<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"> 1129</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01130" name="l01130"></a><span class="lineno"> 1130</span><span class="comment"> * @brief Extract the values from map object</span></div>
+<div class="line"><a id="l01131" name="l01131"></a><span class="lineno"> 1131</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01132" name="l01132"></a><span class="lineno"> 1132</span><span class="comment"> * @tparam key Key of the map. This template parameter is not used.</span></div>
+<div class="line"><a id="l01133" name="l01133"></a><span class="lineno"> 1133</span><span class="comment"> * @tparam val Value of the map.</span></div>
+<div class="line"><a id="l01134" name="l01134"></a><span class="lineno"> 1134</span><span class="comment"> * @param[in] map Map object from which the keys are extracted</span></div>
+<div class="line"><a id="l01135" name="l01135"></a><span class="lineno"> 1135</span><span class="comment"> * @return values Vector of values from the map</span></div>
+<div class="line"><a id="l01136" name="l01136"></a><span class="lineno"> 1136</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01137" name="l01137"></a><span class="lineno"> 1137</span> </div>
+<div class="line"><a id="l01138" name="l01138"></a><span class="lineno"> 1138</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> key, <span class="keyword">typename</span> val&gt;</div>
+<div class="line"><a id="l01139" name="l01139"></a><span class="lineno"> 1139</span>std::vector&lt;val&gt;</div>
+<div class="foldopen" id="foldopen01140" data-start="{" data-end="}">
+<div class="line"><a id="l01140" name="l01140"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a4a392cd214e737c300c8f727e465a409"> 1140</a></span><a class="code hl_function" href="core_2utilities_8h.html#a4a392cd214e737c300c8f727e465a409">extract_values_from_map</a>(<span class="keyword">const</span> std::map&lt;key, val&gt; &amp;map)</div>
+<div class="line"><a id="l01141" name="l01141"></a><span class="lineno"> 1141</span>{</div>
+<div class="line"><a id="l01142" name="l01142"></a><span class="lineno"> 1142</span>  std::vector&lt;val&gt; values;</div>
+<div class="line"><a id="l01143" name="l01143"></a><span class="lineno"> 1143</span>  values.reserve(map.size());</div>
+<div class="line"><a id="l01144" name="l01144"></a><span class="lineno"> 1144</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;pair : map)</div>
+<div class="line"><a id="l01145" name="l01145"></a><span class="lineno"> 1145</span>    values.push_back(pair.second);</div>
+<div class="line"><a id="l01146" name="l01146"></a><span class="lineno"> 1146</span>  <span class="keywordflow">return</span> values;</div>
+<div class="line"><a id="l01147" name="l01147"></a><span class="lineno"> 1147</span>}</div>
 </div>
-<div class="line"><a id="l01146" name="l01146"></a><span class="lineno"> 1146</span><span class="comment"></span> </div>
-<div class="line"><a id="l01147" name="l01147"></a><span class="lineno"> 1147</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01148" name="l01148"></a><span class="lineno"> 1148</span><span class="comment"> * @brief Concatenate words which are passed from the command line to a main function</span></div>
-<div class="line"><a id="l01149" name="l01149"></a><span class="lineno"> 1149</span><span class="comment"> * into a single string in which the words are seperated by space.</span></div>
-<div class="line"><a id="l01150" name="l01150"></a><span class="lineno"> 1150</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01151" name="l01151"></a><span class="lineno"> 1151</span><span class="comment"> * @param[in] argc number of arguments in C style.</span></div>
-<div class="line"><a id="l01152" name="l01152"></a><span class="lineno"> 1152</span><span class="comment"> * @param[in] argv arguments themselves in C style.</span></div>
-<div class="line"><a id="l01153" name="l01153"></a><span class="lineno"> 1153</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01154" name="l01154"></a><span class="lineno"> 1154</span> </div>
-<div class="line"><a id="l01155" name="l01155"></a><span class="lineno"> 1155</span>std::string</div>
-<div class="line"><a id="l01156" name="l01156"></a><span class="lineno"> 1156</span><a class="code hl_function" href="core_2utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv);</div>
-<div class="line"><a id="l01157" name="l01157"></a><span class="lineno"> 1157</span><span class="comment"></span> </div>
-<div class="line"><a id="l01158" name="l01158"></a><span class="lineno"> 1158</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01159" name="l01159"></a><span class="lineno"> 1159</span><span class="comment"> * @brief Print the information of the deal.II and Lethe branches</span></div>
-<div class="line"><a id="l01160" name="l01160"></a><span class="lineno"> 1160</span><span class="comment"> * used to run an application in the &quot;git describe&quot; format.</span></div>
-<div class="line"><a id="l01161" name="l01161"></a><span class="lineno"> 1161</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01162" name="l01162"></a><span class="lineno"> 1162</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l01163" name="l01163"></a><span class="lineno"> 1163</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01164" name="l01164"></a><span class="lineno"> 1164</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01165" name="l01165"></a><span class="lineno"> 1165</span><a class="code hl_function" href="core_2utilities_8h.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout);</div>
-<div class="line"><a id="l01166" name="l01166"></a><span class="lineno"> 1166</span><span class="comment"></span> </div>
-<div class="line"><a id="l01167" name="l01167"></a><span class="lineno"> 1167</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01168" name="l01168"></a><span class="lineno"> 1168</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
-<div class="line"><a id="l01169" name="l01169"></a><span class="lineno"> 1169</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01170" name="l01170"></a><span class="lineno"> 1170</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
-<div class="line"><a id="l01171" name="l01171"></a><span class="lineno"> 1171</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
-<div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
-<div class="line"><a id="l01173" name="l01173"></a><span class="lineno"> 1173</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
-<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
-<div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
-<div class="line"><a id="l01176" name="l01176"></a><span class="lineno"> 1176</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01177" name="l01177"></a><span class="lineno"> 1177</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
-<div class="line"><a id="l01178" name="l01178"></a><span class="lineno"> 1178</span><a class="code hl_function" href="core_2utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv);</div>
-<div class="line"><a id="l01179" name="l01179"></a><span class="lineno"> 1179</span><span class="comment"></span> </div>
-<div class="line"><a id="l01180" name="l01180"></a><span class="lineno"> 1180</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01181" name="l01181"></a><span class="lineno"> 1181</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
-<div class="line"><a id="l01182" name="l01182"></a><span class="lineno"> 1182</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01183" name="l01183"></a><span class="lineno"> 1183</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l01184" name="l01184"></a><span class="lineno"> 1184</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
-<div class="line"><a id="l01185" name="l01185"></a><span class="lineno"> 1185</span><span class="comment"> * file.</span></div>
-<div class="line"><a id="l01186" name="l01186"></a><span class="lineno"> 1186</span><span class="comment"> * @param[in] file_name File name where the parameters will be written.</span></div>
-<div class="line"><a id="l01187" name="l01187"></a><span class="lineno"> 1187</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01188" name="l01188"></a><span class="lineno"> 1188</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01189" name="l01189"></a><span class="lineno"> 1189</span><a class="code hl_function" href="core_2utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
-<div class="line"><a id="l01190" name="l01190"></a><span class="lineno"> 1190</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
-<div class="line"><a id="l01191" name="l01191"></a><span class="lineno"> 1191</span>                                <span class="keyword">const</span> std::string        &amp;file_name);</div>
-<div class="line"><a id="l01192" name="l01192"></a><span class="lineno"> 1192</span><span class="comment"></span> </div>
-<div class="line"><a id="l01193" name="l01193"></a><span class="lineno"> 1193</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01194" name="l01194"></a><span class="lineno"> 1194</span><span class="comment"> * @brief Identify escape sequences listed below and apply them to the string.</span></div>
-<div class="line"><a id="l01195" name="l01195"></a><span class="lineno"> 1195</span><span class="comment"> *  - &quot;\n&quot;: Newline</span></div>
-<div class="line"><a id="l01196" name="l01196"></a><span class="lineno"> 1196</span><span class="comment"> *  - &quot;\t&quot;: Horizontal tab</span></div>
-<div class="line"><a id="l01197" name="l01197"></a><span class="lineno"> 1197</span><span class="comment"> *  - &quot;\r&quot;: Carriage return</span></div>
-<div class="line"><a id="l01198" name="l01198"></a><span class="lineno"> 1198</span><span class="comment"> *  - &quot;\b&quot;: Backspace</span></div>
-<div class="line"><a id="l01199" name="l01199"></a><span class="lineno"> 1199</span><span class="comment"> *  - &quot;\v&quot;: Vertical tab</span></div>
-<div class="line"><a id="l01200" name="l01200"></a><span class="lineno"> 1200</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01201" name="l01201"></a><span class="lineno"> 1201</span><span class="comment"> * @param[in, out] s String to be modified if escape sequences are specified.</span></div>
-<div class="line"><a id="l01202" name="l01202"></a><span class="lineno"> 1202</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01203" name="l01203"></a><span class="lineno"> 1203</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span><a class="code hl_function" href="core_2utilities_8h.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a>(std::string &amp;s);</div>
-<div class="line"><a id="l01205" name="l01205"></a><span class="lineno"> 1205</span><span class="comment"></span> </div>
-<div class="line"><a id="l01206" name="l01206"></a><span class="lineno"> 1206</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span><span class="comment"> * @brief Print a user comment at the beginning of the simulation on the console</span></div>
-<div class="line"><a id="l01208" name="l01208"></a><span class="lineno"> 1208</span><span class="comment"> * output.</span></div>
-<div class="line"><a id="l01209" name="l01209"></a><span class="lineno"> 1209</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01210" name="l01210"></a><span class="lineno"> 1210</span><span class="comment"> * @param[in] pcout Parallel console output stream.</span></div>
-<div class="line"><a id="l01211" name="l01211"></a><span class="lineno"> 1211</span><span class="comment"> * @param[in,out] prm ParameterHandler.</span></div>
-<div class="line"><a id="l01212" name="l01212"></a><span class="lineno"> 1212</span><span class="comment"> * specified.</span></div>
-<div class="line"><a id="l01213" name="l01213"></a><span class="lineno"> 1213</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01214" name="l01214"></a><span class="lineno"> 1214</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01215" name="l01215"></a><span class="lineno"> 1215</span><a class="code hl_function" href="core_2utilities_8h.html#ae2e85bc56c84564999daa889908507c8">print_comment_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
-<div class="line"><a id="l01216" name="l01216"></a><span class="lineno"> 1216</span>                             ParameterHandler         &amp;prm);</div>
-<div class="line"><a id="l01217" name="l01217"></a><span class="lineno"> 1217</span><span class="comment"></span> </div>
-<div class="line"><a id="l01218" name="l01218"></a><span class="lineno"> 1218</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01219" name="l01219"></a><span class="lineno"> 1219</span><span class="comment"> * @brief Delete vtu and pvd files</span></div>
-<div class="line"><a id="l01220" name="l01220"></a><span class="lineno"> 1220</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01221" name="l01221"></a><span class="lineno"> 1221</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01222" name="l01222"></a><span class="lineno"> 1222</span><a class="code hl_function" href="core_2utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path);</div>
-<div class="line"><a id="l01223" name="l01223"></a><span class="lineno"> 1223</span><span class="comment"></span> </div>
-<div class="line"><a id="l01224" name="l01224"></a><span class="lineno"> 1224</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01225" name="l01225"></a><span class="lineno"> 1225</span><span class="comment"> * @brief Converts point to angle (in radians) based on rotation axis</span></div>
-<div class="line"><a id="l01226" name="l01226"></a><span class="lineno"> 1226</span><span class="comment"> * @param[in] point Point in cartesian coordinates</span></div>
-<div class="line"><a id="l01227" name="l01227"></a><span class="lineno"> 1227</span><span class="comment"> * @param[in] center_of_rotation Center of rotation</span></div>
-<div class="line"><a id="l01228" name="l01228"></a><span class="lineno"> 1228</span><span class="comment"> * @param[in] rotation_axis_direction Direction of rotation axis (x=0, y=1, z=2)</span></div>
-<div class="line"><a id="l01229" name="l01229"></a><span class="lineno"> 1229</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01230" name="l01230"></a><span class="lineno"> 1230</span><span class="comment"> * @return Angle in the plane perpendicular to the rotation axis</span></div>
-<div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01232" name="l01232"></a><span class="lineno"> 1232</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"> 1233</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen01234" data-start="{" data-end="}">
-<div class="line"><a id="l01234" name="l01234"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a4d01240a64ec227527f59652438c47a6"> 1234</a></span><a class="code hl_function" href="core_2utilities_8h.html#a4d01240a64ec227527f59652438c47a6">point_to_angle</a>(<span class="keyword">const</span> Point&lt;dim&gt;  &amp;point,</div>
-<div class="line"><a id="l01235" name="l01235"></a><span class="lineno"> 1235</span>               <span class="keyword">const</span> Point&lt;dim&gt;  &amp;center_of_rotation      = Point&lt;dim&gt;(),</div>
-<div class="line"><a id="l01236" name="l01236"></a><span class="lineno"> 1236</span>               <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> rotation_axis_direction = 2)</div>
-<div class="line"><a id="l01237" name="l01237"></a><span class="lineno"> 1237</span>{</div>
-<div class="line"><a id="l01238" name="l01238"></a><span class="lineno"> 1238</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>    {</div>
-<div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> coord1 = (rotation_axis_direction + 1) % 3;</div>
-<div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> coord2 = (rotation_axis_direction + 2) % 3;</div>
-<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span> </div>
-<div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span>      <span class="keywordflow">return</span> std::fmod(std::atan2(point[coord2] - center_of_rotation[coord2],</div>
-<div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>                                  point[coord1] - center_of_rotation[coord1]) +</div>
-<div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span>                         2 * numbers::PI,</div>
-<div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>                       2 * numbers::PI);</div>
-<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>    }</div>
-<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span>    <span class="keywordflow">return</span> std::fmod(std::atan2(point[1] - center_of_rotation[1],</div>
-<div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>                                point[0] - center_of_rotation[0]) +</div>
-<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span>                       2 * numbers::PI,</div>
-<div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span>                     2 * numbers::PI);</div>
-<div class="line"><a id="l01253" name="l01253"></a><span class="lineno"> 1253</span>}</div>
+<div class="line"><a id="l01148" name="l01148"></a><span class="lineno"> 1148</span><span class="comment"></span> </div>
+<div class="line"><a id="l01149" name="l01149"></a><span class="lineno"> 1149</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01150" name="l01150"></a><span class="lineno"> 1150</span><span class="comment"> * @brief Concatenate words which are passed from the command line to a main function</span></div>
+<div class="line"><a id="l01151" name="l01151"></a><span class="lineno"> 1151</span><span class="comment"> * into a single string in which the words are seperated by space.</span></div>
+<div class="line"><a id="l01152" name="l01152"></a><span class="lineno"> 1152</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01153" name="l01153"></a><span class="lineno"> 1153</span><span class="comment"> * @param[in] argc number of arguments in C style.</span></div>
+<div class="line"><a id="l01154" name="l01154"></a><span class="lineno"> 1154</span><span class="comment"> * @param[in] argv arguments themselves in C style.</span></div>
+<div class="line"><a id="l01155" name="l01155"></a><span class="lineno"> 1155</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01156" name="l01156"></a><span class="lineno"> 1156</span> </div>
+<div class="line"><a id="l01157" name="l01157"></a><span class="lineno"> 1157</span>std::string</div>
+<div class="line"><a id="l01158" name="l01158"></a><span class="lineno"> 1158</span><a class="code hl_function" href="core_2utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv);</div>
+<div class="line"><a id="l01159" name="l01159"></a><span class="lineno"> 1159</span><span class="comment"></span> </div>
+<div class="line"><a id="l01160" name="l01160"></a><span class="lineno"> 1160</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01161" name="l01161"></a><span class="lineno"> 1161</span><span class="comment"> * @brief Print the information of the deal.II and Lethe branches</span></div>
+<div class="line"><a id="l01162" name="l01162"></a><span class="lineno"> 1162</span><span class="comment"> * used to run an application in the &quot;git describe&quot; format.</span></div>
+<div class="line"><a id="l01163" name="l01163"></a><span class="lineno"> 1163</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01164" name="l01164"></a><span class="lineno"> 1164</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l01165" name="l01165"></a><span class="lineno"> 1165</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01166" name="l01166"></a><span class="lineno"> 1166</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l01167" name="l01167"></a><span class="lineno"> 1167</span><a class="code hl_function" href="core_2utilities_8h.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout);</div>
+<div class="line"><a id="l01168" name="l01168"></a><span class="lineno"> 1168</span><span class="comment"></span> </div>
+<div class="line"><a id="l01169" name="l01169"></a><span class="lineno"> 1169</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01170" name="l01170"></a><span class="lineno"> 1170</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
+<div class="line"><a id="l01171" name="l01171"></a><span class="lineno"> 1171</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
+<div class="line"><a id="l01173" name="l01173"></a><span class="lineno"> 1173</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
+<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
+<div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
+<div class="line"><a id="l01176" name="l01176"></a><span class="lineno"> 1176</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
+<div class="line"><a id="l01177" name="l01177"></a><span class="lineno"> 1177</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
+<div class="line"><a id="l01178" name="l01178"></a><span class="lineno"> 1178</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01179" name="l01179"></a><span class="lineno"> 1179</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
+<div class="line"><a id="l01180" name="l01180"></a><span class="lineno"> 1180</span><a class="code hl_function" href="core_2utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv);</div>
+<div class="line"><a id="l01181" name="l01181"></a><span class="lineno"> 1181</span><span class="comment"></span> </div>
+<div class="line"><a id="l01182" name="l01182"></a><span class="lineno"> 1182</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01183" name="l01183"></a><span class="lineno"> 1183</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
+<div class="line"><a id="l01184" name="l01184"></a><span class="lineno"> 1184</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01185" name="l01185"></a><span class="lineno"> 1185</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l01186" name="l01186"></a><span class="lineno"> 1186</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
+<div class="line"><a id="l01187" name="l01187"></a><span class="lineno"> 1187</span><span class="comment"> * file.</span></div>
+<div class="line"><a id="l01188" name="l01188"></a><span class="lineno"> 1188</span><span class="comment"> * @param[in] file_name File name where the parameters will be written.</span></div>
+<div class="line"><a id="l01189" name="l01189"></a><span class="lineno"> 1189</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01190" name="l01190"></a><span class="lineno"> 1190</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l01191" name="l01191"></a><span class="lineno"> 1191</span><a class="code hl_function" href="core_2utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
+<div class="line"><a id="l01192" name="l01192"></a><span class="lineno"> 1192</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
+<div class="line"><a id="l01193" name="l01193"></a><span class="lineno"> 1193</span>                                <span class="keyword">const</span> std::string        &amp;file_name);</div>
+<div class="line"><a id="l01194" name="l01194"></a><span class="lineno"> 1194</span><span class="comment"></span> </div>
+<div class="line"><a id="l01195" name="l01195"></a><span class="lineno"> 1195</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01196" name="l01196"></a><span class="lineno"> 1196</span><span class="comment"> * @brief Identify escape sequences listed below and apply them to the string.</span></div>
+<div class="line"><a id="l01197" name="l01197"></a><span class="lineno"> 1197</span><span class="comment"> *  - &quot;\n&quot;: Newline</span></div>
+<div class="line"><a id="l01198" name="l01198"></a><span class="lineno"> 1198</span><span class="comment"> *  - &quot;\t&quot;: Horizontal tab</span></div>
+<div class="line"><a id="l01199" name="l01199"></a><span class="lineno"> 1199</span><span class="comment"> *  - &quot;\r&quot;: Carriage return</span></div>
+<div class="line"><a id="l01200" name="l01200"></a><span class="lineno"> 1200</span><span class="comment"> *  - &quot;\b&quot;: Backspace</span></div>
+<div class="line"><a id="l01201" name="l01201"></a><span class="lineno"> 1201</span><span class="comment"> *  - &quot;\v&quot;: Vertical tab</span></div>
+<div class="line"><a id="l01202" name="l01202"></a><span class="lineno"> 1202</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01203" name="l01203"></a><span class="lineno"> 1203</span><span class="comment"> * @param[in, out] s String to be modified if escape sequences are specified.</span></div>
+<div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01205" name="l01205"></a><span class="lineno"> 1205</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l01206" name="l01206"></a><span class="lineno"> 1206</span><a class="code hl_function" href="core_2utilities_8h.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a>(std::string &amp;s);</div>
+<div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span><span class="comment"></span> </div>
+<div class="line"><a id="l01208" name="l01208"></a><span class="lineno"> 1208</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01209" name="l01209"></a><span class="lineno"> 1209</span><span class="comment"> * @brief Print a user comment at the beginning of the simulation on the console</span></div>
+<div class="line"><a id="l01210" name="l01210"></a><span class="lineno"> 1210</span><span class="comment"> * output.</span></div>
+<div class="line"><a id="l01211" name="l01211"></a><span class="lineno"> 1211</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01212" name="l01212"></a><span class="lineno"> 1212</span><span class="comment"> * @param[in] pcout Parallel console output stream.</span></div>
+<div class="line"><a id="l01213" name="l01213"></a><span class="lineno"> 1213</span><span class="comment"> * @param[in,out] prm ParameterHandler.</span></div>
+<div class="line"><a id="l01214" name="l01214"></a><span class="lineno"> 1214</span><span class="comment"> * specified.</span></div>
+<div class="line"><a id="l01215" name="l01215"></a><span class="lineno"> 1215</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01216" name="l01216"></a><span class="lineno"> 1216</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l01217" name="l01217"></a><span class="lineno"> 1217</span><a class="code hl_function" href="core_2utilities_8h.html#ae2e85bc56c84564999daa889908507c8">print_comment_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
+<div class="line"><a id="l01218" name="l01218"></a><span class="lineno"> 1218</span>                             ParameterHandler         &amp;prm);</div>
+<div class="line"><a id="l01219" name="l01219"></a><span class="lineno"> 1219</span><span class="comment"></span> </div>
+<div class="line"><a id="l01220" name="l01220"></a><span class="lineno"> 1220</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01221" name="l01221"></a><span class="lineno"> 1221</span><span class="comment"> * @brief Delete vtu and pvd files</span></div>
+<div class="line"><a id="l01222" name="l01222"></a><span class="lineno"> 1222</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01223" name="l01223"></a><span class="lineno"> 1223</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l01224" name="l01224"></a><span class="lineno"> 1224</span><a class="code hl_function" href="core_2utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path);</div>
+<div class="line"><a id="l01225" name="l01225"></a><span class="lineno"> 1225</span><span class="comment"></span> </div>
+<div class="line"><a id="l01226" name="l01226"></a><span class="lineno"> 1226</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01227" name="l01227"></a><span class="lineno"> 1227</span><span class="comment"> * @brief Converts point to angle (in radians) based on rotation axis</span></div>
+<div class="line"><a id="l01228" name="l01228"></a><span class="lineno"> 1228</span><span class="comment"> * @param[in] point Point in cartesian coordinates</span></div>
+<div class="line"><a id="l01229" name="l01229"></a><span class="lineno"> 1229</span><span class="comment"> * @param[in] center_of_rotation Center of rotation</span></div>
+<div class="line"><a id="l01230" name="l01230"></a><span class="lineno"> 1230</span><span class="comment"> * @param[in] rotation_axis_direction Direction of rotation axis (x=0, y=1, z=2)</span></div>
+<div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01232" name="l01232"></a><span class="lineno"> 1232</span><span class="comment"> * @return Angle in the plane perpendicular to the rotation axis</span></div>
+<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"> 1233</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01234" name="l01234"></a><span class="lineno"> 1234</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01235" name="l01235"></a><span class="lineno"> 1235</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen01236" data-start="{" data-end="}">
+<div class="line"><a id="l01236" name="l01236"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a4d01240a64ec227527f59652438c47a6"> 1236</a></span><a class="code hl_function" href="core_2utilities_8h.html#a4d01240a64ec227527f59652438c47a6">point_to_angle</a>(<span class="keyword">const</span> Point&lt;dim&gt;  &amp;point,</div>
+<div class="line"><a id="l01237" name="l01237"></a><span class="lineno"> 1237</span>               <span class="keyword">const</span> Point&lt;dim&gt;  &amp;center_of_rotation      = Point&lt;dim&gt;(),</div>
+<div class="line"><a id="l01238" name="l01238"></a><span class="lineno"> 1238</span>               <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> rotation_axis_direction = 2)</div>
+<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>{</div>
+<div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span>    {</div>
+<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> coord1 = (rotation_axis_direction + 1) % 3;</div>
+<div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> coord2 = (rotation_axis_direction + 2) % 3;</div>
+<div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span> </div>
+<div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span>      <span class="keywordflow">return</span> std::fmod(std::atan2(point[coord2] - center_of_rotation[coord2],</div>
+<div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>                                  point[coord1] - center_of_rotation[coord1]) +</div>
+<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>                         2 * numbers::PI,</div>
+<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>                       2 * numbers::PI);</div>
+<div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span>    }</div>
+<div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span>    <span class="keywordflow">return</span> std::fmod(std::atan2(point[1] - center_of_rotation[1],</div>
+<div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span>                                point[0] - center_of_rotation[0]) +</div>
+<div class="line"><a id="l01253" name="l01253"></a><span class="lineno"> 1253</span>                       2 * numbers::PI,</div>
+<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"> 1254</span>                     2 * numbers::PI);</div>
+<div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span>}</div>
 </div>
-<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"> 1254</span><span class="comment"></span> </div>
-<div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span><span class="comment"> * @brief Converts radius to point in cartesian coordinates based on rotation axis</span></div>
-<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span><span class="comment"> * @param[in] radius Radial distance</span></div>
-<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span><span class="comment"> * @param[in] angle_rad Angle (in radians)</span></div>
-<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span><span class="comment"> * @param[in] center_of_rotation Center of rotation</span></div>
-<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span><span class="comment"> * @param[in] rotation_axis_direction Direction of rotation axis (x=0, y=1, z=2)</span></div>
-<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span><span class="comment"> * @return point Point in cartesian coordinates</span></div>
-<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span><span class="keyword">inline</span> Point&lt;dim&gt;</div>
-<div class="foldopen" id="foldopen01266" data-start="{" data-end="}">
-<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#afbfe529803efbfc38f57eb78aada2e6f"> 1266</a></span><a class="code hl_function" href="core_2utilities_8h.html#afbfe529803efbfc38f57eb78aada2e6f">radius_to_point</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>       radius,</div>
-<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span>                <span class="keyword">const</span> <span class="keywordtype">double</span>       angle_rad,</div>
-<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"> 1268</span>                <span class="keyword">const</span> Point&lt;dim&gt;  &amp;center_of_rotation      = Point&lt;dim&gt;(),</div>
-<div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span>                <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> rotation_axis_direction = 2)</div>
-<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>{</div>
-<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>  Point&lt;dim&gt; point;</div>
-<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span> </div>
-<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span>    {</div>
-<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> coord1 = (rotation_axis_direction + 1) % 3;</div>
-<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> coord2 = (rotation_axis_direction + 2) % 3;</div>
-<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span> </div>
-<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>      point[coord1] = radius * std::cos(angle_rad) + center_of_rotation[coord1];</div>
-<div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span>      point[coord2] = radius * std::sin(angle_rad) + center_of_rotation[coord2];</div>
-<div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span>      point[rotation_axis_direction] =</div>
-<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>        center_of_rotation[rotation_axis_direction];</div>
-<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>    }</div>
-<div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>    {</div>
-<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>      point[0] = radius * std::cos(angle_rad) + center_of_rotation[0];</div>
-<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span>      point[1] = radius * std::sin(angle_rad) + center_of_rotation[1];</div>
-<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span>    }</div>
-<div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span>  <span class="keywordflow">return</span> point;</div>
-<div class="line"><a id="l01289" name="l01289"></a><span class="lineno"> 1289</span>}</div>
+<div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span><span class="comment"></span> </div>
+<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span><span class="comment"> * @brief Converts radius to point in cartesian coordinates based on rotation axis</span></div>
+<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span><span class="comment"> * @param[in] radius Radial distance</span></div>
+<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span><span class="comment"> * @param[in] angle_rad Angle (in radians)</span></div>
+<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span><span class="comment"> * @param[in] center_of_rotation Center of rotation</span></div>
+<div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span><span class="comment"> * @param[in] rotation_axis_direction Direction of rotation axis (x=0, y=1, z=2)</span></div>
+<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span><span class="comment"> * @return point Point in cartesian coordinates</span></div>
+<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span><span class="keyword">inline</span> Point&lt;dim&gt;</div>
+<div class="foldopen" id="foldopen01268" data-start="{" data-end="}">
+<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#afbfe529803efbfc38f57eb78aada2e6f"> 1268</a></span><a class="code hl_function" href="core_2utilities_8h.html#afbfe529803efbfc38f57eb78aada2e6f">radius_to_point</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>       radius,</div>
+<div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span>                <span class="keyword">const</span> <span class="keywordtype">double</span>       angle_rad,</div>
+<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>                <span class="keyword">const</span> Point&lt;dim&gt;  &amp;center_of_rotation      = Point&lt;dim&gt;(),</div>
+<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>                <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> rotation_axis_direction = 2)</div>
+<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>{</div>
+<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>  Point&lt;dim&gt; point;</div>
+<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span> </div>
+<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>    {</div>
+<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> coord1 = (rotation_axis_direction + 1) % 3;</div>
+<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>      <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> coord2 = (rotation_axis_direction + 2) % 3;</div>
+<div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span> </div>
+<div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span>      point[coord1] = radius * std::cos(angle_rad) + center_of_rotation[coord1];</div>
+<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>      point[coord2] = radius * std::sin(angle_rad) + center_of_rotation[coord2];</div>
+<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>      point[rotation_axis_direction] =</div>
+<div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>        center_of_rotation[rotation_axis_direction];</div>
+<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>    }</div>
+<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span>    {</div>
+<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span>      point[0] = radius * std::cos(angle_rad) + center_of_rotation[0];</div>
+<div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span>      point[1] = radius * std::sin(angle_rad) + center_of_rotation[1];</div>
+<div class="line"><a id="l01289" name="l01289"></a><span class="lineno"> 1289</span>    }</div>
+<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"> 1290</span>  <span class="keywordflow">return</span> point;</div>
+<div class="line"><a id="l01291" name="l01291"></a><span class="lineno"> 1291</span>}</div>
 </div>
-<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"> 1290</span><span class="comment"></span> </div>
-<div class="line"><a id="l01291" name="l01291"></a><span class="lineno"> 1291</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01292" name="l01292"></a><span class="lineno"> 1292</span><span class="comment"> * @brief Creates a vector of random doubles between 0 and a maximum value using</span></div>
-<div class="line"><a id="l01293" name="l01293"></a><span class="lineno"> 1293</span><span class="comment"> * a pseudo random seed.</span></div>
-<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span><span class="comment"> * @param[in,out] random_container Container in which the doubles are stored.</span></div>
-<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span><span class="comment"> * @param[in] number_of_elements Number of random doubles to generate.</span></div>
-<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span><span class="comment"> * @param[in] maximum_range Maximum value that the random double can have.</span></div>
-<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span><span class="comment"> * @param[in] prn_seed Pseudo random seed used to generate the random doubles.</span></div>
-<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span> </div>
-<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span><span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01302" data-start="{" data-end="}">
-<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a0ca4ad74cfa4ff603d94d8f520df07a5"> 1302</a></span><a class="code hl_function" href="core_2utilities_8h.html#a0ca4ad74cfa4ff603d94d8f520df07a5">create_random_number_container</a>(std::vector&lt;double&gt; &amp;random_container,</div>
-<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>                               <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>   number_of_elements,</div>
-<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>         maximum_range,</div>
-<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>                               <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>   prn_seed)</div>
-<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>{</div>
-<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; number_of_elements; ++i)</div>
-<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>    {</div>
-<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>      srand(prn_seed * (i + 1));</div>
-<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>      random_container.push_back((((<span class="keywordtype">double</span>)rand()) / ((<span class="keywordtype">double</span>)RAND_MAX)) *</div>
-<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>                                 maximum_range);</div>
-<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span>    }</div>
-<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span>}</div>
+<div class="line"><a id="l01292" name="l01292"></a><span class="lineno"> 1292</span><span class="comment"></span> </div>
+<div class="line"><a id="l01293" name="l01293"></a><span class="lineno"> 1293</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span><span class="comment"> * @brief Creates a vector of random doubles between 0 and a maximum value using</span></div>
+<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span><span class="comment"> * a pseudo random seed.</span></div>
+<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span><span class="comment"> * @param[in,out] random_container Container in which the doubles are stored.</span></div>
+<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span><span class="comment"> * @param[in] number_of_elements Number of random doubles to generate.</span></div>
+<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span><span class="comment"> * @param[in] maximum_range Maximum value that the random double can have.</span></div>
+<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span><span class="comment"> * @param[in] prn_seed Pseudo random seed used to generate the random doubles.</span></div>
+<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span> </div>
+<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span><span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01304" data-start="{" data-end="}">
+<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a0ca4ad74cfa4ff603d94d8f520df07a5"> 1304</a></span><a class="code hl_function" href="core_2utilities_8h.html#a0ca4ad74cfa4ff603d94d8f520df07a5">create_random_number_container</a>(std::vector&lt;double&gt; &amp;random_container,</div>
+<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>                               <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>   number_of_elements,</div>
+<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>                               <span class="keyword">const</span> <span class="keywordtype">double</span>         maximum_range,</div>
+<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>                               <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>   prn_seed)</div>
+<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>{</div>
+<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; number_of_elements; ++i)</div>
+<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>    {</div>
+<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>      srand(prn_seed * (i + 1));</div>
+<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span>      random_container.push_back((((<span class="keywordtype">double</span>)rand()) / ((<span class="keywordtype">double</span>)RAND_MAX)) *</div>
+<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span>                                 maximum_range);</div>
+<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span>    }</div>
+<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span>}</div>
 </div>
-<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span><span class="comment"></span> </div>
-<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span><span class="comment"> * @brief Return the vector of size N of entry @entry_string. If the entry is</span></div>
-<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span><span class="comment"> * specified in the .prm file, then the changed value is returned, otherwise</span></div>
-<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span><span class="comment"> * the default value is returned. If the entry is not equivalent to a vector,</span></div>
-<div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span><span class="comment"> * an error will be thrown.</span></div>
-<div class="line"><a id="l01320" name="l01320"></a><span class="lineno"> 1320</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"> 1321</span><span class="comment"> * @tparam T The type of vector (int, unsigned int or double)</span></div>
-<div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span><span class="comment"> * @param[in] prm A parameter handler which is currently used to parse the</span></div>
-<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span><span class="comment"> * simulation information.</span></div>
-<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"> 1324</span><span class="comment"> * @param[in] entry_string A declare string in the parameter file.</span></div>
-<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"> 1326</span><span class="comment"> * @return A std::vector&lt;double&gt; corresponding to the entry_string in the prm file.</span></div>
-<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span>std::vector&lt;T&gt;</div>
-<div class="foldopen" id="foldopen01330" data-start="{" data-end="}">
-<div class="line"><a id="l01330" name="l01330"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a"> 1330</a></span><a class="code hl_function" href="core_2utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a">convert_string_to_vector</a>(<span class="keyword">const</span> ParameterHandler &amp;prm,</div>
-<div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>                         <span class="keyword">const</span> std::string      &amp;entry_string)</div>
-<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span>{</div>
-<div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>  std::string              full_str = prm.get(entry_string);</div>
-<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>  std::vector&lt;std::string&gt; vector_of_string(</div>
-<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>    Utilities::split_string_list(full_str));</div>
-<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, int&gt;::value)</div>
-<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>    {</div>
-<div class="line"><a id="l01338" name="l01338"></a><span class="lineno"> 1338</span>      std::vector&lt;T&gt; vector = Utilities::string_to_int(vector_of_string);</div>
-<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>      <span class="keywordflow">return</span> vector;</div>
-<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>    }</div>
-<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, double&gt;::value)</div>
-<div class="line"><a id="l01342" name="l01342"></a><span class="lineno"> 1342</span>    {</div>
-<div class="line"><a id="l01343" name="l01343"></a><span class="lineno"> 1343</span>      std::vector&lt;T&gt; vector = Utilities::string_to_double(vector_of_string);</div>
-<div class="line"><a id="l01344" name="l01344"></a><span class="lineno"> 1344</span>      <span class="keywordflow">return</span> vector;</div>
-<div class="line"><a id="l01345" name="l01345"></a><span class="lineno"> 1345</span>    }</div>
-<div class="line"><a id="l01346" name="l01346"></a><span class="lineno"> 1346</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, std::string&gt;::value)</div>
-<div class="line"><a id="l01347" name="l01347"></a><span class="lineno"> 1347</span>    {</div>
-<div class="line"><a id="l01348" name="l01348"></a><span class="lineno"> 1348</span>      <span class="keywordflow">return</span> vector_of_string;</div>
-<div class="line"><a id="l01349" name="l01349"></a><span class="lineno"> 1349</span>    }</div>
-<div class="line"><a id="l01350" name="l01350"></a><span class="lineno"> 1350</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, types::boundary_id&gt;::value)</div>
-<div class="line"><a id="l01351" name="l01351"></a><span class="lineno"> 1351</span>    {</div>
-<div class="line"><a id="l01352" name="l01352"></a><span class="lineno"> 1352</span>      std::vector&lt;int&gt; vector_int = Utilities::string_to_int(vector_of_string);</div>
-<div class="line"><a id="l01353" name="l01353"></a><span class="lineno"> 1353</span>      std::vector&lt;T&gt;   vector;</div>
-<div class="line"><a id="l01354" name="l01354"></a><span class="lineno"> 1354</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> var_int : vector_int)</div>
-<div class="line"><a id="l01355" name="l01355"></a><span class="lineno"> 1355</span>        {</div>
-<div class="line"><a id="l01356" name="l01356"></a><span class="lineno"> 1356</span>          AssertThrow(</div>
-<div class="line"><a id="l01357" name="l01357"></a><span class="lineno"> 1357</span>            var_int &gt;= 0,</div>
-<div class="line"><a id="l01358" name="l01358"></a><span class="lineno"> 1358</span>            ExcMessage(</div>
-<div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span>              <span class="stringliteral">&quot;You are trying to convert a negative integer to a boundary id. Lethe does not support negative boundary id.&quot;</span>));</div>
-<div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span>          vector.push_back(<span class="keyword">static_cast&lt;</span>types::boundary_id<span class="keyword">&gt;</span>(var_int));</div>
-<div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span>        }</div>
-<div class="line"><a id="l01362" name="l01362"></a><span class="lineno"> 1362</span>      <span class="keywordflow">return</span> vector;</div>
-<div class="line"><a id="l01363" name="l01363"></a><span class="lineno"> 1363</span>    }</div>
-<div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span> </div>
-<div class="line"><a id="l01365" name="l01365"></a><span class="lineno"> 1365</span>  AssertThrow(<span class="keyword">false</span>,</div>
-<div class="line"><a id="l01366" name="l01366"></a><span class="lineno"> 1366</span>              ExcMessage(<span class="stringliteral">&quot;Error: convert_string_to_vector only works for &quot;</span></div>
-<div class="line"><a id="l01367" name="l01367"></a><span class="lineno"> 1367</span>                         <span class="stringliteral">&quot;int, double and string types.&quot;</span>));</div>
-<div class="line"><a id="l01368" name="l01368"></a><span class="lineno"> 1368</span> </div>
-<div class="line"><a id="l01369" name="l01369"></a><span class="lineno"> 1369</span>  <span class="keywordflow">return</span> std::vector&lt;T&gt;();</div>
-<div class="line"><a id="l01370" name="l01370"></a><span class="lineno"> 1370</span>}</div>
+<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span><span class="comment"></span> </div>
+<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span><span class="comment"> * @brief Return the vector of size N of entry @entry_string. If the entry is</span></div>
+<div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span><span class="comment"> * specified in the .prm file, then the changed value is returned, otherwise</span></div>
+<div class="line"><a id="l01320" name="l01320"></a><span class="lineno"> 1320</span><span class="comment"> * the default value is returned. If the entry is not equivalent to a vector,</span></div>
+<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"> 1321</span><span class="comment"> * an error will be thrown.</span></div>
+<div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span><span class="comment"> * @tparam T The type of vector (int, unsigned int or double)</span></div>
+<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"> 1324</span><span class="comment"> * @param[in] prm A parameter handler which is currently used to parse the</span></div>
+<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span><span class="comment"> * simulation information.</span></div>
+<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"> 1326</span><span class="comment"> * @param[in] entry_string A declare string in the parameter file.</span></div>
+<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span><span class="comment"> * @return A std::vector&lt;double&gt; corresponding to the entry_string in the prm file.</span></div>
+<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01330" name="l01330"></a><span class="lineno"> 1330</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>std::vector&lt;T&gt;</div>
+<div class="foldopen" id="foldopen01332" data-start="{" data-end="}">
+<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a"> 1332</a></span><a class="code hl_function" href="core_2utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a">convert_string_to_vector</a>(<span class="keyword">const</span> ParameterHandler &amp;prm,</div>
+<div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>                         <span class="keyword">const</span> std::string      &amp;entry_string)</div>
+<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>{</div>
+<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>  std::string              full_str = prm.get(entry_string);</div>
+<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span>  std::vector&lt;std::string&gt; vector_of_string(</div>
+<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>    Utilities::split_string_list(full_str));</div>
+<div class="line"><a id="l01338" name="l01338"></a><span class="lineno"> 1338</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;T, int&gt;)</div>
+<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>    {</div>
+<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>      std::vector&lt;T&gt; vector = Utilities::string_to_int(vector_of_string);</div>
+<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span>      <span class="keywordflow">return</span> vector;</div>
+<div class="line"><a id="l01342" name="l01342"></a><span class="lineno"> 1342</span>    }</div>
+<div class="line"><a id="l01343" name="l01343"></a><span class="lineno"> 1343</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;T, double&gt;)</div>
+<div class="line"><a id="l01344" name="l01344"></a><span class="lineno"> 1344</span>    {</div>
+<div class="line"><a id="l01345" name="l01345"></a><span class="lineno"> 1345</span>      std::vector&lt;T&gt; vector = Utilities::string_to_double(vector_of_string);</div>
+<div class="line"><a id="l01346" name="l01346"></a><span class="lineno"> 1346</span>      <span class="keywordflow">return</span> vector;</div>
+<div class="line"><a id="l01347" name="l01347"></a><span class="lineno"> 1347</span>    }</div>
+<div class="line"><a id="l01348" name="l01348"></a><span class="lineno"> 1348</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;T, std::string&gt;)</div>
+<div class="line"><a id="l01349" name="l01349"></a><span class="lineno"> 1349</span>    {</div>
+<div class="line"><a id="l01350" name="l01350"></a><span class="lineno"> 1350</span>      <span class="keywordflow">return</span> vector_of_string;</div>
+<div class="line"><a id="l01351" name="l01351"></a><span class="lineno"> 1351</span>    }</div>
+<div class="line"><a id="l01352" name="l01352"></a><span class="lineno"> 1352</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;T, types::boundary_id&gt;)</div>
+<div class="line"><a id="l01353" name="l01353"></a><span class="lineno"> 1353</span>    {</div>
+<div class="line"><a id="l01354" name="l01354"></a><span class="lineno"> 1354</span>      std::vector&lt;int&gt; vector_int = Utilities::string_to_int(vector_of_string);</div>
+<div class="line"><a id="l01355" name="l01355"></a><span class="lineno"> 1355</span>      std::vector&lt;T&gt;   vector;</div>
+<div class="line"><a id="l01356" name="l01356"></a><span class="lineno"> 1356</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> var_int : vector_int)</div>
+<div class="line"><a id="l01357" name="l01357"></a><span class="lineno"> 1357</span>        {</div>
+<div class="line"><a id="l01358" name="l01358"></a><span class="lineno"> 1358</span>          AssertThrow(</div>
+<div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span>            var_int &gt;= 0,</div>
+<div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span>            ExcMessage(</div>
+<div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span>              <span class="stringliteral">&quot;You are trying to convert a negative integer to a boundary id. Lethe does not support negative boundary id.&quot;</span>));</div>
+<div class="line"><a id="l01362" name="l01362"></a><span class="lineno"> 1362</span>          vector.push_back(<span class="keyword">static_cast&lt;</span>types::boundary_id<span class="keyword">&gt;</span>(var_int));</div>
+<div class="line"><a id="l01363" name="l01363"></a><span class="lineno"> 1363</span>        }</div>
+<div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span>      <span class="keywordflow">return</span> vector;</div>
+<div class="line"><a id="l01365" name="l01365"></a><span class="lineno"> 1365</span>    }</div>
+<div class="line"><a id="l01366" name="l01366"></a><span class="lineno"> 1366</span> </div>
+<div class="line"><a id="l01367" name="l01367"></a><span class="lineno"> 1367</span>  AssertThrow(<span class="keyword">false</span>,</div>
+<div class="line"><a id="l01368" name="l01368"></a><span class="lineno"> 1368</span>              ExcMessage(<span class="stringliteral">&quot;Error: convert_string_to_vector only works for &quot;</span></div>
+<div class="line"><a id="l01369" name="l01369"></a><span class="lineno"> 1369</span>                         <span class="stringliteral">&quot;int, double and string types.&quot;</span>));</div>
+<div class="line"><a id="l01370" name="l01370"></a><span class="lineno"> 1370</span> </div>
+<div class="line"><a id="l01371" name="l01371"></a><span class="lineno"> 1371</span>  <span class="keywordflow">return</span> std::vector&lt;T&gt;();</div>
+<div class="line"><a id="l01372" name="l01372"></a><span class="lineno"> 1372</span>}</div>
 </div>
-<div class="line"><a id="l01371" name="l01371"></a><span class="lineno"> 1371</span><span class="comment"></span> </div>
-<div class="line"><a id="l01372" name="l01372"></a><span class="lineno"> 1372</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01373" name="l01373"></a><span class="lineno"> 1373</span><span class="comment"> * @brief Operator overloading to enable using triangulation cells as map keys.</span></div>
-<div class="line"><a id="l01374" name="l01374"></a><span class="lineno"> 1374</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01375" name="l01375"></a><span class="lineno"> 1375</span> </div>
-<div class="line"><a id="l01376" name="l01376"></a><span class="lineno"> 1376</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen01377" data-start="{" data-end="};">
-<div class="line"><a id="l01377" name="l01377"></a><span class="lineno"><a class="line" href="structcell__comparison.html"> 1377</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structcell__comparison.html">cell_comparison</a></div>
-<div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span>{</div>
-<div class="line"><a id="l01379" name="l01379"></a><span class="lineno"> 1379</span>  <span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="foldopen" id="foldopen01380" data-start="{" data-end="}">
-<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"><a class="line" href="structcell__comparison.html#acb392d810bb42bfdc551fca338ea0905"> 1380</a></span>  <a class="code hl_function" href="structcell__comparison.html#acb392d810bb42bfdc551fca338ea0905">operator()</a>(</div>
-<div class="line"><a id="l01381" name="l01381"></a><span class="lineno"> 1381</span>    <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::active_cell_iterator &amp;cell_1,</div>
-<div class="line"><a id="l01382" name="l01382"></a><span class="lineno"> 1382</span>    <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::active_cell_iterator &amp;cell_2)<span class="keyword"> const</span></div>
-<div class="line"><a id="l01383" name="l01383"></a><span class="lineno"> 1383</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l01384" name="l01384"></a><span class="lineno"> 1384</span>    <span class="keywordflow">return</span> cell_1-&gt;global_active_cell_index() &lt;</div>
-<div class="line"><a id="l01385" name="l01385"></a><span class="lineno"> 1385</span>           cell_2-&gt;global_active_cell_index();</div>
-<div class="line"><a id="l01386" name="l01386"></a><span class="lineno"> 1386</span>  }</div>
+<div class="line"><a id="l01373" name="l01373"></a><span class="lineno"> 1373</span><span class="comment"></span> </div>
+<div class="line"><a id="l01374" name="l01374"></a><span class="lineno"> 1374</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01375" name="l01375"></a><span class="lineno"> 1375</span><span class="comment"> * @brief Operator overloading to enable using triangulation cells as map keys.</span></div>
+<div class="line"><a id="l01376" name="l01376"></a><span class="lineno"> 1376</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01377" name="l01377"></a><span class="lineno"> 1377</span> </div>
+<div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen01379" data-start="{" data-end="};">
+<div class="line"><a id="l01379" name="l01379"></a><span class="lineno"><a class="line" href="structcell__comparison.html"> 1379</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structcell__comparison.html">cell_comparison</a></div>
+<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span>{</div>
+<div class="line"><a id="l01381" name="l01381"></a><span class="lineno"> 1381</span>  <span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen01382" data-start="{" data-end="}">
+<div class="line"><a id="l01382" name="l01382"></a><span class="lineno"><a class="line" href="structcell__comparison.html#acb392d810bb42bfdc551fca338ea0905"> 1382</a></span>  <a class="code hl_function" href="structcell__comparison.html#acb392d810bb42bfdc551fca338ea0905">operator()</a>(</div>
+<div class="line"><a id="l01383" name="l01383"></a><span class="lineno"> 1383</span>    <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::active_cell_iterator &amp;cell_1,</div>
+<div class="line"><a id="l01384" name="l01384"></a><span class="lineno"> 1384</span>    <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::active_cell_iterator &amp;cell_2)<span class="keyword"> const</span></div>
+<div class="line"><a id="l01385" name="l01385"></a><span class="lineno"> 1385</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l01386" name="l01386"></a><span class="lineno"> 1386</span>    <span class="keywordflow">return</span> cell_1-&gt;global_active_cell_index() &lt;</div>
+<div class="line"><a id="l01387" name="l01387"></a><span class="lineno"> 1387</span>           cell_2-&gt;global_active_cell_index();</div>
+<div class="line"><a id="l01388" name="l01388"></a><span class="lineno"> 1388</span>  }</div>
 </div>
-<div class="line"><a id="l01387" name="l01387"></a><span class="lineno"> 1387</span>};</div>
+<div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span>};</div>
 </div>
-<div class="line"><a id="l01388" name="l01388"></a><span class="lineno"> 1388</span><span class="comment"></span> </div>
-<div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span><span class="comment"> * @brief Operator overloading to enable using particle iterators as map keys.</span></div>
-<div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span> </div>
-<div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen01394" data-start="{" data-end="};">
-<div class="line"><a id="l01394" name="l01394"></a><span class="lineno"><a class="line" href="structparticle__comparison.html"> 1394</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structparticle__comparison.html">particle_comparison</a></div>
-<div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span>{</div>
-<div class="line"><a id="l01396" name="l01396"></a><span class="lineno"> 1396</span>  <span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="foldopen" id="foldopen01397" data-start="{" data-end="}">
-<div class="line"><a id="l01397" name="l01397"></a><span class="lineno"><a class="line" href="structparticle__comparison.html#a5549b2cc63f7572efc9be30ef04e71bd"> 1397</a></span>  <a class="code hl_function" href="structparticle__comparison.html#a5549b2cc63f7572efc9be30ef04e71bd">operator()</a>(<span class="keyword">const</span> Particles::ParticleIterator&lt;dim&gt; &amp;particle_1,</div>
-<div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>             <span class="keyword">const</span> Particles::ParticleIterator&lt;dim&gt; &amp;particle_2)</div>
-<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>  {</div>
-<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>    <span class="keywordflow">return</span> particle_1-&gt;id() &lt; particle_2-&gt;id();</div>
-<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>  }</div>
+<div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span><span class="comment"></span> </div>
+<div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span><span class="comment"> * @brief Operator overloading to enable using particle iterators as map keys.</span></div>
+<div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01394" name="l01394"></a><span class="lineno"> 1394</span> </div>
+<div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen01396" data-start="{" data-end="};">
+<div class="line"><a id="l01396" name="l01396"></a><span class="lineno"><a class="line" href="structparticle__comparison.html"> 1396</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structparticle__comparison.html">particle_comparison</a></div>
+<div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span>{</div>
+<div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>  <span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen01399" data-start="{" data-end="}">
+<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"><a class="line" href="structparticle__comparison.html#a5549b2cc63f7572efc9be30ef04e71bd"> 1399</a></span>  <a class="code hl_function" href="structparticle__comparison.html#a5549b2cc63f7572efc9be30ef04e71bd">operator()</a>(<span class="keyword">const</span> Particles::ParticleIterator&lt;dim&gt; &amp;particle_1,</div>
+<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>             <span class="keyword">const</span> Particles::ParticleIterator&lt;dim&gt; &amp;particle_2)</div>
+<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>  {</div>
+<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>    <span class="keywordflow">return</span> particle_1-&gt;id() &lt; particle_2-&gt;id();</div>
+<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>  }</div>
 </div>
-<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>};</div>
+<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>};</div>
 </div>
-<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span><span class="comment"></span> </div>
-<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span><span class="comment"> * @brief Operator overloading to enable using triangulation cells as map keys.</span></div>
-<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span> </div>
-<div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen01410" data-start="{" data-end="};">
-<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"><a class="line" href="structcut__cell__comparison.html"> 1410</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structcut__cell__comparison.html">cut_cell_comparison</a></div>
-<div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span>{</div>
-<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>  <span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="foldopen" id="foldopen01413" data-start="{" data-end="}">
-<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"><a class="line" href="structcut__cell__comparison.html#a70af40f8d7b0285e41557f58b710ada4"> 1413</a></span>  <a class="code hl_function" href="structcut__cell__comparison.html#a70af40f8d7b0285e41557f58b710ada4">operator()</a>(</div>
-<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>    <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim - 1, dim&gt;::active_cell_iterator &amp;cell_1,</div>
-<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"> 1415</span>    <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim - 1, dim&gt;::active_cell_iterator &amp;cell_2)<span class="keyword"></span></div>
-<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span><span class="keyword">    const</span></div>
-<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span>    <span class="keywordflow">return</span> cell_1-&gt;global_active_cell_index() &lt;</div>
-<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>           cell_2-&gt;global_active_cell_index();</div>
-<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>  }</div>
+<div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span><span class="comment"></span> </div>
+<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span><span class="comment"> * @brief Operator overloading to enable using triangulation cells as map keys.</span></div>
+<div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span> </div>
+<div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen01412" data-start="{" data-end="};">
+<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"><a class="line" href="structcut__cell__comparison.html"> 1412</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structcut__cell__comparison.html">cut_cell_comparison</a></div>
+<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>{</div>
+<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>  <span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen01415" data-start="{" data-end="}">
+<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"><a class="line" href="structcut__cell__comparison.html#a70af40f8d7b0285e41557f58b710ada4"> 1415</a></span>  <a class="code hl_function" href="structcut__cell__comparison.html#a70af40f8d7b0285e41557f58b710ada4">operator()</a>(</div>
+<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span>    <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim - 1, dim&gt;::active_cell_iterator &amp;cell_1,</div>
+<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span>    <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim - 1, dim&gt;::active_cell_iterator &amp;cell_2)<span class="keyword"></span></div>
+<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span><span class="keyword">    const</span></div>
+<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>    <span class="keywordflow">return</span> cell_1-&gt;global_active_cell_index() &lt;</div>
+<div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>           cell_2-&gt;global_active_cell_index();</div>
+<div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span>  }</div>
 </div>
-<div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>};</div>
+<div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>};</div>
 </div>
-<div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span><span class="comment"></span> </div>
-<div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span><span class="comment"> * @brief Hash functor to enable using cut-cell (embedded triangulation)</span></div>
-<div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span><span class="comment"> * active cell iterators as keys of an unordered associative container, for</span></div>
-<div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span><span class="comment"> * example std::unordered_map. Pairs with cut_cell_comparison, which orders</span></div>
-<div class="line"><a id="l01427" name="l01427"></a><span class="lineno"> 1427</span><span class="comment"> * the same iterators for ordered associative containers.</span></div>
-<div class="line"><a id="l01428" name="l01428"></a><span class="lineno"> 1428</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01429" name="l01429"></a><span class="lineno"> 1429</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen01430" data-start="{" data-end="};">
-<div class="line"><a id="l01430" name="l01430"></a><span class="lineno"><a class="line" href="structcut__cell__hash.html"> 1430</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structcut__cell__hash.html">cut_cell_hash</a></div>
-<div class="line"><a id="l01431" name="l01431"></a><span class="lineno"> 1431</span>{</div>
-<div class="line"><a id="l01432" name="l01432"></a><span class="lineno"> 1432</span>  <span class="keyword">inline</span> std::size_t</div>
-<div class="foldopen" id="foldopen01433" data-start="{" data-end="}">
-<div class="line"><a id="l01433" name="l01433"></a><span class="lineno"><a class="line" href="structcut__cell__hash.html#ab5e71690ae00b54ee60b81005d3fc416"> 1433</a></span>  <a class="code hl_function" href="structcut__cell__hash.html#ab5e71690ae00b54ee60b81005d3fc416">operator()</a>(<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim - 1, dim&gt;::active_cell_iterator</div>
-<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span>               &amp;cell)<span class="keyword"> const</span></div>
-<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"> 1435</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span>    <span class="keywordflow">return</span> std::hash&lt;int&gt;()(cell-&gt;global_active_cell_index());</div>
-<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span>  }</div>
+<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span><span class="comment"></span> </div>
+<div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span><span class="comment"> * @brief Hash functor to enable using cut-cell (embedded triangulation)</span></div>
+<div class="line"><a id="l01427" name="l01427"></a><span class="lineno"> 1427</span><span class="comment"> * active cell iterators as keys of an unordered associative container, for</span></div>
+<div class="line"><a id="l01428" name="l01428"></a><span class="lineno"> 1428</span><span class="comment"> * example std::unordered_map. Pairs with cut_cell_comparison, which orders</span></div>
+<div class="line"><a id="l01429" name="l01429"></a><span class="lineno"> 1429</span><span class="comment"> * the same iterators for ordered associative containers.</span></div>
+<div class="line"><a id="l01430" name="l01430"></a><span class="lineno"> 1430</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01431" name="l01431"></a><span class="lineno"> 1431</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen01432" data-start="{" data-end="};">
+<div class="line"><a id="l01432" name="l01432"></a><span class="lineno"><a class="line" href="structcut__cell__hash.html"> 1432</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structcut__cell__hash.html">cut_cell_hash</a></div>
+<div class="line"><a id="l01433" name="l01433"></a><span class="lineno"> 1433</span>{</div>
+<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span>  <span class="keyword">inline</span> std::size_t</div>
+<div class="foldopen" id="foldopen01435" data-start="{" data-end="}">
+<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"><a class="line" href="structcut__cell__hash.html#ab5e71690ae00b54ee60b81005d3fc416"> 1435</a></span>  <a class="code hl_function" href="structcut__cell__hash.html#ab5e71690ae00b54ee60b81005d3fc416">operator()</a>(<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim - 1, dim&gt;::active_cell_iterator</div>
+<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span>               &amp;cell)<span class="keyword"> const</span></div>
+<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>    <span class="keywordflow">return</span> std::hash&lt;int&gt;()(cell-&gt;global_active_cell_index());</div>
+<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span>  }</div>
 </div>
-<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>};</div>
+<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>};</div>
 </div>
-<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span><span class="comment"></span> </div>
-<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span><span class="comment"> * @brief Evaluates the values of a scalar field at remote points of the domain</span></div>
-<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span><span class="comment"> * from the mapping, the DoF handler and the solution field.</span></div>
-<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span><span class="comment"> * @tparam dim Denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span><span class="comment"> * @tparam VectorType Vector type of the solution vector.</span></div>
-<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span><span class="comment"> * @param[in] mapping Mapping of the domain.</span></div>
-<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span><span class="comment"> * @param[in] dof_handler DoF handler associated to the solution field.</span></div>
-<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span><span class="comment"> * @param[in] solution_field Vector containing the solution field. For</span></div>
-<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span><span class="comment"> * distributed meshes, ghost elements must be updated.</span></div>
-<div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span><span class="comment"> * @param[in] evaluation_points Vector of points where the values of the</span></div>
-<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span><span class="comment"> * solution field are to be evaluated.</span></div>
-<div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span><span class="comment"> * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation</span></div>
-<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span><span class="comment"> * object used to evaluate values of the variable of interest at given points</span></div>
-<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span><span class="comment"> * of the domain.</span></div>
-<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span><span class="comment"> * @param[in,out] evaluated_scalar_values Vector of evaluated scalar values.</span></div>
-<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span><span class="comment"> * @param[in] first_selected_component First component of the solution to select</span></div>
-<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span><span class="comment"> * if the solution field is a vector field. This is used to extract the correct</span></div>
-<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span><span class="comment"> * field when the solution vector contains multiple fields (e.g., velocity and</span></div>
-<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span><span class="comment"> * pressure are stored in a same solution vector).</span></div>
-<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span><span class="comment"> * @remark If a given evaluation point is not within the simulated domain, an</span></div>
-<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span><span class="comment"> * exception is thrown.</span></div>
-<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
-<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span><a class="code hl_function" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>(</div>
-<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                           &amp;solution_field,</div>
-<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span>  Utilities::MPI::RemotePointEvaluation&lt;dim&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>  std::vector&lt;double&gt;                        &amp;evaluated_scalar_values,</div>
-<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          first_selected_component = 0);</div>
-<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span><span class="comment"></span> </div>
-<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span><span class="comment"> * @brief Evaluates the values of a vector field at remote points of the domain</span></div>
-<div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span><span class="comment"> * from the mapping, the DoF handler and the solution field.</span></div>
-<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span><span class="comment"> * @tparam n_component Number of components of the evaluated vector solution.</span></div>
-<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span><span class="comment"> * @tparam dim Denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span><span class="comment"> * @tparam VectorType Vector type of the solution vector.</span></div>
-<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span><span class="comment"> * @param[in] mapping Mapping of the domain.</span></div>
-<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span><span class="comment"> * @param[in] dof_handler DoF handler associated to the solution field.</span></div>
-<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span><span class="comment"> * @param[in] solution_field Vector containing the vector solution field.</span></div>
-<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span><span class="comment"> * @param[in] evaluation_points Vector of points where the values of the</span></div>
-<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span><span class="comment"> * solution field are to be evaluated.</span></div>
-<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span><span class="comment"> * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation</span></div>
-<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span><span class="comment"> * object used to evaluate values of the variable of interest at given points</span></div>
-<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span><span class="comment"> * of the domain.</span></div>
-<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span><span class="comment"> * @param[in,out] evaluated_vector_values Vector of evaluated vector values.</span></div>
-<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span><span class="comment"> * @param[in] first_selected_component First component of the solution to</span></div>
-<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span><span class="comment"> * select. This is used to extract the correct fields when the solution vector</span></div>
-<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span><span class="comment"> * contains multiple fields (e.g., velocity and pressure are stored in a same</span></div>
-<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span><span class="comment"> * solution vector).</span></div>
-<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span><span class="comment"> * @remark If a given evaluation point is not within the simulated domain, an</span></div>
-<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"> 1499</span><span class="comment"> * exception is thrown.</span></div>
-<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> n_component, <span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
-<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span><a class="code hl_function" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>(</div>
-<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;                         &amp;mapping,</div>
-<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                      &amp;dof_handler,</div>
-<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                           &amp;solution_field,</div>
-<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;              &amp;evaluation_points,</div>
-<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>  Utilities::MPI::RemotePointEvaluation&lt;dim&gt; &amp;remote_point_evaluator,</div>
-<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>  std::vector&lt;Tensor&lt;1, dim, double&gt;&gt;        &amp;evaluated_vector_values,</div>
-<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          first_selected_component = 0);</div>
-<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span><span class="comment"></span> </div>
-<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span><span class="comment"> * @brief Checks that the evaluation points are within the simulated domain and</span></div>
-<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span><span class="comment"> * returns @p true if all points are within the domain.</span></div>
-<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span><span class="comment"> * @tparam dim Denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span><span class="comment"></span> </div>
+<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span><span class="comment"> * @brief Evaluates the values of a scalar field at remote points of the domain</span></div>
+<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span><span class="comment"> * from the mapping, the DoF handler and the solution field.</span></div>
+<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span><span class="comment"> * @tparam dim Denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span><span class="comment"> * @tparam VectorType Vector type of the solution vector.</span></div>
+<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span><span class="comment"> * @param[in] mapping Mapping of the domain.</span></div>
+<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span><span class="comment"> * @param[in] dof_handler DoF handler associated to the solution field.</span></div>
+<div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span><span class="comment"> * @param[in] solution_field Vector containing the solution field. For</span></div>
+<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span><span class="comment"> * distributed meshes, ghost elements must be updated.</span></div>
+<div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span><span class="comment"> * @param[in] evaluation_points Vector of points where the values of the</span></div>
+<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span><span class="comment"> * solution field are to be evaluated.</span></div>
+<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span><span class="comment"> * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation</span></div>
+<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span><span class="comment"> * object used to evaluate values of the variable of interest at given points</span></div>
+<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span><span class="comment"> * of the domain.</span></div>
+<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span><span class="comment"> * @param[in,out] evaluated_scalar_values Vector of evaluated scalar values.</span></div>
+<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span><span class="comment"> * @param[in] first_selected_component First component of the solution to select</span></div>
+<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span><span class="comment"> * if the solution field is a vector field. This is used to extract the correct</span></div>
+<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span><span class="comment"> * field when the solution vector contains multiple fields (e.g., velocity and</span></div>
+<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span><span class="comment"> * pressure are stored in a same solution vector).</span></div>
+<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span><span class="comment"> * @remark If a given evaluation point is not within the simulated domain, an</span></div>
+<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span><span class="comment"> * exception is thrown.</span></div>
+<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
+<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span><a class="code hl_function" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>(</div>
+<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                           &amp;solution_field,</div>
+<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>  Utilities::MPI::RemotePointEvaluation&lt;dim&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>  std::vector&lt;double&gt;                        &amp;evaluated_scalar_values,</div>
+<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          first_selected_component = 0);</div>
+<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span><span class="comment"></span> </div>
+<div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span><span class="comment"> * @brief Evaluates the values of a vector field at remote points of the domain</span></div>
+<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span><span class="comment"> * from the mapping, the DoF handler and the solution field.</span></div>
+<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span><span class="comment"> * @tparam n_component Number of components of the evaluated vector solution.</span></div>
+<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span><span class="comment"> * @tparam dim Denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span><span class="comment"> * @tparam VectorType Vector type of the solution vector.</span></div>
+<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span><span class="comment"> * @param[in] mapping Mapping of the domain.</span></div>
+<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span><span class="comment"> * @param[in] dof_handler DoF handler associated to the solution field.</span></div>
+<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span><span class="comment"> * @param[in] solution_field Vector containing the vector solution field.</span></div>
+<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span><span class="comment"> * @param[in] evaluation_points Vector of points where the values of the</span></div>
+<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span><span class="comment"> * solution field are to be evaluated.</span></div>
+<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span><span class="comment"> * @param[in,out] remote_point_evaluator Utilities::MPI::RemotePointEvaluation</span></div>
+<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span><span class="comment"> * object used to evaluate values of the variable of interest at given points</span></div>
+<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span><span class="comment"> * of the domain.</span></div>
+<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span><span class="comment"> * @param[in,out] evaluated_vector_values Vector of evaluated vector values.</span></div>
+<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span><span class="comment"> * @param[in] first_selected_component First component of the solution to</span></div>
+<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span><span class="comment"> * select. This is used to extract the correct fields when the solution vector</span></div>
+<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span><span class="comment"> * contains multiple fields (e.g., velocity and pressure are stored in a same</span></div>
+<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span><span class="comment"> * solution vector).</span></div>
+<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"> 1499</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span><span class="comment"> * @remark If a given evaluation point is not within the simulated domain, an</span></div>
+<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span><span class="comment"> * exception is thrown.</span></div>
+<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> n_component, <span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
+<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span><a class="code hl_function" href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a>(</div>
+<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;                         &amp;mapping,</div>
+<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                      &amp;dof_handler,</div>
+<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                           &amp;solution_field,</div>
+<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;              &amp;evaluation_points,</div>
+<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span>  Utilities::MPI::RemotePointEvaluation&lt;dim&gt; &amp;remote_point_evaluator,</div>
+<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>  std::vector&lt;Tensor&lt;1, dim, double&gt;&gt;        &amp;evaluated_vector_values,</div>
+<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          first_selected_component = 0);</div>
+<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span><span class="comment"></span> </div>
+<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span><span class="comment"> * @brief Checks that the evaluation points are within the simulated domain and</span></div>
+<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span><span class="comment"> * returns @p true if all points are within the domain.</span></div>
 <div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span><span class="comment"> * @param[in] evaluation_points Vector of points where the values of the</span></div>
-<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span><span class="comment"> * solution field are to be evaluated.</span></div>
-<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span><span class="comment"> * @param[in] remote_point_evaluator RemotePointEvaluation object used to</span></div>
-<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span><span class="comment"> * evaluate values.</span></div>
-<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span><span class="comment"> * @return @p true if all points are within the simulated domain.</span></div>
-<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span><span class="comment"> */</span></div>
-<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l01526" name="l01526"></a><span class="lineno"> 1526</span><span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="foldopen" id="foldopen01527" data-start="{" data-end="}">
-<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a6c59fdbd976bc70491d23f9870eda5ea"> 1527</a></span><a class="code hl_function" href="core_2utilities_8h.html#a6c59fdbd976bc70491d23f9870eda5ea">points_are_in_domain</a>(</div>
-<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;                         &amp;evaluation_points,</div>
-<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span>  <span class="keyword">const</span> Utilities::MPI::RemotePointEvaluation&lt;dim, dim&gt; &amp;remote_point_evaluator)</div>
-<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span>{</div>
-<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span>  <span class="keywordflow">if</span> (!remote_point_evaluator.all_points_found())</div>
-<div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span>    {</div>
-<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; evaluation_points.size(); ++i)</div>
-<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"> 1534</span>        {</div>
-<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"> 1535</span>          AssertThrow(remote_point_evaluator.point_found(i),</div>
-<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"> 1536</span>                      ExcMessage(</div>
-<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span>                        <span class="stringliteral">&quot;The point (&quot;</span> +</div>
-<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span>                        Patterns::Tools::Convert&lt;Point&lt;dim&gt;&gt;::to_string(</div>
-<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span>                          evaluation_points[i]) +</div>
-<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span>                        <span class="stringliteral">&quot;) is not defined within the simulated domain.&quot;</span>));</div>
-<div class="line"><a id="l01541" name="l01541"></a><span class="lineno"> 1541</span>        }</div>
-<div class="line"><a id="l01542" name="l01542"></a><span class="lineno"> 1542</span>    }</div>
-<div class="line"><a id="l01543" name="l01543"></a><span class="lineno"> 1543</span> </div>
-<div class="line"><a id="l01544" name="l01544"></a><span class="lineno"> 1544</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l01545" name="l01545"></a><span class="lineno"> 1545</span>}</div>
+<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span><span class="comment"> * @tparam dim Denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span><span class="comment"> * @param[in] evaluation_points Vector of points where the values of the</span></div>
+<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span><span class="comment"> * solution field are to be evaluated.</span></div>
+<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span><span class="comment"> * @param[in] remote_point_evaluator RemotePointEvaluation object used to</span></div>
+<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span><span class="comment"> * evaluate values.</span></div>
+<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span><span class="comment"> * @return @p true if all points are within the simulated domain.</span></div>
+<div class="line"><a id="l01526" name="l01526"></a><span class="lineno"> 1526</span><span class="comment"> */</span></div>
+<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span><span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen01529" data-start="{" data-end="}">
+<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"><a class="line" href="core_2utilities_8h.html#a6c59fdbd976bc70491d23f9870eda5ea"> 1529</a></span><a class="code hl_function" href="core_2utilities_8h.html#a6c59fdbd976bc70491d23f9870eda5ea">points_are_in_domain</a>(</div>
+<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span>  <span class="keyword">const</span> std::vector&lt;Point&lt;dim&gt;&gt;                         &amp;evaluation_points,</div>
+<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span>  <span class="keyword">const</span> Utilities::MPI::RemotePointEvaluation&lt;dim, dim&gt; &amp;remote_point_evaluator)</div>
+<div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span>{</div>
+<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span>  <span class="keywordflow">if</span> (!remote_point_evaluator.all_points_found())</div>
+<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"> 1534</span>    {</div>
+<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"> 1535</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; evaluation_points.size(); ++i)</div>
+<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"> 1536</span>        {</div>
+<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span>          AssertThrow(remote_point_evaluator.point_found(i),</div>
+<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span>                      ExcMessage(</div>
+<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span>                        <span class="stringliteral">&quot;The point (&quot;</span> +</div>
+<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span>                        Patterns::Tools::Convert&lt;Point&lt;dim&gt;&gt;::to_string(</div>
+<div class="line"><a id="l01541" name="l01541"></a><span class="lineno"> 1541</span>                          evaluation_points[i]) +</div>
+<div class="line"><a id="l01542" name="l01542"></a><span class="lineno"> 1542</span>                        <span class="stringliteral">&quot;) is not defined within the simulated domain.&quot;</span>));</div>
+<div class="line"><a id="l01543" name="l01543"></a><span class="lineno"> 1543</span>        }</div>
+<div class="line"><a id="l01544" name="l01544"></a><span class="lineno"> 1544</span>    }</div>
+<div class="line"><a id="l01545" name="l01545"></a><span class="lineno"> 1545</span> </div>
+<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01547" name="l01547"></a><span class="lineno"> 1547</span>}</div>
 </div>
-<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span> </div>
-<div class="line"><a id="l01547" name="l01547"></a><span class="lineno"> 1547</span> </div>
-<div class="line"><a id="l01548" name="l01548"></a><span class="lineno"> 1548</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01548" name="l01548"></a><span class="lineno"> 1548</span> </div>
+<div class="line"><a id="l01549" name="l01549"></a><span class="lineno"> 1549</span> </div>
+<div class="line"><a id="l01550" name="l01550"></a><span class="lineno"> 1550</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassstatistics_html"><div class="ttname"><a href="classstatistics.html">statistics</a></div><div class="ttdoc">A simple container for storing basic statistical values.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00055">utilities.h:56</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a0288afba1bf979183eed4fe63c9d6677"><div class="ttname"><a href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">statistics::average</a></div><div class="ttdeci">double average</div><div class="ttdoc">The average value of the dataset.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00081">utilities.h:81</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a04dec28f738b790becb32245ef23a1d0"><div class="ttname"><a href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">statistics::max</a></div><div class="ttdeci">double max</div><div class="ttdoc">The maximum value in the dataset.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00075">utilities.h:75</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a31d6750c3251c979f5c2d013984e1162"><div class="ttname"><a href="classstatistics.html#a31d6750c3251c979f5c2d013984e1162">statistics::statistics</a></div><div class="ttdeci">statistics()</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00063">utilities.h:63</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a369777f49617bdece739dc561218ef1d"><div class="ttname"><a href="classstatistics.html#a369777f49617bdece739dc561218ef1d">statistics::min</a></div><div class="ttdeci">double min</div><div class="ttdoc">The minimum value in the dataset.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00072">utilities.h:72</a></div></div>
 <div class="ttc" id="aclassstatistics_html_aa329652ce74ac69d02f7e2a2706083f8"><div class="ttname"><a href="classstatistics.html#aa329652ce74ac69d02f7e2a2706083f8">statistics::total</a></div><div class="ttdeci">double total</div><div class="ttdoc">The sum of all values in the dataset.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00078">utilities.h:78</a></div></div>
-<div class="ttc" id="acore_2utilities_8h_html_a0ca4ad74cfa4ff603d94d8f520df07a5"><div class="ttname"><a href="core_2utilities_8h.html#a0ca4ad74cfa4ff603d94d8f520df07a5">create_random_number_container</a></div><div class="ttdeci">void create_random_number_container(std::vector&lt; double &gt; &amp;random_container, const unsigned int number_of_elements, const double maximum_range, const unsigned int prn_seed)</div><div class="ttdoc">Creates a vector of random doubles between 0 and a maximum value using a pseudo random seed.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01302">utilities.h:1302</a></div></div>
+<div class="ttc" id="acore_2utilities_8h_html_a0ca4ad74cfa4ff603d94d8f520df07a5"><div class="ttname"><a href="core_2utilities_8h.html#a0ca4ad74cfa4ff603d94d8f520df07a5">create_random_number_container</a></div><div class="ttdeci">void create_random_number_container(std::vector&lt; double &gt; &amp;random_container, const unsigned int number_of_elements, const double maximum_range, const unsigned int prn_seed)</div><div class="ttdoc">Creates a vector of random doubles between 0 and a maximum value using a pseudo random seed.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01304">utilities.h:1304</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a1889a1173f8dafd76574024a7e779587"><div class="ttname"><a href="core_2utilities_8h.html#a1889a1173f8dafd76574024a7e779587">check_file_exists</a></div><div class="ttdeci">void check_file_exists(const std::string &amp;file_name, const std::string &amp;file_description)</div><div class="ttdoc">Verify that a file that Lethe must read exists and can be opened, and raise an error stated in the us...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00225">utilities.cc:225</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a2f4c4c70d98da93b973297b97e085b90"><div class="ttname"><a href="core_2utilities_8h.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a></div><div class="ttdeci">unsigned int get_dimension(const std::string &amp;file_name)</div><div class="ttdoc">Extract the dimension in which to run Lethe from the contents of the parameter file....</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00670">utilities.cc:670</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a33de98af6e3fa7efc6404f934ea9db9d"><div class="ttname"><a href="core_2utilities_8h.html#a33de98af6e3fa7efc6404f934ea9db9d">deserialize_table</a></div><div class="ttdeci">void deserialize_table(TableHandler &amp;table, const std::string &amp;filename, const MPI_Comm &amp;mpi_communicator, const bool deserialize_on_rank_zero=true)</div><div class="ttdoc">Loads a TableHandler from a file using Boost serialization.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00576">utilities.h:576</a></div></div>
@@ -1741,18 +1743,18 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="acore_2utilities_8h_html_a439affc773842316d1ef847a134b246c"><div class="ttname"><a href="core_2utilities_8h.html#a439affc773842316d1ef847a134b246c">fill_string_vectors_from_file</a></div><div class="ttdeci">void fill_string_vectors_from_file(std::map&lt; std::string, std::vector&lt; std::string &gt; &gt; &amp;map, const std::string &amp;file_name, const std::string &amp;delimiter=&quot; &quot;)</div><div class="ttdoc">Function that read a file that was build from a dealii table and create a map with the key being the ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00352">utilities.cc:352</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a4571c70fd85a35c8ddaaa75f9743df63"><div class="ttname"><a href="core_2utilities_8h.html#a4571c70fd85a35c8ddaaa75f9743df63">make_table_tensors_scalars</a></div><div class="ttdeci">TableHandler make_table_tensors_scalars(const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; double &gt; &amp;dependent_values, const std::string &amp;dependent_column_name, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of scalars (depe...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00189">utilities.cc:189</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a47c096b4659adc4e0aa45d4aeb994dad"><div class="ttname"><a href="core_2utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">identify_minimum_cell_size</a></div><div class="ttdeci">double identify_minimum_cell_size(const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const Quadrature&lt; dim &gt; &amp;cell_quadrature, const MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Identify minimum cell size. The cell size corresponds to the diameter of a disk (2D) or sphere (3D) o...</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01046">utilities.h:1046</a></div></div>
-<div class="ttc" id="acore_2utilities_8h_html_a4a392cd214e737c300c8f727e465a409"><div class="ttname"><a href="core_2utilities_8h.html#a4a392cd214e737c300c8f727e465a409">extract_values_from_map</a></div><div class="ttdeci">std::vector&lt; val &gt; extract_values_from_map(const std::map&lt; key, val &gt; &amp;map)</div><div class="ttdoc">Extract the values from map object.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01139">utilities.h:1139</a></div></div>
+<div class="ttc" id="acore_2utilities_8h_html_a4a392cd214e737c300c8f727e465a409"><div class="ttname"><a href="core_2utilities_8h.html#a4a392cd214e737c300c8f727e465a409">extract_values_from_map</a></div><div class="ttdeci">std::vector&lt; val &gt; extract_values_from_map(const std::map&lt; key, val &gt; &amp;map)</div><div class="ttdoc">Extract the values from map object.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01140">utilities.h:1140</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a4b182f49ed10ffa3d2d50a9a309cd2f0"><div class="ttname"><a href="core_2utilities_8h.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a></div><div class="ttdeci">void create_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Creates the simulation output folder.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00401">utilities.cc:401</a></div></div>
-<div class="ttc" id="acore_2utilities_8h_html_a4d01240a64ec227527f59652438c47a6"><div class="ttname"><a href="core_2utilities_8h.html#a4d01240a64ec227527f59652438c47a6">point_to_angle</a></div><div class="ttdeci">double point_to_angle(const Point&lt; dim &gt; &amp;point, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;(), const unsigned int rotation_axis_direction=2)</div><div class="ttdoc">Converts point to angle (in radians) based on rotation axis.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01234">utilities.h:1234</a></div></div>
+<div class="ttc" id="acore_2utilities_8h_html_a4d01240a64ec227527f59652438c47a6"><div class="ttname"><a href="core_2utilities_8h.html#a4d01240a64ec227527f59652438c47a6">point_to_angle</a></div><div class="ttdeci">double point_to_angle(const Point&lt; dim &gt; &amp;point, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;(), const unsigned int rotation_axis_direction=2)</div><div class="ttdoc">Converts point to angle (in radians) based on rotation axis.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01236">utilities.h:1236</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a4ebdfb061bfb4288cd6993cb1d6de661"><div class="ttname"><a href="core_2utilities_8h.html#a4ebdfb061bfb4288cd6993cb1d6de661">evaluate_values_at_points</a></div><div class="ttdeci">void evaluate_values_at_points(const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;solution_field, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, Utilities::MPI::RemotePointEvaluation&lt; dim &gt; &amp;remote_point_evaluator, std::vector&lt; double &gt; &amp;evaluated_scalar_values, const unsigned int first_selected_component=0)</div><div class="ttdoc">Evaluates the values of a scalar field at remote points of the domain from the mapping,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00930">utilities.cc:930</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a54eb781396dbcdc912f634cb49143aa6"><div class="ttname"><a href="core_2utilities_8h.html#a54eb781396dbcdc912f634cb49143aa6">enum_to_string</a></div><div class="ttdeci">std::string enum_to_string(const EnumType value)</div><div class="ttdoc">Return the name of an enumerator, e.g. to derive the default value string of a parameter entry from t...</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00705">utilities.h:705</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a5b337d2e0e6ac7f6bce6205d1f92e205"><div class="ttname"><a href="core_2utilities_8h.html#a5b337d2e0e6ac7f6bce6205d1f92e205">make_table_scalars_vectors</a></div><div class="ttdeci">TableHandler make_table_scalars_vectors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of vectors of scalars (...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00024">utilities.cc:24</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a5b78e809b34030d2be858fbc29e69267"><div class="ttname"><a href="core_2utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a></div><div class="ttdeci">void serialize_table(const TableHandler &amp;table, const std::string &amp;filename, const MPI_Comm &amp;mpi_communicator, const bool serialize_on_rank_zero=true)</div><div class="ttdoc">Serializes a TableHandler to a file using Boost serialization.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00547">utilities.h:547</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="core_2utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00865">utilities.cc:865</a></div></div>
-<div class="ttc" id="acore_2utilities_8h_html_a642bc9ef98dbdbc0a480ea1a3b840b7a"><div class="ttname"><a href="core_2utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a">convert_string_to_vector</a></div><div class="ttdeci">std::vector&lt; T &gt; convert_string_to_vector(const ParameterHandler &amp;prm, const std::string &amp;entry_string)</div><div class="ttdoc">Return the vector of size N of entry @entry_string. If the entry is specified in the ....</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01330">utilities.h:1330</a></div></div>
+<div class="ttc" id="acore_2utilities_8h_html_a642bc9ef98dbdbc0a480ea1a3b840b7a"><div class="ttname"><a href="core_2utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a">convert_string_to_vector</a></div><div class="ttdeci">std::vector&lt; T &gt; convert_string_to_vector(const ParameterHandler &amp;prm, const std::string &amp;entry_string)</div><div class="ttdoc">Return the vector of size N of entry @entry_string. If the entry is specified in the ....</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01332">utilities.h:1332</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a6761d32800de2739011760d71ae33c09"><div class="ttname"><a href="core_2utilities_8h.html#a6761d32800de2739011760d71ae33c09">delete_output_folder</a></div><div class="ttdeci">void delete_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Delete the output folder and its content.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00407">utilities.cc:407</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="core_2utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00917">utilities.cc:917</a></div></div>
-<div class="ttc" id="acore_2utilities_8h_html_a6c59fdbd976bc70491d23f9870eda5ea"><div class="ttname"><a href="core_2utilities_8h.html#a6c59fdbd976bc70491d23f9870eda5ea">points_are_in_domain</a></div><div class="ttdeci">bool points_are_in_domain(const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, const Utilities::MPI::RemotePointEvaluation&lt; dim, dim &gt; &amp;remote_point_evaluator)</div><div class="ttdoc">Checks that the evaluation points are within the simulated domain and returns true if all points are ...</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01527">utilities.h:1527</a></div></div>
+<div class="ttc" id="acore_2utilities_8h_html_a6c59fdbd976bc70491d23f9870eda5ea"><div class="ttname"><a href="core_2utilities_8h.html#a6c59fdbd976bc70491d23f9870eda5ea">points_are_in_domain</a></div><div class="ttdeci">bool points_are_in_domain(const std::vector&lt; Point&lt; dim &gt; &gt; &amp;evaluation_points, const Utilities::MPI::RemotePointEvaluation&lt; dim, dim &gt; &amp;remote_point_evaluator)</div><div class="ttdoc">Checks that the evaluation points are within the simulated domain and returns true if all points are ...</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01529">utilities.h:1529</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a775e285833b01fbf0f476f77f0478432"><div class="ttname"><a href="core_2utilities_8h.html#a775e285833b01fbf0f476f77f0478432">fill_vectors_from_file</a></div><div class="ttdeci">void fill_vectors_from_file(std::map&lt; std::string, std::vector&lt; double &gt; &gt; &amp;map, const std::string &amp;file_name, const std::string &amp;delimiter=&quot; &quot;)</div><div class="ttdoc">function that read a file that was build from a dealii table and fill 2 vectors. The first vector con...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00299">utilities.cc:299</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a7fd3607e964d8d62013b2eca0939fc84"><div class="ttname"><a href="core_2utilities_8h.html#a7fd3607e964d8d62013b2eca0939fc84">make_table_tensors_tensors</a></div><div class="ttdeci">TableHandler make_table_tensors_tensors(const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00147">utilities.cc:147</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_a825eba5d27f92341a8515280f34f9d24"><div class="ttname"><a href="core_2utilities_8h.html#a825eba5d27f92341a8515280f34f9d24">get_max_subsection_size</a></div><div class="ttdeci">int get_max_subsection_size(const std::string &amp;file_name, const bool require_subsection_size=true)</div><div class="ttdoc">Extract the maximum value between the number of boundary conditions and the number of manifolds from ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00736">utilities.cc:736</a></div></div>
@@ -1777,21 +1779,21 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="acore_2utilities_8h_html_ae2e85bc56c84564999daa889908507c8"><div class="ttname"><a href="core_2utilities_8h.html#ae2e85bc56c84564999daa889908507c8">print_comment_to_output_file</a></div><div class="ttdeci">void print_comment_to_output_file(const ConditionalOStream &amp;pcout, ParameterHandler &amp;prm)</div><div class="ttdoc">Print a user comment at the beginning of the simulation on the console output.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00902">utilities.cc:902</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_aef330c4a36137fca9e43551c2862930e"><div class="ttname"><a href="core_2utilities_8h.html#aef330c4a36137fca9e43551c2862930e">DeprecatedEnumNames</a></div><div class="ttdeci">std::vector&lt; std::pair&lt; std::string, EnumType &gt; &gt; DeprecatedEnumNames</div><div class="ttdoc">Deprecated strings of an enum parameter, each paired with the enumerator it stands for....</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00765">utilities.h:765</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_af36ab9d4f26f349b1558ce2a12719c6e"><div class="ttname"><a href="core_2utilities_8h.html#af36ab9d4f26f349b1558ce2a12719c6e">fill_table_from_file</a></div><div class="ttdeci">void fill_table_from_file(TableHandler &amp;table, const std::string &amp;file_name, const std::string &amp;delimiter=&quot; &quot;)</div><div class="ttdoc">Reads a file generated by a deal.II TableHandler and fills a TableHandler with its data.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00253">utilities.cc:253</a></div></div>
-<div class="ttc" id="acore_2utilities_8h_html_afbfe529803efbfc38f57eb78aada2e6f"><div class="ttname"><a href="core_2utilities_8h.html#afbfe529803efbfc38f57eb78aada2e6f">radius_to_point</a></div><div class="ttdeci">Point&lt; dim &gt; radius_to_point(const double radius, const double angle_rad, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;(), const unsigned int rotation_axis_direction=2)</div><div class="ttdoc">Converts radius to point in cartesian coordinates based on rotation axis.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01266">utilities.h:1266</a></div></div>
+<div class="ttc" id="acore_2utilities_8h_html_afbfe529803efbfc38f57eb78aada2e6f"><div class="ttname"><a href="core_2utilities_8h.html#afbfe529803efbfc38f57eb78aada2e6f">radius_to_point</a></div><div class="ttdeci">Point&lt; dim &gt; radius_to_point(const double radius, const double angle_rad, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;(), const unsigned int rotation_axis_direction=2)</div><div class="ttdoc">Converts radius to point in cartesian coordinates based on rotation axis.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01268">utilities.h:1268</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html_afcfe4de1afd73ea594f9e79b64c3b1c0"><div class="ttname"><a href="core_2utilities_8h.html#afcfe4de1afd73ea594f9e79b64c3b1c0">deserialize_tables_vector</a></div><div class="ttdeci">void deserialize_tables_vector(std::vector&lt; OutputStructTableHandler &gt; &amp;table_output_structs, const MPI_Comm mpi_communicator)</div><div class="ttdoc">Deserializes all the TableHandler objects in table_output_structs.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l00624">utilities.h:624</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">Variable::phase_cahn_hilliard</a></div><div class="ttdeci">@ phase_cahn_hilliard</div><div class="ttdoc">Phase order scalar field from Cahn Hilliard.</div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">Variable::phase</a></div><div class="ttdeci">@ phase</div><div class="ttdoc">Phase indicator scalar field from CLS.</div></div>
 <div class="ttc" id="anamespaceDEM_1_1DEMMPProperties_html_aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9"><div class="ttname"><a href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9">DEM::DEMMPProperties::T</a></div><div class="ttdeci">@ T</div><div class="ttdoc">Particle temperature.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00178">dem_properties.h:178</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00033">fluid_dynamics_matrix_free.h:34</a></div></div>
 <div class="ttc" id="aoutput__struct_8h_html"><div class="ttname"><a href="output__struct_8h.html">output_struct.h</a></div></div>
-<div class="ttc" id="astructcell__comparison_html"><div class="ttname"><a href="structcell__comparison.html">cell_comparison</a></div><div class="ttdoc">Operator overloading to enable using triangulation cells as map keys.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01377">utilities.h:1378</a></div></div>
-<div class="ttc" id="astructcell__comparison_html_acb392d810bb42bfdc551fca338ea0905"><div class="ttname"><a href="structcell__comparison.html#acb392d810bb42bfdc551fca338ea0905">cell_comparison::operator()</a></div><div class="ttdeci">bool operator()(const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell_1, const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell_2) const</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01380">utilities.h:1380</a></div></div>
-<div class="ttc" id="astructcut__cell__comparison_html"><div class="ttname"><a href="structcut__cell__comparison.html">cut_cell_comparison</a></div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01410">utilities.h:1411</a></div></div>
-<div class="ttc" id="astructcut__cell__comparison_html_a70af40f8d7b0285e41557f58b710ada4"><div class="ttname"><a href="structcut__cell__comparison.html#a70af40f8d7b0285e41557f58b710ada4">cut_cell_comparison::operator()</a></div><div class="ttdeci">bool operator()(const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell_1, const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell_2) const</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01413">utilities.h:1413</a></div></div>
-<div class="ttc" id="astructcut__cell__hash_html"><div class="ttname"><a href="structcut__cell__hash.html">cut_cell_hash</a></div><div class="ttdoc">Hash functor to enable using cut-cell (embedded triangulation) active cell iterators as keys of an un...</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01430">utilities.h:1431</a></div></div>
-<div class="ttc" id="astructcut__cell__hash_html_ab5e71690ae00b54ee60b81005d3fc416"><div class="ttname"><a href="structcut__cell__hash.html#ab5e71690ae00b54ee60b81005d3fc416">cut_cell_hash::operator()</a></div><div class="ttdeci">std::size_t operator()(const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell) const</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01433">utilities.h:1433</a></div></div>
-<div class="ttc" id="astructparticle__comparison_html"><div class="ttname"><a href="structparticle__comparison.html">particle_comparison</a></div><div class="ttdoc">Operator overloading to enable using particle iterators as map keys.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01394">utilities.h:1395</a></div></div>
-<div class="ttc" id="astructparticle__comparison_html_a5549b2cc63f7572efc9be30ef04e71bd"><div class="ttname"><a href="structparticle__comparison.html#a5549b2cc63f7572efc9be30ef04e71bd">particle_comparison::operator()</a></div><div class="ttdeci">bool operator()(const Particles::ParticleIterator&lt; dim &gt; &amp;particle_1, const Particles::ParticleIterator&lt; dim &gt; &amp;particle_2)</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01397">utilities.h:1397</a></div></div>
+<div class="ttc" id="astructcell__comparison_html"><div class="ttname"><a href="structcell__comparison.html">cell_comparison</a></div><div class="ttdoc">Operator overloading to enable using triangulation cells as map keys.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01379">utilities.h:1380</a></div></div>
+<div class="ttc" id="astructcell__comparison_html_acb392d810bb42bfdc551fca338ea0905"><div class="ttname"><a href="structcell__comparison.html#acb392d810bb42bfdc551fca338ea0905">cell_comparison::operator()</a></div><div class="ttdeci">bool operator()(const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell_1, const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell_2) const</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01382">utilities.h:1382</a></div></div>
+<div class="ttc" id="astructcut__cell__comparison_html"><div class="ttname"><a href="structcut__cell__comparison.html">cut_cell_comparison</a></div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01412">utilities.h:1413</a></div></div>
+<div class="ttc" id="astructcut__cell__comparison_html_a70af40f8d7b0285e41557f58b710ada4"><div class="ttname"><a href="structcut__cell__comparison.html#a70af40f8d7b0285e41557f58b710ada4">cut_cell_comparison::operator()</a></div><div class="ttdeci">bool operator()(const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell_1, const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell_2) const</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01415">utilities.h:1415</a></div></div>
+<div class="ttc" id="astructcut__cell__hash_html"><div class="ttname"><a href="structcut__cell__hash.html">cut_cell_hash</a></div><div class="ttdoc">Hash functor to enable using cut-cell (embedded triangulation) active cell iterators as keys of an un...</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01432">utilities.h:1433</a></div></div>
+<div class="ttc" id="astructcut__cell__hash_html_ab5e71690ae00b54ee60b81005d3fc416"><div class="ttname"><a href="structcut__cell__hash.html#ab5e71690ae00b54ee60b81005d3fc416">cut_cell_hash::operator()</a></div><div class="ttdeci">std::size_t operator()(const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell) const</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01435">utilities.h:1435</a></div></div>
+<div class="ttc" id="astructparticle__comparison_html"><div class="ttname"><a href="structparticle__comparison.html">particle_comparison</a></div><div class="ttdoc">Operator overloading to enable using particle iterators as map keys.</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01396">utilities.h:1397</a></div></div>
+<div class="ttc" id="astructparticle__comparison_html_a5549b2cc63f7572efc9be30ef04e71bd"><div class="ttname"><a href="structparticle__comparison.html#a5549b2cc63f7572efc9be30ef04e71bd">particle_comparison::operator()</a></div><div class="ttdeci">bool operator()(const Particles::ParticleIterator&lt; dim &gt; &amp;particle_1, const Particles::ParticleIterator&lt; dim &gt; &amp;particle_2)</div><div class="ttdef"><b>Definition</b> <a href="core_2utilities_8h_source.html#l01399">utilities.h:1399</a></div></div>
 <div class="ttc" id="atime__harmonic__maxwell_8h_html_a5114f84176ad5081553f88d2b5d2525e"><div class="ttname"><a href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a></div><div class="ttdeci">GlobalVectorType VectorType</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell_8h_source.html#l00063">time_harmonic_maxwell.h:63</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!--

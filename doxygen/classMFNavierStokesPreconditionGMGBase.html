@@ -109,8 +109,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a83d349e2b298663ffed4f24b732a4235"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a258577616f84cc7fa8b420f6ff311ab2" id="r_a258577616f84cc7fa8b420f6ff311ab2"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a258577616f84cc7fa8b420f6ff311ab2">~MFNavierStokesPreconditionGMGBase</a> ()=default</td></tr>
 <tr class="separator:a258577616f84cc7fa8b420f6ff311ab2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72c64defc745cba5d15e9c659aede082" id="r_a72c64defc745cba5d15e9c659aede082"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a72c64defc745cba5d15e9c659aede082">reinit</a> (const std::shared_ptr&lt; Mapping&lt; dim &gt; &gt; &amp;mapping, const std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt; &amp;cell_quadrature, const std::shared_ptr&lt; Function&lt; dim &gt; &gt; forcing_function, const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, const std::shared_ptr&lt; <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &gt; &amp;physical_properties_manager, const std::shared_ptr&lt; FESystem&lt; dim &gt; &gt; fe)</td></tr>
-<tr class="separator:a72c64defc745cba5d15e9c659aede082"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96537e05b0162ad05c0f73e879b97935" id="r_a96537e05b0162ad05c0f73e879b97935"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a96537e05b0162ad05c0f73e879b97935">reinit</a> (const std::shared_ptr&lt; Mapping&lt; dim &gt; &gt; &amp;mapping, const std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt; &amp;cell_quadrature, const std::shared_ptr&lt; Function&lt; dim &gt; &gt; &amp;forcing_function, const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, const std::shared_ptr&lt; <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &gt; &amp;physical_properties_manager, const std::shared_ptr&lt; FESystem&lt; dim &gt; &gt; &amp;fe)</td></tr>
+<tr class="separator:a96537e05b0162ad05c0f73e879b97935"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7665874c6bc00f8bd9dc52337439f26" id="r_af7665874c6bc00f8bd9dc52337439f26"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#af7665874c6bc00f8bd9dc52337439f26">create_level_operator</a> (const unsigned int level)=0</td></tr>
 <tr class="separator:af7665874c6bc00f8bd9dc52337439f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bbc619f6ae34a719d76ef86f557ac88" id="r_a4bbc619f6ae34a719d76ef86f557ac88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a4bbc619f6ae34a719d76ef86f557ac88">initialize</a> ()</td></tr>
@@ -837,8 +837,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a72c64defc745cba5d15e9c659aede082" name="a72c64defc745cba5d15e9c659aede082"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a72c64defc745cba5d15e9c659aede082">&#9670;&#160;</a></span>reinit()</h2>
+<a id="a96537e05b0162ad05c0f73e879b97935" name="a96537e05b0162ad05c0f73e879b97935"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96537e05b0162ad05c0f73e879b97935">&#9670;&#160;</a></span>reinit()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -860,7 +860,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; Function&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; Function&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>forcing_function</em>, </td>
         </tr>
         <tr>
@@ -878,7 +878,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; FESystem&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; FESystem&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>fe</em>&#160;</td>
         </tr>
         <tr>
