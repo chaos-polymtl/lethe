@@ -4565,7 +4565,7 @@ namespace Parameters
         prm.leave_subsection();
       }
 
-      unsigned int max_ib_particles = 10;
+      unsigned int max_ib_particles = 20;
       particles.resize(max_ib_particles);
       for (unsigned int i = 0; i < max_ib_particles; ++i)
         {
