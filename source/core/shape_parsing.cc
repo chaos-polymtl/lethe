@@ -3,6 +3,8 @@
 
 #include <core/shape_parsing.h>
 
+#include <deal.II/base/exceptions.h>
+
 #include <algorithm>
 
 template <int dim>
@@ -184,7 +186,7 @@ ShapeGenerator::initialize_shape_from_vector(
       shape = std::make_shared<Plane<dim>>(position, orientation);
     }
   else
-    StandardExceptions::ExcNotImplemented();
+    AssertThrow(false, ExcNotImplemented());
   return shape;
 }
 
