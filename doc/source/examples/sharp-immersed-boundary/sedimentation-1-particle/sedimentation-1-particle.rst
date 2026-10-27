@@ -24,7 +24,7 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/sedimentation-1-particle``).
 
 - Parameter file: ``sedimentation-1-particle.prm``
-- Experimental data of Ten Cate `et al.` [#tencate2002]_ for the E4 experiment: ``ten-cate-E4.dat``
+- Experimental velocity of Ten Cate `et al.` [#tencate2002]_ for the E4 experiment, as plotted in Fig. 8 of Barbeau `et al.` [#barbeau2024]_: ``ten-cate-E4.dat``
 - Postprocessing Python script: ``post-process-sedimentation-1-particle.py``
 
 
@@ -57,7 +57,8 @@ Simulation Control
       set time end           = 1.3    # End time of simulation
       set output name        = out    # Prefix for VTU outputs
       set output path        = out/   # Folder of the outputs
-      set output frequency   = 20     # Frequency of simulation output
+      set output frequency   = 1      # Frequency of simulation output
+      set subdivision        = 1      # Mesh subdivision when output end
     end
 
 
@@ -139,9 +140,7 @@ Mesh Adaptation
       set min refinement level = 0
     
       # Type of mesh adaptationChoices are <none|uniform|adaptive>.
-      set type = adaptive 
-
-      # Type of error estimatorChoices are <kelly|dpg>.
+      set type            = adaptive
       set error estimator = kelly
     
       # Variable for kelly estimationChoices are <velocity|pressure>.
@@ -179,17 +178,17 @@ Boundary Conditions
       set type = noslip
     end
     subsection bc 3
-      set id   = 3
-      set type = outlet
-      set beta = 0
-    end
-    subsection bc 4
       set id   = 4
       set type = noslip
     end
-    subsection bc 5
+    subsection bc 4
       set id   = 5
       set type = noslip
+    end
+    subsection bc 5
+      set id   = 3
+      set type = outlet
+      set beta = 0
     end
   end
 
@@ -221,13 +220,13 @@ Non-linear Solver
     subsection non-linear solver
       subsection fluid dynamics
         set verbosity             = verbose
-        set tolerance             = 1e-6
+        set tolerance             = 1e-5
         set max iterations        = 10
         set force rhs calculation = true
       end
     end
 
-* The ``tolerance`` is set to 1e-6. This is small enough to ensure that the flow field is adequately resolved, as here, we expect a velocity of the particle of the order of 10.
+* The ``tolerance`` is set to 1e-5. This is small enough to ensure that the flow field is adequately resolved, as here, we expect a velocity of the particle of the order of 10.
 
 * The ``max iterations`` is set to 10. The objective here is to allow enough Newton non-linear steps to ensure the convergence to the tolerance. Also, we should limit the time pass on a single time step if the system is too stiff.  
 
@@ -246,21 +245,21 @@ Linear Solver
     subsection linear solver
       subsection fluid dynamics
         set method                                = gmres
-        set max iters                             = 1000
+        set max iters                             = 200
         set relative residual                     = 1e-4
         set minimum residual                      = 1e-11
         set preconditioner                        = ilu
         set ilu preconditioner fill               = 0
-        set ilu preconditioner absolute tolerance = 1e-20
+        set ilu preconditioner absolute tolerance = 1e-12
         set ilu preconditioner relative tolerance = 1.00
         set verbosity                             = verbose
-        set max krylov vectors                    = 1000
+        set max krylov vectors                    = 200
       end
     end
 
 * The ``method`` is set to ``gmres``. This solver is less computationally expensive than the other option, and this case does not require any special preconditioner. This makes the ``gmres`` solver with ``ilu`` preconditioner the best option available.
 
-* The ``max iters`` is set to 1000. This is a lot more steps than how much it should take to solve the system.
+* The ``max iters`` is set to 200. This is more steps than how much it should take to solve the system.
 
 * The ``max krylov vectors`` is set to the same number as the maximum solver iterations. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a certain number of ``gmres`` iterations.
 
@@ -276,7 +275,7 @@ IB Particles
       set assemble Navier-Stokes inside particles = false
       set number of particles                     = 1
       subsection extrapolation function
-        set length ratio  = 2
+        set length ratio   = 2
         set stencil degree = 3
       end
       
@@ -302,10 +301,10 @@ IB Particles
         end
         subsection velocity
           set Function expression = 0;0;0
-        end  
-        
+        end
+
         subsection physical properties
-          set density         = 0.001120
+          set density = 0.001120
         end
       end
     end
@@ -341,7 +340,7 @@ The following parameters are defined in the particle subsection.
 
 * ``velocity`` Function expression is set to 0;0;0. This is the initial velocity of the particle since it starts at rest.
 
-* ``radius`` is set to 0.75. This is according to the definition of the case where the particle has a diameter of 1.5 cm.
+* ``shape arguments`` is set to 0.75, which is the radius of the sphere. This is according to the definition of the case where the particle has a diameter of 1.5 cm.
 
 * ``density`` is set to 0.001120. This is according to the definition of the case.
 
@@ -361,7 +360,7 @@ to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
 
 .. warning:: 
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
-    This simulation takes :math:`\sim \, 4` hours on :math:`14` processes.
+    This simulation takes :math:`\sim \, 2` hours on :math:`14` processes.
 
 ---------------
 Results
@@ -375,7 +374,7 @@ First, we look at a slice of the velocity profile during the acceleration phase.
     :alt: flow_field_acceleration
     :align: center
 
-We can also compare the results obtained for the velocity in time with the results proposed by the article of Ten Cate `et al.` [#tencate2002]_. A similar figure can be generated by launching the following command from the folder of the example, once the simulation is complete:
+We can also compare the velocity of the particle in time with the measurements of Ten Cate `et al.` [#tencate2002]_. A similar figure can be generated by launching the following command from the folder of the example, once the simulation is complete:
 
 .. code-block:: text
   :class: copy-button
@@ -385,8 +384,10 @@ We can also compare the results obtained for the velocity in time with the resul
 This script reads the velocity of the particle in ``out/ib_force.00.dat`` and the experimental data in ``ten-cate-E4.dat``.
 
 .. image:: images/velocity-comparison.png
-    :alt: flow_field_acceleration
+    :alt: velocity_comparison
     :align: center
+
+As noted by Barbeau `et al.` [#barbeau2024]_, integrating the measured velocity gives a fall height of about 12.3 cm instead of the 12 cm of the experimental setup. This explains why the simulated particle reaches the bottom of the container slightly earlier than in the experiment.
 
 
 ---------------
@@ -394,4 +395,6 @@ Reference
 ---------------
 
 .. [#tencate2002] \A. ten Cate, C. H. Nieuwstad, J. J. Derksen, and H. E. A. Van den Akker, “Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity,” *Phys. Fluids*, vol. 14, no. 11, pp. 4012–4025, Oct. 2002, doi: `10.1063/1.1512918 <https://doi.org/10.1063/1.1512918>`_\.
+
+.. [#barbeau2024] \L. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin, and B. Blais, “High-order moving immersed boundary and its application to a resolved CFD-DEM model,” *Comput. Fluids*, vol. 268, p. 106094, 2024, doi: `10.1016/j.compfluid.2023.106094 <https://doi.org/10.1016/j.compfluid.2023.106094>`_\.
 
