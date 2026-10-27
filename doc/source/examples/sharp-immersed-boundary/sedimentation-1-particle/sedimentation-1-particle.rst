@@ -246,7 +246,7 @@ Linear Solver
       subsection fluid dynamics
         set method                                = gmres
         set max iters                             = 200
-        set relative residual                     = 1e-4
+        set relative residual                     = 1e-5
         set minimum residual                      = 1e-11
         set preconditioner                        = ilu
         set ilu preconditioner fill               = 0
@@ -263,7 +263,7 @@ Linear Solver
 
 * The ``max krylov vectors`` is set to the same number as the maximum solver iterations. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a certain number of ``gmres`` iterations.
 
-* The ``relative residual`` is set to 1e-4. This is small enough, so we don't under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn't require too many ``gmres`` iterations.
+* The ``relative residual`` is set to 1e-5. This is small enough, so we don't under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn't require too many ``gmres`` iterations.
 
 * The ``ilu preconditioner fill`` is set to 0. This is the cheapest option. In this case, we can use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
 
@@ -360,7 +360,7 @@ to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
 
 .. warning:: 
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
-    This simulation takes :math:`\sim \, 2` hours on :math:`14` processes.
+    This simulation takes :math:`\sim \, 4` hours on :math:`14` processes.
 
 ---------------
 Results
