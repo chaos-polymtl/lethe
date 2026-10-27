@@ -1,3 +1,4 @@
+
 DEAL::Test 1: Bruggeman model against reference values
 DEAL::Fluid: permittivity 1.00000 + 0.00000 i, conductivity 0.00000, permeability 1.00000 + 0.00000 i
 DEAL::Dispersed phase: permittivity 6.00000 + 0.300000 i, conductivity 0.100000, permeability 2.00000 + 0.500000 i
