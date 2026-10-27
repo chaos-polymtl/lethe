@@ -262,57 +262,58 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>              local_evaluation_point.add(alpha, newton_update);</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>              solver-&gt;<a class="code hl_function" href="classPhysicsSolver.html#afcbaa24bbccef95e74f88926d5d3e7eb">apply_constraints</a>();</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>              evaluation_point = local_evaluation_point;</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span> </div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>              <span class="keywordflow">if</span> (this-&gt;params.verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>                {</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                  solver-&gt;<a class="code hl_variable" href="classPhysicsSolver.html#a438c5dbf8b3a750d042d56ffc3285f1f">pcout</a> &lt;&lt; <span class="stringliteral">&quot;\t\talpha value was kept at alpha = &quot;</span></div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>                                &lt;&lt; std::defaultfloat &lt;&lt; alpha</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                                &lt;&lt; <span class="stringliteral">&quot; since alpha = &quot;</span> &lt;&lt; alpha / 2</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>                                &lt;&lt; std::scientific &lt;&lt; <span class="stringliteral">&quot; increased the residual&quot;</span></div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                                &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>                }</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>              current_res = last_alpha_res;</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>              <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>            }</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>          <span class="keywordflow">if</span> (current_res &lt; this-&gt;params.step_tolerance * last_res ||</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>              last_res &lt; this-&gt;params.tolerance)</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            {</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>              <span class="comment">// If the current residual has decreased  by less than</span></div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>              <span class="comment">// the last residual * matrix_tolerance or more than one alpha</span></div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>              <span class="comment">// iteration was required, the jacobian approximation has become</span></div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>              <span class="comment">// insufficiently performant and, consequently, it is preferable</span></div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>              <span class="comment">// to renew the jacobian matrix</span></div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>              <span class="keywordflow">if</span> (current_res &gt; this-&gt;params.matrix_tolerance * last_res ||</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>                  alpha_iter &gt; 0)</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                matrix_requires_assembly = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                matrix_requires_assembly = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>              <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            }</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>          last_alpha_res = current_res;</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>          alpha_iter++;</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        }</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>      global_res       = solver-&gt;<a class="code hl_function" href="classPhysicsSolver.html#a890a9818cde0d3b89e38ece859b7733e">get_current_residual</a>() / rescale_metric;</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>      present_solution = evaluation_point;</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>      last_res         = current_res;</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>      ++this-&gt;outer_iteration;</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    }</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>  <span class="comment">// If the non-linear solver has not converged abort simulation if</span></div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>  <span class="comment">// abort_at_convergence_failure=true</span></div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>  <span class="keywordflow">if</span> ((global_res &gt; this-&gt;params.tolerance) &amp;&amp;</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>      this-&gt;outer_iteration &gt;= this-&gt;params.max_iterations &amp;&amp;</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>      this-&gt;params.abort_at_convergence_failure)</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    {</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>      <span class="keywordflow">throw</span>(std::runtime_error(</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        <span class="stringliteral">&quot;Stopping simulation because the non-linear solver has failed to converge&quot;</span>));</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    }</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>}</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>              solver-&gt;<a class="code hl_function" href="classPhysicsSolver.html#a74110493860247f4ed2da56ef3050f08">assemble_system_rhs</a>();</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>              <span class="keywordflow">if</span> (this-&gt;params.verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                {</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>                  solver-&gt;<a class="code hl_variable" href="classPhysicsSolver.html#a438c5dbf8b3a750d042d56ffc3285f1f">pcout</a> &lt;&lt; <span class="stringliteral">&quot;\t\talpha value was kept at alpha = &quot;</span></div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                                &lt;&lt; std::defaultfloat &lt;&lt; alpha</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>                                &lt;&lt; <span class="stringliteral">&quot; since alpha = &quot;</span> &lt;&lt; alpha / 2</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                                &lt;&lt; std::scientific &lt;&lt; <span class="stringliteral">&quot; increased the residual&quot;</span></div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>                                &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>                }</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>              current_res = last_alpha_res;</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>              <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            }</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>          <span class="keywordflow">if</span> (current_res &lt; this-&gt;params.step_tolerance * last_res ||</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>              last_res &lt; this-&gt;params.tolerance)</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            {</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>              <span class="comment">// If the current residual has decreased  by less than</span></div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>              <span class="comment">// the last residual * matrix_tolerance or more than one alpha</span></div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>              <span class="comment">// iteration was required, the jacobian approximation has become</span></div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>              <span class="comment">// insufficiently performant and, consequently, it is preferable</span></div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>              <span class="comment">// to renew the jacobian matrix</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>              <span class="keywordflow">if</span> (current_res &gt; this-&gt;params.matrix_tolerance * last_res ||</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                  alpha_iter &gt; 0)</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                matrix_requires_assembly = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>                matrix_requires_assembly = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span> </div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>              <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            }</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>          last_alpha_res = current_res;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>          alpha_iter++;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        }</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>      global_res       = solver-&gt;<a class="code hl_function" href="classPhysicsSolver.html#a890a9818cde0d3b89e38ece859b7733e">get_current_residual</a>() / rescale_metric;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>      present_solution = evaluation_point;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>      last_res         = current_res;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>      ++this-&gt;outer_iteration;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    }</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>  <span class="comment">// If the non-linear solver has not converged abort simulation if</span></div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>  <span class="comment">// abort_at_convergence_failure=true</span></div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>  <span class="keywordflow">if</span> ((global_res &gt; this-&gt;params.tolerance) &amp;&amp;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>      this-&gt;outer_iteration &gt;= this-&gt;params.max_iterations &amp;&amp;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>      this-&gt;params.abort_at_convergence_failure)</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>      <span class="keywordflow">throw</span>(std::runtime_error(</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="stringliteral">&quot;Stopping simulation because the non-linear solver has failed to converge&quot;</span>));</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    }</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>}</div>
 </div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassInexactNewtonNonLinearSolverStrategy_html"><div class="ttname"><a href="classInexactNewtonNonLinearSolverStrategy.html">InexactNewtonNonLinearSolverStrategy</a></div><div class="ttdoc">Non-linear solver for non-linear systems of equations which uses an inexact Newton method with  relax...</div><div class="ttdef"><b>Definition</b> <a href="inexact__newton__non__linear__solver__strategy_8h_source.html#l00019">inexact_newton_non_linear_solver_strategy.h:21</a></div></div>
 <div class="ttc" id="aclassInexactNewtonNonLinearSolverStrategy_html_a09bc41ce28e039c1da2dc0a22109f5d1"><div class="ttname"><a href="classInexactNewtonNonLinearSolverStrategy.html#a09bc41ce28e039c1da2dc0a22109f5d1">InexactNewtonNonLinearSolverStrategy::matrix_requires_assembly</a></div><div class="ttdeci">bool matrix_requires_assembly</div><div class="ttdef"><b>Definition</b> <a href="inexact__newton__non__linear__solver__strategy_8h_source.html#l00046">inexact_newton_non_linear_solver_strategy.h:46</a></div></div>
 <div class="ttc" id="aclassInexactNewtonNonLinearSolverStrategy_html_a7d8f2a00efc898f3d0f64b3f72366b19"><div class="ttname"><a href="classInexactNewtonNonLinearSolverStrategy.html#a7d8f2a00efc898f3d0f64b3f72366b19">InexactNewtonNonLinearSolverStrategy::InexactNewtonNonLinearSolverStrategy</a></div><div class="ttdeci">InexactNewtonNonLinearSolverStrategy(PhysicsSolver&lt; VectorType &gt; *physics_solver, const Parameters::NonLinearSolver &amp;param)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> <a href="inexact__newton__non__linear__solver__strategy_8h_source.html#l00050">inexact_newton_non_linear_solver_strategy.h:51</a></div></div>
