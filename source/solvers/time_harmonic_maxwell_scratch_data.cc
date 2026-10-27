@@ -29,16 +29,53 @@ compute_effective_electromagnetic_properties(
   std::vector<double> permeability_real(n_q_points);
   std::vector<double> permeability_imag(n_q_points);
 
-  physical_properties_manager.get_electric_permittivity_real(0, material_id)
-    ->vector_value(field_values_vectors, permittivity_real);
-  physical_properties_manager.get_electric_permittivity_imag(0, material_id)
-    ->vector_value(field_values_vectors, permittivity_imag);
-  physical_properties_manager.get_electric_conductivity(0, material_id)
-    ->vector_value(field_values_vectors, conductivity);
-  physical_properties_manager.get_magnetic_permeability_real(0, material_id)
-    ->vector_value(field_values_vectors, permeability_real);
-  physical_properties_manager.get_magnetic_permeability_imag(0, material_id)
-    ->vector_value(field_values_vectors, permeability_imag);
+  // We use the fluid_id = 0 because the time-harmonic Maxwell solver only
+  // supports a single fluid. The material_id is used to identify the different
+  // materials in the input file and assign them their corresponding properties.
+  if (physical_properties_manager.is_effective_medium(0, material_id))
+    {
+      // The material is a mixture of the fluid and of a dispersed phase. The
+      // time-harmonic Maxwell solver supports a single fluid (id 0) and a
+      // single dispersed phase (id 0).
+      const unsigned int material_interaction_id =
+        physical_properties_manager.get_material_interaction_id(
+          material_interactions_type::fluid_dispersed_phase, 0, 0);
+
+      physical_properties_manager
+        .get_effective_electric_permittivity_real(material_interaction_id)
+        ->vector_value(field_values_vectors, permittivity_real);
+      physical_properties_manager
+        .get_effective_electric_permittivity_imag(material_interaction_id)
+        ->vector_value(field_values_vectors, permittivity_imag);
+      physical_properties_manager
+        .get_effective_magnetic_permeability_real(material_interaction_id)
+        ->vector_value(field_values_vectors, permeability_real);
+      physical_properties_manager
+        .get_effective_magnetic_permeability_imag(material_interaction_id)
+        ->vector_value(field_values_vectors, permeability_imag);
+
+      // The mixing law is applied to the complete complex permittivity
+      // eps' + i(eps'' + sigma) of each phase, so the conductivity of both
+      // phases is already included in the imaginary part of the effective
+      // permittivity. The conductivity vector is therefore left at zero.
+    }
+  else
+    {
+      physical_properties_manager
+        .get_electric_permittivity_real(0, material_id)
+        ->vector_value(field_values_vectors, permittivity_real);
+      physical_properties_manager
+        .get_electric_permittivity_imag(0, material_id)
+        ->vector_value(field_values_vectors, permittivity_imag);
+      physical_properties_manager.get_electric_conductivity(0, material_id)
+        ->vector_value(field_values_vectors, conductivity);
+      physical_properties_manager
+        .get_magnetic_permeability_real(0, material_id)
+        ->vector_value(field_values_vectors, permeability_real);
+      physical_properties_manager
+        .get_magnetic_permeability_imag(0, material_id)
+        ->vector_value(field_values_vectors, permeability_imag);
+    }
 
   // We resize the effective electromagnetic property vectors to match the
   // number of points because this function can be called with a different
@@ -54,6 +91,56 @@ compute_effective_electromagnetic_properties(
       effective_magnetic_permeabilities[q] = {permeability_real[q],
                                               permeability_imag[q]};
     }
+}
+
+bool
+electromagnetic_properties_depend_on(
+  const PhysicalPropertiesManager &physical_properties_manager,
+  const unsigned int               material_id,
+  const field                      field_id)
+{
+  if (physical_properties_manager.is_effective_medium(0, material_id))
+    {
+      // The time-harmonic Maxwell solver supports a single fluid (id 0) and a
+      // single dispersed phase (id 0). The dependencies of the effective
+      // permittivity models include those of the conductivity models of both
+      // phases.
+      const unsigned int material_interaction_id =
+        physical_properties_manager.get_material_interaction_id(
+          material_interactions_type::fluid_dispersed_phase, 0, 0);
+
+      return physical_properties_manager
+               .get_effective_electric_permittivity_real(
+                 material_interaction_id)
+               ->depends_on(field_id) ||
+             physical_properties_manager
+               .get_effective_electric_permittivity_imag(
+                 material_interaction_id)
+               ->depends_on(field_id) ||
+             physical_properties_manager
+               .get_effective_magnetic_permeability_real(
+                 material_interaction_id)
+               ->depends_on(field_id) ||
+             physical_properties_manager
+               .get_effective_magnetic_permeability_imag(
+                 material_interaction_id)
+               ->depends_on(field_id);
+    }
+
+  return physical_properties_manager.get_electric_conductivity(0, material_id)
+           ->depends_on(field_id) ||
+         physical_properties_manager
+           .get_electric_permittivity_real(0, material_id)
+           ->depends_on(field_id) ||
+         physical_properties_manager
+           .get_electric_permittivity_imag(0, material_id)
+           ->depends_on(field_id) ||
+         physical_properties_manager
+           .get_magnetic_permeability_real(0, material_id)
+           ->depends_on(field_id) ||
+         physical_properties_manager
+           .get_magnetic_permeability_imag(0, material_id)
+           ->depends_on(field_id);
 }
 
 template <int dim>
@@ -95,13 +182,16 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->JxW               = std::vector<double>(n_q_points);
   this->quadrature_points = std::vector<Point<dim>>(n_q_points);
 
-  // Temperature and effective properties at the cell quadrature points. The
-  // temperature is the only field on which the electromagnetic properties can
-  // depend.
-  this->temperature_values = std::vector<double>(n_q_points, 0.);
+  // Temperature, void fraction and effective properties at the cell quadrature
+  // points. The temperature and the void fraction are the only fields on which
+  // the electromagnetic properties can depend.
+  this->temperature_values   = std::vector<double>(n_q_points, 0.);
+  this->void_fraction_values = std::vector<double>(n_q_points, 1.);
   this->fields.clear();
   this->fields.insert(
     std::pair<field, std::vector<double>>(field::temperature, n_q_points));
+  this->fields.insert(
+    std::pair<field, std::vector<double>>(field::void_fraction, n_q_points));
   this->effective_electric_permittivities =
     std::vector<std::complex<double>>(n_q_points);
   this->effective_magnetic_permeabilities =
@@ -126,11 +216,16 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->face_quadrature_points = std::vector<Point<dim>>(n_face_q_points);
   this->face_normals           = std::vector<Tensor<1, dim>>(n_face_q_points);
 
-  // Temperature and effective properties at the face quadrature points
-  this->face_temperature_values = std::vector<double>(n_face_q_points, 0.);
+  // Temperature, void fraction and effective properties at the face quadrature
+  // points
+  this->face_temperature_values   = std::vector<double>(n_face_q_points, 0.);
+  this->face_void_fraction_values = std::vector<double>(n_face_q_points, 1.);
   this->face_fields.clear();
   this->face_fields.insert(
     std::pair<field, std::vector<double>>(field::temperature, n_face_q_points));
+  this->face_fields.insert(
+    std::pair<field, std::vector<double>>(field::void_fraction,
+                                          n_face_q_points));
   this->face_effective_electric_permittivities =
     std::vector<std::complex<double>>(n_face_q_points);
   this->face_effective_magnetic_permeabilities =
@@ -201,6 +296,28 @@ TimeHarmonicMaxwellScratchData<dim>::enable_temperature(
 
 template <int dim>
 void
+TimeHarmonicMaxwellScratchData<dim>::enable_void_fraction(
+  const FiniteElement<dim>  &fe_void_fraction,
+  const Quadrature<dim>     &cell_quadrature,
+  const Quadrature<dim - 1> &face_quadrature,
+  const Mapping<dim>        &mapping)
+{
+  this->gather_void_fraction = true;
+  this->fe_values_void_fraction =
+    std::make_shared<FEValues<dim>>(mapping,
+                                    fe_void_fraction,
+                                    cell_quadrature,
+                                    update_values | update_quadrature_points);
+  this->fe_face_values_void_fraction =
+    std::make_shared<FEFaceValues<dim>>(mapping,
+                                        fe_void_fraction,
+                                        face_quadrature,
+                                        update_values |
+                                          update_quadrature_points);
+}
+
+template <int dim>
+void
 TimeHarmonicMaxwellScratchData<dim>::reinit(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const typename DoFHandler<dim>::active_cell_iterator &cell_test)
@@ -220,21 +337,19 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
 
       this->material_id = cell->material_id();
 
-      // We check if the physical properties depend on the temperature field.
-      // If so, the solver will evaluate the temperature at the quadrature
-      // points using reinit_temperature.
+      // We check if the physical properties depend on the temperature and
+      // void fraction fields. If so, the solver will evaluate them at the
+      // quadrature points using reinit_temperature and reinit_void_fraction.
       this->cell_material_needs_temperature =
-        properties_manager.get_electric_conductivity(0, material_id)
-          ->depends_on(field::temperature) ||
-        properties_manager.get_electric_permittivity_real(0, material_id)
-          ->depends_on(field::temperature) ||
-        properties_manager.get_electric_permittivity_imag(0, material_id)
-          ->depends_on(field::temperature) ||
-        properties_manager.get_magnetic_permeability_real(0, material_id)
-          ->depends_on(field::temperature) ||
-        properties_manager.get_magnetic_permeability_imag(0, material_id)
-          ->depends_on(field::temperature);
+        electromagnetic_properties_depend_on(properties_manager,
+                                             material_id,
+                                             field::temperature);
+      this->cell_material_needs_void_fraction =
+        electromagnetic_properties_depend_on(properties_manager,
+                                             material_id,
+                                             field::void_fraction);
       std::ranges::fill(this->temperature_values, 0.);
+      std::ranges::fill(this->void_fraction_values, 1.);
 
       this->fe_values_trial_interior.reinit(cell);
       this->fe_values_test.reinit(cell_test);
@@ -321,6 +436,7 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
                                  face->boundary_id() :
                                  numbers::invalid_boundary_id;
       std::ranges::fill(this->face_temperature_values, 0.);
+      std::ranges::fill(this->face_void_fraction_values, 1.);
 
       this->fe_face_values_test.reinit(cell_test, face_no);
       this->fe_face_values_trial_skeleton.reinit(cell_skeleton, face_no);
@@ -396,6 +512,9 @@ void
 TimeHarmonicMaxwellScratchData<dim>::calculate_physical_properties()
 {
   set_field_vector(field::temperature, this->temperature_values, this->fields);
+  set_field_vector(field::void_fraction,
+                   this->void_fraction_values,
+                   this->fields);
   compute_effective_electromagnetic_properties(
     this->properties_manager,
     this->fields,
@@ -410,6 +529,9 @@ TimeHarmonicMaxwellScratchData<dim>::calculate_face_physical_properties()
 {
   set_field_vector(field::temperature,
                    this->face_temperature_values,
+                   this->face_fields);
+  set_field_vector(field::void_fraction,
+                   this->face_void_fraction_values,
                    this->face_fields);
   compute_effective_electromagnetic_properties(
     this->properties_manager,
