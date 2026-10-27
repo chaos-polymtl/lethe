@@ -1300,10 +1300,11 @@ namespace Parameters
           else if (material_interactions[i_material_interaction]
                      .material_interaction_type ==
                    MaterialInteractions::MaterialInteractionsType::
-                     fluid_particles)
-            fluid_particles_interactions_with_material_interaction_ids.insert(
-              material_interactions[i_material_interaction]
-                .fluid_particles_interaction_with_material_interaction_id);
+                     fluid_dispersed_phase)
+            fluid_dispersed_phase_interactions_with_material_interaction_ids
+              .insert(
+                material_interactions[i_material_interaction]
+                  .fluid_dispersed_phase_interaction_with_material_interaction_id);
         }
 
       reference_temperature = prm.get_double("reference temperature");
@@ -1822,8 +1823,8 @@ namespace Parameters
       }
       prm.leave_subsection();
 
-      // Fluid-particles interactions
-      prm.enter_subsection("fluid-particles interaction");
+      // Fluid-dispersed phase interactions
+      prm.enter_subsection("fluid-dispersed phase interaction");
       {
         prm.declare_entry("fluid id",
                           "0",
@@ -1914,15 +1915,18 @@ namespace Parameters
           prm.leave_subsection();
         }
       else if (material_interaction_type ==
-               MaterialInteractionsType::fluid_particles)
+               MaterialInteractionsType::fluid_dispersed_phase)
         {
-          prm.enter_subsection("fluid-particles interaction");
-          std::pair<unsigned int, unsigned int> fluid_particles_interaction;
-          fluid_particles_interaction.first  = prm.get_integer("fluid id");
-          fluid_particles_interaction.second = prm.get_integer("particles id");
-          fluid_particles_interaction_with_material_interaction_id.first =
-            fluid_particles_interaction;
-          fluid_particles_interaction_with_material_interaction_id.second = id;
+          prm.enter_subsection("fluid-dispersed phase interaction");
+          std::pair<unsigned int, unsigned int>
+            fluid_dispersed_phase_interaction;
+          fluid_dispersed_phase_interaction.first = prm.get_integer("fluid id");
+          fluid_dispersed_phase_interaction.second =
+            prm.get_integer("particles id");
+          fluid_dispersed_phase_interaction_with_material_interaction_id.first =
+            fluid_dispersed_phase_interaction;
+          fluid_dispersed_phase_interaction_with_material_interaction_id
+            .second = id;
 
           // Effective medium model
           electric_permittivity_effective_medium_model =

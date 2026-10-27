@@ -45,9 +45,9 @@ PhysicalPropertiesManager::initialize(
     physical_properties.fluid_fluid_interactions_with_material_interaction_ids;
   fluid_solid_interactions_with_material_interaction_ids =
     physical_properties.fluid_solid_interactions_with_material_interaction_ids;
-  fluid_particles_interactions_with_material_interaction_ids =
+  fluid_dispersed_phase_interactions_with_material_interaction_ids =
     physical_properties
-      .fluid_particles_interactions_with_material_interaction_ids;
+      .fluid_dispersed_phase_interactions_with_material_interaction_ids;
   reference_temperature = physical_properties.reference_temperature;
 
   non_newtonian_flow       = false;
@@ -209,8 +209,11 @@ PhysicalPropertiesManager::initialize(
   effective_magnetic_permeability_real.resize(number_of_material_interactions);
   effective_magnetic_permeability_imag.resize(number_of_material_interactions);
 
+  material_is_effective_medium.resize(number_of_fluids + number_of_solids,
+                                      false);
+
   // For each pair of interacting materials (fluid-fluid, fluid-solid or
-  // fluid-particles), append physical properties
+  // fluid-dispersed phase), append physical properties
   for (unsigned int i = 0; i < number_of_material_interactions; ++i)
     {
       surface_tension.push_back(SurfaceTensionModel::model_cast(
@@ -223,12 +226,12 @@ PhysicalPropertiesManager::initialize(
         physical_properties.material_interactions[i]));
       establish_fields_required_by_model(*mobility_cahn_hilliard[i]);
 
-      // A fluid-particles interaction defines a mixture whose properties are
-      // given by effective medium models.
+      // A fluid-dispersed phase interaction defines a mixture whose properties
+      // are given by effective medium models.
       if (physical_properties.material_interactions[i]
             .material_interaction_type ==
           Parameters::MaterialInteractions::MaterialInteractionsType::
-            fluid_particles)
+            fluid_dispersed_phase)
         {
           effective_electric_permittivity_real[i] =
             EffectiveMediumModel::model_cast_real(
@@ -253,6 +256,14 @@ PhysicalPropertiesManager::initialize(
               physical_properties,
               i,
               EffectiveMediumProperty::magnetic_permeability);
+
+          // Here we also initialize the interaction container using the first
+          // material of the interaction, as it is the host of the dispersed
+          // phase. It's the only one that carries a global id.
+          material_is_effective_medium
+            [physical_properties.material_interactions[i]
+               .fluid_dispersed_phase_interaction_with_material_interaction_id
+               .first.first] = true;
         }
     }
 }
