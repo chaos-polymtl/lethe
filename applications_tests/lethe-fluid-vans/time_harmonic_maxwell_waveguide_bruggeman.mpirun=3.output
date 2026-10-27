@@ -1,0 +1,53 @@
+Running on 3 MPI rank(s)...
+   Number of active cells:       2
+   Number of degrees of freedom: 48
+   Volume of triangulation:      3.125000e-02
+  DPG system for Time-Harmonic Maxwell Equations:
+   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 384
+   Number of interior degrees of freedom for Time-Harmonic Maxwell: 192
+
+*****************************
+Steady iteration:        1/2
+*****************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+L2 error velocity: 0.000000e+00
+L2 error E real: 2.318397e-02
+L2 error E imag: 2.498038e-02
+L2 error H real: 1.509172e-02
+L2 error H imag: 1.592941e-02
+Global continuity equation error: 0.000000e+00 s^-1
+Max local continuity error: 0.000000e+00 s^-1
+
+*****************************
+Steady iteration:        2/2
+*****************************
+   Number of active cells:       16
+   Number of degrees of freedom: 180
+   Volume of triangulation:      3.125000e-02
+  DPG system for Time-Harmonic Maxwell Equations:
+   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 2240
+   Number of interior degrees of freedom for Time-Harmonic Maxwell: 1536
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+L2 error velocity: 0.000000e+00
+L2 error E real: 6.166731e-03
+L2 error E imag: 6.907992e-03
+L2 error H real: 7.085469e-03
+L2 error H imag: 5.990390e-03
+Global continuity equation error: 0.000000e+00 s^-1
+Max local continuity error: 0.000000e+00 s^-1
+cells  error_velocity   error_pressure  
+    2 0.000000e+00   - 0.000000e+00   - 
+   16 0.000000e+00 nan 0.000000e+00 nan 
+cells   error_E_real      error_E_imag      error_H_real      error_H_imag    
+    2 2.318397e-02    - 2.498038e-02    - 1.509172e-02    - 1.592941e-02    - 
+   16 6.166731e-03 1.91 6.907992e-03 1.85 7.085469e-03 1.09 5.990390e-03 1.41 
