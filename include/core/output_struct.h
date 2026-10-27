@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_output_struct_h
@@ -29,9 +29,9 @@ struct OutputStructPostprocessor
    *
    */
   OutputStructPostprocessor(
-    const DoFHandler<dim>                        &dof_handler,
-    const VectorType                             &solution,
-    const std::shared_ptr<DataPostprocessor<dim>> data_postprocessor)
+    const DoFHandler<dim>                         &dof_handler,
+    const VectorType                              &solution,
+    const std::shared_ptr<DataPostprocessor<dim>> &data_postprocessor)
     : dof_handler(dof_handler)
     , solution(solution)
     , data_postprocessor(data_postprocessor)

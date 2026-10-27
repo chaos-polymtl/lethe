@@ -637,8 +637,7 @@ public:
   /**
    * @brief Default constructor.
    */
-  VANSAssemblerSaffmanMei()
-  {}
+  VANSAssemblerSaffmanMei() = default;
 
   /**
    * @brief Calculate the Saffman-Mei lift force on particles.
@@ -703,8 +702,7 @@ public:
   /**
    * @brief Default constructor.
    */
-  VANSAssemblerMagnus()
-  {}
+  VANSAssemblerMagnus() = default;
 
   /**
    * @brief Calculate the Magnus lift force on particles.
@@ -747,8 +745,7 @@ public:
   /**
    * @brief Default constructor.
    */
-  VANSAssemblerViscousTorque()
-  {}
+  VANSAssemblerViscousTorque() = default;
 
   /**
    * @brief Calculate the viscous torque dissipation on particles.
@@ -792,8 +789,7 @@ public:
   /**
    * @brief Default constructor.
    */
-  VANSAssemblerVorticalTorque()
-  {}
+  VANSAssemblerVorticalTorque() = default;
 
   /**
    * @brief Calculate the vortical torque on particles.

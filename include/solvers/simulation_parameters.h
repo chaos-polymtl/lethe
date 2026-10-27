@@ -123,12 +123,12 @@ public:
     mesh_box_refinement =
       std::make_shared<Parameters::MeshBoxRefinement<dim>>();
     mesh_box_refinement->declare_parameters(prm);
-    for (auto physics_name : nonlinear_physics_names)
+    for (const auto &physics_name : nonlinear_physics_names)
       {
         Parameters::LinearSolver::declare_parameters(prm, physics_name);
         Parameters::NonLinearSolver::declare_parameters(prm, physics_name);
       }
-    for (auto physics_name : linear_physics_names)
+    for (const auto &physics_name : linear_physics_names)
       {
         Parameters::LinearSolver::declare_parameters(prm, physics_name);
       }
@@ -173,14 +173,14 @@ public:
     dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
 
-    for (auto physics_name : nonlinear_physics_names)
+    for (const auto &physics_name : nonlinear_physics_names)
       {
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
         physics_solving_strategy[physics_id].parse_parameters(prm,
                                                               physics_name);
       }
-    for (auto physics_name : linear_physics_names)
+    for (const auto &physics_name : linear_physics_names)
       {
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);

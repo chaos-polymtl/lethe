@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_tracer_assemblers_h
@@ -174,8 +174,7 @@ template <int dim>
 class TracerAssemblerSIPG : public TracerFaceAssemblerBase<dim>
 {
 public:
-  TracerAssemblerSIPG()
-  {}
+  TracerAssemblerSIPG() = default;
 
   /**
    * @brief Interface for the call to matrix assembly

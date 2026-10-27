@@ -95,9 +95,9 @@ public:
     local_rhs    = 0;
 
     strong_residual = 0;
-    for (unsigned int i = 0; i < strong_jacobian.size(); ++i)
+    for (auto &jacobian : strong_jacobian)
       {
-        strong_jacobian[i] = 0;
+        jacobian = 0;
       }
   }
 

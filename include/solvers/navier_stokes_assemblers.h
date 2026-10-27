@@ -11,6 +11,8 @@
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/physics_assemblers.h>
 
+#include <utility>
+
 /*
  * Exceptions used to capture incoherent setup of assemblers
  */
@@ -146,7 +148,7 @@ class GLSNavierStokesAssemblerSRF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesAssemblerSRF(Parameters::VelocitySource velocity_sources)
-    : velocity_sources(velocity_sources)
+    : velocity_sources(std::move(velocity_sources))
   {}
 
   /**
@@ -211,7 +213,7 @@ public:
       {
         if (dim == 2)
           {
-            for (unsigned int k = 0; k < dim; ++k)
+            for (int k = 0; k < dim; ++k)
               {
                 grad_shear_rate[d] +=
                   2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
@@ -224,7 +226,7 @@ public:
           }
         else
           {
-            for (unsigned int k = 0; k < dim; ++k)
+            for (int k = 0; k < dim; ++k)
               {
                 grad_shear_rate[d] +=
                   2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /

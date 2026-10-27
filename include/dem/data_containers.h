@@ -35,7 +35,7 @@ namespace DEM
    * @brief Defined global face id as a type to ensure that we know what the
    * structures use as index. This is more verbose than unsigned int
    */
-  typedef unsigned int global_face_id;
+  using global_face_id = unsigned int;
 
   using namespace dealii;
 
@@ -53,63 +53,59 @@ namespace DEM
   struct dem_data_structures
   {
     // <particle id, particle iterator>
-    typedef ankerl::unordered_dense::map<types::particle_index,
-                                         Particles::ParticleIterator<dim>>
-      particle_index_iterator_map;
+    using particle_index_iterator_map =
+      ankerl::unordered_dense::map<types::particle_index,
+                                   Particles::ParticleIterator<dim>>;
 
     // <particle id, line info>
-    typedef std::unordered_map<types::particle_index,
-                               particle_line_contact_info<dim>>
-      particle_line_in_contact;
+    using particle_line_in_contact =
+      std::unordered_map<types::particle_index,
+                         particle_line_contact_info<dim>>;
 
     // <particle id, point info>
-    typedef std::unordered_map<types::particle_index,
-                               particle_point_contact_info<dim>>
-      particle_point_in_contact;
+    using particle_point_in_contact =
+      std::unordered_map<types::particle_index,
+                         particle_point_contact_info<dim>>;
 
     // <particle id, line info>
-    typedef std::unordered_map<types::particle_index,
-                               particle_line_contact_info<dim>>
-      particle_line_candidates;
+    using particle_line_candidates =
+      std::unordered_map<types::particle_index,
+                         particle_line_contact_info<dim>>;
 
     // <particle id, (particle iterator, point)>
-    typedef std::unordered_map<types::particle_index,
-                               particle_point_contact_info<dim>>
-      particle_point_candidates;
+    using particle_point_candidates =
+      std::unordered_map<types::particle_index,
+                         particle_point_contact_info<dim>>;
 
     // <particle id, <global face id, particle iterator>>
-    typedef ankerl::unordered_dense::map<
+    using particle_floating_wall_candidates = ankerl::unordered_dense::map<
       types::particle_index,
-      std::unordered_map<global_face_id, Particles::ParticleIterator<dim>>>
-      particle_floating_wall_candidates;
+      std::unordered_map<global_face_id, Particles::ParticleIterator<dim>>>;
 
     // <particle id, <global_face_id, (particle iterator, tensor, point,
     // boundary id, cell id)>>
-    typedef ankerl::unordered_dense::map<
+    using particle_wall_candidates = ankerl::unordered_dense::map<
       types::particle_index,
       ankerl::unordered_dense::map<global_face_id,
                                    std::tuple<Particles::ParticleIterator<dim>,
                                               Tensor<1, dim>,
                                               Point<dim>,
-                                              global_face_id>>>
-      particle_wall_candidates;
+                                              global_face_id>>>;
 
     // <particle id, <global_face_id, particle-wall info>>
-    typedef ankerl::unordered_dense::map<
+    using particle_wall_in_contact = ankerl::unordered_dense::map<
       types::particle_index,
       ankerl::unordered_dense::map<global_face_id,
-                                   particle_wall_contact_info<dim>>>
-      particle_wall_in_contact;
+                                   particle_wall_contact_info<dim>>>;
 
     // <particle id, particle-particle info>
-    typedef ankerl::unordered_dense::map<types::particle_index,
-                                         particle_particle_contact_info<dim>>
-      particle_contact_info;
+    using particle_contact_info =
+      ankerl::unordered_dense::map<types::particle_index,
+                                   particle_particle_contact_info<dim>>;
 
     // <particle id, periodic particle-particle info>
-    typedef ankerl::unordered_dense::
-      map<types::particle_index, periodic_particle_particle_contact_info<dim>>
-        periodic_particle_contact_info;
+    using periodic_particle_contact_info = ankerl::unordered_dense::
+      map<types::particle_index, periodic_particle_particle_contact_info<dim>>;
 
     // Value stored per "particle one" in the adjacency containers below. The
     // iterator to particle one is shared by all its contacts, so it is stored
@@ -133,105 +129,98 @@ namespace DEM
 
     // <particle id, (particle one iterator, <particle id, particle-particle
     // info>)>
-    typedef ankerl::unordered_dense::map<types::particle_index,
-                                         adjacent_particle_pairs_value>
-      adjacent_particle_pairs;
+    using adjacent_particle_pairs =
+      ankerl::unordered_dense::map<types::particle_index,
+                                   adjacent_particle_pairs_value>;
 
     // <particle id, (particle one iterator, <particle id, periodic
     // particle-particle info>)>
-    typedef ankerl::unordered_dense::map<types::particle_index,
-                                         periodic_adjacent_particle_pairs_value>
-      periodic_adjacent_particle_pairs;
+    using periodic_adjacent_particle_pairs =
+      ankerl::unordered_dense::map<types::particle_index,
+                                   periodic_adjacent_particle_pairs_value>;
 
     // <cell iterator, <particle id, particle iterator>>
-    typedef std::map<
-      typename Triangulation<dim - 1, dim>::active_cell_iterator,
-      ankerl::unordered_dense::map<types::particle_index,
-                                   Particles::ParticleIterator<dim>>,
-      cut_cell_comparison<dim>>
-      particle_floating_wall_from_mesh_candidates;
+    using particle_floating_wall_from_mesh_candidates =
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               ankerl::unordered_dense::map<types::particle_index,
+                                            Particles::ParticleIterator<dim>>,
+               cut_cell_comparison<dim>>;
 
     // <cell iterator, <particle id, particle-wall info>>
-    typedef std::map<
-      typename Triangulation<dim - 1, dim>::active_cell_iterator,
-      ankerl::unordered_dense::map<types::particle_index,
-                                   particle_wall_contact_info<dim>>,
-      cut_cell_comparison<dim>>
-      particle_triangle_cell_from_mesh_potentially_in_contact;
+    using particle_triangle_cell_from_mesh_potentially_in_contact =
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               ankerl::unordered_dense::map<types::particle_index,
+                                            particle_wall_contact_info<dim>>,
+               cut_cell_comparison<dim>>;
 
     // [<cell iterator, <particle id, particle iterator>>]
-    typedef std::vector<particle_floating_wall_from_mesh_candidates>
-      particle_floating_mesh_candidates;
+    using particle_floating_mesh_candidates =
+      std::vector<particle_floating_wall_from_mesh_candidates>;
 
     // [cell iterator]
-    typedef std::vector<
-      typename Triangulation<dim - 1, dim>::active_cell_iterator>
-      triangulation_cell_vector;
+    using triangulation_cell_vector =
+      std::vector<typename Triangulation<dim - 1, dim>::active_cell_iterator>;
 
     // <cell iterator, [cell iterator]>
-    typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-                     triangulation_cell_vector,
-                     cut_cell_comparison<dim>>
-      triangulation_cell_map;
+    using triangulation_cell_map =
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               triangulation_cell_vector,
+               cut_cell_comparison<dim>>;
 
     // [<cell iterator, <particle id, particle-wall info>>]
-    typedef std::vector<particle_triangle_cell_from_mesh_potentially_in_contact>
-      particle_floating_mesh_potentially_in_contact;
+    using particle_floating_mesh_potentially_in_contact =
+      std::vector<particle_triangle_cell_from_mesh_potentially_in_contact>;
 
     // <particle id, [particle id]>
-    typedef ankerl::unordered_dense::map<types::particle_index,
-                                         std::vector<types::particle_index>>
-      particle_particle_candidates;
+    using particle_particle_candidates =
+      ankerl::unordered_dense::map<types::particle_index,
+                                   std::vector<types::particle_index>>;
 
     // [[cell iterator]]
-    typedef std::vector<
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      cells_neighbor_list;
+    using cells_neighbor_list = std::vector<
+      std::vector<typename Triangulation<dim>::active_cell_iterator>>;
 
     // [[(background cell iterator, solid surface cell iterator)]]
-    typedef std::vector<std::vector<
+    using solid_surfaces_mesh_information = std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
-                typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
-      solid_surfaces_mesh_information;
+                typename Triangulation<dim - 1, dim>::active_cell_iterator>>>;
 
     // [[(background cell iterator, solid volume cell iterator)]]
-    typedef std::vector<std::vector<
+    using solid_volumes_mesh_info = std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
-                typename Triangulation<dim, dim>::active_cell_iterator>>>
-      solid_volumes_mesh_info;
+                typename Triangulation<dim, dim>::active_cell_iterator>>>;
 
     // <cell id, [cell iterator]>
-    typedef ankerl::unordered_dense::map<
+    using cells_total_neighbor_list = ankerl::unordered_dense::map<
       types::global_cell_index,
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      cells_total_neighbor_list;
+      std::vector<typename Triangulation<dim>::active_cell_iterator>>;
 
     // <global_face_id, (tensor, point)>
-    typedef ankerl::unordered_dense::map<global_face_id,
-                                         std::pair<Tensor<1, 3>, Point<3>>>
-      boundary_points_and_normal_vectors;
+    using boundary_points_and_normal_vectors =
+      ankerl::unordered_dense::map<global_face_id,
+                                   std::pair<Tensor<1, 3>, Point<3>>>;
 
     // <unsigned int, <global_face_id, tensor>>
-    typedef ankerl::unordered_dense::
-      map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
-        vector_on_boundary;
+    using vector_on_boundary =
+      ankerl::unordered_dense::map<unsigned int,
+                                   std::map<types::boundary_id, Tensor<1, 3>>>;
 
     // [cell iterators]
-    typedef std::vector<typename Triangulation<dim>::active_cell_iterator>
-      cell_vector;
+    using cell_vector =
+      std::vector<typename Triangulation<dim>::active_cell_iterator>;
 
     // [cell iterators]
-    typedef std::set<typename Triangulation<dim>::active_cell_iterator>
-      cell_set;
+    using cell_set =
+      std::set<typename Triangulation<dim>::active_cell_iterator>;
 
     // <cell id, periodic cells info>
-    typedef std::unordered_multimap<types::global_cell_index,
-                                    periodic_boundaries_cells_info_struct<dim>>
-      periodic_boundaries_cells_info;
+    using periodic_boundaries_cells_info =
+      std::unordered_multimap<types::global_cell_index,
+                              periodic_boundaries_cells_info_struct<dim>>;
 
     // <cell id, integer value>
-    typedef ankerl::unordered_dense::map<types::global_cell_index, unsigned int>
-      cell_index_int_map;
+    using cell_index_int_map =
+      ankerl::unordered_dense::map<types::global_cell_index, unsigned int>;
   };
 
 } // namespace DEM

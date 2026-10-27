@@ -15,7 +15,7 @@ void
 IBParticlesDEM<dim>::initialize(
   const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
   const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-    fw_parameters,
+    &fw_parameters,
   const std::shared_ptr<Parameters::Lagrangian::BCDEM>
                                      &boundary_conditions_parameters_input,
   const MPI_Comm                     &mpi_communicator_input,

@@ -96,16 +96,15 @@ public:
   TimeHarmonicMaxwell(
     MultiphysicsInterface<dim>      *multiphysics_interface,
     const SimulationParameters<dim> &p_simulation_parameters,
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                       p_triangulation,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                      &p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control);
 
   /**
    * @brief TimeHarmonicMaxwell - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  virtual ~TimeHarmonicMaxwell()
-  {}
+  virtual ~TimeHarmonicMaxwell() = default;
 
   /**
    * @brief Gather and return vector of output structs that are particular to some applications.

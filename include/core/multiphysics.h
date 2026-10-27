@@ -94,7 +94,7 @@ enum class Variable : unsigned int
  *
  */
 inline PhysicsID
-get_physics_id(std::string physics_name)
+get_physics_id(const std::string &physics_name)
 {
   if (physics_name == "fluid dynamics")
     return PhysicsID::fluid_dynamics;

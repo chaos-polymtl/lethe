@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_thermal_conductivity_model_h
@@ -7,6 +7,8 @@
 #include <core/parameters.h>
 #include <core/phase_change.h>
 #include <core/physical_property_model.h>
+
+#include <algorithm>
 
 /**
  * @brief Abstract class that allows to calculate the
@@ -91,7 +93,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   };
 
 private:
@@ -174,7 +176,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), B);
+    std::ranges::fill(jacobian_vector, B);
   };
 
 private:

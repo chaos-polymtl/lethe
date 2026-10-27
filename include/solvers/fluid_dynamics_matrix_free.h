@@ -118,11 +118,11 @@ public:
   void
   reinit(const std::shared_ptr<Mapping<dim>>      &mapping,
          const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-         const std::shared_ptr<Function<dim>>      forcing_function,
+         const std::shared_ptr<Function<dim>>     &forcing_function,
          const std::shared_ptr<SimulationControl> &simulation_control,
          const std::shared_ptr<PhysicalPropertiesManager>
-                                             &physical_properties_manager,
-         const std::shared_ptr<FESystem<dim>> fe);
+                                              &physical_properties_manager,
+         const std::shared_ptr<FESystem<dim>> &fe);
 
   /**
    * @brief Creates the operator for a given level.

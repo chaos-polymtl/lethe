@@ -65,11 +65,12 @@ CXXFLAGS="-Wno-unknown-warning-option";  cmake --build . -j "$(nproc)" \
 # generate allheaders.h
 #(cd include; find . -name '*.h'; cd $SRC/include/; find . -name '*.h') | grep -v allheaders.h | grep -v undefine_macros.h | sed 's|^./|#include <|' | sed 's|$|>|' >include/deal.II/allheaders.h
 
-# finally run clang-tidy on lethe
+# finally run clang-tidy on lethe. The headers to analyze are selected by
+# HeaderFilterRegex in .clang-tidy (a -header-filter here would override it).
 #
 # pipe away stderr (just contains nonsensical "x warnings generated")
 # pipe output to output.txt
-run-clang-tidy -p . -quiet -header-filter "$SRC/include/*" -extra-arg='-DCLANG_TIDY' 2>error.txt >output.txt
+run-clang-tidy -p . -quiet -extra-arg='-DCLANG_TIDY' 2>error.txt >output.txt
 
 # grep interesting errors and make sure we remove duplicates:
 grep -E '(warning|error): ' output.txt | sort | uniq >clang-tidy.log

@@ -16,12 +16,26 @@
 #   All modern compilers perform the return value optimization and we prefer
 #   to keep things const.
 #
+# - performance-enum-size:
+#   We don't care if an enum could use a smaller base type than
+#   unsigned int.
+#
+# - modernize-avoid-c-style-cast:
+#   Only exists from clang-tidy 22 on. Disabled, as in deal.II, so that runs
+#   with a recent clang-tidy agree with the CI (clang-tidy 20).
+#
+# HeaderFilterRegex:
+#   Lethe headers are reached as source/<module>/../../include/<module>/...,
+#   so the regex must not assume a normalized path. It skips the bundled
+#   include/ankerl/ library.
+#
 
 Checks: >
   -*,
   cppcoreguidelines-pro-type-static-cast-downcast,
   modernize-*,
   -modernize-avoid-c-arrays,
+  -modernize-avoid-c-style-cast,
   -modernize-concat-nested-namespaces,
   -modernize-pass-by-value,
   -modernize-raw-string-literal,
@@ -34,9 +48,11 @@ Checks: >
   -modernize-use-transparent-functors,
   mpi-*,
   performance-*,
+  -performance-enum-size,
   -performance-inefficient-string-concatenation,
   -performance-no-automatic-move,
   -performance-avoid-endl,
   readability-qualified-auto
 
+HeaderFilterRegex: '.*/include/(core|dem|solvers|fem-dem)/.*'
 WarningsAsErrors: '*'

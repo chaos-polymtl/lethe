@@ -224,7 +224,7 @@ public:
   void
   reinit_signed_distance(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    std::shared_ptr<Shape<dim>>                           immersed_solid_shape)
+    const std::shared_ptr<Shape<dim>>                    &immersed_solid_shape)
   {
     if (properties_manager.field_is_required(field::levelset))
       {
@@ -255,7 +255,7 @@ public:
   reinit_signed_distance_at_face(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int                                   &face_no,
-    std::shared_ptr<Shape<dim>>                           immersed_solid_shape)
+    const std::shared_ptr<Shape<dim>>                    &immersed_solid_shape)
   {
     if (properties_manager.field_is_required(field::levelset))
       {
@@ -293,10 +293,10 @@ public:
   template <typename VectorType>
   void
   reinit_velocity(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType                                     &velocity_solution,
-    const Parameters::ALE<dim>                           &ale,
-    std::shared_ptr<Functions::ParsedFunction<dim>>       drift_velocity)
+    const typename DoFHandler<dim>::active_cell_iterator  &cell,
+    const VectorType                                      &velocity_solution,
+    const Parameters::ALE<dim>                            &ale,
+    const std::shared_ptr<Functions::ParsedFunction<dim>> &drift_velocity)
   {
     this->fe_values_fd.reinit(cell);
 
@@ -467,11 +467,11 @@ public:
   template <typename VectorType>
   void
   reinit_face_velocity(
-    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
-    const unsigned int                                   &face_no,
-    const VectorType                                     &velocity_solution,
-    const Parameters::ALE<dim>                           &ale,
-    std::shared_ptr<Functions::ParsedFunction<dim>>       drift_velocity)
+    const typename DoFHandler<dim>::active_cell_iterator  &velocity_cell,
+    const unsigned int                                    &face_no,
+    const VectorType                                      &velocity_solution,
+    const Parameters::ALE<dim>                            &ale,
+    const std::shared_ptr<Functions::ParsedFunction<dim>> &drift_velocity)
   {
     fe_face_values_fd.reinit(velocity_cell, face_no);
 

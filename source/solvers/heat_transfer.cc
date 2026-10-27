@@ -1942,7 +1942,7 @@ void
 HeatTransfer<dim>::postprocess_temperature_statistics(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const bool                       time_average)
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
@@ -2148,7 +2148,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
 
 template <int dim>
 void
-HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
+HeatTransfer<dim>::write_temperature_statistics(const std::string &domain_name)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -2774,7 +2774,7 @@ void
 HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const VectorType                &current_solution_fd)
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
@@ -2955,33 +2955,33 @@ template void
 HeatTransfer<2>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const GlobalVectorType          &current_solution_fd);
 
 template void
 HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const GlobalVectorType          &current_solution_fd);
 
 template void
 HeatTransfer<2>::postprocess_thermal_energy_in_fluid<GlobalBlockVectorType>(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const GlobalBlockVectorType     &current_solution_fd);
 
 template void
 HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalBlockVectorType>(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const GlobalBlockVectorType     &current_solution_fd);
 
 template <int dim>
 void
-HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
+HeatTransfer<dim>::write_heat_flux(const std::string &domain_name)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 

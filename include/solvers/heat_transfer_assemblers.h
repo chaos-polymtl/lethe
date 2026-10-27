@@ -12,6 +12,8 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_assemblers.h>
 
+#include <utility>
+
 /**
  * @brief A pure virtual class that serves as an interface for all
  * of the assemblers for heat transfer
@@ -320,7 +322,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**
@@ -370,7 +372,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**
@@ -419,7 +421,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**
@@ -473,7 +475,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**
@@ -528,7 +530,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**

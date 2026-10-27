@@ -122,7 +122,7 @@ evaluate_function(const Function<dim>                       &function,
       Point<dim> p;
       for (int d = 0; d < dim; ++d)
         p[d] = p_vectorized[d][v];
-      for (unsigned int d = 0; d < components; ++d)
+      for (int d = 0; d < components; ++d)
         result[d][v] = function.value(p, d);
     }
   return result;
@@ -198,11 +198,11 @@ public:
 
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                  &mapping,
-    const DoFHandler<dim>               &dof_handler,
-    const AffineConstraints<number>     &constraints,
-    const Quadrature<dim>               &quadrature,
-    const std::shared_ptr<Function<dim>> forcing_function,
+    const Mapping<dim>                   &mapping,
+    const DoFHandler<dim>                &dof_handler,
+    const AffineConstraints<number>      &constraints,
+    const Quadrature<dim>                &quadrature,
+    const std::shared_ptr<Function<dim>> &forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
     const StabilizationType                   stabilization,
@@ -240,11 +240,11 @@ public:
    */
   void
   reinit(
-    const Mapping<dim>                  &mapping,
-    const DoFHandler<dim>               &dof_handler,
-    const AffineConstraints<number>     &constraints,
-    const Quadrature<dim>               &quadrature,
-    const std::shared_ptr<Function<dim>> forcing_function,
+    const Mapping<dim>                   &mapping,
+    const DoFHandler<dim>                &dof_handler,
+    const AffineConstraints<number>      &constraints,
+    const Quadrature<dim>                &quadrature,
+    const std::shared_ptr<Function<dim>> &forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
     const StabilizationType                   stabilization,
@@ -456,11 +456,11 @@ public:
    * @param[in] rotor_angular_velocity  Angular velocity of the rotor domain.
    */
   void
-  evaluate_velocity_ale(
-    const Mapping<dim>                             &mapping,
-    const Point<dim>                                center_of_rotation,
-    const unsigned int                              rotation_axis_direction,
-    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity);
+  evaluate_velocity_ale(const Mapping<dim> &mapping,
+                        const Point<dim>    center_of_rotation,
+                        const unsigned int  rotation_axis_direction,
+                        const std::shared_ptr<Functions::ParsedFunction<dim>>
+                          &rotor_angular_velocity);
 
   /**
    * @brief Store the values of the source term calculated if dynamic control

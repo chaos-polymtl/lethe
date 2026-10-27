@@ -44,8 +44,8 @@ public:
                     const std::vector<double>       &interface_dimensions,
                     const Quadrature<dim2>          &quadrature,
                     const double                     rotation_angle,
-                    const unsigned int        rotation_axis_direction = 2,
-                    const std::vector<double> stage_heights = {0.0, 1.0});
+                    const unsigned int         rotation_axis_direction = 2,
+                    const std::vector<double> &stage_heights = {0.0, 1.0});
 
   /**
    * @brief Default destructor
@@ -337,14 +337,14 @@ public:
    * aligned with the x axis
    */
   template <int dim2>
-  MortarManagerCircle(std::vector<unsigned int> n_subdivisions,
-                      std::vector<double>       interface_dimensions,
-                      const Quadrature<dim2>   &quadrature,
-                      const double              rotation_angle,
-                      const unsigned int        rotation_axis_direction = 2,
-                      const std::vector<double> stage_heights = {0.0, 1.0},
-                      const Point<dim> &center_of_rotation    = Point<dim>(),
-                      const double      pre_rotation_angle    = 0.0);
+  MortarManagerCircle(const std::vector<unsigned int> &n_subdivisions,
+                      const std::vector<double>       &interface_dimensions,
+                      const Quadrature<dim2>          &quadrature,
+                      const double                     rotation_angle,
+                      const unsigned int         rotation_axis_direction = 2,
+                      const std::vector<double> &stage_heights = {0.0, 1.0},
+                      const Point<dim> &center_of_rotation     = Point<dim>(),
+                      const double      pre_rotation_angle     = 0.0);
 
   /**
    * @brief Class constructor for circular interface used within the Navier-Stokes
@@ -429,7 +429,7 @@ MortarManagerBase<dim>::MortarManagerBase(
   const Quadrature<dim2>          &quadrature_in,
   const double                     rotation_angle,
   const unsigned int               rotation_axis_direction,
-  const std::vector<double>        stage_heights)
+  const std::vector<double>       &stage_heights)
   : n_subdivisions(n_subdivisions)
   , interface_dimensions(interface_dimensions)
   , quadrature(quadrature_in.get_tensor_basis()[0])
@@ -442,14 +442,14 @@ MortarManagerBase<dim>::MortarManagerBase(
 template <int dim>
 template <int dim2>
 MortarManagerCircle<dim>::MortarManagerCircle(
-  std::vector<unsigned int> n_subdivisions,
-  std::vector<double>       interface_dimensions,
-  const Quadrature<dim2>   &quadrature,
-  const double              rotation_angle,
-  const unsigned int        rotation_axis_direction,
-  std::vector<double>       stage_heights,
-  const Point<dim>         &center_of_rotation,
-  const double              pre_rotation_angle)
+  const std::vector<unsigned int> &n_subdivisions,
+  const std::vector<double>       &interface_dimensions,
+  const Quadrature<dim2>          &quadrature,
+  const double                     rotation_angle,
+  const unsigned int               rotation_axis_direction,
+  const std::vector<double>       &stage_heights,
+  const Point<dim>                &center_of_rotation,
+  const double                     pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions,
                            interface_dimensions,
                            quadrature,
@@ -819,14 +819,14 @@ public:
    * @param[in] sip_factor Penalty factor used in SIPG term
    */
   CouplingOperator(
-    const Mapping<dim>                                        &mapping,
-    const DoFHandler<dim>                                     &dof_handler,
-    const AffineConstraints<Number>                           &constraints,
-    const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
-    const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
-    const unsigned int                                         bid_m,
-    const unsigned int                                         bid_p,
-    const double                                               sip_factor);
+    const Mapping<dim>                                         &mapping,
+    const DoFHandler<dim>                                      &dof_handler,
+    const AffineConstraints<Number>                            &constraints,
+    const std::shared_ptr<CouplingEvaluationBase<dim, Number>> &evaluator,
+    const std::shared_ptr<MortarManagerBase<dim>>              &mortar_manager,
+    const unsigned int                                          bid_m,
+    const unsigned int                                          bid_p,
+    const double                                                sip_factor);
 
   /**
    * @brief Return object containing problem constraints

@@ -45,6 +45,8 @@
 
 #include <deal.II/numerics/solution_transfer.h>
 
+#include <utility>
+
 DeclException1(
   CahnHilliardBoundaryConditionMissing,
   types::boundary_id,
@@ -57,11 +59,12 @@ template <int dim>
 class CahnHilliard : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
 public:
-  CahnHilliard(MultiphysicsInterface<dim>      *multiphysics_interface,
-               const SimulationParameters<dim> &p_simulation_parameters,
-               std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                  p_triangulation,
-               std::shared_ptr<SimulationControl> p_simulation_control)
+  CahnHilliard(
+    MultiphysicsInterface<dim>      *multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                      &p_triangulation,
+    std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.physics_solving_strategy.at(
           PhysicsID::cahn_hilliard))
@@ -72,7 +75,7 @@ public:
                       TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
-    , simulation_control(p_simulation_control)
+    , simulation_control(std::move(p_simulation_control))
     , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   {
     this->pcout << std::setprecision(simulation_control->get_log_precision())

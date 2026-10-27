@@ -17,6 +17,8 @@
 #include <core/tracer_diffusivity_model.h>
 #include <core/tracer_reaction_model.h>
 
+#include <utility>
+
 using namespace dealii;
 
 DeclException1(
@@ -391,7 +393,7 @@ public:
   set_rheology(std::shared_ptr<RheologicalModel> p_rheology,
                const unsigned int                fluid_id = 0)
   {
-    rheology[fluid_id] = p_rheology;
+    rheology[fluid_id] = std::move(p_rheology);
   }
 
   bool

@@ -974,14 +974,14 @@ MortarManagerLinear<dim>::get_normal(const Point<dim> &) const
 /*-------------- CouplingOperator -------------------------------*/
 template <int dim, typename Number>
 CouplingOperator<dim, Number>::CouplingOperator(
-  const Mapping<dim>                                        &mapping,
-  const DoFHandler<dim>                                     &dof_handler,
-  const AffineConstraints<Number>                           &constraints,
-  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
-  const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
-  const unsigned int                                         bid_m,
-  const unsigned int                                         bid_p,
-  const double                                               sip_factor)
+  const Mapping<dim>                                         &mapping,
+  const DoFHandler<dim>                                      &dof_handler,
+  const AffineConstraints<Number>                            &constraints,
+  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> &evaluator,
+  const std::shared_ptr<MortarManagerBase<dim>>              &mortar_manager,
+  const unsigned int                                          bid_m,
+  const unsigned int                                          bid_p,
+  const double                                                sip_factor)
   : mapping(mapping)
   , dof_handler(dof_handler)
   , bid_m(bid_m)

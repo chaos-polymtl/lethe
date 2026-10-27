@@ -131,8 +131,7 @@ protected:
                    const FluidDynamicsFormulation fluid_dynamics_formulation =
                      FluidDynamicsFormulation::standard);
 
-  virtual ~NavierStokesBase()
-  {}
+  virtual ~NavierStokesBase() = default;
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
@@ -527,7 +526,7 @@ protected:
    * @brief Read the solution from a checkpoint file and set it as the current solution.
    */
   virtual void
-  set_solution_from_checkpoint(std::string checkpoint_file_prefix);
+  set_solution_from_checkpoint(const std::string &checkpoint_file_prefix);
 
   /**
    * @brief Set the nodal values of velocity and pressure

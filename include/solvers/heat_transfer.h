@@ -37,6 +37,8 @@
 
 #include <deal.II/numerics/solution_transfer.h>
 
+#include <utility>
+
 DeclException1(
   HeatTransferBoundaryConditionMissing,
   types::boundary_id,
@@ -74,11 +76,12 @@ public:
    * related to time stepping and the stopping criteria.
    *
    */
-  HeatTransfer(MultiphysicsInterface<dim>      *multiphysics_interface,
-               const SimulationParameters<dim> &p_simulation_parameters,
-               std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                  p_triangulation,
-               std::shared_ptr<SimulationControl> p_simulation_control)
+  HeatTransfer(
+    MultiphysicsInterface<dim>      *multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                      &p_triangulation,
+    std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.physics_solving_strategy.at(
           PhysicsID::heat_transfer))
@@ -89,7 +92,7 @@ public:
                       TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
-    , simulation_control(p_simulation_control)
+    , simulation_control(std::move(p_simulation_control))
     , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
     , thermal_conductivity_models(
         p_simulation_parameters.physical_properties_manager
@@ -572,7 +575,7 @@ private:
   postprocess_temperature_statistics(
     const bool                       gather_cls,
     const Parameters::FluidIndicator monitored_fluid,
-    const std::string                domain_name,
+    const std::string               &domain_name,
     const bool                       time_average);
 
   /**
@@ -583,7 +586,7 @@ private:
    */
 
   void
-  write_temperature_statistics(const std::string domain_name);
+  write_temperature_statistics(const std::string &domain_name);
 
   /**
    * @brief Compute the algebraic (phase indicator and liquid fraction weighted)
@@ -667,7 +670,7 @@ private:
   postprocess_thermal_energy_in_fluid(
     const bool                       gather_cls,
     const Parameters::FluidIndicator monitored_fluid,
-    const std::string                domain_name,
+    const std::string               &domain_name,
     const VectorType                &current_solution_fd);
 
   /**
@@ -678,7 +681,7 @@ private:
    */
 
   void
-  write_heat_flux(const std::string domain_name);
+  write_heat_flux(const std::string &domain_name);
 
   /**
    * @brief Set a phase_coefficient that is used in the postprocessing, to

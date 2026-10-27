@@ -16,6 +16,7 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#include <algorithm>
 #include <unordered_map>
 #include <vector>
 
@@ -146,8 +147,7 @@ class ParticleParticleContactForce
 public:
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters);
 
-  virtual ~ParticleParticleContactForce()
-  {}
+  virtual ~ParticleParticleContactForce() = default;
 
   /**
    * @brief Calculate the contact outcomes using the contact pair information
@@ -494,11 +494,9 @@ protected:
         // This way, force_calculation_threshold_distance can be set
         // to const variable, which should make the code faster.
         const double max_effective_hamaker_constant =
-          *(std::max_element(this->effective_hamaker_constant.begin(),
-                             this->effective_hamaker_constant.end()));
+          *(std::ranges::max_element(this->effective_hamaker_constant));
         const double min_effective_surface_energy =
-          *(std::min_element(this->effective_surface_energy.begin(),
-                             this->effective_surface_energy.end()));
+          *(std::ranges::min_element(this->effective_surface_energy));
 
         // Return the critical delta_0. We put a minus sign in front since a
         // positive overlap means that particles are in contact.

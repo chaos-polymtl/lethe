@@ -8,6 +8,9 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_subequations_solver.h>
 
+#include <algorithm>
+#include <utility>
+
 using namespace dealii;
 
 DeclExceptionMsg(
@@ -59,8 +62,8 @@ public:
   CLSSubequationsInterface(
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                              p_triangulation,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                             &p_triangulation,
     const std::shared_ptr<SimulationControl> &p_simulation_control)
     : pcout(p_pcout)
   {
@@ -87,8 +90,8 @@ public:
   void
   initialize_subequations(
     const SimulationParameters<dim> &p_simulation_parameters,
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                              p_triangulation,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                             &p_triangulation,
     const std::shared_ptr<SimulationControl> &p_simulation_control);
 
   /**
@@ -114,9 +117,8 @@ public:
   void
   setup_specific_subequation_dofs(const CLSSubequationsID &subequation_id)
   {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
+    AssertThrow((std::ranges::find(this->active_subequations, subequation_id) !=
+                 this->active_subequations.end()),
                 ExcInternalError());
 
     this->subequations.find(subequation_id)->second->setup_dofs();
@@ -143,9 +145,8 @@ public:
   void
   solve_specific_subequation(const CLSSubequationsID &subequation_id)
   {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
+    AssertThrow((std::ranges::find(this->active_subequations, subequation_id) !=
+                 this->active_subequations.end()),
                 ExcInternalError());
 
     this->subequations.find(subequation_id)->second->solve();
@@ -173,9 +174,8 @@ public:
   const DoFHandler<dim> &
   get_dof_handler(const CLSSubequationsID &subequation_id)
   {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
+    AssertThrow((std::ranges::find(this->active_subequations, subequation_id) !=
+                 this->active_subequations.end()),
                 ExcInternalError());
 
     return *this->subequations_dof_handler[subequation_id];
@@ -239,9 +239,8 @@ public:
   bool
   get_solution_validity(const CLSSubequationsID &subequation_id)
   {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
+    AssertThrow((std::ranges::find(this->active_subequations, subequation_id) !=
+                 this->active_subequations.end()),
                 ExcInternalError());
     return this->subequations_solutions_validity[subequation_id];
   }
@@ -259,9 +258,8 @@ public:
   std::string
   get_subequation_string(const CLSSubequationsID &subequation_id)
   {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
+    AssertThrow((std::ranges::find(this->active_subequations, subequation_id) !=
+                 this->active_subequations.end()),
                 ExcInternalError());
 
     std::string subequation_string;
@@ -296,11 +294,10 @@ public:
   set_dof_handler(const CLSSubequationsID         &subequation_id,
                   std::shared_ptr<DoFHandler<dim>> dof_handler)
   {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
+    AssertThrow((std::ranges::find(this->active_subequations, subequation_id) !=
+                 this->active_subequations.end()),
                 ExcInternalError());
-    this->subequations_dof_handler[subequation_id] = dof_handler;
+    this->subequations_dof_handler[subequation_id] = std::move(dof_handler);
   }
 
   /**
@@ -317,11 +314,10 @@ public:
   set_solution(const CLSSubequationsID          &subequation_id,
                std::shared_ptr<GlobalVectorType> solution_vector)
   {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
+    AssertThrow((std::ranges::find(this->active_subequations, subequation_id) !=
+                 this->active_subequations.end()),
                 ExcInternalError());
-    this->subequations_solutions[subequation_id] = solution_vector;
+    this->subequations_solutions[subequation_id] = std::move(solution_vector);
   }
 
   /**
@@ -355,9 +351,8 @@ public:
   void
   set_solution_valid(const CLSSubequationsID &subequation_id)
   {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
+    AssertThrow((std::ranges::find(this->active_subequations, subequation_id) !=
+                 this->active_subequations.end()),
                 ExcInternalError());
     this->subequations_solutions_validity[subequation_id] = true;
   }

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_physical_property_model_h
@@ -92,7 +92,7 @@ public:
   /**
    * @brief Default virtual destructor. Does not do anything.
    */
-  virtual ~PhysicalPropertyModel(){};
+  virtual ~PhysicalPropertyModel() = default;
 
   /**
    * @brief Returns true if the PhysicalPropertyModel depends on a field, false if not.

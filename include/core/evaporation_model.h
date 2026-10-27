@@ -7,6 +7,8 @@
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 
+#include <algorithm>
+
 using namespace dealii;
 
 /**
@@ -34,13 +36,12 @@ using namespace dealii;
 class EvaporationModel
 {
 public:
-  EvaporationModel()
-  {}
+  EvaporationModel() = default;
 
   /**
    * @brief Default virual destructor. Does not do anything.
    */
-  virtual ~EvaporationModel(){};
+  virtual ~EvaporationModel() = default;
 
   /**
    * @brief Instantiates and returns a pointer to an EvaporationModel
@@ -236,9 +237,7 @@ public:
   mass_flux(const std::map<field, std::vector<double>> & /*field_vectors*/,
             std::vector<double> &mass_flux_vector) override
   {
-    std::fill(mass_flux_vector.begin(),
-              mass_flux_vector.end(),
-              evaporation_mass_flux);
+    std::ranges::fill(mass_flux_vector, evaporation_mass_flux);
   }
 
   /**
@@ -265,9 +264,8 @@ public:
   heat_flux(const std::map<field, std::vector<double>> & /*field_vectors*/,
             std::vector<double> &heat_flux_vector) override
   {
-    std::fill(heat_flux_vector.begin(),
-              heat_flux_vector.end(),
-              evaporation_mass_flux * latent_heat_evaporation);
+    std::ranges::fill(heat_flux_vector,
+                      evaporation_mass_flux * latent_heat_evaporation);
   }
 
   /**
@@ -304,7 +302,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   }
 
   /**
@@ -336,9 +334,7 @@ public:
       -evaporation_mass_flux * evaporation_mass_flux *
       (liquid_density_inv - ambient_gas_density_inv);
 
-    std::fill(momentum_flux_vector.begin(),
-              momentum_flux_vector.end(),
-              momentum_flux_value);
+    std::ranges::fill(momentum_flux_vector, momentum_flux_value);
   }
 
   /**
@@ -375,7 +371,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   }
 
 private:
@@ -644,7 +640,7 @@ public:
           }
       }
     else
-      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+      std::ranges::fill(jacobian_vector, 0);
   }
 
   /**
@@ -721,7 +717,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   }
 
 private:

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_thermal_expansion_model_h
@@ -6,6 +6,8 @@
 
 #include <core/phase_change.h>
 #include <core/physical_property_model.h>
+
+#include <algorithm>
 
 /**
  * @brief Abstract class that allows to calculate the
@@ -58,9 +60,7 @@ public:
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
-    std::fill(property_vector.begin(),
-              property_vector.end(),
-              thermal_expansion);
+    std::ranges::fill(property_vector, thermal_expansion);
   }
 
   /**
@@ -91,7 +91,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   };
 
 private:

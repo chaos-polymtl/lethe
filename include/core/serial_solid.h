@@ -186,11 +186,10 @@ public:
     return id;
   }
 
-  typedef std::unordered_map<
+  using triangulation_cell_neighbors_map = std::unordered_map<
     typename Triangulation<dim, spacedim>::active_cell_iterator,
     std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
-    cut_cell_hash<spacedim>>
-    triangulation_cell_neighbors_map;
+    cut_cell_hash<spacedim>>;
 
   /**
    * @brief Returns the neighboring cells maps of the solid object triangulation.

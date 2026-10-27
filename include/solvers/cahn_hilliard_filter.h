@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_cahn_hilliard_filter_h
@@ -12,8 +12,7 @@
 class CahnHilliardFilterBase
 {
 public:
-  CahnHilliardFilterBase()
-  {}
+  CahnHilliardFilterBase() = default;
 
   /**
    * @brief Default destructor.
@@ -46,8 +45,7 @@ public:
 class CahnHilliardNoFilter : public CahnHilliardFilterBase
 {
 public:
-  CahnHilliardNoFilter()
-  {}
+  CahnHilliardNoFilter() = default;
 
   /**
    * @brief Return the phase fraction with no modification.
@@ -67,8 +65,7 @@ public:
 class CahnHilliardClipFilter : public CahnHilliardFilterBase
 {
 public:
-  CahnHilliardClipFilter()
-  {}
+  CahnHilliardClipFilter() = default;
 
   /**
    * @brief Calculate the value of the filtered phase fraction.

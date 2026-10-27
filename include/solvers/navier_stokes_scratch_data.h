@@ -249,11 +249,11 @@ public:
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
-         const std::vector<VectorType> &previous_solutions,
-         const VectorType              &sum_over_previous_stages,
-         std::shared_ptr<Function<dim>> forcing_function,
-         Tensor<1, dim>                 beta_force,
-         const double                   pressure_scaling_factor)
+         const std::vector<VectorType>        &previous_solutions,
+         const VectorType                     &sum_over_previous_stages,
+         const std::shared_ptr<Function<dim>> &forcing_function,
+         const Tensor<1, dim>                 &beta_force,
+         const double                          pressure_scaling_factor)
   {
     this->fe_values.reinit(cell);
 

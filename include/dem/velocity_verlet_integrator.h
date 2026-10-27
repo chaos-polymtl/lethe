@@ -44,8 +44,7 @@ template <int dim, typename PropertiesIndex>
 class VelocityVerletIntegrator : public Integrator<dim, PropertiesIndex>
 {
 public:
-  VelocityVerletIntegrator()
-  {}
+  VelocityVerletIntegrator() = default;
 
   /**
    * @brief Integrate the opening half step of the Velocity Verlet scheme, which

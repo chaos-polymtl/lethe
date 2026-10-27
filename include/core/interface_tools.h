@@ -27,6 +27,7 @@
 #include <deal.II/non_matching/fe_immersed_values.h>
 
 #include <iostream>
+#include <utility>
 
 using namespace dealii;
 
@@ -395,8 +396,7 @@ namespace InterfaceTools
     /**
      * @brief Default constructor.
      */
-    InterfaceReconstructionDataOut()
-    {}
+    InterfaceReconstructionDataOut() = default;
 
     /**
      * @brief Build the patches of the interface reconstruction vertices for
@@ -490,15 +490,15 @@ namespace InterfaceTools
      *
      */
     SignedDistanceSolver(
-      std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                          background_triangulation,
+      const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                         &background_triangulation,
       std::shared_ptr<FiniteElement<dim>> background_fe,
       const double                        p_max_distance,
       const double                        p_iso_level,
       const double                        p_scaling,
       const Parameters::Verbosity         p_verbosity)
       : dof_handler(*background_triangulation)
-      , fe(background_fe)
+      , fe(std::move(background_fe))
       , max_distance(p_max_distance)
       , iso_level(p_iso_level * p_scaling)
       , scaling(p_scaling)
@@ -794,10 +794,10 @@ namespace InterfaceTools
       const unsigned int                 local_face_id,
       LAPACKFullMatrix<double>          &face_transformation_jac)
     {
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           int k = 0;
-          for (unsigned int j = 0; j < dim; ++j)
+          for (unsigned int j = 0; std::cmp_less(j, dim); ++j)
             {
               if (local_face_id / 2 == j)
                 continue;
@@ -828,7 +828,7 @@ namespace InterfaceTools
       Point<dim> x_ref_cell;
 
       unsigned int j = 0;
-      for (unsigned int i = 0; i < dim; ++i)
+      for (unsigned int i = 0; std::cmp_less(i, dim); ++i)
         {
           if (local_face_id / 2 == i)
             {
@@ -866,8 +866,8 @@ namespace InterfaceTools
       Tensor<1, dim> residual_real =
         distance_gradient - (1.0 / x_n_to_x_I_real.norm()) * x_n_to_x_I_real;
 
-      for (unsigned int i = 0; i < dim - 1; ++i)
-        for (unsigned int j = 0; j < dim; ++j)
+      for (int i = 0; i < dim - 1; ++i)
+        for (int j = 0; j < dim; ++j)
           residual_ref[i] += transformation_jac(j, i) * residual_real[j];
     };
 
@@ -899,7 +899,7 @@ namespace InterfaceTools
                                        const double             perturbation,
                                        std::vector<Point<dim>> &stencil)
     {
-      for (unsigned int i = 0; i < 2 * dim - 1; ++i)
+      for (int i = 0; i < 2 * dim - 1; ++i)
         {
           stencil[i] = x_ref;
         }
@@ -910,7 +910,7 @@ namespace InterfaceTools
       // Set the coordinates (x,y,z) to be skipped (the coordinates not
       // perturbed)
       unsigned int j = 0;
-      for (unsigned int i = 0; i < dim; ++i)
+      for (unsigned int i = 0; std::cmp_less(i, dim); ++i)
         {
           if (i == skip_index)
             continue;
@@ -918,7 +918,7 @@ namespace InterfaceTools
           j += 1;
         }
 
-      for (unsigned int i = 1; i < dim; ++i)
+      for (int i = 1; i < dim; ++i)
         {
           j = j_index[i - 1];
           stencil[2 * i - 1][j] -= perturbation;
@@ -946,7 +946,7 @@ namespace InterfaceTools
       Tensor<1, dim> correction_ref_cell;
 
       unsigned int j = 0;
-      for (unsigned int i = 0; i < dim; ++i)
+      for (unsigned int i = 0; std::cmp_less(i, dim); ++i)
         {
           if (local_face_id / 2 == i)
             {
@@ -1204,7 +1204,7 @@ namespace InterfaceTools
     initialize_bounding_values()
     {
       dealii::Vector<double> bounding_values_vec(2 * dim);
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           bounding_values_vec[2 * i]     = std::numeric_limits<double>::max();
           bounding_values_vec[2 * i + 1] = -std::numeric_limits<double>::max();
