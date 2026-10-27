@@ -26,46 +26,31 @@ EffectiveMediumModel::EffectiveMediumModel(
     physical_properties.material_interactions[material_interaction_id];
 
   // The material interaction gives the materials of the two phases of the
-  // mixture: the fluid and the unresolved particles for a fluid-particles
-  // interaction, the two fluids for a fluid-fluid interaction.
+  // mixture: the fluid and the unresolved particles for a fluid-dispersed
+  // phase interaction.
   if (interaction.material_interaction_type ==
       Parameters::MaterialInteractions::MaterialInteractionsType::
-        fluid_particles)
+        fluid_dispersed_phase)
     {
       const auto &[fluid_id, particles_id] =
-        interaction.fluid_particles_interaction_with_material_interaction_id
-          .first;
+        interaction
+          .fluid_dispersed_phase_interaction_with_material_interaction_id.first;
       AssertThrow(fluid_id < physical_properties.number_of_fluids &&
                     particles_id <
                       physical_properties.number_of_unresolved_particles,
                   ExcMessage("The fluid or the particles of the "
-                             "fluid-particles interaction do not exist."));
+                             "fluid-dispersed phase interaction do not "
+                             "exist."));
 
       phase_1_models =
         create_phase_models(physical_properties.fluids[fluid_id], property);
       phase_2_models = create_phase_models(
         physical_properties.unresolved_particles[particles_id], property);
     }
-  else if (interaction.material_interaction_type ==
-           Parameters::MaterialInteractions::MaterialInteractionsType::
-             fluid_fluid)
-    {
-      const auto &[fluid_0_id, fluid_1_id] =
-        interaction.fluid_fluid_interaction_with_material_interaction_id.first;
-      AssertThrow(fluid_0_id < physical_properties.number_of_fluids &&
-                    fluid_1_id < physical_properties.number_of_fluids,
-                  ExcMessage("The fluids of the fluid-fluid interaction do "
-                             "not exist."));
-
-      phase_1_models =
-        create_phase_models(physical_properties.fluids[fluid_0_id], property);
-      phase_2_models =
-        create_phase_models(physical_properties.fluids[fluid_1_id], property);
-    }
   else
     AssertThrow(false,
                 ExcMessage("Effective medium models are only available for "
-                           "fluid-particles and fluid-fluid interactions."));
+                           "fluid-dispersed phase interactions."));
 
   // The mixture property depends on a field if at least one model of either
   // phase depends on it (union of the phase model dependencies).

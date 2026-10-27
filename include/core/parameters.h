@@ -643,7 +643,7 @@ namespace Parameters
     {
       fluid_fluid,
       fluid_solid,
-      fluid_particles
+      fluid_dispersed_phase // Unresolved multiphase fluid
     } material_interaction_type = MaterialInteractionsType::fluid_fluid;
 
     // Surface tension models
@@ -684,7 +684,7 @@ namespace Parameters
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_solid_interaction_with_material_interaction_id;
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
-      fluid_particles_interaction_with_material_interaction_id;
+      fluid_dispersed_phase_interaction_with_material_interaction_id;
 
     /**
      * @brief Declare the parameters.
@@ -740,7 +740,7 @@ namespace Parameters
     static constexpr unsigned int max_particles =
       1; // Monodisperse particles only for now
 
-    // Fluid-fluid, fluid-solid, or fluid-particles interactions
+    // Fluid-fluid, fluid-solid, or fluid-dispersed phase interactions
     std::vector<MaterialInteractions> material_interactions;
     unsigned int                      number_of_material_interactions = 0;
     static constexpr unsigned int     max_material_interactions       = 3;
@@ -749,7 +749,7 @@ namespace Parameters
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_solid_interactions_with_material_interaction_ids;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
-      fluid_particles_interactions_with_material_interaction_ids;
+      fluid_dispersed_phase_interactions_with_material_interaction_ids;
     /*
      * Reference Temperature for all physical properties of fluids and solids.
      * Currently, this is only used by the thermal expansion models.
