@@ -17,7 +17,7 @@ subsection simulation control
   set time end           = 1.3    # End time of simulation
   set output name        = out    # Prefix for VTU outputs
   set output path        = out/   # Folder of the outputs
-  set output frequency   = 20     # Frequency of simulation output
+  set output frequency   = 1     # Frequency of simulation output
   set subdivision        = 1      # Mesh subdivision when output end
 end
 
