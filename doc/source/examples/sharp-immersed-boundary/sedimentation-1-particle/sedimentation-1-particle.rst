@@ -382,7 +382,7 @@ We can also compare the results obtained for the velocity in time with the resul
 
   python3 post-process-sedimentation-1-particle.py
 
-This script reads the velocity of the particle in ``out/ib_force.00.dat`` and the experimental data in ``ten-cate-E4.dat``. The experimental data were digitized from the figure below.
+This script reads the velocity of the particle in ``out/ib_force.00.dat`` and the experimental data in ``ten-cate-E4.dat``.
 
 .. image:: images/velocity-comparison.png
     :alt: flow_field_acceleration
