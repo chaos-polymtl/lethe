@@ -4,7 +4,7 @@
 """
 Postprocessing code for the sedimentation of one particle example.
 This code compares the velocity of the particle with the one measured by
-ten Cate et al. [1] for the E4 experiment.
+ten Cate et al. [1] for the E4 experiment, as plotted by Barbeau et al. [2].
 """
 
 import numpy as np
@@ -26,7 +26,7 @@ t = particle["time"].to_numpy()
 v_y = particle["v_y"].to_numpy()
 p_y = particle["p_y"].to_numpy()
 
-# Experimental data of ten Cate et al. [1]
+# Experimental data of ten Cate et al. [1], as plotted by Barbeau et al. [2]
 t_exp, v_y_exp = np.loadtxt("ten-cate-E4.dat", unpack=True)
 
 plt.rcParams['font.size'] = '14'
@@ -58,3 +58,7 @@ else:
 # "Particle imaging velocimetry experiments and lattice-Boltzmann simulations
 # on a single sphere settling under gravity", Phys. Fluids 14 (2002) 4012-4025,
 # doi:10.1063/1.1512918.
+# [2] L. Barbeau, S. Golshan, J. Deng, S. Etienne, C. Beguin and B. Blais,
+# "High-order moving immersed boundary and its application to a resolved
+# CFD-DEM model", Comput. Fluids 268 (2024) 106094,
+# doi:10.1016/j.compfluid.2023.106094.
