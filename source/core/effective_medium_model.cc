@@ -371,10 +371,21 @@ BruggemanEffectiveMediumModel::bruggeman(
   const std::complex<double> root_1 = 0.25 * (factor + discriminant_root);
   const std::complex<double> root_2 = 0.25 * (factor - discriminant_root);
 
-  if (std::real(root_1) > 0.0 && std::imag(root_1) >= 0.0)
-    return root_1;
-  if (std::real(root_2) > 0.0 && std::imag(root_2) >= 0.0)
-    return root_2;
+  // The roots are computed with a round-off error of the order of the machine
+  // precision times the magnitude of the phase properties. When the exact
+  // effective property is real (e.g., a lossless fluid with a void fraction of
+  // one), the computed imaginary part of the admissible root can therefore be
+  // slightly negative. Such a root is accepted and its imaginary part is set to
+  // zero.
+  constexpr double root_selection_relative_tolerance = 1e-12;
+  const double     imaginary_part_tolerance =
+    root_selection_relative_tolerance *
+    (std::abs(phase_1_property) + std::abs(phase_2_property));
+
+  if (std::real(root_1) > 0.0 && std::imag(root_1) >= -imaginary_part_tolerance)
+    return {std::real(root_1), std::max(std::imag(root_1), 0.0)};
+  if (std::real(root_2) > 0.0 && std::imag(root_2) >= -imaginary_part_tolerance)
+    return {std::real(root_2), std::max(std::imag(root_2), 0.0)};
 
   AssertThrow(
     false,
