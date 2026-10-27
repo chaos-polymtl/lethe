@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/multiphysics.h>
+
 #include <solvers/time_harmonic_maxwell.h>
 
 #include <deal.II/base/work_stream.h>
@@ -126,40 +128,57 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
     (electromagnetic_adaptation->second.error_estimator ==
      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg);
 
-  needs_temperature = false;
+  needs_temperature   = false;
+  needs_void_fraction = false;
   for (unsigned int material_id = 0; material_id <= number_of_material_ids;
        ++material_id)
     {
       needs_temperature =
-        (physical_properties_manager.get_electric_conductivity(0, material_id)
-           ->depends_on(field::temperature) ||
-         physical_properties_manager
-           .get_electric_permittivity_real(0, material_id)
-           ->depends_on(field::temperature) ||
-         physical_properties_manager
-           .get_electric_permittivity_imag(0, material_id)
-           ->depends_on(field::temperature) ||
-         physical_properties_manager
-           .get_magnetic_permeability_real(0, material_id)
-           ->depends_on(field::temperature) ||
-         physical_properties_manager
-           .get_magnetic_permeability_imag(0, material_id)
-           ->depends_on(field::temperature));
+        needs_temperature ||
+        electromagnetic_properties_depend_on(physical_properties_manager,
+                                             material_id,
+                                             field::temperature);
+      needs_void_fraction =
+        needs_void_fraction ||
+        electromagnetic_properties_depend_on(physical_properties_manager,
+                                             material_id,
+                                             field::void_fraction);
+    }
 
-      if (needs_temperature)
-        {
-          // If temperature-dependent electromagnetic properties are requested,
-          // heat transfer must be enabled.
+  if (needs_temperature)
+    {
+      // If temperature-dependent electromagnetic properties are requested,
+      // heat transfer must be enabled.
+      const std::vector<PhysicsID> active_physics_ids =
+        multiphysics->get_active_physics();
+      AssertThrow(
+        std::ranges::find(active_physics_ids, PhysicsID::heat_transfer) !=
+          active_physics_ids.end(),
+        ExcMessage(
+          "User-defined temperature-dependent electromagnetic properties requested without heat transfer physics. Enable heat transfer in the multiphysics subsection."));
+    }
 
-          const std::vector<PhysicsID> active_physics_ids =
-            multiphysics->get_active_physics();
-          AssertThrow(
-            std::ranges::find(active_physics_ids, PhysicsID::heat_transfer) !=
-              active_physics_ids.end(),
-            ExcMessage(
-              "User-defined temperature-dependent electromagnetic properties requested without heat transfer physics. Enable heat transfer in the multiphysics subsection."));
-          break;
-        }
+  if (needs_void_fraction)
+    {
+      // The void fraction is only available with the volume-averaged
+      // Navier-Stokes (VANS) formulation of the fluid dynamics. It is never an
+      // active physics, so it cannot be checked in the list of active physics.
+      // Instead, we check the formulation of the fluid dynamics solver.
+      AssertThrow(
+        multiphysics->get_fluid_dynamics_formulation() ==
+          FluidDynamicsFormulation::VANS,
+        ExcMessage(
+          "Void fraction-dependent electromagnetic properties (fluid-dispersed phase interaction) require the volume-averaged Navier-Stokes (VANS) formulation, which provides the void fraction."));
+
+      // The threshold coupling strategy compares the electromagnetic
+      // properties with those of the last solve, which are only stored for
+      // the temperature field.
+      AssertThrow(
+        simulation_parameters.multiphysics.time_harmonic_maxwell_parameters
+            .time_coupling_strategy !=
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold,
+        ExcMessage(
+          "The threshold time coupling strategy of the time-harmonic Maxwell solver is not supported with void fraction-dependent electromagnetic properties at the moment."));
     }
 }
 
@@ -392,7 +411,8 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
       std::vector<std::complex<double>> effective_magnetic_permeabilities(
         n_face_q_points);
       unsigned int material_id;
-      bool         cell_material_needs_temperature = false;
+      bool         cell_material_needs_temperature   = false;
+      bool         cell_material_needs_void_fraction = false;
 
       // The temperature field is only needed when at least one electromagnetic
       // property depends on temperature.
@@ -416,6 +436,26 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
             &this->multiphysics->get_solution(PhysicsID::heat_transfer);
         }
 
+      // Likewise, the void fraction field is only needed when at least one
+      // electromagnetic property depends on the void fraction.
+      std::unique_ptr<FEFaceValues<dim>> fe_face_values_void_fraction;
+      const DoFHandler<dim>             *dof_handler_void_fraction = nullptr;
+      const GlobalVectorType            *void_fraction_solution    = nullptr;
+      std::vector<double> void_fraction_face_values(n_face_q_points, 1.);
+
+      if (needs_void_fraction)
+        {
+          dof_handler_void_fraction =
+            &this->multiphysics->get_dof_handler(PhysicsID::void_fraction);
+          fe_face_values_void_fraction = std::make_unique<FEFaceValues<dim>>(
+            *this->mapping,
+            dof_handler_void_fraction->get_fe(),
+            *this->face_quadrature,
+            update_values | update_quadrature_points);
+          void_fraction_solution =
+            &this->multiphysics->get_solution(PhysicsID::void_fraction);
+        }
+
 
       // Here we perform the Poynting vector integration over the waveguide
       // inlet faces.
@@ -426,24 +466,16 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
               material_id = cell->material_id();
 
               // We check if the physical properties depend on the temperature
-              // field. If so, we will need to evaluate the temperature field at
-              // the quadrature points.
+              // and void fraction fields. If so, we will need to evaluate them
+              // at the quadrature points.
               cell_material_needs_temperature =
-                physical_properties_manager
-                  .get_electric_conductivity(0, material_id)
-                  ->depends_on(field::temperature) ||
-                physical_properties_manager
-                  .get_electric_permittivity_real(0, material_id)
-                  ->depends_on(field::temperature) ||
-                physical_properties_manager
-                  .get_electric_permittivity_imag(0, material_id)
-                  ->depends_on(field::temperature) ||
-                physical_properties_manager
-                  .get_magnetic_permeability_real(0, material_id)
-                  ->depends_on(field::temperature) ||
-                physical_properties_manager
-                  .get_magnetic_permeability_imag(0, material_id)
-                  ->depends_on(field::temperature);
+                electromagnetic_properties_depend_on(
+                  physical_properties_manager, material_id, field::temperature);
+              cell_material_needs_void_fraction =
+                electromagnetic_properties_depend_on(
+                  physical_properties_manager,
+                  material_id,
+                  field::void_fraction);
 
               for (const auto &face : cell->face_iterators())
                 {
@@ -467,6 +499,21 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                       std::ranges::fill(temperature_face_values, 0.);
                     }
 
+                  if (cell_material_needs_void_fraction)
+                    {
+                      const typename DoFHandler<dim>::active_cell_iterator
+                        cell_void_fraction = cell->as_dof_handler_iterator(
+                          *dof_handler_void_fraction);
+                      fe_face_values_void_fraction->reinit(cell_void_fraction,
+                                                           face);
+                      fe_face_values_void_fraction->get_function_values(
+                        *void_fraction_solution, void_fraction_face_values);
+                    }
+                  else
+                    {
+                      std::ranges::fill(void_fraction_face_values, 1.);
+                    }
+
                   bc_type =
                     this->simulation_parameters
                       .boundary_conditions_time_harmonic_electromagnetics.type
@@ -487,6 +534,8 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                   // quadrature points.
                   field_values_vector[field::temperature] =
                     temperature_face_values;
+                  field_values_vector[field::void_fraction] =
+                    void_fraction_face_values;
 
                   compute_effective_electromagnetic_properties(
                     physical_properties_manager,
@@ -2079,6 +2128,19 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
                                       *this->face_quadrature,
                                       *this->mapping);
     }
+
+  // We may also need the void fraction field for the physical properties of
+  // an effective medium. The mapping of the time-harmonic Maxwell solver is
+  // used so the void fraction is evaluated at the same quadrature points.
+  if (needs_void_fraction)
+    {
+      const DoFHandler<dim> &dof_handler_void_fraction =
+        this->multiphysics->get_dof_handler(PhysicsID::void_fraction);
+      scratch_data.enable_void_fraction(dof_handler_void_fraction.get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->face_quadrature,
+                                        *this->mapping);
+    }
   // As it is standard, we loop over the cells of the triangulation. We use
   // the DoFHandler associated with the interior trial space for this loop.
   WorkStream::run(this->dof_handler_trial_interior->begin_active(),
@@ -2125,6 +2187,20 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
         &this->multiphysics->get_solution(PhysicsID::heat_transfer);
       scratch_data.reinit_temperature(cell_temperature, *temperature_solution);
     }
+
+  // Likewise, the void fraction field is only evaluated at the quadrature
+  // points if the physical properties of the cell material depend on it.
+  typename DoFHandler<dim>::active_cell_iterator cell_void_fraction;
+  const GlobalVectorType *void_fraction_solution = nullptr;
+  if (scratch_data.cell_material_needs_void_fraction)
+    {
+      cell_void_fraction = cell->as_dof_handler_iterator(
+        this->multiphysics->get_dof_handler(PhysicsID::void_fraction));
+      void_fraction_solution =
+        &this->multiphysics->get_solution(PhysicsID::void_fraction);
+      scratch_data.reinit_void_fraction(cell_void_fraction,
+                                        *void_fraction_solution);
+    }
   scratch_data.calculate_physical_properties();
 
   // We reset the local matrices and vector where we are aggregating the
@@ -2147,6 +2223,10 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
         scratch_data.reinit_face_temperature(cell_temperature,
                                              face_no,
                                              *temperature_solution);
+      if (scratch_data.cell_material_needs_void_fraction)
+        scratch_data.reinit_face_void_fraction(cell_void_fraction,
+                                               face_no,
+                                               *void_fraction_solution);
       scratch_data.calculate_face_physical_properties();
 
       for (auto &assembler : this->face_assemblers)
@@ -2375,6 +2455,15 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
                                       *this->mapping);
     }
 
+  if (needs_void_fraction)
+    {
+      const DoFHandler<dim> &dof_handler_void_fraction =
+        this->multiphysics->get_dof_handler(PhysicsID::void_fraction);
+      scratch_data.enable_void_fraction(dof_handler_void_fraction.get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->face_quadrature,
+                                        *this->mapping);
+    }
 
   WorkStream::run(this->dof_handler_trial_interior->begin_active(),
                   this->dof_handler_trial_interior->end(),
