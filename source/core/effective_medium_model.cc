@@ -26,26 +26,27 @@ EffectiveMediumModel::EffectiveMediumModel(
     physical_properties.material_interactions[material_interaction_id];
 
   // The material interaction gives the materials of the two phases of the
-  // mixture: the fluid and the unresolved particles for a fluid-dispersed
+  // mixture: the fluid and the dispersed phase for a fluid-dispersed
   // phase interaction.
   if (interaction.material_interaction_type ==
       Parameters::MaterialInteractions::MaterialInteractionsType::
         fluid_dispersed_phase)
     {
-      const auto &[fluid_id, particles_id] =
+      const auto &[fluid_id, dispersed_phase_id] =
         interaction
           .fluid_dispersed_phase_interaction_with_material_interaction_id.first;
       AssertThrow(fluid_id < physical_properties.number_of_fluids &&
-                    particles_id <
-                      physical_properties.number_of_unresolved_particles,
-                  ExcMessage("The fluid or the particles of the "
-                             "fluid-dispersed phase interaction do not "
+                    dispersed_phase_id <
+                      physical_properties.number_of_unresolved_dispersed_phases,
+                  ExcMessage("The fluid or the unresolved dispersed phase of "
+                             "the fluid-dispersed phase interaction do not "
                              "exist."));
 
       phase_1_models =
         create_phase_models(physical_properties.fluids[fluid_id], property);
       phase_2_models = create_phase_models(
-        physical_properties.unresolved_particles[particles_id], property);
+        physical_properties.unresolved_dispersed_phases[dispersed_phase_id],
+        property);
     }
   else
     AssertThrow(false,

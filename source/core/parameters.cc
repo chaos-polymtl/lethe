@@ -30,9 +30,9 @@ DeclException1(NumberOfSolidsError,
                << "Number of solids: " << arg1
                << " is larger than 1. This is currently not supported.");
 
-DeclException1(NumberOfUnresolvedParticlesError,
+DeclException1(NumberOfUnresolvedDispersedPhasesError,
                int,
-               << "Number of unresolved particles: " << arg1
+               << "Number of unresolved dispersed phases: " << arg1
                << " is larger than 1. This is currently not supported.");
 
 DeclException1(NumberOfMaterialInteractionsError,
@@ -1159,7 +1159,7 @@ namespace Parameters
   {
     fluids.resize(max_fluids);
     solids.resize(max_solids);
-    unresolved_particles.resize(max_particles);
+    unresolved_dispersed_phases.resize(max_unresolved_dispersed_phases);
     material_interactions.resize(max_material_interactions);
 
     prm.enter_subsection("physical properties");
@@ -1188,19 +1188,20 @@ namespace Parameters
           solids[i_solid].declare_parameters(prm, "solid", i_solid);
         }
 
-      // Definition of the unresolved particles in the simulation
-      for (unsigned int i_particle = 0; i_particle < max_particles;
-           ++i_particle)
+      // Definition of the unresolved dispersed phases in the simulation
+      for (unsigned int i_dispersed_phase = 0;
+           i_dispersed_phase < max_unresolved_dispersed_phases;
+           ++i_dispersed_phase)
         {
-          unresolved_particles[i_particle].declare_parameters(
-            prm, "unresolved particle", i_particle);
+          unresolved_dispersed_phases[i_dispersed_phase].declare_parameters(
+            prm, "unresolved dispersed phase", i_dispersed_phase);
         }
 
-      prm.declare_entry("number of unresolved particles",
+      prm.declare_entry("number of unresolved dispersed phases",
                         Patterns::Tools::Convert<unsigned int>::to_string(
-                          number_of_unresolved_particles),
+                          number_of_unresolved_dispersed_phases),
                         Patterns::Integer(),
-                        "Number of unresolved particles");
+                        "Number of unresolved dispersed phases");
 
       prm.declare_entry(
         "reference temperature",
@@ -1215,7 +1216,7 @@ namespace Parameters
       Patterns::Tools::Convert<unsigned int>::to_string(
         number_of_material_interactions),
       Patterns::Integer(),
-      "Number of material interactions (either fluid-fluid or fluid-solid)");
+      "Number of material interactions (fluid-fluid, fluid-solid or fluid-dispersed phase)");
 
     for (unsigned int i_material_interaction = 0;
          i_material_interaction < max_material_interactions;
@@ -1253,17 +1254,18 @@ namespace Parameters
       AssertThrow(number_of_solids <= max_solids,
                   NumberOfSolidsError(number_of_solids));
 
-      number_of_unresolved_particles =
-        prm.get_integer("number of unresolved particles");
-      AssertThrow(number_of_unresolved_particles <= max_particles,
-                  NumberOfUnresolvedParticlesError(
-                    number_of_unresolved_particles));
-      for (unsigned int i_particle = 0;
-           i_particle < number_of_unresolved_particles;
-           ++i_particle)
+      number_of_unresolved_dispersed_phases =
+        prm.get_integer("number of unresolved dispersed phases");
+      AssertThrow(number_of_unresolved_dispersed_phases <=
+                    max_unresolved_dispersed_phases,
+                  NumberOfUnresolvedDispersedPhasesError(
+                    number_of_unresolved_dispersed_phases));
+      for (unsigned int i_dispersed_phase = 0;
+           i_dispersed_phase < number_of_unresolved_dispersed_phases;
+           ++i_dispersed_phase)
         {
-          unresolved_particles[i_particle].parse_parameters(
-            prm, "unresolved particle", i_particle, dimensions);
+          unresolved_dispersed_phases[i_dispersed_phase].parse_parameters(
+            prm, "unresolved dispersed phase", i_dispersed_phase, dimensions);
         }
 
       // Definition of interactions between materials
@@ -1826,14 +1828,16 @@ namespace Parameters
       // Fluid-dispersed phase interactions
       prm.enter_subsection("fluid-dispersed phase interaction");
       {
-        prm.declare_entry("fluid id",
-                          "0",
-                          Patterns::Integer(),
-                          "ID of the fluid interacting with the particles");
-        prm.declare_entry("particles id",
-                          "0",
-                          Patterns::Integer(),
-                          "ID of the particles interacting with the fluid");
+        prm.declare_entry(
+          "fluid id",
+          "0",
+          Patterns::Integer(),
+          "ID of the fluid hosting the unresolved dispersed phase");
+        prm.declare_entry(
+          "dispersed phase id",
+          "0",
+          Patterns::Integer(),
+          "ID of the unresolved dispersed phase mixed with the fluid");
 
         // Effective medium model
         declare_enum_entry(
@@ -1922,7 +1926,7 @@ namespace Parameters
             fluid_dispersed_phase_interaction;
           fluid_dispersed_phase_interaction.first = prm.get_integer("fluid id");
           fluid_dispersed_phase_interaction.second =
-            prm.get_integer("particles id");
+            prm.get_integer("dispersed phase id");
           fluid_dispersed_phase_interaction_with_material_interaction_id.first =
             fluid_dispersed_phase_interaction;
           fluid_dispersed_phase_interaction_with_material_interaction_id
