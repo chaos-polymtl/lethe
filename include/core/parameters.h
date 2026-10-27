@@ -734,11 +734,12 @@ namespace Parameters
     unsigned int                  number_of_solids = 0;
     static constexpr unsigned int max_solids       = 1;
 
-    // Particles properties when there are unresolved suspensions in the flow
-    std::vector<Material>         unresolved_particles;
-    unsigned int                  number_of_unresolved_particles = 0;
-    static constexpr unsigned int max_particles =
-      1; // Monodisperse particles only for now
+    // Unresolved dispersed phase objects that lives in a host. The host can
+    // only be a fluid for now.
+    std::vector<Material>         unresolved_dispersed_phases;
+    unsigned int                  number_of_unresolved_dispersed_phases = 0;
+    static constexpr unsigned int max_unresolved_dispersed_phases =
+      1; // Only one (monodisperse) phase for now.
 
     // Fluid-fluid, fluid-solid, or fluid-dispersed phase interactions
     std::vector<MaterialInteractions> material_interactions;
