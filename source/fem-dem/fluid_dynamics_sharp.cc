@@ -5801,10 +5801,10 @@ FluidDynamicsSharp<dim>::update_sharp_ib_periodic_geometry()
               ExcMessage("Sharp-IB requires a positive finite periodic span."));
   const auto   ids = sharp_ib_periodic_boundaries.get_periodic_boundary_ids();
   const double tolerance         = 1e-10 * length;
-  std::array<double, 2> face_min = {std::numeric_limits<double>::max(),
-                                    std::numeric_limits<double>::max()};
-  std::array<double, 2> face_max = {std::numeric_limits<double>::lowest(),
-                                    std::numeric_limits<double>::lowest()};
+  std::array<double, 2> face_min = {
+    {std::numeric_limits<double>::max(), std::numeric_limits<double>::max()}};
+  std::array<double, 2> face_max = {{std::numeric_limits<double>::lowest(),
+                                     std::numeric_limits<double>::lowest()}};
   for (const auto &cell : this->triangulation->active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto face : cell->face_indices())
