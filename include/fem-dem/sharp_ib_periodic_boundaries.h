@@ -6,9 +6,15 @@
 
 #include <core/boundary_conditions.h>
 #include <core/parameters_lagrangian.h>
+#include <core/shape.h>
 
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
+#include <deal.II/base/types.h>
+
+#include <utility>
+#include <vector>
 
 /**
  * @brief Combined periodic boundary handler for sharp IB coupling.
@@ -68,7 +74,7 @@ public:
    * Must be called after the domain bounds of the active triangulation have
    * been computed.
    *
-   * @param offset Periodic offset tensor (displacement from boundary 0 to 1)
+   * @param offset Positive translation from the lower periodic face to the upper face.
    */
   void
   set_periodic_offset(const dealii::Tensor<1, dim> &offset);
@@ -98,7 +104,7 @@ public:
   /**
    * @brief Get the periodic offset tensor.
    *
-   * @return Offset vector from periodic boundary 0 to boundary 1.
+   * @return Positive translation from the lower periodic face to the upper face.
    */
   inline dealii::Tensor<1, dim>
   get_periodic_offset() const
@@ -129,10 +135,11 @@ public:
   }
 
   /**
-   * @brief Wrap a point to the periodic domain (minimum image).
+   * @brief Normalize a point into the closed periodic interval.
    *
    * If the point is outside the periodic domain along the periodic direction,
-   * wrap it back using the periodic offset.
+   * translate it by an integer number of periods. Points on either face
+   * remain unchanged.
    *
    * @param point Point to wrap
    * @param domain_lower Lower bound of domain in periodic direction
@@ -162,6 +169,23 @@ public:
                                  const double              support_radius,
                                  const double              domain_lower,
                                  const double              domain_upper) const;
+
+  /**
+   * @brief Translate an integration history into a new coordinate frame.
+   * @param history Positions preceding the newly accepted position.
+   * @param shift Actual translation applied to the accepted position.
+   */
+  static void
+  translate_history(std::vector<dealii::Point<dim>> &history,
+                    const dealii::Tensor<1, dim>    &shift);
+
+  /**
+   * @brief Bound a shape about its reference position, including center offsets.
+   * @param shape Geometry to enclose.
+   * @return Rotation-independent enclosing radius.
+   */
+  static double
+  enclosing_radius(const Shape<dim> &shape);
 
 private:
   /**
