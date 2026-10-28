@@ -1062,8 +1062,8 @@ public:
    * Return the volume displaced by the solid.
    *
    * @return The displaced volume, or 0 for shapes whose volume is not
-   * computed. Callers interpret 0 as unknown and fall back to the volume of
-   * the sphere of radius effective_radius.
+   * computed. The caller is responsible to handle this second case (0)
+   * and estimate the volume differently.
    */
   virtual double
   displaced_volume();
