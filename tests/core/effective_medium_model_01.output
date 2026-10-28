@@ -126,5 +126,8 @@ DEAL::  expected : false
 DEAL::None permittivity (real part) depends on the void fraction
 DEAL::  computed : false
 DEAL::  expected : false
+DEAL::None permittivity (real part) depends on the temperature
+DEAL::  computed : false
+DEAL::  expected : false
 DEAL::
 DEAL::OK

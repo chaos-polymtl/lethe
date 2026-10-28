@@ -734,7 +734,7 @@ namespace Parameters
     unsigned int                  number_of_solids = 0;
     static constexpr unsigned int max_solids       = 1;
 
-    // Unresolved dispersed phase objects that lives in a host. The host can
+    // Unresolved dispersed phase objects that live in a host. The host can
     // only be a fluid for now.
     std::vector<Material>         unresolved_dispersed_phases;
     unsigned int                  number_of_unresolved_dispersed_phases = 0;
