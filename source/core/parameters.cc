@@ -1298,7 +1298,7 @@ namespace Parameters
               material_interactions[i_material_interaction]
                 .fluid_solid_interaction_with_material_interaction_id);
 
-          // fluid-particle interactions
+          // fluid-dispersed phase interactions
           else if (material_interactions[i_material_interaction]
                      .material_interaction_type ==
                    MaterialInteractions::MaterialInteractionsType::

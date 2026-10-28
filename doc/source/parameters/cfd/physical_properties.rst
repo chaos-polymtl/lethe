@@ -392,7 +392,7 @@ In unresolved CFD-DEM simulations (``lethe-fluid-vans`` and ``lethe-fluid-partic
 In the fluid region (``material_id=0``), the time-harmonic Maxwell solver then uses the effective properties of the mixture instead of the properties of the fluid. The meshed solid regions (``material_id>0``) keep their own properties.
 
 .. warning::
-  * The ``bruggeman`` model depends on the void fraction, which is only available with the volume-averaged Navier-Stokes (VANS) solvers. 
+  * The ``bruggeman`` model depends on the void fraction, which is only available with the volume-averaged Navier-Stokes (VANS) solvers.
   * Temperature-dependent electromagnetic properties (``polynomial`` models) are not supported yet for the fluid and the unresolved dispersed phase of a ``fluid_dispersed_phase`` interaction.
 
 .. _immersed solid models:
@@ -948,7 +948,7 @@ In the following, :math:`\alpha` denotes either the complex effective relative p
   .. math::
     \alpha_\text{eff} = \frac{1}{4}\left(b \pm \sqrt{b^2 + 8\alpha_1\alpha_2}\right), \quad b = (3\varepsilon_f - 1)\alpha_1 + (2 - 3\varepsilon_f)\alpha_2
 
-  The physically admissible root, i.e., the one with a positive real part and a non-negative imaginary part, is retained. The model recovers the properties of the fluid when :math:`\varepsilon_f = 1` and those of the dispersed phase when :math:`\varepsilon_f = 0`. 
+  The physically admissible root, i.e., the one with a positive real part and a non-negative imaginary part, is retained. The model recovers the properties of the fluid when :math:`\varepsilon_f = 1` and those of the dispersed phase when :math:`\varepsilon_f = 0`.
 
 .. note::
   The Bruggeman model requires the real part of the properties of both phases to be positive and their imaginary part to be non-negative, which is the case for passive (lossless or lossy) media with the time convention used by Lethe.

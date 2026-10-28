@@ -103,8 +103,8 @@ electromagnetic_properties_depend_on(
     {
       // The time-harmonic Maxwell solver supports a single fluid (id 0) and a
       // single dispersed phase (id 0). The dependencies of the effective
-      // permittivity models include those of the conductivity models of both
-      // phases.
+      // permittivity models include those of the conductivity models of the
+      // phases used by the mixing law.
       const unsigned int material_interaction_id =
         physical_properties_manager.get_material_interaction_id(
           material_interactions_type::fluid_dispersed_phase, 0, 0);

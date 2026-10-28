@@ -19,7 +19,7 @@ DeclException1(
   InvalidPhysicalPropertyComplex,
   std::complex<double>,
   << "Invalid physical property value: " << arg1
-  << ". The physical property values must be in the upper-half right quadrant of the complex plane.");
+  << ". The physical property values must be in the first quadrant of the complex plane (positive real part and non-negative imaginary part).");
 
 /**
  * @brief Physical property of a mixture that can be calculated with an
@@ -37,16 +37,19 @@ enum class EffectiveMediumProperty : std::int8_t
  * interaction. The property of each phase is calculated with the physical
  * property models of its material. The mixing is done with complex values to
  * allow for the calculation of complex properties, such as the complex
- * permittivity or permeability. In the case of a real property, the imaginary
- * part is simply set to zero. The field on which the mixing law depends are the
- * ones of the fields on which the phase models depend and the ones required by
- * the mixing law.
+ * permittivity or permeability. The mixture property depends on the fields on
+ * which the models of the phases used by the mixing law depend, and on the
+ * fields required by the mixing law itself (e.g., the void fraction).
  */
 class EffectiveMediumModel : public PhysicalPropertyModel
 {
 public:
   /**
-   * @brief Flag for the complex number part of the mixture property that is returned by the model. This is required because a PhysicalPropertyModel can only return a single double value, but mixing laws for complex properties require the calculation of both the real and imaginary parts in the same model.
+   * @brief Flag for the complex number part of the mixture property that is
+   * returned by the model. This is required because a PhysicalPropertyModel can
+   * only return a single double value, but mixing laws for complex properties
+   * require the calculation of both the real and imaginary parts in the same
+   * model.
    */
   enum class Component : std::int8_t
   {
@@ -187,9 +190,27 @@ public:
     const std::vector<std::complex<double>>    &phase_2_property,
     std::vector<std::complex<double>>          &mixture_property) const = 0;
 
+protected:
+  /**
+   * @brief Adds the fields on which the models of a phase depend to the fields
+   * on which the mixture property depends.
+   *
+   * @param[in] phase_models Models of the property of the phase.
+   */
+  void
+  add_phase_dependencies(
+    const std::vector<std::shared_ptr<PhysicalPropertyModel>> &phase_models);
+
+  /// Models of the property of phase 1
+  std::vector<std::shared_ptr<PhysicalPropertyModel>> phase_1_models;
+
+  /// Models of the property of phase 2
+  std::vector<std::shared_ptr<PhysicalPropertyModel>> phase_2_models;
+
 private:
   /**
-   * @brief Creates the models for the two phases needed to calculate a property of a material.
+   * @brief Creates the models needed to calculate a property of the material
+   * of a phase.
    *
    * @param[in] material_properties Parameters of the material.
    * @param[in] property Property described by the models.
@@ -257,12 +278,6 @@ private:
 
   /// Part of the mixture property returned by the model
   const Component component;
-
-  /// Models of the property of phase 1
-  std::vector<std::shared_ptr<PhysicalPropertyModel>> phase_1_models;
-
-  /// Models of the property of phase 2
-  std::vector<std::shared_ptr<PhysicalPropertyModel>> phase_2_models;
 };
 
 /**
@@ -326,8 +341,8 @@ class BruggemanEffectiveMediumModel final : public EffectiveMediumModel
 {
 public:
   /**
-   * @brief Constructor. Adds the void fraction to the fields on which the
-   * mixture property depends.
+   * @brief Constructor. Adds the fields on which the models of phase 2 depend
+   * and the void fraction to the fields on which the mixture property depends.
    *
    * @param[in] physical_properties Physical properties parameters.
    * @param[in] material_interaction_id Index of the material interaction that

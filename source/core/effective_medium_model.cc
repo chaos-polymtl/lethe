@@ -53,17 +53,10 @@ EffectiveMediumModel::EffectiveMediumModel(
                 ExcMessage("Effective medium models are only available for "
                            "fluid-dispersed phase interactions."));
 
-  // The mixture property depends on a field if at least one model of either
-  // phase depends on it (union of the phase model dependencies).
-  for (auto &[field_id, mixture_depends_on_field] : this->model_depends_on)
-    {
-      for (const auto &model : phase_1_models)
-        mixture_depends_on_field =
-          mixture_depends_on_field || model->depends_on(field_id);
-      for (const auto &model : phase_2_models)
-        mixture_depends_on_field =
-          mixture_depends_on_field || model->depends_on(field_id);
-    }
+  // The property of phase 1 is used by every mixing law. The mixing laws that
+  // also use the property of phase 2 add the dependencies of its models in
+  // their constructor.
+  add_phase_dependencies(phase_1_models);
 }
 
 std::shared_ptr<EffectiveMediumModel>
@@ -175,6 +168,19 @@ EffectiveMediumModel::vector_jacobian(
   std::vector<double>                        &jacobian_vector)
 {
   this->vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+}
+
+void
+EffectiveMediumModel::add_phase_dependencies(
+  const std::vector<std::shared_ptr<PhysicalPropertyModel>> &phase_models)
+{
+  // The mixture property depends on a field if at least one model of the phase
+  // depends on it. The use of or (||) ensures that a field on which the
+  // mixture property already depends is not erased.
+  for (auto &[field_id, mixture_depends_on_field] : this->model_depends_on)
+    for (const auto &model : phase_models)
+      mixture_depends_on_field =
+        mixture_depends_on_field || model->depends_on(field_id);
 }
 
 std::vector<std::shared_ptr<PhysicalPropertyModel>>
@@ -300,7 +306,9 @@ BruggemanEffectiveMediumModel::BruggemanEffectiveMediumModel(
                          property,
                          component)
 {
-  // The Bruggeman mixing law depends on the void fraction
+  // The Bruggeman mixing law depends on the property of phase 2 and on the
+  // void fraction
+  this->add_phase_dependencies(this->phase_2_models);
   this->model_depends_on[field::void_fraction] = true;
 }
 
@@ -366,7 +374,7 @@ BruggemanEffectiveMediumModel::bruggeman(
     std::sqrt(factor * factor + 8.0 * phase_2_property * phase_1_property);
 
   // The std::sqrt function gives one of the branches of the complex plane. To
-  // ensure that the effective property is in the upper-half right quadrant of
+  // ensure that the effective property is in the first quadrant of
   // the complex plane, we compute both roots and select the proper one.
   const std::complex<double> root_1 = 0.25 * (factor + discriminant_root);
   const std::complex<double> root_2 = 0.25 * (factor - discriminant_root);
@@ -390,6 +398,6 @@ BruggemanEffectiveMediumModel::bruggeman(
   AssertThrow(
     false,
     ExcMessage(
-      "The computed effective property is not in the upper-half right quadrant of the complex plane."));
+      "The computed effective property is not in the first quadrant of the complex plane."));
   return {0.0, 0.0};
 }

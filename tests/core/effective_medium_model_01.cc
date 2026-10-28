@@ -9,9 +9,9 @@
  * limits of the void fraction (including lossless phases, for which the
  * imaginary part of the computed root is affected by round-off), for the
  * clamping of the void fraction, for the vector evaluation, for the jacobian
- * and for temperature-dependent phase properties. The none model, the field
- * dependencies of the models and the invalid inputs are also tested. For each
- * check, the computed and the expected values are printed.
+ * and for temperature-dependent phase properties. The none model and the field
+ * dependencies of the models are also tested. For each check, the computed and
+ * the expected values are printed.
  */
 
 // C++
@@ -333,35 +333,6 @@ namespace
     AssertThrow(computed == expected,
                 ExcMessage("The computed boolean differs from the expected "
                            "boolean."));
-  }
-
-  /**
-   * @brief Evaluates the real part of the effective permittivity and returns
-   * true if an exception is thrown, either when the model is created or when
-   * it is evaluated.
-   *
-   * @param[in] physical_properties Physical properties of the mixture.
-   * @param[in] field_values Values of the fields.
-   *
-   * @return True if an exception is thrown.
-   */
-  bool
-  evaluation_throws(const Parameters::PhysicalProperties &physical_properties,
-                    const std::map<field, double>        &field_values)
-  {
-    try
-      {
-        const auto model = EffectiveMediumModel::model_cast_real(
-          physical_properties,
-          0,
-          EffectiveMediumProperty::electric_permittivity);
-        model->value(field_values);
-      }
-    catch (const std::exception &)
-      {
-        return true;
-      }
-    return false;
   }
 
   /**
@@ -836,9 +807,10 @@ namespace
   }
 
   /**
-   * @brief Tests the field dependencies of the effective medium models. A
-   * mixture depends on a field if one of the models of its phases depends on
-   * it, and the Bruggeman model also depends on the void fraction.
+   * @brief Tests the field dependencies of the effective medium models. The
+   * Bruggeman model depends on a field if one of the models of its two phases
+   * depends on it, and it also depends on the void fraction. The none model
+   * only depends on the fields on which the models of the fluid depend.
    */
   void
   test_dependencies()
@@ -888,18 +860,23 @@ namespace
             << std::endl;
     check_boolean(permeability_real->depends_on(field::temperature), false);
 
+    // The none model does not use the temperature-dependent dispersed phase
     const Parameters::PhysicalProperties none_mixture =
       create_mixture(create_material(1., 0., 0., 1., 0.),
-                     create_material(6., 0.3, 0.1, 2., 0.5),
+                     dispersed_phase,
                      EffectiveMediumModelType::none,
                      EffectiveMediumModelType::none);
+    const auto none_permittivity_real = EffectiveMediumModel::model_cast_real(
+      none_mixture, 0, EffectiveMediumProperty::electric_permittivity);
+
     deallog << "None permittivity (real part) depends on the void fraction"
             << std::endl;
-    check_boolean(EffectiveMediumModel::model_cast_real(
-                    none_mixture,
-                    0,
-                    EffectiveMediumProperty::electric_permittivity)
-                    ->depends_on(field::void_fraction),
+    check_boolean(none_permittivity_real->depends_on(field::void_fraction),
+                  false);
+
+    deallog << "None permittivity (real part) depends on the temperature"
+            << std::endl;
+    check_boolean(none_permittivity_real->depends_on(field::temperature),
                   false);
 
     deallog << std::endl;
