@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_vans_matrix_free_operators_h
@@ -44,8 +44,8 @@ public:
 
   /**
    * @brief Compute the void fraction at the fluid quadrature point.
-   * This essentially calculates the void fraction and the void fraction
-   * gradient.
+   * This essentially calculates the void fraction, the void fraction
+   * gradient and the time derivative of the void fraction.
    *
    * @param[in] void_fraction_dof_handler The dof handler associated with the
    * void fraction
@@ -82,7 +82,12 @@ public:
    * @param[in] fp_drag_solution The solution of the drag force.
    * @param[in] particle_velocity_dof_handler The dof handler associated with
    * the particle velocity.
-   * @param[in] fp_drag_solution The solution of the particle velocity.
+   * @param[in] particle_velocity_solution The solution of the particle
+   * velocity.
+   * @param[in] momentum_transfer_coefficient_dof_handler The dof handler
+   * associated with the momentum transfer coefficient.
+   * @param[in] momentum_transfer_coefficient_solution The solution of the
+   * momentum transfer coefficient.
    *
    */
   void
@@ -97,6 +102,17 @@ public:
     const DoFHandler<dim> &momentum_transfer_coefficient_dof_handler,
     const LinearAlgebra::distributed::Vector<double>
       &momentum_transfer_coefficient_solution);
+
+  /**
+   * @brief Precompute the forcing term at the quadrature points. In addition to
+   * the momentum forcing term, this also precomputes the mass source term,
+   * which is the last component of the forcing function. As in the
+   * matrix-based solvers, the mass source term is added to the continuity
+   * equation and its momentum (mass source times velocity) is added to the
+   * momentum equation.
+   */
+  void
+  compute_forcing_term() override;
 
 protected:
   /**
@@ -147,18 +163,25 @@ protected:
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
 
   /// Table with correct alignment for vectorization to store the values of the
-  /// time deriative of the void fraction
+  /// time derivative of the void fraction
   Table<2, VectorizedArray<number>> time_derivative_void_fraction;
 
   /// Table with correct alignment for vectorization to store the values of the
-  /// particle-fluid forces (without drag). These are the resulting forces
-  /// applied on the particles due to hydrodynamic interaction, normalized by
-  /// the volume of the cells.
+  /// mass source term, which is the last component of the forcing function
+  Table<2, VectorizedArray<number>> mass_source_terms;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// particle-fluid forces (without drag). These are the volumetric forces
+  /// applied on the fluid by the particles, that is minus the projected
+  /// hydrodynamic forces applied on the particles, divided by the fluid
+  /// density.
   Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_force;
 
   /// Table with correct alignment for vectorization to store the values of the
   /// particle-fluid drag. The drag force in this table is volumetric, resulting
-  /// from the projection used.
+  /// from the projection used, applied on the fluid by the particles and
+  /// divided by the fluid density. It is only gathered for an explicit drag
+  /// coupling.
   Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_drag;
 
   /// Table with correct alignment for vectorization to store the values of the
@@ -174,8 +197,8 @@ protected:
   Table<2, VectorizedArray<number>> grad_div_gamma;
 
   ///  Internal copy of the CFD-DEM parameters. This is used for grad-div
-  ///  stabilization, but also to switch between form A and B of the VANS
-  ///  equations.
+  ///  stabilization and the drag coupling, but also to ensure that model A of
+  ///  the VANS equations is used, since model B is not supported.
   const Parameters::CFDDEM cfd_dem_parameters;
 };
 

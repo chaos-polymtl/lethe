@@ -1013,8 +1013,14 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
   while (this->simulation_control->integrate())
     {
       if (this->forcing_function)
-        this->forcing_function->set_time(
-          this->simulation_control->get_current_time());
+        {
+          this->forcing_function->set_time(
+            this->simulation_control->get_current_time());
+          // The forcing term is precomputed by the operator, it must be
+          // recomputed for a time-dependent forcing function to be accounted
+          // for.
+          this->system_operator->compute_forcing_term();
+        }
 
       this->update_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
@@ -1103,6 +1109,9 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::solve()
 
       this->iterate();
       this->postprocess(false);
+      // The void fraction must be percolated at the end of the time step,
+      // otherwise its time derivative is always evaluated with respect to the
+      // initial void fraction.
       this->finish_time_step_fd();
 
       if (this->simulation_parameters.timer.type ==
