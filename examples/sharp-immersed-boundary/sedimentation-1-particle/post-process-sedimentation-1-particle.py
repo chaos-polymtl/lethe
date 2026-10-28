@@ -4,7 +4,8 @@
 """
 Postprocessing code for the sedimentation of one particle example.
 This code compares the velocity of the particle with the one measured by
-ten Cate et al. [1] for the E4 experiment, as plotted by Barbeau et al. [2].
+ten Cate et al. [1] for the E4 experiment, as digitized from the original
+figure of the documentation of this example.
 """
 
 import numpy as np
@@ -26,7 +27,7 @@ t = particle["time"].to_numpy()
 v_y = particle["v_y"].to_numpy()
 p_y = particle["p_y"].to_numpy()
 
-# Experimental data of ten Cate et al. [1], as plotted by Barbeau et al. [2]
+# Experimental data of ten Cate et al. [1]
 t_exp, v_y_exp = np.loadtxt("ten-cate-E4.dat", unpack=True)
 
 plt.rcParams['font.size'] = '14'
@@ -36,7 +37,7 @@ ax0.plot(t, v_y, color=colors[0], lw=2, label="Lethe")
 ax0.plot(t_exp, v_y_exp, 'o', mfc='none', color='k', label="Experiment - ten Cate et al. (2002)")
 ax0.set_xlabel("Time [s]")
 ax0.set_ylabel(r"$v_y$ [cm/s]")
-ax0.legend(loc="upper right")
+ax0.legend(loc="upper center")
 plt.tight_layout()
 
 if (not args.validate):
@@ -58,7 +59,3 @@ else:
 # "Particle imaging velocimetry experiments and lattice-Boltzmann simulations
 # on a single sphere settling under gravity", Phys. Fluids 14 (2002) 4012-4025,
 # doi:10.1063/1.1512918.
-# [2] L. Barbeau, S. Golshan, J. Deng, S. Etienne, C. Beguin and B. Blais,
-# "High-order moving immersed boundary and its application to a resolved
-# CFD-DEM model", Comput. Fluids 268 (2024) 106094,
-# doi:10.1016/j.compfluid.2023.106094.
