@@ -573,14 +573,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>                    scalar_product(-radial_vector, particle_one.velocity) +</div>
 <div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>                    scalar_product(radial_vector, particle_two.velocity);</div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>                  f_lub =</div>
-<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>                    3 / 2 * PI * mu *</div>
+<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>                    3. / 2. * PI * mu *</div>
 <div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>                      (particle_one.radius * 2 * particle_two.radius * 2 /</div>
 <div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>                       (particle_one.radius * 2 + particle_two.radius * 2)) *</div>
 <div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>                      (particle_one.radius * 2 * particle_two.radius * 2 /</div>
 <div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>                       (particle_one.radius * 2 + particle_two.radius * 2)) /</div>
 <div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>                      gap * radial_velocity * radial_vector /</div>
 <div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>                      radial_vector.norm() -</div>
-<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>                    3 / 2 * PI * mu *</div>
+<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>                    3. / 2. * PI * mu *</div>
 <div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>                      (particle_one.radius * 2 * particle_two.radius * 2 /</div>
 <div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>                       (particle_one.radius * 2 + particle_two.radius * 2)) *</div>
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span>                      (particle_one.radius * 2 * particle_two.radius * 2 /</div>
@@ -1147,10 +1147,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>                  radial_velocity =</div>
 <div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>                    scalar_product(-radial_vector,</div>
 <div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>                                   particle.velocity - wall_velocity_at_point);</div>
-<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>                  f_lub = 3 / 2 * PI * mu * (particle.radius) *</div>
+<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>                  f_lub = 3. / 2. * PI * mu * (particle.radius) *</div>
 <div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>                            (particle.radius) / gap * radial_velocity *</div>
 <div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span>                            radial_vector / radial_vector.norm() -</div>
-<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>                          3 / 2 * PI * mu * (particle.radius) *</div>
+<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>                          3. / 2. * PI * mu * (particle.radius) *</div>
 <div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span>                            (particle.radius) / h_max * radial_velocity *</div>
 <div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>                            radial_vector / radial_vector.norm();</div>
 <div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>                }</div>
@@ -2001,7 +2001,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassIBParticlesDEM_html_ae3ea098fee4287bd0b878b32fbf311a0"><div class="ttname"><a href="classIBParticlesDEM.html#ae3ea098fee4287bd0b878b32fbf311a0">IBParticlesDEM::integrate_particles_motion</a></div><div class="ttdeci">void integrate_particles_motion(const double dt, const double h_max, const double h_min, const double rho, const double mu)</div><div class="ttdoc">Integrates the dynamics of the IB_particle taking into account the contact between particles and betw...</div><div class="ttdef"><b>Definition</b> <a href="ib__particles__dem_8cc_source.html#l01240">ib_particles_dem.cc:1240</a></div></div>
 <div class="ttc" id="aclassParameters_1_1IBParticles_html"><div class="ttname"><a href="classParameters_1_1IBParticles.html">Parameters::IBParticles</a></div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02029">parameters.h:2030</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a></div><div class="ttdoc">Parameters for floating walls in DEM simulations.</div><div class="ttdef"><b>Definition</b> <a href="parameters__lagrangian_8h_source.html#l00734">parameters_lagrangian.h:735</a></div></div>
-<div class="ttc" id="aclassSphere_html"><div class="ttname"><a href="classSphere.html">Sphere</a></div><div class="ttdef"><b>Definition</b> <a href="shape_8h_source.html#l01365">shape.h:1366</a></div></div>
+<div class="ttc" id="aclassSphere_html"><div class="ttname"><a href="classSphere.html">Sphere</a></div><div class="ttdef"><b>Definition</b> <a href="shape_8h_source.html#l01369">shape.h:1370</a></div></div>
 <div class="ttc" id="aib__particles__dem_8h_html"><div class="ttname"><a href="ib__particles__dem_8h.html">ib_particles_dem.h</a></div></div>
 <div class="ttc" id="anamespaceDEM_html_af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c"><div class="ttname"><a href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::dem_statistic_variable::velocity</a></div><div class="ttdeci">@ velocity</div></div>
 <div class="ttc" id="anamespaceDEM_html_af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81"><div class="ttname"><a href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::dem_statistic_variable::omega</a></div><div class="ttdeci">@ omega</div></div>
