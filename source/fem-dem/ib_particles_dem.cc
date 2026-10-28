@@ -461,14 +461,14 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
                     scalar_product(-radial_vector, particle_one.velocity) +
                     scalar_product(radial_vector, particle_two.velocity);
                   f_lub =
-                    3 / 2 * PI * mu *
+                    3. / 2. * PI * mu *
                       (particle_one.radius * 2 * particle_two.radius * 2 /
                        (particle_one.radius * 2 + particle_two.radius * 2)) *
                       (particle_one.radius * 2 * particle_two.radius * 2 /
                        (particle_one.radius * 2 + particle_two.radius * 2)) /
                       gap * radial_velocity * radial_vector /
                       radial_vector.norm() -
-                    3 / 2 * PI * mu *
+                    3. / 2. * PI * mu *
                       (particle_one.radius * 2 * particle_two.radius * 2 /
                        (particle_one.radius * 2 + particle_two.radius * 2)) *
                       (particle_one.radius * 2 * particle_two.radius * 2 /
@@ -1029,10 +1029,10 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                   radial_velocity =
                     scalar_product(-radial_vector,
                                    particle.velocity - wall_velocity_at_point);
-                  f_lub = 3 / 2 * PI * mu * (particle.radius) *
+                  f_lub = 3. / 2. * PI * mu * (particle.radius) *
                             (particle.radius) / gap * radial_velocity *
                             radial_vector / radial_vector.norm() -
-                          3 / 2 * PI * mu * (particle.radius) *
+                          3. / 2. * PI * mu * (particle.radius) *
                             (particle.radius) / h_max * radial_velocity *
                             radial_vector / radial_vector.norm();
                 }

@@ -32,6 +32,8 @@
 
 Checks: >
   -*,
+  bugprone-integer-division,
+  bugprone-throw-keyword-missing,
   cppcoreguidelines-pro-type-static-cast-downcast,
   modernize-*,
   -modernize-avoid-c-arrays,

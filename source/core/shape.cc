@@ -23,7 +23,6 @@ template <int dim>
 double
 Shape<dim>::displaced_volume()
 {
-  StandardExceptions::ExcNotImplemented();
   return 0.;
 }
 
