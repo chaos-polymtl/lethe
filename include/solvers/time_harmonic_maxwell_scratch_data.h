@@ -32,7 +32,10 @@
  * set of points. The effective electric permittivity is
  * \f$\varepsilon' + i(\varepsilon'' + \sigma)\f$ and the effective magnetic
  * permeability is \f$\mu' + i\mu''\f$, where each property is evaluated with
- * the physical property models of the material.
+ * the physical property models of the material. If the material is an
+ * effective medium, the properties are given by the effective medium models of
+ * its fluid-dispersed phase interaction. The conductivity of both phases is
+ * then already included in the imaginary part of the effective permittivity.
  *
  * @note The time-harmonic Maxwell equations do not support multiple
  * fluids so the fluid_id is not necessary to determine the material
@@ -62,6 +65,26 @@ compute_effective_electromagnetic_properties(
   const unsigned int                          material_id,
   std::vector<std::complex<double>>          &effective_electric_permittivities,
   std::vector<std::complex<double>> &effective_magnetic_permeabilities);
+
+/**
+ * @brief Check if at least one electromagnetic property of a material depends
+ * on a field. If the material is an effective medium, the dependencies are
+ * those of the effective medium models of its fluid-dispersed phase
+ * interaction. Otherwise, they are those of the electric permittivity, electric
+ * conductivity and magnetic permeability models of the material.
+ *
+ * @param[in] physical_properties_manager The object that manages the
+ * physical properties of the problem.
+ * @param[in] material_id The material id of the cell.
+ * @param[in] field_id The field for which the dependency is checked.
+ * @return true if at least one electromagnetic property of the material
+ * depends on the field, false otherwise.
+ */
+bool
+electromagnetic_properties_depend_on(
+  const PhysicalPropertiesManager &physical_properties_manager,
+  const unsigned int               material_id,
+  const field                      field_id);
 
 
 /**
@@ -150,7 +173,8 @@ public:
                                       update_normal_vectors | update_JxW_values)
     , fe_face_values_test(mapping, fe_test, face_quadrature, update_values)
   {
-    gather_temperature = false;
+    gather_temperature   = false;
+    gather_void_fraction = false;
     allocate();
   }
 
@@ -184,7 +208,8 @@ public:
                           sd.fe_face_values_test.get_quadrature(),
                           update_values)
   {
-    gather_temperature = sd.gather_temperature;
+    gather_temperature   = sd.gather_temperature;
+    gather_void_fraction = sd.gather_void_fraction;
 
     allocate();
 
@@ -193,6 +218,12 @@ public:
                          sd.fe_values_temperature->get_quadrature(),
                          sd.fe_face_values_temperature->get_quadrature(),
                          sd.fe_values_temperature->get_mapping());
+
+    if (sd.gather_void_fraction)
+      enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
+                           sd.fe_values_void_fraction->get_quadrature(),
+                           sd.fe_face_values_void_fraction->get_quadrature(),
+                           sd.fe_values_void_fraction->get_mapping());
   }
 
   /**
@@ -250,11 +281,31 @@ public:
                      const Mapping<dim>        &mapping);
 
   /**
+   * @brief Enable the evaluation of the void fraction field, on which the
+   * electromagnetic properties of an effective medium may depend.
+   *
+   * @param[in] fe_void_fraction Finite element of the void fraction.
+   *
+   * @param[in] cell_quadrature Quadrature used for the cell integrals.
+   *
+   * @param[in] face_quadrature Quadrature used for the face integrals.
+   *
+   * @param[in] mapping Mapping of the domain.
+   */
+  void
+  enable_void_fraction(const FiniteElement<dim>  &fe_void_fraction,
+                       const Quadrature<dim>     &cell_quadrature,
+                       const Quadrature<dim - 1> &face_quadrature,
+                       const Mapping<dim>        &mapping);
+
+  /**
    * @brief Reinitialize the content of the scratch for a cell. It evaluates
    * the shape functions of the test and interior trial spaces at the
    * quadrature points. The temperature values are set to zero and are only
    * overwritten by reinit_temperature when the material of the cell depends on
-   * the temperature.
+   * the temperature. Likewise, the void fraction values are set to one (pure
+   * fluid) and are only overwritten by reinit_void_fraction when the material
+   * of the cell depends on the void fraction.
    *
    * @param[in] cell The cell of the interior trial space DoFHandler over which
    * the assembly is carried out.
@@ -270,7 +321,10 @@ public:
    * cell. It evaluates the test functions and the tangential traces of the
    * skeleton trial space at the face quadrature points. The face temperature
    * values are set to zero and are only overwritten by reinit_face_temperature
-   * when the material of the cell depends on the temperature.
+   * when the material of the cell depends on the temperature. Likewise, the
+   * face void fraction values are set to one (pure fluid) and are only
+   * overwritten by reinit_face_void_fraction when the material of the cell
+   * depends on the void fraction.
    *
    * @param[in] cell_skeleton The current cell, for the skeleton trial space
    * DoFHandler.
@@ -334,6 +388,52 @@ public:
   }
 
   /**
+   * @brief Evaluate the void fraction field at the cell quadrature points.
+   *
+   * @tparam VectorType The vector type of the void fraction solution.
+   *
+   * @param[in] cell_void_fraction The current cell, for the void fraction
+   * DoFHandler.
+   *
+   * @param[in] void_fraction_solution Void fraction solution.
+   */
+  template <typename VectorType>
+  void
+  reinit_void_fraction(
+    const typename DoFHandler<dim>::active_cell_iterator &cell_void_fraction,
+    const VectorType &void_fraction_solution)
+  {
+    fe_values_void_fraction->reinit(cell_void_fraction);
+    fe_values_void_fraction->get_function_values(void_fraction_solution,
+                                                 this->void_fraction_values);
+  }
+
+  /**
+   * @brief Evaluate the void fraction field at the quadrature points of a face
+   * of the current cell.
+   *
+   * @tparam VectorType The vector type of the void fraction solution.
+   *
+   * @param[in] cell_void_fraction The current cell, for the void fraction
+   * DoFHandler.
+   *
+   * @param[in] face_no Index of the face within the cell.
+   *
+   * @param[in] void_fraction_solution Void fraction solution.
+   */
+  template <typename VectorType>
+  void
+  reinit_face_void_fraction(
+    const typename DoFHandler<dim>::active_cell_iterator &cell_void_fraction,
+    const unsigned int                                    face_no,
+    const VectorType &void_fraction_solution)
+  {
+    fe_face_values_void_fraction->reinit(cell_void_fraction, face_no);
+    fe_face_values_void_fraction->get_function_values(
+      void_fraction_solution, this->face_void_fraction_values);
+  }
+
+  /**
    * @brief Compute the effective electromagnetic properties at the cell
    * quadrature points from the fields gathered by the scratch.
    */
@@ -355,6 +455,9 @@ public:
   // Flag to indicate whether the material of the cell depends on the
   // temperature.
   bool cell_material_needs_temperature;
+  // Flag to indicate whether the material of the cell depends on the void
+  // fraction.
+  bool cell_material_needs_void_fraction;
 
   // FEValues of the interior trial space
   FEValues<dim> fe_values_trial_interior;
@@ -418,6 +521,8 @@ public:
 
   // Temperature values at the cell quadrature points
   std::vector<double> temperature_values;
+  // Void fraction values at the cell quadrature points
+  std::vector<double> void_fraction_values;
   // Map of the field values at the cell quadrature points, indexed by field
   std::map<field, std::vector<double>> fields;
   // Effective electric permittivities at the cell quadrature points
@@ -462,6 +567,8 @@ public:
 
   // Face temperature values at the face quadrature points
   std::vector<double> face_temperature_values;
+  // Face void fraction values at the face quadrature points
+  std::vector<double> face_void_fraction_values;
   // Map of the field values at the face quadrature points, indexed by field
   std::map<field, std::vector<double>> face_fields;
   // Effective electric permittivities at the face quadrature points
@@ -499,6 +606,14 @@ public:
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
   // FEFaceValues of the temperature field
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_temperature;
+
+  // Flag to indicate whether the void fraction field needs to be gathered and
+  // evaluated at the quadrature points
+  bool gather_void_fraction;
+  // FEValues of the void fraction field
+  std::shared_ptr<FEValues<dim>> fe_values_void_fraction;
+  // FEFaceValues of the void fraction field
+  std::shared_ptr<FEFaceValues<dim>> fe_face_values_void_fraction;
 };
 
 #endif

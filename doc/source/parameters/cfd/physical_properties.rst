@@ -2,8 +2,8 @@
 Physical Properties
 ===================
 
-.. note:: 
-    Lethe supports single phase, two phase (using Conservative Level-Set or Cahn-Hilliard) and conjugate simulations. This is managed using the fluid and solid subsections.
+.. note::
+    Lethe supports single phase, two phase (using Conservative Level-Set or Cahn-Hilliard) and conjugate simulations. This is managed using the fluid and solid subsections. In unresolved CFD-DEM simulations, the electromagnetic properties of the particles can also be defined with the unresolved dispersed phase subsection (see `Unresolved Dispersed Phase`_).
 
 .. code-block:: text
 
@@ -62,6 +62,8 @@ Physical Properties
 
     set number of solids = 0
 
+    set number of unresolved dispersed phases = 0
+
     set number of material interactions = 1 #by default it is set to 0
     subsection material interaction 0
       set type = fluid_fluid
@@ -94,6 +96,16 @@ Physical Properties
         set temperature-driven surface tension gradient = 0
         set liquidus temperature                        = 0
         set solidus temperature                         = 0
+      end
+
+      # if fluid-dispersed phase interaction
+      subsection fluid-dispersed phase interaction
+        set fluid id           = 0
+        set dispersed phase id = 0
+
+        # Effective medium models
+        set electric permittivity effective medium model = none
+        set magnetic permeability effective medium model = none
       end
     end
   end
@@ -212,9 +224,11 @@ Physical Properties
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
-* The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in `Two Phase Simulations`_.
+* The ``number of unresolved dispersed phases`` parameter controls the number of unresolved dispersed phases, i.e., phases that are not resolved by the mesh, such as the particles in unresolved CFD-DEM simulations. At the moment, at most one unresolved dispersed phase is supported, and its properties are defined in the ``unresolved dispersed phase 0`` subsection (see `Unresolved Dispersed Phase`_).
 
-  * The material interaction ``type`` can either be ``fluid_fluid`` (default) or ``fluid_solid``.
+* The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, the surface tension between two fluids is implemented in `Two Phase Simulations`_ and the effective electromagnetic properties of a fluid containing an unresolved dispersed phase are implemented in `Effective Medium Models`_.
+
+  * The material interaction ``type`` can either be ``fluid_fluid`` (default), ``fluid_solid`` or ``fluid_dispersed_phase``.
 
   * In the ``fluid-fluid`` subsection we define the pair of fluids and their physical properties.
 
@@ -251,6 +265,14 @@ Physical Properties
     * The ``solid id`` is the id of the solid.
 
     * The ``surface tension model``  and ``surface tension coefficient`` are the same as described in the ``fluid-fluid`` subsection above.
+
+  * In the ``fluid-dispersed phase`` subsection we define the mixture of a fluid and of an unresolved dispersed phase, and the models used to compute its effective properties.
+
+    * The ``fluid id`` is the id of the fluid hosting the unresolved dispersed phase.
+
+    * The ``dispersed phase id`` is the id of the unresolved dispersed phase.
+
+    * The ``electric permittivity effective medium model`` and ``magnetic permeability effective medium model`` specify the models used to compute the effective electric permittivity and the effective magnetic permeability of the mixture. They are the only properties that can be computed for the mixture at the moment. The choices are ``none`` (default) and ``bruggeman``. For more details on these models, see `Effective Medium Models`_.
 
 .. note::
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
@@ -330,6 +352,48 @@ Conjugate heat transfer enables the addition of solid regions in which the fluid
       set thermal conductivity       = 1
     end
   end
+
+.. _unresolved dispersed phase:
+
+Unresolved Dispersed Phase
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In unresolved CFD-DEM simulations (``lethe-fluid-vans`` and ``lethe-fluid-particles``), the particles are smaller than the mesh cells and are not resolved by the mesh. The electromagnetic fields are then solved in the fluid-particle mixture, whose electromagnetic properties depend on the properties of the fluid, on those of the particles and on the local void fraction. The particles form an unresolved dispersed phase, whose properties are defined in the ``unresolved dispersed phase 0`` subsection, in an identical fashion as those of the fluids. The mixture is defined by a ``fluid_dispersed_phase`` material interaction between the fluid and the dispersed phase, in which the effective medium models are selected (see `Effective Medium Models`_).
+
+.. code-block:: text
+
+  subsection physical properties
+    set number of fluids = 1
+    subsection fluid 0
+      set electric permittivity real part = 1
+      set electric permittivity imag part = 0
+    end
+
+    set number of unresolved dispersed phases = 1
+    subsection unresolved dispersed phase 0
+      set electric permittivity real part = 6
+      set electric permittivity imag part = 0.4
+      set electric conductivity           = 0
+    end
+
+    set number of material interactions = 1
+    subsection material interaction 0
+      set type = fluid_dispersed_phase
+      subsection fluid-dispersed phase interaction
+        set fluid id           = 0
+        set dispersed phase id = 0
+
+        set electric permittivity effective medium model = bruggeman
+        set magnetic permeability effective medium model = none
+      end
+    end
+  end
+
+In the fluid region (``material_id=0``), the time-harmonic Maxwell solver then uses the effective properties of the mixture instead of the properties of the fluid. The meshed solid regions (``material_id>0``) keep their own properties.
+
+.. warning::
+  * The ``bruggeman`` model depends on the void fraction, which is only available with the volume-averaged Navier-Stokes (VANS) solvers.
+  * Temperature-dependent electromagnetic properties (``polynomial`` models) are not supported yet for the fluid and the unresolved dispersed phase of a ``fluid_dispersed_phase`` interaction.
 
 .. _immersed solid models:
 
@@ -858,7 +922,36 @@ Lethe supports two types of models for the time-harmonic Maxwell equations. Sett
 
 where :math:`\sigma_r(T)` is the dimensionless electric conductivity at temperature :math:`T`, :math:`a_i` are the polynomial coefficients, and :math:`n` is the order of the polynomial.
 
-The same polynomial model is also available for the ``electric permittivity model`` parameter and ``magnetic permeability model`` parameter. 
+The same polynomial model is also available for the ``electric permittivity model`` parameter and ``magnetic permeability model`` parameter.
+
+.. _effective medium models:
+
+Effective Medium Models
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The effective medium models compute the electromagnetic properties of the mixture defined by a ``fluid_dispersed_phase`` material interaction (see `Unresolved Dispersed Phase`_). They combine the properties of the fluid (phase 1), the properties of the unresolved dispersed phase (phase 2) and the void fraction :math:`\varepsilon_f`, which is the volume fraction of the fluid. The electric permittivity and the magnetic permeability are mixed independently, with the models selected by the ``electric permittivity effective medium model`` and ``magnetic permeability effective medium model`` parameters, respectively.
+
+In the following, :math:`\alpha` denotes either the complex effective relative permittivity :math:`\varepsilon_{r,\text{eff}} = \varepsilon_r + i\sigma_r` or the complex relative permeability :math:`\mu_r`. The conductivity of each phase is included in its effective permittivity before the mixing, so the conductivity of both phases contributes to the imaginary part of the effective permittivity of the mixture.
+
+* ``none`` (default): the mixture has the properties of the fluid, and the dispersed phase is ignored:
+
+  .. math::
+    \alpha_\text{eff} = \alpha_1
+
+* ``bruggeman``: the symmetric Bruggeman effective medium approximation for spherical inclusions `[3] <https://doi.org/10.1002/andp.19354160705>`_. The effective property :math:`\alpha_\text{eff}` is the solution of:
+
+  .. math::
+    \varepsilon_f \frac{\alpha_1 - \alpha_\text{eff}}{\alpha_1 + 2\alpha_\text{eff}} + (1-\varepsilon_f) \frac{\alpha_2 - \alpha_\text{eff}}{\alpha_2 + 2\alpha_\text{eff}} = 0
+
+  which is a quadratic equation in :math:`\alpha_\text{eff}` whose roots are:
+
+  .. math::
+    \alpha_\text{eff} = \frac{1}{4}\left(b \pm \sqrt{b^2 + 8\alpha_1\alpha_2}\right), \quad b = (3\varepsilon_f - 1)\alpha_1 + (2 - 3\varepsilon_f)\alpha_2
+
+  The physically admissible root, i.e., the one with a positive real part and a non-negative imaginary part, is retained. The model recovers the properties of the fluid when :math:`\varepsilon_f = 1` and those of the dispersed phase when :math:`\varepsilon_f = 0`.
+
+.. note::
+  The Bruggeman model requires the real part of the properties of both phases to be positive and their imaginary part to be non-negative, which is the case for passive (lossless or lossy) media with the time convention used by Lethe.
 
 References
 ***********
@@ -866,3 +959,5 @@ References
 `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” *Comput. Fluids*, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.
 
 `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_  E. Bretin, R. Denis, S. Masnou, A. Sengers, and G. Terii, “A multiphase Cahn-Hilliard system with mobilities and the numerical simulation of dewetting.” arXiv, Apr. 18, 2023. doi: 10.48550/arXiv.2105.09627.
+
+`[3] <https://doi.org/10.1002/andp.19354160705>`_ D. A. G. Bruggeman, “Berechnung verschiedener physikalischer Konstanten von heterogenen Substanzen. I. Dielektrizitätskonstanten und Leitfähigkeiten der Mischkörper aus isotropen Substanzen,” *Ann. Phys.*, vol. 416, no. 7, pp. 636–664, 1935, doi: 10.1002/andp.19354160705.

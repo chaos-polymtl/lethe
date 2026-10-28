@@ -918,6 +918,13 @@ private:
 
   /**
    * A boolean variable that indicates whether the time-harmonic Maxwell solver
+   * needs to evaluate the void fraction field, i.e., if the electromagnetic
+   * properties of at least one effective medium depend on the void fraction.
+   */
+  bool needs_void_fraction;
+
+  /**
+   * A boolean variable that indicates whether the time-harmonic Maxwell solver
    * needs to compute the value of the DPG error estimator.
    */
   bool needs_dpg_error_estimator;

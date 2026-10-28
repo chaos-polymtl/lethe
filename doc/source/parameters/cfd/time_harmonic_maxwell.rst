@@ -71,6 +71,16 @@ density.
   conductive losses :math:`\sigma_r` into a single complex coefficient via the
   relation :math:`\varepsilon_{r,\text{eff}} = \varepsilon_r + i \sigma_r`.
 
+.. note::
+
+  In unresolved CFD-DEM simulations (``lethe-fluid-vans`` and
+  ``lethe-fluid-particles``), :math:`\varepsilon_{r,\text{eff}}` and
+  :math:`\mu_r` in the fluid region can be the effective properties of the
+  fluid-particle mixture, computed from the void fraction with an effective
+  medium model. See the :ref:`unresolved dispersed phase <unresolved dispersed phase>`
+  and the :ref:`effective medium models <effective medium models>` in the
+  physical properties.
+
 .. tip::
 
   If the user wants to use different units than the MKS system because, for
@@ -293,6 +303,13 @@ electromagnetic fields are recomputed during the time evolution of a coupled
   * ``time``: recompute every ``coupling time`` units of physical time.
   * ``threshold``: recompute whenever the electromagnetic properties of the
     medium change by more than ``coupling threshold``.
+
+  .. attention::
+
+    The ``threshold`` strategy only tracks the changes of the temperature. It
+    is therefore not supported when the electromagnetic properties depend on
+    the void fraction (e.g., with the ``bruggeman`` effective medium model),
+    and the simulation stops with an error in that case.
 
 * ``coupling iteration``: number of time iterations between two
   electromagnetic solves when ``type = iteration``.

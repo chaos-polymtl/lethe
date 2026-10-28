@@ -5,6 +5,7 @@
 #define lethe_physical_properties_manager_h
 
 #include <core/density_model.h>
+#include <core/effective_medium_model.h>
 #include <core/electric_conductivity_model.h>
 #include <core/electric_permittivity_model.h>
 #include <core/magnetic_permeability_model.h>
@@ -42,7 +43,8 @@ DeclException1(
 enum material_interactions_type
 {
   fluid_fluid,
-  fluid_solid
+  fluid_solid,
+  fluid_dispersed_phase
 };
 
 
@@ -358,7 +360,7 @@ public:
   /**
    * @brief Returns the vector of all real part magnetic permeability models defined in the problem.
    * @return A vector of shared pointer, each one them pointing to a
-   * ElectricPermittivityModel.
+   * MagneticPermeabilityModel.
    */
   std::vector<std::shared_ptr<MagneticPermeabilityModel>>
   get_magnetic_permeability_real_vector() const
@@ -369,12 +371,89 @@ public:
   /**
    * @brief Returns the vector of all imaginary part magnetic permeability models defined in the problem.
    * @return A vector of shared pointer, each one them pointing to a
-   * ElectricPermittivityModel.
+   * MagneticPermeabilityModel.
    */
   std::vector<std::shared_ptr<MagneticPermeabilityModel>>
   get_magnetic_permeability_imag_vector() const
   {
     return magnetic_permeability_imag;
+  }
+
+  /**
+   * @brief Returns the effective medium model of the real part of the electric
+   * permittivity of the mixture defined by a material interaction.
+   * @param material_interaction_id Index of the material interaction. It must
+   * be a fluid-dispersed phase interaction.
+   * @return A shared pointer to an EffectiveMediumModel.
+   */
+  std::shared_ptr<EffectiveMediumModel>
+  get_effective_electric_permittivity_real(
+    const unsigned int material_interaction_id) const
+  {
+    AssertThrow(effective_electric_permittivity_real.at(
+                  material_interaction_id) != nullptr,
+                ExcMessage("The material interaction does not define an "
+                           "effective medium model. Only fluid-dispersed "
+                           "phase interactions do."));
+    return effective_electric_permittivity_real[material_interaction_id];
+  }
+
+  /**
+   * @brief Returns the effective medium model of the imaginary part of the electric
+   * permittivity of the mixture defined by a material interaction.
+   * @param material_interaction_id Index of the material interaction. It must
+   * be a fluid-dispersed phase interaction.
+   * @return A shared pointer to an EffectiveMediumModel.
+   */
+  std::shared_ptr<EffectiveMediumModel>
+  get_effective_electric_permittivity_imag(
+    const unsigned int material_interaction_id) const
+  {
+    AssertThrow(effective_electric_permittivity_imag.at(
+                  material_interaction_id) != nullptr,
+                ExcMessage("The material interaction does not define an "
+                           "effective medium model. Only fluid-dispersed "
+                           "phase interactions do."));
+    return effective_electric_permittivity_imag[material_interaction_id];
+  }
+
+
+  /**
+   * @brief Returns the effective medium model of the real part of the magnetic
+   * permeability of the mixture defined by a material interaction.
+   * @param material_interaction_id Index of the material interaction. It must
+   * be a fluid-dispersed phase interaction.
+   * @return A shared pointer to an EffectiveMediumModel.
+   */
+  std::shared_ptr<EffectiveMediumModel>
+  get_effective_magnetic_permeability_real(
+    const unsigned int material_interaction_id) const
+  {
+    AssertThrow(effective_magnetic_permeability_real.at(
+                  material_interaction_id) != nullptr,
+                ExcMessage("The material interaction does not define an "
+                           "effective medium model. Only fluid-dispersed "
+                           "phase interactions do."));
+    return effective_magnetic_permeability_real[material_interaction_id];
+  }
+
+  /**
+   * @brief Returns the effective medium model of the imaginary part of the magnetic
+   * permeability of the mixture defined by a material interaction.
+   * @param material_interaction_id Index of the material interaction. It must
+   * be a fluid-dispersed phase interaction.
+   * @return A shared pointer to an EffectiveMediumModel.
+   */
+  std::shared_ptr<EffectiveMediumModel>
+  get_effective_magnetic_permeability_imag(
+    const unsigned int material_interaction_id) const
+  {
+    AssertThrow(effective_magnetic_permeability_imag.at(
+                  material_interaction_id) != nullptr,
+                ExcMessage("The material interaction does not define an "
+                           "effective medium model. Only fluid-dispersed "
+                           "phase interactions do."));
+    return effective_magnetic_permeability_imag[material_interaction_id];
   }
 
   double
@@ -455,15 +534,42 @@ public:
           .find(fluid_solid_material_interaction)
           ->second;
       }
+    else if (material_interaction_type ==
+             material_interactions_type::fluid_dispersed_phase)
+      {
+        std::pair<unsigned int, unsigned int>
+          fluid_dispersed_phase_material_interaction(material_0_id,
+                                                     material_1_id);
+        return fluid_dispersed_phase_interactions_with_material_interaction_ids
+          .find(fluid_dispersed_phase_material_interaction)
+          ->second;
+      }
     else
       throw(std::runtime_error(
-        "Invalid type of material interaction. The choices are <fluid_fluid|fluid_solid>"));
+        "Invalid type of material interaction. The choices are <fluid_fluid|fluid_solid|fluid_dispersed_phase>"));
   }
 
   double
   get_reference_temperature() const
   {
     return reference_temperature;
+  }
+
+
+  /**
+   * @brief Returns true if the material with the given fluid_id and material_id
+   * is defined by an effective medium model, false otherwise.
+   *
+   * @param fluid_id The id of the fluid (0 for single phase simulations, 0 or 1 for CLS simulations)
+   * @param material_id The material id of the cell. Cells with material_id=0 are fluid cells (0 or 1) and cells with material_id>0 are solid cells
+   * @return true if the material is defined by an effective medium model, false otherwise
+   */
+  bool
+  is_effective_medium(const unsigned int fluid_id,
+                      const unsigned int material_id) const
+  {
+    return material_is_effective_medium[calculate_global_id(fluid_id,
+                                                            material_id)];
   }
 
 private:
@@ -519,6 +625,14 @@ private:
     magnetic_permeability_real;
   std::vector<std::shared_ptr<MagneticPermeabilityModel>>
     magnetic_permeability_imag;
+  std::vector<std::shared_ptr<EffectiveMediumModel>>
+    effective_electric_permittivity_real;
+  std::vector<std::shared_ptr<EffectiveMediumModel>>
+    effective_electric_permittivity_imag;
+  std::vector<std::shared_ptr<EffectiveMediumModel>>
+    effective_magnetic_permeability_real;
+  std::vector<std::shared_ptr<EffectiveMediumModel>>
+    effective_magnetic_permeability_imag;
 
   std::map<field, bool> required_fields;
 
@@ -545,6 +659,12 @@ private:
     fluid_fluid_interactions_with_material_interaction_ids;
   std::map<std::pair<unsigned int, unsigned int>, unsigned int>
     fluid_solid_interactions_with_material_interaction_ids;
+  std::map<std::pair<unsigned int, unsigned int>, unsigned int>
+    fluid_dispersed_phase_interactions_with_material_interaction_ids;
+
+  // Container that indicates, for each material (global id), if its properties
+  // are given by effective medium models.
+  std::vector<bool> material_is_effective_medium;
 };
 
 #endif
