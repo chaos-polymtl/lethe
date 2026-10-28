@@ -493,6 +493,7 @@ end
 <ul class="simple">
 <li><p>In 2D, the first two terms are the source terms for  the <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span> component of the momentum equation. The third term is the mass source term.</p></li>
 <li><p>In 3D, the first three terms are for the <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(z\)</span> component of the momentum equation and the fourth term is for the mass source term.</p></li>
+<li><p>The mass source term <span class="math notranslate nohighlight">\(m\)</span> is added to the continuity equation and its momentum, <span class="math notranslate nohighlight">\(m\mathbf{u}\)</span>, is added to the momentum equation. The mass source term is not supported by <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code>.</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -500,7 +501,7 @@ end
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If you are using the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> application the usage of a source term significantly affects performance. If you are not using it, we advice you to disable it explicitly by setting <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">=</span> <span class="pre">false</span></code>.</p>
+<p>If you are using the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> application the usage of a source term significantly affects performance, since it is evaluated at every quadrature point at each time step. If you are not using it, we advise you to disable it explicitly by setting <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">=</span> <span class="pre">false</span></code>.</p>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">heat</span> <span class="pre">transfer</span></code>: defines the parameters for a heat source term. This source term is defined by a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> and can depend on both space (<code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and, if 3D, <code class="docutils literal notranslate"><span class="pre">z</span></code>) and time (<code class="docutils literal notranslate"><span class="pre">t</span></code>). See <a class="reference internal" href="#ex-function"><span class="std std-ref">Examples of Function Expression</span></a>.</p></li>

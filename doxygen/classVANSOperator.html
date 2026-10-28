@@ -132,6 +132,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:affeb12dbc54b84a0ac4722488b229822"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a704d6fd4bf2fc714a7d5e5e71c283d" id="r_a0a704d6fd4bf2fc714a7d5e5e71c283d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a0a704d6fd4bf2fc714a7d5e5e71c283d">compute_particle_fluid_interaction</a> (const DoFHandler&lt; dim &gt; &amp;fp_force_dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;fp_force_solution, const DoFHandler&lt; dim &gt; &amp;fp_drag_dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;fp_drag_solution, const DoFHandler&lt; dim &gt; &amp;particle_velocity_dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;particle_velocity_solution, const DoFHandler&lt; dim &gt; &amp;momentum_transfer_coefficient_dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;momentum_transfer_coefficient_solution)</td></tr>
 <tr class="separator:a0a704d6fd4bf2fc714a7d5e5e71c283d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b0a819f4c47241fa77d59b6d99bc3bc" id="r_a0b0a819f4c47241fa77d59b6d99bc3bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a0b0a819f4c47241fa77d59b6d99bc3bc">compute_forcing_term</a> () override</td></tr>
+<tr class="separator:a0b0a819f4c47241fa77d59b6d99bc3bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNavierStokesOperatorBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classNavierStokesOperatorBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase&lt; dim, number &gt;</a></td></tr>
 <tr class="memitem:ac7568c9fc9b3fec66af8d8093ad77222 inherit pub_methods_classNavierStokesOperatorBase" id="r_ac7568c9fc9b3fec66af8d8093ad77222"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#ac7568c9fc9b3fec66af8d8093ad77222">NavierStokesOperatorBase</a> ()</td></tr>
 <tr class="separator:ac7568c9fc9b3fec66af8d8093ad77222 inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,8 +145,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a63547240ab69673bbfc4cff24e1d3a80 inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a701b69b2ee87359d14c7083c1cbbb5ef inherit pub_methods_classNavierStokesOperatorBase" id="r_a701b69b2ee87359d14c7083c1cbbb5ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a701b69b2ee87359d14c7083c1cbbb5ef">compute_solid_cell_mask</a> ()</td></tr>
 <tr class="separator:a701b69b2ee87359d14c7083c1cbbb5ef inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab28f65d6c368e788ff8faeb2f1750dcc inherit pub_methods_classNavierStokesOperatorBase" id="r_ab28f65d6c368e788ff8faeb2f1750dcc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#ab28f65d6c368e788ff8faeb2f1750dcc">compute_forcing_term</a> ()</td></tr>
-<tr class="separator:ab28f65d6c368e788ff8faeb2f1750dcc inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e04ed8cb38091a8fb653a22eb2e10b1 inherit pub_methods_classNavierStokesOperatorBase" id="r_a3e04ed8cb38091a8fb653a22eb2e10b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a3e04ed8cb38091a8fb653a22eb2e10b1">compute_thermal_buoyancy_term</a> (const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;temperature_solution, const DoFHandler&lt; dim &gt; &amp;temperature_dof_handler)</td></tr>
 <tr class="separator:a3e04ed8cb38091a8fb653a22eb2e10b1 inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f68d00a0e053fad9f4a7fd79690f759 inherit pub_methods_classNavierStokesOperatorBase" id="r_a6f68d00a0e053fad9f4a7fd79690f759"><td class="memItemLeft" align="right" valign="top">types::global_dof_index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a6f68d00a0e053fad9f4a7fd79690f759">m</a> () const</td></tr>
@@ -216,6 +216,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a696e1eca97adcfce9f4893f22472f514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49b49fc380f226f7bdb8215cfe538709" id="r_a49b49fc380f226f7bdb8215cfe538709"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, VectorizedArray&lt; number &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a49b49fc380f226f7bdb8215cfe538709">time_derivative_void_fraction</a></td></tr>
 <tr class="separator:a49b49fc380f226f7bdb8215cfe538709"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5467385ff27861fadd192f1fcd1e4bf" id="r_aa5467385ff27861fadd192f1fcd1e4bf"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, VectorizedArray&lt; number &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#aa5467385ff27861fadd192f1fcd1e4bf">mass_source_terms</a></td></tr>
+<tr class="separator:aa5467385ff27861fadd192f1fcd1e4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34695b17980cfa6c0fc915025960319f" id="r_a34695b17980cfa6c0fc915025960319f"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a34695b17980cfa6c0fc915025960319f">particle_fluid_force</a></td></tr>
 <tr class="separator:a34695b17980cfa6c0fc915025960319f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3ae4ddfb6fb90ed37ff411b2177c1bc" id="r_aa3ae4ddfb6fb90ed37ff411b2177c1bc"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#aa3ae4ddfb6fb90ed37ff411b2177c1bc">particle_fluid_drag</a></td></tr>
@@ -445,6 +447,41 @@ template&lt;int dim, typename number &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a0b0a819f4c47241fa77d59b6d99bc3bc" name="a0b0a819f4c47241fa77d59b6d99bc3bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b0a819f4c47241fa77d59b6d99bc3bc">&#9670;&#160;</a></span>compute_forcing_term()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classVANSOperator.html">VANSOperator</a>&lt; dim, number &gt;::compute_forcing_term </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Precompute the forcing term at the quadrature points. In addition to the momentum forcing term, this also precomputes the mass source term, which is the last component of the forcing function. As in the matrix-based solvers, the mass source term is added to the continuity equation and its momentum (mass source times velocity) is added to the momentum equation. </p>
+
+<p>Reimplemented from <a class="el" href="classNavierStokesOperatorBase.html#ab28f65d6c368e788ff8faeb2f1750dcc">NavierStokesOperatorBase&lt; dim, number &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00055">55</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00370">NavierStokesOperatorBase&lt; dim, number &gt;::compute_forcing_term()</a>.</p>
+
+</div>
+</div>
 <a id="a0a704d6fd4bf2fc714a7d5e5e71c283d" name="a0a704d6fd4bf2fc714a7d5e5e71c283d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0a704d6fd4bf2fc714a7d5e5e71c283d">&#9670;&#160;</a></span>compute_particle_fluid_interaction()</h2>
 
@@ -517,12 +554,14 @@ template&lt;int dim, typename number &gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">fp_drag_dof_handler</td><td>The dof handler associated with the drag force. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fp_drag_solution</td><td>The solution of the drag force. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_velocity_dof_handler</td><td>The dof handler associated with the particle velocity. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">fp_drag_solution</td><td>The solution of the particle velocity. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">particle_velocity_solution</td><td>The solution of the particle velocity. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">momentum_transfer_coefficient_dof_handler</td><td>The dof handler associated with the momentum transfer coefficient. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">momentum_transfer_coefficient_solution</td><td>The solution of the momentum transfer coefficient. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00184">184</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00214">214</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46a85e3a2ea2c77a301661f94bdd824138f">Parameters::fully_explicit</a>.</p>
 
@@ -562,7 +601,7 @@ template&lt;int dim, typename number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Compute the void fraction at the fluid quadrature point. This essentially calculates the void fraction and the void fraction gradient. </p>
+<p>Compute the void fraction at the fluid quadrature point. This essentially calculates the void fraction, the void fraction gradient and the time derivative of the void fraction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">void_fraction_dof_handler</td><td>The dof handler associated with the void fraction</td></tr>
@@ -572,7 +611,7 @@ template&lt;int dim, typename number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00055">55</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00085">85</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00044">void_fraction</a>.</p>
 
@@ -611,11 +650,11 @@ template&lt;int dim, typename number &gt; </div>
   </table>
   </dd>
 </dl>
-<p>Calculates the Jacobian of VANS equations. Here, we note f_pf the forces from the particles to the fluid. The expressions calculated in this cell integral are: (Continuity equation) (q,ε∇·δu) + (q,δu·∇ε) + (VANS equations) + (v, ε ∂t δu) -&gt; Time derivative + (v, ε (u·∇)δu) + (v, ε (δu·∇)u) -&gt; Advection - (∇·v, ε δp) - (v,δp∇ε) -&gt; Pressure + (v, βu) -&gt; Drag force (this is positive because f_pf = - beta(u-v)) + ε*ν(∇v,∇δu) + ν(v,∇ε·∇δu) -&gt; Viscous term &mdash;&gt; There are currently two terms missing here which would be: + ε*ν(∇v,∇δu^T) + ν(v,∇ε·∇δu^T) plus three additional terms in the case of SUPG-PSPG stabilization: + (ε ∂t δu + ε(u·∇)δu + ε(δu·∇)u + ε∇δp - εν∆δu +βδu)τ·∇q (PSPG Jacobian) + (ε ∂t δu + ε(u·∇)δu + ε(δu·∇)u + ε∇δp - εν∆δu +βδu)τu·∇v (SUPG Jacobian P.1) + (ε ∂t u + ε(u·∇)u + ε∇p - εν∆u - εf - f_pf )τδu·∇v (SUPG Jacobian P.2), in the case of additional grad-div stabilization + (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term) </p>
+<p>Calculates the Jacobian of the VANS equations (model A). Here, we note f_pf the forces from the particles to the fluid (including the drag β(u_p-u)), f the body force (forcing function and dynamic flow control force), m the mass source term (last component of the forcing function) and (∇u)_ik = ∂u_i/∂x_k. The viscous terms are the weak form of -εν∇·(∇u+∇u^T), that is ν(∇v,ε(∇u+∇u^T)) + ν(v,(∇u+∇u^T)·∇ε). The expressions calculated in this cell integral are: (Continuity equation) (q,ε∇·δu) + (q,δu·∇ε) + (VANS equations) + (v, ε ∂t δu) -&gt; Time derivative + (v, ε (u·∇)δu) + (v, ε (δu·∇)u) -&gt; Advection - (∇·v, ε δp) - (v,δp∇ε) -&gt; Pressure + (v, βδu) -&gt; Drag force (positive since the drag in f_pf is β(u_p-u)) + (v, m δu) -&gt; Momentum of the mass source m + ν(∇v,ε∇δu) + ν(∇v,ε∇δu^T) + ν(v,∇δu·∇ε) + ν(v,∇δu^T·∇ε) -&gt; Viscous plus three additional terms in the case of SUPG-PSPG stabilization: + (ε∂t δu + ε(u·∇)δu + ε(δu·∇)u + ε∇δp - εν∆δu - νɛ∇(∇·δu) + βδu + mδu) τ∇q (PSPG Jacobian) + (ε∂t δu + ε(u·∇)δu + ε(δu·∇)u + ε∇δp - εν∆δu - νɛ∇(∇·δu) + βδu + mδu) τ(u·∇)v (SUPG Jacobian P.1) + (ε∂t u + ε(u·∇)u + ε∇p - εν∆u - νɛ∇(∇·u) - εf - f_pf + mu)τ(δu·∇)v (SUPG Jacobian P.2), and in the case of additional grad-div stabilization: + (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term) The derivatives of τ and γ with respect to u are neglected. </p>
 
 <p>Implements <a class="el" href="classNavierStokesOperatorBase.html#a9f3bb8de4716c95844cbdf35272b30a6">NavierStokesOperatorBase&lt; dim, number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00486">486</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00520">520</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00042">time_stepping_is_bdf()</a>, and <a class="el" href="multiphysics_8h_source.html#l00044">void_fraction</a>.</p>
 
@@ -721,11 +760,11 @@ template&lt;int dim, typename number &gt; </div>
   </table>
   </dd>
 </dl>
-<p>The expressions calculated in this cell integral are: (q, ∂tɛ) + (q, ɛ ∇·u) + (q, u·∇ɛ) (Continuity equation) +(v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) - (v,p∇ɛ) + ɛν(∇v,∇u) + ν(v,∇u∇ɛ) - (v, f_pf) - (v,ɛf) (Weak form of VANS), plus two additional terms in the case of SUPG-PSPG stabilization: + (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - f_pf - ɛf)τ∇·q (PSPG term) + (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - f_pf - ɛf)τu·∇v (SUPG term), With additional grad-div stabilization (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ)) (grad-div term) </p>
+<p>Calculates the residual of the VANS equations (model A), with the same notation as the Jacobian above. The expressions calculated in this cell integral are: (q, ∂tɛ) + (q, ɛ ∇·u) + (q, u·∇ɛ) - (q, m) (Continuity equation) +(v,ɛ∂t u) + (v,ɛ(u·∇)u) + (v, mu) - (∇·v,ɛp) - (v,p∇ɛ) + ν(∇v,ɛ∇u) + ν(∇v,ɛ∇u^T) + ν(v,∇u·∇ɛ) + ν(v,∇u^T·∇ɛ) - (v, f_pf) - (v,ɛf) (Weak form of VANS), plus two additional terms in the case of SUPG-PSPG stabilization: + (ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf - ɛf)τ∇q (PSPG term) + (ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf - ɛf)τ(u·∇)v (SUPG term), and in the case of additional grad-div stabilization: + (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ-m)) (grad-div term) </p>
 
 <p>Implements <a class="el" href="classNavierStokesOperatorBase.html#a1d289e3cf780010e8be1f75d4b027194">NavierStokesOperatorBase&lt; dim, number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00757">757</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00815">815</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00042">time_stepping_is_bdf()</a>, and <a class="el" href="multiphysics_8h_source.html#l00044">void_fraction</a>.</p>
 
@@ -753,9 +792,9 @@ template&lt;int dim, typename number &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Internal copy of the CFD-DEM parameters. This is used for grad-div stabilization, but also to switch between form A and B of the VANS equations. </p>
+<p>Internal copy of the CFD-DEM parameters. This is used for grad-div stabilization and the drag coupling, but also to ensure that model A of the VANS equations is used, since model B is not supported. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00179">179</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00202">202</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -782,7 +821,34 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Table with correct alignment for vectorization to store the values of the grad-div gamma parameter </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00174">174</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00197">197</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+
+</div>
+</div>
+<a id="aa5467385ff27861fadd192f1fcd1e4bf" name="aa5467385ff27861fadd192f1fcd1e4bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5467385ff27861fadd192f1fcd1e4bf">&#9670;&#160;</a></span>mass_source_terms</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Table&lt;2, VectorizedArray&lt;number&gt; &gt; <a class="el" href="classVANSOperator.html">VANSOperator</a>&lt; dim, number &gt;::mass_source_terms</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Table with correct alignment for vectorization to store the values of the mass source term, which is the last component of the forcing function </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00171">171</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -809,7 +875,7 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Table with correct alignment for vectorization to store the values of the momentum transfer coefficient. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00170">170</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00193">193</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -834,9 +900,9 @@ template&lt;int dim, typename number &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Table with correct alignment for vectorization to store the values of the particle-fluid drag. The drag force in this table is volumetric, resulting from the projection used. </p>
+<p>Table with correct alignment for vectorization to store the values of the particle-fluid drag. The drag force in this table is volumetric, resulting from the projection used, applied on the fluid by the particles and divided by the fluid density. It is only gathered for an explicit drag coupling. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00162">162</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00185">185</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -861,9 +927,9 @@ template&lt;int dim, typename number &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Table with correct alignment for vectorization to store the values of the particle-fluid forces (without drag). These are the resulting forces applied on the particles due to hydrodynamic interaction, normalized by the volume of the cells. </p>
+<p>Table with correct alignment for vectorization to store the values of the particle-fluid forces (without drag). These are the volumetric forces applied on the fluid by the particles, that is minus the projected hydrodynamic forces applied on the particles, divided by the fluid density. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00157">157</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00178">178</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -890,7 +956,7 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Table with correct alignment for vectorization to store the values of the particle velocity. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00166">166</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00189">189</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -915,9 +981,9 @@ template&lt;int dim, typename number &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Table with correct alignment for vectorization to store the values of the time deriative of the void fraction </p>
+<p>Table with correct alignment for vectorization to store the values of the time derivative of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00151">151</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00167">167</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -944,7 +1010,7 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Table with correct alignment for vectorization to store the values of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00143">143</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00159">159</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -971,7 +1037,7 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Table with correct alignment for vectorization to store the values of the void fraction gradient </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00147">147</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00163">163</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>

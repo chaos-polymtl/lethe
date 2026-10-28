@@ -133,9 +133,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a790efed26ee8f5a3267811ca3a205357" id="r_a790efed26ee8f5a3267811ca3a205357"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
-<tr class="memitem:a790efed26ee8f5a3267811ca3a205357"><td class="memTemplItemLeft" align="right" valign="top">VectorizedArray&lt; Number &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fluid__dynamics__matrix__free__operators_8h.html#a790efed26ee8f5a3267811ca3a205357">evaluate_function</a> (const Function&lt; dim &gt; &amp;function, const Point&lt; dim, VectorizedArray&lt; Number &gt; &gt; &amp;p_vectorized)</td></tr>
-<tr class="separator:a790efed26ee8f5a3267811ca3a205357"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86d4a7f435c2ba8551a389dd7c0fc8b5" id="r_a86d4a7f435c2ba8551a389dd7c0fc8b5"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
+<tr class="memitem:a86d4a7f435c2ba8551a389dd7c0fc8b5"><td class="memTemplItemLeft" align="right" valign="top">VectorizedArray&lt; Number &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fluid__dynamics__matrix__free__operators_8h.html#a86d4a7f435c2ba8551a389dd7c0fc8b5">evaluate_function</a> (const Function&lt; dim &gt; &amp;function, const Point&lt; dim, VectorizedArray&lt; Number &gt; &gt; &amp;p_vectorized, const unsigned int component=0)</td></tr>
+<tr class="separator:a86d4a7f435c2ba8551a389dd7c0fc8b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a530ddaa68d7f5683cacb0ca48bde3eff" id="r_a530ddaa68d7f5683cacb0ca48bde3eff"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number &gt; </td></tr>
 <tr class="memitem:a530ddaa68d7f5683cacb0ca48bde3eff"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, dim, VectorizedArray&lt; Number &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fluid__dynamics__matrix__free__operators_8h.html#a530ddaa68d7f5683cacb0ca48bde3eff">evaluate_function_gradient</a> (const Function&lt; dim &gt; &amp;function, const Point&lt; dim, VectorizedArray&lt; Number &gt; &gt; &amp;p_vectorized)</td></tr>
 <tr class="separator:a530ddaa68d7f5683cacb0ca48bde3eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,63 +179,14 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the boundary condition requires face assembly. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00139">139</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00141">141</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42">BoundaryConditions::neumann_traction</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>.</p>
 
 </div>
 </div>
-<a id="a790efed26ee8f5a3267811ca3a205357" name="a790efed26ee8f5a3267811ca3a205357"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a790efed26ee8f5a3267811ca3a205357">&#9670;&#160;</a></span>evaluate_function() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename Number &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">VectorizedArray&lt; Number &gt; evaluate_function </td>
-          <td>(</td>
-          <td class="paramtype">const Function&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>function</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Point&lt; dim, VectorizedArray&lt; Number &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>p_vectorized</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Evaluate the value of a function at a batch of points to obtain a vectorized array of numbers. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
-    <tr><td class="paramname">Number</td><td>Abstract type for number across the class (i.e., double). </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">function</td><td>Function to evaluate. </td></tr>
-    <tr><td class="paramname">p_vectorized</td><td>Batch of points to evaluate function at. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>VectorizedArray&lt;Number&gt; Batch of evaluated values. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00061">61</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
-
-</div>
-</div>
 <a id="a0f8b31da5ab353ea716a093f929d8b1f" name="a0f8b31da5ab353ea716a093f929d8b1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f8b31da5ab353ea716a093f929d8b1f">&#9670;&#160;</a></span>evaluate_function() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f8b31da5ab353ea716a093f929d8b1f">&#9670;&#160;</a></span>evaluate_function() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -280,7 +231,63 @@ template&lt;int dim, typename Number , int components&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Tensor&lt;1, components, VectorizedArray&lt;Number&gt;&gt; Batch of evaluated values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00116">116</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00118">118</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+
+</div>
+</div>
+<a id="a86d4a7f435c2ba8551a389dd7c0fc8b5" name="a86d4a7f435c2ba8551a389dd7c0fc8b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86d4a7f435c2ba8551a389dd7c0fc8b5">&#9670;&#160;</a></span>evaluate_function() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">VectorizedArray&lt; Number &gt; evaluate_function </td>
+          <td>(</td>
+          <td class="paramtype">const Function&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>function</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim, VectorizedArray&lt; Number &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>p_vectorized</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>component</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evaluate the value of a function at a batch of points to obtain a vectorized array of numbers. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">Number</td><td>Abstract type for number across the class (i.e., double). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">function</td><td>Function to evaluate. </td></tr>
+    <tr><td class="paramname">p_vectorized</td><td>Batch of points to evaluate function at. </td></tr>
+    <tr><td class="paramname">component</td><td>Component of the function to evaluate. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>VectorizedArray&lt;Number&gt; Batch of evaluated values. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00062">62</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -329,7 +336,7 @@ template&lt;int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Tensor&lt;1, components, VectorizedArray&lt;Number&gt;&gt; Batch of evaluated gradients. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00086">86</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00088">88</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
