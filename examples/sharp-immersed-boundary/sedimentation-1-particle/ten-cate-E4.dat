@@ -1,34 +1,39 @@
 # Experiment E4 of A. ten Cate, C. H. Nieuwstad, J. J. Derksen and
 # H. E. A. Van den Akker, Phys. Fluids 14 (2002) 4012-4025,
-# doi:10.1063/1.1512918, as plotted in Fig. 8 of L. Barbeau, S. Golshan,
-# J. Deng, S. Etienne, C. Beguin and B. Blais, Comput. Fluids 268 (2024)
-# 106094, doi:10.1016/j.compfluid.2023.106094.
+# doi:10.1063/1.1512918.
 # Vertical velocity of the sphere (cm/s) as a function of time (s).
-# Extracted from the vector graphics of the figure, so the values are exact to
-# the precision written. Integrating this velocity gives a fall height of about
-# 12.3 cm, instead of the release height of 12 cm (see Barbeau et al.).
+# Digitized from the experimental points of the original figure
+# images/velocity-comparison.png of the documentation of this example, as
+# published on the Lethe website before October 2026. The uncertainty with
+# respect to that figure is about 0.002 s and 0.02 cm/s.
 # t v_y
 0.0000 0.000
-0.0503 -3.716
-0.0836 -4.982
-0.1202 -6.174
-0.1510 -6.732
-0.1640 -7.469
-0.1786 -7.886
-0.2396 -9.048
-0.2712 -9.639
-0.4679 -11.109
-0.5793 -11.798
-0.7988 -12.238
-0.8614 -12.248
-0.9224 -12.253
-0.9752 -12.260
-1.0777 -12.217
-1.1102 -12.020
-1.1517 -11.538
-1.1647 -11.227
-1.1687 -10.831
-1.1720 -10.371
-1.1769 -10.066
-1.1802 -9.063
-1.1827 -7.346
+0.0434 -3.309
+0.0553 -3.767
+0.0819 -4.749
+0.0937 -5.047
+0.1085 -5.778
+0.1292 -6.212
+0.1381 -6.509
+0.1558 -6.784
+0.1736 -7.515
+0.1854 -7.927
+0.2032 -8.224
+0.2475 -9.092
+0.2594 -9.367
+0.2860 -9.687
+0.4665 -11.172
+0.5227 -11.561
+0.5907 -11.881
+0.7859 -12.292
+0.8747 -12.315
+0.9575 -12.315
+1.0522 -12.292
+1.0877 -12.087
+1.1261 -11.584
+1.1469 -11.264
+1.1498 -10.418
+1.1498 -10.852
+1.1587 -9.847
+1.1616 -9.092
+1.1646 -7.378
