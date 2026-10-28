@@ -1456,6 +1456,22 @@ CompositeShape<dim>::gradient_with_cell_guess(
 }
 
 template <int dim>
+bool
+CompositeShape<dim>::contains_rbf() const
+{
+  for (const auto &[id, constituent] : constituents)
+    {
+      if (dynamic_cast<const RBFShape<dim> *>(constituent.get()))
+        return true;
+      const auto *composite =
+        dynamic_cast<const CompositeShape<dim> *>(constituent.get());
+      if (composite && composite->contains_rbf())
+        return true;
+    }
+  return false;
+}
+
+template <int dim>
 std::shared_ptr<Shape<dim>>
 CompositeShape<dim>::static_copy() const
 {

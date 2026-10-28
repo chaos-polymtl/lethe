@@ -359,3 +359,86 @@ Therefore, the near-particle zone around each particle is refined ``mesh``:``ini
 Reference
 ---------------
 .. [#kim2005] \S. Kim and S. J. Karrila, *Microhydrodynamics: Principles and Selected Applications*. Courier Corporation, 2005. Available: https://books.google.ca/books?id=_8llnUUGo0wC&lpg=PP1&hl=pt-BR&pg=PP1#v=onepage&q&f=false\.
+
+
+Periodic immersed particles
+---------------------------
+
+``lethe-fluid-sharp`` supports one axis-aligned translational periodic pair.
+Specify the same ordered boundary IDs and direction in the fluid and DEM
+boundary conditions, even when particle motion is prescribed. For example,
+for the x faces numbered 0 and 1::
+
+  subsection boundary conditions
+    set number = 1
+    subsection bc 0
+      set id                 = 0
+      set type               = periodic
+      set periodic id        = 1
+      set periodic direction = 0
+    end
+  end
+  subsection DEM boundary conditions
+    set number of boundary conditions = 1
+    subsection boundary condition 0
+      set type               = periodic
+      set periodic id 0      = 0
+      set periodic id 1      = 1
+      set periodic direction = 0
+    end
+  end
+
+Add the remaining nonperiodic fluid boundary conditions for your mesh. Older
+CFD-only periodic inputs must also supply the matching DEM pair. Periodic faces
+are excluded from particle-wall contact. DEM force-chain output is not supported
+with Sharp periodic boundaries: its exporter uses primary particle positions
+and cannot reconstruct contacts across the seam. This combination is rejected
+at initialization.
+
+The configured faces must be planar, normal to the selected coordinate direction,
+and lie at the opposite extrema of the mesh. Rotated periodic transformations and
+multiple periodic directions are not supported. The mesh must resolve different
+images of a particle in distinct cells; classification rejects cells intersecting
+two images of the same particle. Refine the mesh before running such a case.
+
+RBF shapes are not yet supported with periodic Sharp-IB boundaries, including
+RBF constituents inside composite shapes. Such configurations are rejected at
+initialization. Nonperiodic RBF simulations remain supported.
+
+Particle geometry, stencils and refinement use translated images near the seam.
+Image selection uses enclosing shape bounds, including offsets of composite
+constituents. Images are enumerated by integer translations, including
+constituents displaced by more than one period from their reference point.
+Minimal-crown refinement includes both the particle extent and the
+crown thickness; coarsening protection is included in the image support as well.
+When fluid equations are assembled inside particles, the interior pressure
+anchor is selected among unconstrained, owned pressure degrees of freedom using
+a global deterministic comparison.
+
+Integrated, prescribed and file-loaded particle positions are normalized after
+motion evaluation. Prescribed functions are evaluated before this normalization,
+in the current integration frame. Wrapping accepts displacements of multiple
+periods. BDF position history is translated uniformly by the actual accepted wrap,
+so older positions may legitimately lie outside the primary interval. These
+history coordinates are retained in the existing particle checkpoint fields;
+they must not be normalized independently.
+
+Particle-particle contact uses the closest periodic image and retains contact
+history under the physical particle IDs. Lubrication uses periodic separation
+with the existing spherical lubrication model. Periodic images are geometric
+copies, not additional particles: force and torque are accumulated on the
+original pair. Multiple simultaneous contacts with distinct images of the same
+particle are not supported. For interacting pairs, the sum of the bounding-box half widths projected
+onto the periodic direction must be less than half the period; candidate search
+rejects larger pairs. This restriction does not apply to prescribed obstacles
+when neither particle integrates contact dynamics.
+
+For periodic Sharp simulations, particle-particle spring history is saved in the additional ``.ib_contacts``
+checkpoint file. Keep it with the other restart files to continue frictional
+contacts. Legacy checkpoints without this file start with empty contact history.
+Periodic nonlinear motion trials within a CFD step reuse the same accepted history rather
+than accumulating a new contact time increment on every trial.
+
+These contact-history and lubrication updates apply only to periodic Sharp
+simulations. Nonperiodic simulations retain the existing contact, wall-candidate,
+motion and checkpoint behavior.

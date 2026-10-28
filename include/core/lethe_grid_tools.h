@@ -60,11 +60,15 @@ namespace LetheGridTools
    *
    * @param point The point around which we want to find the cell.
    *
+   * @param use_global_levels Use globally valid refinement levels for periodic
+   * stencil searches on distributed meshes. False preserves the existing
+   * search.
    */
   template <int dim>
   typename DoFHandler<dim>::active_cell_iterator
   find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
-                                   const Point<dim>      &point);
+                                   const Point<dim>      &point,
+                                   const bool use_global_levels = false);
 
   /**
    * @brief
@@ -75,6 +79,9 @@ namespace LetheGridTools
    * @param point The point around which we want to find the cell.
    *
    * @param vertices_cell_map see vertices_cell_mapping function description.
+   * @param use_global_levels Use globally valid refinement levels for periodic
+   * stencil searches on distributed meshes. False preserves the existing
+   * search.
    */
   template <int dim>
   typename DoFHandler<dim>::active_cell_iterator
@@ -84,7 +91,8 @@ namespace LetheGridTools
              std::set<typename DoFHandler<dim>::active_cell_iterator>>
                                                          &vertices_cell_map,
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const Point<dim>                                     &point);
+    const Point<dim>                                     &point,
+    const bool use_global_levels = false);
 
   /**
    * @brief

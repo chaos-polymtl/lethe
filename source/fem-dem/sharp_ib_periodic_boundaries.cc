@@ -3,7 +3,12 @@
 
 #include <fem-dem/sharp_ib_periodic_boundaries.h>
 
+#include <deal.II/base/exceptions.h>
+
 #include <algorithm>
+#include <cmath>
+#include <limits>
+#include <ostream>
 #include <sstream>
 
 template <int dim>
@@ -18,13 +23,7 @@ SharpIBPeriodicBoundaries<dim>::initialize(
   const BoundaryConditions::BoundaryConditions &cfd_boundary_conditions,
   const dealii::ConditionalOStream             &pcout)
 {
-  // Sharp-IB periodic support is intentionally strict: the fluid and particle
-  // sides must describe the same single periodic pair. Allowing CFD-only or
-  // DEM-only periodicity would leave refinement, wrapping, particle-wall
-  // contact, and cut-cell assembly operating in incompatible frames. This was
-  // already an implicit assumption throughout the periodic implementation, so
-  // we enforce it explicitly here instead of trying to guess which subsystem
-  // should define the authoritative configuration.
+  // Fluid geometry and particle motion must use the same periodic pair.
   const PeriodicConfiguration dem_configuration =
     parse_dem_periodic_configuration(dem_boundary_conditions);
   const PeriodicConfiguration cfd_configuration =
@@ -48,6 +47,14 @@ void
 SharpIBPeriodicBoundaries<dim>::set_periodic_offset(
   const dealii::Tensor<1, dim> &offset)
 {
+  AssertThrow(std::isfinite(offset[configuration.direction]) &&
+                offset[configuration.direction] > 0.,
+              dealii::ExcMessage(
+                "The Sharp-IB period must be positive and finite."));
+  for (unsigned int d = 0; d < dim; ++d)
+    AssertThrow(d == configuration.direction || offset[d] == 0.,
+                dealii::ExcMessage(
+                  "Sharp-IB requires an axis-aligned translation."));
   periodic_offset = offset;
 }
 
@@ -186,14 +193,17 @@ SharpIBPeriodicBoundaries<dim>::wrap_point(const dealii::Point<dim> &point,
   dealii::Point<dim> wrapped_point = point;
   const double       coordinate    = point[configuration.direction];
 
-  // Points that strictly overshoot the lower boundary are wrapped upward
-  // (toward the upper face), and points that strictly overshoot the upper
-  // boundary are wrapped downward. Points that land exactly on either boundary
-  // face are left in place because they are still inside the domain.
+  const double length = domain_upper - domain_lower;
+  AssertThrow(std::isfinite(coordinate) && std::isfinite(length) && length > 0.,
+              dealii::ExcMessage(
+                "Cannot wrap a non-finite point or invalid period."));
+  // Keep both boundary faces in place; normalize arbitrarily large excursions.
   if (coordinate < domain_lower)
-    wrapped_point += periodic_offset;
+    wrapped_point[configuration.direction] +=
+      std::ceil((domain_lower - coordinate) / length) * length;
   else if (coordinate > domain_upper)
-    wrapped_point -= periodic_offset;
+    wrapped_point[configuration.direction] -=
+      std::ceil((coordinate - domain_upper) / length) * length;
 
   return wrapped_point;
 }
@@ -212,14 +222,54 @@ SharpIBPeriodicBoundaries<dim>::generate_periodic_image_points(
     return image_points;
 
   const double coordinate = point[configuration.direction];
-
-  if (coordinate - support_radius < domain_lower)
-    image_points.push_back(point + periodic_offset);
-
-  if (coordinate + support_radius > domain_upper)
-    image_points.push_back(point - periodic_offset);
+  const double length     = domain_upper - domain_lower;
+  AssertThrow(std::isfinite(coordinate) && std::isfinite(support_radius) &&
+                support_radius >= 0. && std::isfinite(length) && length > 0.,
+              dealii::ExcMessage("Invalid periodic image support or domain."));
+  // Enumerate every translated support interval intersecting the domain.
+  // Composite constituents may be displaced by more than one period from
+  // their reference point, even when the reference point is normalized.
+  const double first =
+    std::floor((domain_lower - coordinate - support_radius) / length) + 1.;
+  const double last =
+    std::ceil((domain_upper - coordinate + support_radius) / length) - 1.;
+  AssertThrow(
+    first > std::numeric_limits<int>::min() &&
+      first < std::numeric_limits<int>::max() &&
+      last > std::numeric_limits<int>::min() &&
+      last < std::numeric_limits<int>::max(),
+    dealii::ExcMessage(
+      "Periodic image support exceeds the representable image range."));
+  for (int image = std::max(1, static_cast<int>(first));
+       image <= static_cast<int>(last);
+       ++image)
+    image_points.push_back(point +
+                           static_cast<double>(image) * periodic_offset);
+  for (int image = std::min(-1, static_cast<int>(last));
+       image >= static_cast<int>(first);
+       --image)
+    image_points.push_back(point +
+                           static_cast<double>(image) * periodic_offset);
 
   return image_points;
+}
+
+template <int dim>
+void
+SharpIBPeriodicBoundaries<dim>::translate_history(
+  std::vector<dealii::Point<dim>> &history,
+  const dealii::Tensor<1, dim>    &shift)
+{
+  for (auto &position : history)
+    position += shift;
+}
+
+template <int dim>
+double
+SharpIBPeriodicBoundaries<dim>::enclosing_radius(const Shape<dim> &shape)
+{
+  return shape.bounding_box_center.norm() +
+         shape.bounding_box_half_length.norm();
 }
 
 template class SharpIBPeriodicBoundaries<2>;

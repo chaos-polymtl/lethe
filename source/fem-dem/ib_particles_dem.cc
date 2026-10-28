@@ -2,11 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_lagrangian.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <fem-dem/ib_particles_dem.h>
 
+#include <deal.II/base/exceptions.h>
+#include <deal.II/base/mpi.h>
+
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/map.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -28,6 +36,45 @@ IBParticlesDEM<dim>::initialize(
   mpi_communicator               = mpi_communicator_input;
   dem_particles                  = particles;
   boundary_cells.resize(dem_particles.size());
+}
+
+template <int dim>
+void
+IBParticlesDEM<dim>::set_periodic_offset(const Tensor<1, dim> &offset)
+{
+  periodic_offset = offset;
+}
+
+template <int dim>
+std::unique_ptr<IBParticle<dim>>
+IBParticlesDEM<dim>::periodic_image(const IBParticle<dim> &particle,
+                                    const IBParticle<dim> &reference) const
+{
+  if (periodic_offset.norm_square() == 0.)
+    return nullptr;
+  Tensor<1, dim> shift;
+  const auto     center = particle.shape->get_rotation_matrix() *
+                        point_nd_to_3d(particle.shape->bounding_box_center) +
+                      point_nd_to_3d(particle.position);
+  const auto reference_center =
+    reference.shape->get_rotation_matrix() *
+      point_nd_to_3d(reference.shape->bounding_box_center) +
+    point_nd_to_3d(reference.position);
+  for (unsigned int d = 0; d < dim; ++d)
+    if (periodic_offset[d] > 0.)
+      shift[d] =
+        -std::floor((center[d] - reference_center[d]) / periodic_offset[d] +
+                    0.5) *
+        periodic_offset[d];
+  if (shift.norm_square() == 0.)
+    return nullptr;
+
+  auto image = std::make_unique<IBParticle<dim>>(particle);
+  // Shapes are shared by IBParticle copies. Clone before changing geometry so
+  // neither the CFD particle nor another contact sees this temporary frame.
+  image->shape = particle.shape->static_copy();
+  image->set_position(particle.position + shift);
+  return image;
 }
 
 template <int dim>
@@ -118,10 +165,40 @@ IBParticlesDEM<dim>::get_wall_motion(const types::boundary_id boundary_id,
 
 template <int dim>
 void
+IBParticlesDEM<dim>::write_contact_history(std::ostream &output) const
+{
+  boost::archive::text_oarchive archive(output);
+  archive << pp_contact_map;
+}
+
+template <int dim>
+void
+IBParticlesDEM<dim>::read_contact_history(std::istream &input)
+{
+  boost::archive::text_iarchive archive(input);
+  archive >> pp_contact_map;
+  accepted_pp_contact_map     = pp_contact_map;
+  contact_history_initialized = false;
+}
+
+template <int dim>
+void
 IBParticlesDEM<dim>::update_particles(
   const std::vector<IBParticle<dim>> &particles,
-  double                              time)
+  double                              time,
+  const bool                          recompute_contacts)
 {
+  if (recompute_contacts && periodic_offset.norm_square() != 0.)
+    {
+      if (!contact_history_initialized || time != contact_history_time)
+        {
+          accepted_pp_contact_map     = pp_contact_map;
+          contact_history_time        = time;
+          contact_history_initialized = true;
+        }
+      else
+        pp_contact_map = accepted_pp_contact_map;
+    }
   dem_particles = particles;
   cfd_time      = time;
 }
@@ -140,10 +217,35 @@ IBParticlesDEM<dim>::update_contact_candidates()
   for (auto &particle_one : dem_particles)
     {
       const Point<dim> particle_one_location = particle_one.position;
-      for (auto &particle_two : dem_particles)
+      for (auto &primary_particle_two : dem_particles)
         {
-          if (particle_one.particle_id < particle_two.particle_id)
+          if (particle_one.particle_id < primary_particle_two.particle_id)
             {
+              // One pair history cannot represent simultaneous image contacts.
+              // Only interacting particles need this restriction; prescribed
+              // obstacles alone do not integrate contact dynamics.
+              if (particle_one.integrate_motion ||
+                  primary_particle_two.integrate_motion)
+                for (unsigned int d = 0; d < dim; ++d)
+                  if (periodic_offset[d] > 0.)
+                    {
+                      double combined_half_width = 0.;
+                      for (unsigned int j = 0; j < dim; ++j)
+                        combined_half_width +=
+                          std::abs(
+                            particle_one.shape->get_rotation_matrix()[d][j]) *
+                            particle_one.shape->bounding_box_half_length[j] +
+                          std::abs(primary_particle_two.shape
+                                     ->get_rotation_matrix()[d][j]) *
+                            primary_particle_two.shape
+                              ->bounding_box_half_length[j];
+                      AssertThrow(
+                        combined_half_width < 0.5 * periodic_offset[d],
+                        ExcMessage(
+                          "Periodic Sharp contact requires the sum of the projected bounding-box half widths to be less than half the period."));
+                    }
+              auto  image = periodic_image(primary_particle_two, particle_one);
+              auto &particle_two = image ? *image : primary_particle_two;
               const Point<dim> particle_two_location = particle_two.position;
               double           distance =
                 (particle_one_location - particle_two_location).norm();
@@ -187,6 +289,11 @@ IBParticlesDEM<dim>::update_contact_candidates()
             }
         }
     }
+  if (periodic_offset.norm_square() != 0.)
+    for (auto &[particle_id, contacts] : pp_contact_map)
+      std::erase_if(contacts, [&](const auto &entry) {
+        return !particles_contact_candidates[particle_id].contains(entry.first);
+      });
 }
 
 template <int dim>
@@ -210,28 +317,20 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
           const unsigned int particle_contact_id =
             *particle_contact_candidates_id;
 
-          auto &particle_two = dem_particles[particle_contact_id];
+          auto image =
+            periodic_image(dem_particles[particle_contact_id], particle_one);
+          auto &particle_two =
+            image ? *image : dem_particles[particle_contact_id];
           if (particle_one.particle_id < particle_two.particle_id)
             {
-              ContactInfo contact_info;
-              // Check if there is already information on the contact of
-              // these to particles. If not initialize it in the contact map
-              // with 0 values.
-              try
-                {
-                  contact_info = pp_contact_map[particle_one.particle_id]
-                                               [particle_two.particle_id];
-                }
-              catch (...)
-                {
-                  for (int d = 0; d < dim; ++d)
-                    {
-                      contact_info.tangential_displacement[d]          = 0.;
-                      contact_info.rolling_resistance_spring_torque[d] = 0.;
-                    }
-                  pp_contact_map[particle_one.particle_id]
-                                [particle_two.particle_id] = contact_info;
-                }
+              // Preserve upstream's copied records for nonperiodic runs.
+              // Periodic contacts retain history under physical particle IDs.
+              auto &stored_contact = pp_contact_map[particle_one.particle_id]
+                                                   [particle_two.particle_id];
+              auto  contact_copy = stored_contact;
+              auto &contact_info = periodic_offset.norm_square() != 0. ?
+                                     stored_contact :
+                                     contact_copy;
 
               // Calculation of normal overlap
               double                  normal_overlap;
@@ -239,13 +338,19 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
               Tensor<1, dim>          normal;
               std::vector<Point<dim>> contact_points_candidate;
 
-              auto iterator =
-                previous_wall_contact_point[particle_one.particle_id].find(
-                  particle_two.particle_id);
-              if (iterator !=
-                  previous_wall_contact_point[particle_one.particle_id].end())
+              const bool periodic = periodic_offset.norm_square() != 0.;
+              auto      &contact_points =
+                periodic ?
+                       previous_particle_particle_contact_point[particle_one
+                                                             .particle_id] :
+                       previous_wall_contact_point[particle_one.particle_id];
+              const auto iterator =
+                contact_points.find(particle_two.particle_id);
+              if (iterator != contact_points.end())
                 {
-                  contact_points_candidate.push_back(iterator->second);
+                  contact_points_candidate.push_back(
+                    periodic ? particle_one.position + iterator->second :
+                               iterator->second);
                 }
               else
                 {
@@ -293,9 +398,9 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                   contact_point  = std::get<Point<dim>>(contact_state);
                   normal         = std::get<Tensor<1, dim>>(contact_state);
                 }
-              previous_wall_contact_point[particle_one.particle_id]
-                                         [particle_two.particle_id] =
-                                           contact_point;
+              contact_points[particle_two.particle_id] =
+                periodic ? Point<dim>(contact_point - particle_one.position) :
+                           contact_point;
               Point<3>     contact_point_3d = point_nd_to_3d(contact_point);
               Tensor<1, 3> contact_normal   = tensor_nd_to_3d(normal);
 
@@ -436,17 +541,25 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
           if (particle_one.particle_id < particle_two.particle_id)
             {
               const Point<dim> particle_one_location = particle_one.position;
-              const Point<dim> particle_two_location = particle_two.position;
-              Tensor<1, 3>     radial_vector;
-              double           radial_velocity;
-              Tensor<1, 3>     f_lub;
+              Point<dim>       particle_two_location = particle_two.position;
+              for (unsigned int d = 0; d < dim; ++d)
+                if (periodic_offset[d] > 0.)
+                  particle_two_location[d] -=
+                    std::floor(
+                      (particle_two_location[d] - particle_one_location[d]) /
+                        periodic_offset[d] +
+                      0.5) *
+                    periodic_offset[d];
+              Tensor<1, 3> radial_vector;
+              double       radial_velocity;
+              Tensor<1, 3> f_lub;
 
               // Calculation of normal overlap
               double gap =
                 particle_one_location.distance(particle_two_location) -
                 (particle_one.radius + particle_two.radius);
               radial_vector =
-                tensor_nd_to_3d(particle_one.position - particle_two.position);
+                tensor_nd_to_3d(particle_one_location - particle_two_location);
               if (gap > 0 and gap < h_max)
                 // This means that the adjacent particles are very close but
                 // not in contact
@@ -479,8 +592,16 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
                   ;
                 }
 
-              lubrication_force[particle_one.particle_id] = f_lub;
-              lubrication_force[particle_two.particle_id] = -f_lub;
+              if (periodic_offset.norm_square() != 0.)
+                {
+                  lubrication_force[particle_one.particle_id] += f_lub;
+                  lubrication_force[particle_two.particle_id] -= f_lub;
+                }
+              else
+                {
+                  lubrication_force[particle_one.particle_id] = f_lub;
+                  lubrication_force[particle_two.particle_id] = -f_lub;
+                }
             }
         }
     }
@@ -494,17 +615,13 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
   const Quadrature<dim - 1>    &face_quadrature_formula,
   const Mapping<dim>           &mapping)
 {
-  const FESystem<dim, dim> fe = dof_handler.get_fe();
+  const FESystem<dim, dim>                          fe = dof_handler.get_fe();
+  std::vector<std::map<types::boundary_id, double>> best_contact_candidate(
+    particles.size());
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       // Clear the last boundary cell candidates.
       boundary_cells[p_i].clear();
-      // Keep the boundary point and its levelset together locally so the
-      // "best candidate" metric cannot drift away from the stored point. The
-      // subsequent MPI merge relies on every local candidate carrying a
-      // physically consistent (point, levelset) pair.
-      std::map<unsigned int, std::pair<BoundaryCellsInfo, double>>
-        local_boundary_candidates;
 
       // Find the new cells that are at a boundary and in proximity of the
       // particle.
@@ -549,77 +666,45 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                       if (is_boundary_excluded(
                             boundary_information.boundary_index))
                         continue;
-                      const double level_set = particles[p_i].get_levelset(
-                        boundary_information.point_on_boundary);
-                      auto iterator = local_boundary_candidates.find(
+                      auto iterator = best_contact_candidate[p_i].find(
                         boundary_information.boundary_index);
 
-                      if (iterator == local_boundary_candidates.end() ||
-                          level_set < iterator->second.second)
-                        local_boundary_candidates[boundary_information
-                                                    .boundary_index] = {
-                          boundary_information, level_set};
+                      double level_set = particles[p_i].get_levelset(
+                        boundary_information.point_on_boundary);
+                      if (iterator != best_contact_candidate[p_i].end())
+                        {
+                          if (level_set <
+                              best_contact_candidate[p_i][boundary_information
+                                                            .boundary_index])
+                            {
+                              boundary_cells[p_i][boundary_information
+                                                    .boundary_index] =
+                                boundary_information;
+                              best_contact_candidate[p_i][boundary_information
+                                                            .boundary_index] =
+                                level_set;
+                            }
+                        }
+                      else
+                        boundary_cells[p_i]
+                                      [boundary_information.boundary_index] =
+                                        boundary_information;
+                      best_contact_candidate[p_i][boundary_information
+                                                    .boundary_index] =
+                        level_set;
                     }
                 }
             }
         }
 
-      // Regroup the information of all processors.
-      const auto global_boundary_candidates =
-        Utilities::MPI::all_gather(this->mpi_communicator,
-                                   local_boundary_candidates);
-
+      // Regroup the information of all the processor
+      auto global_boundary_cell =
+        Utilities::MPI::all_gather(this->mpi_communicator, boundary_cells[p_i]);
       boundary_cells[p_i].clear();
-      std::map<unsigned int, double> global_best_levelset;
-      for (const auto &rank_candidates : global_boundary_candidates)
+      for (unsigned int i = 0; i < global_boundary_cell.size(); ++i)
         {
-          for (const auto &[boundary_id, candidate] : rank_candidates)
-            {
-              const auto  &candidate_info     = candidate.first;
-              const double candidate_levelset = candidate.second;
-              const auto   current_best_level =
-                global_best_levelset.find(boundary_id);
-
-              bool accept_candidate = false;
-              if (current_best_level == global_best_levelset.end() ||
-                  candidate_levelset < current_best_level->second)
-                {
-                  accept_candidate = true;
-                }
-              else if (std::abs(candidate_levelset -
-                                current_best_level->second) < 1e-14)
-                {
-                  const auto current_candidate =
-                    boundary_cells[p_i].find(boundary_id);
-                  if (current_candidate == boundary_cells[p_i].end())
-                    {
-                      accept_candidate = true;
-                    }
-                  else
-                    {
-                      for (unsigned int d = 0; d < dim; ++d)
-                        {
-                          if (candidate_info.point_on_boundary[d] <
-                              current_candidate->second.point_on_boundary[d])
-                            {
-                              accept_candidate = true;
-                              break;
-                            }
-                          if (candidate_info.point_on_boundary[d] >
-                              current_candidate->second.point_on_boundary[d])
-                            {
-                              break;
-                            }
-                        }
-                    }
-                }
-
-              if (accept_candidate)
-                {
-                  global_best_levelset[boundary_id] = candidate_levelset;
-                  boundary_cells[p_i][boundary_id]  = candidate_info;
-                }
-            }
+          boundary_cells[p_i].insert(global_boundary_cell[i].begin(),
+                                     global_boundary_cell[i].end());
         }
     }
 }
@@ -1170,6 +1255,12 @@ IBParticlesDEM<dim>::calculate_force_model(
 
   // Calculation of the normal unit contact vector
   normal_unit_vector = contact_normal;
+  if (periodic_offset.norm_square() != 0.)
+    {
+      contact_info.normal_vector  = contact_normal;
+      contact_info.normal_overlap = normal_overlap;
+      contact_info.contact_point  = contact_point;
+    }
 
   // Defining relative contact velocity
   Tensor<1, 3> contact_relative_velocity;
@@ -1211,6 +1302,10 @@ IBParticlesDEM<dim>::calculate_force_model(
   contact_info.tangential_relative_velocity.push_back(
     tangential_relative_velocity);
   contact_info.tangential_displacement += tangential_relative_velocity * dt;
+  if (periodic_offset.norm_square() != 0.)
+    contact_info.tangential_displacement -=
+      (contact_info.tangential_displacement * normal_unit_vector) *
+      normal_unit_vector;
 
   ///////////// Hertz contact force model ////////////////
   // Calculation of effective radius and mass
@@ -1250,6 +1345,13 @@ IBParticlesDEM<dim>::calculate_force_model(
 
   double coulomb_threshold =
     effective_coefficient_of_friction * normal_force.norm();
+
+  if (periodic_offset.norm_square() != 0.)
+    {
+      contact_info.tangential_displacement_limit =
+        coulomb_threshold / tangential_spring_constant;
+      contact_info.limit_tangential_history();
+    }
 
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
@@ -1394,8 +1496,11 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             {
               local_dt = local_dt * 2;
             }
+          // Refresh seam candidates at each RK stage, including crossings
+          // occurring within the DEM substeps.
+          if (periodic_offset.norm_square() != 0.)
+            update_contact_candidates();
           // Calculate particle-particle and particle-wall contact force
-
           calculate_pp_contact_force(local_dt, contact_force, contact_torque);
           calculate_pw_contact_force(local_dt,
                                      contact_wall_force,
@@ -1654,44 +1759,46 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                 }
             }
 
-          for (auto it = pp_contact_map.begin(); it != pp_contact_map.end();
-               it++)
-            {
-              unsigned int particle_one_id = it->first;
-              for (auto it2 = it->second.begin(); it2 != it->second.end();
-                   it2++)
-                {
-                  unsigned int particle_two_id = it2->first;
-                  auto         contact_info    = it2->second;
-                  // Check if all 4 of the RK steps are in the contact info. If
-                  // it is not the case, this means this is a new contact, or
-                  // the contact ended. In this case, we simply take the last RK
-                  // step registered as the derivative for the integration.
-                  if (last_pp_contact_info.find(particle_one_id) !=
-                      last_pp_contact_info.end())
-                    {
-                      auto previous_contact_info_iterator =
-                        last_pp_contact_info.find(particle_one_id)
-                          ->second.find(particle_two_id);
-                      if (previous_contact_info_iterator !=
+          if (periodic_offset.norm_square() != 0.)
+            for (auto it = pp_contact_map.begin(); it != pp_contact_map.end();
+                 it++)
+              {
+                unsigned int particle_one_id = it->first;
+                for (auto it2 = it->second.begin(); it2 != it->second.end();
+                     it2++)
+                  {
+                    unsigned int particle_two_id = it2->first;
+                    auto        &contact_info    = it2->second;
+                    // Check if all 4 of the RK steps are in the contact info.
+                    // If it is not the case, this means this is a new contact,
+                    // or the contact ended. In this case, we simply take the
+                    // last RK step registered as the derivative for the
+                    // integration.
+                    if (last_pp_contact_info.find(particle_one_id) !=
+                        last_pp_contact_info.end())
+                      {
+                        auto previous_contact_info_iterator =
                           last_pp_contact_info.find(particle_one_id)
-                            ->second.end())
-                        {
-                          contact_info.tangential_displacement =
-                            previous_contact_info_iterator->second
-                              .tangential_displacement;
-                        }
-                      else
-                        {
-                          contact_info.tangential_displacement = 0;
-                        }
-                    }
-                  else
-                    {
-                      contact_info.tangential_displacement = 0;
-                    }
-                }
-            }
+                            ->second.find(particle_two_id);
+                        if (previous_contact_info_iterator !=
+                            last_pp_contact_info.find(particle_one_id)
+                              ->second.end())
+                          {
+                            contact_info.tangential_displacement =
+                              previous_contact_info_iterator->second
+                                .tangential_displacement;
+                          }
+                        else
+                          {
+                            contact_info.tangential_displacement = 0;
+                          }
+                      }
+                    else
+                      {
+                        contact_info.tangential_displacement = 0;
+                      }
+                  }
+              }
         }
 
       for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
@@ -1835,64 +1942,77 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             }
         }
       // Same for particle-particle tangential displacement
-      for (auto it = pp_contact_map.begin(); it != pp_contact_map.end(); it++)
-        {
-          unsigned int particle_one_id = it->first;
-          for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
-            {
-              unsigned int particle_two_id = it2->first;
-              auto         contact_info    = it2->second;
-              // Check if all 4 of the RK steps are in the contact info. If it
-              // is not the case, this means this is a new contact, or the
-              // contact ended. In this case, we simply take the last RK step
-              // registered as the derivative for the integration.
-              Tensor<1, 3> previous_tangential_displacement;
-              if (last_pp_contact_info.find(particle_one_id) !=
-                  last_pp_contact_info.end())
-                {
-                  auto previous_contact_info_iterator =
-                    last_pp_contact_info.find(particle_one_id)
-                      ->second.find(particle_two_id);
-                  if (previous_contact_info_iterator !=
-                      last_pp_contact_info.find(particle_one_id)->second.end())
-                    {
-                      previous_tangential_displacement =
-                        previous_contact_info_iterator->second
-                          .tangential_displacement;
-                    }
-                }
-              else
-                {
-                  previous_tangential_displacement = 0;
-                }
-              if (contact_info.tangential_relative_velocity.size() == 4)
-                {
-                  contact_info.tangential_displacement =
-                    previous_tangential_displacement +
-                    dt_dem / 6.0 *
-                      (contact_info.tangential_relative_velocity[0] +
-                       2 * contact_info.tangential_relative_velocity[1] +
-                       2 * contact_info.tangential_relative_velocity[2] +
-                       contact_info.tangential_relative_velocity[3]);
-                }
-              else if (contact_info.tangential_relative_velocity.size() > 0)
-                {
-                  contact_info.tangential_displacement =
-                    previous_tangential_displacement +
-                    dt_dem *
-                      contact_info.tangential_relative_velocity
-                        [contact_info.tangential_relative_velocity.size()];
-                }
-              else
-                {
-                  contact_info.tangential_displacement = 0;
-                }
-              // clear the vector for the next set of 4 Rk steps
-              contact_info.tangential_relative_velocity.clear();
-            }
-        }
+      if (periodic_offset.norm_square() != 0.)
+        for (auto it = pp_contact_map.begin(); it != pp_contact_map.end(); it++)
+          {
+            unsigned int particle_one_id = it->first;
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
+              {
+                unsigned int particle_two_id = it2->first;
+                auto        &contact_info    = it2->second;
+                // Check if all 4 of the RK steps are in the contact info. If it
+                // is not the case, this means this is a new contact, or the
+                // contact ended. In this case, we simply take the last RK step
+                // registered as the derivative for the integration.
+                Tensor<1, 3> previous_tangential_displacement;
+                if (last_pp_contact_info.find(particle_one_id) !=
+                    last_pp_contact_info.end())
+                  {
+                    auto previous_contact_info_iterator =
+                      last_pp_contact_info.find(particle_one_id)
+                        ->second.find(particle_two_id);
+                    if (previous_contact_info_iterator !=
+                        last_pp_contact_info.find(particle_one_id)
+                          ->second.end())
+                      {
+                        previous_tangential_displacement =
+                          previous_contact_info_iterator->second
+                            .tangential_displacement;
+                      }
+                  }
+                else
+                  {
+                    previous_tangential_displacement = 0;
+                  }
+                if (contact_info.tangential_relative_velocity.size() == 4)
+                  {
+                    contact_info.tangential_displacement =
+                      previous_tangential_displacement +
+                      dt_dem / 6.0 *
+                        (contact_info.tangential_relative_velocity[0] +
+                         2 * contact_info.tangential_relative_velocity[1] +
+                         2 * contact_info.tangential_relative_velocity[2] +
+                         contact_info.tangential_relative_velocity[3]);
+                  }
+                else if (contact_info.tangential_relative_velocity.size() > 0)
+                  {
+                    contact_info.tangential_displacement =
+                      previous_tangential_displacement +
+                      dt_dem * contact_info.tangential_relative_velocity.back();
+                  }
+                else
+                  {
+                    contact_info.tangential_displacement = 0;
+                  }
+                if (periodic_offset.norm_square() != 0.)
+                  contact_info.limit_tangential_history();
+                // clear the vector for the next set of 4 Rk steps
+                contact_info.tangential_relative_velocity.clear();
+              }
+          }
       t += dt_dem;
     }
+}
+
+template <int dim>
+void
+IBParticlesDEM<dim>::ContactInfo::limit_tangential_history()
+{
+  tangential_displacement -=
+    (tangential_displacement * normal_vector) * normal_vector;
+  const double length = tangential_displacement.norm();
+  if (length > tangential_displacement_limit)
+    tangential_displacement *= tangential_displacement_limit / length;
 }
 
 template class IBParticlesDEM<2>;
