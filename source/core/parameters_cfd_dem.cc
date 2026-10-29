@@ -42,59 +42,77 @@ namespace Parameters
       "mode",
       mode,
       "Choose the method for the calculation of the void fraction.");
+
     prm.enter_subsection("function");
     void_fraction.declare_parameters(prm);
     prm.leave_subsection();
+
     prm.declare_entry("read dem",
                       Patterns::Tools::Convert<bool>::to_string(read_dem),
                       Patterns::Bool(),
                       "Define particles using a DEM simulation results file.");
+
     prm.declare_entry("dem file name",
                       dem_file_name,
                       Patterns::FileName(),
                       "File output dem prefix");
+
     prm.declare_entry("l2 smoothing length",
                       Patterns::Tools::Convert<double>::to_string(
                         l2_smoothing_length),
                       Patterns::Double(),
                       "The smoothing length for void fraction L2 projection");
+
     prm.declare_entry(
       "particle refinement factor",
       Patterns::Tools::Convert<unsigned int>::to_string(
         particle_refinement_factor),
       Patterns::Double(),
       "The refinement factor used to calculate the number of pseudo-particles in the satellite point method");
+
     prm.declare_entry(
       "qcm smoothing length",
       Patterns::Tools::Convert<double>::to_string(qcm_smoothing_length),
       Patterns::Double(),
       "The smoothing length of the QCM filter. With the spherical filter, half of this value is the averaging-sphere radius; with the gaussian filter, half of this value is the standard deviation sigma.");
+
     prm.declare_entry(
       "qcm sphere equal cell volume",
       Patterns::Tools::Convert<bool>::to_string(qcm_sphere_equal_cell_volume),
       Patterns::Bool(),
       "Specify whether the virtual sphere has the same volume as the mesh element");
+
     declare_enum_entry(
       prm,
       "qcm filter type",
       qcm_filter_type,
       "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm smoothing length' is the averaging-sphere radius. With 'gaussian', half of 'qcm smoothing length' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
+
     declare_enum_entry(
       prm,
       "quadrature rule",
       quadrature_rule,
       "Choose which quadrature rule to follow when distributing quadrature points for the QCM void fraction scheme.",
       deprecated_quadrature_rule_names);
+
     prm.declare_entry(
       "n quadrature points",
       Patterns::Tools::Convert<unsigned int>::to_string(n_quadrature_points),
       Patterns::Integer(),
       "Number of quadrature points per cell used in the QCM void fraction scheme");
+
     prm.declare_entry(
       "project particle velocity",
       Patterns::Tools::Convert<bool>::to_string(project_particle_velocity),
       Patterns::Bool(),
       "Specify whether the particle velocity is projected using QCM");
+
+    prm.declare_entry(
+      "project particle temperature",
+      Patterns::Tools::Convert<bool>::to_string(project_particle_temperature),
+      Patterns::Bool(),
+      "Specify whether the particle temperature is projected onto the fluid mesh using QCM, making it available to the other physics through the multiphysics interface. Requires the qcm mode, an l2 smoothing length > 0 and solver type = dem_mp. It must be enabled when microwave heating is enabled.");
+
     prm.declare_entry(
       "output qcm",
       Patterns::Tools::Convert<bool>::to_string(output_qcm),
@@ -132,6 +150,8 @@ namespace Parameters
     n_quadrature_points = prm.get_integer("n quadrature points");
 
     project_particle_velocity = prm.get_bool("project particle velocity");
+
+    project_particle_temperature = prm.get_bool("project particle temperature");
 
     output_qcm = prm.get_bool("output qcm");
 

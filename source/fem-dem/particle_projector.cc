@@ -189,6 +189,13 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
   fluid_drag_on_particles.setup_dofs();
   particle_velocity.setup_dofs();
   momentum_transfer_coefficient.setup_dofs();
+
+  // Only allocate the particle temperature field in dem_mp simulations where
+  // the projection of the particle temperature is enabled.
+  if (void_fraction_parameters->project_particle_temperature)
+    {
+      particle_temperature.setup_dofs();
+    }
 }
 
 
@@ -236,9 +243,10 @@ ParticleProjector<dim, PropertiesIndex>::setup_constraints(
 
   AssertThrow(
     has_periodic_boundaries == false ||
-      void_fraction_parameters->project_particle_velocity == false,
+      (void_fraction_parameters->project_particle_velocity == false &&
+       void_fraction_parameters->project_particle_temperature == false),
     ExcMessage(
-      "The projection of particle velocity is currently not supported for periodic boundary conditions"));
+      "The projection of particle velocity or temperature is currently not supported for periodic boundary conditions"));
 
 
   // Reinit system matrix
@@ -303,6 +311,14 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction(
   if (void_fraction_parameters->project_particle_velocity)
     {
       calculate_field_projection(particle_velocity);
+    }
+
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      if (void_fraction_parameters->project_particle_temperature)
+        {
+          calculate_field_projection(particle_temperature);
+        }
     }
 }
 

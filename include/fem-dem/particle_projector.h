@@ -4,6 +4,7 @@
 #ifndef lethe_void_fraction_h
 #define lethe_void_fraction_h
 
+#include <core/dem_properties.h>
 #include <core/parameters_cfd_dem.h>
 #include <core/vector.h>
 
@@ -303,6 +304,7 @@ public:
     , particle_handler(particle_handler)
     , particle_have_been_projected(false)
     , particle_velocity(triangulation, fe_degree, simplex, true, false)
+    , particle_temperature(triangulation, fe_degree, simplex, true, false)
     , fluid_force_on_particles_two_way_coupling(triangulation,
                                                 fe_degree,
                                                 simplex,
@@ -374,6 +376,25 @@ public:
          void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm),
       ExcMessage(
         "The projection of the particle velocity currently requires that the QCM method be used for the calculation of the void fraction."));
+
+    AssertThrow(
+      !void_fraction_parameters->project_particle_temperature ||
+        void_fraction_parameters->l2_smoothing_length > 0,
+      ExcMessage(
+        "The projection of the particle temperature field requires that the l2 smoothing length be > 0. Otherwise, the Poisson equation used in the Neumann boundary is invalid."));
+
+    AssertThrow(
+      void_fraction_parameters->project_particle_temperature == false ||
+        (void_fraction_parameters->project_particle_temperature &&
+         void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm),
+      ExcMessage(
+        "The projection of the particle temperature currently requires that the QCM method be used for the calculation of the void fraction."));
+
+    AssertThrow(
+      !void_fraction_parameters->project_particle_temperature ||
+        DEM::has_thermal_properties<PropertiesIndex>,
+      ExcMessage(
+        "The projection of the temperature fields cannot be done if the particle properties do not have thermal properties."));
   }
 
   /**
@@ -893,7 +914,9 @@ private:
   /// When set, setup_dofs() will additionally call distribute_mg_dofs() on the
   /// void-fraction DoFHandler. This is required by local-smoothing multigrid
   /// (LSMG) of the VANS matrix-free solver. The flag is propagated to every
-  /// ParticleFieldQCM by enable_multigrid_level_dofs().
+  /// ParticleFieldQCM by enable_multigrid_level_dofs() except for the
+  /// particle_temperature field, which is not used in the VANS matrix-free
+  /// solver.
   bool multigrid_level_dofs_required = false;
 
 public:
@@ -902,6 +925,16 @@ public:
   /// entire domain of this field will not yield the sum of the particle
   /// velocity over all the particles.
   ParticleFieldQCM<dim, 3, PropertiesIndex::v_x> particle_velocity;
+
+  /// Projector used to save the particle temperature field onto the mesh
+  /// This field is not volumetric, meaning that the integral over the
+  /// entire domain of this field will not yield the sum of the particle
+  /// temperature over all the particles. The particle temperature is only
+  /// projected if the particle properties have thermal properties (for dem_mp
+  /// simulations). Otherwise, its index is set to -1 and the field is not
+  /// projected.
+  ParticleFieldQCM<dim, 1, DEM::temperature_property_index<PropertiesIndex>>
+    particle_temperature;
 
   /// Projector used to save the forces used in the two-way coupling scheme,
   /// without drag. This field is volumetric. The integral of this field over

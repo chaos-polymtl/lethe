@@ -230,6 +230,9 @@ namespace Parameters
     /// Project particle velocity onto the fluid mesh.
     bool project_particle_velocity = false;
 
+    /// Project particle temperature onto the fluid mesh.
+    bool project_particle_temperature = false;
+
     /// Output QCM quadrature points and filter characteristics.
     bool output_qcm = false;
   };
