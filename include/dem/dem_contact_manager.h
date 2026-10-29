@@ -12,6 +12,7 @@
 #include <dem/particle_wall_broad_search.h>
 
 #include <array>
+#include <limits>
 
 using namespace DEM;
 
@@ -121,12 +122,17 @@ public:
    * functions.
    * @param[in] sparse_particle_contact_object Allow to check the mobility
    * status of cells.
+   * @param[in] neighborhood_threshold_squared Square of the neighborhood
+   * threshold distance. The non-periodic candidates farther apart than this
+   * distance are not stored. The default value stores all the candidates.
    */
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     const AdaptiveSparseContacts<dim, PropertiesIndex>
-      &sparse_particle_contact_object);
+                &sparse_particle_contact_object,
+    const double neighborhood_threshold_squared =
+      std::numeric_limits<double>::max());
 
   /**
    * @brief Execute the particle-wall broad searches with adaptive sparse

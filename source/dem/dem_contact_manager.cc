@@ -239,7 +239,8 @@ template <int dim, typename PropertiesIndex>
 void
 DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim>            &particle_handler,
-  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object,
+  const double neighborhood_threshold_squared)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 
@@ -251,7 +252,8 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_broad_search(
                                                 cells_local_neighbor_list,
                                                 cells_ghost_neighbor_list,
                                                 local_contact_pair_candidates,
-                                                ghost_contact_pair_candidates);
+                                                ghost_contact_pair_candidates,
+                                                neighborhood_threshold_squared);
 
       if (action_manager->check_periodic_boundaries_enabled())
         {
@@ -272,7 +274,8 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_broad_search(
                                                 cells_ghost_neighbor_list,
                                                 local_contact_pair_candidates,
                                                 ghost_contact_pair_candidates,
-                                                sparse_contacts_object);
+                                                sparse_contacts_object,
+                                                neighborhood_threshold_squared);
 
       if (action_manager->check_periodic_boundaries_enabled())
         {

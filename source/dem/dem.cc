@@ -731,7 +731,9 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
       // contact pair candidates and the containers of particle-wall
       // contact pair candidates
       contact_manager.execute_particle_particle_broad_search(
-        particle_handler, sparse_contacts_object);
+        particle_handler,
+        sparse_contacts_object,
+        neighborhood_threshold_squared);
 
       contact_manager.execute_particle_wall_broad_search(
         particle_handler,

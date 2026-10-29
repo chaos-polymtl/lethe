@@ -17,7 +17,8 @@ find_particle_particle_contact_pairs(
   typename dem_data_structures<dim>::particle_particle_candidates
     &local_contact_pair_candidates,
   typename dem_data_structures<dim>::particle_particle_candidates
-    &ghost_contact_pair_candidates)
+              &ghost_contact_pair_candidates,
+  const double neighborhood_threshold_squared)
 {
   // Clear containers
   local_contact_pair_candidates.clear();
@@ -74,10 +75,12 @@ find_particle_particle_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates<dim>(particle_in_main_cell->get_id(),
-                                        particles_in_neighbor_cell.begin(),
-                                        particles_in_neighbor_cell,
-                                        local_contact_pair_candidates);
+                  store_candidates_in_neighborhood<dim>(
+                    particle_in_main_cell,
+                    particles_in_neighbor_cell.begin(),
+                    particles_in_neighbor_cell,
+                    neighborhood_threshold_squared,
+                    local_contact_pair_candidates);
                 }
             }
         }
@@ -121,10 +124,12 @@ find_particle_particle_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates<dim>(particle_in_main_cell->get_id(),
-                                        particles_in_neighbor_cell.begin(),
-                                        particles_in_neighbor_cell,
-                                        ghost_contact_pair_candidates);
+                  store_candidates_in_neighborhood<dim>(
+                    particle_in_main_cell,
+                    particles_in_neighbor_cell.begin(),
+                    particles_in_neighbor_cell,
+                    neighborhood_threshold_squared,
+                    ghost_contact_pair_candidates);
                 }
             }
         }
@@ -143,7 +148,8 @@ find_particle_particle_contact_pairs(
     &local_contact_pair_candidates,
   typename dem_data_structures<dim>::particle_particle_candidates
     &ghost_contact_pair_candidates,
-  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object,
+  const double neighborhood_threshold_squared)
 {
   // Clear containers
   local_contact_pair_candidates.clear();
@@ -232,10 +238,12 @@ find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates<dim>(particle_in_main_cell->get_id(),
-                                    particles_in_neighbor_cell.begin(),
-                                    particles_in_neighbor_cell,
-                                    local_contact_pair_candidates);
+              store_candidates_in_neighborhood<dim>(
+                particle_in_main_cell,
+                particles_in_neighbor_cell.begin(),
+                particles_in_neighbor_cell,
+                neighborhood_threshold_squared,
+                local_contact_pair_candidates);
             }
         }
     }
@@ -303,10 +311,12 @@ find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates<dim>(particle_in_main_cell->get_id(),
-                                    particles_in_neighbor_cell.begin(),
-                                    particles_in_neighbor_cell,
-                                    ghost_contact_pair_candidates);
+              store_candidates_in_neighborhood<dim>(
+                particle_in_main_cell,
+                particles_in_neighbor_cell.begin(),
+                particles_in_neighbor_cell,
+                neighborhood_threshold_squared,
+                ghost_contact_pair_candidates);
             }
         }
     }
@@ -765,6 +775,45 @@ store_candidates(
     }
 }
 
+template <int dim>
+void
+store_candidates_in_neighborhood(
+  const typename Particles::ParticleHandler<
+    dim>::particle_iterator_range::iterator &main_particle,
+  const typename Particles::ParticleHandler<
+    dim>::particle_iterator_range::iterator &particle_begin,
+  const typename Particles::ParticleHandler<dim>::particle_iterator_range
+              &particles_to_evaluate,
+  const double neighborhood_threshold_squared,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &contact_pair_candidates)
+{
+  // Find the contact candidate container of the main particle. It is created
+  // even if no particle is close enough, so the order of the main particles in
+  // the container is the same as with store_candidates.
+  auto [candidates_container_it, inserted] =
+    contact_pair_candidates.try_emplace(main_particle->get_id());
+
+  if (inserted)
+    candidates_container_it->second.reserve(40);
+
+  const Point<dim> main_particle_location = main_particle->get_location();
+
+  // Store the ids of the particles within the neighborhood threshold. The
+  // fine search only keeps the pairs closer than this threshold, so the other
+  // pairs do not need to be stored.
+  for (auto particle_iterator = particle_begin;
+       particle_iterator != particles_to_evaluate.end();
+       ++particle_iterator)
+    {
+      if (main_particle_location.distance_square(
+            particle_iterator->get_location()) <=
+          neighborhood_threshold_squared)
+        candidates_container_it->second.emplace_back(
+          particle_iterator->get_id());
+    }
+}
+
 template void
 find_particle_particle_contact_pairs<2>(
   dealii::Particles::ParticleHandler<2> &particle_handler,
@@ -775,7 +824,8 @@ find_particle_particle_contact_pairs<2>(
   typename dem_data_structures<2>::particle_particle_candidates
     &local_contact_pair_candidates,
   typename dem_data_structures<2>::particle_particle_candidates
-    &ghost_contact_pair_candidates);
+              &ghost_contact_pair_candidates,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_contact_pairs<3>(
@@ -787,7 +837,8 @@ find_particle_particle_contact_pairs<3>(
   typename dem_data_structures<3>::particle_particle_candidates
     &local_contact_pair_candidates,
   typename dem_data_structures<3>::particle_particle_candidates
-    &ghost_contact_pair_candidates);
+              &ghost_contact_pair_candidates,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_contact_pairs<2, DEM::DEMProperties::PropertiesIndex>(
@@ -801,7 +852,8 @@ find_particle_particle_contact_pairs<2, DEM::DEMProperties::PropertiesIndex>(
   typename dem_data_structures<2>::particle_particle_candidates
     &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<2, DEM::DEMProperties::PropertiesIndex>
-    &sparse_contacts_object);
+              &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_contact_pairs<3, DEM::DEMProperties::PropertiesIndex>(
@@ -815,7 +867,8 @@ find_particle_particle_contact_pairs<3, DEM::DEMProperties::PropertiesIndex>(
   typename dem_data_structures<3>::particle_particle_candidates
     &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<3, DEM::DEMProperties::PropertiesIndex>
-    &sparse_contacts_object);
+              &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_periodic_contact_pairs<2>(
@@ -897,7 +950,8 @@ find_particle_particle_contact_pairs<2, DEM::CFDDEMProperties::PropertiesIndex>(
   typename dem_data_structures<2>::particle_particle_candidates
     &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<2, DEM::CFDDEMProperties::PropertiesIndex>
-    &sparse_contacts_object);
+              &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_contact_pairs<3, DEM::CFDDEMProperties::PropertiesIndex>(
@@ -911,7 +965,8 @@ find_particle_particle_contact_pairs<3, DEM::CFDDEMProperties::PropertiesIndex>(
   typename dem_data_structures<3>::particle_particle_candidates
     &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
-    &sparse_contacts_object);
+              &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_periodic_contact_pairs<2>(
@@ -961,7 +1016,8 @@ find_particle_particle_contact_pairs<2, DEM::DEMMPProperties::PropertiesIndex>(
   typename dem_data_structures<2>::particle_particle_candidates
     &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
-    &sparse_contacts_object);
+              &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_contact_pairs<2,
@@ -976,7 +1032,8 @@ find_particle_particle_contact_pairs<2,
   typename dem_data_structures<2>::particle_particle_candidates
     &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<2, DEM::CFDDEMMPProperties::PropertiesIndex>
-    &sparse_contacts_object);
+              &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_contact_pairs<3, DEM::DEMMPProperties::PropertiesIndex>(
@@ -990,7 +1047,8 @@ find_particle_particle_contact_pairs<3, DEM::DEMMPProperties::PropertiesIndex>(
   typename dem_data_structures<3>::particle_particle_candidates
     &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
-    &sparse_contacts_object);
+              &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_contact_pairs<3,
@@ -1005,7 +1063,8 @@ find_particle_particle_contact_pairs<3,
   typename dem_data_structures<3>::particle_particle_candidates
     &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<3, DEM::CFDDEMMPProperties::PropertiesIndex>
-    &sparse_contacts_object);
+              &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 template void
 find_particle_particle_periodic_contact_pairs<2>(

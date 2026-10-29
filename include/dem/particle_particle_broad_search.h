@@ -32,6 +32,9 @@
  * @param[out] ghost_contact_pair_candidates Ankerl unordered dense map. Stores
  * potential pairs of local-ghost particle in contact. Keys are particle ids and
  * mapped types are vectors of particle ids.
+ * @param[in] neighborhood_threshold_squared Square of the neighborhood
+ * threshold distance. Only the pairs of particles closer than this distance
+ * are stored as candidates.
  */
 template <int dim>
 void
@@ -44,7 +47,8 @@ find_particle_particle_contact_pairs(
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &local_contact_pair_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &ghost_contact_pair_candidates);
+              &ghost_contact_pair_candidates,
+  const double neighborhood_threshold_squared);
 
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
@@ -74,6 +78,9 @@ find_particle_particle_contact_pairs(
  * mapped types are vectors of particle ids.
  * @param[in] sparse_contacts_object The object that contains the
  * information about the mobility status of cells
+ * @param[in] neighborhood_threshold_squared Square of the neighborhood
+ * threshold distance. Only the pairs of particles closer than this distance
+ * are stored as candidates.
  */
 template <int dim, typename PropertiesIndex>
 void
@@ -87,7 +94,8 @@ find_particle_particle_contact_pairs(
     &local_contact_pair_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &ghost_contact_pair_candidates,
-  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 /**
  * @brief Finds vectors of pairs (particle_particle_candidates) which contains the
@@ -217,6 +225,35 @@ store_candidates(
     dim>::particle_iterator_range::iterator &particle_begin,
   const typename dealii::Particles::ParticleHandler<
     dim>::particle_iterator_range &particles_to_evaluate,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &contact_pair_candidates);
+
+/**
+ * @brief Stores, as candidate particle-particle collision pairs of a main
+ * particle, the particles of a range that are within the neighborhood
+ * threshold distance of the main particle. particle_begin plays the same role
+ * as in store_candidates(). An entry for the main particle is created in
+ * contact_pair_candidates even if no particle is close enough, as
+ * store_candidates() does.
+ *
+ * @param main_particle Iterator to the main particle.
+ * @param particle_begin The particle iterator to start evaluating particles.
+ * @param particles_to_evaluate The particle range to evaluate.
+ * @param neighborhood_threshold_squared Square of the neighborhood threshold
+ * distance.
+ * @param contact_pair_candidates A map which will contain all the particle
+ * pairs candidate.
+ */
+template <int dim>
+inline void
+store_candidates_in_neighborhood(
+  const typename dealii::Particles::ParticleHandler<
+    dim>::particle_iterator_range::iterator &main_particle,
+  const typename dealii::Particles::ParticleHandler<
+    dim>::particle_iterator_range::iterator &particle_begin,
+  const typename dealii::Particles::ParticleHandler<
+    dim>::particle_iterator_range &particles_to_evaluate,
+  const double                     neighborhood_threshold_squared,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &contact_pair_candidates);
 
