@@ -810,7 +810,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        *this->particle_projector.fluid_drag_on_particles.dof_handler);
+        &(*this->particle_projector.fluid_drag_on_particles.dof_handler));
 
       typename DoFHandler<dim>::active_cell_iterator
         particle_two_way_coupling_force_cell(

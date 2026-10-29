@@ -326,6 +326,30 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction(
       if (void_fraction_parameters->project_particle_temperature)
         {
           calculate_field_projection(particle_temperature);
+
+// Transfer the particle temperature solution to the multiphysics interface
+// vector. This is needed since the multiphysics interface uses a different
+// vector type than the one used in the particle projector depending on the
+// build configuration.
+#ifndef LETHE_USE_LDV
+
+          GlobalVectorType temporary_solution_vector(
+            particle_temperature.locally_owned_dofs,
+            particle_temperature.dof_handler->get_mpi_communicator());
+
+          convert_vector_dealii_to_trilinos(
+            temporary_solution_vector,
+            particle_temperature.particle_field_solution);
+
+          *particle_temperature.particle_field_locally_relevant_solution =
+            temporary_solution_vector;
+#else
+          particle_temperature.particle_field_locally_relevant_solution
+            ->copy_locally_owned_data_from(
+              particle_temperature.particle_field_solution);
+          particle_temperature.particle_field_locally_relevant_solution
+            ->update_ghost_values();
+#endif
         }
     }
 }
@@ -1590,6 +1614,13 @@ ParticleProjector<dim, PropertiesIndex>::calculate_field_projection_impl(
                field_qcm.particle_field_solution,
                field_qcm.system_rhs,
                *field_qcm.ilu_preconditioner);
+
+  // Distribute the constraints to the solution vector. This is necessary
+  // because of the hanging nodes that can be present in the mesh and would not
+  // have a correct value only from  distributing the values of the local
+  // solution to the global solution vector.
+  field_qcm.particle_field_constraints.distribute(
+    field_qcm.particle_field_solution);
 
   // Now that the solution has been solved for, update the ghost values.
   field_qcm.particle_field_solution.update_ghost_values();
