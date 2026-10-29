@@ -581,9 +581,9 @@ private:
   /**
    * @brief Validate and cache the periodic configuration used by Sharp-IB.
    *
-   * This phase depends only on DEM/CFD boundary-condition definitions. It must
-   * run before setup_dofs_fd() so the sparsity pattern knows whether periodic
-   * Sharp-specific entries are required.
+   * Validate matching DEM/CFD boundaries, supported particle shapes and output
+   * options after particles are defined. Run before setup_dofs_fd() so matrix
+   * setup can include periodic Sharp-specific entries.
    */
   void
   initialize_sharp_ib_periodic_configuration();
@@ -600,15 +600,13 @@ private:
   /**
    * @brief Add matrix entry, expanding column constraints for periodic DoFs.
    *
-   * When col_dof is a periodic-constrained (slave) DoF, the sparsity pattern
-   * (built with keep_constrained_dofs=false) does not include (row, slave)
-   * entries. This function expands the column constraint to redirect the
-   * entry to (row, master_col), which IS in the sparsity pattern.
+   * Expand constrained columns into their master columns while retaining the
+   * requested row. The caller must provide a matrix sparsity pattern containing
+   * the resulting entries; this helper does not allocate new couplings.
    *
-   * Row constraints are NOT expanded. sharp_edge() deliberately writes
-   * equations on constrained DoF rows; redirecting to master rows would
-   * corrupt master DoF equations. After the solve, constraints.distribute()
-   * correctly sets constrained DoF values from their masters.
+   * sharp_edge() also writes constraint equations on slave rows, so expanding
+   * rows here would change which equation is imposed. Nonperiodic calls retain
+   * the existing insertion and exception-handling behavior.
    *
    * @param row_dof Global DoF index for matrix row
    * @param col_dof Global DoF index for matrix column
@@ -860,9 +858,8 @@ private:
   GlobalVectorType             dof_overconstrained;
   std::map<unsigned int, bool> dof_with_more_then_one_particle;
 
-  // For each active cell, store whether it lies fully inside an immersed
-  // particle, which particle owns it, and the periodic frame used for the
-  // inside-cell classification.
+  // Store the containing particle for each inside cell. Interior assembly
+  // does not require the periodic image used during classification.
   std::map<typename DoFHandler<dim>::active_cell_iterator, InsideCellInfo>
     cells_inside_map;
   /*

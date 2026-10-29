@@ -84,55 +84,40 @@ public:
    *
    * @return True if periodicity is enabled and consistent enough to use
    */
-  inline bool
-  is_periodic_enabled() const
-  {
-    return configuration.enabled;
-  }
+  bool
+  is_periodic_enabled() const;
 
   /**
    * @brief Get the validated periodic configuration.
    *
    * @return Active periodic configuration.
    */
-  inline const PeriodicConfiguration &
-  get_configuration() const
-  {
-    return configuration;
-  }
+  const PeriodicConfiguration &
+  get_configuration() const;
 
   /**
    * @brief Get the periodic offset tensor.
    *
    * @return Positive translation from the lower periodic face to the upper face.
    */
-  inline dealii::Tensor<1, dim>
-  get_periodic_offset() const
-  {
-    return periodic_offset;
-  }
+  dealii::Tensor<1, dim>
+  get_periodic_offset() const;
 
   /**
    * @brief Get the periodic boundary IDs.
    *
    * @return Pair of (boundary_0_id, boundary_1_id).
    */
-  inline std::pair<dealii::types::boundary_id, dealii::types::boundary_id>
-  get_periodic_boundary_ids() const
-  {
-    return {configuration.boundary_0, configuration.boundary_1};
-  }
+  std::pair<dealii::types::boundary_id, dealii::types::boundary_id>
+  get_periodic_boundary_ids() const;
 
   /**
    * @brief Get the periodic direction (0=x, 1=y, 2=z).
    *
    * @return Periodic direction index.
    */
-  inline unsigned int
-  get_periodic_direction() const
-  {
-    return configuration.direction;
-  }
+  unsigned int
+  get_periodic_direction() const;
 
   /**
    * @brief Normalize a point into the closed periodic interval.

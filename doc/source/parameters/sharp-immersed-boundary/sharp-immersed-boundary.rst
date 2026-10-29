@@ -356,10 +356,6 @@ Therefore, the near-particle zone around each particle is refined ``mesh``:``ini
 .. note::
 	If the ``max refinement level`` parameter in the ``adaptation control`` subsection is smaller than the summation of all initial refinement parameters, no cell can be refined more than ``max refinement level``. Note that it does not mean that the refinement stops, meaning that there can be other cells that are refined to the ``max refinement level``, but no cell can be refined more than this.
 
-Reference
----------------
-.. [#kim2005] \S. Kim and S. J. Karrila, *Microhydrodynamics: Principles and Selected Applications*. Courier Corporation, 2005. Available: https://books.google.ca/books?id=_8llnUUGo0wC&lpg=PP1&hl=pt-BR&pg=PP1#v=onepage&q&f=false\.
-
 
 Periodic immersed particles
 ---------------------------
@@ -428,17 +424,21 @@ history under the physical particle IDs. Lubrication uses periodic separation
 with the existing spherical lubrication model. Periodic images are geometric
 copies, not additional particles: force and torque are accumulated on the
 original pair. Multiple simultaneous contacts with distinct images of the same
-particle are not supported. For interacting pairs, the sum of the bounding-box half widths projected
-onto the periodic direction must be less than half the period; candidate search
-rejects larger pairs. This restriction does not apply to prescribed obstacles
+particle are not supported. For interacting pairs, the sum of the bounding-box
+half widths projected onto the periodic direction must be less than half the
+period; candidate search rejects larger pairs. This restriction does not apply to prescribed obstacles
 when neither particle integrates contact dynamics.
 
-For periodic Sharp simulations, particle-particle spring history is saved in the additional ``.ib_contacts``
-checkpoint file. Keep it with the other restart files to continue frictional
-contacts. Legacy checkpoints without this file start with empty contact history.
-Periodic nonlinear motion trials within a CFD step reuse the same accepted history rather
-than accumulating a new contact time increment on every trial.
+For periodic Sharp simulations, particle-particle spring history is saved in
+the additional ``.ib_contacts`` checkpoint file. Keep it with the other restart
+files to continue frictional contacts. Legacy checkpoints without this file start with empty contact history.
+Periodic nonlinear motion trials within a CFD step reuse the same accepted
+history rather than accumulating a new contact time increment on every trial.
 
 These contact-history and lubrication updates apply only to periodic Sharp
 simulations. Nonperiodic simulations retain the existing contact, wall-candidate,
 motion and checkpoint behavior.
+
+Reference
+---------------
+.. [#kim2005] \S. Kim and S. J. Karrila, *Microhydrodynamics: Principles and Selected Applications*. Courier Corporation, 2005. Available: https://books.google.ca/books?id=_8llnUUGo0wC&lpg=PP1&hl=pt-BR&pg=PP1#v=onepage&q&f=false\.

@@ -20,6 +20,9 @@
 #include <dem/visualization.h>
 #include <fem-dem/fluid_dynamics_sharp.h>
 
+#include <deal.II/base/exceptions.h>
+#include <deal.II/base/geometry_info.h>
+#include <deal.II/base/mpi.h>
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -1109,7 +1112,8 @@ FluidDynamicsSharp<dim>::mesh_adapt_ib(const bool initial_refinement)
                       for (const auto &pos : positions_to_check)
                         {
                           // Temporarily set particle position to check position
-                          Point<dim> saved_pos = particles[p].position;
+                          Point<dim> saved_particle_position =
+                            particles[p].position;
                           if (particles[p].position != pos)
                             particles[p].set_position(pos);
 
@@ -1162,8 +1166,8 @@ FluidDynamicsSharp<dim>::mesh_adapt_ib(const bool initial_refinement)
                             }
 
                           // Restore actual particle position
-                          if (particles[p].position != saved_pos)
-                            particles[p].set_position(saved_pos);
+                          if (particles[p].position != saved_particle_position)
+                            particles[p].set_position(saved_particle_position);
 
                           if (is_inside_crown)
                             {
@@ -1521,13 +1525,14 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                               if (sharp_ib_periodic_boundaries
                                                     .is_periodic_enabled())
                                                 {
-                                                  Point<dim> wp =
+                                                  Point<dim> wrapped_point =
                                                     sharp_ib_periodic_boundaries
                                                       .wrap_point(
                                                         point_to_find_cell,
                                                         periodic_domain_lower,
                                                         periodic_domain_upper);
-                                                  if (wp != point_to_find_cell)
+                                                  if (wrapped_point !=
+                                                      point_to_find_cell)
                                                     {
                                                       try
                                                         {
@@ -1535,11 +1540,11 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                                             find_cell_around_point_with_tree(
                                                               *this
                                                                  ->dof_handler,
-                                                              wp,
+                                                              wrapped_point,
                                                               sharp_ib_periodic_boundaries
                                                                 .is_periodic_enabled());
                                                           force_periodic_shift =
-                                                            wp -
+                                                            wrapped_point -
                                                             point_to_find_cell;
                                                           found = true;
                                                         }
@@ -1576,28 +1581,28 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                       // Shift interpolation points if stencil
                                       // was found across periodic boundary
                                       {
-                                        Point<dim> sp;
+                                        Point<dim> shifted_point;
                                         for (unsigned int d = 0; d < dim; ++d)
-                                          sp[d] =
+                                          shifted_point[d] =
                                             point[d] + force_periodic_shift[d];
                                         unite_cell_interpolation_points[0] =
                                           this->mapping
                                             ->transform_real_to_unit_cell(
-                                              cell_2, sp);
+                                              cell_2, shifted_point);
                                       }
                                       for (unsigned int j = 1;
                                            j < ib_coef.size();
                                            ++j)
                                         {
-                                          Point<dim> sp;
+                                          Point<dim> shifted_point;
                                           for (unsigned int d = 0; d < dim; ++d)
-                                            sp[d] =
+                                            shifted_point[d] =
                                               interpolation_points[j - 1][d] +
                                               force_periodic_shift[d];
                                           unite_cell_interpolation_points[j] =
                                             this->mapping
                                               ->transform_real_to_unit_cell(
-                                                cell_2, sp);
+                                                cell_2, shifted_point);
                                         }
 
                                       fluid_viscous_stress_at_ib  = 0;
@@ -2368,6 +2373,8 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::integrate_particles()
 {
+  // Undo the previous trial's wrap before recomputing motion. Accepted BDF
+  // history stays in its original frame until finish_time_step_particles().
   if (sharp_ib_periodic_boundaries.is_periodic_enabled())
     {
       particle_position_wrap.resize(particles.size());
@@ -3769,6 +3776,8 @@ FluidDynamicsSharp<dim>::sharp_edge()
               // Select the same interior pressure node on every rank. The
               // first owned vertex of the reference cell can lie outside the
               // particle, and changes when the mesh is repartitioned.
+              // Order candidates by squared distance, then coordinates and
+              // global DoF index to break ties consistently across ranks.
               using Candidate =
                 std::pair<double,
                           std::pair<Point<dim>, types::global_dof_index>>;
@@ -4294,25 +4303,26 @@ FluidDynamicsSharp<dim>::sharp_edge()
                               if (this->simulation_parameters
                                     .particlesParameters->enable_extrapolation)
                                 {
-                                  Point<dim> shifted_interp;
+                                  Point<dim> shifted_interpolation_point;
                                   for (unsigned int d = 0; d < dim; ++d)
-                                    shifted_interp[d] =
+                                    shifted_interpolation_point[d] =
                                       interpolation_points[j - 1][d] +
                                       stencil_periodic_shift[d];
                                   unite_cell_interpolation_points[j] =
                                     this->mapping->transform_real_to_unit_cell(
-                                      stencil_cell, shifted_interp);
+                                      stencil_cell,
+                                      shifted_interpolation_point);
                                 }
                               else
                                 {
-                                  Point<dim> shifted_sp;
+                                  Point<dim> shifted_support_point;
                                   for (unsigned int d = 0; d < dim; ++d)
-                                    shifted_sp[d] =
+                                    shifted_support_point[d] =
                                       support_points[local_dof_indices[i]][d] +
                                       stencil_periodic_shift[d];
                                   unite_cell_interpolation_points[j] =
                                     this->mapping->transform_real_to_unit_cell(
-                                      stencil_cell, shifted_sp);
+                                      stencil_cell, shifted_support_point);
                                 }
                             }
 
@@ -5884,11 +5894,8 @@ FluidDynamicsSharp<dim>::add_matrix_entry_with_periodic_expansion(
   // constraints explicitly so the custom Sharp-IB row writes the same master
   // columns that deal.II would use for standard constrained assembly.
   //
-  // We never expand ROWS here. sharp_edge() deliberately writes equations
-  // on specific rows (including constrained DoF rows for re-imposing
-  // constraints). Redirecting to master rows would corrupt master equations.
-  // Constrained DoF rows that can't accept entries are handled correctly by
-  // constraints.distribute() after the solve.
+  // Keep the requested row: sharp_edge() also writes constraint equations on
+  // slave rows. All resulting entries must already exist in the matrix graph.
 
   // Check if the column DoF is constrained (periodic or hanging node)
   bool col_is_constrained = this->zero_constraints.is_constrained(col_dof) ||
@@ -5900,14 +5907,9 @@ FluidDynamicsSharp<dim>::add_matrix_entry_with_periodic_expansion(
     }
   else
     {
-      // Column DoF is constrained. The constraint is:
-      //   col_dof = sum_i(w_i * master_i) + inhomogeneity
-      // A matrix entry A(row, col) * x_col expands to:
-      //   sum_i(w_i * A(row, col) * x_master_i) + A(row, col) * inhomogeneity
-      // Matrix: A(row, master_i) += w_i * value
-      // RHS:    b(row) -= value * inhomogeneity  [handled separately if needed]
-      //
-      // For periodic constraints: w=1, inhomogeneity=0, single master.
+      // For x_col = sum_i(weight_i * x_master_i), add weight_i * value to
+      // each master column. This helper only updates the matrix; sharp_edge()
+      // constructs the residual separately.
 
       const auto *entries =
         this->zero_constraints.get_constraint_entries(col_dof);

@@ -272,5 +272,40 @@ SharpIBPeriodicBoundaries<dim>::enclosing_radius(const Shape<dim> &shape)
          shape.bounding_box_half_length.norm();
 }
 
+template <int dim>
+bool
+SharpIBPeriodicBoundaries<dim>::is_periodic_enabled() const
+{
+  return configuration.enabled;
+}
+
+template <int dim>
+typename SharpIBPeriodicBoundaries<dim>::PeriodicConfiguration const &
+SharpIBPeriodicBoundaries<dim>::get_configuration() const
+{
+  return configuration;
+}
+
+template <int dim>
+dealii::Tensor<1, dim>
+SharpIBPeriodicBoundaries<dim>::get_periodic_offset() const
+{
+  return periodic_offset;
+}
+
+template <int dim>
+std::pair<dealii::types::boundary_id, dealii::types::boundary_id>
+SharpIBPeriodicBoundaries<dim>::get_periodic_boundary_ids() const
+{
+  return {configuration.boundary_0, configuration.boundary_1};
+}
+
+template <int dim>
+unsigned int
+SharpIBPeriodicBoundaries<dim>::get_periodic_direction() const
+{
+  return configuration.direction;
+}
+
 template class SharpIBPeriodicBoundaries<2>;
 template class SharpIBPeriodicBoundaries<3>;
