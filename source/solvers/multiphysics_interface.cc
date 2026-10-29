@@ -407,13 +407,18 @@ MultiphysicsInterface<dim>::is_field_available(const PhysicsID physics_id) const
   if (std::ranges::find(active_physics, physics_id) != active_physics.end())
     return true;
 
-  // Special case for projected fields in VANS, since the projected fields are
-  // not an active physics but would be available as a field in the multiphysics
-  // interface when the fluid dynamics formulation is VANS.
-  if ((physics_id == PhysicsID::void_fraction ||
-       physics_id == PhysicsID::particle_temperature) &&
-      this->fluid_dynamics_formulation == FluidDynamicsFormulation::VANS)
-    return true;
+  // Special case for the fields projected by the particle projector of the
+  // VANS solvers. They are not active physics, but are available as fields in
+  // the multiphysics interface when the fluid dynamics formulation is VANS:
+  // the void fraction always, and the particle temperature only when its
+  // projection is enabled.
+  if (this->fluid_dynamics_formulation == FluidDynamicsFormulation::VANS)
+    {
+      if (physics_id == PhysicsID::void_fraction)
+        return particle_void_fraction_field_enabled;
+      if (physics_id == PhysicsID::particle_temperature)
+        return particle_temperature_field_enabled;
+    }
 
   return false;
 }

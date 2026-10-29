@@ -586,6 +586,18 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
                   Parameters::SimulationControl::TimeSteppingMethod::steady,
               NotSupportedMeshAdaptationMethod());
 
+  // Make the projected particle fields available to the other physics through
+  // the multiphysics interface.
+  this->multiphysics->enable_projected_particle_fields(
+    PhysicsID::void_fraction);
+  if (this->cfd_dem_simulation_parameters.void_fraction
+        ->project_particle_temperature)
+    {
+      this->multiphysics->enable_projected_particle_fields(
+        PhysicsID::particle_temperature);
+    }
+
+
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
