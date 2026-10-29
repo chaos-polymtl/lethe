@@ -28,6 +28,10 @@
 
 using namespace dealii;
 
+/**
+ * @brief Check periodic geometry, configuration and interaction invariants.
+ * @tparam dim Spatial dimension.
+ */
 template <int dim>
 void
 test()
@@ -53,6 +57,7 @@ test()
                   ExcMessage("Multi-period normalization failed"));
     }
 
+  // Every accepted wrap must translate the complete BDF history uniformly.
   std::vector<Point<dim>> history(3);
   history[0][0]               = 0.8;
   history[1][0]               = 0.5;
@@ -120,6 +125,7 @@ test()
   AssertThrow(has_two_period_image,
               ExcMessage("Multi-period geometric support was truncated"));
 
+  // Invalid boundary pairs and zero-length periods must fail before use.
   bool rejected                          = false;
   cfd.periodic_boundaries[0].neighbor_id = 2;
   try
@@ -199,18 +205,22 @@ test()
       // Changing the represented image must not reset physical pair history.
       if (step == 1)
         seam.dem_particles[0].set_position(1.02, 0);
-      std::vector<Tensor<1, 3>> fs(2), fi(2), ts(2), ti(2);
-      seam.calculate_pp_contact_force(1e-4, fs, ts);
-      interior.calculate_pp_contact_force(1e-4, fi, ti);
-      AssertThrow(fs[0].norm() > 0., ExcMessage("Seam contact was missed"));
+      std::vector<Tensor<1, 3>> seam_force(2), interior_force(2),
+        seam_torque(2), interior_torque(2);
+      seam.calculate_pp_contact_force(1e-4, seam_force, seam_torque);
+      interior.calculate_pp_contact_force(1e-4,
+                                          interior_force,
+                                          interior_torque);
+      AssertThrow(seam_force[0].norm() > 0.,
+                  ExcMessage("Seam contact was missed"));
       for (unsigned int i = 0; i < 2; ++i)
         {
-          AssertThrow((fs[i] - fi[i]).norm() < 1e-9,
+          AssertThrow((seam_force[i] - interior_force[i]).norm() < 1e-9,
                       ExcMessage("Contact force differs"));
-          AssertThrow((ts[i] - ti[i]).norm() < 1e-9,
+          AssertThrow((seam_torque[i] - interior_torque[i]).norm() < 1e-9,
                       ExcMessage("Contact torque differs"));
         }
-      AssertThrow((fs[0] + fs[1]).norm() < 1e-12,
+      AssertThrow((seam_force[0] + seam_force[1]).norm() < 1e-12,
                   ExcMessage("Contact violates action/reaction"));
       AssertThrow(seam.dem_particles[1].position[0] > 0.9,
                   ExcMessage("Image evaluation changed primary geometry"));
@@ -220,6 +230,7 @@ test()
                   .at(1)
                   .tangential_displacement.norm() > 0.,
               ExcMessage("Tangential history was not retained"));
+  // Restart must preserve the accepted tangential spring.
   std::stringstream checkpoint;
   seam.write_contact_history(checkpoint);
   IBParticlesDEM<dim> restored;
@@ -271,10 +282,14 @@ test()
   interior.dem_particles[1].set_position(-0.05, 0);
   seam.dem_particles[0].velocity[0] = interior.dem_particles[0].velocity[0] =
     -0.1;
-  std::vector<Tensor<1, 3>> fs(2), fi(2), ts(2), ti(2);
-  seam.calculate_pp_lubrication_force(1e-4, 0.02, 0.001, 1., fs, ts);
-  interior.calculate_pp_lubrication_force(1e-4, 0.02, 0.001, 1., fi, ti);
-  AssertThrow(fs[0].norm() > 0. && (fs[0] - fi[0]).norm() < 1e-12,
+  std::vector<Tensor<1, 3>> seam_force(2), interior_force(2), seam_torque(2),
+    interior_torque(2);
+  seam.calculate_pp_lubrication_force(
+    1e-4, 0.02, 0.001, 1., seam_force, seam_torque);
+  interior.calculate_pp_lubrication_force(
+    1e-4, 0.02, 0.001, 1., interior_force, interior_torque);
+  AssertThrow(seam_force[0].norm() > 0. &&
+                (seam_force[0] - interior_force[0]).norm() < 1e-12,
               ExcMessage("Periodic lubrication differs"));
   // Two equidistant neighbors must both contribute to lubrication on particle
   // 0.
@@ -293,7 +308,7 @@ test()
   std::vector<Tensor<1, 3>> three_force(3), three_torque(3);
   three.calculate_pp_lubrication_force(
     1e-4, 0.02, 0.001, 1., three_force, three_torque);
-  AssertThrow((three_force[0] - 2. * fs[0]).norm() < 1e-12,
+  AssertThrow((three_force[0] - 2. * seam_force[0]).norm() < 1e-12,
               ExcMessage(
                 "A lubrication neighbor overwrote another contribution"));
   deallog << dim << "D: normalization, contact, history and lubrication OK"
