@@ -35,19 +35,19 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 {
   // Get a constant copy of the communicator since it is used extensively to
   // establish the void fraction vectors
-  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = dof_handler->get_mpi_communicator();
 
-  dof_handler.distribute_dofs(*fe);
+  dof_handler->distribute_dofs(*fe);
   if (multigrid_level_dofs_required)
-    dof_handler.distribute_mg_dofs();
-  locally_owned_dofs = dof_handler.locally_owned_dofs();
+    dof_handler->distribute_mg_dofs();
+  locally_owned_dofs = dof_handler->locally_owned_dofs();
 
-  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
   // deal.II vector that will also hold the solution
-  this->particle_field_solution.reinit(dof_handler.locally_owned_dofs(),
+  this->particle_field_solution.reinit(dof_handler->locally_owned_dofs(),
                                        DoFTools::extract_locally_active_dofs(
-                                         dof_handler),
+                                         *dof_handler),
                                        mpi_communicator);
 
   // Force the vector to zero after the reinit.
@@ -55,7 +55,7 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   particle_field_constraints.clear();
   particle_field_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(dof_handler,
+  DoFTools::make_hanging_node_constraints(*dof_handler,
                                           particle_field_constraints);
 
   particle_field_constraints.close();
@@ -77,7 +77,7 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(
-    dof_handler, coupling_table, dsp, particle_field_constraints, false);
+    *dof_handler, coupling_table, dsp, particle_field_constraints, false);
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              locally_owned_dofs,
@@ -195,6 +195,14 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
   if (void_fraction_parameters->project_particle_temperature)
     {
       particle_temperature.setup_dofs();
+
+      // The particle temperature is provided to the multiphysics interface,
+      // so we need to ensure the solution vector is reinitialized with the
+      // correct locally relevant dofs.
+      particle_temperature.particle_field_locally_relevant_solution->reinit(
+        particle_temperature.locally_owned_dofs,
+        particle_temperature.locally_relevant_dofs,
+        mpi_communicator);
     }
 }
 
@@ -1233,7 +1241,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_field_projection_impl(
   if (field_qcm.matrix_requires_assembly)
     field_qcm.system_matrix = 0;
 
-  for (const auto &cell : field_qcm.dof_handler.active_cell_iterators())
+  for (const auto &cell : field_qcm.dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {

@@ -1816,16 +1816,16 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
             this->time_derivative_void_fraction);
 
           mf_operator->compute_particle_fluid_interaction(
-            this->particle_projector.fluid_force_on_particles_two_way_coupling
-              .dof_handler,
+            *this->particle_projector.fluid_force_on_particles_two_way_coupling
+               .dof_handler,
             this->particle_projector.fluid_force_on_particles_two_way_coupling
               .particle_field_solution,
-            this->particle_projector.fluid_drag_on_particles.dof_handler,
+            *this->particle_projector.fluid_drag_on_particles.dof_handler,
             this->particle_projector.fluid_drag_on_particles
               .particle_field_solution,
-            this->particle_projector.particle_velocity.dof_handler,
+            *this->particle_projector.particle_velocity.dof_handler,
             this->particle_projector.particle_velocity.particle_field_solution,
-            this->particle_projector.momentum_transfer_coefficient.dof_handler,
+            *this->particle_projector.momentum_transfer_coefficient.dof_handler,
             this->particle_projector.momentum_transfer_coefficient
               .particle_field_solution);
 

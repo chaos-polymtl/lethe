@@ -175,7 +175,9 @@ public:
                    const bool                                   simplex,
                    const bool neumann_boundaries,
                    const bool conservative_projection)
-    : dof_handler(*triangulation)
+    : dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
+    , particle_field_locally_relevant_solution(
+        std::make_shared<GlobalVectorType>())
     , neumann_boundaries(neumann_boundaries)
     , conservative_projection(conservative_projection)
     , matrix_requires_assembly(true)
@@ -192,11 +194,18 @@ public:
       }
   }
 
-  /// DoFHandler that manages the void fraction
-  DoFHandler<dim> dof_handler;
+  /// DoFHandler that manages the particle field. It is stored as a shared
+  /// pointer so that it can be provided to the multiphysics interface.
+  std::shared_ptr<DoFHandler<dim>> dof_handler;
 
-  /// deal.II vector for the particle velocity
+  /// deal.II vector for the particle field solution.
   LinearAlgebra::distributed::Vector<double> particle_field_solution;
+
+  /// Copy of the particle field solution, with locally relevant ghost values,
+  /// in the vector type of the multiphysics interface. It is only allocated
+  /// and filled for the fields that are provided to the multiphysics
+  /// interface.
+  std::shared_ptr<GlobalVectorType> particle_field_locally_relevant_solution;
 
   /// Finite element for the particle field
   std::shared_ptr<FESystem<dim>> fe;
