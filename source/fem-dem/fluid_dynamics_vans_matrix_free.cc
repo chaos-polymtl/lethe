@@ -647,15 +647,14 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::setup_dofs()
   this->multiphysics->set_previous_solutions(
     PhysicsID::void_fraction, particle_projector.previous_void_fraction);
 
-  if (this->cfd_dem_simulation_parameters.cfd_parameters
-        .project_particle_temperature)
+  if (this->cfd_dem_simulation_parameters.void_fraction
+        ->project_particle_temperature)
     {
       this->multiphysics->set_dof_handler(
         PhysicsID::particle_temperature,
         particle_projector.particle_temperature.dof_handler);
-      this->multiphysics->set_mapping(
-        PhysicsID::particle_temperature,
-        particle_projector.particle_temperature.mapping);
+      this->multiphysics->set_mapping(PhysicsID::particle_temperature,
+                                      particle_projector.mapping);
       this->multiphysics->set_solution(
         PhysicsID::particle_temperature,
         particle_projector.particle_temperature
