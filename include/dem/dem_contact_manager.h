@@ -228,7 +228,7 @@ public:
   /**
    * @brief Return the particle-line contact container.
    */
-  inline typename dem_data_structures<dim>::particle_line_candidates &
+  inline typename dem_data_structures<dim>::particle_line_in_contact &
   get_particle_lines_in_contact()
   {
     return particle_lines_in_contact;
@@ -237,7 +237,7 @@ public:
   /**
    * @brief Return the particle-point contact container.
    */
-  inline typename dem_data_structures<dim>::particle_point_candidates &
+  inline typename dem_data_structures<dim>::particle_point_in_contact &
   get_particle_points_in_contact()
   {
     return particle_points_in_contact;
@@ -359,9 +359,9 @@ private:
     particle_floating_wall_in_contact;
   typename dem_data_structures<dim>::particle_wall_in_contact
     particle_wall_in_contact;
-  typename dem_data_structures<dim>::particle_line_candidates
+  typename dem_data_structures<dim>::particle_line_in_contact
     particle_lines_in_contact;
-  typename dem_data_structures<dim>::particle_point_candidates
+  typename dem_data_structures<dim>::particle_point_in_contact
     particle_points_in_contact;
 
 

@@ -69,13 +69,25 @@ public:
     return boundary_cells_information;
   }
 
-  std::unordered_map<std::string, cell_point_info<dim>> &
+  /**
+   * @brief Return the local cells used for the particle-point contact search,
+   * each with the location of its boundary vertex.
+   *
+   * @return The local cells with a boundary point.
+   */
+  typename DEM::dem_data_structures<dim>::boundary_cells_points_info &
   get_boundary_cells_with_points()
   {
     return boundary_cells_with_points;
   }
 
-  std::unordered_map<std::string, cell_line_info<dim>> &
+  /**
+   * @brief Return the local cells used for the particle-line contact search,
+   * each with the locations of the vertices of its boundary line.
+   *
+   * @return The local cells with a boundary line.
+   */
+  typename DEM::dem_data_structures<dim>::boundary_cells_lines_info &
   get_boundary_cells_with_lines()
   {
     return boundary_cells_with_lines;
@@ -209,8 +221,9 @@ private:
   std::map<int, boundary_cells_info_struct<dim>>
     global_boundary_cells_information;
 
-  // Structure that contains the boundary cells which have a line
-  std::unordered_map<std::string, cell_line_info<dim>>
+  // Structure that contains the boundary cells which have a line, with one
+  // entry per cell
+  typename DEM::dem_data_structures<dim>::boundary_cells_lines_info
     boundary_cells_with_lines;
 
   // A vector of all the local cells with boundary lines. This vector is used in
@@ -218,8 +231,9 @@ private:
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     local_cells_with_boundary_lines;
 
-  // Structure that contains the boundary cells which have a point
-  std::unordered_map<std::string, cell_point_info<dim>>
+  // Structure that contains the boundary cells which have a point, with one
+  // entry per cell
+  typename DEM::dem_data_structures<dim>::boundary_cells_points_info
     boundary_cells_with_points;
 
   // Structure that contains the boundary cells with floating walls

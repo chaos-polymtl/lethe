@@ -9,10 +9,11 @@
 using namespace dealii;
 
 /**
- * @brief Iterate over a map of pairs (particle_point_contact_candidates)
- * to see if the particle-point pairs are in contact or not. If they are in
- * contact, the normal overlap, normal vector of contact and contact normal
- * relative velocity are stored in a map which is the output of this function.
+ * @brief Iterate over the particle-point contact candidates
+ * (particle_point_contact_candidates) to see if the particle-point pairs are
+ * in contact or not. If they are in contact, the normal overlap, normal vector
+ * of contact and contact normal relative velocity are stored in a map which is
+ * the output of this function.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
@@ -34,10 +35,11 @@ particle_point_fine_search(
     &particle_point_pairs_in_contact);
 
 /**
- * @brief Iterate over a map of tuples (particle_line_contact_candidates) to
- * see if the particle-line pairs are in contact or not. If they are in
- * contact, the normal overlap, normal vector of contact and contact normal
- * relative velocity are stored in a map which is the output of this function.
+ * @brief Iterate over the particle-line contact candidates
+ * (particle_line_contact_candidates) to see if the particle-line pairs are in
+ * contact or not. If they are in contact, the normal overlap, normal vector of
+ * contact and contact normal relative velocity are stored in a map which is
+ * the output of this function.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.

@@ -59,23 +59,27 @@ namespace DEM
 
     // <particle id, line info>
     using particle_line_in_contact =
-      std::unordered_map<types::particle_index,
-                         particle_line_contact_info<dim>>;
+      ankerl::unordered_dense::map<types::particle_index,
+                                   particle_line_contact_info<dim>>;
 
     // <particle id, point info>
     using particle_point_in_contact =
-      std::unordered_map<types::particle_index,
-                         particle_point_contact_info<dim>>;
+      ankerl::unordered_dense::map<types::particle_index,
+                                   particle_point_contact_info<dim>>;
 
-    // <particle id, line info>
+    // [(particle iterator, line vertices)]
     using particle_line_candidates =
-      std::unordered_map<types::particle_index,
-                         particle_line_contact_info<dim>>;
+      std::vector<particle_line_contact_info<dim>>;
 
-    // <particle id, (particle iterator, point)>
+    // [(particle iterator, point)]
     using particle_point_candidates =
-      std::unordered_map<types::particle_index,
-                         particle_point_contact_info<dim>>;
+      std::vector<particle_point_contact_info<dim>>;
+
+    // [(cell iterator, point)]
+    using boundary_cells_points_info = std::vector<cell_point_info<dim>>;
+
+    // [(cell iterator, line vertices)]
+    using boundary_cells_lines_info = std::vector<cell_line_info<dim>>;
 
     // <particle id, <global face id, particle iterator>>
     using particle_floating_wall_candidates = ankerl::unordered_dense::map<

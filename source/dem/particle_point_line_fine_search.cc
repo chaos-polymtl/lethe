@@ -27,17 +27,9 @@ particle_point_fine_search(
   // Iterating over contact candidates from broad search. If a particle-point
   // pair is in contact (distance > 0) it is inserted into the output of this
   // function (particle_point_pairs_in_contact)
-  for (auto contact_pair_candidates_iterator =
-         particle_point_contact_candidates.begin();
-       contact_pair_candidates_iterator !=
-       particle_point_contact_candidates.end();
-       ++contact_pair_candidates_iterator)
+  for (const particle_point_contact_info<dim> &pair_candidates :
+       particle_point_contact_candidates)
     {
-      // Get the value of the map (pair candidate) from the
-      // contact_pair_candidates_iterator
-      const particle_point_contact_info<dim> &pair_candidates =
-        contact_pair_candidates_iterator->second;
-
       // Get the particle, particle diameter and boundary vertex location once
       Particles::ParticleIterator<dim> particle = pair_candidates.particle;
       double                           particle_diameter =
@@ -85,17 +77,9 @@ particle_line_fine_search(
   // Iterating over contact candidates from broad search. If a particle-line
   // pair is in contact (distance > 0) it is inserted into the output of this
   // function (particle_line_pairs_in_contact);
-  for (auto contact_pair_candidates_iterator =
-         particle_line_contact_candidates.begin();
-       contact_pair_candidates_iterator !=
-       particle_line_contact_candidates.end();
-       ++contact_pair_candidates_iterator)
+  for (const particle_line_contact_info<dim> &pair_candidates :
+       particle_line_contact_candidates)
     {
-      // Get the value of the map (pair candidate) from the
-      // contact_pair_candidates_iterator
-      const particle_line_contact_info<dim> &pair_candidates =
-        contact_pair_candidates_iterator->second;
-
       // Get the particle, particle diameter and the locations of beginning
       // and ending vertices of the boundary line
       Particles::ParticleIterator<dim> particle = pair_candidates.particle;

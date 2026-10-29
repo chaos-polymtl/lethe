@@ -371,6 +371,9 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
 
                   if (!cell_boundary_lines.empty())
                     {
+                      // Only the first boundary line of the cell is used in
+                      // the particle-line contact search
+                      bool cell_line_is_stored = false;
                       for (auto &map_iterator : cell_boundary_lines)
                         {
                           Point<3> vertex_one, vertex_two;
@@ -388,9 +391,15 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
                               vertex_two =
                                 point_nd_to_3d(map_iterator.second.second);
                             }
-                          boundary_cells_with_lines.emplace(
-                            cell_id_string,
-                            cell_line_info<dim>{cell, vertex_one, vertex_two});
+
+                          if (!cell_line_is_stored)
+                            {
+                              boundary_cells_with_lines.push_back(
+                                cell_line_info<dim>{cell,
+                                                    vertex_one,
+                                                    vertex_two});
+                              cell_line_is_stored = true;
+                            }
 
                           // Add the cell to local_cells_with_boundary_lines to
                           // be used in
@@ -428,8 +437,14 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
     {
       if (cell->is_locally_owned() && !cell->has_boundary_lines())
         {
+          // Only the first boundary vertex found in the cell is used in the
+          // particle-point contact search
+          bool cell_point_is_stored = false;
           for (const auto &face : cell->face_iterators())
             {
+              if (cell_point_is_stored)
+                break;
+
               if (!face->at_boundary())
                 {
                   for (unsigned int v = 0; v < face->n_vertices(); ++v)
@@ -444,9 +459,10 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
                           if constexpr (dim == 2)
                             vertex = point_nd_to_3d(face->vertex(v));
 
-                          boundary_cells_with_points.emplace(
-                            cell->id().to_string(),
+                          boundary_cells_with_points.push_back(
                             cell_point_info<dim>{cell, vertex});
+                          cell_point_is_stored = true;
+                          break;
                         }
                     }
                 }
