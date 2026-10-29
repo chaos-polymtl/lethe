@@ -409,9 +409,8 @@ MultiphysicsInterface<dim>::is_field_available(const PhysicsID physics_id) const
 
   // Special case for the fields projected by the particle projector of the
   // VANS solvers. They are not active physics, but are available as fields in
-  // the multiphysics interface when the fluid dynamics formulation is VANS:
-  // the void fraction always, and the particle temperature only when its
-  // projection is enabled.
+  // the multiphysics interface when the fluid dynamics formulation is VANS and
+  // the VANS solver enabled them with enable_projected_particle_fields().
   if (this->fluid_dynamics_formulation == FluidDynamicsFormulation::VANS)
     {
       if (physics_id == PhysicsID::void_fraction)

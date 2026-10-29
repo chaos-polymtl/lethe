@@ -95,8 +95,11 @@ public:
   }
 
   /**
-   * @brief Make the particle fields projected by the particle projector
-   * of the VANS solvers available in the interface.
+   * @brief Make a field projected by the particle projector of the VANS
+   * solvers available in the interface. The VANS solvers call it in their
+   * constructor (always for the void fraction).
+   *
+   * @param[in] physics_id The ID of the projected field to enable.
    */
   void
   enable_projected_particle_fields(PhysicsID physics_id)
@@ -1169,7 +1172,7 @@ private:
     const SimulationParameters<dim> &nsparam);
 
   /**
-   * @brief Return true if the fields of @p physics_id are registered in the interface: either the physics is active, or it is a field projected under the VANS formulation.
+   * @brief Return true if the fields of @p physics_id are registered in the interface: either the physics is active, or it is a field projected under the VANS formulation and enabled with enable_projected_particle_fields().
    *
    * @param[in] physics_id The ID of the physics to check.
    * @return true if the fields of @p physics_id are registered in the interface, false otherwise.
