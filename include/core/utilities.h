@@ -1167,6 +1167,49 @@ void
 print_version_info(const ConditionalOStream &pcout);
 
 /**
+ * @brief Return the versions of Lethe and deal.II in the "git describe" format,
+ * without the leading "v" of their tags.
+ *
+ * @return Pair holding the version of Lethe followed by the version of deal.II.
+ */
+std::pair<std::string, std::string>
+get_version_tags();
+
+/**
+ * @brief Return a string as a JSON string literal, i.e. surrounded by double
+ * quotes and with the characters that JSON requires to be escaped (double
+ * quotes, backslashes and control characters) escaped.
+ *
+ * @param[in] s String to be converted.
+ *
+ * @return The JSON string literal representing @p s.
+ */
+std::string
+to_json_string(const std::string &s);
+
+/**
+ * @brief Print all the parameters declared in a ParameterHandler as a JSON
+ * schema, which describes every entry (value, default value, documentation and
+ * pattern description) in the order of its declaration.
+ *
+ * The deal.II JSON listing of the parameters is wrapped in an object which
+ * also identifies the Lethe and deal.II versions, the solver family and the
+ * dimension the parameters were declared for, so that a tool reading the
+ * schema can tell which version of Lethe it describes.
+ *
+ * @param[in,out] out Stream to which the schema is written.
+ * @param[in] prm Object in which the parameters were declared.
+ * @param[in] solver_family Solver family the parameters were declared for
+ * (e.g. lethe-fluid).
+ * @param[in] dim Dimension the parameters were declared for.
+ */
+void
+print_parameter_schema(std::ostream           &out,
+                       const ParameterHandler &prm,
+                       const std::string      &solver_family,
+                       const unsigned int      dim);
+
+/**
  * @brief Parse the arguments given to the application
  *
  * @param[in] argc Number of arguments

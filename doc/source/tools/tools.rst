@@ -11,6 +11,7 @@ Tools
     command-line-interface-options
     gmsh/gmsh
     inlet_profile_generator/inlet_profile_generator
+    parameter_check/parameter_check
     pointwise/pointwise
     postprocessing/postprocessing_paraview
     postprocessing/postprocessing_pyvista

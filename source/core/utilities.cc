@@ -14,8 +14,10 @@
 #include <boost/algorithm/string/replace.hpp>
 
 #include <filesystem>
+#include <iomanip>
 #include <iostream>
 #include <regex>
+#include <sstream>
 #include <system_error>
 #include <type_traits>
 
@@ -774,16 +776,86 @@ concatenate_strings(const int argc, char **argv)
 void
 print_version_info(const ConditionalOStream &pcout)
 {
-  (void)pcout;
+  const auto [lethe_version, dealii_version] = get_version_tags();
 
+  // Print tags using the right format
+  pcout << "lethe/" << lethe_version << " deal.II/" << dealii_version
+        << std::endl;
+  pcout << std::endl;
+}
+
+std::pair<std::string, std::string>
+get_version_tags()
+{
   // Copy the tags to be able to delete the first v
   std::string lethe_tag  = LETHE_GIT_FANCY_TAG;
   std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;
 
-  // Print tags using the right format
-  pcout << "lethe/" << lethe_tag.erase(0, 1) << " deal.II/"
-        << dealii_tag.erase(0, 1) << std::endl;
-  pcout << std::endl;
+  return {lethe_tag.erase(0, 1), dealii_tag.erase(0, 1)};
+}
+
+std::string
+to_json_string(const std::string &s)
+{
+  std::ostringstream json;
+  json << '"';
+  for (const char c : s)
+    {
+      switch (c)
+        {
+          case '"':
+            json << "\\\"";
+            break;
+          case '\\':
+            json << "\\\\";
+            break;
+          case '\n':
+            json << "\\n";
+            break;
+          case '\t':
+            json << "\\t";
+            break;
+          case '\r':
+            json << "\\r";
+            break;
+          default:
+            // The other control characters are written as unicode escapes.
+            // The bytes of multibyte UTF-8 characters are above 0x7F and are
+            // kept as they are.
+            if (static_cast<unsigned char>(c) < 0x20)
+              json << "\\u" << std::hex << std::setw(4) << std::setfill('0')
+                   << static_cast<unsigned int>(static_cast<unsigned char>(c))
+                   << std::dec << std::setfill(' ');
+            else
+              json << c;
+        }
+    }
+  json << '"';
+  return json.str();
+}
+
+void
+print_parameter_schema(std::ostream           &out,
+                       const ParameterHandler &prm,
+                       const std::string      &solver_family,
+                       const unsigned int      dim)
+{
+  const auto [lethe_version, dealii_version] = get_version_tags();
+
+  out << "{\n"
+      << "  \"lethe_version\": " << to_json_string(lethe_version) << ",\n"
+      << "  \"dealii_version\": " << to_json_string(dealii_version) << ",\n"
+      << "  \"solver_family\": " << to_json_string(solver_family) << ",\n"
+      << "  \"dimension\": " << dim << ",\n"
+      << "  \"parameters\": ";
+
+  // The entries are kept in the order of their declaration, which groups
+  // related parameters together, as in the parameter files.
+  prm.print_parameters(out,
+                       ParameterHandler::OutputStyle::JSON |
+                         ParameterHandler::KeepDeclarationOrder);
+
+  out << "}" << std::endl;
 }
 
 /**

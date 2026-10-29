@@ -1,0 +1,18 @@
+
+DEAL::--- Schema ---
+DEAL::Lethe version present: 1
+DEAL::deal.II version present: 1
+DEAL::Solver family: lethe-fluid
+DEAL::Dimension: 2
+DEAL::mesh/type value: gmsh
+DEAL::mesh/type default value: dealii
+DEAL::mesh/type documentation: Type of mesh. Choices are <gmsh|dealii|lethe>.
+DEAL::mesh/type pattern: [Selection gmsh|dealii|lethe ]
+DEAL::First entries of the mesh subsection: "type" "file name" "initial refinement"
+DEAL::mesh/type read back: gmsh
+DEAL::--- JSON strings ---
+DEAL::"plain"
+DEAL::"a \"quoted\" word"
+DEAL::"a\\path"
+DEAL::"two\nlines\tand a tab"
+DEAL::"bell\u0007"
