@@ -45,7 +45,12 @@ enum PhysicsID : unsigned int
   /// Time-harmonic electromagnetics (Electric field, Magnetic field)
   electromagnetics = 6,
   /// Euler-Euler solid phase (solid velocity, solid volume fraction)
-  continuum_solid_dynamics = 7
+  continuum_solid_dynamics = 7,
+  /// Projected particle temperature from DEM (not an auxiliary physics). Like
+  /// the void fraction, it is computed by the particle projector of the VANS
+  /// solvers and registered by them in the multiphysics interface. Only
+  /// available with the VANS formulation.
+  particle_temperature = 8
 };
 
 /**

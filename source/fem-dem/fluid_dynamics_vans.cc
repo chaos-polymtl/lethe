@@ -90,6 +90,21 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
     particle_projector.void_fraction_locally_relevant);
   this->multiphysics->set_previous_solutions(
     PhysicsID::void_fraction, particle_projector.previous_void_fraction);
+
+  if (this->cfd_dem_simulation_parameters.cfd_parameters
+        .project_particle_temperature)
+    {
+      this->multiphysics->set_dof_handler(
+        PhysicsID::particle_temperature,
+        particle_projector.particle_temperature.dof_handler);
+      this->multiphysics->set_mapping(
+        PhysicsID::particle_temperature,
+        particle_projector.particle_temperature.mapping);
+      this->multiphysics->set_solution(
+        PhysicsID::particle_temperature,
+        particle_projector.particle_temperature
+          .particle_field_locally_relevant_solution);
+    }
 }
 
 template <int dim, typename PropertiesIndex>

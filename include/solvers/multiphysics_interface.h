@@ -42,7 +42,7 @@ DeclException1(
   PhysicsIDNotAvailable,
   int,
   << " The physics with ID " << arg1
-  << " required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the void fraction to be available. ");
+  << " required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the projected fields to be available. For the temperature projected field to be available, make sure the `project particle temperature` option is enabled in the parameter file. ");
 
 template <int dim>
 class MultiphysicsInterface

@@ -407,10 +407,11 @@ MultiphysicsInterface<dim>::is_field_available(const PhysicsID physics_id) const
   if (std::ranges::find(active_physics, physics_id) != active_physics.end())
     return true;
 
-  // Special case for void fraction in VANS, since the void fraction is not an
-  // active physics but would be available as a field in the multiphysics
+  // Special case for projected fields in VANS, since the projected fields are
+  // not an active physics but would be available as a field in the multiphysics
   // interface when the fluid dynamics formulation is VANS.
-  if (physics_id == PhysicsID::void_fraction &&
+  if ((physics_id == PhysicsID::void_fraction ||
+       physics_id == PhysicsID::particle_temperature) &&
       this->fluid_dynamics_formulation == FluidDynamicsFormulation::VANS)
     return true;
 
