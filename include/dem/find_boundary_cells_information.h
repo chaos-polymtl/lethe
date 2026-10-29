@@ -137,10 +137,11 @@ private:
     const std::set<types::boundary_id>              &outlet_boundaries);
 
   /**
-   * Loops over all the cells to find boundary cells, find the global boundary
-   * cells with faces. Note that the boundary_cells_with_faces container only
-   * stores the local boundary cells, while global_boundary_cells_with_faces
-   * stores all the boundary cells with faces.
+   * @brief Loops over all the cells to flag the global boundary cells with
+   * faces in is_global_boundary_cell_with_faces. Note that the
+   * boundary_cells_with_faces container only stores the local boundary cells,
+   * while is_global_boundary_cell_with_faces flags all the boundary cells with
+   * faces.
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param outlet_boundaries A set which contains the outlet boundary IDs
@@ -271,9 +272,9 @@ private:
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     boundary_cells_with_faces;
 
-  // Structure that contains the global boundary cells with faces
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-    global_boundary_cells_with_faces;
+  // Flags of the global boundary cells with faces, indexed by active cell
+  // index
+  std::vector<bool> is_global_boundary_cell_with_faces;
 
   // A map that contains updated points on boundaries and normal vectors of the
   // boundary faces. This container is used when the grid is moving. We use this

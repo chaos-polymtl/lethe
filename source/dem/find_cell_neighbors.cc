@@ -6,6 +6,8 @@
 #include <deal.II/grid/cell_id.h>
 #include <deal.II/grid/grid_tools.h>
 
+#include <vector>
+
 using namespace DEM;
 
 template <int dim, bool reciprocal>
@@ -27,9 +29,9 @@ find_cell_neighbors(
 
   // This vector is used to avoid repetition of adjacent cells. For instance if
   // cell B is recognized as the neighbor of cell A, cell A will not be added to
-  // the neighbor list of cell B again. This is done using the total_cell_list
-  // vector
-  typename dem_data_structures<dim>::cell_set total_cell_list;
+  // the neighbor list of cell B again. This is done by flagging the processed
+  // cells in the is_processed_cell vector, indexed by active cell index
+  std::vector<bool> is_processed_cell(triangulation.n_active_cells(), false);
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -45,7 +47,7 @@ find_cell_neighbors(
           local_neighbor_vector.push_back(cell);
 
           if constexpr (!reciprocal)
-            total_cell_list.insert(cell);
+            is_processed_cell[cell->active_cell_index()] = true;
 
           for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
             {
@@ -53,18 +55,15 @@ find_cell_neighbors(
                 {
                   if (neighbor->is_locally_owned())
                     {
-                      auto search_iterator = total_cell_list.find(neighbor);
                       auto local_search_iterator =
                         std::find(local_neighbor_vector.begin(),
                                   local_neighbor_vector.end(),
                                   neighbor);
 
-                      // If the cell (neighbor) is a local cell and not present
-                      // in the total_cell_list vector, it will be added as the
-                      // neighbor of the main cell
-                      // ("cell") and also to the total_cell_list to avoid
-                      // repetition for next cells.
-                      if (search_iterator == total_cell_list.end() &&
+                      // If the cell (neighbor) is a local cell that was not
+                      // processed as a main cell yet, it will be added as the
+                      // neighbor of the main cell ("cell").
+                      if (!is_processed_cell[neighbor->active_cell_index()] &&
                           local_search_iterator == local_neighbor_vector.end())
                         {
                           local_neighbor_vector.push_back(neighbor);
@@ -120,18 +119,22 @@ find_cell_periodic_neighbors(
   typename dem_data_structures<dim>::cell_vector
     ghost_local_periodic_neighbor_vector;
 
-  typename dem_data_structures<dim>::cell_set total_cell_list;
+  // Flags of the locally owned main cells already processed, indexed by
+  // active cell index
+  std::vector<bool> is_processed_local_main_cell(triangulation.n_active_cells(),
+                                                 false);
 
   // Every distinct cell of periodic_boundaries_cells_information touches at
   // least one principal periodic boundary and is therefore processed as a
   // periodic main cell by the loop below. Since we support multiple PBC, it is
   // possible that a main cell on the principal boundary of PBC 0 is also a
-  // periodic neighbor of another main cell relative to PBC 1. We need to store
+  // periodic neighbor of another main cell relative to PBC 1. We need to flag
   // all the cells that were treated as "main" otherwise we are gonna have
-  // duplicated neighboring cell pairs. this cell_set stores the those cells.
-  typename dem_data_structures<dim>::cell_set all_main_cell_list;
+  // duplicated neighboring cell pairs. This vector, indexed by active cell
+  // index, flags those cells.
+  std::vector<bool> is_main_cell(triangulation.n_active_cells(), false);
   for (const auto &pb_cell_struct : periodic_boundaries_cells_information)
-    all_main_cell_list.insert(pb_cell_struct.second.cell);
+    is_main_cell[pb_cell_struct.second.cell->active_cell_index()] = true;
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -150,8 +153,9 @@ find_cell_periodic_neighbors(
                                          vertex_to_coinciding_vertex_group);
 
   // Keep track of cells already processed to avoid redundant corner handling,
-  // since periodic_boundaries_cells_information is an unordered_multimap
-  std::set<typename Triangulation<dim>::active_cell_iterator> processed_cells;
+  // since periodic_boundaries_cells_information is an unordered_multimap. The
+  // cells are flagged by active cell index.
+  std::vector<bool> is_processed_cell(triangulation.n_active_cells(), false);
 
   // Looping over cells struct at periodic boundaries 0
   for (const auto &pb_cell_struct : periodic_boundaries_cells_information)
@@ -160,11 +164,11 @@ find_cell_periodic_neighbors(
 
       // Skip if we already mapped this cell's periodic neighbors. This could
       // happen if a cell is located at a corner formed by two primary PBC.
-      if (processed_cells.contains(cell))
+      if (is_processed_cell[cell->active_cell_index()])
         continue;
 
-      // Since the cell is gonna be processed, we add it to the list.
-      processed_cells.insert(cell);
+      // Since the cell is gonna be processed, we flag it.
+      is_processed_cell[cell->active_cell_index()] = true;
 
       // If the cell is owned by the processor
       if (cell->is_locally_owned())
@@ -172,8 +176,8 @@ find_cell_periodic_neighbors(
           // The first element of each vector is the cell itself.
           local_periodic_neighbor_vector.push_back(cell);
 
-          // Store every main cell
-          total_cell_list.insert(cell);
+          // Flag every locally owned main cell
+          is_processed_local_main_cell[cell->active_cell_index()] = true;
 
           // Empty list of periodic cell neighbor
           typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
@@ -187,13 +191,11 @@ find_cell_periodic_neighbors(
 
           for (const auto &periodic_neighbor : periodic_neighbor_list)
             {
+              const unsigned int neighbor_index =
+                periodic_neighbor->active_cell_index();
+
               if (periodic_neighbor->is_locally_owned())
                 {
-                  // Check if the neighbor cell has been processed as a
-                  // main cell
-                  auto search_iterator =
-                    total_cell_list.find(periodic_neighbor);
-
                   // Check if the neighbor cell is in already in the
                   // local_periodic_neighbor_vector
                   // Note from Gabo: I don't understand how this could happen
@@ -206,10 +208,10 @@ find_cell_periodic_neighbors(
                               local_periodic_neighbor_vector.end(),
                               periodic_neighbor);
 
-                  // If the cell neighbor is a local cell and not present
-                  // in the total_cell_list vector, it will be added as the
+                  // If the cell neighbor is a local cell that was not
+                  // processed as a main cell yet, it will be added as the
                   // neighbor of the main cell.
-                  if (search_iterator == total_cell_list.end() &&
+                  if (!is_processed_local_main_cell[neighbor_index] &&
                       local_search_iterator ==
                         local_periodic_neighbor_vector.end())
                     {
@@ -228,7 +230,7 @@ find_cell_periodic_neighbors(
                   // never discovers this pair and the current cell must record
                   // it. CellId is used since it identifies a cell identically
                   // on every process, ghost cells included.
-                  if (all_main_cell_list.contains(periodic_neighbor) &&
+                  if (is_main_cell[neighbor_index] &&
                       periodic_neighbor->id() < cell->id())
                     continue;
 
@@ -287,7 +289,7 @@ find_cell_periodic_neighbors(
                   // Same rule as in the local branch above: if the periodic
                   // neighbor is also a main cell, only the cell with the
                   // smallest CellId records the pair.
-                  if (all_main_cell_list.contains(periodic_neighbor) &&
+                  if (is_main_cell[periodic_neighbor->active_cell_index()] &&
                       periodic_neighbor->id() < cell->id())
                     continue;
 

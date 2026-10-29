@@ -217,10 +217,6 @@ namespace DEM
     using cell_vector =
       std::vector<typename Triangulation<dim>::active_cell_iterator>;
 
-    // [cell iterators]
-    using cell_set =
-      std::set<typename Triangulation<dim>::active_cell_iterator>;
-
     // <cell id, periodic cells info>
     using periodic_boundaries_cells_info =
       std::unordered_multimap<types::global_cell_index,

@@ -32,7 +32,7 @@ BoundaryCellsInformation<dim>::build(
   const ConditionalOStream &pcout)
 {
   boundary_cells_with_faces.clear();
-  global_boundary_cells_with_faces.clear();
+  is_global_boundary_cell_with_faces.clear();
   boundary_cells_with_lines.clear();
   local_cells_with_boundary_lines.clear();
   boundary_cells_information.clear();
@@ -103,7 +103,7 @@ BoundaryCellsInformation<dim>::build(
   const ConditionalOStream                        &pcout)
 {
   boundary_cells_with_faces.clear();
-  global_boundary_cells_with_faces.clear();
+  is_global_boundary_cell_with_faces.clear();
   boundary_cells_with_lines.clear();
   local_cells_with_boundary_lines.clear();
   boundary_cells_information.clear();
@@ -135,15 +135,6 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const std::set<types::boundary_id>              &outlet_boundaries)
 {
-  // Initializing output_vector and a search_vector (containing boundary_id and
-  // cell) to avoid replication of a boundary face. All the found boundary faces
-  // will be searched in this vector before being added to the output_vector. If
-  // they are not found in this search_vector they will be added to the
-  // output_vector as well as the search_vector
-  // std::map<int, boundary_cells_info_struct<dim>> output_vector;
-  std::vector<std::pair<int, typename Triangulation<dim>::active_cell_iterator>>
-    search_vector;
-
   // Initialize a simple quadrature on the system. This will be used to
   // obtain a single sample point on the boundary faces
   const FE_Q<dim>   fe(1);
@@ -192,28 +183,16 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                   boundary_information.normal_vector  = normal_vector;
                   boundary_information.point_on_face  = quad_point;
 
-                  // Searching to see if boundary with this information was
-                  // already found or not. If this is a new
-                  // boundary face, it will be added to the
-                  // output_vector as well as the search_vector to avoid
-                  // repetition
-                  auto information_search_element =
-                    std::make_pair(face_id, cell);
-                  auto search_iterator = std::find(search_vector.begin(),
-                                                   search_vector.end(),
-                                                   information_search_element);
-                  if (search_iterator == search_vector.end())
+                  // Store the boundary face. Every face of every cell is
+                  // visited once, so each (face, cell) pair is stored once.
+                  if (cell->is_locally_owned())
                     {
-                      if (cell->is_locally_owned())
-                        {
-                          boundary_cells_information_map.insert(
-                            {global_face_id, boundary_information});
-                          boundary_cells_with_faces.push_back(cell);
-                          search_vector.push_back(information_search_element);
-                        }
-                      global_boundary_cells_information.insert(
+                      boundary_cells_information_map.insert(
                         {global_face_id, boundary_information});
+                      boundary_cells_with_faces.push_back(cell);
                     }
+                  global_boundary_cells_information.insert(
+                    {global_face_id, boundary_information});
                 }
             }
         }
@@ -300,9 +279,11 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   // Boundary lines only exist in three-dimensional cases
   if (dim == 3)
     {
-      std::unordered_map<std::string,
-                         std::unordered_map<types::global_dof_index,
-                                            std::pair<Point<dim>, Point<dim>>>>
+      // <active cell index, <line index, (vertex, vertex)>>
+      ankerl::unordered_dense::map<
+        unsigned int,
+        std::unordered_map<types::global_dof_index,
+                           std::pair<Point<dim>, Point<dim>>>>
         all_cells_with_boundary_lines;
 
       // Iterating over the active cells in the triangulation
@@ -322,12 +303,12 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
                         {
                           if (face->line(l)->at_boundary())
                             {
-                              all_cells_with_boundary_lines[cell->id()
-                                                              .to_string()]
-                                .emplace(
-                                  face->line_index(l),
-                                  std::make_pair(face->line(l)->vertex(0),
-                                                 face->line(l)->vertex(1)));
+                              all_cells_with_boundary_lines
+                                [cell->active_cell_index()]
+                                  .emplace(
+                                    face->line_index(l),
+                                    std::make_pair(face->line(l)->vertex(0),
+                                                   face->line(l)->vertex(1)));
                             }
                         }
                     }
@@ -342,19 +323,23 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
         {
           for (const auto &cell : triangulation.active_cell_iterators())
             {
-              if (cell->is_locally_owned())
+              if (!cell->is_locally_owned())
+                continue;
+
+              const auto cell_boundary_lines =
+                all_cells_with_boundary_lines.find(cell->active_cell_index());
+              if (cell_boundary_lines == all_cells_with_boundary_lines.end())
+                continue;
+
+              for (const auto &face : cell->face_iterators())
                 {
-                  for (const auto &face : cell->face_iterators())
+                  // Check to see if the face is located at boundary
+                  if (face->at_boundary())
                     {
-                      // Check to see if the face is located at boundary
-                      if (face->at_boundary())
+                      for (unsigned int l = 0; l < face->n_lines(); ++l)
                         {
-                          for (unsigned int l = 0; l < face->n_lines(); ++l)
-                            {
-                              all_cells_with_boundary_lines[cell->id()
-                                                              .to_string()]
-                                .erase(face->line_index(l));
-                            }
+                          cell_boundary_lines->second.erase(
+                            face->line_index(l));
                         }
                     }
                 }
@@ -369,18 +354,23 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
             {
               if (cell->is_locally_owned())
                 {
-                  std::string cell_id_string = cell->id().to_string();
-                  std::unordered_map<types::global_dof_index,
-                                     std::pair<Point<dim>, Point<dim>>>
-                    &cell_boundary_lines =
-                      all_cells_with_boundary_lines[cell_id_string];
+                  const auto cell_boundary_lines_iterator =
+                    all_cells_with_boundary_lines.find(
+                      cell->active_cell_index());
+                  if (cell_boundary_lines_iterator ==
+                      all_cells_with_boundary_lines.end())
+                    continue;
+
+                  const std::unordered_map<types::global_dof_index,
+                                           std::pair<Point<dim>, Point<dim>>>
+                    &cell_boundary_lines = cell_boundary_lines_iterator->second;
 
                   if (!cell_boundary_lines.empty())
                     {
                       // Only the first boundary line of the cell is used in
                       // the particle-line contact search
                       bool cell_line_is_stored = false;
-                      for (auto &map_iterator : cell_boundary_lines)
+                      for (const auto &map_iterator : cell_boundary_lines)
                         {
                           Point<3> vertex_one, vertex_two;
 
@@ -423,15 +413,15 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   // (Point<dim>). For line and face objects, at_boundary() function is
   // available to help
 
-  // First getting a set of all boundary vertices
-  std::set<unsigned int> boundary_vertices;
+  // First flagging all boundary vertices, indexed by vertex index
+  std::vector<bool> is_boundary_vertex(triangulation.n_vertices(), false);
   for (const auto &face : triangulation.active_face_iterators())
     {
       if (face->at_boundary())
         {
           for (unsigned int v = 0; v < face->n_vertices(); ++v)
             {
-              boundary_vertices.insert(face->vertex_index(v));
+              is_boundary_vertex[face->vertex_index(v)] = true;
             }
         }
     }
@@ -455,7 +445,7 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
                 {
                   for (unsigned int v = 0; v < face->n_vertices(); ++v)
                     {
-                      if (boundary_vertices.contains(face->vertex_index(v)))
+                      if (is_boundary_vertex[face->vertex_index(v)])
                         {
                           Point<3> vertex;
 
@@ -483,9 +473,14 @@ BoundaryCellsInformation<dim>::find_global_boundary_cells_with_faces(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const std::set<types::boundary_id>              &outlet_boundaries)
 {
+  is_global_boundary_cell_with_faces.assign(triangulation.n_active_cells(),
+                                            false);
+
   // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
+      const unsigned int cell_index = cell->active_cell_index();
+
       // Iterating over the faces of each cell
       for (const auto &face : cell->face_iterators())
         {
@@ -496,7 +491,7 @@ BoundaryCellsInformation<dim>::find_global_boundary_cells_with_faces(
               // Check to see if the face is located at boundary
               if (face->at_boundary())
                 {
-                  global_boundary_cells_with_faces.push_back(cell);
+                  is_global_boundary_cell_with_faces[cell_index] = true;
                 }
             }
         }
@@ -536,9 +531,8 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
           boundary_neighbor_cells.clear();
           for (auto &neighbor : active_neighbors)
             {
-              if (std::count(global_boundary_cells_with_faces.begin(),
-                             global_boundary_cells_with_faces.end(),
-                             neighbor))
+              const unsigned int neighbor_index = neighbor->active_cell_index();
+              if (is_global_boundary_cell_with_faces[neighbor_index])
                 {
                   boundary_neighbor_cells.push_back(neighbor);
                 }
