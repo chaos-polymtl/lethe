@@ -81,6 +81,10 @@ namespace DEM
     // [(cell iterator, line vertices)]
     using boundary_cells_lines_info = std::vector<cell_line_info<dim>>;
 
+    // [(face id, boundary cell info)], sorted by face id
+    using boundary_cells_faces_info =
+      std::vector<std::pair<int, boundary_cells_info_struct<dim>>>;
+
     // <particle id, <global face id, particle iterator>>
     using particle_floating_wall_candidates = ankerl::unordered_dense::map<
       types::particle_index,

@@ -1585,7 +1585,7 @@ CFDDEMSolver<dim, PropertiesIndex>::dem_contact_build()
 
       // Execute periodic boundaries (if PBC enabled)
       periodic_boundaries_object.execute_particles_displacement(
-        this->particle_handler, periodic_boundaries_cells_information);
+        this->particle_handler);
 
       // Sort particles into subdomains and cells and reset the vectors that
       // the local particle if is their index

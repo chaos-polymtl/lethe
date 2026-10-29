@@ -17,6 +17,7 @@
 #include <array>
 #include <map>
 #include <unordered_map>
+#include <vector>
 
 using namespace dealii;
 
@@ -50,7 +51,10 @@ public:
 
   /**
    * @brief Execute the mapping of the cells on periodic boundaries and store
-   * information in periodic_boundaries_cells_information.
+   * information in periodic_boundaries_cells_information. The same information
+   * is also stored, in the iteration order of
+   * periodic_boundaries_cells_information, for the displacement of the
+   * particles in execute_particles_displacement().
    *
    * @param[in] triangulation Triangulation.
    * @param[out] periodic_boundaries_cells_information Map (multimap) of
@@ -63,23 +67,21 @@ public:
       &periodic_boundaries_cells_information);
 
   /**
-   * @brief Moves particles crossing periodic boundaries (any side)
-   * particle_handler doesn't allow automated particle displacement since it is
-   * not linked to triangulation and its periodic mapping.
+   * @brief Moves particles crossing periodic boundaries (any side), using the
+   * pairs of cells on periodic boundaries found by the last call of
+   * map_periodic_cells(). particle_handler doesn't allow automated particle
+   * displacement since it is not linked to triangulation and its periodic
+   * mapping.
    *
    * @param[in,out] particle_handler Particle handler of particles located in
    * boundary cells.
-   * @param[in] periodic_boundaries_cells_information Map of information of the
-   * pair of cells on periodic boundaries.
    *
    * @return Flag if at least one particle has been moved to the other periodic
    * cell.
    */
   bool
   execute_particles_displacement(
-    const Particles::ParticleHandler<dim> &particle_handler,
-    const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-      &periodic_boundaries_cells_information);
+    const Particles::ParticleHandler<dim> &particle_handler);
 
   /**
    * @brief Return the periodic offset distance for a specific pb0 boundary ID.
@@ -205,6 +207,16 @@ private:
    * periodic image of a particle.
    */
   std::array<double, dim> periodic_offset_per_direction{};
+
+  /**
+   * @brief Information of the pairs of cells on periodic boundaries, in the
+   * iteration order of the periodic_boundaries_cells_information multimap
+   * filled by map_periodic_cells(). It is stored contiguously since it is
+   * iterated at every contact search to displace the particles crossing the
+   * periodic boundaries.
+   */
+  std::vector<periodic_boundaries_cells_info_struct<dim>>
+    periodic_cells_information;
 };
 
 #endif

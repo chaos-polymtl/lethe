@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_collision_log_data_h
@@ -6,6 +6,7 @@
 
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 
 #include <deal.II/base/tensor.h>
@@ -88,9 +89,10 @@ public:
   }
 
 private:
-  // Map to store ongoing collisions with particle id as key and collision log
-  // as value
-  std::map<std::pair<unsigned int, types::boundary_id>, collision_log<dim>>
+  // Map to store ongoing collisions with the (particle id, boundary id) pair as
+  // key and collision log as value
+  ankerl::unordered_dense::map<std::pair<unsigned int, types::boundary_id>,
+                               collision_log<dim>>
     ongoing_collisions;
 };
 

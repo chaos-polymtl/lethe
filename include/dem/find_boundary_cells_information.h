@@ -13,6 +13,7 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <map>
 #include <set>
 #include <vector>
 
@@ -63,7 +64,15 @@ public:
         const bool                                      &check_diamond_cells,
         const ConditionalOStream                        &pcout);
 
-  std::map<int, boundary_cells_info_struct<dim>> &
+  /**
+   * @brief Return the local boundary cells used for the particle-wall contact
+   * search, each with the information of one of its boundary faces. The
+   * entries are sorted by their key, the global face id or a negative
+   * imaginary face id.
+   *
+   * @return The information of the local boundary cells and faces.
+   */
+  typename DEM::dem_data_structures<dim>::boundary_cells_faces_info &
   get_boundary_cells_information()
   {
     return boundary_cells_information;
@@ -212,8 +221,24 @@ private:
     const std::map<int, boundary_cells_info_struct<dim>>
       &global_boundary_cells_information);
 
-  // Structure that contains the necessary information for boundaries
-  std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
+  /**
+   * @brief Store the boundary faces gathered in boundary_cells_information_map
+   * in boundary_cells_information, in the order of their keys, and clear
+   * boundary_cells_information_map.
+   */
+  void
+  store_boundary_cells_information();
+
+  // Structure that contains the necessary information for boundaries, in the
+  // order of the keys of boundary_cells_information_map. It is filled at the
+  // end of build() and iterated at every particle-wall broad search.
+  typename DEM::dem_data_structures<dim>::boundary_cells_faces_info
+    boundary_cells_information;
+
+  // Map used while building boundary_cells_information. It is keyed by the
+  // global face id (or by a negative imaginary face id) to store each face
+  // once and to order the faces. It is cleared at the end of build().
+  std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information_map;
 
   // A structure that contains the geometrical information of all (global)
   // boundary cells. This structure is used in the

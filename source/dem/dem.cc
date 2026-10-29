@@ -716,7 +716,7 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
     {
       // Apply particle displacement across periodic boundaries.
       periodic_boundaries_object.execute_particles_displacement(
-        particle_handler, periodic_boundaries_cells_information);
+        particle_handler);
 
       sort_particles_into_subdomains_and_cells();
 

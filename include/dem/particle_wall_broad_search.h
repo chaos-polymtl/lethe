@@ -35,7 +35,7 @@ using namespace dealii;
 template <int dim>
 void
 find_particle_wall_contact_pairs(
-  const std::map<int, boundary_cells_info_struct<dim>>
+  const typename DEM::dem_data_structures<dim>::boundary_cells_faces_info
                                         &boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
@@ -65,7 +65,7 @@ find_particle_wall_contact_pairs(
 template <int dim, typename PropertiesIndex>
 void
 find_particle_wall_contact_pairs(
-  const std::map<int, boundary_cells_info_struct<dim>>
+  const typename DEM::dem_data_structures<dim>::boundary_cells_faces_info
                                         &boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_wall_candidates

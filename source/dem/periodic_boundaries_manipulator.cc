@@ -184,6 +184,15 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
         }
     }
 
+  // Store the pairs of cells contiguously for the displacement of the
+  // particles, in the iteration order of the multimap
+  periodic_cells_information.clear();
+  periodic_cells_information.reserve(
+    periodic_boundaries_cells_information.size());
+  for (const auto &boundaries_information :
+       periodic_boundaries_cells_information | std::views::values)
+    periodic_cells_information.push_back(boundaries_information);
+
   // Once periodic offsets are calculated, combine them into a single
   // per-direction array
   this->compute_periodic_offset_per_direction();
@@ -298,31 +307,24 @@ PeriodicBoundariesManipulator<dim>::compute_periodic_offset_per_direction()
 template <int dim>
 bool
 PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
-  const Particles::ParticleHandler<dim> &particle_handler,
-  const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-    &periodic_boundaries_cells_information)
+  const Particles::ParticleHandler<dim> &particle_handler)
 {
   if (!periodic_boundaries_enabled)
     return false;
 
   bool particle_has_been_moved = false;
 
-  if (!periodic_boundaries_cells_information.empty())
+  if (!periodic_cells_information.empty())
     {
-      // Iterate over all entries. Multimap correctly handles periodic corner
-      // cells in higher dimensions. In 2D, a periodic corner cell would be
-      // iterated over twice:  once for x-boundary, once for y-boundary.
-      for (auto boundaries_cells_information_iterator =
-             periodic_boundaries_cells_information.begin();
-           boundaries_cells_information_iterator !=
-           periodic_boundaries_cells_information.end();
-           ++boundaries_cells_information_iterator)
+      // Iterate over all entries. There is one entry per periodic boundary of
+      // a cell, which correctly handles periodic corner cells in higher
+      // dimensions. In 2D, a periodic corner cell would be iterated over twice:
+      // once for x-boundary, once for y-boundary.
+      for (const auto &boundaries_cells_content : periodic_cells_information)
         {
-          // Get the cell and periodic cell from map
-          auto boundaries_cells_content =
-            boundaries_cells_information_iterator->second;
-          auto cell          = boundaries_cells_content.cell;
-          auto periodic_cell = boundaries_cells_content.periodic_cell;
+          // Get the cell and periodic cell
+          const auto &cell          = boundaries_cells_content.cell;
+          const auto &periodic_cell = boundaries_cells_content.periodic_cell;
 
           // Check and execute displacement of particles crossing a periodic
           // wall.

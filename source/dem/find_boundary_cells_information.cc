@@ -36,6 +36,7 @@ BoundaryCellsInformation<dim>::build(
   boundary_cells_with_lines.clear();
   local_cells_with_boundary_lines.clear();
   boundary_cells_information.clear();
+  boundary_cells_information_map.clear();
   global_boundary_cells_information.clear();
   boundary_cells_with_points.clear();
   boundary_cells_for_floating_walls.clear();
@@ -74,7 +75,7 @@ BoundaryCellsInformation<dim>::build(
       add_boundary_neighbors_of_boundary_cells(
         triangulation,
         outlet_boundaries,
-        boundary_cells_information,
+        boundary_cells_information_map,
         global_boundary_cells_information);
     }
   else
@@ -89,6 +90,8 @@ BoundaryCellsInformation<dim>::build(
           display_pw_contact_expansion_warning = false;
         }
     }
+
+  store_boundary_cells_information();
 }
 
 template <int dim>
@@ -104,6 +107,7 @@ BoundaryCellsInformation<dim>::build(
   boundary_cells_with_lines.clear();
   local_cells_with_boundary_lines.clear();
   boundary_cells_information.clear();
+  boundary_cells_information_map.clear();
   global_boundary_cells_information.clear();
   boundary_cells_with_points.clear();
   boundary_cells_for_floating_walls.clear();
@@ -118,6 +122,8 @@ BoundaryCellsInformation<dim>::build(
                                                   outlet_boundaries,
                                                   check_diamond_cells,
                                                   pcout);
+
+  store_boundary_cells_information();
 }
 
 // This function finds all the boundary cells and faces in the triangulation,
@@ -200,7 +206,7 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                     {
                       if (cell->is_locally_owned())
                         {
-                          boundary_cells_information.insert(
+                          boundary_cells_information_map.insert(
                             {global_face_id, boundary_information});
                           boundary_cells_with_faces.push_back(cell);
                           search_vector.push_back(information_search_element);
@@ -648,9 +654,10 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                                                 .global_face_id =
                                                 imaginary_face_id;
 
-                                              boundary_cells_information.insert(
-                                                {imaginary_face_id,
-                                                 imaginary_information});
+                                              boundary_cells_information_map
+                                                .insert(
+                                                  {imaginary_face_id,
+                                                   imaginary_information});
                                             }
                                         }
                                     }
@@ -662,6 +669,15 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
             }
         }
     }
+}
+
+template <int dim>
+void
+BoundaryCellsInformation<dim>::store_boundary_cells_information()
+{
+  boundary_cells_information.assign(boundary_cells_information_map.begin(),
+                                    boundary_cells_information_map.end());
+  boundary_cells_information_map.clear();
 }
 
 // This function finds the triangulation cells adjacent to the floating walls

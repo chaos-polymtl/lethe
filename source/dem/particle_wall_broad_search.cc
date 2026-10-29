@@ -8,7 +8,7 @@ using namespace dealii;
 template <int dim>
 void
 find_particle_wall_contact_pairs(
-  const std::map<int, boundary_cells_info_struct<dim>>
+  const typename DEM::dem_data_structures<dim>::boundary_cells_faces_info
                                         &boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
@@ -27,8 +27,9 @@ find_particle_wall_contact_pairs(
        boundary_cells_information_iterator != boundary_cells_information.end();
        ++boundary_cells_information_iterator)
     {
-      auto boundary_cells_content = boundary_cells_information_iterator->second;
-      auto cell                   = boundary_cells_content.cell;
+      const auto &boundary_cells_content =
+        boundary_cells_information_iterator->second;
+      const auto &cell = boundary_cells_content.cell;
 
       // Finding particles located in the corresponding cell
       // (boundary_cells_content.cell)
@@ -91,7 +92,7 @@ find_particle_floating_wall_contact_pairs(
           simulation_time <=
             floating_wall_properties.time_end[floating_wall_id])
         {
-          auto boundary_cells_content =
+          const auto &boundary_cells_content =
             fw_boundary_cells_information_iterator->second;
 
           for (auto cell = boundary_cells_content.begin();
@@ -216,7 +217,7 @@ particle_solid_surfaces_contact_search(
 template <int dim, typename PropertiesIndex>
 void
 find_particle_wall_contact_pairs(
-  const std::map<int, boundary_cells_info_struct<dim>>
+  const typename DEM::dem_data_structures<dim>::boundary_cells_faces_info
                                         &boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
@@ -236,8 +237,9 @@ find_particle_wall_contact_pairs(
        boundary_cells_information_iterator != boundary_cells_information.end();
        ++boundary_cells_information_iterator)
     {
-      auto boundary_cells_content = boundary_cells_information_iterator->second;
-      auto cell                   = boundary_cells_content.cell;
+      const auto &boundary_cells_content =
+        boundary_cells_information_iterator->second;
+      const auto &cell = boundary_cells_content.cell;
 
       // If main cell has status other than mobile, skip to next cell
       // No needs to check if the main cell has any particle after this
@@ -303,7 +305,7 @@ find_particle_floating_wall_contact_pairs(
           simulation_time <=
             floating_wall_properties.time_end[floating_wall_id])
         {
-          auto boundary_cells_content =
+          const auto &boundary_cells_content =
             fw_boundary_cells_information_iterator->second;
 
           for (auto cell = boundary_cells_content.begin();
@@ -458,7 +460,7 @@ store_candidates(
 // Explicit Instantiation
 template void
 find_particle_wall_contact_pairs<2>(
-  const std::map<int, boundary_cells_info_struct<2>>
+  const DEM::dem_data_structures<2>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<2> &particle_handler,
   DEM::dem_data_structures<2>::particle_wall_candidates
@@ -466,7 +468,7 @@ find_particle_wall_contact_pairs<2>(
 
 template void
 find_particle_wall_contact_pairs<3>(
-  const std::map<int, boundary_cells_info_struct<3>>
+  const DEM::dem_data_structures<3>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<3> &particle_handler,
   DEM::dem_data_structures<3>::particle_wall_candidates
@@ -474,7 +476,7 @@ find_particle_wall_contact_pairs<3>(
 
 template void
 find_particle_wall_contact_pairs<2, DEM::DEMProperties::PropertiesIndex>(
-  const std::map<int, boundary_cells_info_struct<2>>
+  const DEM::dem_data_structures<2>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<2> &particle_handler,
   DEM::dem_data_structures<2>::particle_wall_candidates
@@ -484,7 +486,7 @@ find_particle_wall_contact_pairs<2, DEM::DEMProperties::PropertiesIndex>(
 
 template void
 find_particle_wall_contact_pairs<3, DEM::DEMProperties::PropertiesIndex>(
-  const std::map<int, boundary_cells_info_struct<3>>
+  const DEM::dem_data_structures<3>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<3> &particle_handler,
   DEM::dem_data_structures<3>::particle_wall_candidates
@@ -494,7 +496,7 @@ find_particle_wall_contact_pairs<3, DEM::DEMProperties::PropertiesIndex>(
 
 template void
 find_particle_wall_contact_pairs<2, DEM::CFDDEMProperties::PropertiesIndex>(
-  const std::map<int, boundary_cells_info_struct<2>>
+  const DEM::dem_data_structures<2>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<2> &particle_handler,
   DEM::dem_data_structures<2>::particle_wall_candidates
@@ -504,7 +506,7 @@ find_particle_wall_contact_pairs<2, DEM::CFDDEMProperties::PropertiesIndex>(
 
 template void
 find_particle_wall_contact_pairs<3, DEM::CFDDEMProperties::PropertiesIndex>(
-  const std::map<int, boundary_cells_info_struct<3>>
+  const DEM::dem_data_structures<3>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<3> &particle_handler,
   DEM::dem_data_structures<3>::particle_wall_candidates
@@ -514,7 +516,7 @@ find_particle_wall_contact_pairs<3, DEM::CFDDEMProperties::PropertiesIndex>(
 
 template void
 find_particle_wall_contact_pairs<2, DEM::DEMMPProperties::PropertiesIndex>(
-  const std::map<int, boundary_cells_info_struct<2>>
+  const DEM::dem_data_structures<2>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<2> &particle_handler,
   DEM::dem_data_structures<2>::particle_wall_candidates
@@ -524,7 +526,7 @@ find_particle_wall_contact_pairs<2, DEM::DEMMPProperties::PropertiesIndex>(
 
 template void
 find_particle_wall_contact_pairs<2, DEM::CFDDEMMPProperties::PropertiesIndex>(
-  const std::map<int, boundary_cells_info_struct<2>>
+  const DEM::dem_data_structures<2>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<2> &particle_handler,
   DEM::dem_data_structures<2>::particle_wall_candidates
@@ -534,7 +536,7 @@ find_particle_wall_contact_pairs<2, DEM::CFDDEMMPProperties::PropertiesIndex>(
 
 template void
 find_particle_wall_contact_pairs<3, DEM::DEMMPProperties::PropertiesIndex>(
-  const std::map<int, boundary_cells_info_struct<3>>
+  const DEM::dem_data_structures<3>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<3> &particle_handler,
   DEM::dem_data_structures<3>::particle_wall_candidates
@@ -544,7 +546,7 @@ find_particle_wall_contact_pairs<3, DEM::DEMMPProperties::PropertiesIndex>(
 
 template void
 find_particle_wall_contact_pairs<3, DEM::CFDDEMMPProperties::PropertiesIndex>(
-  const std::map<int, boundary_cells_info_struct<3>>
+  const DEM::dem_data_structures<3>::boundary_cells_faces_info
                                       &boundary_cells_information,
   const Particles::ParticleHandler<3> &particle_handler,
   DEM::dem_data_structures<3>::particle_wall_candidates
