@@ -10,6 +10,7 @@
 #include <limits>
 #include <ostream>
 #include <sstream>
+#include <utility>
 
 template <int dim>
 SharpIBPeriodicBoundaries<dim>::SharpIBPeriodicBoundaries()
@@ -51,8 +52,8 @@ SharpIBPeriodicBoundaries<dim>::set_periodic_offset(
                 offset[configuration.direction] > 0.,
               dealii::ExcMessage(
                 "The Sharp-IB period must be positive and finite."));
-  for (unsigned int d = 0; d < dim; ++d)
-    AssertThrow(d == configuration.direction || offset[d] == 0.,
+  for (int d = 0; d < dim; ++d)
+    AssertThrow(std::cmp_equal(d, configuration.direction) || offset[d] == 0.,
                 dealii::ExcMessage(
                   "Sharp-IB requires an axis-aligned translation."));
   periodic_offset = offset;

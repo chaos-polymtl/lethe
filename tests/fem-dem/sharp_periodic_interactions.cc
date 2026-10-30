@@ -38,9 +38,9 @@ test()
 {
   Parameters::Lagrangian::BCDEM          dem;
   BoundaryConditions::BoundaryConditions cfd;
-  dem.periodic_boundaries[0] = {1, 0};
+  dem.periodic_boundaries[0] = {.neighbor_id = 1, .direction = 0};
   cfd.type[0]                = BoundaryConditions::BoundaryType::periodic;
-  cfd.periodic_boundaries[0] = {1, 0};
+  cfd.periodic_boundaries[0] = {.neighbor_id = 1, .direction = 0};
   SharpIBPeriodicBoundaries<dim> helper;
   std::ostringstream             sink;
   ConditionalOStream             quiet(sink, false);

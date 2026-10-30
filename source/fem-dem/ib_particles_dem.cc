@@ -60,7 +60,7 @@ IBParticlesDEM<dim>::periodic_image(const IBParticle<dim> &particle,
     reference.shape->get_rotation_matrix() *
       point_nd_to_3d(reference.shape->bounding_box_center) +
     point_nd_to_3d(reference.position);
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     if (periodic_offset[d] > 0.)
       shift[d] =
         -std::floor((center[d] - reference_center[d]) / periodic_offset[d] +
@@ -226,11 +226,11 @@ IBParticlesDEM<dim>::update_contact_candidates()
               // obstacles alone do not integrate contact dynamics.
               if (particle_one.integrate_motion ||
                   primary_particle_two.integrate_motion)
-                for (unsigned int d = 0; d < dim; ++d)
+                for (int d = 0; d < dim; ++d)
                   if (periodic_offset[d] > 0.)
                     {
                       double combined_half_width = 0.;
-                      for (unsigned int j = 0; j < dim; ++j)
+                      for (int j = 0; j < dim; ++j)
                         combined_half_width +=
                           std::abs(
                             particle_one.shape->get_rotation_matrix()[d][j]) *
@@ -542,7 +542,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
             {
               const Point<dim> particle_one_location = particle_one.position;
               Point<dim>       particle_two_location = particle_two.position;
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 if (periodic_offset[d] > 0.)
                   particle_two_location[d] -=
                     std::floor(

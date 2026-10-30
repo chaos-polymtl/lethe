@@ -18,6 +18,7 @@
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
 #include <fem-dem/sharp_ib_periodic_boundaries.h>
+#include <fem-dem/sharp_ib_stencil_search.h>
 
 #include <deal.II/base/numbers.h>
 #include <deal.II/base/point.h>
@@ -596,6 +597,24 @@ private:
    */
   void
   update_sharp_ib_periodic_geometry();
+
+  /**
+   * @brief Wrap a periodic stencil query and search locally available cells.
+   * @param seed Cell cut by the particle, used for the nearby search.
+   * @param point Unwrapped stencil query.
+   * @param shift Translation applied to the query and interpolation points.
+   * @return Containing cell, or end() for an unwrapped wall fallback. Missing
+   * wrapped cells throw because substituting a wall stencil would be incorrect.
+   */
+  typename DoFHandler<dim>::active_cell_iterator
+  find_periodic_stencil_cell(
+    const typename DoFHandler<dim>::active_cell_iterator &seed,
+    const Point<dim>                                     &point,
+    Tensor<1, dim>                                       &shift);
+
+  // Independent of ib_done: cached geometry must never suppress row assembly.
+  SharpIBStencilSearch<dim> periodic_stencil_search;
+
 
   /**
    * @brief Add matrix entry, expanding column constraints for periodic DoFs.
