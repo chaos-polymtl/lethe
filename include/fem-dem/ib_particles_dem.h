@@ -9,7 +9,15 @@
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_wall_contact_force.h>
 
+#include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
+#include <deal.II/base/types.h>
+
+#include <iosfwd>
+#include <map>
+#include <memory>
+#include <set>
+#include <vector>
 
 using namespace dealii;
 
@@ -47,6 +55,25 @@ public:
    * */
   struct ContactInfo
   {
+    /**
+     * @brief Serialize the persistent spring history; RK stage data is transient.
+     * @param archive Checkpoint archive.
+     * @param version Archive version (unused).
+     */
+    template <class Archive>
+    void
+    serialize(Archive &archive, const unsigned int /*version*/)
+    {
+      archive &tangential_displacement;
+      archive &rolling_resistance_spring_torque;
+    }
+
+    /** @brief Project the spring onto the contact tangent and cap its magnitude. */
+    void
+    limit_tangential_history();
+
+    // Current Coulomb displacement limit, recomputed at each force evaluation.
+    double       tangential_displacement_limit = 0.;
     Tensor<1, 3> normal_vector;
     Point<3>     contact_point;
     double       normal_overlap;
@@ -92,15 +119,40 @@ public:
 
 
   /**
+   * @brief Configure the axis-aligned translation used for particle interactions.
+   * @param offset Translation from the lower to the upper periodic face, or zero.
+   */
+  void
+  set_periodic_offset(const Tensor<1, dim> &offset);
+
+  /**
+   * @brief Save accepted particle-particle spring history for restart.
+   * @param output Checkpoint stream.
+   */
+  void
+  write_contact_history(std::ostream &output) const;
+
+  /**
+   * @brief Restore particle-particle spring history before the next time step.
+   * @param input Checkpoint stream.
+   */
+  void
+  read_contact_history(std::istream &input);
+
+  /**
    * @brief
    * Updates the boundary cells that are contact candidates for each of the
    * particles.
    *
    * @param particles The particles vector containing all the IB particles.
    * @param time The current CFD time.
+   * @param recompute_contacts Whether this trial will reintegrate DEM contacts.
+   * False preserves the last trial history when explicit coupling reuses it.
    */
   void
-  update_particles(const std::vector<IBParticle<dim>> &particles, double time);
+  update_particles(const std::vector<IBParticle<dim>> &particles,
+                   double                              time,
+                   const bool                          recompute_contacts);
 
 
   /**
@@ -278,6 +330,18 @@ public:
 
 private:
   /**
+   * @brief Make a translated geometry copy for the closest periodic image.
+   * @param particle Particle whose image is required.
+   * @param reference Other particle whose bounding-box center defines the frame.
+   * @return Image copy, or nullptr when the primary geometry is closest.
+   */
+  std::unique_ptr<IBParticle<dim>>
+  periodic_image(const IBParticle<dim> &particle,
+                 const IBParticle<dim> &reference) const;
+
+  Tensor<1, dim> periodic_offset;
+
+  /**
    * @brief Check whether a boundary should be ignored for Sharp-IB particle
    * wall interactions.
    *
@@ -354,7 +418,8 @@ private:
 
   std::vector<std::set<unsigned int>> particles_contact_candidates;
 
-  // Store the previous contact point as initial guess for the next search
+  // Periodic pair seeds are relative to particle one. Nonperiodic searches
+  // retain upstream wall-map seed storage and absolute coordinates.
   std::map<unsigned int, std::map<unsigned int, Point<dim>>>
     previous_wall_contact_point;
   std::map<unsigned int, std::map<unsigned int, Point<dim>>>
@@ -368,7 +433,12 @@ private:
   // A vector of vectors of candidate cells for each of the particle.
   std::vector<std::map<types::boundary_id, BoundaryCellsInfo>> boundary_cells;
 
-  double cfd_time;
+  double cfd_time                    = 0.;
+  bool   contact_history_initialized = false;
+  double contact_history_time        = 0.;
+  // Each periodic nonlinear trial starts from the same accepted spring history.
+  std::map<unsigned int, std::map<unsigned int, ContactInfo>>
+    accepted_pp_contact_map;
 };
 
 

@@ -2387,6 +2387,12 @@ public:
   void
   set_layer_thickening(const double layer_thickening) override;
 
+  /**
+   * @brief Whether this composite contains an RBF shape, including nested composites.
+   */
+  bool
+  contains_rbf() const;
+
 private:
   // The members of this class are all the constituent and operations that are
   // to be performed to construct the composite shape
