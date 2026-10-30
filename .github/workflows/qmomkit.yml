@@ -1,0 +1,93 @@
+name: CI-Lethe-with-QMOMKit
+
+# Called by ci.yml, which sets the triggers and concurrency, once the
+# indentation and documentation checks pass
+#
+# Compiles Lethe linked with the optional QMOMKit library and runs only the
+# tests of the coupling between Lethe and QMOMKit, whose names start with
+# qmomkit_ (e.g. tests/solvers/qmomkit_*.with_qmomkit=on.output).
+on:
+  workflow_call:
+
+env:
+  COMPILE_JOBS: 40
+  TEST_JOBS: 40
+  # Tag or branch of https://github.com/polycfd/QMOMKit that Lethe is tested with
+  QMOMKIT_VERSION: v1.0.0
+  QMOMKIT_TESTS_REGEX: "qmomkit"
+
+jobs:
+  build:
+    name: Build (deal.ii:${{ matrix.dealii_version }})
+    runs-on: self-hosted
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dealii_version: ["master-noble"]
+
+    # Run steps in container of dealii's master branch
+    container:
+      image: dealii/dealii:${{ matrix.dealii_version }}
+      options: --user root
+
+    steps:
+      - name: Setup
+        run: |
+          # Since dealii image doesn't include Node.js, we'll install it
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends nodejs
+
+          # Lethe links with mold when it is installed, which is much faster
+          # than the default GNU linker (see LETHE_USE_FAST_LINKER in the
+          # top-level CMakeLists.txt). Install it if the image lacks it.
+          command -v mold > /dev/null || sudo apt-get install -y --no-install-recommends mold
+          mold --version
+
+          echo "Github actions is sane!"
+          echo "Running build with deal.ii version ${{ matrix.dealii_version }} and QMOMKit ${{ env.QMOMKIT_VERSION }} on branch ${GITHUB_REF#refs/heads/}"
+
+      # Checks-out Lethe with branch of triggering commit
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Checks-out QMOMKit inside the workspace, so that it is cleaned with
+      # the rest of the workspace at the beginning of the next run
+      - name: Checkout QMOMKit (${{ env.QMOMKIT_VERSION }})
+        uses: actions/checkout@v4
+        with:
+          repository: polycfd/QMOMKit
+          ref: ${{ env.QMOMKIT_VERSION }}
+          path: qmomkit
+
+      # In a container, the GITHUB_WORKSPACE environment variable is the path
+      # of the workspace inside the container, unlike ${{ github.workspace }}
+      - name: Compile and install QMOMKit (${{ env.QMOMKIT_VERSION }})
+        run: |
+          cmake -S qmomkit -B qmomkit/build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="${GITHUB_WORKSPACE}/qmomkit/install"
+          cmake --build qmomkit/build --target install -j${{ env.COMPILE_JOBS }}
+
+      # Warnings are treated as errors, since this is the only build that
+      # compiles the parts of Lethe that depend on QMOMKit
+      - name: Compile Lethe with QMOMKit (Debug-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          mkdir build-qmomkit
+          cd build-qmomkit
+          git config --global --add safe.directory /__w/lethe/lethe
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_COMPILE_WARNING_AS_ERROR=ON -G Ninja \
+            -DLETHE_WITH_QMOMKIT=ON -DQMOMKIT_DIR="${GITHUB_WORKSPACE}/qmomkit/install"
+          ninja -j${{ env.COMPILE_JOBS }}
+
+      # Only the tests of the coupling with QMOMKit are run. The job fails if
+      # none is found, e.g. if they were skipped because QMOMKit was not enabled.
+      - name: Run Lethe-QMOMKit tests (Debug-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          #Allow OMPI to run as root
+          export OMPI_ALLOW_RUN_AS_ROOT=1
+          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+          cd build-qmomkit
+
+          ctest -N --tests-regex ${{ env.QMOMKIT_TESTS_REGEX }}
+          ctest --output-on-failure -j${{ env.TEST_JOBS }} --tests-regex ${{ env.QMOMKIT_TESTS_REGEX }} --no-tests=error

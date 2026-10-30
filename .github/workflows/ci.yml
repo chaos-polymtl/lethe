@@ -44,7 +44,8 @@ jobs:
   #     applications_tests/, CMakeLists.txt, .github/, ...)
   #       --> Check_indent, Check_prm_indent, doc,
   #           then CI-Clang-tidy-v20, CI-Parameter-files-examples, CI-Debug,
-  #           CI-Warnings, CI-Release, CI-Lethe-with-dealii-vectors
+  #           CI-Warnings, CI-Release, CI-Lethe-with-dealii-vectors,
+  #           CI-Lethe-with-QMOMKit
   #
   # "then" means the following jobs only start once Check_indent,
   # Check_prm_indent and doc pass. If they fail, they won't run.
@@ -96,8 +97,9 @@ jobs:
           # CI-Clang-tidy-v20 and CI-Parameter-files-examples ignore doc/,
           # release_notes/ and contrib/
           echo "tidy=$(changed_outside 'doc|release_notes|contrib')" >> "${GITHUB_OUTPUT}"
-          # CI-Debug, CI-Warnings, CI-Release and CI-Lethe-with-dealii-vectors
-          # ignore doc/, release_notes/, contrib/ and examples/
+          # CI-Debug, CI-Warnings, CI-Release, CI-Lethe-with-dealii-vectors and
+          # CI-Lethe-with-QMOMKit ignore doc/, release_notes/, contrib/ and
+          # examples/
           echo "build=$(changed_outside 'doc|release_notes|contrib|examples')" >> "${GITHUB_OUTPUT}"
 
   #
@@ -146,6 +148,12 @@ jobs:
     if: needs.changes.outputs.build == 'true'
     uses: ./.github/workflows/main_dealii_distributed_vectors.yml
 
+  qmomkit:
+    name: CI-Lethe-with-QMOMKit
+    needs: [changes, indent, prm-indent, doc]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/qmomkit.yml
+
   clang-tidy:
     name: CI-Clang-tidy-v20
     needs: [changes, indent, prm-indent, doc]
@@ -173,6 +181,7 @@ jobs:
       - warnings
       - release
       - dealii-vectors
+      - qmomkit
       - clang-tidy
       - examples-parameter-files
     runs-on: ubuntu-latest

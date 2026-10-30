@@ -204,6 +204,25 @@ Create a build folder at the same level as the lethe folder
 
   This behavior can be disabled with ``-DLETHE_USE_FAST_LINKER=OFF``, and a specific linker can be requested with ``-DCMAKE_LINKER_TYPE``.
 
+.. note::
+  Lethe can optionally be linked with the `QMOMKit <https://github.com/polycfd/QMOMKit>`_ library, which provides quadrature-based methods of moments. QMOMKit is not required: Lethe does not look for it unless it is explicitly enabled. To use it, first compile and install QMOMKit (version 1.x):
+
+  .. code-block:: text
+    :class: copy-button
+
+    git clone https://github.com/polycfd/QMOMKit --branch v1.0.0
+    cmake -S QMOMKit -B qmomkit-build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/username/path/to/qmomkit/installation
+    cmake --build qmomkit-build --target install -j$numprocs
+
+  Then add the following options to the ``cmake`` command of Lethe below:
+
+  .. code-block:: text
+    :class: copy-button
+
+    -DLETHE_WITH_QMOMKIT=ON -DQMOMKIT_DIR=/home/username/path/to/qmomkit/installation
+
+  CMake prints ``Linking Lethe with QMOMKit`` during the configuration. The tests of the coupling between Lethe and QMOMKit, which only run when Lethe is linked with QMOMKit, can be launched with ``ctest -R qmomkit``.
+
 Build Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
 
 .. code-block:: text

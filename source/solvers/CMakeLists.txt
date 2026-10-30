@@ -113,3 +113,10 @@ add_library(lethe-solvers
 
 deal_ii_setup_target(lethe-solvers)
 target_link_libraries(lethe-solvers lethe-core)
+
+if(LETHE_WITH_QMOMKIT)
+  # Without a keyword, like in deal_ii_setup_target, so that the include
+  # directories and the library of QMOMKit propagate to the targets that link
+  # with lethe-solvers.
+  target_link_libraries(lethe-solvers qmomkit::qmomkit)
+endif()
