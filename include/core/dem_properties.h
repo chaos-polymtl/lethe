@@ -362,6 +362,27 @@ namespace DEM
   inline constexpr bool
     has_thermal_properties<CFDDEMMPProperties::PropertiesIndex> = true;
 
+  /**
+   * @brief The index of the temperature property in a properties index set.
+   *
+   * This is the property start index of the ParticleFieldQCM used to project
+   * the particle temperature; -1 indicates that the projection is not to be
+   * done.
+   *
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+   */
+  template <typename PropertiesIndex>
+  inline constexpr int temperature_property_index = -1;
+
+  template <>
+  inline constexpr int
+    temperature_property_index<DEMMPProperties::PropertiesIndex> =
+      DEMMPProperties::T;
+
+  template <>
+  inline constexpr int
+    temperature_property_index<CFDDEMMPProperties::PropertiesIndex> =
+      CFDDEMMPProperties::T;
 
   /**
    * @brief Whether a properties index set carries fluid coupling properties.

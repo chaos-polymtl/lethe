@@ -42,7 +42,7 @@ DeclException1(
   PhysicsIDNotAvailable,
   int,
   << " The physics with ID " << arg1
-  << " required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the void fraction to be available. ");
+  << " required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the projected fields to be available. For the temperature projected field to be available, make sure the `project particle temperature` option is enabled in the parameter file. ");
 
 template <int dim>
 class MultiphysicsInterface
@@ -92,6 +92,33 @@ public:
   get_fluid_dynamics_formulation() const
   {
     return fluid_dynamics_formulation;
+  }
+
+  /**
+   * @brief Make a field projected by the particle projector of the VANS
+   * solvers available in the interface. The VANS solvers call it in their
+   * constructor (always for the void fraction).
+   *
+   * @param[in] physics_id The ID of the projected field to enable.
+   */
+  void
+  enable_projected_particle_fields(PhysicsID physics_id)
+  {
+    if (physics_id == PhysicsID::void_fraction)
+      {
+        particle_void_fraction_field_enabled = true;
+      }
+    else if (physics_id == PhysicsID::particle_temperature)
+      {
+        particle_temperature_field_enabled = true;
+      }
+    else
+      {
+        AssertThrow(
+          false,
+          ExcMessage(
+            "The physics ID provided is not associated with an existing projected particle field."));
+      }
   }
 
   /**
@@ -1025,6 +1052,13 @@ private:
   ConditionalOStream                         pcout;
   const FluidDynamicsFormulation             fluid_dynamics_formulation;
 
+  // Always true if the VANS solver is used
+  bool particle_void_fraction_field_enabled = false;
+
+  // True if the VANS solver projects the particle temperature and provides it
+  // to the interface
+  bool particle_temperature_field_enabled = false;
+
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;
 
@@ -1138,7 +1172,7 @@ private:
     const SimulationParameters<dim> &nsparam);
 
   /**
-   * @brief Return true if the fields of @p physics_id are registered in the interface: either the physics is active, or it is the void fraction under the VANS formulation.
+   * @brief Return true if the fields of @p physics_id are registered in the interface: either the physics is active, or it is a field projected under the VANS formulation and enabled with enable_projected_particle_fields().
    *
    * @param[in] physics_id The ID of the physics to check.
    * @return true if the fields of @p physics_id are registered in the interface, false otherwise.

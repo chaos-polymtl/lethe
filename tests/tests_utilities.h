@@ -41,9 +41,10 @@ make_default_void_fraction_parameters()
     Parameters::QCMFilterType::spherical;
   void_fraction_parameters->quadrature_rule =
     Parameters::VoidFractionQuadratureRule::gauss;
-  void_fraction_parameters->project_particle_velocity  = false;
-  void_fraction_parameters->read_dem                   = false;
-  void_fraction_parameters->particle_refinement_factor = 1;
+  void_fraction_parameters->project_particle_velocity    = false;
+  void_fraction_parameters->project_particle_temperature = false;
+  void_fraction_parameters->read_dem                     = false;
+  void_fraction_parameters->particle_refinement_factor   = 1;
   return void_fraction_parameters;
 }
 

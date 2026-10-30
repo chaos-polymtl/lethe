@@ -35,19 +35,19 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 {
   // Get a constant copy of the communicator since it is used extensively to
   // establish the void fraction vectors
-  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = dof_handler->get_mpi_communicator();
 
-  dof_handler.distribute_dofs(*fe);
+  dof_handler->distribute_dofs(*fe);
   if (multigrid_level_dofs_required)
-    dof_handler.distribute_mg_dofs();
-  locally_owned_dofs = dof_handler.locally_owned_dofs();
+    dof_handler->distribute_mg_dofs();
+  locally_owned_dofs = dof_handler->locally_owned_dofs();
 
-  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
   // deal.II vector that will also hold the solution
-  this->particle_field_solution.reinit(dof_handler.locally_owned_dofs(),
+  this->particle_field_solution.reinit(dof_handler->locally_owned_dofs(),
                                        DoFTools::extract_locally_active_dofs(
-                                         dof_handler),
+                                         *dof_handler),
                                        mpi_communicator);
 
   // Force the vector to zero after the reinit.
@@ -55,7 +55,7 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   particle_field_constraints.clear();
   particle_field_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(dof_handler,
+  DoFTools::make_hanging_node_constraints(*dof_handler,
                                           particle_field_constraints);
 
   particle_field_constraints.close();
@@ -77,7 +77,7 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(
-    dof_handler, coupling_table, dsp, particle_field_constraints, false);
+    *dof_handler, coupling_table, dsp, particle_field_constraints, false);
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              locally_owned_dofs,
@@ -189,6 +189,21 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
   fluid_drag_on_particles.setup_dofs();
   particle_velocity.setup_dofs();
   momentum_transfer_coefficient.setup_dofs();
+
+  // Only allocate the particle temperature field in dem_mp simulations where
+  // the projection of the particle temperature is enabled.
+  if (void_fraction_parameters->project_particle_temperature)
+    {
+      particle_temperature.setup_dofs();
+
+      // The particle temperature is provided to the multiphysics interface,
+      // so we need to ensure the solution vector is reinitialized with the
+      // correct locally relevant dofs.
+      particle_temperature.particle_field_locally_relevant_solution->reinit(
+        particle_temperature.locally_owned_dofs,
+        particle_temperature.locally_relevant_dofs,
+        mpi_communicator);
+    }
 }
 
 
@@ -236,9 +251,10 @@ ParticleProjector<dim, PropertiesIndex>::setup_constraints(
 
   AssertThrow(
     has_periodic_boundaries == false ||
-      void_fraction_parameters->project_particle_velocity == false,
+      (void_fraction_parameters->project_particle_velocity == false &&
+       void_fraction_parameters->project_particle_temperature == false),
     ExcMessage(
-      "The projection of particle velocity is currently not supported for periodic boundary conditions"));
+      "The projection of particle velocity or temperature is currently not supported for periodic boundary conditions"));
 
 
   // Reinit system matrix
@@ -303,6 +319,38 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction(
   if (void_fraction_parameters->project_particle_velocity)
     {
       calculate_field_projection(particle_velocity);
+    }
+
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      if (void_fraction_parameters->project_particle_temperature)
+        {
+          calculate_field_projection(particle_temperature);
+
+// Transfer the particle temperature solution to the multiphysics interface
+// vector. This is needed since the multiphysics interface uses a different
+// vector type than the one used in the particle projector depending on the
+// build configuration.
+#ifndef LETHE_USE_LDV
+
+          GlobalVectorType temporary_solution_vector(
+            particle_temperature.locally_owned_dofs,
+            particle_temperature.dof_handler->get_mpi_communicator());
+
+          convert_vector_dealii_to_trilinos(
+            temporary_solution_vector,
+            particle_temperature.particle_field_solution);
+
+          *particle_temperature.particle_field_locally_relevant_solution =
+            temporary_solution_vector;
+#else
+          particle_temperature.particle_field_locally_relevant_solution
+            ->copy_locally_owned_data_from(
+              particle_temperature.particle_field_solution);
+          particle_temperature.particle_field_locally_relevant_solution
+            ->update_ghost_values();
+#endif
+        }
     }
 }
 
@@ -1217,7 +1265,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_field_projection_impl(
   if (field_qcm.matrix_requires_assembly)
     field_qcm.system_matrix = 0;
 
-  for (const auto &cell : field_qcm.dof_handler.active_cell_iterators())
+  for (const auto &cell : field_qcm.dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1566,6 +1614,13 @@ ParticleProjector<dim, PropertiesIndex>::calculate_field_projection_impl(
                field_qcm.particle_field_solution,
                field_qcm.system_rhs,
                *field_qcm.ilu_preconditioner);
+
+  // Distribute the constraints to the solution vector. This is necessary
+  // because of the hanging nodes that can be present in the mesh and would not
+  // have a correct value only from  distributing the values of the local
+  // solution to the global solution vector.
+  field_qcm.particle_field_constraints.distribute(
+    field_qcm.particle_field_solution);
 
   // Now that the solution has been solved for, update the ghost values.
   field_qcm.particle_field_solution.update_ghost_values();

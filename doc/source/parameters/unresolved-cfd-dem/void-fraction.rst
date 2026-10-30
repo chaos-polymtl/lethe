@@ -35,6 +35,7 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
   set n quadrature points          = 0
   set output qcm                   = false
   set project particle velocity    = false
+  set project particle temperature = false
 
 
 * The ``read dem`` allows us to read an already existing dem simulation result which can be obtained from checkpointing the Lethe-DEM simulation. This is important as the `lethe-fluid-vans` solver requires reading an initial dem triangulation and particle information to simulate flows in the presence of particles. 
@@ -67,5 +68,6 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
 * The ``output qcm`` allows us to output the QCM quadrature points and the QCM filter smoothing length for visualization in paraview. Using the cell index, the user can visualize the QCM quadrature points and the QCM filter smoothing length for a selected cell in the mesh. This is done primarily to verify that the cell area is fully covered by the QCM filters and that the filters do not extend beyond the neighboring cell. The output file name is ``qcm_quadrature_points`` and it is written in the output folder specified in the ``.prm`` file. This option is only compatible with the ``qcm`` method.
 * The ``particle refinement factor`` is only required for the ``spm``. It allows to determine the number of pseudo-particles that we want to divide our particle into. By default, it is set to 0 refinements, and results in no refinement of the original meshed particle (division into 7 particles in 3D). Every additional refinement results in a :math:`2^{dim}` times more particles. The figure below shows how the number of pseudo-particles change with every refinement. Every cell in the particle mesh represents a pseudo-particle in the satellite point method.
 * The ``project particle velocity`` allows to project the particle velocity field onto the fluid mesh. This is useful to visualize the particle velocity field in paraview. This option is only compatible with the ``qcm`` method since it relies on the same mechanisms.
+* The ``project particle temperature`` allows to project the particle temperature onto the fluid mesh, in the same way as the particle velocity. However, the projection is not outputed for visualization purposes, but rather the projected temperature is made available to the other physics through the multiphysics interface for multiphysics simulations. This option requires the ``qcm`` method, an ``l2 smoothing length`` greater than 0 and particles that carry a temperature (``solver type = dem_mp`` in the :doc:`../dem/model_parameters` subsection). It is not supported with periodic boundary conditions.
 
 .. image:: images/refinement.png
