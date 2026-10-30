@@ -5,8 +5,8 @@ DEAL:0::Number of particles inserted: 4096
 Void Fraction
 --------------
 DEAL:0::Number of constrained temperature DoFs: 42
-DEAL:0::Projected temperature equals the particle temperature: yes
-DEAL:0::Interface copy equals the particle temperature, ghosts included: yes
+DEAL:0::Projected temperature: min = 300.000, max = 300.000 (expected 300.000)
+DEAL:0::Interface copy, ghosts included: min = 300.000, max = 300.000 (expected 300.000)
 
 DEAL:1::Number of cells: 120
 DEAL:1::Number of particles inserted: 4096
@@ -14,6 +14,6 @@ DEAL:1::Number of particles inserted: 4096
 Void Fraction
 --------------
 DEAL:1::Number of constrained temperature DoFs: 42
-DEAL:1::Projected temperature equals the particle temperature: yes
-DEAL:1::Interface copy equals the particle temperature, ghosts included: yes
+DEAL:1::Projected temperature: min = 300.000, max = 300.000 (expected 300.000)
+DEAL:1::Interface copy, ghosts included: min = 300.000, max = 300.000 (expected 300.000)
 

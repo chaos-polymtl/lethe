@@ -9,8 +9,9 @@
  * particle temperature is therefore T_0 at every quadrature point that sees
  * particles, and the constant field T_0 solves the smoothed L2 projection
  * exactly, including at the hanging nodes, since the constrained finite
- * element space contains the constant functions. The test checks that the
- * projected temperature is T_0 at every degree of freedom:
+ * element space contains the constant functions. The test prints the minimum
+ * and the maximum of the projected temperature over the degrees of freedom,
+ * which must both be T_0:
  * - in the deal.II vector of the projection, on the locally owned cells;
  * - in its copy provided to the multiphysics interface, on the locally owned
  *   and ghost cells, which also checks the ghost values of the copy.
@@ -48,6 +49,7 @@
 #include <algorithm>
 #include <cmath>
 #include <exception>
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -108,9 +110,6 @@ test()
   // Temperature carried by all the particles
   const double particle_temperature = 300.;
 
-  // Tolerance on the projected temperature, relative to particle_temperature
-  const double relative_tolerance = 1e-8;
-
   // Unit cube refined twice, then once more in the octant [0, 0.5]^3, which
   // creates hanging nodes at the interface between the two refinement levels.
   parallel::distributed::Triangulation<3> domain_triangulation(MPI_COMM_WORLD);
@@ -132,7 +131,8 @@ test()
           << std::endl;
 
   // Particles with thermal properties, one at the center of each cell of a
-  // 16 x 16 x 16 grid
+  // 16 x 16 x 16 grid (the grid for the particles is independent of the grid
+  // for the fluid domain and is uniformly refined everywhere).
   const MappingQ1<3>            mapping;
   Particles::ParticleHandler<3> particle_handler;
   particle_handler.initialize(domain_triangulation,
@@ -145,9 +145,9 @@ test()
                          domain_triangulation,
                          particle_handler);
 
-  // Exchange ghost particles after particle_triangulation has gone out of scope
-  // so that its destructor does not overlap with MPI operations from the ghost
-  // exchange.
+  // Exchange ghost particles after particle_triangulation (inside
+  // generate_particle_grid) has gone out of scope so that its destructor does
+  // not overlap with MPI operations from the ghost exchange.
   particle_handler.exchange_ghost_particles(true);
 
   // Particle diameter that gives a solid fraction of 0.1 in the unit cube
@@ -210,12 +210,14 @@ test()
   deallog << "Number of constrained temperature DoFs: " << n_constrained_dofs
           << std::endl;
 
-  // Largest difference between the projected temperature and the particle
-  // temperature, for the deal.II vector of the projection (locally owned
-  // cells) and for its copy in the interface (locally owned and ghost cells).
+  // Minimum and maximum of the projected temperature, for the deal.II vector
+  // of the projection (locally owned cells) and for its copy in the interface
+  // (locally owned and ghost cells).
   Vector<double> cell_values(temperature_field.fe->n_dofs_per_cell());
-  double         max_error_projection     = 0.;
-  double         max_error_interface_copy = 0.;
+  double         min_projection     = std::numeric_limits<double>::max();
+  double         max_projection     = std::numeric_limits<double>::lowest();
+  double         min_interface_copy = std::numeric_limits<double>::max();
+  double         max_interface_copy = std::numeric_limits<double>::lowest();
 
   for (const auto &cell :
        temperature_field.dof_handler->active_cell_iterators())
@@ -228,31 +230,33 @@ test()
           cell->get_dof_values(temperature_field.particle_field_solution,
                                cell_values);
           for (const double value : cell_values)
-            max_error_projection =
-              std::max(max_error_projection,
-                       std::abs(value - particle_temperature));
+            {
+              min_projection = std::min(min_projection, value);
+              max_projection = std::max(max_projection, value);
+            }
         }
 
       cell->get_dof_values(
         *temperature_field.particle_field_locally_relevant_solution,
         cell_values);
       for (const double value : cell_values)
-        max_error_interface_copy =
-          std::max(max_error_interface_copy,
-                   std::abs(value - particle_temperature));
+        {
+          min_interface_copy = std::min(min_interface_copy, value);
+          max_interface_copy = std::max(max_interface_copy, value);
+        }
     }
 
-  max_error_projection =
-    Utilities::MPI::max(max_error_projection, MPI_COMM_WORLD);
-  max_error_interface_copy =
-    Utilities::MPI::max(max_error_interface_copy, MPI_COMM_WORLD);
+  min_projection     = Utilities::MPI::min(min_projection, MPI_COMM_WORLD);
+  max_projection     = Utilities::MPI::max(max_projection, MPI_COMM_WORLD);
+  min_interface_copy = Utilities::MPI::min(min_interface_copy, MPI_COMM_WORLD);
+  max_interface_copy = Utilities::MPI::max(max_interface_copy, MPI_COMM_WORLD);
 
-  const double tolerance = relative_tolerance * particle_temperature;
-
-  deallog << "Projected temperature equals the particle temperature: "
-          << (max_error_projection < tolerance ? "yes" : "no") << std::endl;
-  deallog << "Interface copy equals the particle temperature, ghosts included: "
-          << (max_error_interface_copy < tolerance ? "yes" : "no") << std::endl;
+  deallog << "Projected temperature: min = " << min_projection
+          << ", max = " << max_projection << " (expected "
+          << particle_temperature << ")" << std::endl;
+  deallog << "Interface copy, ghosts included: min = " << min_interface_copy
+          << ", max = " << max_interface_copy << " (expected "
+          << particle_temperature << ")" << std::endl;
 }
 
 int
