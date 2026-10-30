@@ -365,8 +365,9 @@ namespace DEM
   /**
    * @brief The index of the temperature property in a properties index set.
    *
-   * This is the property start index of the ParticleFieldQCM used to project the
-   * particle temperature; -1 indicates that the projection is not to be done.
+   * This is the property start index of the ParticleFieldQCM used to project
+   * the particle temperature; -1 indicates that the projection is not to be
+   * done.
    *
    * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    */
