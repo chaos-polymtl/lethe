@@ -169,7 +169,18 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   if(LETHE_GMG_USE_FLOAT)
     add_compile_definitions(LETHE_GMG_USE_FLOAT)
   endif()
-  
+
+  # QMOMKit (https://github.com/polycfd/QMOMKit) is an optional dependency of
+  # the solvers library. It is found here, before the libraries are added,
+  # so that its imported target is visible in every subdirectory.
+  option(LETHE_WITH_QMOMKIT "Link the solvers library with QMOMKit")
+  if(LETHE_WITH_QMOMKIT)
+    find_package(QMOMKit 1.0 CONFIG REQUIRED
+      HINTS "${QMOMKIT_DIR}" "$ENV{QMOMKIT_DIR}")
+    message(STATUS "Linking Lethe with QMOMKit ${QMOMKit_VERSION}: ${QMOMKit_DIR}")
+    add_compile_definitions(LETHE_WITH_QMOMKIT)
+  endif()
+
   include(GNUInstallDirs)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
   list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
@@ -219,6 +230,10 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   if(BUILD_TESTING)
     set(DEAL_II_WITH_DEALII ON)
     set(DEAL_II_DEALII_VERSION ${DEAL_II_VERSION})
+    # Tests named foo.with_qmomkit=on.output only run when Lethe is linked
+    # with QMOMKit
+    set(DEAL_II_WITH_QMOMKIT ${LETHE_WITH_QMOMKIT})
+    set(DEAL_II_QMOMKIT_VERSION ${QMOMKit_VERSION})
     add_subdirectory(applications_tests)
     add_subdirectory(tests)
 

@@ -48,8 +48,8 @@
 common_deps='deal[.]II[/]|boost[/]|magic_enum[.]hpp[">]|sys[/]stat[.]h[">]'
 core_deps="$common_deps"
 dem_deps="$common_deps|core[/]"
-solvers_deps="$common_deps|core[/]"
-fem_dem_deps="$common_deps|core[/]|dem[/]|solvers[/]"
+solvers_deps="$common_deps|core[/]|qmomkit[/]"
+fem_dem_deps="$common_deps|core[/]|dem[/]|solvers[/]|qmomkit[/]"
 # Many false positives; skip for now.
 #all_deps="$common_deps|core[/]|dem[/]|solvers[/]|fem-dem[/]"
 
