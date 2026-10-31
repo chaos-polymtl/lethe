@@ -1,0 +1,19 @@
+
+DEAL::Advection of the quadrature
+DEAL::  Node 0: abscissa = 0.552585, weight = 0.200000
+DEAL::  Node 1: abscissa = 1.65776, weight = 0.300000
+DEAL::  Node 2: abscissa = 3.31551, weight = 0.500000
+DEAL::  Abscissas grow as xi(0)*exp(t): passed
+DEAL::  Weights are unchanged: passed
+DEAL::  Rebuilt moments match M_k(0)*exp(k*t): passed
+DEAL::Phase-space evolution with a moment source
+DEAL::  Errors decrease as the time step is refined: passed
+DEAL::  Observed orders of strang: 2.0 2.0
+DEAL::  Observed orders of advsrc: 1.0 1.0
+DEAL::  Observed orders of srcadv: 1.0 1.0
+DEAL::  Strang splitting is second order: passed
+DEAL::  Lie splittings are first order: passed
+DEAL::Moment source through the node visitor
+DEAL::  Node 0: abscissa = 0.575000, weight = 0.400000
+DEAL::  Node 1: abscissa = 2.07500, weight = 0.600000
+DEAL::  Moments, abscissas and weights match the translated nodes: passed
