@@ -594,6 +594,18 @@ protected:
   update_boundary_conditions();
 
   /**
+   * @brief Set the time of the forcing function and of the time-dependent
+   * boundary conditions to the current time of the simulation control, and
+   * re-impose the non-zero constraints on the present solution.
+   *
+   * This is called at the beginning of every time step and, for multi-stage
+   * (SDIRK) methods, at every stage so that the forcing and the boundary
+   * conditions are evaluated at the stage time \f$t_n + c_i \Delta t\f$.
+   */
+  virtual void
+  update_forcing_and_boundary_conditions();
+
+  /**
    * @brief Check if a specifique boundary condition exist
    * @param bc, the boundary type that we want to check if it exists
    */
