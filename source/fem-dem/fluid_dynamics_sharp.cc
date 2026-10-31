@@ -20,17 +20,30 @@
 #include <dem/visualization.h>
 #include <fem-dem/fluid_dynamics_sharp.h>
 
+#include <deal.II/base/exceptions.h>
+#include <deal.II/base/geometry_info.h>
+#include <deal.II/base/mpi.h>
 #include <deal.II/base/work_stream.h>
+
+#include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/sparsity_tools.h>
 
 #include <boost/signals2/connection.hpp>
 
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <limits>
 #include <numbers>
+#include <stdexcept>
+#include <tuple>
 
 // Constructor for class FluidDynamicsSharp
 template <int dim>
@@ -54,6 +67,9 @@ FluidDynamicsSharp<dim>::vertices_cell_mapping()
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
 
   LetheGridTools::vertices_cell_mapping(*this->dof_handler, vertices_to_cell);
+  // Bound the exact-query cache to one timestep and refresh mesh iterators.
+  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+    periodic_stencil_search.reinit(*this->dof_handler);
 }
 
 template <int dim>
@@ -103,9 +119,6 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
   std::map<types::global_dof_index, Point<dim>> support_points =
     DoFTools::map_dofs_to_support_points(*this->mapping, *this->dof_handler);
 
-  // When the finite element order > 1, overconstrained cells are impossible
-  // since there is always at least a DOF inside the element that is not
-  // overconstrained. We therefore only have to check when the velocity order
   // When the finite element degree > 1, overconstrained cells are impossible
   // since there is always at least a DOF inside the element that is not
   // overconstrained. We therefore only have to check when the velocity degree
@@ -146,17 +159,23 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
           bool         cell_is_inside                             = false;
           unsigned int particle_id_which_cuts_this_cell           = 0;
           unsigned int particle_id_in_which_this_cell_is_embedded = 0;
-          std::vector<unsigned int> particles_cutting_this_cell;
+          std::vector<ParticlePeriodicFrame> cutting_particle_frames;
           // is the particle index that cuts the cell if it's cut. If the cell
           // is not cut the default value is stored (0). If the cell is not cut
           // this value will never be used.
-          // particles_cutting_this_cell count the number of particles
+          // cutting_particle_frames records the particles
           // that cut a cell if multiple particles cut this cell. This is used
           // to treat cells that are cut by multiple particles differently.
           cell->get_dof_indices(local_dof_indices);
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
+              const Point<dim> saved_particle_position = particles[p].position;
+              const std::vector<Tensor<1, dim>> candidate_periodic_shifts =
+                get_periodic_particle_shifts(saved_particle_position,
+                                             particle_support_radius(
+                                               particles[p]));
+
               // Particles defined from a stl or an iges don't have a signed
               // distance function. To identify cells that are cut a special
               // algorithm is required. For this type of particle, no cell are
@@ -164,56 +183,102 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
               // fluid is always solved inside the particle.
               if (particles[p].shape->additional_info_on_shape == "iges")
                 {
-                  if (cell_cut_by_p_absolute_distance(cell, support_points, p))
+                  bool           particle_cuts_cell = false;
+                  Tensor<1, dim> best_periodic_shift;
+
+                  // Unsigned CAD distances are evaluated in each image frame.
+                  for (const auto &periodic_shift : candidate_periodic_shifts)
                     {
-                      // We only register the particle with the lowest id as
-                      // the particle by which this cell is cut if the cell is
-                      // cut by multiple particles.
-                      if (particles_cutting_this_cell.size() == 0)
+                      set_particle_position_from_periodic_shift(
+                        p, saved_particle_position, periodic_shift);
+                      if (cell_cut_by_p_absolute_distance(cell,
+                                                          support_points,
+                                                          p))
+                        {
+                          AssertThrow(
+                            !particle_cuts_cell,
+                            ExcMessage(
+                              "Refine the mesh: a cell intersects two periodic images of one Sharp-IB particle."));
+                          particle_cuts_cell  = true;
+                          best_periodic_shift = periodic_shift;
+                        }
+                    }
+
+                  if (particles[p].position != saved_particle_position)
+                    particles[p].set_position(saved_particle_position);
+
+                  if (particle_cuts_cell)
+                    {
+                      if (cutting_particle_frames.empty())
                         {
                           cell_is_cut                      = true;
                           particle_id_which_cuts_this_cell = p;
                         }
-                      particles_cutting_this_cell.push_back(p);
+                      if (std::ranges::none_of(
+                            cutting_particle_frames,
+                            [p](const auto &particle_frame) {
+                              return particle_frame.particle_id == p;
+                            }))
+                        {
+                          cutting_particle_frames.push_back(
+                            {p, best_periodic_shift});
+                        }
                     }
                 }
               else
                 {
-                  unsigned int nb_dof_inside = 0;
-                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+                  unsigned int   best_nb_dof_inside = 0;
+                  Tensor<1, dim> best_periodic_shift;
+
+                  for (const auto &periodic_shift : candidate_periodic_shifts)
                     {
-                      // Count the number of DOFs that are inside
-                      // of the particles. If all the DOfs are on one side
-                      // the cell is not cut by the boundary.
-                      if (0 == this->fe->system_to_component_index(j).first)
+                      unsigned int nb_dof_inside = 0;
+                      set_particle_position_from_periodic_shift(
+                        p, saved_particle_position, periodic_shift);
+
+                      for (unsigned int j = 0; j < local_dof_indices.size();
+                           ++j)
                         {
-                          // Check if we already have checked this point in a
-                          // previously evaluated cell. If we didn't find it in
-                          // the previous evaluation, we assess whether the DOF
-                          // is inside or outside the shape.
-                          if (particles[p].get_levelset(
-                                support_points[local_dof_indices[j]], cell) <=
-                              0)
+                          if (0 == this->fe->system_to_component_index(j).first)
                             {
-                              ++nb_dof_inside;
-                              inside_outside_support_point_vector
-                                [p][local_dof_indices[j]] = true;
+                              if (particles[p].get_levelset(
+                                    support_points[local_dof_indices[j]],
+                                    cell) <= 0)
+                                {
+                                  ++nb_dof_inside;
+                                  if (periodic_shift.norm_square() == 0.0)
+                                    inside_outside_support_point_vector
+                                      [p][local_dof_indices[j]] = true;
+                                }
                             }
+                        }
+
+                      AssertThrow(
+                        nb_dof_inside == 0 || best_nb_dof_inside == 0,
+                        ExcMessage(
+                          "Refine the mesh: a cell intersects two periodic images of one Sharp-IB particle."));
+                      if (nb_dof_inside > best_nb_dof_inside)
+                        {
+                          best_nb_dof_inside  = nb_dof_inside;
+                          best_periodic_shift = periodic_shift;
                         }
                     }
 
+                  if (particles[p].position != saved_particle_position)
+                    particles[p].set_position(saved_particle_position);
+
                   // If some DOFs are inside the boundary, the cell is inside
                   // the particle or cut by the particle.
-                  if (nb_dof_inside != 0)
+                  if (best_nb_dof_inside != 0)
                     {
                       // If all the DOFs are inside the boundary this cell is
                       // inside the particle. Otherwise, the particle is cut.
-                      if (nb_dof_inside == dofs_per_cell_local_v_x)
+                      if (best_nb_dof_inside == dofs_per_cell_local_v_x)
                         {
                           //  We register only the particle with the lowest id
                           //  as the particle in which this cell is embedded if
                           //  the cell is in multiple particles.
-                          if (particles_cutting_this_cell.size() == 0)
+                          if (cutting_particle_frames.empty())
                             {
                               cell_is_cut                      = false;
                               particle_id_which_cuts_this_cell = 0;
@@ -227,15 +292,23 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                           // We only register the particle with the lowest id as
                           // the particle by this cell is cut if the cell is cut
                           // in multiple particles.
-                          if (particles_cutting_this_cell.size() == 0)
+                          if (cutting_particle_frames.empty())
                             {
                               cell_is_cut                      = true;
                               particle_id_which_cuts_this_cell = p;
                               cell_is_inside                   = false;
                               particle_id_in_which_this_cell_is_embedded = 0;
                             }
-                          particles_cutting_this_cell.push_back(p);
-                          if (particles_cutting_this_cell.size() > 1)
+                          if (std::ranges::none_of(
+                                cutting_particle_frames,
+                                [p](const auto &particle_frame) {
+                                  return particle_frame.particle_id == p;
+                                }))
+                            {
+                              cutting_particle_frames.push_back(
+                                {p, best_periodic_shift});
+                            }
+                          if (cutting_particle_frames.size() > 1)
                             {
                               for (const auto &dof_index : local_dof_indices)
                                 {
@@ -247,7 +320,7 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                     }
                   else
                     {
-                      if (particles_cutting_this_cell.size() == 0)
+                      if (cutting_particle_frames.empty())
                         {
                           cell_is_cut                                = false;
                           particle_id_which_cuts_this_cell           = 0;
@@ -290,7 +363,7 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
 
           cut_cells_map[cell]    = {cell_is_cut,
                                     particle_id_which_cuts_this_cell,
-                                    particles_cutting_this_cell};
+                                    cutting_particle_frames};
           cells_inside_map[cell] = {cell_is_inside,
                                     particle_id_in_which_this_cell_is_embedded};
         }
@@ -309,9 +382,8 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
               bool cell_is_cut;
               bool cell_is_inside;
               cell->get_dof_indices(local_dof_indices);
-              std::tie(cell_is_cut, std::ignore, std::ignore) =
-                cut_cells_map[cell];
-              std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+              cell_is_cut    = cut_cells_map[cell].is_cut;
+              cell_is_inside = cells_inside_map[cell].is_inside;
               if (!cell_is_cut && !cell_is_inside)
                 {
                   unsigned int number_of_vertices_in_cell =
@@ -324,6 +396,7 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                     std::numeric_limits<double>::max());
                   double particle_candidate_distance(
                     std::numeric_limits<double>::max());
+                  Tensor<1, dim> periodic_shift_for_overconstrained_cell;
 
                   unsigned int global_dof_id;
                   // We count the number of vertices that are constrained.
@@ -342,14 +415,42 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                     {
                       for (unsigned int p = 0; p < particles.size(); p++)
                         {
-                          particle_candidate_distance =
-                            particles[p].get_levelset(cell->barycenter(), cell);
+                          const Point<dim> saved_particle_position =
+                            particles[p].position;
+                          const auto candidate_periodic_shifts =
+                            get_periodic_particle_shifts(
+                              saved_particle_position,
+                              particle_support_radius(particles[p]));
+
+                          Tensor<1, dim> best_periodic_shift;
+                          for (const auto &periodic_shift :
+                               candidate_periodic_shifts)
+                            {
+                              set_particle_position_from_periodic_shift(
+                                p, saved_particle_position, periodic_shift);
+                              const double candidate_distance =
+                                particles[p].get_levelset(cell->barycenter(),
+                                                          cell);
+                              if (std::abs(candidate_distance) <
+                                  std::abs(particle_candidate_distance))
+                                {
+                                  particle_candidate_distance =
+                                    candidate_distance;
+                                  best_periodic_shift = periodic_shift;
+                                }
+                            }
+
+                          if (particles[p].position != saved_particle_position)
+                            particles[p].set_position(saved_particle_position);
+
                           if (abs(particle_candidate_distance) <
                               abs(particle_current_distance))
                             {
                               particle_current_id = p;
                               particle_current_distance =
                                 particle_candidate_distance;
+                              periodic_shift_for_overconstrained_cell =
+                                best_periodic_shift;
                             }
                         }
 
@@ -360,7 +461,10 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                         }
 
                       overconstrained_fluid_cell_map[cell] = {
-                        true, particle_current_id, particle_current_distance};
+                        true,
+                        particle_current_id,
+                        particle_current_distance,
+                        periodic_shift_for_overconstrained_cell};
                     }
                 }
             }
@@ -530,7 +634,9 @@ FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          cut_cells_map[cell]    = {false, 0, std::vector<unsigned int>()};
+          cut_cells_map[cell]    = {false,
+                                    0,
+                                    std::vector<ParticlePeriodicFrame>()};
           cells_inside_map[cell] = {false, 0};
         }
     }
@@ -605,7 +711,8 @@ FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
                       // If it is an active cell, add it to cells_inside_map
                       if (cell->is_active())
                         {
-                          cells_inside_map[cell] = {true, p};
+                          cells_inside_map[cell] = {
+                            true, static_cast<unsigned int>(p)};
                         }
                       else
                         {
@@ -625,9 +732,10 @@ FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
                       // If it is an active cell, add it to cells_cut_map
                       if (cell->is_active())
                         {
-                          cut_cells_map[cell] = {true,
-                                                 p,
-                                                 std::vector<unsigned int>()};
+                          cut_cells_map[cell] = {
+                            true,
+                            static_cast<unsigned int>(p),
+                            std::vector<ParticlePeriodicFrame>()};
                         }
                       else
                         {
@@ -929,13 +1037,72 @@ FluidDynamicsSharp<dim>::mesh_adapt_ib(const bool initial_refinement)
                   particles[p].set_position(particles[p].position);
                   particles[p].set_orientation(particles[p].orientation);
                 }
+
+              if (extrapolate_particle_position &&
+                  sharp_ib_periodic_boundaries.is_periodic_enabled())
+                {
+                  const Point<dim> normalized =
+                    sharp_ib_periodic_boundaries.wrap_point(
+                      particles[p].position,
+                      periodic_domain_lower,
+                      periodic_domain_upper);
+                  if (normalized != particles[p].position)
+                    particles[p].set_position(normalized);
+                }
+
+              // Build list of particle positions to check for refinement:
+              // actual position + periodic images if near periodic boundary
+              std::vector<Point<dim>> positions_to_check;
+              positions_to_check.push_back(particles[p].position);
+
+              if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+                {
+                  // The crown thickness is measured from the shape surface,
+                  // not from its reference point. Include coarsening support.
+                  const auto &parameters =
+                    *this->simulation_parameters.particlesParameters;
+                  const double crown_thickness =
+                    minimal_crown_refinement_enabled ?
+                      smallest_cut_cell / std::sqrt(dim) :
+                      particles[p].radius *
+                        std::max(0.,
+                                 parameters.refinement_outside_distance_factor -
+                                   1.);
+                  const double coarsening_thickness =
+                    cell_can_be_coarsened ?
+                      particles[p].radius *
+                        std::max(0.,
+                                 parameters.coarsening_distance_factor - 1.) :
+                      0.;
+                  const double refinement_radius =
+                    particle_support_radius(particles[p]) +
+                    std::max(crown_thickness, coarsening_thickness);
+
+                  // Get periodic images for this particle
+                  std::vector<Point<dim>> images =
+                    get_periodic_particle_images(particles[p].position,
+                                                 refinement_radius);
+
+                  // Add images to list of positions to check
+                  positions_to_check.insert(positions_to_check.end(),
+                                            images.begin(),
+                                            images.end());
+                }
               // Check if a point on the random point on the IB is contained in
               // that cell. If the particle is much smaller than the cell, all
               // its vertices may be outside of the particle. In that case the
               // cell won't be refined. To prevent that, we check if a random
               // point on the boundary is contained in the cell.
-              bool cell_as_ib_inside =
-                cell->point_inside(particles[p].position + r);
+              bool cell_as_ib_inside = false;
+              for (const auto &pos : positions_to_check)
+                {
+                  if (cell->point_inside(pos + r))
+                    {
+                      cell_as_ib_inside = true;
+                      break;
+                    }
+                }
+
               bool cell_is_near_particle_for_coarsening = false;
 
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
@@ -943,60 +1110,76 @@ FluidDynamicsSharp<dim>::mesh_adapt_ib(const bool initial_refinement)
                   // Only check the dof of velocity in x.
                   if (this->fe->system_to_component_index(j).first == 0)
                     {
-                      // Count the number of DOFs that fall in the refinement
-                      // zone around the particle. To fall in the zone, the
-                      // radius of the DOFs to the center of the particle must
-                      // be bigger than the inside radius of the refinement zone
-                      // and smaller than the outside radius of the refinement
-                      // zone.
-                      bool is_inside_crown;
-                      if (minimal_crown_refinement_enabled)
+                      // Check if this DoF is in crown around any position
+                      // (actual particle or periodic image)
+                      for (const auto &pos : positions_to_check)
                         {
-                          // The factor should be equal to the length of the
-                          // current smallest cell. Since cell->diameter()
-                          // returns the longest diagonal, we divide the
-                          // diameter by the diagonal of a unit hypercube to
-                          // obtain the correct length.
-                          double factor   = 1 / sqrt(dim);
-                          is_inside_crown = particles[p].is_inside_crown(
-                            support_points[local_dof_indices[j]],
-                            factor * smallest_cut_cell,
-                            -factor * smallest_cut_cell,
-                            true, // indicates that we use the absolute
-                                  // distance definition
-                            cell);
-                        }
-                      else
-                        {
-                          is_inside_crown = particles[p].is_inside_crown(
-                            support_points[local_dof_indices[j]],
-                            this->simulation_parameters.particlesParameters
-                              ->refinement_outside_distance_factor,
-                            this->simulation_parameters.particlesParameters
-                              ->refinement_inside_distance_factor,
-                            false, // indicates that we use the
-                                   // radius relative distance definition
-                            cell);
-                        }
+                          // Temporarily set particle position to check position
+                          Point<dim> saved_particle_position =
+                            particles[p].position;
+                          if (particles[p].position != pos)
+                            particles[p].set_position(pos);
 
-                      if (cell_can_be_coarsened)
-                        {
-                          const double coarsening_distance =
-                            particles[p].shape->value_with_cell_guess(
-                              support_points[local_dof_indices[j]], cell);
-                          const double coarsening_threshold =
-                            particles[p].shape->effective_radius *
-                            (this->simulation_parameters.particlesParameters
-                               ->coarsening_distance_factor -
-                             1);
+                          bool is_inside_crown;
+                          if (minimal_crown_refinement_enabled)
+                            {
+                              // The factor should be equal to the length of the
+                              // current smallest cell. Since cell->diameter()
+                              // returns the longest diagonal, we divide the
+                              // diameter by the diagonal of a unit hypercube to
+                              // obtain the correct length.
+                              double factor   = 1 / sqrt(dim);
+                              is_inside_crown = particles[p].is_inside_crown(
+                                support_points[local_dof_indices[j]],
+                                factor * smallest_cut_cell,
+                                -factor * smallest_cut_cell,
+                                true, // indicates that we use the absolute
+                                      // distance definition
+                                cell);
+                            }
+                          else
+                            {
+                              is_inside_crown = particles[p].is_inside_crown(
+                                support_points[local_dof_indices[j]],
+                                this->simulation_parameters.particlesParameters
+                                  ->refinement_outside_distance_factor,
+                                this->simulation_parameters.particlesParameters
+                                  ->refinement_inside_distance_factor,
+                                false, // indicates that we use the
+                                       // radius relative distance definition
+                                cell);
+                            }
 
-                          if (coarsening_distance <= coarsening_threshold)
-                            cell_is_near_particle_for_coarsening = true;
-                        }
+                          if (cell_can_be_coarsened)
+                            {
+                              const double coarsening_distance =
+                                particles[p].shape->value_with_cell_guess(
+                                  support_points[local_dof_indices[j]], cell);
+                              const double coarsening_threshold =
+                                particles[p].shape->effective_radius *
+                                (this->simulation_parameters
+                                   .particlesParameters
+                                   ->coarsening_distance_factor -
+                                 1);
 
-                      if (is_inside_crown)
-                        {
-                          ++count_small;
+                              if (coarsening_distance <= coarsening_threshold)
+                                {
+                                  cell_is_near_particle_for_coarsening = true;
+                                }
+                            }
+
+                          // Restore actual particle position
+                          if (particles[p].position != saved_particle_position)
+                            particles[p].set_position(saved_particle_position);
+
+                          if (is_inside_crown)
+                            {
+                              ++count_small;
+                              break; // Don't double-count for multiple images
+                            }
+
+                          // Another image may still require refinement even
+                          // after this image has ruled out coarsening.
                         }
                     }
                 }
@@ -1130,7 +1313,14 @@ FluidDynamicsSharp<dim>::force_on_ib()
   std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
   std::vector<double>     local_interp_sol(ib_coef.size());
 
-  std::unordered_map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>>
+  // Cache extrapolated force tensors per (DoF, particle key, periodic frame).
+  // Primary frames share key zero; multi-particle DoFs are recomputed below.
+  // Near a periodic interface the same geometric DoF can be visited from
+  // different wrapped frames of the same particle, and reusing the stress
+  // tensor across those frames is incorrect because the supporting stencil
+  // cell can change. The cache key therefore mirrors the frame-aware stencil
+  // cache used in sharp_edge().
+  std::map<PeriodicFrameDofCacheKey, std::pair<Tensor<2, dim>, Tensor<2, dim>>>
     force_eval;
 
   // Define cell iterator
@@ -1151,17 +1341,28 @@ FluidDynamicsSharp<dim>::force_on_ib()
       if (cell->is_locally_owned())
         {
           // Particle id that cut the cell.
-          unsigned int p_main; // The index of the particle used in the
-                               // imposition of this cell
-          std::vector<unsigned int> p_count;
-          bool                      cell_is_cut;
-          std::tie(cell_is_cut, p_main, p_count) = cut_cells_map[cell];
+          const auto &cut_cell_info = cut_cells_map[cell];
+          bool        cell_is_cut   = cut_cell_info.is_cut;
           // If the cell is cut
           if (cell_is_cut)
             {
               // loop over all particles that cut this precise cell
-              for (auto p : p_count)
+              for (const auto &particle_frame :
+                   cut_cell_info.cutting_particle_frames)
                 {
+                  const unsigned int p = particle_frame.particle_id;
+                  const int          particle_frame_index =
+                    get_periodic_frame_index(particle_frame.periodic_shift);
+                  // Preserve the primary-frame per-DoF cache. Distinguish
+                  // translated particle images without changing existing IB
+                  // assembly or force reuse away from the periodic interface.
+                  const unsigned int cache_particle_id =
+                    particle_frame_index != 0 ? p : 0;
+                  const Point<dim> saved_force_particle_pos =
+                    particles[p].position;
+                  set_particle_position_from_periodic_shift(
+                    p, saved_force_particle_pos, particle_frame.periodic_shift);
+
                   // Loop over all cut cell faces'.
                   for (const auto face : cell->face_indices())
                     {
@@ -1251,10 +1452,15 @@ FluidDynamicsSharp<dim>::force_on_ib()
                               const unsigned int component_i =
                                 this->fe->face_system_to_component_index(i)
                                   .first;
-                              // Check if that dof already have been used to
-                              // extrapolate the fluid stress tensor on the IB
-                              // surface.
-                              if (force_eval.find(local_face_dof_indices[i]) ==
+                              const PeriodicFrameDofCacheKey force_cache_key = {
+                                local_face_dof_indices[i],
+                                cache_particle_id,
+                                particle_frame_index};
+                              // Reuse primary-frame stresses as before, while
+                              // keeping translated images separate by particle
+                              // and periodic frame. Shared multi-particle DoFs
+                              // still require a fresh evaluation below.
+                              if (force_eval.find(force_cache_key) ==
                                     force_eval.end() or
                                   dof_with_more_then_one_particle
                                       [local_face_dof_indices[i]] == true)
@@ -1276,15 +1482,21 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                               [local_face_dof_indices[i]],
                                             cell);
 
-                                      auto cell_2 =
-                                        ib_done[local_face_dof_indices[i]]
-                                          .second;
+                                      auto           cell_2 = cell;
+                                      Tensor<1, dim> force_periodic_shift;
+                                      const PeriodicFrameDofCacheKey
+                                        stencil_cache_key = {
+                                          local_face_dof_indices[i],
+                                          cache_particle_id,
+                                          particle_frame_index};
                                       // Check if we already have the cell used
                                       // to define the IB constraint of that
                                       // dof. We always have that information
                                       // except if the dof is not owned.
-                                      if (ib_done[local_face_dof_indices[i]]
-                                              .first == false or
+                                      const auto cached_stencil_cell =
+                                        ib_done.find(stencil_cache_key);
+                                      if (cached_stencil_cell ==
+                                            ib_done.end() or
                                           dof_with_more_then_one_particle
                                               [local_face_dof_indices[i]] ==
                                             true)
@@ -1297,38 +1509,75 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                               support_points
                                                 [local_face_dof_indices[i]],
                                               cell);
-
-                                          try
+                                          if (sharp_ib_periodic_boundaries
+                                                .is_periodic_enabled())
                                             {
-                                              cell_2 = LetheGridTools::
-                                                find_cell_around_point_with_neighbors<
-                                                  dim>(*this->dof_handler,
-                                                       vertices_to_cell,
-                                                       cell,
-                                                       point_to_find_cell);
+                                              cell_2 =
+                                                find_periodic_stencil_cell(
+                                                  cell,
+                                                  point_to_find_cell,
+                                                  force_periodic_shift);
+                                              if (cell_2 ==
+                                                  this->dof_handler->end())
+                                                cell_2 = cell;
                                             }
-                                          catch (...)
+                                          else
                                             {
-                                              cell_2 = cell;
+                                              try
+                                                {
+                                                  cell_2 = LetheGridTools::
+                                                    find_cell_around_point_with_neighbors<
+                                                      dim>(*this->dof_handler,
+                                                           vertices_to_cell,
+                                                           cell,
+                                                           point_to_find_cell);
+                                                }
+                                              catch (...)
+                                                {
+                                                  cell_2 = cell;
+                                                }
                                             }
+                                          if (sharp_ib_periodic_boundaries
+                                                .is_periodic_enabled())
+                                            ib_done[stencil_cache_key] = {
+                                              cell_2, force_periodic_shift};
+                                        }
+                                      else
+                                        {
+                                          cell_2 =
+                                            cached_stencil_cell->second.first;
+                                          force_periodic_shift =
+                                            cached_stencil_cell->second.second;
                                         }
 
                                       cell_2->get_dof_indices(
                                         local_dof_indices_2);
 
-                                      unite_cell_interpolation_points[0] =
-                                        this->mapping
-                                          ->transform_real_to_unit_cell(cell_2,
-                                                                        point);
+                                      // Shift interpolation points if stencil
+                                      // was found across periodic boundary
+                                      {
+                                        Point<dim> shifted_point;
+                                        for (int d = 0; d < dim; ++d)
+                                          shifted_point[d] =
+                                            point[d] + force_periodic_shift[d];
+                                        unite_cell_interpolation_points[0] =
+                                          this->mapping
+                                            ->transform_real_to_unit_cell(
+                                              cell_2, shifted_point);
+                                      }
                                       for (unsigned int j = 1;
                                            j < ib_coef.size();
                                            ++j)
                                         {
+                                          Point<dim> shifted_point;
+                                          for (int d = 0; d < dim; ++d)
+                                            shifted_point[d] =
+                                              interpolation_points[j - 1][d] +
+                                              force_periodic_shift[d];
                                           unite_cell_interpolation_points[j] =
                                             this->mapping
                                               ->transform_real_to_unit_cell(
-                                                cell_2,
-                                                interpolation_points[j - 1]);
+                                                cell_2, shifted_point);
                                         }
 
                                       fluid_viscous_stress_at_ib  = 0;
@@ -1409,7 +1658,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                         fluid_pressure_stress_at_ib;
 
 
-                                      force_eval[local_face_dof_indices[i]] =
+                                      force_eval[force_cache_key] =
                                         std::make_pair(
                                           fluid_viscous_stress_at_ib,
                                           fluid_pressure_stress_at_ib);
@@ -1422,10 +1671,9 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                   // error due to the curvature of the surface
                                   // in Q2 and higher degree elements.
                                   local_face_viscous_stress_tensor[i] =
-                                    force_eval[local_face_dof_indices[i]].first;
+                                    force_eval[force_cache_key].first;
                                   local_face_pressure_tensor[i] =
-                                    force_eval[local_face_dof_indices[i]]
-                                      .second;
+                                    force_eval[force_cache_key].second;
                                 }
                             }
                           // Use the extrapolation of fluid stress tensor at the
@@ -1644,6 +1892,9 @@ FluidDynamicsSharp<dim>::force_on_ib()
                             }
                         }
                     }
+
+                  if (particles[p].position != saved_force_particle_pos)
+                    particles[p].set_position(saved_force_particle_pos);
                 }
             }
         }
@@ -1728,10 +1979,9 @@ FluidDynamicsSharp<dim>::gather_output_hook()
               // Here we identify all cut cells, and if a cell is cut we output
               // the ID of the cell that cuts it. If the cell is not cut, a
               // default value of -1 is output.
-              bool cell_is_cut;
-              int  particle_id;
-              std::tie(cell_is_cut, particle_id, std::ignore) =
-                cut_cells_map[cell];
+              const auto &cut_cell_info = cut_cells_map[cell];
+              bool        cell_is_cut   = cut_cell_info.is_cut;
+              int         particle_id   = cut_cell_info.primary_particle_id;
               if (cell_is_cut)
                 cell_cuts(i) = particle_id;
               else
@@ -1742,9 +1992,11 @@ FluidDynamicsSharp<dim>::gather_output_hook()
               // one used for extrapolation of the velocity immersed boundary
               // condition). If the cell is not overconstrained, a default value
               // of -1 is output.
-              bool cell_is_overconstrained;
-              std::tie(cell_is_overconstrained, particle_id, std::ignore) =
+              const auto &overconstrained_cell_info =
                 overconstrained_fluid_cell_map[cell];
+              bool cell_is_overconstrained =
+                overconstrained_cell_info.is_overconstrained;
+              particle_id = overconstrained_cell_info.particle_id;
               if (cell_is_overconstrained)
                 cell_overconstrained(i) = particle_id;
               else
@@ -1896,15 +2148,10 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
     {
       if (cell->is_locally_owned())
         {
-          bool cell_is_cut;
-          // std::ignore is used because we don't care about what particle cut
-          // the cell or the number of particles that cut the cell.
-          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
-          bool cell_is_inside;
-          std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-          bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
-            overconstrained_fluid_cell_map[cell];
+          const bool cell_is_cut    = cut_cells_map[cell].is_cut;
+          const bool cell_is_inside = cells_inside_map[cell].is_inside;
+          const bool cell_is_overconstrained =
+            overconstrained_fluid_cell_map[cell].is_overconstrained;
 
           if ((!cell_is_cut && !cell_is_inside) && !cell_is_overconstrained)
             {
@@ -1950,17 +2197,12 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
         {
           cell->get_dof_indices(local_dof_indices);
 
-          bool cell_is_cut;
-          // std::ignore is used because we don't care about what particle cut
-          // the cell or the number of particles that cut the cell.
-          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
+          const bool cell_is_cut = cut_cells_map[cell].is_cut;
 
-          bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
-            overconstrained_fluid_cell_map[cell];
+          const bool cell_is_overconstrained =
+            overconstrained_fluid_cell_map[cell].is_overconstrained;
 
-          bool cell_is_inside;
-          std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+          const bool cell_is_inside = cells_inside_map[cell].is_inside;
           if (cell->at_boundary() &&
               this->check_existance_of_bc(
                 BoundaryConditions::BoundaryType::function_weak))
@@ -2106,6 +2348,20 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::integrate_particles()
 {
+  // Undo the previous trial's wrap before recomputing motion. Accepted BDF
+  // history stays in its original frame until finish_time_step_particles().
+  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+    {
+      particle_position_wrap.resize(particles.size());
+      for (unsigned int p = 0; p < particles.size(); ++p)
+        if (particle_position_wrap[p].norm_square() != 0.)
+          particles[p].set_position(particles[p].position -
+                                    particle_position_wrap[p]);
+      std::fill(particle_position_wrap.begin(),
+                particle_position_wrap.end(),
+                Tensor<1, dim>());
+    }
+
   particle_residual = 0;
 
   TimerOutput::Scope t(this->computing_timer, "Integrate particles");
@@ -2128,7 +2384,16 @@ FluidDynamicsSharp<dim>::integrate_particles()
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
 
-  ib_dem.update_particles(particles, time - dt);
+  // Explicit coupling reuses the first DEM trial on subsequent fluid
+  // iterations. Only roll back spring history when DEM will run again.
+  const bool recompute_contacts =
+    some_particles_are_coupled && time > 0 &&
+    (this->get_current_newton_iteration() == 0 ||
+     (!this->simulation_parameters.particlesParameters
+         ->explicit_contact_impulsion_calculation &&
+      !this->simulation_parameters.particlesParameters
+         ->explicit_position_integration_calculation));
+  ib_dem.update_particles(particles, time - dt, recompute_contacts);
 
   std::map<field, double> field_values;
   field_values[field::shear_rate]  = 1;
@@ -2173,16 +2438,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
       Tensor<1, 3> g;
       this->simulation_parameters.particlesParameters->f_gravity->set_time(
         time);
-      unsigned int current_newton_iteration =
-        this->get_current_newton_iteration();
-
-      // Do the DEM only if it’s the first newton iteration or both the
-      // explicit calculation of the impulsion and position are false.
-      if (current_newton_iteration == 0 ||
-          (this->simulation_parameters.particlesParameters
-               ->explicit_contact_impulsion_calculation == false and
-           this->simulation_parameters.particlesParameters
-               ->explicit_position_integration_calculation == false))
+      if (recompute_contacts)
         {
           ib_dem.integrate_particles_motion(
             dt, h_max, h_min, fluid_density, kinematic_viscosity);
@@ -2337,13 +2593,23 @@ FluidDynamicsSharp<dim>::integrate_particles()
                   particles[p].position = ib_dem.dem_particles[p].position;
                   particles[p].set_position(particles[p].position);
                 }
+
+              // Test the normalized geometry without changing the integration
+              // frame. All motion modes are normalized together below.
+              const Point<dim> domain_position =
+                sharp_ib_periodic_boundaries.wrap_point(particles[p].position,
+                                                        periodic_domain_lower,
+                                                        periodic_domain_upper);
+
               // Check if the particle is in the domain. Throw an error if it's
               // the case.
               try
                 {
                   const auto &cell =
                     LetheGridTools::find_cell_around_point_with_tree(
-                      *this->dof_handler, particles[p].position);
+                      *this->dof_handler,
+                      domain_position,
+                      sharp_ib_periodic_boundaries.is_periodic_enabled());
                   (void)cell;
                 }
               catch (...)
@@ -2573,15 +2839,31 @@ FluidDynamicsSharp<dim>::integrate_particles()
                 }
               else
                 {
-                  particles[p].position[0] += particles[p].velocity[0] * dt;
-                  particles[p].position[1] += particles[p].velocity[1] * dt;
+                  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+                    particles[p].position[0] =
+                      particles[p].previous_positions[0][0] +
+                      particles[p].velocity[0] * dt;
+                  else
+                    particles[p].position[0] += particles[p].velocity[0] * dt;
+                  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+                    particles[p].position[1] =
+                      particles[p].previous_positions[0][1] +
+                      particles[p].velocity[1] * dt;
+                  else
+                    particles[p].position[1] += particles[p].velocity[1] * dt;
                   particles[p].orientation[0] = particles[p].omega[0] * dt;
                   particles[p].orientation[1] = particles[p].omega[1] * dt;
                   particles[p].orientation[2] = particles[p].omega[2] * dt;
 
                   if constexpr (dim == 3)
                     {
-                      particles[p].position[2] += particles[p].velocity[2] * dt;
+                      if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+                        particles[p].position[2] =
+                          particles[p].previous_positions[0][2] +
+                          particles[p].velocity[2] * dt;
+                      else
+                        particles[p].position[2] +=
+                          particles[p].velocity[2] * dt;
                     }
                 }
               if (particles[p].position != particles[p].previous_positions[0] ||
@@ -2657,15 +2939,30 @@ FluidDynamicsSharp<dim>::integrate_particles()
             }
           else
             {
-              particles[p].position[0] += particles[p].velocity[0] * dt;
-              particles[p].position[1] += particles[p].velocity[1] * dt;
+              if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+                particles[p].position[0] =
+                  particles[p].previous_positions[0][0] +
+                  particles[p].velocity[0] * dt;
+              else
+                particles[p].position[0] += particles[p].velocity[0] * dt;
+              if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+                particles[p].position[1] =
+                  particles[p].previous_positions[0][1] +
+                  particles[p].velocity[1] * dt;
+              else
+                particles[p].position[1] += particles[p].velocity[1] * dt;
               particles[p].orientation[0] = particles[p].omega[0] * dt;
               particles[p].orientation[1] = particles[p].omega[1] * dt;
               particles[p].orientation[2] = particles[p].omega[2] * dt;
 
               if constexpr (dim == 3)
                 {
-                  particles[p].position[2] += particles[p].velocity[2] * dt;
+                  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+                    particles[p].position[2] =
+                      particles[p].previous_positions[0][2] +
+                      particles[p].velocity[2] * dt;
+                  else
+                    particles[p].position[2] += particles[p].velocity[2] * dt;
                 }
             }
           if (particles[p].position != particles[p].previous_positions[0] ||
@@ -2677,6 +2974,17 @@ FluidDynamicsSharp<dim>::integrate_particles()
         }
       particle_residual = 0;
     }
+  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+    for (unsigned int p = 0; p < particles.size(); ++p)
+      {
+        const Point<dim> wrapped =
+          sharp_ib_periodic_boundaries.wrap_point(particles[p].position,
+                                                  periodic_domain_lower,
+                                                  periodic_domain_upper);
+        particle_position_wrap[p] = wrapped - particles[p].position;
+        if (particle_position_wrap[p].norm_square() != 0.)
+          particles[p].set_position(wrapped);
+      }
 }
 
 
@@ -2776,6 +3084,15 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
   table_all_p.clear();
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
+      // Apply the accepted translation uniformly before inserting the new
+      // position. Older history entries may legitimately span many periods.
+      if (sharp_ib_periodic_boundaries.is_periodic_enabled() &&
+          p < particle_position_wrap.size())
+        {
+          sharp_ib_periodic_boundaries.translate_history(
+            particles[p].previous_positions, particle_position_wrap[p]);
+          particle_position_wrap[p].clear();
+        }
       for (unsigned int i = particles[p].previous_velocity.size() - 1; i > 0;
            --i)
         {
@@ -3129,9 +3446,10 @@ FluidDynamicsSharp<dim>::build_ib_particle_handler(
       typename DoFHandler<dim>::active_cell_iterator cell;
       try
         {
-          cell =
-            LetheGridTools::find_cell_around_point_with_tree(*this->dof_handler,
-                                                             particle.position);
+          cell = LetheGridTools::find_cell_around_point_with_tree(
+            *this->dof_handler,
+            particle.position,
+            sharp_ib_periodic_boundaries.is_periodic_enabled());
         }
       catch (...)
         {
@@ -3428,9 +3746,82 @@ FluidDynamicsSharp<dim>::sharp_edge()
           Point<dim> pressure_reference_location =
             particles[p].pressure_location + particles[p].position;
 
+          if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+            {
+              // Select the same interior pressure node on every rank. The
+              // first owned vertex of the reference cell can lie outside the
+              // particle, and changes when the mesh is repartitioned.
+              // Order candidates by squared distance, then coordinates and
+              // global DoF index to break ties consistently across ranks.
+              using Candidate =
+                std::pair<double,
+                          std::pair<Point<dim>, types::global_dof_index>>;
+              Candidate  best{std::numeric_limits<double>::max(),
+                              {Point<dim>(), numbers::invalid_dof_index}};
+              const auto less = [](const Candidate &a, const Candidate &b) {
+                if (a.first != b.first)
+                  return a.first < b.first;
+                for (int d = 0; d < dim; ++d)
+                  if (a.second.first[d] != b.second.first[d])
+                    return a.second.first[d] < b.second.first[d];
+                return a.second.second < b.second.second;
+              };
+              const auto pressure_frames = get_periodic_particle_shifts(
+                particles[p].position, particle_support_radius(particles[p]));
+              for (const auto &candidate_cell : cell_iterator)
+                if (candidate_cell->is_locally_owned())
+                  {
+                    candidate_cell->get_dof_indices(local_dof_indices);
+                    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                      {
+                        const auto index = local_dof_indices[i];
+                        if (this->fe->system_to_component_index(i).first !=
+                              dim ||
+                            !this->locally_owned_dofs.is_element(index) ||
+                            this->zero_constraints.is_constrained(index) ||
+                            this->nonzero_constraints.is_constrained(index))
+                          continue;
+                        for (const auto &shift : pressure_frames)
+                          {
+                            const Point<dim> point =
+                              support_points.at(index) - shift;
+                            if (particles[p].get_levelset(point) >= 0.0)
+                              continue;
+                            Candidate candidate{point.distance_square(
+                                                  pressure_reference_location),
+                                                {support_points.at(index),
+                                                 index}};
+                            if (less(candidate, best))
+                              best = candidate;
+                          }
+                      }
+                  }
+              const auto candidates =
+                Utilities::MPI::all_gather(this->mpi_communicator, best);
+              for (const auto &candidate : candidates)
+                if (less(candidate, best))
+                  best = candidate;
+              AssertThrow(best.second.second != numbers::invalid_dof_index,
+                          ExcMessage(
+                            "No unconstrained pressure node lies inside "
+                            "the periodic particle. Refine the mesh."));
+              const auto index = best.second.second;
+              if (this->locally_owned_dofs.is_element(index))
+                {
+                  const double scale = std::pow(dr, dim) / dt;
+                  this->system_matrix.clear_row(index);
+                  this->system_matrix.add(index, index, scale);
+                  this->system_rhs(index) =
+                    -this->evaluation_point(index) * scale;
+                }
+              continue;
+            }
+
 
           const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
-            *this->dof_handler, pressure_reference_location);
+            *this->dof_handler,
+            pressure_reference_location,
+            sharp_ib_periodic_boundaries.is_periodic_enabled());
 
           if (cell->is_locally_owned())
             {
@@ -3493,25 +3884,51 @@ FluidDynamicsSharp<dim>::sharp_edge()
         {
           // Check if the cell_cut is cut or not by the IB and what the particle
           // the cut the cell_cut. If the particle is cut
-          bool cell_is_cut;
-          // The id of the particle that cut the cell_cut. Returns 0 if the
-          // cell_cut is not cut.We also check the number of particles that cut
-          // the cell_cut. If multiple particles cut the cell_cut, the dummy
-          // DOFs of pressure will be treated differently to avoid
-          // self-reference.
-          unsigned int              ib_particle_id;
-          std::vector<unsigned int> count_particles;
-          std::tie(cell_is_cut, ib_particle_id, count_particles) =
-            cut_cells_map[cell_cut];
-          bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
+          const auto &cut_cell_info = cut_cells_map[cell_cut];
+          const auto &overconstrained_cell_info =
             overconstrained_fluid_cell_map[cell_cut];
-          if (cell_is_overconstrained)
-            std::tie(cell_is_overconstrained, ib_particle_id, std::ignore) =
-              overconstrained_fluid_cell_map[cell_cut];
+          bool cell_is_cut = cut_cell_info.is_cut;
+          bool cell_is_overconstrained =
+            overconstrained_cell_info.is_overconstrained;
+          unsigned int ib_particle_id =
+            cell_is_overconstrained ? overconstrained_cell_info.particle_id :
+                                      cut_cell_info.primary_particle_id;
+          std::vector<unsigned int> cutting_particle_ids;
+          cutting_particle_ids.reserve(
+            cut_cell_info.cutting_particle_frames.size());
+          for (const auto &particle_frame :
+               cut_cell_info.cutting_particle_frames)
+            {
+              if (std::ranges::none_of(cutting_particle_ids,
+                                       [&particle_frame](
+                                         const unsigned int particle_id) {
+                                         return particle_id ==
+                                                particle_frame.particle_id;
+                                       }))
+                {
+                  cutting_particle_ids.push_back(particle_frame.particle_id);
+                }
+            }
 
           if (cell_is_cut || cell_is_overconstrained)
             {
+              // Reuse the periodic frame stored during cut-cell
+              // classification instead of re-guessing the wrapped particle
+              // image from the cell barycenter.
+              const Point<dim> saved_particle_pos_for_periodic =
+                particles[ib_particle_id].position;
+              const Tensor<1, dim> periodic_shift_for_cell =
+                cell_is_overconstrained ?
+                  overconstrained_cell_info.periodic_shift :
+                  get_periodic_shift_for_particle_frame(cut_cell_info,
+                                                        ib_particle_id);
+              const int periodic_frame_index =
+                get_periodic_frame_index(periodic_shift_for_cell);
+              set_particle_position_from_periodic_shift(
+                ib_particle_id,
+                saved_particle_pos_for_periodic,
+                periodic_shift_for_cell);
+
               double sum_line = 0;
               fe_values.reinit(cell_cut);
 
@@ -3528,7 +3945,13 @@ FluidDynamicsSharp<dim>::sharp_edge()
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
                   unsigned int global_index_overwrite = local_dof_indices[i];
-                  if (ib_done[global_index_overwrite].first == false)
+                  const unsigned int cache_particle_id =
+                    periodic_frame_index != 0 ? ib_particle_id : 0;
+                  const PeriodicFrameDofCacheKey stencil_cache_key = {
+                    global_index_overwrite,
+                    cache_particle_id,
+                    periodic_frame_index};
+                  if (ib_done.find(stencil_cache_key) == ib_done.end())
                     {
                       const int component_i =
                         this->fe->system_to_component_index(i).first;
@@ -3544,7 +3967,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                         (dof_is_inside) && (component_i == dim) &&
                         (this->simulation_parameters.particlesParameters
                            ->assemble_navier_stokes_inside == false) &&
-                        count_particles.size() < 2;
+                        cutting_particle_ids.size() < 2;
 
                       // Reapply the zero and nonzero constraints.
                       if ((this->zero_constraints.is_constrained(
@@ -3575,25 +3998,13 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                   interpolation +=
                                     this->evaluation_point(col) * entries;
 
-                                  try
-                                    {
-                                      this->system_matrix.add(
-                                        local_dof_indices[i],
-                                        col,
-                                        entries * sum_line);
-                                    }
-                                  catch (...)
-                                    {
-                                      //  If we are here, an error happens
-                                      //  when trying to fill the line in
-                                      //  the matrix.
-                                      // For example, this can occur if a
-                                      // particle is close to a wall and we
-                                      // are trying to impose the equation
-                                      // on a DOF that as a boundary
-                                      // condition applied to it. As such,
-                                      // we discard these errors.
-                                    }
+                                  // Expand constrained columns explicitly so
+                                  // Sharp-IB equations remain valid when the
+                                  // column DoF is a periodic slave.
+                                  add_matrix_entry_with_periodic_expansion(
+                                    local_dof_indices[i],
+                                    col,
+                                    entries * sum_line);
                                 }
                               this->system_matrix.add(local_dof_indices[i],
                                                       local_dof_indices[i],
@@ -3635,25 +4046,11 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                   interpolation +=
                                     this->evaluation_point(col_non_zero) *
                                     entries_non_zero;
-                                  try
-                                    {
-                                      this->system_matrix.add(
-                                        local_dof_indices[i],
-                                        col_non_zero,
-                                        entries_non_zero * sum_line);
-                                    }
-                                  catch (...)
-                                    {
-                                      //  If we are here, an error happens
-                                      //  when trying to fill the line in
-                                      //  the matrix.
-                                      // For example, this can occur if a
-                                      // particle is close to a wall and we
-                                      // are trying to impose the equation
-                                      // on a DOF that as a boundary
-                                      // condition applied to it. As such,
-                                      // we discard these errors.
-                                    }
+
+                                  add_matrix_entry_with_periodic_expansion(
+                                    local_dof_indices[i],
+                                    col_non_zero,
+                                    entries_non_zero * sum_line);
                                 }
                               this->system_matrix.add(local_dof_indices[i],
                                                       local_dof_indices[i],
@@ -3719,38 +4116,47 @@ FluidDynamicsSharp<dim>::sharp_edge()
                               support_points[local_dof_indices[i]],
                               cell_cut);
                           typename DoFHandler<dim>::active_cell_iterator
-                               stencil_cell;
-                          bool particle_close_to_wall = false;
+                                         stencil_cell;
+                          bool           particle_close_to_wall = false;
+                          Tensor<1, dim> stencil_periodic_shift;
                           (void)particle_close_to_wall;
-                          try
+                          if (sharp_ib_periodic_boundaries
+                                .is_periodic_enabled())
+                            stencil_cell = find_periodic_stencil_cell(
+                              cell_cut,
+                              point_to_find_cell,
+                              stencil_periodic_shift);
+                          else
                             {
-                              stencil_cell = LetheGridTools::
-                                find_cell_around_point_with_neighbors<dim>(
-                                  *this->dof_handler,
-                                  vertices_to_cell,
-                                  cell_cut,
-                                  point_to_find_cell);
+                              try
+                                {
+                                  stencil_cell = LetheGridTools::
+                                    find_cell_around_point_with_neighbors<dim>(
+                                      *this->dof_handler,
+                                      vertices_to_cell,
+                                      cell_cut,
+                                      point_to_find_cell);
+                                }
+                              catch (...)
+                                {
+                                  stencil_cell = this->dof_handler->end();
+                                }
                             }
-                          catch (...)
+                          if (stencil_cell == this->dof_handler->end())
                             {
-                              // If we are here, the DOF is on a boundary.
+                              // Preserve the nonperiodic wall fallback.
                               particle_close_to_wall = true;
                               stencil_cell           = cell_cut;
-                              // If a boundary condition is already applied to
-                              // this DOF we skip it otherwise we impose a value
-                              // base on the velocity of the particle.
                               if (this->zero_constraints.is_constrained(
                                     global_index_overwrite) ||
                                   this->nonzero_constraints.is_constrained(
                                     global_index_overwrite))
-                                {
-                                  continue;
-                                }
+                                continue;
                             }
 
                           stencil_cell->get_dof_indices(local_dof_indices_2);
-                          ib_done[global_index_overwrite] =
-                            std::make_pair(true, stencil_cell);
+                          ib_done[stencil_cache_key] = {stencil_cell,
+                                                        stencil_periodic_shift};
 
                           bool skip_stencil = false;
 
@@ -3777,17 +4183,12 @@ FluidDynamicsSharp<dim>::sharp_edge()
                             point_in_cell = cell_cut->point_inside(
                               support_points[local_dof_indices[i]]);
 
-                          bool         dof_is_dummy = false;
-                          bool         cell2_is_cut;
-                          unsigned int ib_particle_id_2;
-                          std::tie(cell2_is_cut,
-                                   ib_particle_id_2,
-                                   std::ignore) = cut_cells_map[stencil_cell];
-                          bool cell2_is_overconstrained;
-                          std::tie(cell2_is_overconstrained,
-                                   std::ignore,
-                                   std::ignore) =
-                            overconstrained_fluid_cell_map[stencil_cell];
+                          bool       dof_is_dummy = false;
+                          const bool cell2_is_cut =
+                            cut_cells_map[stencil_cell].is_cut;
+                          bool cell2_is_overconstrained =
+                            overconstrained_fluid_cell_map[stencil_cell]
+                              .is_overconstrained;
                           if (cell2_is_cut || point_in_cell)
                             {
                               dof_is_dummy = true;
@@ -3820,12 +4221,21 @@ FluidDynamicsSharp<dim>::sharp_edge()
                           // boundaries in order to define the correction
 
                           // Define the unit cell_cut points for the points
-                          // used in the stencil.
+                          // used in the stencil. If the stencil cell was
+                          // found via periodic wrapping, shift the
+                          // interpolation points by the same offset so
+                          // they are in the stencil cell's coordinate frame.
                           std::vector<Point<dim>>
                             unite_cell_interpolation_points(ib_coef.size());
-                          unite_cell_interpolation_points[0] =
-                            this->mapping->transform_real_to_unit_cell(
-                              stencil_cell, point);
+                          {
+                            Point<dim> shifted_point;
+                            for (int d = 0; d < dim; ++d)
+                              shifted_point[d] =
+                                point[d] + stencil_periodic_shift[d];
+                            unite_cell_interpolation_points[0] =
+                              this->mapping->transform_real_to_unit_cell(
+                                stencil_cell, shifted_point);
+                          }
                           for (unsigned int j = 1; j < ib_coef.size(); ++j)
                             {
                               // The extrapolation can be disabled for debugging
@@ -3833,14 +4243,28 @@ FluidDynamicsSharp<dim>::sharp_edge()
                               // since it is a core part of this solver
                               if (this->simulation_parameters
                                     .particlesParameters->enable_extrapolation)
-                                unite_cell_interpolation_points[j] =
-                                  this->mapping->transform_real_to_unit_cell(
-                                    stencil_cell, interpolation_points[j - 1]);
+                                {
+                                  Point<dim> shifted_interpolation_point;
+                                  for (int d = 0; d < dim; ++d)
+                                    shifted_interpolation_point[d] =
+                                      interpolation_points[j - 1][d] +
+                                      stencil_periodic_shift[d];
+                                  unite_cell_interpolation_points[j] =
+                                    this->mapping->transform_real_to_unit_cell(
+                                      stencil_cell,
+                                      shifted_interpolation_point);
+                                }
                               else
-                                unite_cell_interpolation_points[j] =
-                                  this->mapping->transform_real_to_unit_cell(
-                                    stencil_cell,
-                                    support_points[local_dof_indices[i]]);
+                                {
+                                  Point<dim> shifted_support_point;
+                                  for (int d = 0; d < dim; ++d)
+                                    shifted_support_point[d] =
+                                      support_points[local_dof_indices[i]][d] +
+                                      stencil_periodic_shift[d];
+                                  unite_cell_interpolation_points[j] =
+                                    this->mapping->transform_real_to_unit_cell(
+                                      stencil_cell, shifted_support_point);
+                                }
                             }
 
                           std::vector<double> local_interp_sol(ib_coef.size());
@@ -3895,26 +4319,12 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                             this->evaluation_point(
                                               local_dof_indices_2[j]);
                                         }
-                                      // update the matrix.
-                                      try
-                                        {
-                                          this->system_matrix.add(
-                                            global_index_overwrite,
-                                            local_dof_indices_2[j],
-                                            local_matrix_entry * sum_line);
-                                        }
-                                      catch (...)
-                                        {
-                                          //  If we are here, an error happens
-                                          //  when trying to fill the line in
-                                          //  the matrix.
-                                          // For example, this can occur if a
-                                          // particle is close to a wall and we
-                                          // are trying to impose the equation
-                                          // on a DOF that as a boundary
-                                          // condition applied to it. As such,
-                                          // we discard these errors.
-                                        }
+                                      // Update the matrix using the expanded
+                                      // column constraint, if any.
+                                      add_matrix_entry_with_periodic_expansion(
+                                        global_index_overwrite,
+                                        local_dof_indices_2[j],
+                                        local_matrix_entry * sum_line);
                                     }
                                 }
                             }
@@ -3953,25 +4363,10 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                     {
                                       v_ib = this->evaluation_point(
                                         local_dof_indices[k]);
-                                      try
-                                        {
-                                          this->system_matrix.add(
-                                            global_index_overwrite,
-                                            local_dof_indices[k],
-                                            -1 * sum_line);
-                                        }
-                                      catch (...)
-                                        {
-                                          //  If we are here, an error happens
-                                          //  when trying to fill the line in
-                                          //  the matrix.
-                                          // For example, this can occur if a
-                                          // particle is close to a wall and we
-                                          // are trying to impose the equation
-                                          // on a DOF that as a boundary
-                                          // condition applied to it. As such,
-                                          // we discard these errors.
-                                        }
+                                      add_matrix_entry_with_periodic_expansion(
+                                        global_index_overwrite,
+                                        local_dof_indices[k],
+                                        -1 * sum_line);
                                       break;
                                     }
                                 }
@@ -4066,17 +4461,12 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                           // check if this cell_cut is cut if
                                           // it's not cut this dof must not
                                           // be overwritten
-                                          bool cell_is_cut;
-                                          std::tie(cell_is_cut,
-                                                   std::ignore,
-                                                   std::ignore) =
-                                            cut_cells_map[neighbor_cell];
-                                          bool cell_is_overconstrained;
-                                          std::tie(cell_is_overconstrained,
-                                                   std::ignore,
-                                                   std::ignore) =
+                                          const bool cell_is_cut =
+                                            cut_cells_map[neighbor_cell].is_cut;
+                                          const bool cell_is_overconstrained =
                                             overconstrained_fluid_cell_map
-                                              [neighbor_cell];
+                                              [neighbor_cell]
+                                                .is_overconstrained;
                                           if (cell_is_cut == false &&
                                               cell_is_overconstrained == false)
                                             {
@@ -4103,6 +4493,11 @@ FluidDynamicsSharp<dim>::sharp_edge()
                         }
                     }
                 }
+
+              if (particles[ib_particle_id].position !=
+                  saved_particle_pos_for_periodic)
+                particles[ib_particle_id].set_position(
+                  saved_particle_pos_for_periodic);
             }
         }
     }
@@ -4250,11 +4645,9 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
   // We check if the cell is cut by the IB and if it is overconstrained. If the
   // cell is cut or overconstrained, we adjust the copy data so that the
   // assemblers don't execute work on this cell.
-  bool cell_is_cut                                = false;
-  std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
-  bool cell_is_overconstrained;
-  std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
-    overconstrained_fluid_cell_map[cell];
+  bool cell_is_cut = cut_cells_map[cell].is_cut;
+  bool cell_is_overconstrained =
+    overconstrained_fluid_cell_map[cell].is_overconstrained;
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
 
@@ -4292,8 +4685,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
 
   // check if we assemble the NS equation inside the particle or the Laplacian
   // of the variables
-  bool cell_is_inside;
-  std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+  bool cell_is_inside = cells_inside_map[cell].is_inside;
   if (cell_is_inside && this->simulation_parameters.particlesParameters
                             ->assemble_navier_stokes_inside == false)
     {
@@ -4341,12 +4733,10 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
   // We check if the cell is cut by the IB and if it is overconstrained. If the
   // cell is cut or overconstrained, we adjust the copy data so that the
   // assemblers don't execute work on this cell.
-  bool cell_is_cut                                = false;
-  std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
+  bool cell_is_cut = cut_cells_map[cell].is_cut;
 
-  bool cell_is_overconstrained;
-  std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
-    overconstrained_fluid_cell_map[cell];
+  bool cell_is_overconstrained =
+    overconstrained_fluid_cell_map[cell].is_overconstrained;
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
 
@@ -4384,8 +4774,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
 
   // check if we assemble the NS equation inside the particle or the Laplacian
   // of the variables
-  bool cell_is_inside;
-  std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+  bool cell_is_inside = cells_inside_map[cell].is_inside;
   if (cell_is_inside && this->simulation_parameters.particlesParameters
                             ->assemble_navier_stokes_inside == false)
     {
@@ -4436,6 +4825,14 @@ FluidDynamicsSharp<dim>::write_checkpoint()
       TableHandler  particles_information_table;
       std::string   filename = prefix + ".ib_particles";
       std::ofstream output(filename.c_str());
+      if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+        {
+          std::ofstream contacts_output(prefix + ".ib_contacts");
+          AssertThrow(contacts_output,
+                      ExcMessage("Cannot write Sharp-IB contact checkpoint."));
+          ib_dem.write_contact_history(contacts_output);
+        }
+
       this->simulation_control->save(prefix);
       ib_particles_pvdhandler.save(prefix + ".ib_particles");
 
@@ -4777,6 +5174,14 @@ FluidDynamicsSharp<dim>::read_checkpoint()
       cfd_dem_parameters.dem_parameters.boundary_conditions),
     this->mpi_communicator,
     particles);
+  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+    {
+      // Older checkpoints have no spring-history file and retain legacy empty
+      // history.
+      std::ifstream contacts_input(prefix + ".ib_contacts");
+      if (contacts_input)
+        ib_dem.read_contact_history(contacts_input);
+    }
   ib_dem.update_contact_candidates();
   // Finish the time step of the particles.
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
@@ -5097,7 +5502,24 @@ FluidDynamicsSharp<dim>::solve()
     this->simulation_parameters.boundary_conditions.periodic_boundaries);
 
   define_particles();
+  initialize_sharp_ib_periodic_configuration();
   this->setup_dofs();
+  update_sharp_ib_periodic_geometry();
+  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+    for (auto &particle : particles)
+      {
+        const Point<dim> normalized =
+          sharp_ib_periodic_boundaries.wrap_point(particle.position,
+                                                  periodic_domain_lower,
+                                                  periodic_domain_upper);
+        const Tensor<1, dim> shift = normalized - particle.position;
+        if (shift.norm_square() != 0.)
+          {
+            particle.set_position(normalized);
+            sharp_ib_periodic_boundaries.translate_history(
+              particle.previous_positions, shift);
+          }
+      }
 
   if (this->simulation_parameters.restart_parameters.restart == false)
     {
@@ -5191,6 +5613,397 @@ FluidDynamicsSharp<dim>::solve()
     }
 
   this->finish_simulation();
+}
+
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::setup_dofs_fd()
+{
+  // DoF redistribution also invalidates cached cells without a mesh change.
+  periodic_stencil_search.reinit(*this->dof_handler);
+  // Call the base class to do all standard setup (DoF distribution,
+  // constraints, vector reinit, sparsity pattern, matrix reinit).
+  FluidDynamicsMatrixBased<dim>::setup_dofs_fd();
+
+  // If periodic boundaries are not enabled, the standard sparsity
+  // pattern (built with keep_constrained_dofs=false) is sufficient.
+  if (!sharp_ib_periodic_boundaries.is_periodic_enabled())
+    return;
+
+  // Retain condensed element couplings and add only the slave-to-master
+  // entries needed by the Sharp constraint equations.
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+
+  DynamicSparsityPattern dsp(this->locally_relevant_dofs);
+  DoFTools::make_sparsity_pattern(*this->dof_handler,
+                                  dsp,
+                                  nonzero_constraints,
+                                  false);
+
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+
+  // Constrained diagonals already exist; add their master columns.
+  for (auto dof = this->locally_relevant_dofs.begin();
+       dof != this->locally_relevant_dofs.end();
+       ++dof)
+    {
+      const auto *entries = this->zero_constraints.get_constraint_entries(*dof);
+      if (entries == nullptr)
+        entries = this->nonzero_constraints.get_constraint_entries(*dof);
+
+      if (entries != nullptr && !entries->empty())
+        {
+          // Off-diagonal (slave, master) entries so the constraint
+          // equation A(slave, master) = weight can be written.
+          for (const auto &[master_dof, weight] : *entries)
+            {
+              (void)weight;
+              dsp.add(*dof, master_dof);
+            }
+        }
+    }
+
+  SparsityTools::distribute_sparsity_pattern(
+    dsp,
+    this->dof_handler->locally_owned_dofs(),
+    this->mpi_communicator,
+    this->locally_relevant_dofs);
+
+  this->system_matrix.reinit(this->locally_owned_dofs,
+                             this->locally_owned_dofs,
+                             dsp,
+                             this->mpi_communicator);
+}
+
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::initialize_sharp_ib_periodic_configuration()
+{
+  sharp_ib_periodic_boundaries.initialize(
+    cfd_dem_parameters.dem_parameters.boundary_conditions,
+    this->simulation_parameters.boundary_conditions,
+    this->pcout);
+  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+    for (const auto &particle : particles)
+      {
+        const auto *composite =
+          dynamic_cast<const CompositeShape<dim> *>(particle.shape.get());
+        AssertThrow(
+          !dynamic_cast<const RBFShape<dim> *>(particle.shape.get()) &&
+            !(composite && composite->contains_rbf()),
+          ExcMessage(
+            "RBF shapes, including RBF constituents of composite shapes, "
+            "are not yet supported with periodic Sharp-IB boundaries."));
+      }
+
+  // The DEM exporter recomputes overlap from primary positions and therefore
+  // omits contacts across the seam. Reject misleading force-chain output.
+  AssertThrow(
+    !sharp_ib_periodic_boundaries.is_periodic_enabled() ||
+      !cfd_dem_parameters.dem_parameters.post_processing.force_chains,
+    ExcMessage(
+      "Force-chain output is not supported for periodic Sharp-IB particles."));
+}
+
+
+template <int dim>
+typename DoFHandler<dim>::active_cell_iterator
+FluidDynamicsSharp<dim>::find_periodic_stencil_cell(
+  const typename DoFHandler<dim>::active_cell_iterator &seed,
+  const Point<dim>                                     &point,
+  Tensor<1, dim>                                       &shift)
+{
+  const Point<dim> wrapped =
+    sharp_ib_periodic_boundaries.wrap_point(point,
+                                            periodic_domain_lower,
+                                            periodic_domain_upper);
+  shift = wrapped - point;
+  const auto cell =
+    periodic_stencil_search.find(wrapped, seed, vertices_to_cell);
+  AssertThrow(cell != this->dof_handler->end() || wrapped == point,
+              ExcMessage(
+                "Periodic Sharp stencil is unavailable on this rank."));
+  return cell;
+}
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::update_sharp_ib_periodic_geometry()
+{
+  if (!sharp_ib_periodic_boundaries.is_periodic_enabled())
+    return;
+
+  const unsigned int periodic_direction =
+    sharp_ib_periodic_boundaries.get_periodic_direction();
+
+  // Sharp-IB currently supports one periodic pair on opposite extremal faces
+  // of a box-like domain. Under that constraint, the wrap length is the global
+  // min/max coordinate span in the periodic direction, so it can be recovered
+  // from the mesh-wide vertex extrema below.
+  //
+  // If support is ever extended to periodic faces that are not the geometric
+  // extrema in that direction, these bounds must instead be computed directly
+  // from the configured periodic boundary ids.
+  periodic_domain_lower = std::numeric_limits<double>::max();
+  periodic_domain_upper = std::numeric_limits<double>::lowest();
+
+  for (const auto &cell : this->triangulation->active_cell_iterators())
+    {
+      for (unsigned int vertex_index = 0;
+           vertex_index < GeometryInfo<dim>::vertices_per_cell;
+           ++vertex_index)
+        {
+          const Point<dim> &vertex = cell->vertex(vertex_index);
+          periodic_domain_lower =
+            std::min(periodic_domain_lower, vertex[periodic_direction]);
+          periodic_domain_upper =
+            std::max(periodic_domain_upper, vertex[periodic_direction]);
+        }
+    }
+
+  periodic_domain_lower =
+    Utilities::MPI::min(periodic_domain_lower, this->mpi_communicator);
+  periodic_domain_upper =
+    Utilities::MPI::max(periodic_domain_upper, this->mpi_communicator);
+
+  const double length = periodic_domain_upper - periodic_domain_lower;
+  AssertThrow(std::isfinite(length) && length > 0.,
+              ExcMessage("Sharp-IB requires a positive finite periodic span."));
+  const auto   ids = sharp_ib_periodic_boundaries.get_periodic_boundary_ids();
+  const double tolerance         = 1e-10 * length;
+  std::array<double, 2> face_min = {
+    {std::numeric_limits<double>::max(), std::numeric_limits<double>::max()}};
+  std::array<double, 2> face_max = {{std::numeric_limits<double>::lowest(),
+                                     std::numeric_limits<double>::lowest()}};
+  for (const auto &cell : this->triangulation->active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto face : cell->face_indices())
+        if (cell->face(face)->at_boundary())
+          for (unsigned int side = 0; side < 2; ++side)
+            if (cell->face(face)->boundary_id() ==
+                (side == 0 ? ids.first : ids.second))
+              for (const auto vertex : cell->face(face)->vertex_indices())
+                {
+                  const double x =
+                    cell->face(face)->vertex(vertex)[periodic_direction];
+                  face_min[side] = std::min(face_min[side], x);
+                  face_max[side] = std::max(face_max[side], x);
+                }
+  for (unsigned int side = 0; side < 2; ++side)
+    {
+      face_min[side] =
+        Utilities::MPI::min(face_min[side], this->mpi_communicator);
+      face_max[side] =
+        Utilities::MPI::max(face_max[side], this->mpi_communicator);
+      AssertThrow(
+        face_max[side] >= face_min[side] &&
+          face_max[side] - face_min[side] <= tolerance,
+        ExcMessage(
+          "Sharp-IB periodic faces must exist and be planar normal to the periodic direction."));
+    }
+  AssertThrow(
+    std::abs(std::min(face_min[0], face_min[1]) - periodic_domain_lower) <=
+        tolerance &&
+      std::abs(std::max(face_max[0], face_max[1]) - periodic_domain_upper) <=
+        tolerance,
+    ExcMessage(
+      "Sharp-IB periodic faces must be opposite extremal faces of the mesh."));
+
+  Tensor<1, dim> periodic_offset;
+  periodic_offset[periodic_direction] =
+    periodic_domain_upper - periodic_domain_lower;
+  sharp_ib_periodic_boundaries.set_periodic_offset(periodic_offset);
+  ib_dem.set_periodic_offset(periodic_offset);
+
+  this->pcout << "  Periodic domain bounds [" << periodic_domain_lower << ", "
+              << periodic_domain_upper << "] in direction "
+              << periodic_direction << std::endl;
+  this->pcout << "  Periodic offset: " << periodic_offset << std::endl;
+}
+
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::add_matrix_entry_with_periodic_expansion(
+  const types::global_dof_index row_dof,
+  const types::global_dof_index col_dof,
+  const double                  value)
+{
+  // Sharp-IB equations are assembled row-wise. Never write to a non-owned row:
+  // nonlocal row inserts are not guaranteed and can make parallel matrices
+  // rank-dependent.
+  if (!this->locally_owned_dofs.is_element(row_dof))
+    return;
+
+  if (!sharp_ib_periodic_boundaries.is_periodic_enabled())
+    {
+      // Retain upstream nonperiodic assembly, including its handling of
+      // entries absent from the condensed sparsity pattern.
+      try
+        {
+          this->system_matrix.add(row_dof, col_dof, value);
+        }
+      catch (...)
+        {}
+      return;
+    }
+
+  // When sharp_edge() writes IB stencil or constraint equations, the column
+  // DoF may be a periodic slave whose entry is not in the sparsity pattern
+  // (built with keep_constrained_dofs=false). We therefore expand COLUMN
+  // constraints explicitly so the custom Sharp-IB row writes the same master
+  // columns that deal.II would use for standard constrained assembly.
+  //
+  // Keep the requested row: sharp_edge() also writes constraint equations on
+  // slave rows. All resulting entries must already exist in the matrix graph.
+
+  // Check if the column DoF is constrained (periodic or hanging node)
+  bool col_is_constrained = this->zero_constraints.is_constrained(col_dof) ||
+                            this->nonzero_constraints.is_constrained(col_dof);
+
+  if (!col_is_constrained)
+    {
+      this->system_matrix.add(row_dof, col_dof, value);
+    }
+  else
+    {
+      // For x_col = sum_i(weight_i * x_master_i), add weight_i * value to
+      // each master column. This helper only updates the matrix; sharp_edge()
+      // constructs the residual separately.
+
+      const auto *entries =
+        this->zero_constraints.get_constraint_entries(col_dof);
+
+      if (entries == nullptr)
+        entries = this->nonzero_constraints.get_constraint_entries(col_dof);
+
+      if (entries != nullptr)
+        {
+          for (const auto &entry : *entries)
+            {
+              const types::global_dof_index master_col = entry.first;
+              const double                  weight     = entry.second;
+              this->system_matrix.add(row_dof, master_col, weight * value);
+            }
+        }
+      else
+        {
+          this->system_matrix.add(row_dof, col_dof, value);
+        }
+    }
+}
+
+
+template <int dim>
+std::vector<Point<dim>>
+FluidDynamicsSharp<dim>::get_periodic_particle_images(
+  const Point<dim> &particle_position,
+  const double      particle_radius) const
+{
+  return sharp_ib_periodic_boundaries.generate_periodic_image_points(
+    particle_position,
+    particle_radius,
+    periodic_domain_lower,
+    periodic_domain_upper);
+}
+
+
+template <int dim>
+std::vector<Tensor<1, dim>>
+FluidDynamicsSharp<dim>::get_periodic_particle_shifts(
+  const Point<dim> &particle_position,
+  const double      support_radius) const
+{
+  std::vector<Tensor<1, dim>> periodic_shifts(1, Tensor<1, dim>());
+
+  if (!sharp_ib_periodic_boundaries.is_periodic_enabled())
+    return periodic_shifts;
+
+  for (const auto &image_position :
+       get_periodic_particle_images(particle_position, support_radius))
+    {
+      periodic_shifts.push_back(image_position - particle_position);
+    }
+
+  return periodic_shifts;
+}
+
+
+template <int dim>
+int
+FluidDynamicsSharp<dim>::get_periodic_frame_index(
+  const Tensor<1, dim> &periodic_shift) const
+{
+  if (periodic_shift.norm_square() == 0.0 ||
+      !sharp_ib_periodic_boundaries.is_periodic_enabled())
+    return 0;
+
+  const unsigned int periodic_direction =
+    sharp_ib_periodic_boundaries.get_periodic_direction();
+
+  return static_cast<int>(
+    std::lround(periodic_shift[periodic_direction] /
+                (periodic_domain_upper - periodic_domain_lower)));
+}
+
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::set_particle_position_from_periodic_shift(
+  const unsigned int    particle_id,
+  const Point<dim>     &primary_particle_position,
+  const Tensor<1, dim> &periodic_shift)
+{
+  Point<dim> shifted_position = primary_particle_position;
+  shifted_position += periodic_shift;
+  if (particles[particle_id].position != shifted_position)
+    particles[particle_id].set_position(shifted_position);
+}
+
+
+template <int dim>
+Tensor<1, dim>
+FluidDynamicsSharp<dim>::get_periodic_shift_for_particle_frame(
+  const CutCellInfo &cut_cell_info,
+  const unsigned int particle_id) const
+{
+  for (const auto &particle_frame : cut_cell_info.cutting_particle_frames)
+    {
+      if (particle_frame.particle_id == particle_id)
+        return particle_frame.periodic_shift;
+    }
+
+  AssertThrow(false,
+              ExcMessage(
+                "Missing periodic frame metadata for a Sharp-IB cut cell. "
+                "The periodic shift used during cut-cell classification must "
+                "be available during assembly and force evaluation."));
+  return Tensor<1, dim>();
+}
+
+
+template <int dim>
+double
+FluidDynamicsSharp<dim>::particle_support_radius(
+  const IBParticle<dim> &particle) const
+{
+  // Rotations preserve this enclosing radius. The center offset is essential
+  // for composites whose reference point is not the bounding-box center.
+  return sharp_ib_periodic_boundaries.enclosing_radius(*particle.shape);
+}
+
+template <int dim>
+bool
+FluidDynamicsSharp<dim>::PeriodicFrameDofCacheKey::operator<(
+  const PeriodicFrameDofCacheKey &other) const
+{
+  return std::tie(dof_index, particle_id, periodic_frame_index) <
+         std::tie(other.dof_index,
+                  other.particle_id,
+                  other.periodic_frame_index);
 }
 
 // Pre-compile the 2D and 3D versopm solver to ensure that the library is

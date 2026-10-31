@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_gls_sharp_h
@@ -17,10 +17,22 @@
 #include <dem/visualization.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
+#include <fem-dem/sharp_ib_periodic_boundaries.h>
+#include <fem-dem/sharp_ib_stencil_search.h>
+
+#include <deal.II/base/numbers.h>
+#include <deal.II/base/point.h>
+#include <deal.II/base/tensor.h>
+#include <deal.II/base/types.h>
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <map>
+#include <set>
+#include <tuple>
 #include <unordered_set>
+#include <utility>
+#include <vector>
 
 using namespace dealii;
 
@@ -64,8 +76,24 @@ public:
     sharp_edge();
   }
 
+protected:
+  /**
+   * @brief Override to extend the sparsity pattern for periodic IB coupling.
+   *
+   * Condensed sparsity retains constrained diagonals but omits slave-to-master
+   * off-diagonals. Add those entries for the constraint rows written by
+   * sharp_edge(), without retaining all constrained element couplings.
+   */
+  void
+  setup_dofs_fd() override;
 
 private:
+  struct ParticlePeriodicFrame;
+  struct CutCellInfo;
+  struct OverconstrainedFluidCellInfo;
+  struct InsideCellInfo;
+  struct PeriodicFrameDofCacheKey;
+
   /**
    * @brief Assemble the local matrix for a given cell.
    *
@@ -198,36 +226,29 @@ private:
   }
 
   /**
-   * @brief
-   * Map the vertex index to the cell that includes that vertex.
-   * This map is used to find all the cell close to a specific vertex.
+   * @brief Build the vertex-to-cell map used by Sharp-IB cell searches.
    */
   void
   vertices_cell_mapping();
 
   /**
-   * @brief
-   * Defines the particle structure and value based on the parameter file.
-   * This structure gives access to the position, velocity, force and other
-   * proprieties of each IB particle. All the variables defined for each of the
-   * particle are described in the class: IBparticle. see:
-   * \include\core\ib_particle.h
+   * @brief Instantiate Sharp-IB particles from the parameter file.
    */
   void
   define_particles();
 
   /**
-   * @brief
-   * Evaluate the forces applied on each of the IB particle.
+   * @brief Evaluate hydrodynamic forces and torques on immersed-boundary
+   * particles.
    */
   void
   force_on_ib();
 
 
   /**
-   * @brief
-   * Modify the system matrix to impose IB condition using the sharp_edge
-   * approach. The detail of this approach are presented in : L. Barbeau, S.
+   * @brief Impose Sharp-IB constraints on the assembled fluid system.
+   *
+   * The details of this approach are presented in: L. Barbeau, S.
    * Étienne, C. Béguin & B. Blais, «Development of a high-order continuous
    * Galerkin sharp-interface immersed boundary method and its application to
    * incompressible flow problems,» Computers & Fluids, 2020, in press, ref.
@@ -237,25 +258,21 @@ private:
   sharp_edge();
 
   /**
-   * @brief
-   * Write in a specifique file for each of the paticles its forces, velocity,
-   * position at each time step.
+   * @brief Write per-particle force and motion history for Sharp-IB output.
    */
   void
   write_force_ib();
 
   /**
-   * @brief
-   * Integrate the particle velocity and position based on the forces and
-   * torques and applies the next value to the particle.
+   * @brief Advance particle translation and rotation using the current force
+   * and torque state.
    */
   void
   integrate_particles();
 
   /**
-   * @brief
-   * Store the solution of the particles dynamics parameters for integration.
-   * Defines the table to store the history of each of the particles.
+   * @brief Finalize the current particle time step and update particle history
+   * states.
    */
   void
   finish_time_step_particles();
@@ -322,24 +339,25 @@ private:
                            std::vector<double>   &properties) const;
 
   /**
-   * @brief
-   * Evaluate the L2 error on the computational domain if an analytical solution
-   * is given. This function is slightly different from its standard GLS
-   * counterpart as the cells that are cut by an immersed boundary should not be
-   * taken into account in the error evaluation. See "computation domain"
-   * definition in: L. Barbeau, S. Étienne, C. Béguin & B. Blais, «Development
-   * of a high-order continuous Galerkin sharp-interface immersed boundary
-   * method and its application to incompressible flow problems,» Computers &
-   * Fluids, 2020, in press, ref. CAF-D-20-0077
+   * @brief Evaluate the L2 error on the Sharp-IB computational domain.
+   *
+   * This function differs from the standard GLS counterpart because cells cut
+   * by immersed boundaries are excluded from the error evaluation. See the
+   * "computational domain" definition in: L. Barbeau, S. Étienne, C. Béguin &
+   * B. Blais, «Development of a high-order continuous Galerkin sharp-interface
+   * immersed boundary method and its application to incompressible flow
+   * problems,» Computers & Fluids, 2020, in press, ref. CAF-D-20-0077
+   *
+   * @return Pair of L2 errors for velocity and pressure.
    */
   std::pair<double, double>
   calculate_L2_error_particles();
 
 
   /**
-   * @brief
-   * Same function as its standard GLS counterpart but it used the error
-   * evaluation that takes into account the particle’s position.
+   * @brief Post-process Sharp-IB results using the Sharp-specific error and
+   * output paths.
+   * @param firstIter Whether this is the initial postprocessing call.
    */
   virtual void
   postprocess_fd(bool firstIter) override;
@@ -354,15 +372,16 @@ private:
   gather_output_hook() override;
 
   /**
-   * @brief
-   * Adapt the mesh around each immersed-boundary particle.
+   * @brief Adapt the mesh around each immersed-boundary particle.
+   *
    * The refinement zone is defined by a ring in 2D and a shell in 3D. The
    * outside and inside radius of this ring\shell are defined relative to the
    * particle radius by the immersed-boundary parameters
    * "refine mesh inside radius factor" and
    * "refine mesh outside radius factor". When enabled, distance-based
    * coarsening is also applied outside the corresponding coarsening threshold.
-   * @param initial_refinement A bool that indicates if this is the initial
+   *
+   * @param initial_refinement Whether this is the initial
    * refinement cycle.
    */
   void
@@ -370,36 +389,35 @@ private:
 
 
   /**
-   * @brief
-   *This function checks if all particles are spheres. If one of them is not,
-   *the code will use the regular generate_cut_cells function. If all particles
-   *are spheres, it uses the optimized_generate_cut_cells.
+   * @brief Check whether every Sharp-IB particle is spherical.
+   *
+   * The optimized path is currently disabled: this sets all_spheres to false
+   * so every particle uses the generic cut-cell classification.
    */
   void
   check_whether_all_particles_are_sphere();
+
   /**
-   * @brief
-   *This function creates a map (cut_cells_map) that indicates if a cell is
-   *cut, and the particle id of the particle that cut it.
+   * @brief Build cut-cell, inside-cell, and overconstrained-cell maps for the
+   * current particle state.
    */
   void
   generate_cut_cells_map();
 
   /**
-   * @brief
-   * This function is only applied if all particles are spheres.
-   * It creates two maps (cut_cells_map and cells_inside_map) to access the
-   * cells cut by particles and inside the particles, respectively. The map keys
-   * are the particle's IDs. The algorithm was optimized to reduce the cost of
-   * this step.
+   * @brief Build the optimized cut-cell maps used when all particles are
+   * spheres.
    */
   void
   optimized_generate_cut_cells_map();
 
   /**
-   * @brief
-   *This function abstracts the generation of cell candidates that possibly are
-   *cut
+   * @brief Determine whether a cell is a candidate inside-cell or cut-cell for
+   * a particle.
+   *
+   * @param cell Cell under consideration.
+   * @param p_id Particle index.
+   * @return Pair of flags `(cell_is_inside, cell_is_cut)`.
    */
   std::pair<bool, bool>
   generate_cut_cell_candidates(
@@ -407,17 +425,12 @@ private:
     const unsigned int                             p_id);
 
   /**
-   * @brief
-   * Return a bool to define if a cell is cut by an IB particle and the local
-   * DOFs of the cell for later us. If the cell is cut, the function will return
-   * the id of the particle that cut it, else it returns 0.
+   * @brief Check whether a cell is cut by an immersed-boundary particle.
    *
-   * @param cell , the cell that we verify whether it is cut or not.
-   *
-   * @param local_dof_indices, a container for the local dof indices used during the function call.
-   *
-   * @param support_points, a mapping of support points for the DOFs.
-   *
+   * @param cell Cell under consideration.
+   * @param local_dof_indices Local DoF indices for @p cell.
+   * @param support_points Support-point map for the flow DoFs.
+   * @return Tuple `(cell_is_cut, particle_id, local_dof_indices)`.
    */
   std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
   cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -425,17 +438,13 @@ private:
            std::map<types::global_dof_index, Point<dim>> &support_points);
 
   /**
-   * @brief
-   * Return a bool to define if a cell is cut by an IB.
-   * This function is built to handle special cases where the level set is
-   * always positive.
+   * @brief Check whether a cell is cut by a particle whose geometry does not
+   * provide a signed level-set test.
    *
-   * @param cell, the cell that we verify whether it is cut or not.
-   *
-   * @param support_points, a mapping of support points for the DOFs.
-   *
-   * @param p, the particle index of the particle used in the check
-   *
+   * @param cell Cell under consideration.
+   * @param support_points Support-point map for the flow DoFs.
+   * @param p Particle index used in the check.
+   * @return `true` if the cell is cut by particle @p p.
    */
   bool
   cell_cut_by_p_absolute_distance(
@@ -444,17 +453,13 @@ private:
     unsigned int                                          p);
 
   /**
-   * @brief
-   * Return a bool to define if a cell is contains inside an IB particle and the
-   * local DOFs of the cell for later us. If the cell is cut, the function will
-   * return the id of the particle, else it returns 0.
+   * @brief Check whether a cell lies fully inside an immersed-boundary
+   * particle.
    *
-   * @param cell , the cell that we verify whether it is cut or not.
-   *
-   * @param local_dof_indices, a container for the local dof indices used during the function call.
-   *
-   * @param support_points, a mapping of support points for the DOFs.
-   *
+   * @param cell Cell under consideration.
+   * @param local_dof_indices Local DoF indices for @p cell.
+   * @param support_points Support-point map for the flow DoFs.
+   * @return Tuple `(cell_is_inside, particle_id, local_dof_indices)`.
    */
   std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
   cell_inside(const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -464,8 +469,9 @@ private:
 
 
   /**
-   * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
-   * This function stores all the previous' particles states in one file. Each
+   * @brief Write a Sharp-IB checkpoint that supports simulation restart.
+   *
+   * This function stores all previous particle states in one file. Each
    * row corresponds to one particle state. The file is structured as follows:
    *
    *
@@ -482,57 +488,61 @@ private:
    * P1 state at time t-2dt
    *
    * etc
-   *
    */
-
   virtual void
   write_checkpoint() override;
-  /*
-   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart.
-   * See the description of the function write_checkpoint for more details about
-   * the file structure.
-   * */
+
+  /**
+   * @brief Read a Sharp-IB checkpoint and initialize a restart.
+   *
+   * See write_checkpoint() for the file structure.
+   */
   virtual void
   read_checkpoint() override;
 
 
-  /*
-   * @brief Read file to load particles. The file must contain the following information for each particle (the header must be defined accordingly):
+  /**
+   * @brief Read a particle file and populate the initial Sharp-IB particle
+   * state.
+   *
+   * The file must contain the following information for each particle (the
+   * header must be defined accordingly):
    * type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y
    * v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z
    * density inertia pressure_x pressure_y pressure_z youngs_modulus
    * restitution_coefficient friction_coefficient poisson_ratio
    * rolling_friction_coefficient
-   * */
+   */
   void
   load_particles_from_file();
 
   /**
    * @brief Regroup and organize the refinement process around the IB particle.
    *
-   * @param initial_refinement, A bool that indicate if this is the initial refinement.
+   * @param initial_refinement Whether this call performs the initial
+   * refinement before time stepping starts.
    */
   void
   refinement_control(const bool initial_refinement);
 
 
   /**
-* @brief
-Return a bool that describes  if a cell contains a specific point
-*
-* @param cell , The initial cell for which we want to check if the point is inside.
-*
-* @param point, The point that we wish to check
-*/
+   * @brief Check whether a point lies inside a given active cell.
+   *
+   * @param cell Active cell under consideration.
+   * @param point Point to test.
+   * @return `true` if @p point lies inside @p cell.
+   */
   bool
   point_inside_cell(const typename DoFHandler<dim>::active_cell_iterator &cell,
                     Point<dim> point);
 
   /**
-   * @brief A override of the get_current_residual to take into account the particles
-   * coupling residual.
+   * @brief Override the nonlinear residual to include particle-coupling
+   * residuals.
    *
-   * @return The maximum between the fluid residual and the particle residual time the scaling.
+   * @return The larger of the fluid residual and the particle residual scaled
+   * to the fluid nonlinear tolerance.
    */
   double
   get_current_residual() override
@@ -564,11 +574,152 @@ Return a bool that describes  if a cell contains a specific point
   }
 
   /**
-   * @brief
-   *This function updates the precalculations for every immersed particle
+   * @brief Update cached geometric data for every immersed particle.
    */
   void
   update_precalculations_for_ib();
+
+  /**
+   * @brief Validate and cache the periodic configuration used by Sharp-IB.
+   *
+   * Validate matching DEM/CFD boundaries, supported particle shapes and output
+   * options after particles are defined. Run before setup_dofs_fd() so matrix
+   * setup can include periodic Sharp-specific entries.
+   */
+  void
+  initialize_sharp_ib_periodic_configuration();
+
+  /**
+   * @brief Update periodic domain bounds and offset for the active mesh.
+   *
+   * This phase depends on the current triangulation and must be called after
+   * the mesh exists in its current refinement state.
+   */
+  void
+  update_sharp_ib_periodic_geometry();
+
+  /**
+   * @brief Wrap a periodic stencil query and search locally available cells.
+   * @param seed Cell cut by the particle, used for the nearby search.
+   * @param point Unwrapped stencil query.
+   * @param shift Translation applied to the query and interpolation points.
+   * @return Containing cell, or end() for an unwrapped wall fallback. Missing
+   * wrapped cells throw because substituting a wall stencil would be incorrect.
+   */
+  typename DoFHandler<dim>::active_cell_iterator
+  find_periodic_stencil_cell(
+    const typename DoFHandler<dim>::active_cell_iterator &seed,
+    const Point<dim>                                     &point,
+    Tensor<1, dim>                                       &shift);
+
+  // Independent of ib_done: cached geometry must never suppress row assembly.
+  SharpIBStencilSearch<dim> periodic_stencil_search;
+
+
+  /**
+   * @brief Add matrix entry, expanding column constraints for periodic DoFs.
+   *
+   * Expand constrained columns into their master columns while retaining the
+   * requested row. The caller must provide a matrix sparsity pattern containing
+   * the resulting entries; this helper does not allocate new couplings.
+   *
+   * sharp_edge() also writes constraint equations on slave rows, so expanding
+   * rows here would change which equation is imposed. Nonperiodic calls retain
+   * the existing insertion and exception-handling behavior.
+   *
+   * @param row_dof Global DoF index for matrix row
+   * @param col_dof Global DoF index for matrix column
+   * @param value Value to add to matrix entry
+   */
+  void
+  add_matrix_entry_with_periodic_expansion(
+    const types::global_dof_index row_dof,
+    const types::global_dof_index col_dof,
+    const double                  value);
+
+  /**
+   * @brief Get periodic images of a particle for refinement/coupling.
+   *
+   * Given a particle position and radius, returns a list of periodic image
+   * positions that may affect cells across the periodic boundary.
+   *
+   * @param particle_position Center position of particle
+   * @param particle_radius Radius of particle (or support radius for effect)
+   * @return Vector of periodic image positions (empty if no images needed)
+   */
+  std::vector<Point<dim>>
+  get_periodic_particle_images(const Point<dim> &particle_position,
+                               const double      particle_radius) const;
+
+  /**
+   * @brief Get the periodic shifts needed to evaluate all relevant particle
+   * frames for a given support region.
+   *
+   * The returned list always begins with the zero shift corresponding to the
+   * physical (primary) particle position. Callers must not prepend or skip
+   * this zero shift: iterating the full returned list covers both the primary
+   * frame and any periodic images that overlap the support region.
+   *
+   * When periodic boundaries are disabled or the support region does not cross
+   * the periodic boundary, the list contains only the zero shift.
+   *
+   * @param particle_position Particle centroid in the primary domain.
+   * @param support_radius Radius used to detect whether a periodic image can
+   * influence the current operation.
+   * @return List of periodic shifts, starting with the zero shift for the
+   * primary frame.
+   */
+  std::vector<Tensor<1, dim>>
+  get_periodic_particle_shifts(const Point<dim> &particle_position,
+                               const double      support_radius) const;
+
+  /**
+   * @brief Convert a periodic particle shift into a discrete cache-frame
+   * index.
+   *
+   * Cache identities use the signed integer number of periods translated.
+   * This also distinguishes images of composite constituents located more
+   * than one period from the particle reference point.
+   *
+   * @param periodic_shift Translation relative to the primary position.
+   * @return Signed image index; zero denotes the primary frame.
+   */
+  int
+  get_periodic_frame_index(const Tensor<1, dim> &periodic_shift) const;
+
+  /**
+   * @brief Apply a periodic shift to a particle position for temporary
+   * geometric evaluations.
+   *
+   * This function mutates the particle's position. Every call must be paired
+   * with a matching restore of @p primary_particle_position before the
+   * particle is used for any purpose other than the immediate evaluation.
+   * Failing to restore leaves the particle in a shifted frame for all
+   * subsequent operations in the current time step.
+   *
+   * @param particle_id Particle index.
+   * @param primary_particle_position Particle centroid in the primary domain.
+   * @param periodic_shift Shift relative to @p primary_particle_position.
+   * Pass a zero-initialized tensor to restore the particle to its primary
+   * frame position.
+   */
+  void
+  set_particle_position_from_periodic_shift(
+    const unsigned int    particle_id,
+    const Point<dim>     &primary_particle_position,
+    const Tensor<1, dim> &periodic_shift);
+
+  /**
+   * @brief Recover the stored periodic frame for a particle that cuts a cell.
+   *
+   * @param cut_cell_info Cut-cell metadata for the cell under consideration.
+   * @param particle_id Particle index.
+   * @return Periodic shift used when that particle was classified as cutting
+   * the cell.
+   */
+  Tensor<1, dim>
+  get_periodic_shift_for_particle_frame(const CutCellInfo &cut_cell_info,
+                                        const unsigned int particle_id) const;
 
   /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
@@ -646,6 +797,53 @@ Return a bool that describes  if a cell contains a specific point
    */
 
 private:
+  /** @brief A physical particle and the translation used for this cell. */
+  struct ParticlePeriodicFrame
+  {
+    unsigned int   particle_id = 0;
+    Tensor<1, dim> periodic_shift;
+  };
+
+  /** @brief Cut-cell state with one frame per contributing physical particle. */
+  struct CutCellInfo
+  {
+    bool                               is_cut              = false;
+    unsigned int                       primary_particle_id = 0;
+    std::vector<ParticlePeriodicFrame> cutting_particle_frames;
+  };
+
+  /** @brief Closest particle/frame used to constrain an overconstrained cell. */
+  struct OverconstrainedFluidCellInfo
+  {
+    bool           is_overconstrained  = false;
+    unsigned int   particle_id         = 0;
+    double         distance_to_surface = 0.0;
+    Tensor<1, dim> periodic_shift;
+  };
+
+  /** @brief Physical particle containing a cell; interior assembly needs no image frame. */
+  struct InsideCellInfo
+  {
+    bool         is_inside   = false;
+    unsigned int particle_id = 0;
+  };
+
+  /** @brief Stencil key; primary-frame entries use particle key zero for compatibility. */
+  struct PeriodicFrameDofCacheKey
+  {
+    types::global_dof_index dof_index   = 0;
+    unsigned int            particle_id = numbers::invalid_unsigned_int;
+    int                     periodic_frame_index = 0;
+
+    /**
+     * @brief Strict lexicographic ordering of cache identities.
+     * @param other Key to compare.
+     * @return Whether this key precedes the other key.
+     */
+    bool
+    operator<(const PeriodicFrameDofCacheKey &other) const;
+  };
+
   // Parameters
   CFDDEMSimulationParameters<dim> cfd_dem_parameters;
 
@@ -657,26 +855,18 @@ private:
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
-  /*
-   * This map uses the cell as the key, and stores the following information:
-   * if that cell is cut (bool), what particle cut this cell (unsigned int), and
-   * the number of particles that cut this cell(unsigned int). The id of the
-   * particle that cut the cell is the id of the particle with the lowest
-   * particle index.
-   */
-  std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int, std::vector<unsigned int>>>
+
+  // For each active cell, store whether it is cut by any immersed particle,
+  // which particle owns the primary cut-cell treatment, and which periodic
+  // particle frames generated the cut classification.
+  std::map<typename DoFHandler<dim>::active_cell_iterator, CutCellInfo>
     cut_cells_map;
 
-  /*
-   * This map uses the cell as the key, and stores the following information:
-   * if the cell is overconstrained (bool), what particle overconstrains this
-   * cell (unsigned int), and the distance to the closest surface (double).
-   * The id of the particle that overconstrains the cell
-   * is the id of the particle closest to the cell barycenter.
-   */
+  // For each active cell, store whether the fluid cell is overconstrained, the
+  // particle responsible for that state, the distance to the nearest particle
+  // surface, and the periodic frame in which that classification was made.
   std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int, double>>
+           OverconstrainedFluidCellInfo>
     overconstrained_fluid_cell_map;
 
   /*
@@ -687,16 +877,22 @@ private:
   GlobalVectorType             dof_overconstrained;
   std::map<unsigned int, bool> dof_with_more_then_one_particle;
 
-
-  std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int>>
+  // Store the containing particle for each inside cell. Interior assembly
+  // does not require the periodic image used during classification.
+  std::map<typename DoFHandler<dim>::active_cell_iterator, InsideCellInfo>
     cells_inside_map;
   /*
-   * This map is used to keep in memory which DOFs already have an IB equation
-   * imposed on them in order to avoid writing multiple time the same equation.
+   * Cache of stencil cells and the coordinate shifts used to locate them.
+   * Translated images use (DoF, particle, periodic frame) keys. The primary
+   * frame retains the shared per-DoF cache with zero particle/frame keys.
+   *
+   * The periodic frame is part of the key because the same DoF can be reached
+   * from different wrapped images of the same particle near the periodic
+   * interface, and those frames can require different stencil cells.
    */
-  std::map<unsigned int,
-           std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>>
+  std::map<
+    PeriodicFrameDofCacheKey,
+    std::pair<typename DoFHandler<dim>::active_cell_iterator, Tensor<1, dim>>>
     ib_done;
 
   // Special assembler of the cells inside an IB particle
@@ -729,6 +925,26 @@ private:
   std::shared_ptr<LevelsetPostprocessor<dim>> levelset_postprocessor;
   std::shared_ptr<LevelsetGradientPostprocessor<dim>>
     levelset_gradient_postprocessor;
+
+  // Combined periodic boundary handler for sharp IB coupling
+  SharpIBPeriodicBoundaries<dim> sharp_ib_periodic_boundaries;
+
+  // Translation applied to the current motion iterate. History remains in the
+  // last accepted frame until finish_time_step_particles() accepts this shift.
+  std::vector<Tensor<1, dim>> particle_position_wrap;
+
+  /**
+   * @brief Conservative radius enclosing the shape about its reference point.
+   * @param particle Particle whose geometry is enclosed.
+   * @return Enclosing radius, including offsets of composite constituents.
+   */
+  double
+  particle_support_radius(const IBParticle<dim> &particle) const;
+
+
+  // Cache for domain bounds in periodic direction (used for wrapping)
+  double periodic_domain_lower = 0.;
+  double periodic_domain_upper = 0.;
 };
 
 
