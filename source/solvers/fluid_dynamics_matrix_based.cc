@@ -383,6 +383,22 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_assemblers()
 {
+  // The SDIRK time derivative is only implemented for the single-phase
+  // Navier-Stokes equations with a constant density.
+  if (this->simulation_control->is_sdirk())
+    {
+      AssertThrow(!this->simulation_parameters.multiphysics.CLS &&
+                    !this->simulation_parameters.multiphysics.cahn_hilliard,
+                  ExcMessage("SDIRK time-stepping methods are not supported "
+                             "for multiphase flows (CLS or Cahn-Hilliard). "
+                             "Use a BDF method instead."));
+      AssertThrow(this->simulation_parameters.physical_properties_manager
+                    .density_is_constant(),
+                  ExcMessage("SDIRK time-stepping methods are not supported "
+                             "for flows with a variable density. Use a BDF "
+                             "method instead."));
+    }
+
   this->assemblers.clear();
 
   if (this->check_existance_of_bc(
@@ -2285,12 +2301,9 @@ FluidDynamicsMatrixBased<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      this->forcing_function->set_time(
-        this->simulation_control->get_current_time());
-
-      // We allow the physics to update their boundary conditions
+      // We allow the physics to update their forcing and boundary conditions
       // according to their own parameters
-      this->update_boundary_conditions();
+      this->update_forcing_and_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
       this->simulation_control->print_progression(this->pcout);

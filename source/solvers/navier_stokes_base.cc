@@ -6,6 +6,7 @@
 #include <core/lethe_grid_tools.h>
 #include <core/mesh_controller.h>
 #include <core/mortar_coupling_manager.h>
+#include <core/sdirk_stage_data.h>
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -181,6 +182,13 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->use_manifold_for_normal = true;
   if (this->simulation_parameters.mortar_parameters.enable)
     this->use_manifold_for_normal = false;
+
+  // The rotor position of the mortar method is only updated once per time
+  // step, whereas the stages of an SDIRK method require it at the stage times.
+  AssertThrow(!(this->simulation_parameters.mortar_parameters.enable &&
+                this->simulation_control->is_sdirk()),
+              ExcMessage("SDIRK time-stepping methods are not supported with "
+                         "the mortar method. Use a BDF method instead."));
 
   if (this->simulation_control->is_sdirk())
     {
@@ -651,28 +659,27 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  // The locally_relevant_dofs are used for the assembly,
-  // while the non-locally_relevant_dofs are used for the calculations on the
-  // vectors (addition, multiplication, etc.).
-  const auto         method = this->simulation_control->get_assembly_method();
-  const auto         time_step = this->simulation_control->get_time_step();
-  const unsigned int n_stages = SimulationControl::get_number_of_stages(method);
+  // Solve and percolate the auxiliary physics that should be treated
+  // BEFORE the fluid dynamics
+  multiphysics->solve(false, simulation_parameters.simulation_control.method);
+  multiphysics->percolate_time_vectors(false);
 
-  // For a multi-stages method, at each time iteration, we reset the value of
-  // sum_bi_ki
-  if (n_stages > 1)
-    this->sdirk_vectors.local_sum_bi_ki = 0;
-
-  for (unsigned int stage = 0; stage < n_stages; ++stage)
+  if (simulation_parameters.multiphysics.fluid_dynamics)
     {
-      if (simulation_parameters.multiphysics.fluid_dynamics)
-        {
-          // Solve and percolate the auxiliary physics that should be treated
-          // BEFORE the fluid dynamics
-          multiphysics->solve(false,
-                              simulation_parameters.simulation_control.method);
-          multiphysics->percolate_time_vectors(false);
+      const auto method    = this->simulation_control->get_assembly_method();
+      const auto time_step = this->simulation_control->get_time_step();
+      const unsigned int n_stages =
+        SimulationControl::get_number_of_stages(method);
 
+      // For a multi-stage method, the Butcher tableau provides the time of
+      // each stage, and the sum of b_i * k_i is reset at each time step.
+      const SDIRKTable table =
+        (n_stages > 1) ? sdirk_table(method) : SDIRKTable();
+      if (n_stages > 1)
+        this->sdirk_vectors.local_sum_bi_ki = 0;
+
+      for (unsigned int stage = 0; stage < n_stages; ++stage)
+        {
           if (simulation_parameters.physics_solving_strategy
                   .at(PhysicsID::fluid_dynamics)
                   .verbosity != Parameters::Verbosity::quiet ||
@@ -682,6 +689,11 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
           if (n_stages > 1)
             {
+              // The forcing and the boundary conditions of a stage are
+              // evaluated at the time of the stage t_n + c_i * dt.
+              this->simulation_control->set_stage_time(table.c[stage]);
+              this->update_forcing_and_boundary_conditions();
+
               // For SDIRK, some variables need to be updated before solving the
               // non-linear system.
               multi_stage_preresolution(stage, method);
@@ -695,52 +707,53 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
               // non-linear system.
               multi_stage_postresolution(stage, method, time_step);
             }
-
-
-          // If the physics need to be solved after the physics, the matrix free
-          // solver requires to update the value here. This is due to the
-          // different type of vectors.
-          if (this->multiphysics->get_active_physics().size() > 1)
-            {
-              this->update_solutions_for_multiphysics();
-            }
-
-          // Solve and percolate the auxiliary physics that should be treated
-          // AFTER the fluid dynamics
-          multiphysics->solve(true,
-                              simulation_parameters.simulation_control.method);
-          // Dear future Bruno, percolating auxiliary physics before fluid
-          // dynamics is necessary because of the checkpointing mechanism. You
-          // spent an evening debugging this, trust me.
-          multiphysics->percolate_time_vectors(true);
         }
-      else
+
+      if (n_stages > 1)
         {
-          // Fluid dynamics is not to be solved, but rather specified. Update
-          // condition and move on.
+          // For SDIRK, the solution is not directly computed with the
+          // non-linear solver. Once we looped over all the stages, we restore
+          // the time to t_{n+1}, update the present_solution vector and
+          // re-impose the forcing and boundary conditions at t_{n+1}.
+          this->simulation_control->end_stages();
+          update_multi_stage_solution(time_step);
+          this->update_forcing_and_boundary_conditions();
+        }
 
-          // Solve and percolate the auxiliary physics that should be treated
-          // BEFORE the fluid dynamics
-          multiphysics->solve(false,
-                              simulation_parameters.simulation_control.method);
-          multiphysics->percolate_time_vectors(false);
-
-          this->set_specified_fluid_dynamics_solution();
-
-          // Solve and percolate the auxiliary physics that should be treated
-          // AFTER the fluid dynamics
-          multiphysics->solve(true,
-                              simulation_parameters.simulation_control.method);
-          multiphysics->percolate_time_vectors(true);
+      // If the physics need to be solved after the physics, the matrix free
+      // solver requires to update the value here. This is due to the
+      // different type of vectors.
+      if (this->multiphysics->get_active_physics().size() > 1)
+        {
+          this->update_solutions_for_multiphysics();
         }
     }
-  if (n_stages > 1)
+  else
     {
-      // For SDIRK, the solution is not directly computed with the non-linear
-      // solver. Once we looped over all the stages, we can finally update the
-      // present_solution vector.
-      update_multi_stage_solution(time_step);
+      // Fluid dynamics is not to be solved, but rather specified. Update
+      // condition and move on.
+      this->set_specified_fluid_dynamics_solution();
     }
+
+  // Solve and percolate the auxiliary physics that should be treated
+  // AFTER the fluid dynamics
+  multiphysics->solve(true, simulation_parameters.simulation_control.method);
+  // Dear future Bruno, percolating auxiliary physics before fluid
+  // dynamics is necessary because of the checkpointing mechanism. You
+  // spent an evening debugging this, trust me.
+  multiphysics->percolate_time_vectors(true);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  update_forcing_and_boundary_conditions()
+{
+  if (this->forcing_function)
+    this->forcing_function->set_time(
+      this->simulation_control->get_current_time());
+
+  this->update_boundary_conditions();
 }
 
 

@@ -3,6 +3,7 @@
 
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
 #include <dem/particle_handler_conversion.h>
@@ -258,6 +259,12 @@ template <int dim, typename PropertiesIndex>
 void
 FluidDynamicsVANS<dim, PropertiesIndex>::setup_assemblers()
 {
+  // The VANS assemblers only implement the BDF time derivative.
+  AssertThrow(
+    !time_stepping_is_sdirk(this->simulation_control->get_assembly_method()),
+    ExcMessage("SDIRK time-stepping methods are not supported by the VANS "
+               "solver. Use a BDF method instead."));
+
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 

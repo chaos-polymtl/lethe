@@ -4116,6 +4116,13 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::setup_assemblers()
 {
+  // The sharp-interface immersed boundary solver only supports BDF methods.
+  AssertThrow(
+    !time_stepping_is_sdirk(this->simulation_control->get_assembly_method()),
+    ExcMessage("SDIRK time-stepping methods are not supported by the "
+               "sharp-interface immersed boundary solver. Use a BDF method "
+               "instead."));
+
   this->assemblers.clear();
   assemblers_inside_ib.clear();
 
