@@ -1246,7 +1246,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
-            this->simulation_parameters.stabilization.stabilization,
+            this->simulation_parameters.stabilization,
             levels[level].first,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
@@ -1767,7 +1767,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
-            this->simulation_parameters.stabilization.stabilization,
+            this->simulation_parameters.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
@@ -2802,6 +2802,44 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
     dealii::ExcMessage(
       "Matrix free Navier-Stokes does not support the <pressure scaling factor> parameter of the <stabilization> subsection. Set it to 1, or use the matrix-based solver (lethe-fluid) if the pressure has to be rescaled."));
 
+  // The dynamic RBVMS velocity subscale stores the history of the fine-scale
+  // velocity at the quadrature points of the cells. This history is advanced
+  // with BDF schemes only, and it is neither transferred when the mesh is
+  // adapted nor written to the checkpoint files. It is also attached to the
+  // reference quadrature points, which ignores the motion of a rotating mesh.
+  // For steady simulations, the dynamic and quasi-static subscales coincide.
+  if (nsparam.stabilization.velocity_subscale ==
+      Parameters::Stabilization::VelocitySubscale::dynamic)
+    {
+      using Method        = Parameters::SimulationControl::TimeSteppingMethod;
+      const Method method = nsparam.simulation_control.method;
+
+      AssertThrow(
+        nsparam.stabilization.stabilization ==
+          Parameters::Stabilization::NavierStokesStabilization::rbvms,
+        dealii::ExcMessage(
+          "The dynamic velocity subscale is only available with the rbvms stabilization."));
+      AssertThrow(
+        method == Method::steady || method == Method::steady_bdf ||
+          method == Method::bdf1 || method == Method::bdf2 ||
+          method == Method::bdf3,
+        dealii::ExcMessage(
+          "The dynamic velocity subscale is only available with the steady and BDF time-stepping methods."));
+      AssertThrow(
+        method == Method::steady || nsparam.mesh_adaptation.type ==
+                                      Parameters::MeshAdaptation::Type::none,
+        dealii::ExcMessage(
+          "The dynamic velocity subscale does not support mesh adaptation in transient simulations."));
+      AssertThrow(
+        !nsparam.restart_parameters.restart,
+        dealii::ExcMessage(
+          "The dynamic velocity subscale does not support restarting a simulation."));
+      AssertThrow(
+        !nsparam.mortar_parameters.enable,
+        dealii::ExcMessage(
+          "The dynamic velocity subscale does not support the mortar method."));
+    }
+
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_degree), dim + 1);
 
@@ -2913,6 +2951,30 @@ FluidDynamicsMatrixFree<dim>::multi_stage_postresolution(
 
 template <int dim>
 void
+FluidDynamicsMatrixFree<dim>::percolate_time_vectors_fd()
+{
+  // The fine-scale velocity of the dynamic RBVMS subscale is computed from the
+  // converged solution before the time vectors are percolated, while the
+  // forcing, buoyancy and time-derivative data of the operator still describe
+  // the time step that just converged. The initial condition is also
+  // percolated, before any time step is solved (iteration 0). The fine-scale
+  // velocity of the initial condition is zero, which is what the history
+  // already holds, so the history is left untouched in that case.
+  if (this->simulation_parameters.stabilization.velocity_subscale ==
+        Parameters::Stabilization::VelocitySubscale::dynamic &&
+      time_stepping_is_bdf(this->simulation_control->get_assembly_method()) &&
+      this->simulation_control->get_iteration_number() > 0)
+    {
+      this->present_solution->update_ghost_values();
+      this->system_operator->update_fine_scale_velocity_history(
+        *this->present_solution);
+    }
+
+  NavierStokesBase<dim, VectorType, IndexSet>::percolate_time_vectors_fd();
+}
+
+template <int dim>
+void
 FluidDynamicsMatrixFree<dim>::update_multi_stage_solution(double time_step)
 {
   // At each time iteration, we update the value of present_solution
@@ -2997,6 +3059,11 @@ FluidDynamicsMatrixFree<dim>::solve()
           this->time_derivative_previous_solutions.update_ghost_values();
           this->system_operator->evaluate_time_derivative_previous_solutions(
             this->time_derivative_previous_solutions);
+
+          // Memory of the dynamic RBVMS fine-scale velocity, the counterpart
+          // of the time derivative of the previous solutions (does nothing
+          // for the quasi-static subscale).
+          this->system_operator->evaluate_fine_scale_velocity_memory();
 
           this->computing_timer.leave_subsection(
             "Calculate time derivative previous solutions");
@@ -3112,7 +3179,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     *this->cell_quadrature,
     this->forcing_function,
     this->physical_properties_manager,
-    this->simulation_parameters.stabilization.stabilization,
+    this->simulation_parameters.stabilization,
     mg_level,
     this->simulation_control,
     this->simulation_parameters.boundary_conditions,

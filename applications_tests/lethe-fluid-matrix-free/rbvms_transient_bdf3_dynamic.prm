@@ -1,0 +1,180 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Test description: This test solves the 2D Taylor-Green vortex of
+# rbvms_transient_bdf2 with the lethe-fluid-matrix-free solver using the
+# residual-based variational multiscale (RBVMS) stabilization with equal-order
+# Q2-Q2 elements, the dynamic velocity subscale and the BDF3 time-stepping
+# scheme. The fine-scale velocity is advanced in time with the same BDF3 scheme
+# as the coarse-scale velocity, so its history at the quadrature points spans
+# the three previous time steps. The L2 error on the velocity, the kinetic
+# energy and the enstrophy are monitored at every time step.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf3
+  set time step         = 0.1
+  set number mesh adapt = 0
+  set time end          = 0.5
+  set output name       = tgv
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# Stabilization
+#---------------------------------------------------
+
+subsection stabilization
+  set use default stabilization = false
+  set stabilization             = rbvms
+  set velocity subscale         = dynamic
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 2
+  set pressure degree = 2
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = cos(x)*sin(y); -sin(x)*cos(y); -1./4*(cos(2*x)+cos(2*y));
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 0.01
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set verbosity = verbose
+  set enable    = true
+  subsection uvwp
+    set Function constants  = viscosity=0.01
+    set Function expression = exp(-2*viscosity*t)*cos(x)*sin(y); -sin(x)*cos(y)*exp(-2*viscosity*t); 0
+  end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                = verbose
+  set calculate enstrophy      = true
+  set calculate kinetic energy = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 6.28318530718 : true
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic id        = 1
+    set periodic direction = 0
+  end
+  subsection bc 1
+    set type               = periodic
+    set id                 = 2
+    set periodic id        = 3
+    set periodic direction = 1
+  end
+end
+
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable = false
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-8
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 5000
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-10
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end

@@ -858,6 +858,17 @@ namespace Parameters
       rbvms
     } stabilization = NavierStokesStabilization::pspg_supg;
 
+    /// Model of the fine-scale (subgrid) velocity of the RBVMS stabilization.
+    /// With quasi_static, the fine-scale velocity is u' = -tau_M r_M with a
+    /// stabilization parameter tau_M that contains the time step. With
+    /// dynamic, u' is advanced in time with its own evolution equation,
+    /// d(u')/dt + u'/tau_s = -r_M, and tau_s does not contain the time step.
+    enum class VelocitySubscale : std::int8_t
+    {
+      quasi_static,
+      dynamic
+    } velocity_subscale = VelocitySubscale::quasi_static;
+
     enum class ScalarLimiters : std::int8_t
     {
       moe,

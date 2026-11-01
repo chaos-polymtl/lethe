@@ -942,6 +942,15 @@ namespace Parameters
         "stabilization",
         defaults.stabilization,
         "Type of stabilization used for the Navier-Stokes equations.");
+      declare_enum_entry(
+        prm,
+        "velocity subscale",
+        defaults.velocity_subscale,
+        "Model of the fine-scale velocity of the rbvms stabilization. "
+        "quasi_static computes it from the current residual with a "
+        "stabilization parameter that depends on the time step. dynamic "
+        "advances it in time, so that the stabilization parameter no longer "
+        "depends on the time step.");
 
       prm.declare_entry(
         "heat transfer dcdd stabilization",
@@ -994,6 +1003,8 @@ namespace Parameters
       use_default_stabilization = prm.get_bool("use default stabilization");
       stabilization =
         string_to_enum<NavierStokesStabilization>(prm.get("stabilization"));
+      velocity_subscale =
+        string_to_enum<VelocitySubscale>(prm.get("velocity subscale"));
       scalar_limiter =
         string_to_enum<ScalarLimiters>(prm.get("scalar limiter"));
 

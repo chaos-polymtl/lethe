@@ -202,6 +202,34 @@ calculate_rbvms_tau(const Tensor<2, dim, Number> &metric_tensor,
 }
 
 /**
+ * @brief Compute the stabilization parameter tau_t of the dynamic RBVMS
+ * fine-scale velocity.
+ *
+ * The dynamic fine-scale velocity satisfies d(u')/dt + u'/tau_s = -r_M, where
+ * tau_s is the steady stabilization parameter, i.e. calculate_rbvms_tau with
+ * four_over_dt_squared = 0. Discretizing d(u')/dt with the same scheme as the
+ * coarse-scale velocity, d(u')/dt ~ alpha u' + m', where m' gathers the
+ * contributions of the previous fine-scale velocities, gives
+ *
+ *   u' = -tau_t (r_M + m'),   tau_t = ( alpha + 1/tau_s )^(-1)
+ *
+ * with alpha = beta_0 for BDF schemes and alpha = 0 for steady problems, in
+ * which case tau_t = tau_s.
+ *
+ * @tparam Number Number type (e.g. double or VectorizedArray<double>).
+ * @param[in] tau_static The steady stabilization parameter tau_s.
+ * @param[in] alpha The coefficient of the current fine-scale velocity in the
+ *   time derivative (beta_0 for BDF schemes, 0 for steady problems).
+ * @return The stabilization parameter tau_t.
+ */
+template <typename Number>
+inline Number
+calculate_rbvms_dynamic_tau(const Number tau_static, const double alpha)
+{
+  return 1.0 / (alpha + 1.0 / tau_static);
+}
+
+/**
  * @brief Assemble the RBVMS fine-scale cross-stress and Reynolds-stress
  * contributions to the velocity gradient residual (Bazilevs et al. 2007,
  * eq. 72), written in terms of the fine-scale velocity u'. These are the two

@@ -383,6 +383,14 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_assemblers()
 {
+  // The matrix-based solver only implements the quasi-static RBVMS fine-scale
+  // velocity.
+  AssertThrow(this->simulation_parameters.stabilization.velocity_subscale ==
+                Parameters::Stabilization::VelocitySubscale::quasi_static,
+              ExcMessage("The dynamic velocity subscale is only available with "
+                         "the rbvms stabilization of the matrix-free solver "
+                         "(lethe-fluid-matrix-free)."));
+
   this->assemblers.clear();
 
   if (this->check_existance_of_bc(

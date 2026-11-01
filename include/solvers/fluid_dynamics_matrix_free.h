@@ -484,6 +484,15 @@ protected:
   update_multi_stage_solution(double time_step) override;
 
   /**
+   * @brief Percolate the time vectors of the fluid dynamics. With the dynamic
+   * RBVMS velocity subscale and a BDF scheme, the fine-scale velocity of the
+   * time step that just converged is first stored in the history of the
+   * system operator, while the operator data still describe that time step.
+   */
+  void
+  percolate_time_vectors_fd() override;
+
+  /**
    * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
    *
