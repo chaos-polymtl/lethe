@@ -30,6 +30,7 @@ examples/multiphysics/melting-cavity 128
 examples/multiphysics/capillary-wave 128
 examples/multiphysics/dam-break 128
 # The three rolling resistance models are launched at the same time, each on a third of the given number of cores
+# The sandpile case is repeated for three rolling resistance models (epsd, constant, and viscous). They are launched at the same time, each on a third of the given number of cores.
 examples/dem/2d-sandpile-formation 128
 # The given number of cores is the number of serial simulations launched at the same time
 examples/dem/3d-oblique-wall-impact 34

@@ -24,7 +24,7 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/sedimentation-1-particle``).
 
 - Parameter file: ``sedimentation-1-particle.prm``
-- Experimental velocity of ten Cate `et al.` [#tencate2002]_ for the E4 experiment, as digitized from the original figure of this documentation page: ``ten-cate-E4.dat``
+- Experimental velocity of ten Cate `et al.` [#tencate2002]_ for the E4 experiment, digitized from the original figure: ``ten-cate-E4.dat``
 - Postprocessing Python script: ``post-process-sedimentation-1-particle.py``
 
 
@@ -35,7 +35,7 @@ Description of the Case
 The E4 experiment consists of the release of a particle made of Nylon (:math:`\rho_p=0.001120 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 1.5 cm. The center of the particle is located 12.75 cm above the bottom of a :math:`10 \times 16 \times 10` cm container. The viscosity of the fluid is :math:`\mu_f=0.00058 \frac{\text{kg}}{\text{s cm}}` which is equivalent to :math:`\mu_f=0.058 \frac{\text{N s}}{\text{m}^{2}}`. The density of the fluid is :math:`\rho_f=0.000960 \frac{\text{kg}}{\text{cm}^{3}}`. The gravitational acceleration is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it reaches the bottom of the container, shortly after which the simulation ends.
 
 .. note::
-   You will note that we have transformed every length unit into centimeters. The reason is that the particle's size is very close to 1 cm. Representing the problem in this way helps the linear solver converge. It avoids extremely small values in the matrix due to the volume of cells being expressed in :math:`\text{cm}^{3}` instead of :math:`\text{m}^{3}`.
+   You will note that we have transformed every length unit into centimeters. The reason is that the particle's size is very close to 1 cm. Representing the problem in this way helps the linear solver convergence. It avoids extremely small values in the matrix due to the volume of cells being expressed in :math:`\text{cm}^{3}` instead of :math:`\text{m}^{3}`.
 
 All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
@@ -230,7 +230,7 @@ Non-linear Solver
 
 * The ``max iterations`` is set to 10. The objective here is to allow enough Newton iterations to converge to the tolerance, while limiting the time spent on a single time step if the system is too stiff.
 
-* The ``force rhs calculation`` is set to ``true``. This is the most important difference with most of the other examples. By default, the non-linear solver recalculates the RHS only after the update of the solution. Here, however, we need to evaluate it before every resolution of the linear system, and we cannot use the RHS evaluated after the previous Newton iteration, because the particle position was updated between these two steps. This means that the RHS is evaluated twice per Newton iteration. The non-linear solver follows this sequence of steps for each Newton iteration:
+* The ``force rhs calculation`` is set to ``true``. This is the most important difference with most of the other examples. By default, the non-linear solver recalculates the RHS only after the update of the solution. Here, however, we need to evaluate it before every resolution of the linear system. To do so, we cannot use the RHS evaluated after the previous Newton iteration, because the particle position was updated between these two steps. This means that the RHS is evaluated twice per Newton iteration. The non-linear solver follows this sequence of steps for each Newton iteration:
 
   * update the particle position
   * update the Jacobian matrix
