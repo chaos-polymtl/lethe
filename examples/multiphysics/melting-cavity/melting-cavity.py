@@ -16,9 +16,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
 import pandas as pd
+import argparse
 
 import os
-import sys
 #############################################################################
 
 #############################################################################
@@ -40,7 +40,11 @@ total_volume = 1 * 0.714
 temperature_limit = 29.7
 
 #Take case path as argument and store it
-output_path = sys.argv[1]
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the melting cavity')
+parser.add_argument("output_path", type=str, help="Folder which contains the results of the simulation")
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
+output_path = args.output_path
 
 # Read the pvd file to extract the times
 reader = pv.get_reader(f"{output_path}/melting.pvd")
@@ -74,17 +78,19 @@ b_bot = [1, y_bot, 0]
 for vtu_file in (list_vtu):
     sim = pv.read(f"{output_path}/{vtu_file}")
 
+    # The pyvista arrays are converted to plain numpy arrays, since pandas
+    # otherwise uses their name (if any) as the column label
     sampled_data_top = sim.sample_over_line(a_top, b_top, resolution=1000)
-    temperature_top = pd.DataFrame(sampled_data_top["temperature"])
-    points_top = pd.DataFrame(sampled_data_top.points)
+    temperature_top = pd.DataFrame(np.asarray(sampled_data_top["temperature"]))
+    points_top = pd.DataFrame(np.asarray(sampled_data_top.points))
 
     sampled_data_bot = sim.sample_over_line(a_bot, b_bot, resolution=1000)
-    temperature_bot = pd.DataFrame(sampled_data_bot["temperature"])
-    points_bot = pd.DataFrame(sampled_data_bot.points)
+    temperature_bot = pd.DataFrame(np.asarray(sampled_data_bot["temperature"]))
+    points_bot = pd.DataFrame(np.asarray(sampled_data_bot.points))
 
     sampled_data_mid = sim.sample_over_line(a_mid, b_mid, resolution=1000)
-    temperature_mid = pd.DataFrame(sampled_data_mid["temperature"])
-    points_mid = pd.DataFrame(sampled_data_mid.points)
+    temperature_mid = pd.DataFrame(np.asarray(sampled_data_mid["temperature"]))
+    points_mid = pd.DataFrame(np.asarray(sampled_data_mid.points))
 
     #Find min 'x' in temperature > temperature_limit (top)
     fluid1_points = points_top[temperature_top[0] < temperature_limit].values
@@ -148,8 +154,16 @@ ax0.set_ylabel(r'$\delta x$')
 ax0.set_xlabel(r'$\tau$')
 ax0.set_xlim([0, 0.07])
 ax0.legend(loc="upper left")
-fig0.savefig(f'./xmax-t.png')
-plt.show()
+if (not args.validate):
+    fig0.savefig(f'./xmax-t.png')
+    plt.show()
+else:
+    fig0.savefig("xmax-t.pdf")
+    # Store the plotted interface positions so that they can be compared
+    # between validation runs
+    np.savetxt("solution-front-position.dat",
+               np.column_stack((time_list, x_list_top, x_list_mid, x_list_bot)),
+               header="tau x_top x_mid x_bot")
 plt.close()
 
 #Load melted volume
@@ -162,14 +176,23 @@ melt_frac_geo = [V/total_volume for V in melt_volume_geo]
 #Plot melted volume
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
-ax1.plot(t_list_alge * time_scaling , melt_frac_alge, '-k', label=r"Simulation - $V_\text{melt,alge}$")
-ax1.plot(t_list_geo * time_scaling , melt_frac_geo, '--k', label=r"Simulation - $V_\text{melt,geo}$")
+ax1.plot(t_list_alge * time_scaling , melt_frac_alge, '-k', label=r"Simulation - $V_\mathrm{melt,alge}$")
+ax1.plot(t_list_geo * time_scaling , melt_frac_geo, '--k', label=r"Simulation - $V_\mathrm{melt,geo}$")
 ax1.plot(melted_x_exp, melted_y_exp, 'ro', label="Experiment - G&V (1986)")
 ax1.plot(melted_x_blais, melted_y_blais, 'bs', label="Simulation - B&I (2018)")
 ax1.set_ylabel(r'melted volume fraction')
 ax1.set_xlabel(r'$\tau$')
 ax1.set_xlim([0, 0.07])
 ax1.legend(loc="upper left")
-fig1.savefig(f'./melted-volume-fraction.png')
-plt.show()
+if (not args.validate):
+    fig1.savefig(f'./melted-volume-fraction.png')
+    plt.show()
+else:
+    fig1.savefig("melted-volume-fraction.pdf")
+    # Store the plotted melted volume fractions. The geometric melt volume is
+    # interpolated at the times of the algebraic one, in case they differ.
+    np.savetxt("solution-melt-fraction.dat",
+               np.column_stack((t_list_alge * time_scaling, melt_frac_alge,
+                                np.interp(t_list_alge, t_list_geo, melt_frac_geo))),
+               header="tau melt_fraction_alge melt_fraction_geo")
 plt.close()

@@ -37,6 +37,7 @@ prm = parameter()
 parser = argparse.ArgumentParser(description='Arguments for calculation of the dissipation rate')
 parser.add_argument("-ens", "--enstrophy", type=str, help="Name of the input file for the enstrophy", required=True)
 parser.add_argument("-l", "--legend", type=str, help="Legend label", required=False)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
 fname_ens=args.enstrophy
 leg = args.legend
@@ -74,8 +75,18 @@ ax_zoom.set_xlim(16, 40)
 ax_zoom.set_ylim(12, 18)
 ax_zoom.xaxis.set_major_locator((MaxNLocator(nbins=4,integer=True)))
 ax_zoom.yaxis.set_major_locator((MaxNLocator(nbins=4,integer=True)))
-if (leg==None):
-  plt.savefig('enstrophy_comparison.png', dpi=300)
+if (not args.validate):
+  if (leg==None):
+    plt.savefig('enstrophy_comparison.png', dpi=300)
+  else:
+    plt.savefig(leg.replace(" ","")+".png", dpi=300)
+  plt.show()
 else:
-  plt.savefig(leg.replace(" ","")+".png", dpi=300)
-plt.show()
+  plt.savefig("enstrophy_comparison.pdf")
+  # Store the enstrophy and the reference ones at the same times so that they
+  # can be compared between validation runs
+  np.savetxt("solution-enstrophy.dat",
+             np.column_stack((t_1, e, np.interp(t_1, t_p3, e_ref_p3),
+                              np.interp(t_1, t_p4, e_ref_p4),
+                              np.interp(t_1, t_p5, e_ref_p5))),
+             header="t enstrophy enstrophy_wang_p3 enstrophy_wang_p4 enstrophy_wang_p5")
