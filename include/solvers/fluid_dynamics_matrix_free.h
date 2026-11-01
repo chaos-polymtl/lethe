@@ -484,6 +484,16 @@ protected:
   update_multi_stage_solution(double time_step) override;
 
   /**
+   * @brief Set the time of the forcing function and of the time-dependent
+   * boundary conditions to the current time and re-impose the non-zero
+   * constraints. The forcing term is precomputed by the matrix-free operator,
+   * so it is also recomputed here for a time-dependent forcing function to be
+   * accounted for.
+   */
+  void
+  update_forcing_and_boundary_conditions() override;
+
+  /**
    * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
    *

@@ -20,7 +20,8 @@ test()
 
   // Important note : the nomenclature used for the name of the SDIRK methods
   // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
-  // means SDIRK with order 3 and 3 stages.
+  // means SDIRK with order 3 and 3 stages and sdirk45 means SDIRK with order 4
+  // and 5 stages.
   SDIRKTable table22 =
     sdirk_table(Parameters::SimulationControl::TimeSteppingMethod::sdirk22);
   const unsigned int n_stages22 = table22.A.m();
@@ -61,16 +62,16 @@ test()
 
   deallog << "<----------------------------->\n" << std::endl;
 
-  deallog << "Testing SDIRK43 coefficients" << std::endl;
+  deallog << "Testing SDIRK45 coefficients" << std::endl;
 
-  SDIRKTable table43 =
-    sdirk_table(Parameters::SimulationControl::TimeSteppingMethod::sdirk43);
-  const unsigned int n_stages43 = table43.A.m();
+  SDIRKTable table45 =
+    sdirk_table(Parameters::SimulationControl::TimeSteppingMethod::sdirk45);
+  const unsigned int n_stages45 = table45.A.m();
 
   // Data printed at each stage
-  for (unsigned int stage_i = 1; stage_i <= n_stages43; ++stage_i)
+  for (unsigned int stage_i = 1; stage_i <= n_stages45; ++stage_i)
     {
-      SDIRKStageData data(table43, stage_i);
+      SDIRKStageData data(table45, stage_i);
 
       deallog << "\nStage " << stage_i << ":" << std::endl;
       deallog << "  a_ij: ";

@@ -2458,8 +2458,8 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
                                          ((*bdf_coefficients)[0] * value[i]);
 
               if (is_sdirk)
-                gradient_result[i][k] +=
-                  tau * previous_values[k] * ((1.0 / (dt * a_ii)) * value[i]);
+                gradient_result[i][k] += tau * previous_advective_values[k] *
+                                         ((1.0 / (dt * a_ii)) * value[i]);
 
 
               // Part 2

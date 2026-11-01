@@ -40,11 +40,12 @@ struct SDIRKTable
 /**
  * @brief Construct the Butcher tableau (A, b, c) for a given SDIRK method.
  *
- * This function returns the Runge-Kutta coefficients for a diagonally implicit
- * Runge-Kutta (SDIRK) time integration method, such as SDIRK22 (Alexander's
- * method here) or SDIRK33 (Kennedy-Carpenter method here). These coefficients
- * define the time-stepping scheme and are used in implicit time integration of
- * ODEs or PDEs.
+ * This function returns the Runge-Kutta coefficients for a singly diagonally
+ * implicit Runge-Kutta (SDIRK) time integration method: SDIRK22 and SDIRK33
+ * (Alexander's 2- and 3-stage methods) or SDIRK45 (SDIRK4 of Hairer and
+ * Wanner). All these methods are L-stable and stiffly accurate. These
+ * coefficients define the time-stepping scheme and are used in implicit time
+ * integration of ODEs or PDEs.
  *
  * The Butcher tableau is defined as follows:
  * - A: the matrix of coefficients a_ij

@@ -576,6 +576,13 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
     !this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
     ExcMessage("The VANS matrix-free solver does not support simplex meshes."));
 
+  // The VANS operator only implements the BDF time derivative.
+  AssertThrow(
+    !time_stepping_is_sdirk(param.cfd_parameters.simulation_control.method),
+    ExcMessage(
+      "SDIRK time-stepping methods are not supported by the VANS matrix-free "
+      "solver. Use a BDF method instead."));
+
   // After a mesh adaptation, the void fraction is recomputed on the new mesh,
   // but its previous time steps are not transferred: they are reset to zero by
   // setup_dofs(). Mesh adaptation is therefore only valid with the steady

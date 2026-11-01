@@ -95,7 +95,7 @@ namespace Parameters
       bdf3,
       sdirk22,
       sdirk33,
-      sdirk43
+      sdirk45
     } method = TimeSteppingMethod::steady;
 
     // Initial time step

@@ -43,6 +43,12 @@ template <int dim>
 void
 FluidDynamicsBlock<dim>::setup_assemblers()
 {
+  // The block solver does not assemble the SDIRK time derivative.
+  AssertThrow(
+    !time_stepping_is_sdirk(this->simulation_control->get_assembly_method()),
+    ExcMessage("SDIRK time-stepping methods are not supported by the block "
+               "fluid dynamics solver. Use a BDF method instead."));
+
   this->assemblers.clear();
 
   // Thermal buoyancy force
