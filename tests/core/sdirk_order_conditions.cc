@@ -166,9 +166,10 @@ test()
   };
 
   // The naming convention of the SDIRK methods is sdirkOrderStages
-  const std::vector<MethodToTest> methods = {{"sdirk22", Method::sdirk22, 2},
-                                             {"sdirk33", Method::sdirk33, 3},
-                                             {"sdirk45", Method::sdirk45, 4}};
+  const std::vector<MethodToTest> methods = {
+    {.name = "sdirk22", .method = Method::sdirk22, .order = 2},
+    {.name = "sdirk33", .method = Method::sdirk33, .order = 3},
+    {.name = "sdirk45", .method = Method::sdirk45, .order = 4}};
 
   for (const auto &[name, method, order] : methods)
     {
