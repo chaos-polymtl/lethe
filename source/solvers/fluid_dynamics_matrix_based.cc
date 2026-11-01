@@ -397,6 +397,14 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                              "method instead."));
     }
 
+  // The matrix-based solver only implements the quasi-static RBVMS fine-scale
+  // velocity.
+  AssertThrow(this->simulation_parameters.stabilization.velocity_subscale ==
+                Parameters::Stabilization::VelocitySubscale::quasi_static,
+              ExcMessage("The dynamic velocity subscale is only available with "
+                         "the rbvms stabilization of the matrix-free solver "
+                         "(lethe-fluid-matrix-free)."));
+
   this->assemblers.clear();
 
   if (this->check_existance_of_bc(
@@ -1449,15 +1457,15 @@ FluidDynamicsMatrixBased<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   this->system_rhs = 0;
-  FEValues<dim>               fe_values(*this->get_mapping(),
-                          *this->fe,
-                          *this->cell_quadrature,
-                          update_values | update_quadrature_points |
-                            update_JxW_values);
-  const unsigned int          dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int          n_q_points    = this->cell_quadrature->size();
-  FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>              local_rhs(dofs_per_cell);
+  FEValues<dim>      fe_values(*this->get_mapping(),
+                               *this->fe,
+                               *this->cell_quadrature,
+                               update_values | update_quadrature_points |
+                                 update_JxW_values);
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int n_q_points    = this->cell_quadrature->size();
+  FullMatrix<double> local_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs(dofs_per_cell);
   std::vector<Vector<double>> initial_velocity(n_q_points,
                                                Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);

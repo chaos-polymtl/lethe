@@ -21,6 +21,8 @@
 #include <deal.II/matrix_free/operators.h>
 #include <deal.II/matrix_free/tools.h>
 
+#include <array>
+
 using namespace dealii;
 
 /**
@@ -185,7 +187,8 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters specified in
+   * the parameter file (stabilization type and velocity subscale model).
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] physical_properties_manager Required to have the updated values
@@ -207,7 +210,7 @@ public:
     const std::shared_ptr<Function<dim>> &forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -229,7 +232,8 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    * physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters specified in
+   * the parameter file (stabilization type and velocity subscale model).
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] boundary_conditions Contains information regarding all
@@ -249,7 +253,7 @@ public:
     const std::shared_ptr<Function<dim>> &forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -450,6 +454,35 @@ public:
   void
   evaluate_time_derivative_previous_solutions(
     const VectorType &time_derivative_previous_solutions);
+
+  /**
+   * @brief Compute the memory of the dynamic RBVMS fine-scale velocity,
+   * m' = sum_{j>=1} beta_j u'_{n+1-j}, from the stored history of u' and the
+   * BDF coefficients beta_j of the current time step. The fine-scale velocity
+   * of the time step is then u' = -tau_t (r_M + m'). This mirrors the time
+   * derivative of the previous solutions of the coarse-scale velocity and must
+   * be called at the beginning of every BDF time step, after the time step
+   * has been set. It does nothing if the velocity subscale is not dynamic or
+   * if the operator is a multigrid level operator.
+   */
+  void
+  evaluate_fine_scale_velocity_memory();
+
+  /**
+   * @brief Compute the dynamic RBVMS fine-scale velocity
+   * u'_{n+1} = -tau_t (r_M + m') at the converged solution of the time step
+   * and store it in the history of u', shifting the older values. The strong
+   * momentum residual r_M is rebuilt from @p solution with the forcing,
+   * buoyancy and time-derivative data of the time step, which must therefore
+   * not have been updated for the next time step yet. It does nothing if the
+   * velocity subscale is not dynamic or if the operator is a multigrid level
+   * operator.
+   *
+   * @param[in] solution Converged solution of the time step, with up-to-date
+   * ghost values.
+   */
+  void
+  update_fine_scale_velocity_history(const VectorType &solution);
 
   /**
    * @brief Store the values of the vector containing the ALE velocity to use
@@ -693,6 +726,13 @@ protected:
   StabilizationType stabilization;
 
   /**
+   * @brief Model of the RBVMS fine-scale velocity (quasi-static or dynamic).
+   *
+   */
+  Parameters::Stabilization::VelocitySubscale velocity_subscale =
+    Parameters::Stabilization::VelocitySubscale::quasi_static;
+
+  /**
    * @brief Object storing the information regarding the time stepping method.
    *
    */
@@ -786,6 +826,26 @@ protected:
    */
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
     time_derivatives_previous_solutions;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the memory
+   * m' = sum_{j>=1} beta_j u'_{n+1-j} of the dynamic RBVMS fine-scale velocity.
+   * It is only allocated on the fine level when the velocity subscale is
+   * dynamic, and is empty otherwise.
+   *
+   */
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> fine_scale_velocity_memory;
+
+  /**
+   * @brief Tables with correct alignment for vectorization to store the
+   * history of the dynamic RBVMS fine-scale velocity: entry j holds u'_{n-j},
+   * that is the fine-scale velocity of the last converged time step and of the
+   * two before it (enough for BDF3). They are only allocated on the fine level
+   * when the velocity subscale is dynamic, and are empty otherwise.
+   *
+   */
+  std::array<Table<2, Tensor<1, dim, VectorizedArray<number>>>, 3>
+    fine_scale_velocity_history;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values

@@ -1,0 +1,10 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       256
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      4.000000e+00
+
+*******************************************************************************
+Transient iteration: 1        Time: 1e+12    Time step: 1e+12    CFL: 0       
+*******************************************************************************
+       time        error_velocity 
+1000000000000.0000   1.618889e-03 

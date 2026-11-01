@@ -122,3 +122,34 @@ where :math:`C_I` is a positive constant arising from an element-wise inverse es
 
 As in the SUPG/PSPG and GLS formulations, the Jacobian is assembled with the stabilization parameters :math:`\tau_M` and :math:`\tau_C` frozen (their dependence on the solution is not linearized). This stabilization is currently available for constant-density (incompressible) Newtonian flows with the monolithic solvers (``lethe-fluid`` and ``lethe-fluid-matrix-free``).
 
+Fine-scale velocity: quasi-static and dynamic subscales
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All the RBVMS terms can be written in terms of the fine-scale (subgrid) velocity :math:`\mathbf{u}'`. With :math:`\mathbf{u}' = -\tau_M \boldsymbol{\mathcal{R}}`, the PSPG, SUPG, cross-stress and Reynolds-stress terms of the weak form above are
+
+.. math::
+
+   -\left(\nabla q, \mathbf{u}'\right), \qquad -\left(\mathbf{u} \cdot \nabla \mathbf{v}, \mathbf{u}'\right), \qquad -\left(\nabla \mathbf{v}, \mathbf{u} \otimes \mathbf{u}'\right), \qquad -\left(\nabla \mathbf{v}, \mathbf{u}' \otimes \mathbf{u}'\right)
+
+and this is how Lethe assembles them. The ``velocity subscale`` parameter of the ``stabilization`` subsection selects how :math:`\mathbf{u}'` is computed.
+
+With the default ``quasi_static`` subscale, :math:`\mathbf{u}' = -\tau_M \boldsymbol{\mathcal{R}}` is computed from the current residual only, and the time step enters through the :math:`4/\Delta t^2` term of :math:`\tau_M`. This has two consequences. First, a steady state reached by time stepping depends on the time step, since :math:`\tau_M` does. Second, when :math:`\Delta t` becomes small, :math:`\tau_M \rightarrow \Delta t / 2`, so the stabilization terms, in particular the PSPG term that stabilizes the pressure of equal-order elements, vanish.
+
+With the ``dynamic`` subscale, following Codina, Principe, Guasch and Badia, "Time dependent subscales in the stabilized finite element approximation of incompressible flow problems", Computer Methods in Applied Mechanics and Engineering 196 (2007) 2413-2430, the fine-scale velocity has its own evolution equation
+
+.. math::
+
+   \partial_t \mathbf{u}' + \frac{1}{\tau_s}\mathbf{u}' = -\boldsymbol{\mathcal{R}}, \qquad \tau_{s} = \left( u_i G_{ij} u_j + C_I \nu^2 G_{ij} G_{ij} \right)^{-1/2}
+
+where the steady stabilization parameter :math:`\tau_s` is :math:`\tau_M` without the :math:`4/\Delta t^2` term. This equation is discretized with the same BDF scheme as the velocity, :math:`\partial_t \mathbf{u}' \approx \beta_0 \mathbf{u}'_{n+1} + \sum_{j \geq 1} \beta_j \mathbf{u}'_{n+1-j}`, which gives
+
+.. math::
+
+   \mathbf{u}'_{n+1} = -\tau_t \left( \boldsymbol{\mathcal{R}} + \mathbf{m}' \right), \qquad \tau_t = \left( \beta_0 + \frac{1}{\tau_s} \right)^{-1}, \qquad \mathbf{m}' = \sum_{j \geq 1} \beta_j \mathbf{u}'_{n+1-j}
+
+The memory :math:`\mathbf{m}'` requires the fine-scale velocity of the previous time steps, which Lethe stores at the quadrature points of the cells. The continuity stabilization parameter is built from :math:`\tau_s`, :math:`\tau_C = 1/(\tau_s\, g_i g_i)`, so it does not depend on the time step either.
+
+The memory changes the behaviour of the stabilization in both regimes. At a steady state, :math:`\mathbf{u}'` no longer changes and, since the BDF coefficients sum to zero, :math:`\beta_0 \mathbf{u}' + \mathbf{m}' = 0`, so that :math:`\mathbf{u}' = -\tau_s \boldsymbol{\mathcal{R}}`: the steady solution no longer depends on the time step. When the time step is small, :math:`\tau_t` also behaves like :math:`\Delta t`, but the memory compensates for it (for BDF1, :math:`\mathbf{u}'_{n+1} \approx \mathbf{u}'_n - \Delta t\, \boldsymbol{\mathcal{R}}`), so :math:`\mathbf{u}'` keeps its magnitude and relaxes towards :math:`-\tau_s \boldsymbol{\mathcal{R}}` on the time scale :math:`\tau_s`.
+
+The fine-scale velocity starts from zero, and the term :math:`\left(\mathbf{v}, \partial_t \mathbf{u}'\right)` is neglected in the momentum equation. The Jacobian is assembled with :math:`\tau_t` and :math:`\mathbf{m}'` frozen, so that :math:`\delta \mathbf{u}' = -\tau_t\, \delta \boldsymbol{\mathcal{R}}`. On the levels of the geometric multigrid preconditioner, the memory is neglected, which only affects the preconditioner. The dynamic subscale is currently available with the matrix-free solver (``lethe-fluid-matrix-free``), for steady simulations and BDF time-stepping methods, without mesh adaptation in transient simulations, restarts or the mortar method. In steady simulations, the dynamic and quasi-static subscales are identical.
+
