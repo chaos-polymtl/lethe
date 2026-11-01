@@ -354,6 +354,14 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
   // Pressure scaling factor
   const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
+  // Per-trial-function quantities computed once per quadrature point in the
+  // loop over the columns and reused in the loop over the rows. They are
+  // allocated once, outside of the loop over the quadrature points.
+  std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+  std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+  std::vector<Tensor<1, dim>> delta_fine_scale_velocity(n_dofs);
+  std::vector<Tensor<2, dim>> fine_scale_terms_linearization(n_dofs);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -409,8 +417,12 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
 
-      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
-      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+      // Fine-scale velocity u' = -tau_M r_M at the linearization point. The
+      // jacobian matrix does not include the jacobian of the stabilization
+      // parameters tau (frozen-tau linearization, consistently with the
+      // SUPG/PSPG and GLS assemblers), so the increment of u' is
+      // δu' = -tau_M δr_M.
+      const Tensor<1, dim> fine_scale_velocity = -tau * strong_residual;
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -431,6 +443,16 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * advective_velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
+
+          // Fine-scale velocity increment δu' and linearization of the
+          // cross-stress and Reynolds-stress terms (eq. 72) for this trial
+          // function.
+          delta_fine_scale_velocity[j] = -tau * strong_jacobian_vec[q][j];
+          fine_scale_terms_linearization[j] =
+            rbvms_fine_scale_terms_linearization(advective_velocity,
+                                                 phi_u_j,
+                                                 fine_scale_velocity,
+                                                 delta_fine_scale_velocity[j]);
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -446,14 +468,12 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
           // Store these temporary products in auxiliary variables for speed.
           // grad_phi_u_i_x_velocity contracts the velocity with the derivative
           // (gradient) index (SUPG weight u·∇v), whereas
-          // grad_phi_u_i_x_strong_residual contracts r_M with that same index
-          // and is used by the cross-stress and Reynolds-stress terms.
+          // fine_scale_velocity_x_grad_phi_u_i contracts u' with the component
+          // index and is used by the second part of the SUPG jacobian.
           const auto grad_phi_u_i_x_velocity =
             grad_phi_u_i * advective_velocity;
-          const auto strong_residual_x_grad_phi_u_i =
-            strong_residual * grad_phi_u_i;
-          const auto grad_phi_u_i_x_strong_residual =
-            grad_phi_u_i * strong_residual;
+          const auto fine_scale_velocity_x_grad_phi_u_i =
+            fine_scale_velocity * grad_phi_u_i;
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
@@ -464,7 +484,8 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
               const auto &phi_p_j =
                 pressure_scaling_factor * scratch_data.phi_p[q][j];
 
-              const auto &strong_jac = strong_jacobian_vec[q][j];
+              const auto &delta_fine_scale_velocity_j =
+                delta_fine_scale_velocity[j];
 
               double local_matrix_ij =
                 component_j == dim ? -div_phi_u_i * phi_p_j : 0;
@@ -474,8 +495,9 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
                   local_matrix_ij += phi_p_i * div_phi_u_j; // continuity
 
-                  // PSPG term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  // PSPG term -(∇q, δu')
+                  local_matrix_ij +=
+                    -(delta_fine_scale_velocity_j * grad_phi_p_i);
                 }
 
               if (component_i < dim && component_j < dim)
@@ -499,28 +521,16 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
                 }
               if (component_i < dim)
                 {
-                  // The jacobian matrix does not include the jacobian of the
-                  // stabilization parameters tau (frozen-tau linearization),
-                  // consistently with the SUPG/PSPG and GLS assemblers.
-
-                  // SUPG term
+                  // SUPG term -((u·∇)v, δu') - ((δu·∇)v, u')
                   local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i_x_velocity +
-                           strong_residual_x_grad_phi_u_i * phi_u_j);
+                    -(delta_fine_scale_velocity_j * grad_phi_u_i_x_velocity +
+                      fine_scale_velocity_x_grad_phi_u_i * phi_u_j);
 
                   // RBVMS cross-stress and Reynolds-stress terms (eq. 72),
-                  // consistent frozen-tau linearization.
-                  const auto grad_phi_u_i_x_strong_jac =
-                    grad_phi_u_i * strong_jac;
-                  // Cross-stress d/dU [ tau (u·(∇v)^T r_M) ].
+                  // linearization of -(∇v, u ⊗ u') - (∇v, u' ⊗ u').
                   local_matrix_ij +=
-                    tau * (advective_velocity * grad_phi_u_i_x_strong_jac +
-                           phi_u_j * grad_phi_u_i_x_strong_residual);
-                  // Reynolds-stress d/dU [ -tau^2 (∇v : r_M ⊗ r_M) ].
-                  local_matrix_ij +=
-                    -tau * tau *
-                    (strong_jac * grad_phi_u_i_x_strong_residual +
-                     strong_residual * grad_phi_u_i_x_strong_jac);
+                    scalar_product(fine_scale_terms_linearization[j],
+                                   grad_phi_u_i);
                 }
 
               local_matrix_ij *= JxW;
@@ -623,6 +633,13 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
 
+      // Fine-scale velocity u' = -tau_M r_M, and cross-stress and
+      // Reynolds-stress terms -(∇v, u ⊗ u') - (∇v, u' ⊗ u') (eq. 72), which
+      // are contracted with the test-function gradients below.
+      const Tensor<1, dim> fine_scale_velocity = -tau * strong_residual;
+      const Tensor<2, dim> fine_scale_terms =
+        rbvms_fine_scale_terms(advective_velocity, fine_scale_velocity);
+
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -631,11 +648,6 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
           const auto &phi_p_i      = scratch_data.phi_p[q][i];
           const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
           const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
-
-          // Contraction of r_M with the derivative index of the test-function
-          // gradient, shared by the cross-stress and Reynolds-stress terms.
-          const auto grad_phi_u_i_x_strong_residual =
-            grad_phi_u_i * strong_residual;
 
           double local_rhs_i = 0;
 
@@ -652,25 +664,18 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
               velocity_divergence * phi_p_i + mass_source * phi_p_i) *
             JxW;
 
-          // PSPG term
-          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+          // PSPG term -(∇q, u')
+          local_rhs_i += (fine_scale_velocity * grad_phi_p_i) * JxW;
 
-          // SUPG term ( u·∇v weight only, no GLS -ν∆v part )
+          // SUPG term -((u·∇)v, u') ( u·∇v weight only, no GLS -ν∆v part )
           local_rhs_i +=
-            -tau * (strong_residual * (grad_phi_u_i * advective_velocity)) *
-            JxW;
+            (fine_scale_velocity * (grad_phi_u_i * advective_velocity)) * JxW;
 
           // LSIC / grad-div term (uses tau_C)
           local_rhs_i += -tau_lsic * (div_phi_u_i * velocity_divergence) * JxW;
 
-          // RBVMS cross-stress term ( u·(∇v)^T, tau_M r_M ) (eq. 72)
-          local_rhs_i +=
-            -tau * (advective_velocity * grad_phi_u_i_x_strong_residual) * JxW;
-
-          // RBVMS Reynolds-stress term -( ∇v, tau_M r_M ⊗ tau_M r_M ) (eq. 72)
-          local_rhs_i += tau * tau *
-                         (strong_residual * grad_phi_u_i_x_strong_residual) *
-                         JxW;
+          // RBVMS cross-stress and Reynolds-stress terms (eq. 72)
+          local_rhs_i += -scalar_product(fine_scale_terms, grad_phi_u_i) * JxW;
 
           local_rhs(i) += local_rhs_i;
         }
