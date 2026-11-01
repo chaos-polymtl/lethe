@@ -11,6 +11,7 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
     set use default stabilization        = true
 
     set stabilization                    = pspg_supg     # <pspg_supg|gls|grad_div|rbvms>.
+    set velocity subscale                = quasi_static  # <quasi_static|dynamic>
 
     # DCDD stabilization
     set heat transfer dcdd stabilization = false
@@ -36,6 +37,8 @@ There are four choices of stabilization strategy:
 * ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div block Navier-Stokes solver (``lethe-fluid-block``).
 
 * ``stabilization=rbvms`` assembles the residual-based variational multiscale (RBVMS) stabilization of `Bazilevs et al. (2007) <https://doi.org/10.1016/j.cma.2007.07.016>`_. In addition to the SUPG/PSPG terms, it builds the stabilization parameters from the element metric tensor (so they account for element stretching and shearing) and adds the cross-stress and Reynolds-stress subgrid terms, making it suitable as an implicit large-eddy-simulation (LES) model for turbulent flows (for more details see :doc:`../../../../theory/multiphysics/fluid_dynamics/stabilization`). It is currently available for constant-density (incompressible) Newtonian flows with the monolithic solvers (``lethe-fluid`` or ``lethe-fluid-matrix-free``).
+
+* ``velocity subscale`` selects the model of the fine-scale (subgrid) velocity of the ``rbvms`` stabilization (for more details see :doc:`../../../../theory/multiphysics/fluid_dynamics/stabilization`). With ``quasi_static`` (the default), the fine-scale velocity is computed from the current residual with a stabilization parameter that contains the time step. As a consequence, a steady state reached by time stepping depends on the time step, and the pressure stabilization weakens when the time step becomes small. With ``dynamic``, the fine-scale velocity is advanced in time with the same BDF scheme as the velocity and its stabilization parameter no longer contains the time step, so a steady state reached by time stepping no longer depends on the time step. The ``dynamic`` option is currently only available with ``stabilization=rbvms`` and the matrix-free solver (``lethe-fluid-matrix-free``), for steady simulations and the ``bdf1``, ``bdf2``, ``bdf3`` and ``steady_bdf`` time-stepping methods. It does not support mesh adaptation in transient simulations, restarts, or the mortar method. In steady simulations, both options are identical.
 
 * ``heat transfer dcdd stabilization`` applies the Discontinuity-Capturing Directional Dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
 
