@@ -204,58 +204,60 @@ calculate_rbvms_tau(const Tensor<2, dim, Number> &metric_tensor,
 /**
  * @brief Assemble the RBVMS fine-scale cross-stress and Reynolds-stress
  * contributions to the velocity gradient residual (Bazilevs et al. 2007,
- * eq. 72). These are the two fine-scale terms that distinguish RBVMS from
- * SUPG/PSPG. The returned tensor T is meant to be added to the gradient
- * residual that is later contracted with the test-function gradient, i.e. it
- * contributes (T : ∇v) = sum_ij T[i][j] ∂v_i/∂x_j, so:
+ * eq. 72), written in terms of the fine-scale velocity u'. These are the two
+ * fine-scale terms that distinguish RBVMS from SUPG/PSPG. The returned tensor T
+ * is meant to be added to the gradient residual that is later contracted with
+ * the test-function gradient, i.e. it contributes
+ * (T : ∇v) = sum_ij T[i][j] ∂v_i/∂x_j, so:
  *
- *   cross-stress     ( ∇v, u ⊗ τ_M r_M )          -> +τ_M u_i r_M[j]
- *   Reynolds-stress -( ∇v, τ_M r_M ⊗ τ_M r_M )    -> -τ_M^2 r_M[i] r_M[j]
+ *   cross-stress    -( ∇v, u ⊗ u' )    -> -u_i u'_j
+ *   Reynolds-stress -( ∇v, u' ⊗ u' )   -> -u'_i u'_j
  *
- * Equivalently, with the fine-scale velocity u' = -τ_M r_M, the cross-stress is
- * -( ∇v, u ⊗ u' ) and the Reynolds-stress is -( ∇v, u' ⊗ u' ). Note the u
- * factor sits on the component (test) index i and r_M on the derivative index
- * j, which is the transpose of the SUPG term ( u·∇v, τ_M r_M ) = τ_M u_j r_M[i]
- * (r_M on the component index, u on the derivative index).
+ * With the quasi-static fine-scale velocity u' = -τ_M r_M, these are the terms
+ * +τ_M u_i r_M[j] and -τ_M^2 r_M[i] r_M[j] of eq. 72. Note the u factor sits
+ * on the component (test) index i and u' on the derivative index j, which is
+ * the transpose of the SUPG term -( u·∇v, u' ) = -u_j u'_i (u' on the
+ * component index, u on the derivative index).
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).
  * @param[in] velocity The advecting velocity u.
- * @param[in] momentum_residual The strong momentum residual r_M (eq. 62).
- * @param[in] tau_momentum The momentum stabilization parameter τ_M (eq. 64).
+ * @param[in] fine_scale_velocity The fine-scale velocity u'.
  * @return The gradient-residual contribution T[i][j].
  */
 template <int dim, typename Number>
 inline Tensor<2, dim, Number>
 rbvms_fine_scale_terms(const Tensor<1, dim, Number> &velocity,
-                       const Tensor<1, dim, Number> &momentum_residual,
-                       const Number                  tau_momentum)
+                       const Tensor<1, dim, Number> &fine_scale_velocity)
 {
   Tensor<2, dim, Number> result;
   for (int i = 0; i < dim; ++i)
     for (int j = 0; j < dim; ++j)
-      result[i][j] = tau_momentum * velocity[i] * momentum_residual[j] -
-                     tau_momentum * tau_momentum * momentum_residual[i] *
-                       momentum_residual[j];
+      result[i][j] = -velocity[i] * fine_scale_velocity[j] -
+                     fine_scale_velocity[i] * fine_scale_velocity[j];
   return result;
 }
 
 /**
- * @brief Consistent frozen-τ linearization of rbvms_fine_scale_terms with
- * respect to (δu, δr_M). τ_M is treated as constant (read from the precomputed
- * table), so only the residual factors are differentiated. Applying the product
- * rule to the cross-stress and Reynolds-stress terms of eq. 72:
+ * @brief Linearization of rbvms_fine_scale_terms with respect to (δu, δu').
+ * Applying the product rule to the cross-stress and Reynolds-stress terms of
+ * eq. 72:
  *
- *   d(cross)    =  τ_M   ( δu_i r_M[j] + u_i δr_M[j] )
- *   d(Reynolds) = -τ_M^2 ( δr_M[i] r_M[j] + r_M[i] δr_M[j] )
+ *   d(cross)    = -( δu_i u'_j + u_i δu'_j )
+ *   d(Reynolds) = -( δu'_i u'_j + u'_i δu'_j )
+ *
+ * The fine-scale velocity is affine in the strong momentum residual r_M with a
+ * frozen stabilization parameter (u' = -τ_M r_M for the quasi-static
+ * subscale), so δu' = -τ_M δr_M, where δr_M is the linearization of r_M with
+ * respect to the trial (δu, δp).
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).
- * @param[in] velocity Frozen advecting velocity u^n.
+ * @param[in] velocity Frozen advecting velocity u at the linearization point.
  * @param[in] delta_velocity Trial velocity increment δu.
- * @param[in] momentum_residual Frozen strong residual r_M^n (eq. 62).
- * @param[in] delta_momentum_residual Linearized residual δr_M.
- * @param[in] tau_momentum The (frozen) momentum stabilization parameter τ_M.
+ * @param[in] fine_scale_velocity Fine-scale velocity u' at the linearization
+ *   point.
+ * @param[in] delta_fine_scale_velocity Fine-scale velocity increment δu'.
  * @return The linearized gradient-residual contribution.
  */
 template <int dim, typename Number>
@@ -263,18 +265,16 @@ inline Tensor<2, dim, Number>
 rbvms_fine_scale_terms_linearization(
   const Tensor<1, dim, Number> &velocity,
   const Tensor<1, dim, Number> &delta_velocity,
-  const Tensor<1, dim, Number> &momentum_residual,
-  const Tensor<1, dim, Number> &delta_momentum_residual,
-  const Number                  tau_momentum)
+  const Tensor<1, dim, Number> &fine_scale_velocity,
+  const Tensor<1, dim, Number> &delta_fine_scale_velocity)
 {
   Tensor<2, dim, Number> result;
   for (int i = 0; i < dim; ++i)
     for (int j = 0; j < dim; ++j)
-      result[i][j] = tau_momentum * (delta_velocity[i] * momentum_residual[j] +
-                                     velocity[i] * delta_momentum_residual[j]) -
-                     tau_momentum * tau_momentum *
-                       (delta_momentum_residual[i] * momentum_residual[j] +
-                        momentum_residual[i] * delta_momentum_residual[j]);
+      result[i][j] = -(delta_velocity[i] * fine_scale_velocity[j] +
+                       velocity[i] * delta_fine_scale_velocity[j]) -
+                     (delta_fine_scale_velocity[i] * fine_scale_velocity[j] +
+                      fine_scale_velocity[i] * delta_fine_scale_velocity[j]);
   return result;
 }
 

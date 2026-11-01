@@ -134,12 +134,15 @@ public:
  * residual-based turbulence modeling for large eddy simulation of
  * incompressible flows", CMAME 197 (2007) 173-201.
  *
- * On top of the SUPG/PSPG terms it adds the metric-based stabilization
- * parameters tau_M (eq. 64) and tau_C (eq. 65) built from the element metric
- * tensor G (eq. 66) and vector g (eq. 69), the LSIC/grad-div term, and the two
- * fine-scale terms that define RBVMS: the cross-stress term (∇w, u ⊗ tau_M
- * r_M) and the Reynolds-stress term -(∇w, tau_M r_M ⊗ tau_M r_M) (eq. 72). This
- * is the matrix-based counterpart of the matrix-free rbvms implementation.
+ * All the stabilization terms are written in terms of the fine-scale velocity
+ * u' = -tau_M r_M, with r_M the strong momentum residual (eq. 62) and the
+ * metric-based stabilization parameter tau_M (eq. 64) built from the element
+ * metric tensor G (eq. 66). On top of the PSPG -(∇q, u') and SUPG
+ * -((u·∇)w, u') terms, it adds the LSIC/grad-div term with the metric-based
+ * tau_C (eq. 65) built from G and the metric vector g (eq. 69), and the two
+ * fine-scale terms that define RBVMS: the cross-stress term -(∇w, u ⊗ u') and
+ * the Reynolds-stress term -(∇w, u' ⊗ u') (eq. 72). This is the matrix-based
+ * counterpart of the matrix-free rbvms implementation.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

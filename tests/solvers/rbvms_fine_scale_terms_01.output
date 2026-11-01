@@ -1,5 +1,7 @@
 
-DEAL::[double]     residual terms (eq. 72) match reference : OK
-DEAL::[double]     linearization matches finite difference  : OK
-DEAL::[vectorized] residual terms (eq. 72) match reference : OK
-DEAL::[vectorized] linearization matches finite difference  : OK
+DEAL::[double]     residual terms match the closed form in r_M      : OK
+DEAL::[double]     linearization matches the closed form in r_M     : OK
+DEAL::[double]     linearization matches finite difference          : OK
+DEAL::[vectorized] residual terms match the closed form in r_M      : OK
+DEAL::[vectorized] linearization matches the closed form in r_M     : OK
+DEAL::[vectorized] linearization matches finite difference          : OK
