@@ -73,6 +73,8 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   See :doc:`time_harmonic_maxwell` for advanced time-harmonic Maxwell parameters, :doc:`boundary_conditions_multiphysics` for the definition of the electromagnetic boundary conditions and :doc:`physical_properties` for the definition of the physical properties of the medium.
 
+  With the unresolved CFD-DEM solvers (``lethe-fluid-vans`` and ``lethe-fluid-particles``), the electromagnetic properties of the fluid region can account for the particles through an effective medium model. See :ref:`Physical properties - Unresolved dispersed phase <unresolved dispersed phase>`.
+
   When ``set heat transfer = true``, in addition to the electromagnetic solver, the optional parameter ``microwave heating`` can be used to enable the calculation of the heat source due to the electromagnetic fields. If ``set microwave heating = true``, the following heat source is calculated and added to the right-hand side of the heat transfer equation:
 
   .. math::
