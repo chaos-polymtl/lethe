@@ -29,6 +29,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 - Case generation and simulation launching Bash script: ``capillary-wave-time-step-sensitivity.sh``
 - Parameter file for case generation: ``capillary-wave.tpl``
 - Parameter file for the :math:`\Delta t = 0.95\Delta t_\sigma` case: ``capillary-wave-TSM-0_95.prm``
+- Parameter file for the :math:`\Delta t = 15\Delta t_\sigma` case: ``capillary-wave-TSM-15.prm``
 - Postprocessing Python script for a simple case: ``capillary-wave-postprocess.py``
 - Postprocessing Python script for generating a comparison figure: ``capillary-wave-combined.py``
 - Postprocessing Bash script: ``capillary-wave-time-step-sensitivity-postprocess.sh``
