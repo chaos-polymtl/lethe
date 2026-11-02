@@ -2087,24 +2087,24 @@ TimeHarmonicMaxwell<dim>::define_constraints()
                         std::distance(cell_dof_indices.begin(), it);
                       is_dof_on_face[local_dof_index] = true;
 
-                      // if (!robin_face)
-                      //   continue;
+                      if (!robin_face)
+                        continue;
 
-                      // // Remember that the convention for the FE system we
-                      // // are using is [E_real, E_imag, H_real, H_imag].
-                      // const unsigned int base_element =
-                      //   fe_skeleton.system_to_base_index(local_dof_index)
-                      //     .first.first;
-                      // const bool is_magnetic_dof =
-                      //   (base_element == 2 || base_element == 3);
-                      // const bool is_face_interior_dof =
-                      //   (local_dof_index >= first_face_interior_dof) &&
-                      //   (local_dof_index < end_face_interior_dof);
+                      // Remember that the convention for the FE system we
+                      // are using is [E_real, E_imag, H_real, H_imag].
+                      const unsigned int base_element =
+                        fe_skeleton.system_to_base_index(local_dof_index)
+                          .first.first;
+                      const bool is_magnetic_dof =
+                        (base_element == 2 || base_element == 3);
+                      const bool is_face_interior_dof =
+                        (local_dof_index >= first_face_interior_dof) &&
+                        (local_dof_index < end_face_interior_dof);
 
-                      // if (is_magnetic_dof && is_face_interior_dof &&
-                      //     !this->nonzero_constraints.is_constrained(face_dof))
-                      //   this->nonzero_constraints.constrain_dof_to_zero(
-                      //     face_dof);
+                      if (is_magnetic_dof && is_face_interior_dof &&
+                          !this->nonzero_constraints.is_constrained(face_dof))
+                        this->nonzero_constraints.constrain_dof_to_zero(
+                          face_dof);
                     }
                 }
             }
