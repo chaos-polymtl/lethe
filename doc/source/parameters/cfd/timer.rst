@@ -48,3 +48,17 @@ For every block of functions, Lethe reports the number of calls, the wall time s
 * ``Solve linear system`` refers to the time spent solving the linear system of equations, without the time required to assemble the preconditioner.
 
 Depending on the type of simulation, there may be other categories that appear in the timer. This is useful to monitor the functions responsible for taking up most of the simulation time. 
+
+For Sharp-IB simulations, startup also reports ``Generate or read mesh``,
+``Set mesh periodicity`` (for periodic meshes), ``Attach manifolds and refine mesh``,
+``Initialize particle coupling``, ``Initialize Sharp periodic geometry``, and
+``Setup Sharp periodic sparsity`` (when periodicity is enabled). The latter
+measures the additional sparsity construction and matrix initialization after
+the ordinary ``Setup DOFs`` section has finished.
+
+``Interpolate initial conditions`` measures nodal initialization, including
+constraint application and initialization of previous solutions when requested.
+With ``type=iteration``, nodal initialization prints a startup summary before the
+first timestep and resets the timer. Subsequent summaries cover the time since
+the preceding reset. The total elapsed time includes operations outside named
+sections, so the section percentages need not sum to exactly 100 percent.

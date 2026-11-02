@@ -15,6 +15,7 @@
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/mpi.h>
+#include <deal.II/base/timer.h>
 #include <deal.II/base/types.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -26,6 +27,7 @@
 #include <fstream>
 #include <iostream>
 #include <numbers>
+#include <optional>
 #include <string>
 
 
@@ -449,11 +451,24 @@ read_mesh_and_manifolds(
   const Parameters::Mesh<dim, spacedim>                 &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   const bool                                             restart,
-  const Parameters::PeriodicBoundaries                  &periodic_boundaries)
+  const Parameters::PeriodicBoundaries                  &periodic_boundaries,
+  TimerOutput                                           *computing_timer)
 {
+  // Close each section before opening the next so mesh setup is not counted
+  // twice in the summary. Existing callers can omit the timer.
+  std::optional<TimerOutput::Scope> timing;
+  if (computing_timer != nullptr)
+    timing.emplace(*computing_timer, "Generate or read mesh");
   attach_grid_to_triangulation(triangulation, mesh_parameters);
+  timing.reset();
 
+  if (computing_timer != nullptr && !periodic_boundaries.empty())
+    timing.emplace(*computing_timer, "Set mesh periodicity");
   setup_periodic_boundary_conditions(triangulation, periodic_boundaries);
+  timing.reset();
+
+  if (computing_timer != nullptr)
+    timing.emplace(*computing_timer, "Attach manifolds and refine mesh");
 
   // If the mesh is a GMSH mesh, we need to manually set the manifold id
   // of the face to be that of the boundary
@@ -782,21 +797,24 @@ read_mesh_and_manifolds(
   const Parameters::Mesh<2>                 &mesh_parameters,
   const Parameters::Manifolds               &manifolds_parameters,
   const bool                                 restart,
-  const Parameters::PeriodicBoundaries      &periodic_boundaries);
+  const Parameters::PeriodicBoundaries      &periodic_boundaries,
+  TimerOutput                               *computing_timer);
 template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<3> &triangulation,
   const Parameters::Mesh<3>                 &mesh_parameters,
   const Parameters::Manifolds               &manifolds_parameters,
   const bool                                 restart,
-  const Parameters::PeriodicBoundaries      &periodic_boundaries);
+  const Parameters::PeriodicBoundaries      &periodic_boundaries,
+  TimerOutput                               *computing_timer);
 template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<2, 3> &triangulation,
   const Parameters::Mesh<2, 3>                 &mesh_parameters,
   const Parameters::Manifolds                  &manifolds_parameters,
   const bool                                    restart,
-  const Parameters::PeriodicBoundaries         &periodic_boundaries);
+  const Parameters::PeriodicBoundaries         &periodic_boundaries,
+  TimerOutput                                  *computing_timer);
 
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(

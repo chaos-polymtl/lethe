@@ -22,6 +22,7 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/geometry_info.h>
 #include <deal.II/base/mpi.h>
+#include <deal.II/base/timer.h>
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -914,6 +915,8 @@ FluidDynamicsSharp<dim>::define_particles()
         }
     }
 
+  TimerOutput::Scope timer(this->computing_timer,
+                           "Initialize particle coupling");
   table_p.resize(particles.size());
   ib_dem.initialize(
     this->simulation_parameters.particlesParameters,
@@ -5378,27 +5381,32 @@ FluidDynamicsSharp<dim>::solve()
     this->simulation_parameters.mesh,
     this->simulation_parameters.manifolds_parameters,
     this->simulation_parameters.restart_parameters.restart,
-    this->simulation_parameters.boundary_conditions.periodic_boundaries);
+    this->simulation_parameters.boundary_conditions.periodic_boundaries,
+    &this->computing_timer);
 
   define_particles();
   initialize_sharp_ib_periodic_configuration();
   this->setup_dofs();
-  update_sharp_ib_periodic_geometry();
-  if (sharp_ib_periodic_boundaries.is_periodic_enabled())
-    for (auto &particle : particles)
-      {
-        const Point<dim> normalized =
-          sharp_ib_periodic_boundaries.wrap_point(particle.position,
-                                                  periodic_domain_lower,
-                                                  periodic_domain_upper);
-        const Tensor<1, dim> shift = normalized - particle.position;
-        if (shift.norm_square() != 0.)
-          {
-            particle.set_position(normalized);
-            sharp_ib_periodic_boundaries.translate_history(
-              particle.previous_positions, shift);
-          }
-      }
+  {
+    TimerOutput::Scope timer(this->computing_timer,
+                             "Initialize Sharp periodic geometry");
+    update_sharp_ib_periodic_geometry();
+    if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+      for (auto &particle : particles)
+        {
+          const Point<dim> normalized =
+            sharp_ib_periodic_boundaries.wrap_point(particle.position,
+                                                    periodic_domain_lower,
+                                                    periodic_domain_upper);
+          const Tensor<1, dim> shift = normalized - particle.position;
+          if (shift.norm_square() != 0.)
+            {
+              particle.set_position(normalized);
+              sharp_ib_periodic_boundaries.translate_history(
+                particle.previous_positions, shift);
+            }
+        }
+  }
 
   if (this->simulation_parameters.restart_parameters.restart == false)
     {
@@ -5501,6 +5509,10 @@ FluidDynamicsSharp<dim>::setup_dofs_fd()
   // pattern (built with keep_constrained_dofs=false) is sufficient.
   if (!sharp_ib_periodic_boundaries.is_periodic_enabled())
     return;
+
+  // The base Setup DOFs scope has ended; report this rebuild separately.
+  TimerOutput::Scope timer(this->computing_timer,
+                           "Setup Sharp periodic sparsity");
 
   // Retain condensed element couplings and add only the slave-to-master
   // entries needed by the Sharp constraint equations.
