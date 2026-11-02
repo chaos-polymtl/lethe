@@ -468,8 +468,10 @@
 </section>
 <section id="files-used-in-this-example">
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/warming-up-viscous-fluid</span></code>).</p>
 <ul class="simple">
-<li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">examples/multiphysics/warming-up-viscous-fluid.prm</span></code></p></li>
+<li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">warming-up-viscous-fluid.prm</span></code></p></li>
+<li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">warming-up-viscous-fluid-postprocessing.py</span></code></p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
@@ -654,6 +656,11 @@ end
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lethe-fluid warming-up-viscous-fluid.prm
 </pre></div>
 </div>
+<p>Once the simulation is complete, the evolution of the temperature and of the error with respect to the analytical solution can be plotted by launching the following command from the folder of the example:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 warming-up-viscous-fluid-postprocessing.py
+</pre></div>
+</div>
+<p>This script uses <code class="docutils literal notranslate"><span class="pre">lethe_pyvista_tools</span></code>. Click <a class="reference external" href="../../../tools/postprocessing/postprocessing_pyvista.html">here</a> for details.</p>
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>

@@ -29,6 +29,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 - Case generation and simulation launching Bash script: ``capillary-wave-time-step-sensitivity.sh``
 - Parameter file for case generation: ``capillary-wave.tpl``
 - Parameter file for the :math:`\Delta t = 0.95\Delta t_\sigma` case: ``capillary-wave-TSM-0_95.prm``
+- Parameter file for the :math:`\Delta t = 15\Delta t_\sigma` case: ``capillary-wave-TSM-15.prm``
 - Postprocessing Python script for a simple case: ``capillary-wave-postprocess.py``
 - Postprocessing Python script for generating a comparison figure: ``capillary-wave-combined.py``
 - Postprocessing Bash script: ``capillary-wave-time-step-sensitivity-postprocess.sh``
@@ -304,7 +305,7 @@ After generating the analytical solution file, the results can be postprocessed 
 with ``./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv`` being the path to the analytical solution csv file.
 
 .. important::
-    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing_pyvista.html>`_ for details.
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/figure-TSM-0_95.png                                                                           |

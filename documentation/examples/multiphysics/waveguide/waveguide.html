@@ -466,9 +466,10 @@
 </section>
 <section id="files-used-in-this-example">
 <h2>Files Used In This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
-<p>The file mentioned below is located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/waveguide</span></code>).</p>
+<p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/waveguide</span></code>).</p>
 <ul class="simple">
 <li><p>Base case parameter file (<span class="math notranslate nohighlight">\(\mathrm{f=2.45 GHz}\)</span> and <span class="math notranslate nohighlight">\(\mathrm{TE}_{10}\)</span>): <code class="docutils literal notranslate"><span class="pre">waveguide.prm</span></code></p></li>
+<li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">waveguide-postprocessing.py</span></code></p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
@@ -752,6 +753,11 @@ run in parallel using mpirun. With three mesh adaptations, this simulation takes
 <p>Here is the error of the default setting simulation in function of the element size (<span class="math notranslate nohighlight">\(h\)</span>) and the polynomial degree (<span class="math notranslate nohighlight">\(p\)</span>):</p>
 <img alt="final graph" class="align-center" src="../../../_images/model_validation.png" />
 <p>As expected, the error is <span class="math notranslate nohighlight">\(\mathcal{O}(h^{p+1})\)</span> in the <span class="math notranslate nohighlight">\(\|L^2\|\)</span> norm for the interior trial space, which verifies the implementation of the solver.</p>
+<p>At the end of the simulation, Lethe prints the table of the <span class="math notranslate nohighlight">\(L^2\)</span> errors on the real and imaginary parts of the electric and magnetic fields, with their convergence rates. The script <code class="docutils literal notranslate"><span class="pre">waveguide-postprocessing.py</span></code> reads this table from the output of the simulation and plots the errors with the expected order of convergence. To use it, write the output of the simulation in a file, then launch the script with the degree of the trial space:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 10 lethe-fluid waveguide.prm | tee log
+python3 waveguide-postprocessing.py --log log --degree 1
+</pre></div>
+</div>
 </section>
 </section>
 
