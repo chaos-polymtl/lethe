@@ -656,6 +656,31 @@ private:
                             GlobalVectorType      &solution);
 
   /**
+   * @brief Compute the power balance of the electromagnetic field and print it
+   * if the verbosity of the electromagnetics linear solver is not quiet:
+   * - the net power entering the domain through each boundary id,
+   *   \f$P = \frac{1}{2}\mathrm{Re}\int_{\Gamma}\hat{\mathbf{E}}_T \cdot
+   *   (\mathbf{n}\times\hat{\mathbf{H}})^*\,\mathrm{d}A\f$, computed with the
+   *   traces. On the boundaries with a Robin boundary condition, the magnetic
+   *   trace is not an unknown, so it is recovered from the Robin boundary
+   *   condition \f$\mathbf{n}\times\hat{\mathbf{H}} = \mathbf{g} -
+   *   Y\hat{\mathbf{E}}_T\f$;
+   * - the power dissipated in the domain, \f$\frac{1}{2}\omega\int_{\Omega}
+   *   (\mathrm{Im}(\varepsilon)|\mathbf{E}|^2 +
+   *   \mathrm{Im}(\mu)|\mathbf{H}|^2)\,\mathrm{d}V\f$, computed with the
+   *   interior solution, which is the electromagnetic heat source of the heat
+   *   transfer physics.
+   *
+   * By the Poynting theorem, the total net power entering the domain equals the
+   * dissipated power. Since the DPG method does not conserve it exactly, the
+   * imbalance is a measure of the discretization error. This function must be
+   * called before the solution is scaled. The powers are in W when the solution
+   * is scaled and non-dimensional otherwise.
+   */
+  void
+  compute_power_balance();
+
+  /**
    * Pointer to the multiphysics interface that manages the coupling
    * between the different physics solvers.
    */
