@@ -23,7 +23,7 @@ import pyvista as pv
 import glob
 
 import os
-import sys
+import argparse
 
 #############################################################################
 
@@ -41,7 +41,11 @@ time_correction = 0.175
 phase_limit = 0.5
 
 #Take case path as argument and store it
-output_path = sys.argv[1]
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the dam break')
+parser.add_argument("output_path", type=str, help="Folder which contains the results of the simulation")
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
+output_path = args.output_path
 
 # Read the pvd file to extract the times
 reader = pv.get_reader(f"{output_path}/dam-break.pvd")
@@ -66,9 +70,11 @@ for i in range(0, len(list_vtu)):
     #Select a data to apply the slice   
     exec(f'df = df_{i}')
 
-    #find max 'x' in which phase > 0
-    points = pd.DataFrame(df.points[:, 0])
-    phase  = pd.DataFrame(df['filtered_phase'])
+    #find max 'x' in which phase > 0. The pyvista arrays are converted to
+    #plain numpy arrays, since pandas otherwise uses their name (if any) as
+    #the column label
+    points = pd.DataFrame(np.asarray(df.points[:, 0]))
+    phase  = pd.DataFrame(np.asarray(df['filtered_phase']))
 
     x_max = max(points[phase[0] > phase_limit].values)[0]
     x_list.append(x_max)
@@ -94,7 +100,15 @@ ax0.set_xlabel(r'$\tau$')
 ax0.set_xlim([0, 3.5])
 ax0.set_ylim([1, 4])
 ax0.legend(loc="upper left")
-fig0.savefig(f'./xmax-t.png')
-plt.show()
+if (not args.validate):
+    fig0.savefig(f'./xmax-t.png')
+    plt.show()
+else:
+    fig0.savefig("xmax-t.pdf")
+    # Store the plotted front position so that it can be compared between
+    # validation runs
+    np.savetxt("solution-front.dat",
+               np.column_stack((time_list, x_list)),
+               header="tau delta")
 
 # [1] J. C. Martin et al., “Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane,” Philos. Trans. R. Soc. Lond. Ser. Math. Phys. Sci., vol. 244, no. 882, pp. 312–324, Mar. 1952, doi: 10.1098/rsta.1952.0006.

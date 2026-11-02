@@ -18,7 +18,7 @@ subsection simulation control
   set adapt time step to respect CFL = true
   set max cfl                        = 1
   set time step                      = 0.01
-  set output frequency               = 10
+  set output frequency               = 100
   set subdivision                    = 2
 end
 

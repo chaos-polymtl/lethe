@@ -31,6 +31,7 @@ parser = argparse.ArgumentParser(description='Arguments for the post-processing 
 parser.add_argument("-f", "--folder", type=str, help="Folder path. This folder is the folder which contains the .prm file.", required=True)
 parser.add_argument("--regression", action="store_true", default=False, help="Plot the least squares regression",required=False)
 parser.add_argument("--rollingmethod", type=str, choices=["constant", "viscous", "epsd"], help="Rolling resistance method. Must be one of: constant, viscous, or epsd.", required=True)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
 
 # Simulation folder
@@ -109,9 +110,14 @@ if (args.regression):
 
 
 # Write the angle on a file
-with open("data/angle_" + rollingmethod + ".txt", "w") as file:
-    file.write("Angle\n")
-    file.write(f"{np.arctan(p[0])*180/np.pi}\n")
+if (not args.validate):
+    with open("data/angle_" + rollingmethod + ".txt", "w") as file:
+        file.write("Angle\n")
+        file.write(f"{np.arctan(p[0])*180/np.pi}\n")
+else:
+    np.savetxt("solution-angle-" + rollingmethod + ".dat",
+               np.array([[np.arctan(p[0])*180/np.pi, R2]]),
+               header="angle R2")
 
 
 # Read height data from paper
@@ -129,13 +135,21 @@ plt.xlabel('Time (s)')
 plt.ylabel('Height of the pile (m)')
 plt.yticks(np.arange(0.1, 0.32, 0.02))
 plt.xticks(np.arange(0, 60, 10))
-plt.savefig('data/figure-height-comparison-' + rollingmethod)
-plt.show()
+if (not args.validate):
+    plt.savefig('data/figure-height-comparison-' + rollingmethod)
+    plt.show()
 
-
-# Export simulation data to csv
-data_height = pd.DataFrame({'time': time[start:], 'height':height})
-data_height.to_csv(folder + '/data/height_' + rollingmethod + '.csv')
+    # Export simulation data to csv
+    data_height = pd.DataFrame({'time': time[start:], 'height':height})
+    data_height.to_csv(folder + '/data/height_' + rollingmethod + '.csv')
+else:
+    plt.savefig('sandpile-height-' + rollingmethod + '.pdf')
+    # Store the height of the pile and the one of Ai et al. at the same times
+    # so that they can be compared between validation runs
+    np.savetxt("solution-height-" + rollingmethod + ".dat",
+               np.column_stack((time[start:], height,
+                                np.interp(time[start:], paper_data['x'], paper_data['Curve1']))),
+               header="time height height_ai")
 
 
 
