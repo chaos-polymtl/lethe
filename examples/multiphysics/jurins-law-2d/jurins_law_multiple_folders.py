@@ -84,7 +84,7 @@ class parametres():
 
 prm=parametres()
 
-pparams=dict(xlabel=r'$t \text{[s]}$', ylabel=r'$\Delta H \text{[mm]}$')
+pparams=dict(xlabel=r'$t$ [s]', ylabel=r'$\Delta H$ [mm]')
 
 with plt.style.context(plot_styles):
 
