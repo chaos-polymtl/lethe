@@ -93,7 +93,8 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
           simulation_parameters.fem_parameters.electromagnetics_test_degree),
         FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_test_degree));
-      mapping = std::make_shared<MappingQ<dim>>(fe_trial_interior->degree);
+      mapping = std::make_shared<MappingQ<dim>>(
+        std::max(fe_trial_interior->degree, uint(1)));
       cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
     }
