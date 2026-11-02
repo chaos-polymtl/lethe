@@ -763,6 +763,347 @@ TimeHarmonicMaxwell<dim>::scale_solution_components(
 }
 
 template <int dim>
+void
+TimeHarmonicMaxwell<dim>::compute_power_balance()
+{
+  const auto &electromagnetic_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+  const auto &boundary_conditions =
+    this->simulation_parameters
+      .boundary_conditions_time_harmonic_electromagnetics;
+  const PhysicalPropertiesManager &physical_properties_manager =
+    this->simulation_parameters.physical_properties_manager;
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  constexpr double           void_impedance = 4 * numbers::PI * 29.9792458;
+  const std::complex<double> imag(0., 1.);
+  const double               omega =
+    2.0 * numbers::PI * electromagnetic_parameters.electromagnetic_frequency;
+
+  // The excitation of each waveguide port is scaled by its amplitude relative
+  // to the maximum amplitude of all the ports, as in the assembly of the Robin
+  // boundary condition (see TimeHarmonicMaxwellAssemblerRobinBC).
+  std::vector<double> waveguide_ports_relative_amplitudes =
+    this->waveguide_ports_electric_amplitudes;
+  if (!waveguide_ports_relative_amplitudes.empty())
+    {
+      const double max_port_electric_amplitude =
+        *std::ranges::max_element(waveguide_ports_relative_amplitudes);
+      for (double &amplitude : waveguide_ports_relative_amplitudes)
+        amplitude /= max_port_electric_amplitude;
+    }
+
+  // Net power entering the domain through each boundary id and power
+  // dissipated in the domain
+  std::map<types::boundary_id, double> boundary_powers;
+  for (const auto &boundary : boundary_conditions.type)
+    boundary_powers[boundary.first] = 0.;
+  double dissipated_power = 0.;
+
+  // The interior solution is used for the power dissipated in the cells and
+  // the skeleton solution (the traces) for the power through the boundaries
+  FEValues<dim>      fe_values_trial_interior(*this->mapping,
+                                         *this->fe_trial_interior,
+                                         *this->cell_quadrature,
+                                         update_values | update_JxW_values);
+  FEFaceValues<dim>  fe_face_values_trial_skeleton(*this->mapping,
+                                                  *this->fe_trial_skeleton,
+                                                  *this->face_quadrature,
+                                                  update_values |
+                                                    update_quadrature_points |
+                                                    update_normal_vectors |
+                                                    update_JxW_values);
+  const unsigned int n_q_points = fe_values_trial_interior.n_quadrature_points;
+  const unsigned int n_face_q_points =
+    fe_face_values_trial_skeleton.n_quadrature_points;
+
+  // Containers for electromagnetic quantities at the quadrature points
+  std::vector<Tensor<1, dim>>       E_real_values(n_q_points);
+  std::vector<Tensor<1, dim>>       E_imag_values(n_q_points);
+  std::vector<Tensor<1, dim>>       H_real_values(n_q_points);
+  std::vector<Tensor<1, dim>>       H_imag_values(n_q_points);
+  std::vector<Tensor<1, dim>>       E_hat_real_values(n_face_q_points);
+  std::vector<Tensor<1, dim>>       E_hat_imag_values(n_face_q_points);
+  std::vector<Tensor<1, dim>>       H_hat_real_values(n_face_q_points);
+  std::vector<Tensor<1, dim>>       H_hat_imag_values(n_face_q_points);
+  std::vector<std::complex<double>> effective_electric_permittivities(
+    n_q_points);
+  std::vector<std::complex<double>> effective_magnetic_permeabilities(
+    n_q_points);
+  std::vector<std::complex<double>> face_effective_electric_permittivities(
+    n_face_q_points);
+  std::vector<std::complex<double>> face_effective_magnetic_permeabilities(
+    n_face_q_points);
+
+  // The temperature field is only needed when at least one electromagnetic
+  // property depends on temperature.
+  std::unique_ptr<FEValues<dim>>       fe_values_temperature;
+  std::unique_ptr<FEFaceValues<dim>>   fe_face_values_temperature;
+  const DoFHandler<dim>               *dof_handler_temperature = nullptr;
+  const GlobalVectorType              *temperature_solution    = nullptr;
+  std::vector<double>                  temperature_values(n_q_points);
+  std::vector<double>                  temperature_face_values(n_face_q_points);
+  std::map<field, std::vector<double>> field_values_vector;
+  std::map<field, std::vector<double>> face_field_values_vector;
+
+  if (needs_temperature)
+    {
+      dof_handler_temperature =
+        &this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      fe_values_temperature =
+        std::make_unique<FEValues<dim>>(*this->mapping,
+                                        dof_handler_temperature->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values);
+      fe_face_values_temperature =
+        std::make_unique<FEFaceValues<dim>>(*this->mapping,
+                                            dof_handler_temperature->get_fe(),
+                                            *this->face_quadrature,
+                                            update_values);
+      temperature_solution =
+        &this->multiphysics->get_solution(PhysicsID::heat_transfer);
+    }
+
+  for (const auto &cell : this->triangulation->active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      const unsigned int material_id = cell->material_id();
+
+      // We check if the physical properties depend on the temperature field. If
+      // so, we will need to evaluate the temperature field at the quadrature
+      // points.
+      const bool cell_material_needs_temperature =
+        physical_properties_manager.get_electric_conductivity(0, material_id)
+          ->depends_on(field::temperature) ||
+        physical_properties_manager
+          .get_electric_permittivity_real(0, material_id)
+          ->depends_on(field::temperature) ||
+        physical_properties_manager
+          .get_electric_permittivity_imag(0, material_id)
+          ->depends_on(field::temperature) ||
+        physical_properties_manager
+          .get_magnetic_permeability_real(0, material_id)
+          ->depends_on(field::temperature) ||
+        physical_properties_manager
+          .get_magnetic_permeability_imag(0, material_id)
+          ->depends_on(field::temperature);
+
+      // Power dissipated in the cell, 0.5 * omega * (Im(eps) |E|^2 + Im(mu)
+      // |H|^2), which is the electromagnetic heat source of the heat transfer
+      // physics (the conductivity is included in Im(eps)).
+      fe_values_trial_interior.reinit(
+        cell->as_dof_handler_iterator(*this->dof_handler_trial_interior));
+      fe_values_trial_interior[this->extractor_E_real].get_function_values(
+        *this->present_solution, E_real_values);
+      fe_values_trial_interior[this->extractor_E_imag].get_function_values(
+        *this->present_solution, E_imag_values);
+      fe_values_trial_interior[this->extractor_H_real].get_function_values(
+        *this->present_solution, H_real_values);
+      fe_values_trial_interior[this->extractor_H_imag].get_function_values(
+        *this->present_solution, H_imag_values);
+
+      if (cell_material_needs_temperature)
+        {
+          fe_values_temperature->reinit(
+            cell->as_dof_handler_iterator(*dof_handler_temperature));
+          fe_values_temperature->get_function_values(*temperature_solution,
+                                                     temperature_values);
+        }
+      else
+        {
+          std::ranges::fill(temperature_values, 0.);
+        }
+
+      field_values_vector[field::temperature] = temperature_values;
+      compute_effective_electromagnetic_properties(
+        physical_properties_manager,
+        field_values_vector,
+        material_id,
+        effective_electric_permittivities,
+        effective_magnetic_permeabilities);
+
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          const double E_squared_amplitude =
+            E_real_values[q].norm_square() + E_imag_values[q].norm_square();
+          const double H_squared_amplitude =
+            H_real_values[q].norm_square() + H_imag_values[q].norm_square();
+
+          dissipated_power +=
+            0.5 * omega *
+            (effective_electric_permittivities[q].imag() * E_squared_amplitude +
+             effective_magnetic_permeabilities[q].imag() *
+               H_squared_amplitude) *
+            fe_values_trial_interior.JxW(q);
+        }
+
+      if (!cell->at_boundary())
+        continue;
+
+      // Net power entering the domain through the boundary faces of the cell
+      const auto skeleton_cell =
+        cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
+
+      for (const auto face_no : cell->face_indices())
+        {
+          if (!cell->face(face_no)->at_boundary())
+            continue;
+
+          const types::boundary_id boundary_id =
+            cell->face(face_no)->boundary_id();
+          const bool robin_face =
+            is_robin_boundary_type(boundary_conditions.type.at(boundary_id));
+
+          fe_face_values_trial_skeleton.reinit(skeleton_cell, face_no);
+          fe_face_values_trial_skeleton[this->extractor_E_real]
+            .get_function_values(*this->present_solution_skeleton,
+                                 E_hat_real_values);
+          fe_face_values_trial_skeleton[this->extractor_E_imag]
+            .get_function_values(*this->present_solution_skeleton,
+                                 E_hat_imag_values);
+
+          // On Robin faces, the magnetic trace is not an unknown and is
+          // recovered from the Robin boundary condition, which requires the
+          // material properties. On the other faces, it is the skeleton
+          // solution.
+          if (robin_face)
+            {
+              if (cell_material_needs_temperature)
+                {
+                  fe_face_values_temperature->reinit(
+                    cell->as_dof_handler_iterator(*dof_handler_temperature),
+                    face_no);
+                  fe_face_values_temperature->get_function_values(
+                    *temperature_solution, temperature_face_values);
+                }
+              else
+                {
+                  std::ranges::fill(temperature_face_values, 0.);
+                }
+
+              face_field_values_vector[field::temperature] =
+                temperature_face_values;
+              compute_effective_electromagnetic_properties(
+                physical_properties_manager,
+                face_field_values_vector,
+                material_id,
+                face_effective_electric_permittivities,
+                face_effective_magnetic_permeabilities);
+            }
+          else
+            {
+              fe_face_values_trial_skeleton[this->extractor_H_real]
+                .get_function_values(*this->present_solution_skeleton,
+                                     H_hat_real_values);
+              fe_face_values_trial_skeleton[this->extractor_H_imag]
+                .get_function_values(*this->present_solution_skeleton,
+                                     H_hat_imag_values);
+            }
+
+          for (unsigned int q = 0; q < n_face_q_points; ++q)
+            {
+              const auto &normal =
+                fe_face_values_trial_skeleton.normal_vector(q);
+
+              // Tangential trace of the electric field
+              const Tensor<1, dim, std::complex<double>> E_hat =
+                tangential_component(E_hat_real_values[q] +
+                                       imag * E_hat_imag_values[q],
+                                     normal);
+
+              Tensor<1, dim, std::complex<double>> n_cross_H_hat;
+              if (robin_face)
+                {
+                  // Robin boundary condition: n x H = g - Y E_T
+                  const auto [excitation, surface_admittance] =
+                    compute_robin_boundary_data(
+                      electromagnetic_parameters,
+                      boundary_conditions,
+                      waveguide_ports_relative_amplitudes,
+                      boundary_id,
+                      fe_face_values_trial_skeleton.quadrature_point(q),
+                      normal,
+                      face_effective_electric_permittivities[q],
+                      face_effective_magnetic_permeabilities[q]);
+                  n_cross_H_hat = excitation - surface_admittance * E_hat;
+                }
+              else
+                {
+                  n_cross_H_hat = cross_product_3d(
+                    normal, H_hat_real_values[q] + imag * H_hat_imag_values[q]);
+                }
+
+              // The power entering the domain is the negative of the flux of
+              // the Poynting vector 0.5 * Re(E x H*) through the face, since
+              // the normal points outward from the domain. Using
+              // (E x H*) . n = -E . (n x H)*, it is 0.5 * Re(E . (n x H)*).
+              std::complex<double> E_dot_conj_n_cross_H = 0.;
+              for (unsigned int d = 0; d < dim; ++d)
+                E_dot_conj_n_cross_H += E_hat[d] * std::conj(n_cross_H_hat[d]);
+
+              boundary_powers[boundary_id] +=
+                0.5 * std::real(E_dot_conj_n_cross_H) *
+                fe_face_values_trial_skeleton.JxW(q);
+            }
+        }
+    }
+
+  // Conversion to physical units. After scaling, E = s E* (V/m) and
+  // H = s / Z_0 H* (A/m), with s the electromagnetic scaling, and the surface
+  // element is dA = L^2 dA*, with L the length unit of the mesh. Therefore,
+  // P = (s L)^2 / Z_0 P* (W). By the Poynting theorem, the dissipated power
+  // has the same conversion factor. Without scaling, the non-dimensional power
+  // is reported.
+  const bool solution_is_scaled =
+    electromagnetic_parameters.electromagnetic_scaling_type !=
+    Parameters::ElectromagneticScalingType::none;
+  const double power_scaling =
+    solution_is_scaled ? Utilities::fixed_power<2>(
+                           this->electromagnetic_scaling *
+                           this->simulation_parameters.dimensionality.length) /
+                           void_impedance :
+                         1.;
+
+  // The power entering the domain is the sum over the boundaries with a net
+  // inflow. It is used as the reference for the relative power imbalance.
+  double total_boundary_power = 0.;
+  double entering_power       = 0.;
+  for (auto &boundary : boundary_powers)
+    {
+      boundary.second =
+        power_scaling * Utilities::MPI::sum(boundary.second, mpi_communicator);
+      total_boundary_power += boundary.second;
+      entering_power += std::max(boundary.second, 0.);
+    }
+  dissipated_power =
+    power_scaling * Utilities::MPI::sum(dissipated_power, mpi_communicator);
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      const std::string units =
+        solution_is_scaled ? " W" : " (non-dimensional)";
+
+      this->pcout << "   Time-Harmonic Maxwell power balance:" << std::endl;
+      for (const auto &boundary : boundary_powers)
+        this->pcout << "     Net power entering through boundary ID "
+                    << boundary.first << ": " << boundary.second << units
+                    << std::endl;
+      this->pcout << "     Total net power entering the domain: "
+                  << total_boundary_power << units << std::endl;
+      this->pcout << "     Power dissipated in the domain: " << dissipated_power
+                  << units << std::endl;
+      if (entering_power > 0.)
+        this->pcout
+          << "     Power imbalance relative to the power entering the domain: "
+          << (total_boundary_power - dissipated_power) / entering_power
+          << std::endl;
+    }
+}
+
+template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
 TimeHarmonicMaxwell<dim>::gather_output_hook()
 {
@@ -1682,13 +2023,31 @@ TimeHarmonicMaxwell<dim>::define_constraints()
   // and a container for the face dof indices and we loop on all the faces of
   // each cell to find which dofs are on the face and flag them. The remaining
   // dofs are then constrained to zero.
+  //
+  // On the faces where a Robin boundary condition is applied, the magnetic
+  // trace is replaced by the Robin boundary condition and is therefore not
+  // tested. The magnetic trace dofs attached to the interior of such a face
+  // (quad dofs in 3D, line dofs in 2D) belong to no other face, so no test
+  // function sees them: they would form a nullspace of the condensed system.
+  // We constrain them to zero as well. The magnetic dofs on the edges of a
+  // Robin face are not constrained since they are shared with neighboring
+  // faces where the magnetic trace is tested.
 
+  const FiniteElement<dim>            &fe_skeleton = *this->fe_trial_skeleton;
   std::vector<types::global_dof_index> cell_dof_indices(
-    this->fe_trial_skeleton->n_dofs_per_cell());
+    fe_skeleton.n_dofs_per_cell());
   std::vector<types::global_dof_index> face_dof_indices(
-    this->fe_trial_skeleton->n_dofs_per_face());
-  std::vector<bool> is_dof_on_face(this->fe_trial_skeleton->n_dofs_per_cell(),
-                                   false);
+    fe_skeleton.n_dofs_per_face());
+  std::vector<bool> is_dof_on_face(fe_skeleton.n_dofs_per_cell(), false);
+
+  // Range of the cell-local indices of the dofs attached to the interior of the
+  // faces of the cell
+  const unsigned int first_face_interior_dof =
+    (dim == 3) ? fe_skeleton.get_first_quad_index() :
+                 fe_skeleton.get_first_line_index();
+  const unsigned int end_face_interior_dof =
+    (dim == 3) ? fe_skeleton.get_first_hex_index() :
+                 fe_skeleton.get_first_quad_index();
 
   // Loop on all skeleton dofs and set the interior constraints to zero
   for (const auto &cell :
@@ -1704,6 +2063,13 @@ TimeHarmonicMaxwell<dim>::define_constraints()
             {
               face->get_dof_indices(face_dof_indices);
 
+              const bool robin_face =
+                face->at_boundary() &&
+                is_robin_boundary_type(
+                  this->simulation_parameters
+                    .boundary_conditions_time_harmonic_electromagnetics.type.at(
+                      face->boundary_id()));
+
               // Loop on all dofs on the face
               for (const auto &face_dof : face_dof_indices)
                 {
@@ -1717,8 +2083,28 @@ TimeHarmonicMaxwell<dim>::define_constraints()
                   // flag to true
                   if (it != cell_dof_indices.end())
                     {
-                      is_dof_on_face[std::distance(cell_dof_indices.begin(),
-                                                   it)] = true;
+                      const unsigned int local_dof_index =
+                        std::distance(cell_dof_indices.begin(), it);
+                      is_dof_on_face[local_dof_index] = true;
+
+                      // if (!robin_face)
+                      //   continue;
+
+                      // // Remember that the convention for the FE system we
+                      // // are using is [E_real, E_imag, H_real, H_imag].
+                      // const unsigned int base_element =
+                      //   fe_skeleton.system_to_base_index(local_dof_index)
+                      //     .first.first;
+                      // const bool is_magnetic_dof =
+                      //   (base_element == 2 || base_element == 3);
+                      // const bool is_face_interior_dof =
+                      //   (local_dof_index >= first_face_interior_dof) &&
+                      //   (local_dof_index < end_face_interior_dof);
+
+                      // if (is_magnetic_dof && is_face_interior_dof &&
+                      //     !this->nonzero_constraints.is_constrained(face_dof))
+                      //   this->nonzero_constraints.constrain_dof_to_zero(
+                      //     face_dof);
                     }
                 }
             }
@@ -1806,6 +2192,11 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
 
   // Reconstruct the interior solution from the skeleton solution
   reconstruct_interior_solution();
+
+  // The power balance is computed from the non-dimensional solution, before
+  // it is scaled, since the excitation of the Robin boundary conditions is
+  // non-dimensional.
+  compute_power_balance();
 
   // We need to apply the scaling to the interior solution as it is the one
   // used for the multiphysics coupling and output.
