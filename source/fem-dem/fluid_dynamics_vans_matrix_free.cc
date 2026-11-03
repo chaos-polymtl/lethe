@@ -576,7 +576,7 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
     !this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
     ExcMessage("The VANS matrix-free solver does not support simplex meshes."));
 
-  // The VANS operator only implements the BDF time derivative.
+  // The VANS operator only implements the BDF time integration.
   AssertThrow(
     !time_stepping_is_sdirk(param.cfd_parameters.simulation_control.method),
     ExcMessage(
