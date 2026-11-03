@@ -14,6 +14,10 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <fstream>
+#include <iomanip>
+#include <sstream>
+
 template <int dim>
 TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   MultiphysicsInterface<dim>      *multiphysics_interface,
@@ -708,6 +712,9 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::compute_power_balance()
 {
+  TimerOutput::Scope t(this->computing_timer,
+                       "Calculate electromagnetic power");
+
   const auto &electromagnetic_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const auto &boundary_conditions =
@@ -735,12 +742,29 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
         amplitude /= max_port_electric_amplitude;
     }
 
-  // Net power entering the domain through each boundary id and power
-  // dissipated in the domain
-  std::map<types::boundary_id, double> boundary_powers;
-  for (const auto &boundary : boundary_conditions.type)
-    boundary_powers[boundary.first] = 0.;
-  double dissipated_power = 0.;
+  // Net power entering the domain through each boundary id. On the boundaries
+  // with a Robin boundary condition, it is split into the incident, outgoing
+  // and cross powers. All the entries are initialized on every process
+  // for the MPI sums.
+  std::map<types::boundary_id, double> net_powers;
+  std::map<types::boundary_id, double> incident_powers;
+  std::map<types::boundary_id, double> outgoing_powers;
+  std::map<types::boundary_id, double> cross_powers;
+  for (const auto &[boundary_id, type] : boundary_conditions.type)
+    {
+      net_powers[boundary_id] = 0.;
+      if (is_robin_boundary_type(type))
+        {
+          incident_powers[boundary_id] = 0.;
+          outgoing_powers[boundary_id] = 0.;
+          cross_powers[boundary_id]    = 0.;
+        }
+    }
+
+  // Power absorbed in each material. The material id is 0 for the fluid and i
+  // for the i-th solid.
+  std::vector<double> absorbed_powers(
+    physical_properties_manager.get_number_of_solids() + 1, 0.);
 
   // The interior solution is used for the power dissipated in the cells and
   // the skeleton solution (the traces) for the power through the boundaries
@@ -832,9 +856,10 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
           .get_magnetic_permeability_imag(0, material_id)
           ->depends_on(field::temperature);
 
-      // Power dissipated in the cell, 0.5 * omega * (Im(eps) |E|^2 + Im(mu)
+      // Power absorbed in the cell, 0.5 * omega * (Im(eps) |E|^2 + Im(mu)
       // |H|^2), which is the electromagnetic heat source of the heat transfer
       // physics (the conductivity is included in Im(eps)).
+      AssertIndexRange(material_id, absorbed_powers.size());
       fe_values_trial_interior.reinit(
         cell->as_dof_handler_iterator(*this->dof_handler_trial_interior));
       fe_values_trial_interior[this->extractor_E_real].get_function_values(
@@ -873,7 +898,7 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
           const double H_squared_amplitude =
             H_real_values[q].norm_square() + H_imag_values[q].norm_square();
 
-          dissipated_power +=
+          absorbed_powers[material_id] +=
             0.5 * omega *
             (effective_electric_permittivities[q].imag() * E_squared_amplitude +
              effective_magnetic_permeabilities[q].imag() *
@@ -956,9 +981,15 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                                      normal);
 
               Tensor<1, dim, std::complex<double>> n_cross_H_hat;
+              double                               incident_power_density = 0.;
+              double                               outgoing_power_density = 0.;
+              double                               cross_power_density    = 0.;
+              bool                                 waves_are_separable = false;
               if (robin_face)
                 {
-                  // Robin boundary condition: n x H = g - Y E_T
+                  // Robin boundary condition: n x H = g - Y E_T. Only the
+                  // tangential component of the excitation g is kept, since
+                  // n x H is tangential.
                   const auto [excitation, surface_admittance] =
                     compute_robin_boundary_data(
                       electromagnetic_parameters,
@@ -969,7 +1000,55 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                       normal,
                       face_effective_electric_permittivities[q],
                       face_effective_magnetic_permeabilities[q]);
-                  n_cross_H_hat = excitation - surface_admittance * E_hat;
+                  const Tensor<1, dim, std::complex<double>>
+                    tangential_excitation =
+                      tangential_component(excitation, normal);
+                  n_cross_H_hat =
+                    tangential_excitation - surface_admittance * E_hat;
+
+                  // The tangential field is split into an incident wave,
+                  // entering the domain, and an outgoing wave, which satisfy
+                  // n x H_inc = Y E_inc and n x H_out = -Y E_out. The Robin
+                  // boundary condition then gives g = 2 Y E_inc, so E_inc =
+                  // g / (2Y) and E_out = E_T - E_inc. On a waveguide port,
+                  // E_inc is the field of the incident mode. The Poynting
+                  // flux of each wave gives the incident and outgoing powers
+                  // 0.5 Re(Y) |E_inc|^2 and 0.5 Re(Y) |E_out|^2, and the net
+                  // power is P_net = P_inc - P_out + Im(Y) Im(E_out . E_inc*).
+                  // The last term is the cross power of the two waves, which
+                  // vanishes for a real admittance (lossless medium), since the
+                  // two waves are then orthogonal with respect to the Poynting
+                  // flux. The waves cannot be separated if Y = 0, in which case
+                  // the whole net power is counted as cross power below.
+                  if (surface_admittance != 0.)
+                    {
+                      waves_are_separable = true;
+                      const Tensor<1, dim, std::complex<double>> E_incident =
+                        tangential_excitation / (2. * surface_admittance);
+                      const Tensor<1, dim, std::complex<double>> E_outgoing =
+                        E_hat - E_incident;
+
+                      double               E_incident_squared_amplitude   = 0.;
+                      double               E_outgoing_squared_amplitude   = 0.;
+                      std::complex<double> E_outgoing_dot_conj_E_incident = 0.;
+                      for (unsigned int d = 0; d < dim; ++d)
+                        {
+                          E_incident_squared_amplitude +=
+                            std::norm(E_incident[d]);
+                          E_outgoing_squared_amplitude +=
+                            std::norm(E_outgoing[d]);
+                          E_outgoing_dot_conj_E_incident +=
+                            E_outgoing[d] * std::conj(E_incident[d]);
+                        }
+
+                      incident_power_density = 0.5 * surface_admittance.real() *
+                                               E_incident_squared_amplitude;
+                      outgoing_power_density = 0.5 * surface_admittance.real() *
+                                               E_outgoing_squared_amplitude;
+                      cross_power_density =
+                        surface_admittance.imag() *
+                        std::imag(E_outgoing_dot_conj_E_incident);
+                    }
                 }
               else
                 {
@@ -984,10 +1063,26 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
               std::complex<double> E_dot_conj_n_cross_H = 0.;
               for (unsigned int d = 0; d < dim; ++d)
                 E_dot_conj_n_cross_H += E_hat[d] * std::conj(n_cross_H_hat[d]);
+              const double net_power_density =
+                0.5 * std::real(E_dot_conj_n_cross_H);
 
-              boundary_powers[boundary_id] +=
-                0.5 * std::real(E_dot_conj_n_cross_H) *
-                fe_face_values_trial_skeleton.JxW(q);
+              net_powers[boundary_id] +=
+                net_power_density * fe_face_values_trial_skeleton.JxW(q);
+
+              if (robin_face)
+                {
+                  if (!waves_are_separable)
+                    cross_power_density = net_power_density;
+
+                  incident_powers[boundary_id] +=
+                    incident_power_density *
+                    fe_face_values_trial_skeleton.JxW(q);
+                  outgoing_powers[boundary_id] +=
+                    outgoing_power_density *
+                    fe_face_values_trial_skeleton.JxW(q);
+                  cross_powers[boundary_id] +=
+                    cross_power_density * fe_face_values_trial_skeleton.JxW(q);
+                }
             }
         }
     }
@@ -995,7 +1090,7 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
   // Conversion to physical units. After scaling, E = s E* (V/m) and
   // H = s / Z_0 H* (A/m), with s the electromagnetic scaling, and the surface
   // element is dA = L^2 dA*, with L the length unit of the mesh. Therefore,
-  // P = (s L)^2 / Z_0 P* (W). By the Poynting theorem, the dissipated power
+  // P = (s L)^2 / Z_0 P* (W). By the Poynting theorem, the absorbed power
   // has the same conversion factor. Without scaling, the non-dimensional power
   // is reported.
   const bool solution_is_scaled =
@@ -1008,41 +1103,197 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                            void_impedance :
                          1.;
 
-  // The power entering the domain is the sum over the boundaries with a net
-  // inflow. It is used as the reference for the relative power imbalance.
-  double total_boundary_power = 0.;
-  double entering_power       = 0.;
-  for (auto &boundary : boundary_powers)
-    {
-      boundary.second =
-        power_scaling * Utilities::MPI::sum(boundary.second, mpi_communicator);
-      total_boundary_power += boundary.second;
-      entering_power += std::max(boundary.second, 0.);
-    }
-  dissipated_power =
-    power_scaling * Utilities::MPI::sum(dissipated_power, mpi_communicator);
+  for (auto &[boundary_id, power] : net_powers)
+    power = power_scaling * Utilities::MPI::sum(power, mpi_communicator);
+  for (auto &[boundary_id, power] : incident_powers)
+    power = power_scaling * Utilities::MPI::sum(power, mpi_communicator);
+  for (auto &[boundary_id, power] : outgoing_powers)
+    power = power_scaling * Utilities::MPI::sum(power, mpi_communicator);
+  for (auto &[boundary_id, power] : cross_powers)
+    power = power_scaling * Utilities::MPI::sum(power, mpi_communicator);
+  Utilities::MPI::sum(absorbed_powers, mpi_communicator, absorbed_powers);
+  for (double &power : absorbed_powers)
+    power *= power_scaling;
 
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
-        .verbosity != Parameters::Verbosity::quiet)
+  // Power balance. On the Robin boundaries with an incident power (the excited
+  // boundaries), the outgoing power is the reflected power. On the other Robin
+  // boundaries, it is the transmitted power. The power entering the domain,
+  // i.e. the sum over the boundaries with a net inflow, is the reference power
+  // when there is no incident power.
+  double incident_power      = 0.;
+  double reflected_power     = 0.;
+  double transmitted_power   = 0.;
+  double cross_power         = 0.;
+  double non_robin_net_power = 0.;
+  double total_net_power     = 0.;
+  double entering_power      = 0.;
+  for (const auto &[boundary_id, net_power] : net_powers)
     {
-      const std::string units =
-        solution_is_scaled ? " W" : " (non-dimensional)";
-
-      this->pcout << "   Time-Harmonic Maxwell power balance:" << std::endl;
-      for (const auto &boundary : boundary_powers)
-        this->pcout << "     Net power entering through boundary ID "
-                    << boundary.first << ": " << boundary.second << units
-                    << std::endl;
-      this->pcout << "     Total net power entering the domain: "
-                  << total_boundary_power << units << std::endl;
-      this->pcout << "     Power dissipated in the domain: " << dissipated_power
-                  << units << std::endl;
-      if (entering_power > 0.)
-        this->pcout
-          << "     Power imbalance relative to the power entering the domain: "
-          << (total_boundary_power - dissipated_power) / entering_power
-          << std::endl;
+      total_net_power += net_power;
+      entering_power += std::max(net_power, 0.);
+      if (incident_powers.contains(boundary_id))
+        {
+          incident_power += incident_powers.at(boundary_id);
+          cross_power += cross_powers.at(boundary_id);
+          if (incident_powers.at(boundary_id) > 0.)
+            reflected_power += outgoing_powers.at(boundary_id);
+          else
+            transmitted_power += outgoing_powers.at(boundary_id);
+        }
+      else
+        {
+          non_robin_net_power += net_power;
+        }
     }
+  double absorbed_power = 0.;
+  for (const double power : absorbed_powers)
+    absorbed_power += power;
+
+  // Add the powers to the table and write it. The net power through the PEC
+  // and PMC boundaries must vanish and is kept as a sanity check.
+  const unsigned int precision = this->simulation_control->get_log_precision();
+  if (this->simulation_control->is_steady())
+    {
+      this->electromagnetic_power_table.add_value(
+        "cells", this->triangulation->n_global_active_cells());
+    }
+  else
+    {
+      this->electromagnetic_power_table.add_value(
+        "time", this->simulation_control->get_current_time());
+      this->electromagnetic_power_table.set_precision("time", precision);
+    }
+
+  const auto add_power_to_table = [&](const std::string &column,
+                                      const double       power) {
+    this->electromagnetic_power_table.add_value(column, power);
+    this->electromagnetic_power_table.set_scientific(column, true);
+    this->electromagnetic_power_table.set_precision(column, precision);
+  };
+  for (const auto &[boundary_id, type] : boundary_conditions.type)
+    {
+      const std::string id = std::to_string(boundary_id);
+      if (is_robin_boundary_type(type))
+        {
+          add_power_to_table("incident_power_bc_" + id,
+                             incident_powers.at(boundary_id));
+          add_power_to_table("outgoing_power_bc_" + id,
+                             outgoing_powers.at(boundary_id));
+          add_power_to_table("cross_power_bc_" + id,
+                             cross_powers.at(boundary_id));
+        }
+      else
+        {
+          add_power_to_table("net_power_bc_" + id, net_powers.at(boundary_id));
+        }
+    }
+  for (unsigned int material_id = 0; material_id < absorbed_powers.size();
+       ++material_id)
+    add_power_to_table("absorbed_power_material_" + std::to_string(material_id),
+                       absorbed_powers[material_id]);
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      const std::string filename =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.post_processing
+          .electromagnetic_power_output_name +
+        ".dat";
+      std::ofstream output(filename.c_str());
+      this->electromagnetic_power_table.write_text(output);
+    }
+
+  if (this->simulation_parameters.post_processing.verbosity !=
+      Parameters::Verbosity::verbose)
+    return;
+
+  // Terminal summary. All the boundaries are listed, including the PEC and PMC
+  // boundaries, whose net power must vanish, as a sanity check. The incident,
+  // outgoing and cross powers are only defined on the Robin boundaries.
+  const bool   reference_is_incident = incident_power > 0.;
+  const double reference_power =
+    reference_is_incident ? incident_power : entering_power;
+  const std::string reference_name =
+    reference_is_incident ? "incident" : "entering";
+
+  const auto format_power = [precision](const double power) {
+    std::ostringstream stream;
+    stream << std::scientific << std::setprecision(precision) << power;
+    return stream.str();
+  };
+  const auto format_percentage = [&](const double power) -> std::string {
+    if (reference_power <= 0.)
+      return "-";
+    std::ostringstream stream;
+    stream << std::defaultfloat << std::setprecision(precision)
+           << 100. * power / reference_power << " %";
+    return stream.str();
+  };
+
+  TableHandler boundary_table;
+  for (const auto &[boundary_id, type] : boundary_conditions.type)
+    {
+      const bool robin_boundary = is_robin_boundary_type(type);
+      boundary_table.add_value("boundary", boundary_id);
+      boundary_table.add_value("type", enum_to_string(type));
+      boundary_table.add_value("incident",
+                               robin_boundary ?
+                                 format_power(incident_powers.at(boundary_id)) :
+                                 "-");
+      boundary_table.add_value("outgoing",
+                               robin_boundary ?
+                                 format_power(outgoing_powers.at(boundary_id)) :
+                                 "-");
+      boundary_table.add_value("cross",
+                               robin_boundary ?
+                                 format_power(cross_powers.at(boundary_id)) :
+                                 "-");
+      boundary_table.add_value("net entering",
+                               format_power(net_powers.at(boundary_id)));
+    }
+
+  TableHandler material_table;
+  for (unsigned int material_id = 0; material_id < absorbed_powers.size();
+       ++material_id)
+    {
+      material_table.add_value("material", material_id);
+      material_table.add_value("absorbed",
+                               format_power(absorbed_powers[material_id]));
+      material_table.add_value("% of " + reference_name,
+                               format_percentage(absorbed_powers[material_id]));
+    }
+
+  std::ostringstream summary;
+  const auto         add_balance_line = [&](const std::string &label,
+                                    const double       power) {
+    summary << "  " << std::left << std::setw(48) << label << std::right
+            << std::setw(precision + 8) << format_power(power) << "  "
+            << format_percentage(power) << '\n';
+  };
+
+  summary << "+------------------------------------------+\n"
+          << "|  Electromagnetic power summary           |\n"
+          << "+------------------------------------------+\n"
+          << (solution_is_scaled ? "Powers in W" : "Non-dimensional powers")
+          << ", positive net powers enter the domain.\n\n"
+          << "Boundaries:\n";
+  boundary_table.write_text(summary);
+  summary << "\nMaterials:\n";
+  material_table.write_text(summary);
+  summary << "\nBalance (percentages of the " << reference_name << " power):\n";
+  add_balance_line("incident", incident_power);
+  add_balance_line("reflected (outgoing, excited Robin boundaries)",
+                   reflected_power);
+  add_balance_line("transmitted (outgoing, other Robin boundaries)",
+                   transmitted_power);
+  add_balance_line("cross power (lossy Robin boundaries)", cross_power);
+  add_balance_line("net entering, non-Robin boundaries", non_robin_net_power);
+  add_balance_line("absorbed", absorbed_power);
+  add_balance_line("imbalance (net entering - absorbed)",
+                   total_net_power - absorbed_power);
+  summary << std::endl;
+
+  this->pcout << summary.str();
 }
 
 template <int dim>
@@ -1467,6 +1718,14 @@ TimeHarmonicMaxwell<dim>::gather_tables()
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_THM" + suffix);
 
+  if (this->simulation_parameters.post_processing
+        .calculate_electromagnetic_power)
+    table_output_structs.emplace_back(
+      this->electromagnetic_power_table,
+      prefix +
+        this->simulation_parameters.post_processing
+          .electromagnetic_power_output_name +
+        suffix);
 
   return table_output_structs;
 }
@@ -2138,7 +2397,9 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
   // The power balance is computed from the non-dimensional solution, before
   // it is scaled, since the excitation of the Robin boundary conditions is
   // non-dimensional.
-  compute_power_balance();
+  if (this->simulation_parameters.post_processing
+        .calculate_electromagnetic_power)
+    compute_power_balance();
 
   // We need to apply the scaling to the interior solution as it is the one
   // used for the multiphysics coupling and output.
