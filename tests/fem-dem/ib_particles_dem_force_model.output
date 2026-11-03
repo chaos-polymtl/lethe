@@ -1,0 +1,7 @@
+
+DEAL::Dimension 2
+DEAL::Tangential force matches the effective shear modulus of the DEM: true
+DEAL::Tangential force does not depend on the order of the bodies: true
+DEAL::Dimension 3
+DEAL::Tangential force matches the effective shear modulus of the DEM: true
+DEAL::Tangential force does not depend on the order of the bodies: true

@@ -14,7 +14,6 @@
 #include <solvers/postprocessing_cfd.h>
 
 #include <dem/force_chains_visualization.h>
-#include <dem/log_collision_data.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/update_local_particle_containers.h>
 #include <dem/visualization.h>
@@ -2104,6 +2103,57 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 
 template <int dim>
 void
+FluidDynamicsSharp<dim>::apply_prescribed_particle_motion(
+  IBParticle<dim> &particle,
+  const double     time,
+  const double     dt) const
+{
+  if (this->simulation_parameters.particlesParameters
+        ->load_particles_from_file == false)
+    {
+      particle.f_position->set_time(time);
+      particle.f_velocity->set_time(time);
+      particle.f_omega->set_time(time);
+      particle.f_orientation->set_time(time);
+
+      particle.position[0] = particle.f_position->value(particle.position, 0);
+      particle.position[1] = particle.f_position->value(particle.position, 1);
+      particle.velocity[0] = particle.f_velocity->value(particle.position, 0);
+      particle.velocity[1] = particle.f_velocity->value(particle.position, 1);
+      particle.omega[0]    = particle.f_omega->value(particle.position, 0);
+      particle.omega[1]    = particle.f_omega->value(particle.position, 1);
+      particle.omega[2]    = particle.f_omega->value(particle.position, 2);
+      particle.orientation[0] =
+        particle.f_orientation->value(particle.position, 0);
+      particle.orientation[1] =
+        particle.f_orientation->value(particle.position, 1);
+      particle.orientation[2] =
+        particle.f_orientation->value(particle.position, 2);
+      if constexpr (dim == 3)
+        {
+          particle.position[2] =
+            particle.f_position->value(particle.position, 2);
+          particle.velocity[2] =
+            particle.f_velocity->value(particle.position, 2);
+        }
+    }
+  else
+    {
+      // The velocity and angular velocity of a particle loaded from a file are
+      // constant. The new state is computed from the state at the start of the
+      // time step, so that it does not change when this function is called at
+      // each Newton iteration.
+      for (int d = 0; d < dim; ++d)
+        particle.position[d] =
+          particle.previous_positions[0][d] + particle.velocity[d] * dt;
+      particle.orientation =
+        particle.previous_orientation[0] + particle.omega * dt;
+    }
+}
+
+
+template <int dim>
+void
 FluidDynamicsSharp<dim>::integrate_particles()
 {
   particle_residual = 0;
@@ -2533,57 +2583,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
             }
           else
             {
-              if (this->simulation_parameters.particlesParameters
-                    ->load_particles_from_file == false)
-                {
-                  particles[p].f_position->set_time(time);
-                  particles[p].f_velocity->set_time(time);
-                  particles[p].f_omega->set_time(time);
-                  particles[p].f_orientation->set_time(time);
-
-                  particles[p].position[0] =
-                    particles[p].f_position->value(particles[p].position, 0);
-                  particles[p].position[1] =
-                    particles[p].f_position->value(particles[p].position, 1);
-                  particles[p].velocity[0] =
-                    particles[p].f_velocity->value(particles[p].position, 0);
-                  particles[p].velocity[1] =
-                    particles[p].f_velocity->value(particles[p].position, 1);
-                  particles[p].omega[0] =
-                    particles[p].f_omega->value(particles[p].position, 0);
-                  particles[p].omega[1] =
-                    particles[p].f_omega->value(particles[p].position, 1);
-                  particles[p].omega[2] =
-                    particles[p].f_omega->value(particles[p].position, 2);
-                  particles[p].orientation[0] =
-                    particles[p].f_orientation->value(particles[p].position, 0);
-                  particles[p].orientation[1] =
-                    particles[p].f_orientation->value(particles[p].position, 1);
-                  particles[p].orientation[2] =
-                    particles[p].f_orientation->value(particles[p].position, 2);
-                  if constexpr (dim == 3)
-                    {
-                      particles[p].position[2] =
-                        particles[p].f_position->value(particles[p].position,
-                                                       2);
-                      particles[p].velocity[2] =
-                        particles[p].f_velocity->value(particles[p].position,
-                                                       2);
-                    }
-                }
-              else
-                {
-                  particles[p].position[0] += particles[p].velocity[0] * dt;
-                  particles[p].position[1] += particles[p].velocity[1] * dt;
-                  particles[p].orientation[0] = particles[p].omega[0] * dt;
-                  particles[p].orientation[1] = particles[p].omega[1] * dt;
-                  particles[p].orientation[2] = particles[p].omega[2] * dt;
-
-                  if constexpr (dim == 3)
-                    {
-                      particles[p].position[2] += particles[p].velocity[2] * dt;
-                    }
-                }
+              apply_prescribed_particle_motion(particles[p], time, dt);
               if (particles[p].position != particles[p].previous_positions[0] ||
                   particles[p].orientation !=
                     particles[p].previous_orientation[0])
@@ -2619,55 +2619,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
       // particle dynamics is not integrated.
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
-          if (this->simulation_parameters.particlesParameters
-                ->load_particles_from_file == false)
-            {
-              particles[p].f_position->set_time(time);
-              particles[p].f_velocity->set_time(time);
-              particles[p].f_omega->set_time(time);
-              particles[p].f_orientation->set_time(time);
-
-              particles[p].position[0] =
-                particles[p].f_position->value(particles[p].position, 0);
-              particles[p].position[1] =
-                particles[p].f_position->value(particles[p].position, 1);
-              particles[p].velocity[0] =
-                particles[p].f_velocity->value(particles[p].position, 0);
-              particles[p].velocity[1] =
-                particles[p].f_velocity->value(particles[p].position, 1);
-              particles[p].omega[0] =
-                particles[p].f_omega->value(particles[p].position, 0);
-              particles[p].omega[1] =
-                particles[p].f_omega->value(particles[p].position, 1);
-              particles[p].omega[2] =
-                particles[p].f_omega->value(particles[p].position, 2);
-              particles[p].orientation[0] =
-                particles[p].f_orientation->value(particles[p].position, 0);
-              particles[p].orientation[1] =
-                particles[p].f_orientation->value(particles[p].position, 1);
-              particles[p].orientation[2] =
-                particles[p].f_orientation->value(particles[p].position, 2);
-              if constexpr (dim == 3)
-                {
-                  particles[p].position[2] =
-                    particles[p].f_position->value(particles[p].position, 2);
-                  particles[p].velocity[2] =
-                    particles[p].f_velocity->value(particles[p].position, 2);
-                }
-            }
-          else
-            {
-              particles[p].position[0] += particles[p].velocity[0] * dt;
-              particles[p].position[1] += particles[p].velocity[1] * dt;
-              particles[p].orientation[0] = particles[p].omega[0] * dt;
-              particles[p].orientation[1] = particles[p].omega[1] * dt;
-              particles[p].orientation[2] = particles[p].omega[2] * dt;
-
-              if constexpr (dim == 3)
-                {
-                  particles[p].position[2] += particles[p].velocity[2] * dt;
-                }
-            }
+          apply_prescribed_particle_motion(particles[p], time, dt);
           if (particles[p].position != particles[p].previous_positions[0] ||
               particles[p].orientation != particles[p].previous_orientation[0])
             particles[p].clear_shape_cache();
@@ -3162,15 +3114,12 @@ FluidDynamicsSharp<dim>::build_contact_containers(
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     &local_adjacent_particles,
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_wall_in_contact) const
+    &ghost_adjacent_particles) const
 {
   local_adjacent_particles.clear();
   ghost_adjacent_particles.clear();
-  particle_wall_in_contact.clear();
 
-  // Convert the Sharp-IB contact maps into the DEM containers expected by the
+  // Convert the Sharp-IB contact map into the DEM containers expected by the
   // existing DEM post-processing utilities.
   const auto &pp_contact_map = ib_dem.get_particle_particle_contact_map();
   for (const auto &[particle_id, contacts] : pp_contact_map)
@@ -3219,43 +3168,6 @@ FluidDynamicsSharp<dim>::build_contact_containers(
             }
         }
     }
-
-  const auto &pw_contact_map = ib_dem.get_particle_wall_contact_map();
-  for (const auto &[particle_id, contacts] : pw_contact_map)
-    {
-      // The particle-wall contact map is also replicated through ghosted
-      // particles near subdomain boundaries. Restricting this loop to locally
-      // owned particles gives a single owner rank for each exported
-      // particle-wall contact.
-      if (local_particle_ids.find(particle_id) == local_particle_ids.end())
-        continue;
-
-      const auto particle_it = particle_container.find(particle_id);
-      if (particle_it == particle_container.end())
-        continue;
-
-      for (const auto &[boundary_id, contact_info] : contacts)
-        {
-          // The contact map can keep history for contacts that have just ended
-          // so tangential displacement can be reset consistently. The DEM
-          // post-processing path only needs contacts that are still physically
-          // active (those with a positive overlap).
-          if (contact_info.normal_overlap <= 0.)
-            continue;
-
-          particle_wall_contact_info<dim> dem_contact_info;
-          dem_contact_info.particle          = particle_it->second;
-          dem_contact_info.normal_vector     = contact_info.normal_vector;
-          dem_contact_info.point_on_boundary = contact_info.contact_point;
-          dem_contact_info.boundary_id       = boundary_id;
-          dem_contact_info.tangential_displacement =
-            contact_info.tangential_displacement;
-          dem_contact_info.rolling_resistance_spring_torque =
-            contact_info.rolling_resistance_spring_torque;
-
-          particle_wall_in_contact[particle_id][boundary_id] = dem_contact_info;
-        }
-    }
 }
 
 template <int dim>
@@ -3270,11 +3182,8 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
   const bool write_particle_output = output_iteration;
   const bool write_force_chains =
     output_iteration && dem_parameters.post_processing.force_chains;
-  const bool log_particle_wall_collisions =
-    dem_parameters.post_processing.particle_wall_collision_statistics;
 
-  if (!(write_particle_output || write_force_chains ||
-        log_particle_wall_collisions))
+  if (!(write_particle_output || write_force_chains))
     return;
 
   Particles::ParticleHandler<dim, dim> particle_handler(
@@ -3293,25 +3202,12 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
     local_adjacent_particles;
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    particle_wall_in_contact;
 
-  if (write_force_chains || log_particle_wall_collisions)
+  if (write_force_chains)
     build_contact_containers(particle_container,
                              local_particle_ids,
                              local_adjacent_particles,
-                             ghost_adjacent_particles,
-                             particle_wall_in_contact);
-
-  if (log_particle_wall_collisions)
-    {
-      log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
-        dem_parameters,
-        particle_wall_in_contact,
-        this->simulation_control->get_current_time(),
-        ongoing_collision_log,
-        collision_event_log);
-    }
+                             ghost_adjacent_particles);
 
   if (write_particle_output)
     {
@@ -5089,6 +4985,13 @@ FluidDynamicsSharp<dim>::solve()
       "DEM lagrangian post-processing is not supported for lethe-fluid-sharp. "
       "Disable it in the DEM post-processing subsection."));
 
+  AssertThrow(!cfd_dem_parameters.dem_parameters.post_processing
+                 .particle_wall_collision_statistics,
+              ExcMessage(
+                "DEM particle-wall collision statistics are not supported for "
+                "lethe-fluid-sharp. Disable them in the DEM post-processing "
+                "subsection."));
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,
@@ -5180,14 +5083,6 @@ FluidDynamicsSharp<dim>::solve()
       finish_time_step_particles();
       write_force_ib();
       this->finish_time_step();
-    }
-
-  if (cfd_dem_parameters.dem_parameters.post_processing
-        .particle_wall_collision_statistics)
-    {
-      write_collision_stats(cfd_dem_parameters.dem_parameters,
-                            collision_event_log,
-                            this->mpi_communicator);
     }
 
   this->finish_simulation();

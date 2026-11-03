@@ -17,6 +17,7 @@ file(COPY check_point_files/ib_force.00.dat DESTINATION "${CMAKE_CURRENT_BINARY_
 file(COPY particles.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_particles_from_file_test.${_build_type}/mpirun=1/")
 file(COPY particles_mixed_integration.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_particles_from_file_mixed_integration.${_build_type}/mpirun=1/")
 file(COPY particles_2d_inertia_tensor.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_particles_from_file_2d_inertia_tensor.${_build_type}/mpirun=1/")
+file(COPY particles_prescribed_motion.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_particles_from_file_prescribed_motion.${_build_type}/mpirun=1/")
 file(COPY rbf_test_shape.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/flow_around_rbf.${_build_type}/mpirun=1/")
 file(COPY helix_composite_shape DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavatappi_composite_test.${_build_type}/mpirun=1/")
 file(COPY spooky_composite_shape DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/spooky_composite_test.${_build_type}/mpirun=1/")

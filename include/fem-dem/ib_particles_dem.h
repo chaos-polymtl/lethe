@@ -266,16 +266,6 @@ public:
     return pp_contact_map;
   }
 
-  /**
-   * @brief Return the particle-wall contact map built for the IB DEM
-   * coupling.
-   */
-  const std::map<unsigned int, std::map<unsigned int, ContactInfo>> &
-  get_particle_wall_contact_map() const
-  {
-    return pw_contact_map;
-  }
-
 private:
   /**
    * @brief Check whether a boundary should be ignored for Sharp-IB particle

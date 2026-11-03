@@ -1,0 +1,7 @@
+
+DEAL::Dimension 2
+DEAL::Particle is in contact with the wall: true
+DEAL::Contact force is normal to the wall at the closest boundary point: true
+DEAL::Dimension 3
+DEAL::Particle is in contact with the wall: true
+DEAL::Contact force is normal to the wall at the closest boundary point: true
