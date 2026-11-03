@@ -18,22 +18,22 @@ Transient iteration: 1        Time: 0.0025   Time step: 0.0025   CFL: 0
 Fluid Dynamics
 ---------------
   -Tolerance of iterative solver is : 6.3252e+00
-  -Iterative solver took : 15 steps to reach a residual norm of 2.5490e+00
-  -Tolerance of iterative solver is : 8.8132e-01
-  -Iterative solver took : 17 steps to reach a residual norm of 4.7164e-01
-  -Tolerance of iterative solver is : 8.6227e-02
-  -Iterative solver took : 17 steps to reach a residual norm of 4.1009e-02
-  -Tolerance of iterative solver is : 9.3223e-03
-  -Iterative solver took : 17 steps to reach a residual norm of 3.3691e-03
-  -Tolerance of iterative solver is : 9.8723e-04
-  -Iterative solver took : 17 steps to reach a residual norm of 3.7382e-04
-particle 0 position 5.0007e+00 8.2005e-01
-particle 0 velocity 2.5660e-01 2.8560e+01
+  -Iterative solver took : 12 steps to reach a residual norm of 4.6418e+00
+  -Tolerance of iterative solver is : 6.1034e-01
+  -Iterative solver took : 11 steps to reach a residual norm of 3.9544e-01
+  -Tolerance of iterative solver is : 8.5527e-02
+  -Iterative solver took : 11 steps to reach a residual norm of 6.1632e-02
+  -Tolerance of iterative solver is : 9.0464e-03
+  -Iterative solver took : 11 steps to reach a residual norm of 6.0750e-03
+  -Tolerance of iterative solver is : 9.9457e-04
+  -Iterative solver took : 11 steps to reach a residual norm of 6.7210e-04
+particle 0 position 5.0007e+00 8.2016e-01
+particle 0 velocity 2.7447e-01 2.8644e+01
 particle 1 position 4.9993e+00 1.5180e+01
-particle 1 velocity -2.7494e-01 -2.8540e+01
+particle 1 velocity -2.7447e-01 -2.8644e+01
 +------------------------------------------+
 |  Force summary particles                 |
 +------------------------------------------+
 particle_ID  time    T_z   omega_z theta_z   f_x     v_x    p_x     f_y     v_y      p_y    f_xv    f_yv    f_xp    f_yp   
-          0 0.0025  0.0000  0.0004  0.0000 -0.0142  0.2566 5.0007 -0.0779  28.5596  0.8201 0.0000 -0.0004 -0.0142 -0.0775 
-          1 0.0025 0.0000  0.0004  0.0000 0.0000 -0.2749 4.9993  0.0929 -28.5405 15.1800 0.0000  0.0004 0.0000  0.0925 
+          0 0.0025 0.0000  0.0004  0.0000 -0.0003  0.2745 5.0007 -0.0119  28.6440  0.8202 0.0000 -0.0004 -0.0003 -0.0115 
+          1 0.0025 0.0000  0.0004  0.0000  0.0003 -0.2745 4.9993  0.0119 -28.6440 15.1798  0.0000  0.0004  0.0003  0.0115 
