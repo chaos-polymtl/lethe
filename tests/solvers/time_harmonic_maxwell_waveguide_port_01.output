@@ -1,0 +1,5 @@
+
+DEAL::TE10, outward normal -e_x: n x H_inc = Y E_inc,t is satisfied
+DEAL::TE10, outward normal +e_x: n x H_inc = Y E_inc,t is satisfied
+DEAL::TM11, outward normal -e_x: n x H_inc = Y E_inc,t is satisfied
+DEAL::TM11, outward normal +e_x: n x H_inc = Y E_inc,t is satisfied
