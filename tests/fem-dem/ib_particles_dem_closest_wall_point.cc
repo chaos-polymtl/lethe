@@ -71,9 +71,11 @@ test()
     make_ib_particles_parameters<dim>((dim == 2) ? "0; 0" : "0; 0; 0");
 
   // The sphere overlaps the boundary of the ball, away from the symmetry
-  // planes of the mesh so that the closest boundary point is unique.
+  // planes of the mesh so that the closest boundary point is unique. This
+  // position makes the test fail in both 2D and 3D when the search does not
+  // keep the closest point found so far.
   Point<dim> position;
-  position[0] = 0.2;
+  position[0] = -0.15;
   position[1] = -0.8;
   if constexpr (dim == 3)
     position[2] = 0.1;

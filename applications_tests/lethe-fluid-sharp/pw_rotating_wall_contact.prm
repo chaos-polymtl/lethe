@@ -10,7 +10,10 @@
 # moderate velocity (about 30 m/s). The fluid is much lighter than the
 # particles, so the tangential velocity of each particle comes mostly from the
 # friction of its wall.
-# All the walls are no-slip, so the pressure is fixed at one node.
+# The side walls are outlets, so that the fluid displaced by the particles can
+# leave the domain. The case is then symmetric under a rotation of 180 degrees
+# around the center of the domain: the two particles have opposite velocities
+# and forces.
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -74,15 +77,16 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number                = 4
-  set fix pressure constant = true
+  set number = 4
   subsection bc 0
     set id   = 0
-    set type = noslip
+    set type = outlet
+    set beta = 0
   end
   subsection bc 1
     set id   = 1
-    set type = noslip
+    set type = outlet
+    set beta = 0
   end
   subsection bc 2
     set id   = 2
