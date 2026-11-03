@@ -1,0 +1,47 @@
+
+DEAL::TE10 mode, modal admittance Y = (1.95496,0.0728309)
+DEAL::  Outward normal -e_x
+DEAL::    Point 0.00000 0.300000 0.100000
+DEAL::      E_inc,t       : (0.00000,0.00000) (0.00000,0.00000) (0.809017,0.00000)
+DEAL::      n x H_inc / Y : (0.00000,0.00000) (0.00000,0.00000) (0.809017,0.00000)
+DEAL::    Point 0.00000 0.500000 0.00000
+DEAL::      E_inc,t       : (0.00000,0.00000) (0.00000,0.00000) (1.00000,0.00000)
+DEAL::      n x H_inc / Y : (0.00000,0.00000) (0.00000,0.00000) (1.00000,0.00000)
+DEAL::    Max |n x H_inc - Y E_inc,t| over the port : 0.00000
+DEAL::    Max |Im(E_inc,t)| over the port           : 0.00000
+DEAL::    Max |E_inc,t| over the port               : 1.00000
+DEAL::    Max change with the corner ordering       : 0.00000
+DEAL::  Outward normal +e_x
+DEAL::    Point 0.00000 0.300000 0.100000
+DEAL::      E_inc,t       : (0.00000,0.00000) (0.00000,0.00000) (-0.809017,0.00000)
+DEAL::      n x H_inc / Y : (0.00000,0.00000) (0.00000,0.00000) (-0.809017,0.00000)
+DEAL::    Point 0.00000 0.500000 0.00000
+DEAL::      E_inc,t       : (0.00000,0.00000) (0.00000,0.00000) (-1.00000,0.00000)
+DEAL::      n x H_inc / Y : (0.00000,0.00000) (0.00000,0.00000) (-1.00000,0.00000)
+DEAL::    Max |n x H_inc - Y E_inc,t| over the port : 0.00000
+DEAL::    Max |Im(E_inc,t)| over the port           : 0.00000
+DEAL::    Max |E_inc,t| over the port               : 1.00000
+DEAL::    Max change with the corner ordering       : 0.00000
+DEAL::TM11 mode, modal admittance Y = (2.32923,-0.145422)
+DEAL::  Outward normal -e_x
+DEAL::    Point 0.00000 0.300000 0.100000
+DEAL::      E_inc,t       : (0.00000,0.00000) (0.172746,0.00000) (0.654508,0.00000)
+DEAL::      n x H_inc / Y : (0.00000,0.00000) (0.172746,0.00000) (0.654508,0.00000)
+DEAL::    Point 0.00000 0.500000 0.00000
+DEAL::      E_inc,t       : (0.00000,0.00000) (0.00000,0.00000) (1.00000,0.00000)
+DEAL::      n x H_inc / Y : (0.00000,0.00000) (0.00000,0.00000) (1.00000,0.00000)
+DEAL::    Max |n x H_inc - Y E_inc,t| over the port : 0.00000
+DEAL::    Max |Im(E_inc,t)| over the port           : 0.00000
+DEAL::    Max |E_inc,t| over the port               : 1.00000
+DEAL::    Max change with the corner ordering       : 0.00000
+DEAL::  Outward normal +e_x
+DEAL::    Point 0.00000 0.300000 0.100000
+DEAL::      E_inc,t       : (0.00000,0.00000) (0.172746,0.00000) (0.654508,0.00000)
+DEAL::      n x H_inc / Y : (0.00000,0.00000) (0.172746,0.00000) (0.654508,0.00000)
+DEAL::    Point 0.00000 0.500000 0.00000
+DEAL::      E_inc,t       : (0.00000,0.00000) (0.00000,0.00000) (1.00000,0.00000)
+DEAL::      n x H_inc / Y : (0.00000,0.00000) (0.00000,0.00000) (1.00000,0.00000)
+DEAL::    Max |n x H_inc - Y E_inc,t| over the port : 0.00000
+DEAL::    Max |Im(E_inc,t)| over the port           : 0.00000
+DEAL::    Max |E_inc,t| over the port               : 1.00000
+DEAL::    Max change with the corner ordering       : 0.00000

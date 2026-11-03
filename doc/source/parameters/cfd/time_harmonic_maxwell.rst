@@ -234,13 +234,30 @@ excited at the inlet.
   .. math::
     \begin{align}
         \mathbf{E}_{TM} & = \begin{bmatrix} i \frac{k_{x_3} k_{x_1}}{k_c^2} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2) \\  i \frac{k_{x_3} k_{x_2}}{k_c^2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2) \\ \sin(k_{x_1} x_1) \sin(k_{x_2} x_2) \end{bmatrix} e^{i k_{x_3} x_3}, \\
-        \mathbf{H}_{TM} & = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\-k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
+        \mathbf{H}_{TM} & = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} -k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
     \end{align}
 
   In the above equations, :math:`k_{x_1}` and :math:`k_{x_2}` are the
   wavenumbers in the two transverse directions, and :math:`k_{x_3}` is the
-  wavenumber in the propagation direction. The cutoff wavenumber :math:`k_c` is
-  defined as :math:`k_c^2 = k_{x_1}^2 + k_{x_2}^2`.
+  wavenumber in the propagation direction :math:`x_3`, which points into the
+  domain. The cutoff wavenumber :math:`k_c` is defined as
+  :math:`k_c^2 = k_{x_1}^2 + k_{x_2}^2`.
+
+  Both modes are then multiplied by a constant so that the transverse electric
+  field on the inlet (:math:`x_3 = 0`) is real, with a maximum amplitude of 1:
+
+  .. math::
+    \begin{align} 
+       \mathbf{E} = C_{TE|TM}\,\mathbf{E},& \quad \mathbf{H} = C_{TE|TM}\,\mathbf{H}, \quad \\ 
+        \mathrm{with: }
+    C_{TE} = \frac{k_c^2}{i \omega \mu_r \max(k_{x_1}, k_{x_2})},& \quad
+    C_{TM} = \frac{k_c^2}{i k_{x_3} \max(k_{x_1}, k_{x_2})}.
+    \end{align}
+
+
+  The incident electric field on the inlet thus oscillates as
+  :math:`\cos(\omega t)`, with an amplitude of 1 at its maximum, for any mode
+  and medium.
 
 * ``mode order m``, ``mode order n``: mode orders in the two transverse
   directions. They are used to compute the wavenumbers :math:`k_{x_1}` and
