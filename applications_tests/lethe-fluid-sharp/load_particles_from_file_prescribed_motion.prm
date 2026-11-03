@@ -171,7 +171,7 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
+  # Type of initial condition. Choices are <L2projection|viscous|nodal>.
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0
