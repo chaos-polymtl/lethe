@@ -320,7 +320,7 @@ The following parameter and subsection are all inside the subsection ``particle 
     The way position and orientation are defined is that the position of the solid is taken into account first, and then the orientation is considered. The orientation is considered as a rotation around each main axis, in the order X, then Y, and lastly Z. The center of rotation for this rotation is the position point of the solid.
 
 .. warning::
-  Regarding ``omega`` and ``orientation`` , it is important to note that even in 2D simulations the rotational quantities are treated as 3D vectors. In the planar case, only the Z component of the angular velocity is used, but all three components of both omega and orientation should still be defined in the input.
+  Regarding ``omega`` and ``orientation``, it is important to note that even in 2D simulations the rotational quantities are treated as 3D vectors. In the planar case, only the Z component of the angular velocity is used, but all three components of both omega and orientation should still be defined in the input.
 
 * The ``physical properties`` subsection contains all the parameters associated with the particle physical properties.
     * The ``density`` parameter is used to define the density of the particle.
