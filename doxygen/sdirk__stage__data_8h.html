@@ -106,7 +106,7 @@ Include dependency graph for sdirk_stage_data.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="sdirk__stage__data_8h__dep__incl.svg" width="2988" height="872"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="sdirk__stage__data_8h__dep__incl.svg" width="2983" height="872"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="sdirk__stage__data_8h_source.html">Go to the source code of this file.</a></p>
@@ -141,7 +141,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Construct the Butcher tableau (A, b, c) for a given SDIRK method. </p>
-<p>This function returns the Runge-Kutta coefficients for a diagonally implicit Runge-Kutta (SDIRK) time integration method, such as SDIRK22 (Alexander's method here) or SDIRK33 (Kennedy-Carpenter method here). These coefficients define the time-stepping scheme and are used in implicit time integration of ODEs or PDEs.</p>
+<p>This function returns the Runge-Kutta coefficients for a singly diagonally implicit Runge-Kutta (SDIRK) time integration method: SDIRK22 and SDIRK33 (Alexander's 2- and 3-stage methods) or SDIRK45 (SDIRK4 of Hairer and Wanner). All these methods are L-stable and stiffly accurate. These coefficients define the time-stepping scheme and are used in implicit time integration of ODEs or PDEs.</p>
 <p>The Butcher tableau is defined as follows:</p><ul>
 <li>A: the matrix of coefficients a_ij</li>
 <li>b: the weights used in the final combination of stages</li>
@@ -158,7 +158,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="sdirk__stage__data_8cc_source.html#l00019">19</a> of file <a class="el" href="sdirk__stage__data_8cc_source.html">sdirk_stage_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="sdirk__stage__data_8h_source.html#l00035">SDIRKTable::A</a>, <a class="el" href="sdirk__stage__data_8h_source.html#l00036">SDIRKTable::b</a>, <a class="el" href="sdirk__stage__data_8h_source.html#l00037">SDIRKTable::c</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0675922ff4c4a16ee033b34e48ee33ee">Parameters::SimulationControl::sdirk22</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8aaeba79e7430a4815eb11453c271ce6f4">Parameters::SimulationControl::sdirk33</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7d1d28e0c34d45b88cd359397ba4ab23">Parameters::SimulationControl::sdirk43</a>.</p>
+<p class="reference">References <a class="el" href="sdirk__stage__data_8h_source.html#l00035">SDIRKTable::A</a>, <a class="el" href="sdirk__stage__data_8h_source.html#l00036">SDIRKTable::b</a>, <a class="el" href="sdirk__stage__data_8h_source.html#l00037">SDIRKTable::c</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0675922ff4c4a16ee033b34e48ee33ee">Parameters::SimulationControl::sdirk22</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8aaeba79e7430a4815eb11453c271ce6f4">Parameters::SimulationControl::sdirk33</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a1573962ffa82a1d5ce0c03d41cbf34a6">Parameters::SimulationControl::sdirk45</a>.</p>
 
 </div>
 </div>

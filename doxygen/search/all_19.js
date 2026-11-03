@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['x_5fmax_0',['x_max',['../namespaceInterfaceTools.html#ab48aaf0140e2b6b18c4d1c7c6dfae13ea68a6e14f5735ccc9202993f16ad4bf98',1,'InterfaceTools']]],
-  ['x_5fmin_1',['x_min',['../namespaceInterfaceTools.html#ab48aaf0140e2b6b18c4d1c7c6dfae13eae3da8bcfc69b88403d4de761aeffda9e',1,'InterfaceTools']]]
+  ['y_5fmax_0',['y_max',['../namespaceInterfaceTools.html#ab48aaf0140e2b6b18c4d1c7c6dfae13ea93b777dec0b81972c81a8212802539b7',1,'InterfaceTools']]],
+  ['y_5fmin_1',['y_min',['../namespaceInterfaceTools.html#ab48aaf0140e2b6b18c4d1c7c6dfae13ea9a8db43fc0e5558ea3ad0a0108ce8c0a',1,'InterfaceTools']]],
+  ['youngs_5fmodulus_2',['youngs_modulus',['../classIBParticle.html#ae6a678a2676e33033134e548318ee2e7',1,'IBParticle']]],
+  ['youngs_5fmodulus_5fparticle_3',['youngs_modulus_particle',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a4fcac36ee54a24de54163a32d9eba59a',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
+  ['youngs_5fmodulus_5fwall_4',['youngs_modulus_wall',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a9fd2888002b07fdf3edb43b4bc238de6',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]]
 ];

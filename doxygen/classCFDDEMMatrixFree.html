@@ -209,6 +209,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:ae6620fc54e70d6aa0117354d906bf64e inherit pro_methods_classFluidDynamicsMatrixFree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb93aab08dd01037ce9ddf65ccf87c09 inherit pro_methods_classFluidDynamicsMatrixFree" id="r_acb93aab08dd01037ce9ddf65ccf87c09"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixFree.html#acb93aab08dd01037ce9ddf65ccf87c09">update_multi_stage_solution</a> (double time_step) override</td></tr>
 <tr class="separator:acb93aab08dd01037ce9ddf65ccf87c09 inherit pro_methods_classFluidDynamicsMatrixFree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40002580366c0000a7b24c1512833adc inherit pro_methods_classFluidDynamicsMatrixFree" id="r_a40002580366c0000a7b24c1512833adc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixFree.html#a40002580366c0000a7b24c1512833adc">update_forcing_and_boundary_conditions</a> () override</td></tr>
+<tr class="separator:a40002580366c0000a7b24c1512833adc inherit pro_methods_classFluidDynamicsMatrixFree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4639e057f9cb0a084f11abd442cbabc4 inherit pro_methods_classFluidDynamicsMatrixFree" id="r_a4639e057f9cb0a084f11abd442cbabc4"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixFree.html#a4639e057f9cb0a084f11abd442cbabc4">set_initial_condition_fd</a> (<a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a> initial_condition_type, bool restart=false) override</td></tr>
 <tr class="separator:a4639e057f9cb0a084f11abd442cbabc4 inherit pro_methods_classFluidDynamicsMatrixFree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1ce4a6097c6d9e696e4f3c559d47a2c inherit pro_methods_classFluidDynamicsMatrixFree" id="r_ae1ce4a6097c6d9e696e4f3c559d47a2c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixFree.html#ae1ce4a6097c6d9e696e4f3c559d47a2c">assemble_system_matrix</a> () override</td></tr>
@@ -1070,7 +1072,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8cc_source.html#l01251">1251</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8cc_source.html">cfd_dem_coupling_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l01279">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::postprocess_fd()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l01292">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::postprocess_fd()</a>.</p>
 
 </div>
 </div>
@@ -1106,7 +1108,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8cc_source.html#l00500">500</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8cc_source.html">cfd_dem_coupling_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00225">check_file_exists()</a>, <a class="el" href="vector_8h_source.html#l00039">convert_vector_dealii_to_trilinos()</a>, <a class="el" href="core_2utilities_8h_source.html#l00624">deserialize_tables_vector()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l02974">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00225">check_file_exists()</a>, <a class="el" href="vector_8h_source.html#l00039">convert_vector_dealii_to_trilinos()</a>, <a class="el" href="core_2utilities_8h_source.html#l00624">deserialize_tables_vector()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l02987">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>.</p>
 
 </div>
 </div>
@@ -1262,7 +1264,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html#l00130">130</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8h_source.html">cfd_dem_coupling_matrix_free.h</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00965">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::multiphysics</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00798">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::refine_mesh()</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03288">FluidDynamicsMatrixFree&lt; dim &gt;::set_initial_condition_fd()</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00887">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00977">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::multiphysics</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00811">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::refine_mesh()</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03294">FluidDynamicsMatrixFree&lt; dim &gt;::set_initial_condition_fd()</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -1464,7 +1466,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling__matrix__free_8cc_source.html#l00392">392</a> of file <a class="el" href="cfd__dem__coupling__matrix__free_8cc_source.html">cfd_dem_coupling_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l02974">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, and <a class="el" href="core_2utilities_8h_source.html#l00602">serialize_tables_vector()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l02987">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, and <a class="el" href="core_2utilities_8h_source.html#l00602">serialize_tables_vector()</a>.</p>
 
 </div>
 </div>

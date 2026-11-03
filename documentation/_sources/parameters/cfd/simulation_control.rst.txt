@@ -122,11 +122,18 @@ This subsection is the most important in a simulation and therefore, the most co
 	* ``bdf1``: 1st order backward differentiation
 	* ``bdf2``: 2nd order backward differentiation
 	* ``bdf3``: 3rd order backward differentiation
-	* ``sdirk22``: 2nd order 2 stages singly diagonally implicit Runge-Kutta
-	* ``sdirk33``: 3rd order 3 stages singly diagonally implicit Runge-Kutta
+	* ``sdirk22``: 2nd order 2 stages singly diagonally implicit Runge-Kutta (Alexander's method)
+	* ``sdirk33``: 3rd order 3 stages singly diagonally implicit Runge-Kutta (Alexander's method)
+	* ``sdirk45``: 4th order 5 stages singly diagonally implicit Runge-Kutta (SDIRK4 of Hairer and Wanner)
+
+.. tip::
+	All the SDIRK schemes are L-stable and stiffly accurate: the solution at the end of the time step is the solution of the last stage, and the pressure does not depend on the pressure of the previous time step. Contrary to BDF schemes, they are self-starting and their accuracy does not depend on the history of the time steps, which makes them well suited to adaptive time stepping. However, an SDIRK scheme with :math:`s` stages is roughly :math:`s` times more expensive per time step than a BDF scheme. They are thus advantageous when a high temporal accuracy is required and their accuracy allows for a significantly larger time step. Since all SDIRK schemes have a stage order of 1, their order of accuracy can be reduced for the pressure and for problems with time-dependent Dirichlet boundary conditions. The ``sdirk45`` scheme has large coefficients, so a tight non-linear solver ``tolerance`` should be used with it.
 
 .. warning::
-	For now, the SDIRK schemes are not supported by any physics other than Fluid Dynamics.
+	For now, the SDIRK schemes are not supported by any physics other than Fluid Dynamics. They are only supported by the single-phase, constant-density, matrix-based (``lethe-fluid``) and matrix-free (``lethe-fluid-matrix-free``) Navier-Stokes solvers, without the mortar method. The other solvers (block, VANS, CFD-DEM, sharp-interface immersed boundary) and the multiphase (CLS, Cahn-Hilliard) or variable-density flows stop with an error message if an SDIRK scheme is selected.
+
+.. note::
+	An SDIRK scheme with :math:`s` stages solves :math:`s` non-linear systems per time step. Each stage :math:`i` is solved at the time :math:`t^n + c_i \Delta t`, where :math:`c_i` is the stage time coefficient of the Butcher tableau of the scheme. The source term and the time-dependent boundary conditions are evaluated at this stage time.
 
 -----------------------------------
 Steady-state simulation parameters
