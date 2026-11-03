@@ -454,6 +454,54 @@ namespace Parameters
   };
 
   /**
+   * @brief Parameters for a quadrature method of moments (QMOM) simulation
+   */
+  struct QmomLNP
+  {
+    /// Number of nodes
+    unsigned int n_nodes = 1;
+
+    /// Boolean to include nucleation source
+    bool is_nucleation = true;
+    /// Boolean to include coalescence source
+    bool is_coalescence = true;
+    /// Boolean to include growth source
+    bool is_growth = true;
+
+    /* Operating conditions */
+    /// Temperature
+    double temperature = 295;
+    /// Flow rate ratio (relation between aqueous and organic phases)
+    double flow_rate_ratio = 1.;
+    /// Total flow rate
+    double total_flow_rate = 1.;
+    /// Mixing time scale
+    double mixing_time_scale = 0.;
+    /// Initial lipid concentration in organic mixture
+    double initial_concentration_org = 1.;
+    /// Ion concentration in mixture
+    double ion_concentration_mixture = 1.;
+
+    /* Universal constants */
+    // Boltzmann's constant [m2 kg /s2 /K]
+    double boltzmann_constant = 1.380649e-23;
+    // Avogadro's number [1/mol]
+    double avogadro_number = 6.02214076e23;
+    // Elementary charge [C]
+    double elementary_charge = 1.6021766e-19;
+    // Permittivity in a vacuum [F/m]
+    double permittivity_vacuum = 8.8541878188e-12;
+    // Volume shape factor
+    double shape_factor = std::numbers::pi / 6;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+  };
+
+
+  /**
    * @brief TimeHarmonicMaxwell - Defines the parameters for
    * time-harmonic Maxwell simulations.
    */
@@ -541,6 +589,7 @@ namespace Parameters
     bool cahn_hilliard            = false;
     bool electromagnetics         = false;
     bool continuum_solid_dynamics = false;
+    bool qmom                     = false;
 
     // subparameters for heat_transfer
     bool viscous_dissipation    = false;
@@ -550,6 +599,7 @@ namespace Parameters
     Parameters::CLS                      cls_parameters;
     Parameters::CahnHilliard             cahn_hilliard_parameters;
     Parameters::TimeHarmonicMaxwell<dim> time_harmonic_maxwell_parameters;
+    Parameters::QmomLNP                  qmom_parameters;
 
     void
     declare_parameters(ParameterHandler &prm) const;

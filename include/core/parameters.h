@@ -297,6 +297,41 @@ namespace Parameters
   };
 
   /**
+   * @brief Material parameters of the aqueous and organic phases used in QMOM
+   * LNP simulations
+   */
+  struct QmomParameters
+  {
+    /* Solvent properties: aqueous phase */
+    // Aqueous phase density [kg/m3]
+    double density_aqueous = 997;
+    // Aqueous phase molar mass [kg/mol]
+    double molar_mass_aqueous = 0.018015;
+    // Mole fraction solubility of lipid in pure aqueous phase [-]
+    double mole_fraction_solub_aqueous = 2e-8;
+    // Relative permittivity of aqueous phase [-]
+    double permittivity_aqueous = 78.2;
+
+    /* Solvent properties: organic phase */
+    // Organic phase density [kg/m3]
+    double density_organic = 789;
+    // Organic phase molar mass [kg/mol]
+    double molar_mass_organic = 0.046069;
+    // Mole fraction solubility of lipid in pure organic phase [-]
+    double mole_fraction_solub_organic = 2.9e-3;
+    // Relative permittivity of organic phase [-]
+    double permittivity_organic = 24.3;
+
+    // Dynamic viscosity of aqueous/organic mixture [Pa s]
+    double viscosity_mixture = 2e-3;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+  };
+
+  /**
    * @brief Power-law rheological model to solve for non-Newtonian
    * flows.
    */
@@ -528,6 +563,9 @@ namespace Parameters
 
     // Phase change parameters
     PhaseChange phase_change_parameters;
+
+    // QMOM LNP parameters
+    QmomParameters qmom_parameters;
 
     // non-Newtonian model parameters
     enum class RheologicalModel : std::int8_t

@@ -103,6 +103,11 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Euler-Euler solid phase calculation <true|false>");
 
+    prm.declare_entry("qmom",
+                      Patterns::Tools::Convert<bool>::to_string(qmom),
+                      Patterns::Bool(),
+                      "Quadrature method of moments <true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       Patterns::Tools::Convert<bool>::to_string(
@@ -126,6 +131,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
   cls_parameters.declare_parameters(prm);
   cahn_hilliard_parameters.declare_parameters(prm);
   time_harmonic_maxwell_parameters.declare_parameters(prm);
+  qmom_parameters.declare_parameters(prm);
 }
 
 template <int dim>
@@ -143,6 +149,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     cahn_hilliard            = prm.get_bool("cahn hilliard");
     electromagnetics         = prm.get_bool("electromagnetics");
     continuum_solid_dynamics = prm.get_bool("continuum solid dynamics");
+    qmom                     = prm.get_bool("qmom");
 
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");
@@ -153,6 +160,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
   cls_parameters.parse_parameters(prm);
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
   time_harmonic_maxwell_parameters.parse_parameters(prm, dimensions);
+  qmom_parameters.parse_parameters(prm, dimensions);
 }
 
 void
@@ -740,6 +748,135 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
       epsilon *= dimensions.cahn_hilliard_epsilon_scaling;
     }
     prm.leave_subsection();
+  }
+  prm.leave_subsection();
+}
+
+
+void
+Parameters::QmomLNP::declare_parameters(ParameterHandler &prm)
+{
+  const QmomLNP defaults;
+  prm.enter_subsection("qmom");
+  {
+    prm.declare_entry("number nodes",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.n_nodes),
+                      Patterns::Integer(),
+                      "Number of nodes");
+
+    prm.declare_entry("nucleation",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.is_nucleation),
+                      Patterns::Bool(),
+                      "Include nucleation source <true|false>");
+
+    prm.declare_entry("coalescence",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.is_coalescence),
+                      Patterns::Bool(),
+                      "Include coalescence source <true|false>");
+
+    prm.declare_entry("growth",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.is_growth),
+                      Patterns::Bool(),
+                      "Include growth source <true|false>");
+
+    prm.declare_entry("temperature",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.temperature),
+                      Patterns::Double(),
+                      "Room temperature");
+
+    prm.declare_entry("flow rate ratio",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.flow_rate_ratio),
+                      Patterns::Double(),
+                      "Flow rate ratio between aqueous and organic phases");
+
+    prm.declare_entry("total flow rate",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.total_flow_rate),
+                      Patterns::Double(),
+                      "Total flow rate of the mixture");
+
+    prm.declare_entry("mixing time scale",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.mixing_time_scale),
+                      Patterns::Double(),
+                      "Mixing time scale between aqueous and organic phases");
+
+    prm.declare_entry("initial concentration organic",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.initial_concentration_org),
+                      Patterns::Double(),
+                      "Initial lipid concentration in organic phase");
+
+    prm.declare_entry("ion concentration mixture",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.ion_concentration_mixture),
+                      Patterns::Double(),
+                      "Ion concentration in mixture");
+
+    prm.declare_entry("boltzmann",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.boltzmann_constant),
+                      Patterns::Double(),
+                      "Boltzmann's constant");
+
+    prm.declare_entry("avogadro",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.avogadro_number),
+                      Patterns::Double(),
+                      "Avogadro's number");
+
+    prm.declare_entry("elementary charge",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.elementary_charge),
+                      Patterns::Double(),
+                      "Elementary charge");
+
+    prm.declare_entry("permittivity vacuum",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.permittivity_vacuum),
+                      Patterns::Double(),
+                      "Permittivity in a vacuum");
+
+    prm.declare_entry("shape factor",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.shape_factor),
+                      Patterns::Double(),
+                      "Volume shape factor");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QmomLNP::parse_parameters(ParameterHandler     &prm,
+                                      const Dimensionality &dimensions)
+{
+  prm.enter_subsection("qmom");
+  {
+    n_nodes        = prm.get_integer("number nodes");
+    is_nucleation  = prm.get_bool("nucleation");
+    is_coalescence = prm.get_bool("coalescence");
+    is_growth      = prm.get_bool("growth");
+
+    // Operational conditions
+    temperature               = prm.get_double("temperature");
+    flow_rate_ratio           = prm.get_double("flow rate ratio");
+    total_flow_rate           = prm.get_double("total flow rate");
+    mixing_time_scale         = prm.get_double("mixing time scale");
+    initial_concentration_org = prm.get_double("initial concentration organic");
+    ion_concentration_mixture = prm.get_double("ion concentration mixture");
+
+    // Universal constants
+    boltzmann_constant  = prm.get_double("boltzmann");
+    avogadro_number     = prm.get_double("avogadro");
+    elementary_charge   = prm.get_double("elementary charge");
+    permittivity_vacuum = prm.get_double("permittivity vacuum");
+    shape_factor        = prm.get_double("shape factor");
   }
   prm.leave_subsection();
 }

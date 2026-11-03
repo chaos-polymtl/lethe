@@ -1148,6 +1148,90 @@ namespace Parameters
   }
 
 
+  void
+  QmomParameters::declare_parameters(ParameterHandler &prm)
+  {
+    const QmomParameters defaults;
+    prm.enter_subsection("qmom phases");
+    {
+      prm.declare_entry("molar mass aqueous",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.molar_mass_aqueous),
+                        Patterns::Double(),
+                        "Molar mass of the aqueous phase");
+
+      prm.declare_entry("molar mass organic",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.molar_mass_organic),
+                        Patterns::Double(),
+                        "Molar mass of the organic phase");
+
+      prm.declare_entry(
+        "mole fraction aqueous",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.mole_fraction_solub_aqueous),
+        Patterns::Double(),
+        "Mole fraction solubility of lipid in pure aqueous phase");
+
+      prm.declare_entry(
+        "mole fraction organic",
+        Patterns::Tools::Convert<double>::to_string(
+          defaults.mole_fraction_solub_organic),
+        Patterns::Double(),
+        "Mole fraction solubility of lipid in pure organic phase");
+
+      prm.declare_entry("permittivity aqueous",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.permittivity_aqueous),
+                        Patterns::Double(),
+                        "Relative permittivity of aqueous phase");
+
+      prm.declare_entry("permittivity organic",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.permittivity_organic),
+                        Patterns::Double(),
+                        "Relative permittivity of organic phase");
+
+      prm.declare_entry("density aqueous",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.density_aqueous),
+                        Patterns::Double(),
+                        "Density of aqueous phase");
+
+      prm.declare_entry("density organic",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.density_organic),
+                        Patterns::Double(),
+                        "Density of organic phase");
+
+      prm.declare_entry("viscosity mixture",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.viscosity_mixture),
+                        Patterns::Double(),
+                        "Viscosity of the mixture");
+    }
+
+    prm.leave_subsection();
+  }
+
+  void
+  QmomParameters::parse_parameters(ParameterHandler     &prm,
+                                   const Dimensionality &dimensions)
+  {
+    prm.enter_subsection("qmom phases");
+    {
+      molar_mass_aqueous          = prm.get_double("molar mass aqueous");
+      molar_mass_organic          = prm.get_double("molar mass organic");
+      mole_fraction_solub_aqueous = prm.get_double("mole fraction aqueous");
+      mole_fraction_solub_organic = prm.get_double("mole fraction organic");
+      permittivity_aqueous        = prm.get_double("permittivity aqueous");
+      permittivity_organic        = prm.get_double("permittivity organic");
+      density_aqueous             = prm.get_double("density aqueous");
+      density_organic             = prm.get_double("density organic");
+      viscosity_mixture           = prm.get_double("viscosity mixture");
+    }
+    prm.leave_subsection();
+  }
 
   void
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
@@ -1396,6 +1480,8 @@ namespace Parameters
 
       phase_change_parameters.declare_parameters(prm);
 
+      qmom_parameters.declare_parameters(prm);
+
       declare_enum_entry(
         prm,
         "thermal conductivity model",
@@ -1618,6 +1704,11 @@ namespace Parameters
       // Phase change properties
       //--------------------------------
       phase_change_parameters.parse_parameters(prm, dimensions);
+
+      //--------------------------------
+      // QMOM phases properties
+      //--------------------------------
+      qmom_parameters.parse_parameters(prm, dimensions);
 
       //--------------------------------
       // Electromagnetic properties
