@@ -383,7 +383,7 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_assemblers()
 {
-  // The SDIRK time derivative is only implemented for the single-phase
+  // The SDIRK time integration is only implemented for the single-phase
   // Navier-Stokes equations with a constant density.
   if (this->simulation_control->is_sdirk())
     {
