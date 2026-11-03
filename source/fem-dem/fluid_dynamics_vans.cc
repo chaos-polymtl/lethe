@@ -259,7 +259,7 @@ template <int dim, typename PropertiesIndex>
 void
 FluidDynamicsVANS<dim, PropertiesIndex>::setup_assemblers()
 {
-  // The VANS assemblers only implement the BDF time derivative.
+  // The VANS assemblers only implement the BDF time integration.
   AssertThrow(
     !time_stepping_is_sdirk(this->simulation_control->get_assembly_method()),
     ExcMessage("SDIRK time-stepping methods are not supported by the VANS "
