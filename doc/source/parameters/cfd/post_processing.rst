@@ -89,6 +89,10 @@ This subsection controls the post-processing other than the forces and torque on
     set geometric melt volume name        = melt_volume_geo
     set melting temperature               = 0
 
+    # Electromagnetic postprocessing
+    set calculate electromagnetic power = false
+    set electromagnetic power name      = electromagnetic_power
+
     #---------------------------------------------------
     # Multiphase post-processing
     #---------------------------------------------------
@@ -332,6 +336,24 @@ Multiphysics Post-processing
 
   * ``geometric melt volume name``: name of the output file containing the time evolution of the geometric melt volume.
   * ``melting temperature``: temperature above which the fluid is considered melted.
+
+* ``calculate electromagnetic power``: controls if the calculation of the electromagnetic powers is enabled for the time-harmonic Maxwell equations. The powers are computed after each solve of the time-harmonic Maxwell equations, in W if an ``electromagnetic scaling type`` is used and non-dimensional otherwise. These quantities are postprocessed:
+
+  1. the incident power :math:`P_\text{in}`, the outgoing power :math:`P_\text{out}` and the cross power :math:`P_\text{cross}` for each boundary with a ``silver_muller``, ``impedance_boundary`` or ``waveguide_port`` boundary condition, which reads :math:`\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}`. The tangential electric field on the boundary is split into an incident wave entering the domain, :math:`\mathbf{n}\times\mathbf{H}_\text{in} = Y\mathbf{E}_\text{in}`, and an outgoing wave, :math:`\mathbf{n}\times\mathbf{H}_\text{out} = -Y\mathbf{E}_\text{out}`. The boundary condition then gives :math:`\mathbf{E}_\text{in} = \mathbf{g}/(2Y)` and :math:`\mathbf{E}_\text{out} = \mathbf{E}_T - \mathbf{E}_\text{in}`. On a boundary :math:`\Gamma`, the powers are defined from the Poynting flux of each wave as:
+
+  .. math::
+
+      P_\text{in} = \frac{\mathrm{Re}(Y)}{2}\int_\Gamma |\mathbf{E}_\text{in}|^2 \qquad P_\text{out} = \frac{\mathrm{Re}(Y)}{2}\int_\Gamma |\mathbf{E}_\text{out}|^2 \qquad P_\text{cross} = \mathrm{Im}(Y)\int_\Gamma \mathrm{Im}\left(\mathbf{E}_\text{out}\cdot\mathbf{E}_\text{in}^*\right)
+
+  such that the net power entering the domain through :math:`\Gamma` is :math:`P_\text{in} - P_\text{out} + P_\text{cross} = \frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}_T \cdot (\mathbf{n}\times\mathbf{H})^*\right)`. On a waveguide port, :math:`P_\text{in}` is the power of the incident mode (i.e. the ``waveguide power`` when the ``electromagnetic scaling type`` is ``power``) and :math:`P_\text{out}` is the reflected power. On a boundary without excitation (:math:`\mathbf{g}=\mathbf{0}`), :math:`P_\text{in}=0` and :math:`P_\text{out}` is the transmitted power. The cross power vanishes for a real admittance, i.e. when the medium at the boundary is lossless, since the incident and outgoing waves are then orthogonal with respect to the Poynting flux. In a lossy medium, it accounts for the cross term of the Poynting flux of the two waves. If :math:`Y = 0`, the waves cannot be separated and the net power is reported as cross power. The output table is appended with the columns ``incident_power_bc_i``, ``outgoing_power_bc_i`` and ``cross_power_bc_i``, where ``i`` is the boundary id.
+
+  2. the net power entering the domain for each boundary with a ``pec``, ``pmc``, ``electric_field`` or ``magnetic_field`` boundary condition. The output table is appended with one column per boundary, named ``net_power_bc_i``. The net power through the ``pec`` and ``pmc`` boundaries must vanish, which provides a sanity check.
+
+  3. the power absorbed in each material, :math:`P_\text{abs} = \frac{\omega}{2}\int_\Omega \left(\mathrm{Im}(\varepsilon)|\mathbf{E}|^2 + \mathrm{Im}(\mu)|\mathbf{H}|^2\right)`, which is the electromagnetic heat source of the heat transfer equation. The output table is appended with one column per material, named ``absorbed_power_material_i``, where ``i`` is the material id (``0`` for the fluid and ``i`` for the i-th solid).
+
+  If ``verbosity = verbose``, a summary is also printed in the terminal. It lists all the boundaries, the absorbed powers and the power balance: incident, reflected, transmitted, cross and absorbed powers. Their imbalance, which vanishes for the exact solution by the Poynting theorem, measures the discretization error.
+
+  * ``electromagnetic power name``: output filename for the electromagnetic power calculations.
 
 Multiphase Post-processing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
