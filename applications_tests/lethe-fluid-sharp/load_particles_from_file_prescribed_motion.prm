@@ -162,7 +162,7 @@ subsection mesh adaptation
   set type            = adaptive
   set error estimator = kelly
 
-  # Variable for kelly estimationChoices are <velocity|pressure>.
+  # Variable for kelly estimation. Choices are <velocity|pressure>.
   set variable = velocity
 end
 
