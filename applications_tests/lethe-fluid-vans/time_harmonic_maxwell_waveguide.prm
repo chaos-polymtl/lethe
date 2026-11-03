@@ -202,7 +202,7 @@ subsection analytical solution
   set enable    = true
   set verbosity = verbose
   subsection electromagnetics
-    set Function expression = cos(4*pi*x) * sin(4*pi*z) * cos(2*pi*y);    4 * sin(4*pi*x) * sin(4*pi*z) * sin(2*pi*y);    sin(4*pi*x) * cos(4*pi*z) * cos(2*pi*y);    cos(4*pi*x) * sin(4*pi*z) * sin(2*pi*y);    -4 * sin(4*pi*x) * sin(4*pi*z) * cos(2*pi*y);    sin(4*pi*x) * cos(4*pi*z) * sin(2*pi*y);    3 * sin(4*pi*x) * cos(4*pi*z) * cos(2*pi*y);    0.;    -3 * cos(4*pi*x) * sin(4*pi*z) * cos(2*pi*y);    3 * sin(4*pi*x) * cos(4*pi*z) * sin(2*pi*y);    0.;    -3 * cos(4*pi*x) * sin(4*pi*z) * sin(2*pi*y)
+    set Function expression = -1/4 * cos(4*pi*x) * sin(4*pi*z) * sin(2*pi*y); sin(4*pi*x) * sin(4*pi*z) * cos(2*pi*y);    -1/4 * sin(4*pi*x) * cos(4*pi*z) * sin(2*pi*y);    1/4 * cos(4*pi*x) * sin(4*pi*z) * cos(2*pi*y);    sin(4*pi*x) * sin(4*pi*z) * sin(2*pi*y);    1/4 * sin(4*pi*x) * cos(4*pi*z) * cos(2*pi*y);   -3/4 * sin(4*pi*x) * cos(4*pi*z) * sin(2*pi*y);    0.;    3/4 * cos(4*pi*x) * sin(4*pi*z) * sin(2*pi*y);    3/4 * sin(4*pi*x) * cos(4*pi*z) * cos(2*pi*y);    0.;    -3/4 * cos(4*pi*x) * sin(4*pi*z) * cos(2*pi*y)
   end
 end
 

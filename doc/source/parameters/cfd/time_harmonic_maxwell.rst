@@ -243,21 +243,22 @@ excited at the inlet.
   domain. The cutoff wavenumber :math:`k_c` is defined as
   :math:`k_c^2 = k_{x_1}^2 + k_{x_2}^2`.
 
-  Both modes are then multiplied by a constant so that the transverse electric
-  field on the inlet (:math:`x_3 = 0`) is real, with a maximum amplitude of 1:
+  With ``electromagnetic scaling type = none``, the incident mode is given by
+  the above equations, i.e. the standard solution of a rectangular waveguide,
+  whose longitudinal field (:math:`H_{x_3}` for the TE mode and
+  :math:`E_{x_3}` for the TM mode) has a unit amplitude. With the other scaling
+  types, both fields are divided by the maximum amplitude of the transverse
+  electric field on the inlet (:math:`x_3 = 0`):
 
   .. math::
-    \begin{align} 
-       \mathbf{E} = C_{TE|TM}\,\mathbf{E},& \quad \mathbf{H} = C_{TE|TM}\,\mathbf{H}, \quad \\ 
-        \mathrm{with: }
-    C_{TE} = \frac{k_c^2}{i \omega \mu_r \max(k_{x_1}, k_{x_2})},& \quad
-    C_{TM} = \frac{k_c^2}{i k_{x_3} \max(k_{x_1}, k_{x_2})}.
-    \end{align}
+    \mathbf{E} = \frac{\mathbf{E}_{TE|TM}}{A_{TE|TM}}, \quad
+    \mathbf{H} = \frac{\mathbf{H}_{TE|TM}}{A_{TE|TM}}, \quad
+    A_{TE} = \frac{\omega |\mu_r| \max(k_{x_1}, k_{x_2})}{k_c^2}, \quad
+    A_{TM} = \frac{|k_{x_3}| \max(k_{x_1}, k_{x_2})}{k_c^2}.
 
-
-  The incident electric field on the inlet thus oscillates as
-  :math:`\cos(\omega t)`, with an amplitude of 1 at its maximum, for any mode
-  and medium.
+  The ``electric field amplitude`` is then the maximum amplitude of the
+  incident transverse electric field on the inlet. Since :math:`A_{TE|TM}` is
+  real, the phase of the incident mode is the same for all the scaling types.
 
 * ``mode order m``, ``mode order n``: mode orders in the two transverse
   directions. They are used to compute the wavenumbers :math:`k_{x_1}` and

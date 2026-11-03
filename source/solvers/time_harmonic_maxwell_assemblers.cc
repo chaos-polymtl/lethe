@@ -206,10 +206,18 @@ compute_waveguide_port_incident_fields(
       AssertThrow(false, ExcMessage("Unknown waveguide mode type."));
     }
 
-  // The mode is normalized so that its tangential electric field on the port is
-  // real, with a maximum amplitude of 1.
-  const std::complex<double> normalization =
-    1. / (tangential_electric_field_factor * std::max(k_t1, k_t2));
+  // With the none electromagnetic scaling, the mode is the standard solution of
+  // a rectangular waveguide, whose longitudinal field (H_z for TE modes and E_z
+  // for TM modes) has a unit amplitude. With the other scalings, the mode is
+  // divided by the maximum amplitude of its tangential electric field on the
+  // port, |f| max(k_t1, k_t2), with f the factor above, so that the electric
+  // field amplitude is the maximum amplitude of the incident tangential
+  // electric field. This real factor does not change the phase of the mode.
+  const double normalization =
+    (time_harmonic_maxwell_parameters.electromagnetic_scaling_type ==
+     Parameters::ElectromagneticScalingType::none) ?
+      1. :
+      1. / (std::abs(tangential_electric_field_factor) * std::max(k_t1, k_t2));
 
   // Convert the E and H field components from the local coordinate system back
   // to the global coordinate system using the basis vectors e_t1, e_t2, e_t3

@@ -10,15 +10,21 @@
  *   the port, where n is the outward normal, E_inc,t is the tangential
  *   component of the incident electric field and Y is the modal admittance
  *   (k_l / (omega mu) for TE modes and omega epsilon / k_l for TM modes);
- * - the tangential electric field on the port is real, with a maximum
- *   amplitude of 1;
+ * - with the none electromagnetic scaling, the fields are the standard
+ *   solution of a rectangular waveguide, with a unit amplitude of the
+ *   longitudinal field (H for TE modes and E for TM modes);
+ * - with the electric_field electromagnetic scaling, the fields are divided
+ *   by the real maximum amplitude of the tangential electric field of the
+ *   standard solution, so their phase is unchanged and the maximum amplitude
+ *   of the tangential electric field is 1;
  * - the fields do not depend on the ordering of corner 1 and corner 2, when
- *   the mode orders m and n are swapped accordingly.
+ *   the mode orders m and n are swapped accordingly;
+ * - the fields of a port rotated and translated in space are the rotated
+ *   fields of the port aligned with the axes.
  *
- * For each case, it outputs the tangential electric field and n x H_inc / Y at
- * two points, which must be equal, the maximum over the port of
- * |n x H_inc - Y E_inc,t| (0), of |Im(E_inc,t)| (0) and of |E_inc,t| (1), and
- * the maximum change of the fields when corner 1 and corner 2 are swapped (0).
+ * For each case, it outputs the tangential electric field, n x H_inc / Y
+ * (which must be equal to the tangential electric field) and the longitudinal
+ * field at two points, and the maximum over the port of the quantities above.
  */
 
 // Lethe
@@ -26,6 +32,9 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <solvers/time_harmonic_maxwell_assemblers.h>
+
+// deal.II
+#include <deal.II/physics/transformations.h>
 
 // Tests
 #include <../tests/tests.h>
@@ -48,6 +57,8 @@ test()
   parameters.electromagnetic_frequency  = 1.0;
   parameters.number_of_waveguide_inlets = 1;
   parameters.waveguide_boundary_ids     = {0};
+  parameters.electromagnetic_scaling_type =
+    Parameters::ElectromagneticScalingType::none;
   parameters.waveguide_corners.resize(1);
 
   parameters.waveguide_corners[0][0] = Point<dim>(0., 0., 0.);
@@ -55,14 +66,30 @@ test()
   parameters.waveguide_corners[0][2] = Point<dim>(0., 0., height);
   parameters.waveguide_corners[0][3] = Point<dim>(0., width, height);
 
+  // Same port with the electric_field electromagnetic scaling
+  Parameters::TimeHarmonicMaxwell<dim> electric_field_parameters = parameters;
+  electric_field_parameters.electromagnetic_scaling_type =
+    Parameters::ElectromagneticScalingType::electric_field;
+
   // Same port with corner 1 and corner 2 swapped (so e_t1 = e_z, e_t2 = e_y and
   // e_t1 x e_t2 = -e_x).
   Parameters::TimeHarmonicMaxwell<dim> swapped_parameters = parameters;
-
-  swapped_parameters.waveguide_corners[0][0] = Point<dim>(0., 0., 0.);
   swapped_parameters.waveguide_corners[0][1] = Point<dim>(0., 0., height);
   swapped_parameters.waveguide_corners[0][2] = Point<dim>(0., width, 0.);
-  swapped_parameters.waveguide_corners[0][3] = Point<dim>(0., width, height);
+
+  // Same port rotated about an arbitrary axis and translated
+  Tensor<1, dim> rotation_axis({1., 2., 3.});
+  rotation_axis /= rotation_axis.norm();
+  const Tensor<2, dim> rotation =
+    Physics::Transformations::Rotations::rotation_matrix_3d(rotation_axis, 0.7);
+  const Tensor<1, dim> translation({1., -2., 3.});
+  const auto transform = [&rotation, &translation](const Point<dim> &point) {
+    return Point<dim>(rotation * point + translation);
+  };
+  Parameters::TimeHarmonicMaxwell<dim> rotated_parameters = parameters;
+  for (unsigned int c = 0; c < 4; ++c)
+    rotated_parameters.waveguide_corners[0][c] =
+      transform(Point<dim>(parameters.waveguide_corners[0][c]));
 
   const double omega = 2. * numbers::PI * parameters.electromagnetic_frequency;
 
@@ -98,12 +125,17 @@ test()
 
   for (const Mode &mode : modes)
     {
-      parameters.waveguide_mode         = {mode.type};
-      parameters.mode_order_m           = {mode.m};
-      parameters.mode_order_n           = {mode.n};
-      swapped_parameters.waveguide_mode = {mode.type};
-      swapped_parameters.mode_order_m   = {mode.n};
-      swapped_parameters.mode_order_n   = {mode.m};
+      for (auto *mode_parameters : {&parameters,
+                                    &electric_field_parameters,
+                                    &swapped_parameters,
+                                    &rotated_parameters})
+        {
+          mode_parameters->waveguide_mode = {mode.type};
+          mode_parameters->mode_order_m   = {mode.m};
+          mode_parameters->mode_order_n   = {mode.n};
+        }
+      swapped_parameters.mode_order_m = {mode.n};
+      swapped_parameters.mode_order_n = {mode.m};
 
       // Modal admittance of the mode in the lossy medium
       const double k_c_squared =
@@ -115,6 +147,7 @@ test()
         (mode.type == Parameters::WaveguideMode::TE) ?
           k_l / (omega * permeability) :
           omega * permittivity / k_l;
+      const bool te_mode = (mode.type == Parameters::WaveguideMode::TE);
 
       deallog << mode.name << " mode, modal admittance Y = " << admittance
               << std::endl;
@@ -124,21 +157,76 @@ test()
       for (const double normal_direction : {-1., 1.})
         {
           Tensor<1, dim> normal;
-          normal[0] = normal_direction;
+          normal[0]                           = normal_direction;
+          const Tensor<1, dim> rotated_normal = rotation * normal;
 
-          // The sampling points include the points where the tangential
-          // electric field of both modes reaches its maximum amplitude
-          double max_relation_error  = 0.;
-          double max_imaginary_part  = 0.;
-          double max_amplitude       = 0.;
-          double max_ordering_change = 0.;
+          // Incident fields with the none scaling. The longitudinal field is
+          // the component along the propagation direction -n of H for TE modes
+          // and of E for TM modes.
+          const auto incident_fields = [&](const Point<dim> &point) {
+            return compute_waveguide_port_incident_fields(
+              parameters, point, normal, permittivity, permeability, 0);
+          };
+          const auto longitudinal_field =
+            [&](const Tensor<1, dim, std::complex<double>> &E_inc,
+                const Tensor<1, dim, std::complex<double>> &H_inc) {
+              return -((te_mode ? H_inc : E_inc) * normal);
+            };
+
+          // Maximum over the port of the tangential electric field with the
+          // none scaling, used to compare with the electric_field scaling
+          double max_amplitude = 0.;
           for (unsigned int i = 0; i <= 10; ++i)
             for (unsigned int j = 0; j <= 10; ++j)
               {
                 const Point<dim> point(0., 0.1 * i * width, 0.1 * j * height);
-                const auto [E_inc, H_inc] =
+                const auto [E_inc, H_inc] = incident_fields(point);
+                max_amplitude =
+                  std::max(max_amplitude,
+                           tangential_component(E_inc, normal).norm());
+              }
+
+          // The sampling points include the points where the tangential
+          // electric field and the longitudinal field of both modes reach
+          // their maximum amplitude
+          double max_relation_error                = 0.;
+          double max_longitudinal_amplitude        = 0.;
+          double max_electric_field_amplitude      = 0.;
+          double max_electric_field_scaling_change = 0.;
+          double max_ordering_change               = 0.;
+          double max_rotation_change               = 0.;
+          for (unsigned int i = 0; i <= 10; ++i)
+            for (unsigned int j = 0; j <= 10; ++j)
+              {
+                const Point<dim> point(0., 0.1 * i * width, 0.1 * j * height);
+                const auto [E_inc, H_inc] = incident_fields(point);
+                const Tensor<1, dim, std::complex<double>> E_inc_t =
+                  tangential_component(E_inc, normal);
+
+                max_relation_error = std::max(max_relation_error,
+                                              (cross_product_3d(normal, H_inc) -
+                                               admittance * E_inc_t)
+                                                .norm());
+                max_longitudinal_amplitude =
+                  std::max(max_longitudinal_amplitude,
+                           std::abs(longitudinal_field(E_inc, H_inc)));
+
+                const auto [E_inc_electric_field, H_inc_electric_field] =
                   compute_waveguide_port_incident_fields(
-                    parameters, point, normal, permittivity, permeability, 0);
+                    electric_field_parameters,
+                    point,
+                    normal,
+                    permittivity,
+                    permeability,
+                    0);
+                max_electric_field_amplitude = std::max(
+                  max_electric_field_amplitude,
+                  tangential_component(E_inc_electric_field, normal).norm());
+                max_electric_field_scaling_change = std::max(
+                  max_electric_field_scaling_change,
+                  (E_inc_electric_field - E_inc / max_amplitude).norm() +
+                    (H_inc_electric_field - H_inc / max_amplitude).norm());
+
                 const auto [E_inc_swapped, H_inc_swapped] =
                   compute_waveguide_port_incident_fields(swapped_parameters,
                                                          point,
@@ -146,52 +234,59 @@ test()
                                                          permittivity,
                                                          permeability,
                                                          0);
-
-                const Tensor<1, dim, std::complex<double>> E_inc_t =
-                  tangential_component(E_inc, normal);
-                const Tensor<1, dim, std::complex<double>> n_cross_H_inc =
-                  cross_product_3d(normal, H_inc);
-
-                max_relation_error =
-                  std::max(max_relation_error,
-                           (n_cross_H_inc - admittance * E_inc_t).norm());
-                for (unsigned int d = 0; d < dim; ++d)
-                  max_imaginary_part =
-                    std::max(max_imaginary_part, std::abs(E_inc_t[d].imag()));
-                max_amplitude = std::max(max_amplitude, E_inc_t.norm());
                 max_ordering_change =
                   std::max(max_ordering_change,
                            (E_inc - E_inc_swapped).norm() +
                              (H_inc - H_inc_swapped).norm());
+
+                const auto [E_inc_rotated, H_inc_rotated] =
+                  compute_waveguide_port_incident_fields(rotated_parameters,
+                                                         transform(point),
+                                                         rotated_normal,
+                                                         permittivity,
+                                                         permeability,
+                                                         0);
+                max_rotation_change =
+                  std::max(max_rotation_change,
+                           (E_inc_rotated - rotation * E_inc).norm() +
+                             (H_inc_rotated - rotation * H_inc).norm());
               }
 
           deallog << "  Outward normal "
                   << ((normal_direction > 0.) ? "+e_x" : "-e_x") << std::endl;
 
           // Incident tangential electric field and n x H_inc / Y, which must
-          // be equal for a wave entering the domain
+          // be equal for a wave entering the domain, and longitudinal field
           for (const Point<dim> &point : printed_points)
             {
-              const auto [E_inc, H_inc] =
-                compute_waveguide_port_incident_fields(
-                  parameters, point, normal, permittivity, permeability, 0);
+              const auto [E_inc, H_inc] = incident_fields(point);
               deallog << "    Point " << point << std::endl;
-              deallog << "      E_inc,t       : ";
+              deallog << "      E_inc,t            : ";
               print_vector(tangential_component(E_inc, normal));
-              deallog << "      n x H_inc / Y : ";
+              deallog << "      n x H_inc / Y      : ";
               print_vector(cross_product_3d(normal, H_inc) / admittance);
+              deallog << "      longitudinal field : "
+                      << filter(longitudinal_field(E_inc, H_inc)) << std::endl;
             }
 
-          deallog << "    Max |n x H_inc - Y E_inc,t| over the port : "
+          deallog << "    Max |n x H_inc - Y E_inc,t|                  : "
                   << filter_out_small_numbers(max_relation_error, tolerance)
                   << std::endl;
-          deallog << "    Max |Im(E_inc,t)| over the port           : "
-                  << filter_out_small_numbers(max_imaginary_part, tolerance)
-                  << std::endl;
-          deallog << "    Max |E_inc,t| over the port               : "
+          deallog << "    Max |longitudinal field|                     : "
+                  << max_longitudinal_amplitude << std::endl;
+          deallog << "    Max |E_inc,t|                                : "
                   << max_amplitude << std::endl;
-          deallog << "    Max change with the corner ordering       : "
+          deallog << "    Max |E_inc,t| with electric_field scaling    : "
+                  << max_electric_field_amplitude << std::endl;
+          deallog << "    Max change with electric_field scaling       : "
+                  << filter_out_small_numbers(max_electric_field_scaling_change,
+                                              tolerance)
+                  << std::endl;
+          deallog << "    Max change with the corner ordering          : "
                   << filter_out_small_numbers(max_ordering_change, tolerance)
+                  << std::endl;
+          deallog << "    Max change with the rotation of the port     : "
+                  << filter_out_small_numbers(max_rotation_change, tolerance)
                   << std::endl;
         }
     }
