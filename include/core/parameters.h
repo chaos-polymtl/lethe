@@ -1379,6 +1379,13 @@ namespace Parameters
     /// Prefix for the total heat flux output
     std::string heat_flux_output_name = "heat_flux";
 
+    /// Enable the calculation of the incident, outgoing and absorbed
+    /// electromagnetic powers
+    bool calculate_electromagnetic_power = false;
+
+    /// Prefix for the electromagnetic power output
+    std::string electromagnetic_power_output_name = "electromagnetic_power";
+
     /// Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid =
       Parameters::FluidIndicator::both;

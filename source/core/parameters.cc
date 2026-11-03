@@ -2875,6 +2875,20 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output for the heat flux");
 
+      prm.declare_entry(
+        "calculate electromagnetic power",
+        Patterns::Tools::Convert<bool>::to_string(
+          calculate_electromagnetic_power),
+        Patterns::Bool(),
+        "Enable calculation of the electromagnetic powers: incident, outgoing "
+        "and cross powers through the Robin boundaries, net power "
+        "through the other boundaries and power absorbed in each material.");
+
+      prm.declare_entry("electromagnetic power name",
+                        electromagnetic_power_output_name,
+                        Patterns::FileName(),
+                        "File name output for the electromagnetic power");
+
 
       declare_enum_entry(prm,
                          "postprocessed fluid",
@@ -3033,6 +3047,11 @@ namespace Parameters
       output_q_criterion            = prm.get_bool("output qcriterion");
       output_vorticity              = prm.get_bool("output vorticity");
       output_velocity_gradient      = prm.get_bool("output velocity gradient");
+
+      // Electromagnetic power
+      calculate_electromagnetic_power =
+        prm.get_bool("calculate electromagnetic power");
+      electromagnetic_power_output_name = prm.get("electromagnetic power name");
 
       // Viscous dissipative fluid
       postprocessed_fluid =
