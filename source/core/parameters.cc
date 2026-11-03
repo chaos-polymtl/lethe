@@ -1152,7 +1152,7 @@ namespace Parameters
   QmomParameters::declare_parameters(ParameterHandler &prm)
   {
     const QmomParameters defaults;
-    prm.enter_subsection("qmom phases");
+    prm.enter_subsection("QMOM");
     {
       prm.declare_entry("molar mass aqueous",
                         Patterns::Tools::Convert<double>::to_string(
@@ -1218,7 +1218,7 @@ namespace Parameters
   QmomParameters::parse_parameters(ParameterHandler     &prm,
                                    const Dimensionality &dimensions)
   {
-    prm.enter_subsection("qmom phases");
+    prm.enter_subsection("QMOM");
     {
       molar_mass_aqueous          = prm.get_double("molar mass aqueous");
       molar_mass_organic          = prm.get_double("molar mass organic");

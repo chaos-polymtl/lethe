@@ -47,7 +47,7 @@ enum PhysicsID : unsigned int
   /// Euler-Euler solid phase (solid velocity, solid volume fraction)
   continuum_solid_dynamics = 7,
   /// Quadrature method of moments (QMOM)
-  qmom = 8
+  QMOM = 8
 };
 
 /**
@@ -114,8 +114,8 @@ get_physics_id(const std::string &physics_name)
     return PhysicsID::electromagnetics;
   else if (physics_name == "continuum solid dynamics")
     return PhysicsID::continuum_solid_dynamics;
-  else if (physics_name == "qmom")
-    return PhysicsID::qmom;
+  else if (physics_name == "QMOM")
+    return PhysicsID::QMOM;
   else
     AssertThrow(false,
                 dealii::StandardExceptions::ExcMessage(

@@ -453,11 +453,25 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
+  struct QMOM_PhaseEvolution
+  {
+    /// Adaptive node count
+    bool adaptive = false;
+
+
+    void
+    declare_parameters(ParameterHandler &prm) const;
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   /**
    * @brief Parameters for a quadrature method of moments (QMOM) simulation
    */
-  struct QmomLNP
+  struct QMOM
   {
+    Parameters::QMOM_PhaseEvolution qmom_phase_evolution;
+
     /// Number of nodes
     unsigned int n_nodes = 1;
 
@@ -494,10 +508,10 @@ namespace Parameters
     // Volume shape factor
     double shape_factor = std::numbers::pi / 6;
 
-    static void
-    declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+    declare_parameters(ParameterHandler &prm) const;
+    void
+    parse_parameters(ParameterHandler &prm);
   };
 
 
@@ -599,7 +613,7 @@ namespace Parameters
     Parameters::CLS                      cls_parameters;
     Parameters::CahnHilliard             cahn_hilliard_parameters;
     Parameters::TimeHarmonicMaxwell<dim> time_harmonic_maxwell_parameters;
-    Parameters::QmomLNP                  qmom_parameters;
+    Parameters::QMOM                     qmom_parameters;
 
     void
     declare_parameters(ParameterHandler &prm) const;

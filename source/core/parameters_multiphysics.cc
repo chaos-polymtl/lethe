@@ -103,7 +103,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Euler-Euler solid phase calculation <true|false>");
 
-    prm.declare_entry("qmom",
+    prm.declare_entry("QMOM",
                       Patterns::Tools::Convert<bool>::to_string(qmom),
                       Patterns::Bool(),
                       "Quadrature method of moments <true|false>");
@@ -149,7 +149,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     cahn_hilliard            = prm.get_bool("cahn hilliard");
     electromagnetics         = prm.get_bool("electromagnetics");
     continuum_solid_dynamics = prm.get_bool("continuum solid dynamics");
-    qmom                     = prm.get_bool("qmom");
+    qmom                     = prm.get_bool("QMOM");
 
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");
@@ -160,7 +160,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
   cls_parameters.parse_parameters(prm);
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
   time_harmonic_maxwell_parameters.parse_parameters(prm, dimensions);
-  qmom_parameters.parse_parameters(prm, dimensions);
+  qmom_parameters.parse_parameters(prm);
 }
 
 void
@@ -752,13 +752,39 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
   prm.leave_subsection();
 }
 
+void
+Parameters::QMOM_PhaseEvolution::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOM_PhaseEvolution defaults;
+  prm.enter_subsection("phase evolution");
+  {
+    prm.declare_entry("adaptive",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.adaptive),
+                      Patterns::Bool(),
+                      "Enable adaptive quadrature node count <true|false>");
+  }
+  prm.leave_subsection();
+}
 
 void
-Parameters::QmomLNP::declare_parameters(ParameterHandler &prm)
+Parameters::QMOM_PhaseEvolution::parse_parameters(ParameterHandler &prm)
 {
-  const QmomLNP defaults;
-  prm.enter_subsection("qmom");
+  prm.enter_subsection("phase evolution");
   {
+    adaptive = prm.get_bool("adaptive");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOM defaults;
+  prm.enter_subsection("QMOM");
+  {
+    qmom_phase_evolution.declare_parameters(prm);
+
     prm.declare_entry("number nodes",
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.n_nodes),
@@ -853,11 +879,12 @@ Parameters::QmomLNP::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::QmomLNP::parse_parameters(ParameterHandler     &prm,
-                                      const Dimensionality &dimensions)
+Parameters::QMOM::parse_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("qmom");
+  prm.enter_subsection("QMOM");
   {
+    qmom_phase_evolution.parse_parameters(prm);
+
     n_nodes        = prm.get_integer("number nodes");
     is_nucleation  = prm.get_bool("nucleation");
     is_coalescence = prm.get_bool("coalescence");
