@@ -2924,6 +2924,19 @@ FluidDynamicsMatrixFree<dim>::update_multi_stage_solution(double time_step)
 
 template <int dim>
 void
+FluidDynamicsMatrixFree<dim>::update_forcing_and_boundary_conditions()
+{
+  NavierStokesBase<dim, VectorType, IndexSet>::
+    update_forcing_and_boundary_conditions();
+
+  // The forcing term is precomputed by the operator, it must be recomputed for
+  // a time-dependent forcing function to be accounted for.
+  if (this->forcing_function)
+    this->system_operator->compute_forcing_term();
+}
+
+template <int dim>
+void
 FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
@@ -2967,16 +2980,9 @@ FluidDynamicsMatrixFree<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      if (this->forcing_function)
-        {
-          this->forcing_function->set_time(
-            this->simulation_control->get_current_time());
-          // The forcing term is precomputed by the operator, it must be
-          // recomputed for a time-dependent forcing function to be accounted.
-          this->system_operator->compute_forcing_term();
-        }
-
-      this->update_boundary_conditions();
+      // We allow the physics to update their forcing and boundary conditions
+      // according to their own parameters
+      this->update_forcing_and_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
       this->simulation_control->print_progression(this->pcout);

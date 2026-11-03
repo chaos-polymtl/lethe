@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -9,9 +9,14 @@
 // Lethe
 #include <core/parameters.h>
 #include <core/simulation_control.h>
+#include <core/utilities.h>
 
 // Tests
 #include <../tests/tests.h>
+
+// Std
+#include <utility>
+#include <vector>
 
 void
 test()
@@ -26,12 +31,12 @@ test()
     {Method::bdf3, 1},
     {Method::sdirk22, 2},
     {Method::sdirk33, 3},
-    {Method::sdirk43, 3}};
+    {Method::sdirk45, 5}};
 
   for (const auto &[method, expected] : test_cases)
     {
       unsigned int result = SimulationControl::get_number_of_stages(method);
-      deallog << "Method: " << static_cast<int>(method)
+      deallog << "Method: " << enum_to_string(method)
               << " -> Stages: " << result << std::endl;
       AssertThrow(result == expected,
                   ExcMessage(

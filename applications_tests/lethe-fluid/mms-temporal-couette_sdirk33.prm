@@ -1,0 +1,157 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Temporal manufactured solution for the SDIRK33 scheme with a time-dependent
+# Dirichlet boundary condition. The Couette-like velocity u = (sin(4t) y, 0) is
+# imposed on the top wall (y=1), the bottom wall (y=0) is a no-slip wall and
+# the domain is periodic in x. The source term is f = (4 cos(4t) y, 0). The
+# velocity is linear in y and is thus represented exactly in space. This test
+# checks that the boundary condition is evaluated at the time of each stage.
+# Since SDIRK methods have a stage order of 1, an order reduction is expected
+# with time-dependent Dirichlet boundary conditions.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = sdirk33
+  set time step        = 0.1
+  set time end         = 1.0
+  set output name      = mms-temporal-couette
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.0
+  end
+end
+
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable              = true
+    set Function expression = 4*cos(4*t)*y; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set verbosity = verbose
+  set enable    = true
+  subsection uvwp
+    set Function expression = sin(4*t)*y; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 1 : true
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number         = 3
+  set time dependent = true
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic id        = 1
+    set periodic direction = 0
+  end
+  subsection bc 1
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = function
+    subsection u
+      set Function expression = sin(4*t)
+    end
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-10
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 5000
+    set relative residual                     = 1e-12
+    set minimum residual                      = 1e-13
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end

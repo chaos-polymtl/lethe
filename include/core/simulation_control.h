@@ -400,7 +400,7 @@ public:
   /**
    * @brief Establish if the method is an SDIRK method
    *
-   * @return true if the method is sdirk22, sdirk33, or sdirk43, false otherwise
+   * @return true if the method is sdirk22, sdirk33, or sdirk45, false otherwise
    */
   bool
   is_sdirk() const
@@ -409,7 +409,7 @@ public:
              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
            method ==
              Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
-           method == Parameters::SimulationControl::TimeSteppingMethod::sdirk43;
+           method == Parameters::SimulationControl::TimeSteppingMethod::sdirk45;
   }
 
 
@@ -704,6 +704,33 @@ public:
   get_previous_time() const
   {
     return previous_time;
+  }
+
+  /**
+   * @brief Move the current time to an intermediate stage of a multi-stage
+   * (SDIRK) method, \f$t_{stage} = t_n + c_i \Delta t\f$, so that
+   * time-dependent functions (forcing, boundary conditions) are evaluated at
+   * the time of the stage being solved. end_stages() must be called once all
+   * the stages have been solved.
+   *
+   * @param[in] c_i Time fraction of the stage within the time step (c
+   * coefficient of the Butcher tableau).
+   */
+  void
+  set_stage_time(const double c_i)
+  {
+    current_time = previous_time + c_i * time_step;
+  }
+
+  /**
+   * @brief Restore the current time to \f$t_{n+1}\f$ after all the stages of a
+   * multi-stage method have been solved. This reproduces exactly the value
+   * computed in integrate(), where current_time = previous_time + time_step.
+   */
+  void
+  end_stages()
+  {
+    current_time = previous_time + time_step;
   }
 
   /**

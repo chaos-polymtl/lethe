@@ -1,0 +1,10 @@
+
+DEAL::sdirk22: 2 stages, order conditions satisfied up to order 2
+DEAL::  stiffly accurate: true
+DEAL::  R(infinity): 0.000000
+DEAL::sdirk33: 3 stages, order conditions satisfied up to order 3
+DEAL::  stiffly accurate: true
+DEAL::  R(infinity): 0.000000
+DEAL::sdirk45: 5 stages, order conditions satisfied up to order 4
+DEAL::  stiffly accurate: true
+DEAL::  R(infinity): 0.000000
