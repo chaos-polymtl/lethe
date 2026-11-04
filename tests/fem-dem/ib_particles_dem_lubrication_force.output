@@ -1,0 +1,9 @@
+
+DEAL::Dimension 2
+DEAL::Particle-particle lubrication force matches the closed form: true
+DEAL::Particle-particle lubrication forces are opposite: true
+DEAL::Particle-wall lubrication force matches the closed form: true
+DEAL::Dimension 3
+DEAL::Particle-particle lubrication force matches the closed form: true
+DEAL::Particle-particle lubrication forces are opposite: true
+DEAL::Particle-wall lubrication force matches the closed form: true

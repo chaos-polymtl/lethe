@@ -345,7 +345,7 @@ Sphere<dim>::set_position(const Point<dim> &position)
 
 template <int dim>
 std::tuple<double, Tensor<1, dim>, Point<dim>>
-Sphere<dim>::distance_to_shape_with_cell_guess(
+Sphere<dim>::half_distance_to_shape_with_cell_guess(
   Shape<dim>                                           &shape,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   std::vector<Point<dim>>                              &candidate_points,
@@ -384,10 +384,10 @@ Sphere<dim>::distance_to_shape_with_cell_guess(
 
 template <int dim>
 std::tuple<double, Tensor<1, dim>, Point<dim>>
-Sphere<dim>::distance_to_shape(Shape<dim>              &shape,
-                               std::vector<Point<dim>> &candidate_points,
-                               double                   precision,
-                               bool exact_distance_outside_of_contact)
+Sphere<dim>::half_distance_to_shape(Shape<dim>              &shape,
+                                    std::vector<Point<dim>> &candidate_points,
+                                    double                   precision,
+                                    bool exact_distance_outside_of_contact)
 {
   (void)candidate_points;
   (void)precision;
