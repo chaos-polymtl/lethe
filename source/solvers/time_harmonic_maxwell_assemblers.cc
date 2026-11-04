@@ -580,24 +580,11 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::TimeHarmonicMaxwellAssemblerRobinBC(
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters,
   const BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
                             &boundary_conditions,
-  const std::vector<double> &waveguide_ports_electric_amplitudes)
+  const std::vector<double> &waveguide_ports_relative_amplitudes)
   : time_harmonic_maxwell_parameters(time_harmonic_maxwell_parameters)
   , boundary_conditions(boundary_conditions)
-  , waveguide_ports_relative_amplitudes(waveguide_ports_electric_amplitudes)
-{
-  // In the case of multiple waveguide ports, we normalize their amplitudes by
-  // their maximum here before assembling the Robin boundary condition to avoid
-  // extra computations as this factor is constant across all quadrature points.
-  // This normalization is done to ensure that the waveguide port with the
-  // highest amplitude is set to 1, and the other ports are scaled accordingly.
-  if (waveguide_ports_relative_amplitudes.empty())
-    return;
-
-  const double max_port_electric_amplitude =
-    *std::ranges::max_element(waveguide_ports_relative_amplitudes);
-  for (double &amplitude : waveguide_ports_relative_amplitudes)
-    amplitude /= max_port_electric_amplitude;
-}
+  , waveguide_ports_relative_amplitudes(waveguide_ports_relative_amplitudes)
+{}
 
 template <int dim>
 void

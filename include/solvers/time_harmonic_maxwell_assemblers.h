@@ -371,16 +371,16 @@ public:
    * @param[in] boundary_conditions Boundary conditions of the time-harmonic
    * Maxwell physics.
    *
-   * @param[in] waveguide_ports_electric_amplitudes Electric field amplitudes of
-   * all the waveguide ports. They are normalized by their maximum
-   * to get the relative amplitudes of the ports during initialization.
+   * @param[in] waveguide_ports_relative_amplitudes Electric field amplitudes of
+   * all the waveguide ports relative to the maximum amplitude of all the
+   * ports.
    */
   TimeHarmonicMaxwellAssemblerRobinBC(
     const Parameters::TimeHarmonicMaxwell<dim>
       &time_harmonic_maxwell_parameters,
     const BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
                               &boundary_conditions,
-    const std::vector<double> &waveguide_ports_electric_amplitudes);
+    const std::vector<double> &waveguide_ports_relative_amplitudes);
 
   /**
    * @brief Assemble the Robin boundary terms of the Gram matrix and of the

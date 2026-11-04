@@ -369,12 +369,12 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
       std::vector<double> waveguide_modal_powers(
         electromagnetic_parameters.number_of_waveguide_inlets, 0.);
 
-      // Resize the vector that will store the waveguide port electric field
+      // The following vector will store the waveguide port electric field
       // amplitudes. Those are obtain by computing the square root of the ratio
       // between the input power provided by the user and the modal power
       // computed from integrating the Poynting vector of the incident wave over
       // the inlet face.
-      this->waveguide_ports_electric_amplitudes = std::vector<double>(
+      std::vector<double> waveguide_ports_electric_amplitudes(
         electromagnetic_parameters.number_of_waveguide_inlets, 0.);
 
       // We need to define a FEFaceValues object to perform the integral of the
@@ -567,14 +567,24 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
           // dimensionality because we assume user input in W and impedance in
           // Ohms so the resulting units of this integral will always be
           // Volt/length unit (of the mesh).
-          this->waveguide_ports_electric_amplitudes[inlets] =
+          waveguide_ports_electric_amplitudes[inlets] =
             std::sqrt(waveguide_powers[inlets] * void_impedance /
                       Utilities::MPI::sum(waveguide_modal_powers[inlets],
                                           mpi_communicator));
         }
 
       max_port_electric_amplitude =
-        *std::ranges::max_element(this->waveguide_ports_electric_amplitudes);
+        *std::ranges::max_element(waveguide_ports_electric_amplitudes);
+
+      // The excitation of each waveguide port is scaled by its amplitude
+      // relative to the maximum amplitude of all the ports, so that the
+      // strongest port is excited with the unit-amplitude mode. These factors
+      // are constant across the quadrature points, so they are computed once
+      // here for the Robin boundary condition and the power balance.
+      this->waveguide_ports_relative_amplitudes =
+        waveguide_ports_electric_amplitudes;
+      for (double &amplitude : this->waveguide_ports_relative_amplitudes)
+        amplitude /= max_port_electric_amplitude;
     }
 
   // Now we need to define the electromagnetic scaling factor according to the
@@ -729,19 +739,6 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
   const double               omega =
     2.0 * numbers::PI * electromagnetic_parameters.electromagnetic_frequency;
 
-  // The excitation of each waveguide port is scaled by its amplitude relative
-  // to the maximum amplitude of all the ports, as in the assembly of the Robin
-  // boundary condition (see TimeHarmonicMaxwellAssemblerRobinBC).
-  std::vector<double> waveguide_ports_relative_amplitudes =
-    this->waveguide_ports_electric_amplitudes;
-  if (!waveguide_ports_relative_amplitudes.empty())
-    {
-      const double max_port_electric_amplitude =
-        *std::ranges::max_element(waveguide_ports_relative_amplitudes);
-      for (double &amplitude : waveguide_ports_relative_amplitudes)
-        amplitude /= max_port_electric_amplitude;
-    }
-
   // Net power entering the domain through each boundary id. On the boundaries
   // with a Robin boundary condition, it is split into the incident, outgoing
   // and cross powers. All the entries are initialized on every process
@@ -859,7 +856,6 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
       // Power absorbed in the cell, 0.5 * omega * (Im(eps) |E|^2 + Im(mu)
       // |H|^2), which is the electromagnetic heat source of the heat transfer
       // physics (the conductivity is included in Im(eps)).
-      AssertIndexRange(material_id, absorbed_powers.size());
       fe_values_trial_interior.reinit(
         cell->as_dof_handler_iterator(*this->dof_handler_trial_interior));
       fe_values_trial_interior[this->extractor_E_real].get_function_values(
@@ -994,7 +990,7 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                     compute_robin_boundary_data(
                       electromagnetic_parameters,
                       boundary_conditions,
-                      waveguide_ports_relative_amplitudes,
+                      this->waveguide_ports_relative_amplitudes,
                       boundary_id,
                       fe_face_values_trial_skeleton.quadrature_point(q),
                       normal,
@@ -1015,10 +1011,7 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                   // flux of each wave gives the incident and outgoing powers
                   // 0.5 Re(Y) |E_inc|^2 and 0.5 Re(Y) |E_out|^2, and the net
                   // power is P_net = P_inc - P_out + Im(Y) Im(E_out . E_inc*).
-                  // The last term is the cross power of the two waves, which
-                  // vanishes for a real admittance (lossless medium), since the
-                  // two waves are then orthogonal with respect to the Poynting
-                  // flux. The waves cannot be separated if Y = 0, in which case
+                  // The waves cannot be separated if Y = 0, in which case
                   // the whole net power is counted as cross power below.
                   if (surface_admittance != 0.)
                     {
@@ -1090,8 +1083,7 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
   // Conversion to physical units. After scaling, E = s E* (V/m) and
   // H = s / Z_0 H* (A/m), with s the electromagnetic scaling, and the surface
   // element is dA = L^2 dA*, with L the length unit of the mesh. Therefore,
-  // P = (s L)^2 / Z_0 P* (W). By the Poynting theorem, the absorbed power
-  // has the same conversion factor. Without scaling, the non-dimensional power
+  // P = (s L)^2 / Z_0 P* (W). Without scaling, the non-dimensional power
   // is reported.
   const bool solution_is_scaled =
     electromagnetic_parameters.electromagnetic_scaling_type !=
@@ -2227,12 +2219,14 @@ TimeHarmonicMaxwell<dim>::define_constraints()
   //
   // On the faces where a Robin boundary condition is applied, the magnetic
   // trace is replaced by the Robin boundary condition and is therefore not
-  // tested. The magnetic trace dofs attached to the interior of such a face
-  // (quad dofs in 3D, line dofs in 2D) belong to no other face, so no test
-  // function sees them: they would form a nullspace of the condensed system.
-  // We constrain them to zero as well. The magnetic dofs on the edges of a
-  // Robin face are not constrained since they are shared with neighboring
-  // faces where the magnetic trace is tested.
+  // tested. A magnetic trace dof that lies only on Robin faces is seen by no
+  // test function, so it would form a nullspace of the condensed system. This
+  // is the case of the dofs attached to the interior of a Robin face, and of
+  // the dofs on an edge shared only by Robin faces (e.g. an edge of the domain
+  // between two Robin boundaries). We constrain these dofs to zero as well to
+  // remove them from the matrix. The magnetic dofs that also lie on a face
+  // where the magnetic trace is tested (an interior face or a non-Robin
+  // boundary face) are kept.
 
   const FiniteElement<dim>            &fe_skeleton = *this->fe_trial_skeleton;
   std::vector<types::global_dof_index> cell_dof_indices(
@@ -2241,14 +2235,42 @@ TimeHarmonicMaxwell<dim>::define_constraints()
     fe_skeleton.n_dofs_per_face());
   std::vector<bool> is_dof_on_face(fe_skeleton.n_dofs_per_cell(), false);
 
-  // Range of the cell-local indices of the dofs attached to the interior of the
-  // faces of the cell
-  const unsigned int first_face_interior_dof =
-    (dim == 3) ? fe_skeleton.get_first_quad_index() :
-                 fe_skeleton.get_first_line_index();
-  const unsigned int end_face_interior_dof =
-    (dim == 3) ? fe_skeleton.get_first_hex_index() :
-                 fe_skeleton.get_first_quad_index();
+  const auto is_robin_face = [&](const auto &face) {
+    return face->at_boundary() &&
+           is_robin_boundary_type(
+             this->simulation_parameters
+               .boundary_conditions_time_harmonic_electromagnetics.type.at(
+                 face->boundary_id()));
+  };
+
+  // Count, for each skeleton dof, the faces containing it where the magnetic
+  // trace is tested (the non-Robin faces). The faces containing a dof can
+  // belong to cells owned by different processes, so the faces of the locally
+  // owned cells are counted on each process and the counts are summed over
+  // the processes. All the dofs of these faces are counted, but the counts are
+  // only used for the magnetic dofs.
+  LinearAlgebra::distributed::Vector<double> n_tested_faces(
+    this->locally_owned_dofs_trial_skeleton,
+    this->locally_relevant_dofs_trial_skeleton,
+    this->triangulation->get_mpi_communicator());
+  for (const auto &cell :
+       this->dof_handler_trial_skeleton->active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      for (const auto &face : cell->face_iterators())
+        {
+          if (is_robin_face(face))
+            continue;
+
+          face->get_dof_indices(face_dof_indices);
+          for (const auto &face_dof : face_dof_indices)
+            n_tested_faces[face_dof] += 1.;
+        }
+    }
+  n_tested_faces.compress(VectorOperation::add);
+  n_tested_faces.update_ghost_values();
 
   // Loop on all skeleton dofs and set the interior constraints to zero
   for (const auto &cell :
@@ -2264,12 +2286,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
             {
               face->get_dof_indices(face_dof_indices);
 
-              const bool robin_face =
-                face->at_boundary() &&
-                is_robin_boundary_type(
-                  this->simulation_parameters
-                    .boundary_conditions_time_harmonic_electromagnetics.type.at(
-                      face->boundary_id()));
+              const bool robin_face = is_robin_face(face);
 
               // Loop on all dofs on the face
               for (const auto &face_dof : face_dof_indices)
@@ -2292,17 +2309,14 @@ TimeHarmonicMaxwell<dim>::define_constraints()
                         continue;
 
                       // Remember that the convention for the FE system we
-                      // are using is [E_real, E_imag, H_real, H_imag].
-                      const unsigned int base_element =
-                        fe_skeleton.system_to_base_index(local_dof_index)
-                          .first.first;
+                      // are using is [E_real, E_imag, H_real, H_imag]. The
+                      // block index is used since the Nedelec shape
+                      // functions are not primitive.
                       const bool is_magnetic_dof =
-                        (base_element == 2 || base_element == 3);
-                      const bool is_face_interior_dof =
-                        (local_dof_index >= first_face_interior_dof) &&
-                        (local_dof_index < end_face_interior_dof);
+                        fe_skeleton.system_to_block_index(local_dof_index)
+                          .first >= 2;
 
-                      if (is_magnetic_dof && is_face_interior_dof &&
+                      if (is_magnetic_dof && n_tested_faces[face_dof] == 0. &&
                           !this->nonzero_constraints.is_constrained(face_dof))
                         this->nonzero_constraints.constrain_dof_to_zero(
                           face_dof);
@@ -2690,7 +2704,7 @@ TimeHarmonicMaxwell<dim>::setup_assemblers()
       std::make_shared<TimeHarmonicMaxwellAssemblerRobinBC<dim>>(
         time_harmonic_maxwell_parameters,
         boundary_conditions,
-        this->waveguide_ports_electric_amplitudes));
+        this->waveguide_ports_relative_amplitudes));
 }
 
 template <int dim>
