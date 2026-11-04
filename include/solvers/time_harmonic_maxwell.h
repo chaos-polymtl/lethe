@@ -915,14 +915,15 @@ private:
   double electromagnetic_scaling;
 
   /**
-   * A vector containing the electric amplitudes of all the waveguide ports. It
-   * is define as the : \f$ \sqrt{P_\mathrm{input}/P_\mathrm{port}} \f$, where
+   * Electric amplitudes of all the waveguide ports relative to the maximum
+   * amplitude of all the ports. The electric amplitude of a port is
+   * \f$ \sqrt{P_\mathrm{input} Z_0/P_\mathrm{port}} \f$, where
    * \f$P_\mathrm{input}\f$ is the input power provided by the user for a given
    * waveguide port and \f$P_\mathrm{port}\f$ is the power computed from
    * integrating the Poynting vector of the electromagnetic fields at the inlet
    * associated with the waveguide port condition.
    */
-  std::vector<double> waveguide_ports_electric_amplitudes;
+  std::vector<double> waveguide_ports_relative_amplitudes;
 
 
   /**
