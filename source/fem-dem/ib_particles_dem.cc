@@ -240,9 +240,6 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 }
 
               // Calculation of normal overlap
-              double                  normal_overlap;
-              Point<dim>              contact_point;
-              Tensor<1, dim>          normal;
               std::vector<Point<dim>> contact_points_candidate;
 
               auto iterator =
@@ -261,44 +258,31 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                       (particle_one.radius /
                        (particle_one.radius + particle_two.radius)));
                 }
-              // The normal vector goes from particle one to particle two.
-              if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                  typeid(*particle_two.shape) == typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
+              // The normal vector goes from particle one to particle two. The
+              // routine of the sphere is used whenever one of the particles is
+              // a sphere. When only particle two is a sphere, the normal it
+              // returns goes from particle two to particle one, so it is
+              // flipped.
+              const bool only_particle_two_is_a_sphere =
+                typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
+                typeid(*particle_two.shape) == typeid(Sphere<dim>);
+              const auto contact_state =
+                only_particle_two_is_a_sphere ?
+                  particle_two.shape->half_distance_to_shape(
+                    *particle_one.shape, contact_points_candidate) :
+                  particle_one.shape->half_distance_to_shape(
                     *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
-              else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                       typeid(*particle_two.shape) != typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
-                    *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
-              else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
-                       typeid(*particle_two.shape) == typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_two.shape->distance_to_shape(
-                    *particle_one.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = -std::get<Tensor<1, dim>>(
-                    contact_state); // Flip the normal since it returns the
-                                            // normal using the second particle;
-                }
-              else
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
-                    *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
+
+              // The Hertz model uses the full overlap, which is twice the
+              // half distance returned by the shape, as for the walls.
+              const double normal_overlap =
+                -2. * std::get<double>(contact_state);
+              const Point<dim> contact_point =
+                std::get<Point<dim>>(contact_state);
+              const Tensor<1, dim> normal =
+                only_particle_two_is_a_sphere ?
+                  -std::get<Tensor<1, dim>>(contact_state) :
+                  std::get<Tensor<1, dim>>(contact_state);
               previous_wall_contact_point[particle_one.particle_id]
                                          [particle_two.particle_id] =
                                            contact_point;
@@ -443,16 +427,11 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
             {
               const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
-              Tensor<1, 3>     radial_vector;
-              double           radial_velocity;
-              Tensor<1, 3>     f_lub;
 
               // Calculation of normal overlap
               double gap =
                 particle_one_location.distance(particle_two_location) -
                 (particle_one.radius + particle_two.radius);
-              radial_vector =
-                tensor_nd_to_3d(particle_one.position - particle_two.position);
               if (gap > 0 and gap < h_max)
                 // This means that the adjacent particles are very close but
                 // not in contact
@@ -463,25 +442,29 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
                       gap = h_min;
                     }
 
-                  // Evaluate the force
-                  radial_velocity =
-                    scalar_product(-radial_vector, particle_one.velocity) +
-                    scalar_product(radial_vector, particle_two.velocity);
-                  f_lub =
-                    3. / 2. * PI * mu *
-                      (particle_one.radius * 2 * particle_two.radius * 2 /
-                       (particle_one.radius * 2 + particle_two.radius * 2)) *
-                      (particle_one.radius * 2 * particle_two.radius * 2 /
-                       (particle_one.radius * 2 + particle_two.radius * 2)) /
-                      gap * radial_velocity * radial_vector /
-                      radial_vector.norm() -
-                    3. / 2. * PI * mu *
-                      (particle_one.radius * 2 * particle_two.radius * 2 /
-                       (particle_one.radius * 2 + particle_two.radius * 2)) *
-                      (particle_one.radius * 2 * particle_two.radius * 2 /
-                       (particle_one.radius * 2 + particle_two.radius * 2)) /
-                      h_max * radial_velocity * radial_vector /
-                      radial_vector.norm();
+                  // Unit vector from particle two to particle one. Its norm
+                  // is not zero since the gap is positive. The radial
+                  // velocity is positive when the particles approach each
+                  // other.
+                  const Tensor<1, 3> radial_vector = tensor_nd_to_3d(
+                    particle_one.position - particle_two.position);
+                  const Tensor<1, 3> unit_radial_vector =
+                    radial_vector / radial_vector.norm();
+                  const double radial_velocity =
+                    scalar_product(unit_radial_vector,
+                                   particle_two.velocity -
+                                     particle_one.velocity);
+
+                  // Evaluate the force. The 1/h_max term makes the force
+                  // vanish at the end of the lubrication range.
+                  const double diameter_one = 2. * particle_one.radius;
+                  const double diameter_two = 2. * particle_two.radius;
+                  const double effective_diameter =
+                    diameter_one * diameter_two / (diameter_one + diameter_two);
+                  const Tensor<1, 3> f_lub =
+                    1.5 * PI * mu * effective_diameter * effective_diameter *
+                    (1. / gap - 1. / h_max) * radial_velocity *
+                    unit_radial_vector;
 
                   // A particle can be close to several others: the force of
                   // each pair is added to the force of both particles.
@@ -784,8 +767,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               // set is smaller than the wall initial guess. Find the normal
               // overlap
               auto contact_state =
-                particle.shape->distance_to_shape(*contact_plane,
-                                                  contact_point_candidate);
+                particle.shape->half_distance_to_shape(*contact_plane,
+                                                       contact_point_candidate);
               double   normal_overlap = -2 * std::get<double>(contact_state);
               Point<3> contact_point =
                 point_nd_to_3d(std::get<Point<dim>>(contact_state));
@@ -1024,11 +1007,6 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
 
               double gap = (projected_vector.norm()) - particle.radius;
 
-              Tensor<1, 3> radial_vector;
-              double       radial_velocity;
-              Tensor<1, 3> f_lub;
-
-              radial_vector = projected_vector;
               if (gap > 0 and gap < h_max)
                 // This means that the particles is very close to the wall
                 // but not in contact
@@ -1038,16 +1016,26 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                     {
                       gap = h_min;
                     }
-                  // Evaluate the force
-                  radial_velocity =
-                    scalar_product(-radial_vector,
-                                   particle.velocity - wall_velocity_at_point);
-                  f_lub = 3. / 2. * PI * mu * (particle.radius) *
-                            (particle.radius) / gap * radial_velocity *
-                            radial_vector / radial_vector.norm() -
-                          3. / 2. * PI * mu * (particle.radius) *
-                            (particle.radius) / h_max * radial_velocity *
-                            radial_vector / radial_vector.norm();
+
+                  // Unit vector from the wall to the particle. Its norm is
+                  // not zero since the gap is positive. The radial velocity
+                  // is positive when the particle approaches the wall.
+                  const Tensor<1, 3> unit_radial_vector =
+                    projected_vector / projected_vector.norm();
+                  const double radial_velocity =
+                    scalar_product(unit_radial_vector,
+                                   wall_velocity_at_point - particle.velocity);
+
+                  // Evaluate the force. The wall is a particle of infinite
+                  // diameter, so the effective diameter is the diameter of
+                  // the particle and the force is 6 pi mu R^2 U / h. The
+                  // 1/h_max term makes the force vanish at the end of the
+                  // lubrication range.
+                  const double       effective_diameter = 2. * particle.radius;
+                  const Tensor<1, 3> f_lub =
+                    1.5 * PI * mu * effective_diameter * effective_diameter *
+                    (1. / gap - 1. / h_max) * radial_velocity *
+                    unit_radial_vector;
 
                   // A particle can be close to several walls: the force of
                   // each wall is added.

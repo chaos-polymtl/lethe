@@ -136,7 +136,7 @@ public:
   }
 
   /**
-   * @brief Return the distance, the center point, and the unit normal vector between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The unit normal vector is defined using the closest surface point of the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified by setting exact_distance_outside_of_contact to true.
+   * @brief Return half the distance, the center point, and the unit normal vector between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The value returned is the level set of both shapes at this point, which is half the distance between the two shapes (half the overlap, with a negative sign, when they overlap). The unit normal vector is defined using the closest surface point of the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact, and then returns DBL_MAX. This behavior can be modified by setting exact_distance_outside_of_contact to true.
    * @param shape The shape with which the distance is evaluated
    * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial guess points used in the calculation.
@@ -144,7 +144,7 @@ public:
    * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact.
    */
   virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
-  distance_to_shape_with_cell_guess(
+  half_distance_to_shape_with_cell_guess(
     Shape<dim>                                           &shape,
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     std::vector<Point<dim>>                              &candidate_points,
@@ -440,17 +440,17 @@ public:
   }
 
   /**
-   * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified using the appropriate parameter.
+   * @brief Return half the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The value returned is the level set of both shapes at this point, which is half the distance between the two shapes (half the overlap, with a negative sign, when they overlap). The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact, and then returns DBL_MAX. This behavior can be modified using the appropriate parameter.
    * @param shape The shape with which the distance is evaluated
    * @param candidate_points This is the initial guess points used in the calculation.
    * @param precision This is the precision of the distance between the two shapes.
    * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact.
    */
   virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
-  distance_to_shape(Shape<dim>              &shape,
-                    std::vector<Point<dim>> &candidate_points,
-                    double                   precision     = 1e-6,
-                    bool exact_distance_outside_of_contact = false)
+  half_distance_to_shape(Shape<dim>              &shape,
+                         std::vector<Point<dim>> &candidate_points,
+                         double                   precision     = 1e-6,
+                         bool exact_distance_outside_of_contact = false)
   {
     // Initialized the default values.
     double         distance = DBL_MAX;
@@ -1435,7 +1435,7 @@ public:
 
 
   /**
-   * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
+   * @brief Return half the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The value returned is the level set of both shapes at this point, which is half the distance between the two shapes (half the overlap, with a negative sign, when they overlap). The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
    * @param shape The shape with which the distance is evaluated
    * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial guess points used in the calculation. (In this implementation this parameter is void)
@@ -1443,7 +1443,7 @@ public:
    * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact. (In this implementation this parameter is void)
    */
   std::tuple<double, Tensor<1, dim>, Point<dim>>
-  distance_to_shape_with_cell_guess(
+  half_distance_to_shape_with_cell_guess(
     Shape<dim>                                           &shape,
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     std::vector<Point<dim>>                              &candidate_points,
@@ -1451,17 +1451,18 @@ public:
     bool exact_distance_outside_of_contact = false) override;
 
   /**
-   * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
+   * @brief Return half the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The value returned is the level set of both shapes at this point, which is half the distance between the two shapes (half the overlap, with a negative sign, when they overlap). The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
    * @param shape The shape with which the distance is evaluated
    * @param candidate_points This is the initial guess points used in the calculation. (In this implementation, this parameter is void)
    * @param precision This is the precision of the distance between the two shapes. (In this implementation, this parameter is void)
    * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact. (In this implementation, this parameter is void)
    */
   std::tuple<double, Tensor<1, dim>, Point<dim>>
-  distance_to_shape(Shape<dim>              &shape,
-                    std::vector<Point<dim>> &candidate_points,
-                    double                   precision     = 1e-6,
-                    bool exact_distance_outside_of_contact = false) override;
+  half_distance_to_shape(
+    Shape<dim>              &shape,
+    std::vector<Point<dim>> &candidate_points,
+    double                   precision     = 1e-6,
+    bool exact_distance_outside_of_contact = false) override;
 
   /**
    * @brief
