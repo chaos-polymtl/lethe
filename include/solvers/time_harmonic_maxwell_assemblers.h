@@ -122,13 +122,9 @@ get_waveguide_port_index(
 
 /**
  * @brief Compute the excitation and the surface admittance of the Robin
- * boundary condition of a rectangular waveguide port. On the port, the Robin
- * boundary condition reads \f$\mathbf{n}\times\mathbf{H} + Y \mathbf{E}_T =
- * \mathbf{g}\f$, where \f$Y\f$ is the surface admittance of the mode and
- * \f$\mathbf{g} = a(\mathbf{n}\times\mathbf{H}_\mathrm{inc} +
- * Y\mathbf{E}_{\mathrm{inc},T})\f$ is the excitation, \f$a\f$ being the
- * amplitude of the port relative to the maximum amplitude of all the ports. It
- * is only implemented for 3D problems.
+ * boundary condition of a rectangular waveguide port from the input
+ * parameters. The excitation used is the normalized one across all the
+ * waveguide ports. This function is only implemented for 3D problems.
  *
  * @tparam dim Spatial dimension.
  *
@@ -169,9 +165,7 @@ compute_waveguide_port_excitation(
  * @brief Compute the excitation \f$\mathbf{g}\f$ and the surface admittance
  * \f$Y\f$ of the Robin boundary condition \f$\mathbf{n}\times\mathbf{H} + Y
  * \mathbf{E}_T = \mathbf{g}\f$ at a point of a boundary with a Robin boundary
- * condition (silver_muller, impedance_boundary or waveguide_port). It is used
- * both to assemble the Robin boundary conditions and to recover the magnetic
- * trace on these boundaries, where it is not an unknown of the system.
+ * condition (silver_muller, impedance_boundary or waveguide_port).
  *
  * @tparam dim Spatial dimension.
  *
