@@ -587,14 +587,15 @@ to physical units after the linear system is solved. The choices are:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">none</span></code> (default): the solution is left in dimensionless form and output
 as such.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">electric_field</span></code>: rescaled so the electric field matches
-<code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>, and the magnetic field matches
-<span class="math notranslate nohighlight">\(H_0 = E_0 / Z_0\)</span>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">magnetic_field</span></code>: rescaled so the magnetic field matches
-<code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span> <span class="pre">amplitude</span></code>, and the electric field matches
-<span class="math notranslate nohighlight">\(E_0 = Z_0 H_0\)</span>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">power</span></code>: rescaled so the power delivered through the waveguide inlet
-matches the <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">power</span></code> given in watts by the user for that inlet.
+<li><p><code class="docutils literal notranslate"><span class="pre">electric_field</span></code>: the dimensionless electric field is multiplied by the
+<code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">field</span> <span class="pre">amplitude</span></code> <span class="math notranslate nohighlight">\(E_0\)</span>, and the dimensionless magnetic
+field by <span class="math notranslate nohighlight">\(H_0 = E_0 / Z_0\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">magnetic_field</span></code>: the dimensionless magnetic field is multiplied by the
+<code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">field</span> <span class="pre">amplitude</span></code> <span class="math notranslate nohighlight">\(H_0\)</span>, and the dimensionless electric
+field by <span class="math notranslate nohighlight">\(E_0 = Z_0 H_0\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">power</span></code>: rescaled so the power carried by the incident mode through the
+waveguide inlet matches the <code class="docutils literal notranslate"><span class="pre">waveguide</span> <span class="pre">power</span></code> given in watts by the user
+for that inlet.
 The scaling is done internally by isolating the electric field amplitude
 using the Poynting vector and the waveguide mode properties, and then
 rescaling the magnetic field accordingly, via the relation:</p>
@@ -674,13 +675,20 @@ following equations:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
     \mathbf{E}_{TM} &amp; = \begin{bmatrix} i \frac{k_{x_3} k_{x_1}}{k_c^2} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2) \\  i \frac{k_{x_3} k_{x_2}}{k_c^2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2) \\ \sin(k_{x_1} x_1) \sin(k_{x_2} x_2) \end{bmatrix} e^{i k_{x_3} x_3}, \\
-    \mathbf{H}_{TM} &amp; = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\-k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
+    \mathbf{H}_{TM} &amp; = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} -k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
 \end{align}\end{split}\]</div>
 </div>
 <p>In the above equations, <span class="math notranslate nohighlight">\(k_{x_1}\)</span> and <span class="math notranslate nohighlight">\(k_{x_2}\)</span> are the
 wavenumbers in the two transverse directions, and <span class="math notranslate nohighlight">\(k_{x_3}\)</span> is the
-wavenumber in the propagation direction. The cutoff wavenumber <span class="math notranslate nohighlight">\(k_c\)</span> is
-defined as <span class="math notranslate nohighlight">\(k_c^2 = k_{x_1}^2 + k_{x_2}^2\)</span>.</p>
+wavenumber in the propagation direction <span class="math notranslate nohighlight">\(x_3\)</span>, which points into the
+domain. The cutoff wavenumber <span class="math notranslate nohighlight">\(k_c\)</span> is defined as
+<span class="math notranslate nohighlight">\(k_c^2 = k_{x_1}^2 + k_{x_2}^2\)</span>.</p>
+<p>The incident mode is given by the above equations, i.e. the standard
+solution of a rectangular waveguide, whose longitudinal field
+(<span class="math notranslate nohighlight">\(H_{x_3}\)</span> for the TE mode and <span class="math notranslate nohighlight">\(E_{x_3}\)</span> for the TM mode) has a
+unit amplitude, whatever the <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span></code>. The scaling
+only multiplies the solution once the linear system is solved, as described
+in the <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span></code> parameter.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">order</span> <span class="pre">m</span></code>, <code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">order</span> <span class="pre">n</span></code>: mode orders in the two transverse
 directions. They are used to compute the wavenumbers <span class="math notranslate nohighlight">\(k_{x_1}\)</span> and
