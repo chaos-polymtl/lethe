@@ -385,6 +385,57 @@ compute_robin_boundary_data(
 }
 
 template <int dim>
+BoundaryPowerTypes
+compute_robin_power_densities(const Tensor<1, dim, std::complex<double>> &E_T,
+                              const Tensor<1, dim, std::complex<double>> &g_T,
+                              const std::complex<double>                 &Y)
+{
+  // Hermitian product a . b* of two complex vectors
+  const auto hermitian_product =
+    [](const Tensor<1, dim, std::complex<double>> &a,
+       const Tensor<1, dim, std::complex<double>> &b) {
+      std::complex<double> product = 0.;
+      for (unsigned int d = 0; d < dim; ++d)
+        product += a[d] * std::conj(b[d]);
+      return product;
+    };
+
+  BoundaryPowerTypes densities;
+
+  // The power entering the domain is the negative of the flux of the Poynting
+  // vector 0.5 * Re(E x H*) through the boundary, since the normal points
+  // outward from the domain. Using (E x H*) . n = -E . (n x H)*, it is
+  // 0.5 * Re(E . (n x H)*), with n x H = g - Y E_T given by the Robin boundary
+  // condition.
+  densities.net = 0.5 * std::real(hermitian_product(E_T, g_T - Y * E_T));
+
+  // The tangential field is split into an incident wave, entering the domain,
+  // and an outgoing wave, which satisfy n x H_inc = Y E_inc and n x H_out =
+  // -Y E_out. The Robin boundary condition then gives g = 2 Y E_inc, so E_inc =
+  // g / (2Y) and E_out = E_T - E_inc. On a waveguide port, E_inc is the field
+  // of the incident mode. The Poynting flux of each wave gives the incident and
+  // outgoing powers 0.5 Re(Y) |E_inc|^2 and 0.5 Re(Y) |E_out|^2, and the net
+  // power is P_net = P_inc - P_out + Im(Y) Im(E_out . E_inc*). The waves cannot
+  // be separated if Y = 0, in which case the whole net power is counted as
+  // cross power.
+  if (Y == 0.)
+    {
+      densities.cross = densities.net;
+      return densities;
+    }
+
+  const Tensor<1, dim, std::complex<double>> E_incident = g_T / (2. * Y);
+  const Tensor<1, dim, std::complex<double>> E_outgoing = E_T - E_incident;
+
+  densities.incident = 0.5 * Y.real() * E_incident.norm_square();
+  densities.outgoing = 0.5 * Y.real() * E_outgoing.norm_square();
+  densities.cross =
+    Y.imag() * std::imag(hermitian_product(E_outgoing, E_incident));
+
+  return densities;
+}
+
+template <int dim>
 TimeHarmonicMaxwellAssemblerCore<dim>::TimeHarmonicMaxwellAssemblerCore(
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters)
   : omega(2.0 * numbers::PI *
@@ -773,6 +824,15 @@ compute_robin_boundary_data<3>(
   const Tensor<1, 3>         &normal,
   const std::complex<double> &effective_electric_permittivity,
   const std::complex<double> &effective_magnetic_permeability);
+
+template BoundaryPowerTypes
+compute_robin_power_densities<2>(const Tensor<1, 2, std::complex<double>> &E_T,
+                                 const Tensor<1, 2, std::complex<double>> &g_T,
+                                 const std::complex<double>               &Y);
+template BoundaryPowerTypes
+compute_robin_power_densities<3>(const Tensor<1, 3, std::complex<double>> &E_T,
+                                 const Tensor<1, 3, std::complex<double>> &g_T,
+                                 const std::complex<double>               &Y);
 
 template class TimeHarmonicMaxwellAssemblerCore<2>;
 template class TimeHarmonicMaxwellAssemblerCore<3>;
