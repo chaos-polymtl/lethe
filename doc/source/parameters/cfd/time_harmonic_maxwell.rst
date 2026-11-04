@@ -143,14 +143,15 @@ box below.
 
   * ``none`` (default): the solution is left in dimensionless form and output
     as such.
-  * ``electric_field``: rescaled so the electric field matches
-    ``electric field amplitude``, and the magnetic field matches
-    :math:`H_0 = E_0 / Z_0`.
-  * ``magnetic_field``: rescaled so the magnetic field matches
-    ``magnetic field amplitude``, and the electric field matches
-    :math:`E_0 = Z_0 H_0`.
-  * ``power``: rescaled so the power delivered through the waveguide inlet
-    matches the ``waveguide power`` given in watts by the user for that inlet.
+  * ``electric_field``: the dimensionless electric field is multiplied by the
+    ``electric field amplitude`` :math:`E_0`, and the dimensionless magnetic
+    field by :math:`H_0 = E_0 / Z_0`.
+  * ``magnetic_field``: the dimensionless magnetic field is multiplied by the
+    ``magnetic field amplitude`` :math:`H_0`, and the dimensionless electric
+    field by :math:`E_0 = Z_0 H_0`.
+  * ``power``: rescaled so the power carried by the incident mode through the
+    waveguide inlet matches the ``waveguide power`` given in watts by the user
+    for that inlet.
     The scaling is done internally by isolating the electric field amplitude
     using the Poynting vector and the waveguide mode properties, and then
     rescaling the magnetic field accordingly, via the relation:
@@ -243,22 +244,12 @@ excited at the inlet.
   domain. The cutoff wavenumber :math:`k_c` is defined as
   :math:`k_c^2 = k_{x_1}^2 + k_{x_2}^2`.
 
-  With ``electromagnetic scaling type = none``, the incident mode is given by
-  the above equations, i.e. the standard solution of a rectangular waveguide,
-  whose longitudinal field (:math:`H_{x_3}` for the TE mode and
-  :math:`E_{x_3}` for the TM mode) has a unit amplitude. With the other scaling
-  types, both fields are divided by the maximum amplitude of the transverse
-  electric field on the inlet (:math:`x_3 = 0`):
-
-  .. math::
-    \mathbf{E} = \frac{\mathbf{E}_{TE|TM}}{A_{TE|TM}}, \quad
-    \mathbf{H} = \frac{\mathbf{H}_{TE|TM}}{A_{TE|TM}}, \quad
-    A_{TE} = \frac{\omega |\mu_r| \max(k_{x_1}, k_{x_2})}{k_c^2}, \quad
-    A_{TM} = \frac{|k_{x_3}| \max(k_{x_1}, k_{x_2})}{k_c^2}.
-
-  The ``electric field amplitude`` is then the maximum amplitude of the
-  incident transverse electric field on the inlet. Since :math:`A_{TE|TM}` is
-  real, the phase of the incident mode is the same for all the scaling types.
+  The incident mode is given by the above equations, i.e. the standard
+  solution of a rectangular waveguide, whose longitudinal field
+  (:math:`H_{x_3}` for the TE mode and :math:`E_{x_3}` for the TM mode) has a
+  unit amplitude, whatever the ``electromagnetic scaling type``. The scaling
+  only multiplies the solution once the linear system is solved, as described
+  in the ``electromagnetic scaling type`` parameter.
 
 * ``mode order m``, ``mode order n``: mode orders in the two transverse
   directions. They are used to compute the wavenumbers :math:`k_{x_1}` and

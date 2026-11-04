@@ -13,6 +13,12 @@
 # problem is identical to the one solved by lethe-fluid and the L2 errors
 # with respect to the analytical solution must match those of the
 # lethe-fluid time_harmonic_maxwell_waveguide_robin tests.
+#
+# Contrary to the time_harmonic_maxwell_waveguide_robin test, the corner points
+# of the waveguide inlet define a right-handed basis with the propagation
+# direction (the first transverse direction is along z and the second along x).
+# Since the incident fields do not depend on the ordering of the corners, the
+# L2 errors must still match, and both orientations are tested for a TM mode.
 
 set dimension = 3
 
@@ -130,14 +136,14 @@ subsection time harmonic maxwell
     set port boundary id = 2
 
     set corner 0 = 0,0,0
-    set corner 1 = 0.25,0,0
-    set corner 2 = 0, 0, 0.5
+    set corner 1 = 0, 0, 0.5
+    set corner 2 = 0.25,0,0
     set corner 3 = 0.25, 0, 0.5
 
     subsection waveguide mode
       set mode type    = TM
-      set mode order m = 1
-      set mode order n = 2
+      set mode order m = 2
+      set mode order n = 1
     end
   end
 end

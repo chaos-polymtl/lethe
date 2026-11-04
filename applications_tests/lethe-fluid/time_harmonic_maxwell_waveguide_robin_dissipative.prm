@@ -11,7 +11,12 @@
 # regime (kL >> 1), but still show a noticable decay of the wave amplitude.
 # This test does not exactly fall back to the right convergence order because
 # the mesh resolution is not high enough. However, it can not be increase or
-# the test in DEBUG will timeout.
+# the test in DEBUG will timeout. Note that the corner points of the waveguide
+# inlet define a left-handed basis with the propagation direction (the first
+# transverse direction is along y and the second along x). The waveguide port
+# boundary condition should recover the right orientation, so this
+# functionality is tested here for a TE mode (it is tested for a TM mode in the
+# time_harmonic_maxwell_waveguide_robin test).
 
 # Listing of Parameters
 #----------------------
@@ -104,14 +109,14 @@ subsection time harmonic maxwell
     set port boundary id = 4
 
     set corner 0 = 1,1,1
-    set corner 1 = 1.25,1,1
-    set corner 2 = 1, 1.5, 1
+    set corner 1 = 1, 1.5, 1
+    set corner 2 = 1.25,1,1
     set corner 3 = 1.25, 1.5, 1
 
     subsection waveguide mode
       set mode type    = TE
-      set mode order m = 1
-      set mode order n = 2
+      set mode order m = 2
+      set mode order n = 1
     end
   end
 end

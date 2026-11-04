@@ -165,15 +165,10 @@ compute_waveguide_port_incident_fields(
   const double sin_k_t2_y = std::sin(k_t2 * (y_local + 0.5 * length_t2));
   const double cos_k_t2_y = std::cos(k_t2 * (y_local + 0.5 * length_t2));
 
-  // Factor multiplying the real profile of the tangential electric field of the
-  // mode, used below for the normalization of the incident fields
-  std::complex<double> tangential_electric_field_factor;
-
   if (mode == Parameters::WaveguideMode::TE)
     {
       std::complex<double> factor =
         imag * omega * effective_magnetic_permeability / (k_c * k_c);
-      tangential_electric_field_factor = factor;
 
       E_inc_local[0] = -factor * k_t2 * cos_k_t1_x * sin_k_t2_y;
       E_inc_local[1] = factor * k_t1 * sin_k_t1_x * cos_k_t2_y;
@@ -189,16 +184,15 @@ compute_waveguide_port_incident_fields(
     {
       std::complex<double> factor =
         imag * omega * effective_electric_permittivity / (k_c * k_c);
-      tangential_electric_field_factor = imag * k_l / (k_c * k_c);
 
       H_inc_local[0] = -factor * k_t2 * sin_k_t1_x * cos_k_t2_y;
       H_inc_local[1] = factor * k_t1 * cos_k_t1_x * sin_k_t2_y;
       H_inc_local[2] = 0.0;
 
       E_inc_local[0] =
-        tangential_electric_field_factor * k_t1 * cos_k_t1_x * sin_k_t2_y;
+        imag * k_l * k_t1 / (k_c * k_c) * cos_k_t1_x * sin_k_t2_y;
       E_inc_local[1] =
-        tangential_electric_field_factor * k_t2 * sin_k_t1_x * cos_k_t2_y;
+        imag * k_l * k_t2 / (k_c * k_c) * sin_k_t1_x * cos_k_t2_y;
       E_inc_local[2] = sin_k_t1_x * sin_k_t2_y;
     }
   else
@@ -206,27 +200,12 @@ compute_waveguide_port_incident_fields(
       AssertThrow(false, ExcMessage("Unknown waveguide mode type."));
     }
 
-  // With the none electromagnetic scaling, the mode is the standard solution of
-  // a rectangular waveguide, whose longitudinal field (H_z for TE modes and E_z
-  // for TM modes) has a unit amplitude. With the other scalings, the mode is
-  // divided by the maximum amplitude of its tangential electric field on the
-  // port, |f| max(k_t1, k_t2), with f the factor above, so that the electric
-  // field amplitude is the maximum amplitude of the incident tangential
-  // electric field. This real factor does not change the phase of the mode.
-  const double normalization =
-    (time_harmonic_maxwell_parameters.electromagnetic_scaling_type ==
-     Parameters::ElectromagneticScalingType::none) ?
-      1. :
-      1. / (std::abs(tangential_electric_field_factor) * std::max(k_t1, k_t2));
-
   // Convert the E and H field components from the local coordinate system back
   // to the global coordinate system using the basis vectors e_t1, e_t2, e_t3
   const Tensor<1, dim, std::complex<double>> E_inc =
-    normalization *
-    (E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3);
+    E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3;
   const Tensor<1, dim, std::complex<double>> H_inc =
-    normalization *
-    (H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3);
+    H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3;
 
   return std::make_pair(E_inc, H_inc);
 }
