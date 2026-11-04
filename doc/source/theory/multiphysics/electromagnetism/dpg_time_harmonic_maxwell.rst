@@ -233,21 +233,22 @@ implementation,
 
    \Delta p \geq 1.
 
-The index :math:`p` follows the finite element exterior calculus convention,
-in which the lowest-order spaces correspond to :math:`p = 1`. It is related to
-the polynomial degree parameters of the :doc:`FEM <../../../parameters/cfd/fem>`
-subsection by
+.. note::
 
-.. math::
+   The index :math:`p` follows the finite element exterior calculus convention,
+   in which the lowest-order spaces correspond to :math:`p = 1`. It is related to
+   the polynomial degree parameters of the :doc:`FEM <../../../parameters/cfd/fem>`
+   subsection by
 
-   p = \text{electromagnetics trial degree} + 1,
-   \qquad
-   p_{\mathrm{test}} = \text{electromagnetics test degree} + 1,
+   .. math::
 
-so that :math:`\Delta p` is the difference between the test and trial degrees.
-In particular, ``electromagnetics trial degree = 0`` is allowed and corresponds
-to the lowest-order case :math:`p = 1`, with piecewise-constant interior fields
-and lowest-order Nédélec traces.
+      p = \text{electromagnetics trial degree} + 1,
+      \qquad
+      p_{\mathrm{test}} = \text{electromagnetics test degree} + 1,
+
+   In particular, ``electromagnetics trial degree = 0`` is allowed and corresponds
+   to the lowest-order case :math:`p = 1`, with piecewise-constant interior fields
+   and lowest-order Nédélec traces.
 
 The discrete fields are expanded in terms of their respective basis functions,
 

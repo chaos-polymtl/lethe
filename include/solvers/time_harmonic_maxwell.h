@@ -656,47 +656,11 @@ private:
                             GlobalVectorType      &solution);
 
   /**
-   * @brief Compute the power balance of the electromagnetic field, add it to
-   * the electromagnetic power table and write this table. It
-   * contains:
-   * - the net power entering the domain through each boundary id,
-   *   \f$P_\mathrm{net} = \frac{1}{2}\mathrm{Re}\int_{\Gamma}\hat{\mathbf{E}}_T
-   *   \cdot (\mathbf{n}\times\hat{\mathbf{H}})^*\,\mathrm{d}A\f$, computed with
-   *   the traces. On the boundaries with a Robin boundary condition, the
-   *   magnetic trace is removed from the linear system, so it is recovered from
-   * the Robin boundary condition \f$\mathbf{n}\times\hat{\mathbf{H}} =
-   * \mathbf{g} - Y\hat{\mathbf{E}}_T\f$;
-   * - on the boundaries with a Robin boundary condition, the split of the net
-   *   power into the powers of an incident wave and an outgoing wave. These
-   *   waves satisfy \f$\mathbf{n}\times\mathbf{H}_\mathrm{in} =
-   *   Y\mathbf{E}_\mathrm{in}\f$ and \f$\mathbf{n}\times\mathbf{H}_\mathrm{out}
-   * = -Y\mathbf{E}_\mathrm{out}\f$, so the Robin boundary condition gives
-   *   \f$\mathbf{E}_\mathrm{in} = \mathbf{g}/(2Y)\f$ and
-   *   \f$\mathbf{E}_\mathrm{out} = \hat{\mathbf{E}}_T -
-   *   \mathbf{E}_\mathrm{in}\f$. The Poynting flux of each wave gives
-   *   \f$P_\mathrm{in} = \frac{1}{2}\mathrm{Re}(Y)\int_{\Gamma}
-   *   |\mathbf{E}_\mathrm{in}|^2\,\mathrm{d}A\f$ and \f$P_\mathrm{out} =
-   *   \frac{1}{2}\mathrm{Re}(Y)\int_{\Gamma}
-   *   |\mathbf{E}_\mathrm{out}|^2\,\mathrm{d}A\f$, and \f$P_\mathrm{net} =
-   *   P_\mathrm{in} - P_\mathrm{out} + P_\mathrm{cross}\f$, where
-   *   \f$P_\mathrm{cross} = \mathrm{Im}(Y)\int_{\Gamma}\mathrm{Im}(
-   *   \mathbf{E}_\mathrm{out}\cdot\mathbf{E}_\mathrm{in}^*)\,\mathrm{d}A\f$ is
-   *   the cross power of the two waves, which vanishes for a real admittance
-   *   (lossless medium). On a waveguide port, \f$P_\mathrm{in}\f$
-   *   is the power of the incident mode and \f$P_\mathrm{out}\f$ is the
-   *   reflected power. On a Robin boundary without excitation, the outgoing
-   *   power is the transmitted power;
-   * - the power absorbed in each material, \f$\frac{1}{2}\omega\int_{\Omega}
-   *   (\mathrm{Im}(\varepsilon)|\mathbf{E}|^2 +
-   *   \mathrm{Im}(\mu)|\mathbf{H}|^2)\,\mathrm{d}V\f$, computed with the
-   *   interior solution, which is the electromagnetic heat source of the heat
-   *   transfer physics.
-   *
-   * By the Poynting theorem, the total net power entering the domain equals the
-   * absorbed power. Since the DPG method does not conserve it exactly, the
-   * imbalance is a measure of the discretization error. This function must be
-   * called before the solution is scaled. The powers are in W when the solution
-   * is scaled and non-dimensional otherwise.
+   * @brief Compute the electromagnetic powers (net power through each
+   * boundary, incident, outgoing and cross powers on the Robin boundaries, and
+   * power absorbed in each material), add them to the electromagnetic power
+   * table and write this table. If the post-processing verbosity is verbose,
+   * also print a summary of the power balance.
    */
   void
   compute_power_balance();
@@ -806,9 +770,7 @@ private:
 
   /**
    * Store the electromagnetic powers computed after each solve of the
-   * time-harmonic Maxwell equations: the incident, outgoing and cross powers
-   * through the Robin boundaries, the net power through the other
-   * boundaries and the power absorbed in each material.
+   * time-harmonic Maxwell equations.
    */
   TableHandler electromagnetic_power_table;
 
