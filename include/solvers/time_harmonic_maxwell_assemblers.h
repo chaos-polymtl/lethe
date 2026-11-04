@@ -207,6 +207,46 @@ compute_robin_boundary_data(
   const std::complex<double> &effective_magnetic_permeability);
 
 /**
+ * @brief Powers through a boundary: the net power entering the domain and, on
+ * a boundary with a Robin boundary condition, its split into the incident,
+ * outgoing and cross powers, such that net = incident - outgoing + cross.
+ */
+struct BoundaryPowerTypes
+{
+  /// Net power entering the domain
+  double net = 0.;
+  /// Power of the incident wave
+  double incident = 0.;
+  /// Power of the outgoing wave
+  double outgoing = 0.;
+  /// Cross power of the incident and outgoing waves
+  double cross = 0.;
+};
+
+/**
+ * @brief Compute the densities of the net, incident, outgoing and cross powers
+ * at a point of a boundary with a Robin boundary condition
+ * \f$\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}\f$.
+ *
+ * @tparam dim Spatial dimension.
+ *
+ * @param[in] E_T Tangential electric field at the point.
+ *
+ * @param[in] g_T Tangential component of the excitation at the point.
+ *
+ * @param[in] Y Surface admittance at the point.
+ *
+ * @return The power densities. If \f$Y = 0\f$, the incident and outgoing
+ * waves are not defined, and the whole net power density is returned as cross
+ * power density.
+ */
+template <int dim>
+BoundaryPowerTypes
+compute_robin_power_densities(const Tensor<1, dim, std::complex<double>> &E_T,
+                              const Tensor<1, dim, std::complex<double>> &g_T,
+                              const std::complex<double>                 &Y);
+
+/**
  * @brief Class that assembles the cell terms of the ultraweak DPG formulation
  * of the time-harmonic Maxwell equations. With the test functions
  * \f$\mathbf{F}\f$ (electric) and \f$\mathbf{I}\f$ (magnetic), it assembles:
