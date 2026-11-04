@@ -100,17 +100,9 @@ compute_waveguide_port_incident_fields(
   // to determine this:
   //   - If normal · t3 > 0: t3 points outward, need to flip entire system
   //   - If normal · t3 < 0: t3 points inward (correct for incident wave)
-  // Note that by swapping the basis vectors e_t1 and e_t2, we change the parity
-  // of the system since it is equivalent to a reflection. This means that
-  // pseudo vectors (like the magnetic field) will not change sign while regular
-  // vectors (like the electric field) will. Even though this does not affect
-  // the physics of the solution, it is important to be consistent with the
-  // definition of the mode profiles that we use, which assume a specific parity
-  // for the system. Therefore, we keep track of the status of the parity and
-  // apply it later on to the magnetic field to make it consistent with the
-  // switch of sign that has been applied to the electric field when we compute
-  // the excitation.
-  double parity_factor = 1.0;
+  // The flip swaps e_t1 and e_t2 (and the associated lengths and mode orders,
+  // so the mode keeps the same transverse profile) and recomputes e_t3 as their
+  // cross product so the resulting system is right-handed.
   if ((normal * e_t3) > 0)
     {
       std::swap(e_t1, e_t2);
@@ -119,7 +111,6 @@ compute_waveguide_port_incident_fields(
       e_t3 =
         cross_product_3d(e_t1, e_t2); // Recompute t3 after swapping t1 and t2
                                       // to be sure the system is right-handed
-      parity_factor = -1.0;
     }
 
   // Compute the various wavenumbers k in using this global coordinate system
@@ -194,8 +185,8 @@ compute_waveguide_port_incident_fields(
       std::complex<double> factor =
         imag * omega * effective_electric_permittivity / (k_c * k_c);
 
-      H_inc_local[0] = factor * k_t2 * sin_k_t1_x * cos_k_t2_y;
-      H_inc_local[1] = -factor * k_t1 * cos_k_t1_x * sin_k_t2_y;
+      H_inc_local[0] = -factor * k_t2 * sin_k_t1_x * cos_k_t2_y;
+      H_inc_local[1] = factor * k_t1 * cos_k_t1_x * sin_k_t2_y;
       H_inc_local[2] = 0.0;
 
       E_inc_local[0] =
@@ -214,8 +205,7 @@ compute_waveguide_port_incident_fields(
   const Tensor<1, dim, std::complex<double>> E_inc =
     E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3;
   const Tensor<1, dim, std::complex<double>> H_inc =
-    parity_factor *
-    (H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3);
+    H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3;
 
   return std::make_pair(E_inc, H_inc);
 }

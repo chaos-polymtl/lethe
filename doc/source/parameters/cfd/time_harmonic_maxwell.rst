@@ -143,14 +143,15 @@ box below.
 
   * ``none`` (default): the solution is left in dimensionless form and output
     as such.
-  * ``electric_field``: rescaled so the electric field matches
-    ``electric field amplitude``, and the magnetic field matches
-    :math:`H_0 = E_0 / Z_0`.
-  * ``magnetic_field``: rescaled so the magnetic field matches
-    ``magnetic field amplitude``, and the electric field matches
-    :math:`E_0 = Z_0 H_0`.
-  * ``power``: rescaled so the power delivered through the waveguide inlet
-    matches the ``waveguide power`` given in watts by the user for that inlet.
+  * ``electric_field``: the dimensionless electric field is multiplied by the
+    ``electric field amplitude`` :math:`E_0`, and the dimensionless magnetic
+    field by :math:`H_0 = E_0 / Z_0`.
+  * ``magnetic_field``: the dimensionless magnetic field is multiplied by the
+    ``magnetic field amplitude`` :math:`H_0`, and the dimensionless electric
+    field by :math:`E_0 = Z_0 H_0`.
+  * ``power``: rescaled so the power carried by the incident mode through the
+    waveguide inlet matches the ``waveguide power`` given in watts by the user
+    for that inlet.
     The scaling is done internally by isolating the electric field amplitude
     using the Poynting vector and the waveguide mode properties, and then
     rescaling the magnetic field accordingly, via the relation:
@@ -234,13 +235,21 @@ excited at the inlet.
   .. math::
     \begin{align}
         \mathbf{E}_{TM} & = \begin{bmatrix} i \frac{k_{x_3} k_{x_1}}{k_c^2} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2) \\  i \frac{k_{x_3} k_{x_2}}{k_c^2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2) \\ \sin(k_{x_1} x_1) \sin(k_{x_2} x_2) \end{bmatrix} e^{i k_{x_3} x_3}, \\
-        \mathbf{H}_{TM} & = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\-k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
+        \mathbf{H}_{TM} & = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} -k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
     \end{align}
 
   In the above equations, :math:`k_{x_1}` and :math:`k_{x_2}` are the
   wavenumbers in the two transverse directions, and :math:`k_{x_3}` is the
-  wavenumber in the propagation direction. The cutoff wavenumber :math:`k_c` is
-  defined as :math:`k_c^2 = k_{x_1}^2 + k_{x_2}^2`.
+  wavenumber in the propagation direction :math:`x_3`, which points into the
+  domain. The cutoff wavenumber :math:`k_c` is defined as
+  :math:`k_c^2 = k_{x_1}^2 + k_{x_2}^2`.
+
+  The incident mode is given by the above equations, i.e. the standard
+  solution of a rectangular waveguide, whose longitudinal field
+  (:math:`H_{x_3}` for the TE mode and :math:`E_{x_3}` for the TM mode) has a
+  unit amplitude, whatever the ``electromagnetic scaling type``. The scaling
+  only multiplies the solution once the linear system is solved, as described
+  in the ``electromagnetic scaling type`` parameter.
 
 * ``mode order m``, ``mode order n``: mode orders in the two transverse
   directions. They are used to compute the wavenumbers :math:`k_{x_1}` and
