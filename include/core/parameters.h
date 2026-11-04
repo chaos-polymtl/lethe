@@ -1457,6 +1457,13 @@ namespace Parameters
     /// model.
     unsigned int solid_volume_fraction_degree = 1;
 
+    /// Polynomial degree of the scalars of the QMOM physics (ethanol
+    /// concentration and free lipids concentration).
+    unsigned int qmom_scalar_degree = 1;
+
+    /// Polynomial degree of the moments of the QMOM physics.
+    unsigned int qmom_moment_degree = 1;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

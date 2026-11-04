@@ -103,6 +103,13 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Euler-Euler solid phase calculation <true|false>");
 
+    prm.declare_entry(
+      "qmom",
+      Patterns::Tools::Convert<bool>::to_string(qmom),
+      Patterns::Bool(),
+      "Quadrature method of moments calculation (requires QMOMKit) "
+      "<true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       Patterns::Tools::Convert<bool>::to_string(
@@ -143,6 +150,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     cahn_hilliard            = prm.get_bool("cahn hilliard");
     electromagnetics         = prm.get_bool("electromagnetics");
     continuum_solid_dynamics = prm.get_bool("continuum solid dynamics");
+    qmom                     = prm.get_bool("qmom");
 
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");

@@ -1917,6 +1917,19 @@ namespace Parameters
         "interpolation degree of the solid volume fraction of the Euler-Euler model.");
 
       prm.declare_entry(
+        "qmom scalar degree",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.qmom_scalar_degree),
+        Patterns::Integer(1),
+        "interpolation degree of the ethanol and free lipids concentrations of the QMOM physics.");
+      prm.declare_entry(
+        "qmom moment degree",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.qmom_moment_degree),
+        Patterns::Integer(1),
+        "interpolation degree of the moments of the QMOM physics.");
+
+      prm.declare_entry(
         "tracer uses dg",
         Patterns::Tools::Convert<bool>::to_string(defaults.tracer_uses_dg),
         Patterns::Bool(),
@@ -1973,6 +1986,8 @@ namespace Parameters
       solid_velocity_degree = prm.get_integer("solid velocity degree");
       solid_volume_fraction_degree =
         prm.get_integer("solid volume fraction degree");
+      qmom_scalar_degree = prm.get_integer("qmom scalar degree");
+      qmom_moment_degree = prm.get_integer("qmom moment degree");
     }
     prm.leave_subsection();
   }

@@ -45,7 +45,10 @@ enum PhysicsID : unsigned int
   /// Time-harmonic electromagnetics (Electric field, Magnetic field)
   electromagnetics = 6,
   /// Euler-Euler solid phase (solid velocity, solid volume fraction)
-  continuum_solid_dynamics = 7
+  continuum_solid_dynamics = 7,
+  /// Quadrature method of moments (ethanol concentration, free lipids
+  /// concentration and moments of the particle size distribution)
+  qmom = 8
 };
 
 /**
@@ -112,6 +115,8 @@ get_physics_id(const std::string &physics_name)
     return PhysicsID::electromagnetics;
   else if (physics_name == "continuum solid dynamics")
     return PhysicsID::continuum_solid_dynamics;
+  else if (physics_name == "qmom")
+    return PhysicsID::qmom;
   else
     AssertThrow(false,
                 dealii::StandardExceptions::ExcMessage(

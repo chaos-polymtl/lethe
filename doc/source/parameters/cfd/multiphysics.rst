@@ -30,6 +30,9 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
     #Euler-Euler model for solid phase
     set continuum solid dynamics        = false
+
+    # Quadrature method of moments (requires QMOMKit)
+    set qmom                            = false
   end
 
 
@@ -91,3 +94,9 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 .. warning::
 
   The solid phase is under development. Its fields are allocated, written to the output files and checkpointed, but its equations are not solved yet.
+
+* ``qmom``: enables the quadrature method of moments (QMOM) auxiliary physics, which transports two regular scalars, the ethanol concentration and the free lipids concentration, together with the first 8 raw moments of the particle size distribution (a 4-node quadrature). The reconstruction of the quadrature and the evolution of the moments in phase space are carried out by the `QMOMKit <https://github.com/polycfd/QMOMKit>`_ library, so Lethe must be compiled with ``-DLETHE_WITH_QMOMKIT=ON`` (see :doc:`../../installation/regular_installation`). It can only be enabled with a solver of the standard Navier-Stokes equations.
+
+.. warning::
+
+  The QMOM physics is under development. Its fields are allocated, written to the output files and checkpointed, but its equations are not solved yet.

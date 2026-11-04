@@ -608,7 +608,8 @@ private:
     "CLS",
     "cahn hilliard",
     "void fraction",
-    "continuum solid dynamics"};
+    "continuum solid dynamics",
+    "qmom"};
   std::vector<std::string> linear_physics_names = {"electromagnetics"};
   // Names of subequations within CLS that inherits from PhysicsSolver
   std::vector<std::string> cls_subequations_names = {
