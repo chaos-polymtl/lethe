@@ -785,6 +785,12 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
   {
     qmom_phase_evolution.declare_parameters(prm);
 
+    declare_enum_entry(
+      prm,
+      "splitting scheme",
+      defaults.splitting_scheme,
+      "Splitting scheme for the physical-phase space evolution <lie|strang>");
+
     prm.declare_entry("number nodes",
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.n_nodes),
@@ -809,11 +815,11 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Include growth source <true|false>");
 
-    prm.declare_entry("temperature",
+    prm.declare_entry("operating temperature",
                       Patterns::Tools::Convert<double>::to_string(
                         defaults.temperature),
                       Patterns::Double(),
-                      "Room temperature");
+                      "Operating temperature");
 
     prm.declare_entry("flow rate ratio",
                       Patterns::Tools::Convert<double>::to_string(
@@ -885,13 +891,16 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
   {
     qmom_phase_evolution.parse_parameters(prm);
 
-    n_nodes        = prm.get_integer("number nodes");
+    n_nodes          = prm.get_integer("number nodes");
+    splitting_scheme = string_to_enum<Parameters::QMOM_SplittingScheme>(
+      prm.get("splitting scheme"));
+
     is_nucleation  = prm.get_bool("nucleation");
     is_coalescence = prm.get_bool("coalescence");
     is_growth      = prm.get_bool("growth");
 
     // Operational conditions
-    temperature               = prm.get_double("temperature");
+    temperature               = prm.get_double("operating temperature");
     flow_rate_ratio           = prm.get_double("flow rate ratio");
     total_flow_rate           = prm.get_double("total flow rate");
     mixing_time_scale         = prm.get_double("mixing time scale");

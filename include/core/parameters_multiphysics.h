@@ -453,16 +453,27 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
+  /**
+   * @brief QMOM phase space evolution parameters used by QMOMKit
+   */
   struct QMOM_PhaseEvolution
   {
     /// Adaptive node count
     bool adaptive = false;
 
-
     void
     declare_parameters(ParameterHandler &prm) const;
     void
     parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief QMOM splitting scheme for the physical-phase space solver
+   */
+  enum class QMOM_SplittingScheme : std::int8_t
+  {
+    lie,
+    strang
   };
 
   /**
@@ -474,6 +485,8 @@ namespace Parameters
 
     /// Number of nodes
     unsigned int n_nodes = 1;
+    /// Splitting scheme for physical-phase space solver
+    Parameters::QMOM_SplittingScheme splitting_scheme = QMOM_SplittingScheme::lie;
 
     /// Boolean to include nucleation source
     bool is_nucleation = true;

@@ -1964,6 +1964,11 @@ namespace Parameters
                           defaults.tracer_degree),
                         Patterns::Integer(0),
                         "interpolation degree for tracer");
+      prm.declare_entry("qmom degree",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          defaults.qmom_degree),
+                        Patterns::Integer(0),
+                        "interpolation degree for qmom");
       prm.declare_entry("cls degree",
                         Patterns::Tools::Convert<unsigned int>::to_string(
                           defaults.CLS_degree),
@@ -2047,6 +2052,7 @@ namespace Parameters
       temperature_degree   = prm.get_integer("temperature degree");
       tracer_degree        = prm.get_integer("tracer degree");
       tracer_uses_dg       = prm.get_bool("tracer uses dg");
+      qmom_degree          = prm.get_integer("qmom degree");
       CLS_degree           = prm.get_integer("cls degree");
       CLS_uses_dg          = prm.get_bool("cls uses dg");
       phase_cahn_hilliard_degree =
@@ -2123,11 +2129,11 @@ namespace Parameters
   {
     prm.enter_subsection("forces");
     {
-      verbosity             = string_to_enum<Verbosity>(prm.get("verbosity"),
-                                            deprecated_verbosity_names(),
-                                            "verbosity");
-      calculate_force       = prm.get_bool("calculate force");
-      calculate_torque      = prm.get_bool("calculate torque");
+      verbosity        = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                                   deprecated_verbosity_names(),
+                                                   "verbosity");
+      calculate_force  = prm.get_bool("calculate force");
+      calculate_torque = prm.get_bool("calculate torque");
       force_output_name     = prm.get("force name");
       torque_output_name    = prm.get("torque name");
       output_precision      = prm.get_integer("output precision");

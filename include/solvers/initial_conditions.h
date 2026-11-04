@@ -65,6 +65,30 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Type of distribution used in QMOMKit to initialize the moments
+   */
+  enum class QMOMDistributionShape
+  {
+    lognormal,
+    normal,
+    beta
+  };
+
+  struct QMOMInitialConditions
+  {
+    /// Distribution shape
+    QMOMDistributionShape distribution_shape = QMOMDistributionShape::normal;
+
+    /// Initial lipid concentration in the organic phase
+    double concentration_0_lipid_org = 1.0;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   template <int dim>
   class InitialConditions
   {
@@ -95,6 +119,9 @@ namespace Parameters
     CLSInitialConditionType cls_initial_condition_smoothing =
       CLSInitialConditionType::none;
     double projection_step_diffusion_factor = 1;
+
+    // QMOM
+    QMOMInitialConditions QMOM;
 
     // Non-Newtonian
     Ramp ramp;

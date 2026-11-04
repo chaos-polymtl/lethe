@@ -1467,6 +1467,9 @@ namespace Parameters
     // Switch tracer to DG formulation instead of CG
     bool tracer_uses_dg = false;
 
+    // Intepolation degree QMOM
+    unsigned int qmom_degree = 1;
+
     // Interpolation degree cls model
     unsigned int CLS_degree = 1;
 
