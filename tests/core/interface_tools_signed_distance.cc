@@ -72,7 +72,7 @@ test()
   Vector<double> error_volume(4);
 
 
-  for (unsigned int m = 0; m < 3; m++)
+  for (unsigned int m = 0; m < 4; m++)
     {
       DoFHandler<dim> background_dof_handler =
         DoFHandler(*background_triangulation);
@@ -104,22 +104,26 @@ test()
                                sphere_function,
                                background_level_set_owned);
 
-        
+
 
       double h    = 1.0 / std::pow(2, (3 + m));
       double band = 4.0 * h;
 
-      for (auto p : background_locally_owned_dofs)
-        {
-              double signed_distance_dof = -background_level_set_owned[p];
-              if (signed_distance_dof <= -4*h)
-                background_level_set_owned[p] = 1.0;
-              else if (signed_distance_dof >= 4*h)
-                background_level_set_owned[p] = 0.0;
-              else
-                background_level_set_owned[p] = -1.0/(2*4*h)*signed_distance_dof+0.5;
-              
-        }                         
+      // for (auto p : background_locally_owned_dofs)
+      //   {
+      //         double signed_distance_dof = -background_level_set_owned[p];
+      //         if (signed_distance_dof <= -4*h)
+      //           background_level_set_owned[p] = 1.0;
+      //         else if (signed_distance_dof >= 4*h)
+      //           background_level_set_owned[p] = 0.0;
+      //         else
+      //           background_level_set_owned[p] =
+      //           -1.0/(2*4*h)*signed_distance_dof+0.5;
+
+      //         // background_level_set_owned[p] = 0.5 - 0.5 *
+      //         tanh(signed_distance / tanh_thickness);
+
+      //   }
 
       background_level_set = background_level_set_owned;
 
@@ -133,7 +137,7 @@ test()
           background_triangulation,
           background_fe,
           max_reinitialization_distance,
-          0.5,
+          0,
           1.0,
           Parameters::Verbosity::quiet);
 
@@ -151,7 +155,8 @@ test()
       std::tie(volume_0, surface_0) =
         InterfaceTools::integrate_volume_and_surface(background_dof_handler,
                                                      *background_fe,
-                                                     background_level_set, 0.5);
+                                                     background_level_set,
+                                                     0);
 
       pcout << "volume_0 = " << volume_0 << std::endl;
 
@@ -200,31 +205,32 @@ test()
 
           times_and_names.emplace_back(k, pvtu_filename);
 
-          for (auto p : background_locally_owned_dofs)
-            {
-              double signed_distance_dof = -background_signed_distance[p];
-              if (signed_distance_dof <= -4*h)
-                background_level_set_owned[p] = 1.0;
-              else if (signed_distance_dof >= 4*h)
-                background_level_set_owned[p] = 0.0;
-              else
-                background_level_set_owned[p] = -1.0/(2*4*h)*signed_distance_dof+0.5;
-              
-            }  
+          // for (auto p : background_locally_owned_dofs)
+          //   {
+          //     double signed_distance_dof = -background_signed_distance[p];
+          //     if (signed_distance_dof <= -4*h)
+          //       background_level_set_owned[p] = 1.0;
+          //     else if (signed_distance_dof >= 4*h)
+          //       background_level_set_owned[p] = 0.0;
+          //     else
+          //       background_level_set_owned[p] =
+          //       -1.0/(2*4*h)*signed_distance_dof+0.5;
 
-          // background_level_set = background_signed_distance;
-          background_level_set = background_level_set_owned;
+          //   }
 
-                double volume_n, surface_n;
+          background_level_set = background_signed_distance;
+          // background_level_set = background_level_set_owned;
 
-
-      std::tie(volume_n, surface_n) =
-        InterfaceTools::integrate_volume_and_surface(
-          background_dof_handler, *background_fe, background_level_set, 0.5);
-
-      pcout << "it = " << k << ", volume_n = " << volume_n << std::endl;
+          double volume_n, surface_n;
 
 
+          std::tie(volume_n, surface_n) =
+            InterfaceTools::integrate_volume_and_surface(background_dof_handler,
+                                                         *background_fe,
+                                                         background_level_set,
+                                                         0);
+
+          pcout << "it = " << k << ", volume_n = " << volume_n << std::endl;
         }
 
       if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
@@ -237,8 +243,10 @@ test()
 
 
       std::tie(volume_1, surface_1) =
-        InterfaceTools::integrate_volume_and_surface(
-          background_dof_handler, *background_fe, background_level_set, 0.5);
+        InterfaceTools::integrate_volume_and_surface(background_dof_handler,
+                                                     *background_fe,
+                                                     background_level_set,
+                                                     0);
 
       pcout << "volume_1 = " << volume_1 << ", volume_0 = " << volume_0
             << std::endl;

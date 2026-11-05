@@ -22,12 +22,12 @@
 #include <deal.II/fe/mapping_fe.h>
 
 #include <deal.II/lac/lapack_full_matrix.h>
+#include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
-#include <deal.II/lac/solver_control.h>
-#include <deal.II/lac/trilinos_solver.h>
-#include <deal.II/lac/solver_cg.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
@@ -659,16 +659,18 @@ namespace InterfaceTools
       const std::vector<double> &dof_values,
       const unsigned int         element_dim,
       const std::vector<bool>   &free_coordinates,
-      Point<dim>                &unit_closest_point);
+      Point<dim>                &unit_closest_point,
+      const Tensor<1, dim>      &curvature_correction);
 
     bool
     compute_closet_point_in_reference_cell(
-      const Point<dim>          &unit_point,
-      const FiniteElement<dim>  &fe,
+      const Point<dim>                                     &unit_point,
+      const FiniteElement<dim>                             &fe,
       const typename DoFHandler<dim>::active_cell_iterator &cell,
-      const NonMatching::MeshClassifier<dim> &mesh_classifier,
-      const std::vector<double> &dof_values,
-      Point<dim>                &unit_closest_point);
+      const NonMatching::MeshClassifier<dim>               &mesh_classifier,
+      const std::vector<double>                            &dof_values,
+      Point<dim>                                           &unit_closest_point,
+      const Tensor<1, dim> &curvature_correction);
 
     /**
      * @brief Compute the geometric distance (minimization) between the interface
@@ -699,8 +701,7 @@ namespace InterfaceTools
     compute_cell_wise_volume_correction();
 
     void
-    compute_volume_correction_L2_projection(
-    const Vector<double> &eta_cell);
+    compute_volume_correction_L2_projection(const Vector<double> &eta_cell);
 
     /**
      * @brief Correct the global volume to match the volume englobed by the given level
@@ -1157,9 +1158,18 @@ namespace InterfaceTools
     /// Value of the correction to apply to the signed_distance to match the
     /// cell-wise volume encompassed by the level 0 of level_set
     LinearAlgebra::distributed::Vector<double> volume_correction;
-    LinearAlgebra::distributed::Vector<double> n_intersected_cell_arround_dof_for_volume_correction;
+    LinearAlgebra::distributed::Vector<double>
+      n_intersected_cell_arround_dof_for_volume_correction;
 
     LinearAlgebra::distributed::Vector<double> distance_correction;
+
+    LinearAlgebra::distributed::Vector<double> closest_points_x;
+    LinearAlgebra::distributed::Vector<double> closest_points_y;
+    LinearAlgebra::distributed::Vector<double> closest_points_z;
+
+    LinearAlgebra::distributed::Vector<double> previous_closest_points_x;
+    LinearAlgebra::distributed::Vector<double> previous_closest_points_y;
+    LinearAlgebra::distributed::Vector<double> previous_closest_points_z;
 
     /// Hanging node constraints
     AffineConstraints<double> constraints;
@@ -1174,7 +1184,8 @@ namespace InterfaceTools
     std::map<types::global_cell_index, std::vector<CellData<dim - 1>>>
       interface_reconstruction_cells;
 
-    std::map<types::global_dof_index, std::pair<types::global_cell_index,Point<dim>>>
+    std::map<types::global_dof_index,
+             std::pair<types::global_cell_index, Point<dim>>>
       dof_closest_point;
 
 
@@ -1196,7 +1207,7 @@ namespace InterfaceTools
     LAPACKFullMatrix<double> H_x_transformation_jacobian;
 
     TrilinosWrappers::SparseMatrix system_matrix_volume_correction;
-    GlobalVectorType                system_rhs_volume_correction;
+    GlobalVectorType               system_rhs_volume_correction;
   };
 
 

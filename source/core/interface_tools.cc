@@ -517,33 +517,54 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs()
   volume_correction.reinit(locally_owned_dofs,
                            locally_active_dofs,
                            mpi_communicator);
-                           
-  distance_correction.reinit(locally_owned_dofs, locally_active_dofs, mpi_communicator);
 
-  n_intersected_cell_arround_dof_for_volume_correction.reinit(locally_owned_dofs,
-                           locally_active_dofs,
-                           mpi_communicator);     
-  
+  distance_correction.reinit(locally_owned_dofs,
+                             locally_active_dofs,
+                             mpi_communicator);
 
+  n_intersected_cell_arround_dof_for_volume_correction.reinit(
+    locally_owned_dofs, locally_active_dofs, mpi_communicator);
+
+  closest_points_x.reinit(locally_owned_dofs,
+                          locally_relevant_dofs,
+                          mpi_communicator);
+  closest_points_y.reinit(locally_owned_dofs,
+                          locally_relevant_dofs,
+                          mpi_communicator);
+  if constexpr (dim == 3)
+    closest_points_z.reinit(locally_owned_dofs,
+                            locally_relevant_dofs,
+                            mpi_communicator);
+
+  previous_closest_points_x.reinit(locally_owned_dofs,
+                                   locally_relevant_dofs,
+                                   mpi_communicator);
+  previous_closest_points_y.reinit(locally_owned_dofs,
+                                   locally_relevant_dofs,
+                                   mpi_communicator);
+  if constexpr (dim == 3)
+    previous_closest_points_z.reinit(locally_owned_dofs,
+                                     locally_relevant_dofs,
+                                     mpi_communicator);
 
   constraints.clear();
   constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
   constraints.close();
 
-      DynamicSparsityPattern dsp(locally_relevant_dofs);
-    DoFTools::make_sparsity_pattern(dof_handler,
-                                    dsp,
-                                    constraints,
-                                    /*keep_constrained_dofs =*/false);
+  DynamicSparsityPattern dsp(locally_relevant_dofs);
+  DoFTools::make_sparsity_pattern(dof_handler,
+                                  dsp,
+                                  constraints,
+                                  /*keep_constrained_dofs =*/false);
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              this->locally_owned_dofs,
                                              mpi_communicator,
                                              this->locally_relevant_dofs);
   system_matrix_volume_correction.reinit(locally_owned_dofs,
-                                        locally_owned_dofs,
-                                        dsp,
-                                        mpi_communicator);
+                                         locally_owned_dofs,
+                                         dsp,
+                                         mpi_communicator);
   system_rhs_volume_correction.reinit(locally_owned_dofs, mpi_communicator);
 }
 
@@ -585,7 +606,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   interface_reconstruction_cells.clear();
   intersected_dofs.clear();
 
-  dof_closest_point.clear();
+  // dof_closest_point.clear();
 
   initialize_distance();
 
@@ -610,28 +631,17 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
 
 
 
-
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
   compute_second_neighbors_distance();
 
 
-        
   // Compute signed distance from distance (all DoFs have updated value)
   compute_signed_distance_from_distance();
 
- 
-
-
-    // Conserve local and global volume
-  compute_cell_wise_volume_correction();
-  conserve_global_volume();
-
-   double global_volume, surface;
-
-    std::tie(global_volume, surface) =
-        integrate_volume_and_surface(dof_handler, *fe, signed_distance_with_ghost, 0.0);
-        pcout << "global_volume after compute_signed_distance_from_distance = " << global_volume << std::endl;
+  // Conserve local and global volume
+  // compute_cell_wise_volume_correction();
+  // conserve_global_volume();
 
   // Update ghost values to regain reading ability.
   update_ghost_values();
@@ -654,6 +664,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::initialize_distance()
       signed_distance(p)               = max_distance * sgn_level_set_value;
       signed_distance_with_ghost(p)    = max_distance * sgn_level_set_value;
     }
+  closest_points_x = 0.0;
+  closest_points_y = 0.0;
+  closest_points_z = 0.0;
 }
 
 template <int dim, typename VectorType>
@@ -748,7 +761,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
     const std::vector<double> &dof_values,
     const unsigned int         element_dim,
     const std::vector<bool>   &free_coordinates,
-    Point<dim>                &unit_closest_point)
+    Point<dim>                &unit_closest_point,
+    const Tensor<1, dim>      &curvature_correction)
 {
   bool           converged = false;
   Vector<double> current_solution(element_dim + 1);
@@ -756,8 +770,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   Vector<double> solution_update(element_dim + 1);
 
-  Vector<double>     residual(element_dim + 1);
-  FullMatrix<double> hessian(element_dim + 1, element_dim + 1);
+  Vector<double>           residual(element_dim + 1);
+  LAPACKFullMatrix<double> hessian(element_dim + 1, element_dim + 1);
+  hessian.set_property(LAPACKSupport::general);
+
 
   unsigned int n = 0;
   for (unsigned int i = 0; i < dim; ++i)
@@ -770,7 +786,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
         }
     }
 
-  for (unsigned int newton_iter = 0; newton_iter < 100; ++newton_iter)
+  for (unsigned int newton_iter = 0; newton_iter < 20; ++newton_iter)
     {
       hessian             = 0.0;
       residual            = 0.0;
@@ -804,29 +820,53 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           residual[element_dim] -= dof_values[k] * value_k;
         }
 
+      double error = 0.0;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          error -= 0.5 * curvature_correction[i] * unit_closest_point[i] *
+                   (1.0 - unit_closest_point[i]);
+        }
+      residual[element_dim] -= error;
+
+      // correct the interpolation
+      for (unsigned int i = 0; i < element_dim; ++i)
+        {
+          const unsigned int i_free_coordinate_id = free_coordinate_ids[i];
+
+          const double error_grad =
+            -0.5 * curvature_correction[i_free_coordinate_id] *
+            (1.0 - 2.0 * unit_closest_point[i_free_coordinate_id]);
+
+          hessian(i, i) += curvature_correction[i_free_coordinate_id] * lambda;
+          hessian(i, element_dim) += error_grad;
+          hessian(element_dim, i) += error_grad;
+
+          residual[i] -= lambda * error_grad;
+        }
 
       for (unsigned int i = 0; i < element_dim; ++i)
         {
           const unsigned int i_free_coordinate_id = free_coordinate_ids[i];
 
           residual[i] -= current_solution[i] - unit_point[i_free_coordinate_id];
-          hessian[i][i] += 1.0;
+          hessian(i, i) += 1.0;
         }
 
-      
+
       if (residual.l2_norm() < 1e-12)
         {
           converged = true;
           break;
         }
 
-      // hessian.print_formatted(std::cout);
-      if (std::abs(hessian.determinant()) < 1e-16)
-        return false;
+      hessian.compute_lu_factorization();
 
-      hessian.gauss_jordan();
-      hessian.vmult(solution_update, residual);
-      current_solution += solution_update;
+
+      if ((std::abs(hessian.determinant()) < 1e-16))
+        return false;
+      hessian.solve(residual);
+
+      current_solution += residual;
 
       for (unsigned int i = 0; i < element_dim; ++i)
         {
@@ -844,12 +884,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 template <int dim, typename VectorType>
 bool
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
-  compute_closet_point_in_reference_cell(const Point<dim>          &unit_point,
-                                         const FiniteElement<dim>  &fe,
-                                         const typename DoFHandler<dim>::active_cell_iterator &cell,
-                                         const NonMatching::MeshClassifier<dim> &mesh_classifier,
-                                         const std::vector<double> &dof_values,
-                                         Point<dim> &unit_closest_point)
+  compute_closet_point_in_reference_cell(
+    const Point<dim>                                     &unit_point,
+    const FiniteElement<dim>                             &fe,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const NonMatching::MeshClassifier<dim>               &mesh_classifier,
+    const std::vector<double>                            &dof_values,
+    Point<dim>                                           &unit_closest_point,
+    const Tensor<1, dim>                                 &curvature_correction)
 {
   std::vector<bool> free_coordinates(dim, true);
   Point<dim>        candidate_unit_closest_point = unit_point;
@@ -861,7 +903,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                            dof_values,
                                            dim,
                                            free_coordinates,
-                                           candidate_unit_closest_point);
+                                           candidate_unit_closest_point,
+                                           curvature_correction);
 
   const double tol = 1e-10;
   if (!GeometryInfo<dim>::is_inside_unit_cell(candidate_unit_closest_point,
@@ -880,7 +923,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           for (const double face_coordinate : {0.0, 1.0})
             {
               const NonMatching::LocationToLevelSet face_location =
-              mesh_classifier.location_to_level_set(cell, face_id);
+                mesh_classifier.location_to_level_set(cell, face_id);
               face_id += 1;
 
               if (face_location != NonMatching::LocationToLevelSet::intersected)
@@ -896,7 +939,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                 dof_values,
                 dim - 1,
                 free_coordinates,
-                candidate_unit_closest_point_in_face);
+                candidate_unit_closest_point_in_face,
+                curvature_correction);
 
               if (!GeometryInfo<dim>::is_inside_unit_cell(
                     candidate_unit_closest_point_in_face, tol) ||
@@ -920,66 +964,66 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
         }
 
       // if (!found)
-        // {
-          // best_distance = std::numeric_limits<double>::max();
-          // the solution will be on an edge
-          if constexpr (dim == 3)
+      // {
+      // best_distance = std::numeric_limits<double>::max();
+      // the solution will be on an edge
+      if constexpr (dim == 3)
+        {
+          for (unsigned int i = 0; i < dim; i++)
             {
-              for (unsigned int i = 0; i < dim; i++)
+              free_coordinates.assign(dim, false);
+              free_coordinates[i] = true;
+
+              unsigned int first_edge_coordinate_id  = (i + 1) % dim;
+              unsigned int second_edge_coordinate_id = (i + 2) % dim;
+
+
+              for (const double first_edge_coordinate : {0.0, 1.0})
                 {
-                  free_coordinates.assign(dim, false);
-                  free_coordinates[i] = true;
-
-                  unsigned int first_edge_coordinate_id  = (i + 1) % dim;
-                  unsigned int second_edge_coordinate_id = (i + 2) % dim;
-
-
-                  for (const double first_edge_coordinate : {0.0, 1.0})
+                  for (const double second_edge_coordinate : {0.0, 1.0})
                     {
-                      for (const double second_edge_coordinate : {0.0, 1.0})
+                      Point<dim> candidate_unit_closest_point_in_edge =
+                        unit_point;
+
+                      candidate_unit_closest_point_in_edge
+                        [first_edge_coordinate_id] = first_edge_coordinate;
+                      candidate_unit_closest_point_in_edge
+                        [second_edge_coordinate_id] = second_edge_coordinate;
+
+                      converged = newton_raphson_method_for_minimization(
+                        unit_point,
+                        fe,
+                        dof_values,
+                        1,
+                        free_coordinates,
+                        candidate_unit_closest_point_in_edge,
+                        curvature_correction);
+
+                      if (!GeometryInfo<dim>::is_inside_unit_cell(
+                            candidate_unit_closest_point_in_edge, tol) ||
+                          !converged)
                         {
-                          Point<dim> candidate_unit_closest_point_in_edge =
-                            unit_point;
+                          // found = false;
+                          continue;
+                        }
 
-                          candidate_unit_closest_point_in_edge
-                            [first_edge_coordinate_id] = first_edge_coordinate;
-                          candidate_unit_closest_point_in_edge
-                            [second_edge_coordinate_id] =
-                              second_edge_coordinate;
-
-                          converged = newton_raphson_method_for_minimization(
-                            unit_point,
-                            fe,
-                            dof_values,
-                            1,
-                            free_coordinates,
-                            candidate_unit_closest_point_in_edge);
-
-                          if (!GeometryInfo<dim>::is_inside_unit_cell(
-                                candidate_unit_closest_point_in_edge, tol) ||
-                              !converged)
-                            {
-                              // found = false;
-                              continue;
-                            }
-
-                          // It is possible to have a closest point solution in
-                          // more than one edge. We need to select the one
-                          // minimizing the distance.
-                          double candidate_distance = unit_point.distance(
-                            candidate_unit_closest_point_in_edge);
-                          if (candidate_distance < best_distance)
-                            {
-                              best_distance = candidate_distance;
-                              unit_closest_point =
-                                candidate_unit_closest_point_in_edge;
-                              found = true;
-                            }
+                      // It is possible to have a closest point solution in
+                      // more than one edge. We need to select the one
+                      // minimizing the distance.
+                      double candidate_distance = unit_point.distance(
+                        candidate_unit_closest_point_in_edge);
+                      if (candidate_distance < best_distance)
+                        {
+                          best_distance = candidate_distance;
+                          unit_closest_point =
+                            candidate_unit_closest_point_in_edge;
+                          found = true;
                         }
                     }
                 }
             }
-        // }
+        }
+      // }
     }
   else
     {
@@ -1011,7 +1055,16 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   level_set_vector_relevant_copy = level_set_vector_owned_copy;
 
-  NonMatching::MeshClassifier<dim> mesh_classifier(dof_handler, level_set_vector_relevant_copy);
+  Vector<double> curvature_correction_x(
+    dof_handler.get_triangulation().n_active_cells());
+  Vector<double> curvature_correction_y(
+    dof_handler.get_triangulation().n_active_cells());
+  Vector<double> curvature_correction_z(
+    dof_handler.get_triangulation().n_active_cells());
+
+
+  NonMatching::MeshClassifier<dim> mesh_classifier(
+    dof_handler, level_set_vector_relevant_copy);
   mesh_classifier.reclassify();
 
   const unsigned int dofs_per_cell = fe->n_dofs_per_cell();
@@ -1038,23 +1091,40 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
 
 
-  NonMatching::FEValues<dim> non_matching_fe_values(fe_collection,
-                                                    quadrature_1D,
-                                                    region_update_flags,
-                                                    mesh_classifier,
-                                                    dof_handler,
-                                                    level_set_vector_relevant_copy);
+  NonMatching::FEValues<dim> non_matching_fe_values(
+    fe_collection,
+    quadrature_1D,
+    region_update_flags,
+    mesh_classifier,
+    dof_handler,
+    level_set_vector_relevant_copy);
 
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
 
+
+  Point<dim> unit_cell_center;
+  unit_cell_center[0] = 0.5;
+  unit_cell_center[1] = 0.5;
+
+  if constexpr (dim == 3)
+    {
+      unit_cell_center[2] = 0.5;
+    }
+  FEValues<dim> fe_values(*mapping,
+                          *this->fe,
+                          Quadrature<dim>(unit_cell_center),
+                          update_jacobians);
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      if ((cell->is_locally_owned()))
+      if ((cell->is_locally_owned()) || cell->is_ghost())
         {
           non_matching_fe_values.reinit(cell);
+
+          fe_values.reinit(cell);
 
           const NonMatching::LocationToLevelSet cell_location =
             mesh_classifier.location_to_level_set(cell);
@@ -1072,125 +1142,232 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           cell->get_dof_indices(dof_indices);
 
           const unsigned int cell_index = cell->global_active_cell_index();
+          const unsigned int cell_index_local = cell->active_cell_index();
 
-          auto active_neighbors =
-            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
+
 
           interface_reconstruction_vertices[cell_index] = surface_vertices;
           interface_reconstruction_cells[cell_index]    = surface_cells;
 
-          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+
+
+          Tensor<1, dim> curvature_correction;
+          for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
-              const Point<dim> point = dof_support_points.at(dof_indices[i]);
+              const Point<dim> point = dof_support_points.at(dof_indices[k]);
 
-              Point<dim> closest_point = point;
-
-              const Point<dim> unit_point =
-                mapping->transform_real_to_unit_cell(cell, point);
-
-              Point<dim> unit_closest_point =
-                mapping->transform_real_to_unit_cell(cell, closest_point);
-
-              bool converged = compute_closet_point_in_reference_cell(
-                unit_point, *fe, cell, mesh_classifier, cell_dof_values, unit_closest_point);
-
-
-              if (converged)
+              // const Point<dim> previous_dof_closest_point =
+              // dof_closest_point.at(dof_indices[i]).second;
+              Point<dim> previous_dof_closest_point;
+              previous_dof_closest_point[0] =
+                previous_closest_points_x[dof_indices[k]];
+              previous_dof_closest_point[1] =
+                previous_closest_points_y[dof_indices[k]];
+              if constexpr (dim == 3)
                 {
-                  closest_point =
-                    mapping->transform_unit_to_real_cell(cell,
-                                                         unit_closest_point);
-
-                  Tensor<1, dim> point_closest_point_vec =
-                    point - closest_point;
-
-                  // distance(dof_indices[i]) =
-                  //   std::min(std::abs(distance(dof_indices[i])),
-                  //            std::abs(point_closest_point_vec.norm()));
-                  
-                  if (std::abs(point_closest_point_vec.norm()) < std::abs(distance(dof_indices[i])))
-                  {
-                    distance(dof_indices[i]) = std::abs(point_closest_point_vec.norm());
-                    dof_closest_point[dof_indices[i]] = std::pair(cell_index,unit_closest_point);
-
-
-                  }           
-
+                  previous_dof_closest_point[2] =
+                    previous_closest_points_z[dof_indices[k]];
                 }
-                  intersected_dofs.insert(dof_indices[i]);
 
+              if (previous_dof_closest_point.norm() < 1e-12)
+                {
+                  curvature_correction = 0.0;
+                  break;
+                }
+              Tensor<1, dim> normal;
+
+              double level_set_value =
+                level_set_vector_relevant_copy[dof_indices[k]];
+              normal = sgn(level_set_value) *
+                       (point - previous_dof_closest_point) /
+                       (point.distance(previous_dof_closest_point) + 1e-12);
+
+              auto transformation_jacobian = fe_values.jacobian(0);
+              auto shape_gradient = fe->shape_grad(k, unit_cell_center);
+
+              double h = std::cbrt(cell->measure());
+              for (int d = 0; d < dim; ++d)
+                {
+                  curvature_correction[d] += shape_gradient[d] * normal[d] * h;
+                  // curvature_correction[d] += 1.0/(0.23)*h*h;
+                }
+
+              curvature_correction_x[cell_index_local] =
+                curvature_correction[0];
+              curvature_correction_y[cell_index_local] =
+                curvature_correction[1];
+              if constexpr (dim == 3)
+                curvature_correction_z[cell_index_local] =
+                  curvature_correction[2];
             }
         }
     }
 
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if ((cell->is_locally_owned()))
+        {
+          non_matching_fe_values.reinit(cell);
+
+          fe_values.reinit(cell);
+
+          const NonMatching::LocationToLevelSet cell_location =
+            mesh_classifier.location_to_level_set(cell);
+
+          if (cell_location != NonMatching::LocationToLevelSet::intersected)
+            continue;
+
+          const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+            &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+
+          cell->get_dof_values(level_set_vector_relevant_copy,
+                               cell_dof_values.begin(),
+                               cell_dof_values.end());
+
+          cell->get_dof_indices(dof_indices);
+          const unsigned int cell_index = cell->global_active_cell_index();
+
+          auto neighboring_cells =
+            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
+          // Loop on the neighboring cells of the main cell
+          for (const auto &neigh_cell : neighboring_cells)
+            {
+              if ((!neigh_cell->is_locally_owned()) &&
+                  (!neigh_cell->is_ghost()))
+                continue;
+
+              const NonMatching::LocationToLevelSet neigh_cell_location =
+                mesh_classifier.location_to_level_set(neigh_cell);
+
+              if (neigh_cell_location !=
+                  NonMatching::LocationToLevelSet::intersected)
+                continue;
+
+              neigh_cell->get_dof_values(level_set_vector_relevant_copy,
+                                         neighbor_dof_values.begin(),
+                                         neighbor_dof_values.end());
+
+              neigh_cell->get_dof_indices(neighbor_dof_indices);
+              const unsigned int neigh_cell_index_local =
+                neigh_cell->active_cell_index();
+
+              Tensor<1, dim> curvature_correction;
+
+              curvature_correction[0] =
+                curvature_correction_x[neigh_cell_index_local];
+              curvature_correction[1] =
+                curvature_correction_y[neigh_cell_index_local];
+              if constexpr (dim == 3)
+                curvature_correction[2] =
+                  curvature_correction_z[neigh_cell_index_local];
+
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  const Point<dim> point =
+                    dof_support_points.at(dof_indices[i]);
+
+                  Point<dim> closest_point = point;
+
+                  const Point<dim> unit_point =
+                    mapping->transform_real_to_unit_cell(neigh_cell, point);
+
+                  Point<dim> unit_closest_point =
+                    mapping->transform_real_to_unit_cell(neigh_cell,
+                                                         closest_point);
+
+                  bool converged = compute_closet_point_in_reference_cell(
+                    unit_point,
+                    *fe,
+                    neigh_cell,
+                    mesh_classifier,
+                    neighbor_dof_values,
+                    unit_closest_point,
+                    curvature_correction);
+
+                  if (converged)
+                    {
+                      closest_point = mapping->transform_unit_to_real_cell(
+                        neigh_cell, unit_closest_point);
+
+                      Tensor<1, dim> point_closest_point_vec =
+                        point - closest_point;
+
+                      if (std::abs(point_closest_point_vec.norm()) <
+                          std::abs(distance(dof_indices[i])))
+                        {
+                          distance(dof_indices[i]) =
+                            std::abs(point_closest_point_vec.norm());
+                          dof_closest_point[dof_indices[i]] =
+                            std::pair(cell_index, unit_closest_point);
+
+                          closest_points_x[dof_indices[i]] = closest_point[0];
+                          closest_points_y[dof_indices[i]] = closest_point[1];
+                          if constexpr (dim == 3)
+                            closest_points_z[dof_indices[i]] = closest_point[2];
+                        }
+                      intersected_dofs.insert(dof_indices[i]);
+                    }
+                }
+            }
+        }
+    }
+
+  LinearAlgebra::distributed::Vector<double> previous_distance;
+
+  previous_distance.reinit(locally_owned_dofs,
+                           locally_active_dofs,
+                           mpi_communicator);
+
+  for (auto p : this->locally_active_dofs)
+    {
+      previous_distance(p) = distance(p);
+    }
+  // previous_distance.update_ghost_values();
+
   exchange_distance();
 
-  // compute_signed_distance_from_distance();
+  LinearAlgebra::distributed::Vector<double> n_ranks;
 
-  // distance_correction = 0.0;
+  n_ranks.reinit(locally_owned_dofs, locally_active_dofs, mpi_communicator);
 
-  // FEPointEvaluation<1, dim> fe_point_evaluation_values_only(*mapping,
-  //                                                           *fe,
-  //                                                           update_values);
+  for (auto p : this->locally_active_dofs)
+    {
+      if (std::abs(previous_distance(p) - distance_with_ghost(p)) >= 1e-12)
+        {
+          closest_points_x(p) = 0.0;
+          closest_points_y(p) = 0.0;
+          closest_points_z(p) = 0.0;
+        }
+      else
+        {
+          // to count the number of ranks that have the same minimum distance
+          n_ranks(p) = 1.0;
+        }
+    }
 
-  //   for (const auto &cell : dof_handler.active_cell_iterators())
-  //   {
-  //     if ((cell->is_locally_owned()))
-  //       {
-  //         non_matching_fe_values.reinit(cell);
+  n_ranks.compress(VectorOperation::add);
 
-  //         const NonMatching::LocationToLevelSet cell_location =
-  //           mesh_classifier.location_to_level_set(cell);
+  closest_points_x.compress(VectorOperation::add);
+  closest_points_y.compress(VectorOperation::add);
+  closest_points_z.compress(VectorOperation::add);
 
-  //         if (cell_location != NonMatching::LocationToLevelSet::intersected)
-  //           continue;
+  for (auto p : this->locally_active_dofs)
+    {
+      if (n_ranks(p) > 1e-12)
+        {
+          closest_points_x(p) /= n_ranks(p);
+          closest_points_y(p) /= n_ranks(p);
+          closest_points_z(p) /= n_ranks(p);
+        }
+    }
 
-  //         const unsigned int cell_index = cell->global_active_cell_index();
+  closest_points_x.update_ghost_values();
+  closest_points_y.update_ghost_values();
+  closest_points_z.update_ghost_values();
 
-  //         cell->get_dof_indices(dof_indices);
-
-  //         cell->get_dof_values(signed_distance_with_ghost,
-  //                              cell_dof_values.begin(),
-  //                              cell_dof_values.end());
-          
-                    
-  //         for (unsigned int i = 0; i < dofs_per_cell; ++i)
-  //           {
-  //             auto cell_id_closet_point = dof_closest_point.at(dof_indices[i]);
-
-  //             if (cell_id_closet_point.first == cell_index)
-  //             {
-  //                 std::vector<Point<dim>> tmp(1);
-  //                 tmp[0] = cell_id_closet_point.second;
-
-  //                 fe_point_evaluation_values_only.reinit(cell, tmp);
-  //                 fe_point_evaluation_values_only.evaluate(
-  //                   cell_dof_values, EvaluationFlags::values);
-
-  //                 double shift = fe_point_evaluation_values_only.get_value(0);
-
-  //                 // std::cout << shift << std::endl;
-
-  //                 distance_correction[dof_indices[i]] = -shift;
-                  
-  //             }
-  //           }
-  //       }
-  //     }
-
-  //     // volume_correction.compress(VectorOperation::add);
-  //     // volume_correction.update_ghost_values();
-
-  //     signed_distance_with_ghost.add(1, distance_correction);
-  //     signed_distance_with_ghost.update_ghost_values();
-
-  //     for (auto p : this->locally_active_dofs)
-  //       {
-  //         signed_distance(p) = signed_distance_with_ghost(p);
-  //         distance(p)        = abs(signed_distance(p));
-  //       }
-
-  //     exchange_distance();
+  previous_closest_points_x = closest_points_x;
+  previous_closest_points_y = closest_points_y;
+  previous_closest_points_z = closest_points_z;
 }
 
 template <int dim, typename VectorType>
@@ -1730,7 +1907,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
     }
 
   // Re-initialize volume_correction vector.
-  volume_correction = 0.0;
+  volume_correction                                    = 0.0;
   n_intersected_cell_arround_dof_for_volume_correction = 0.0;
 
   Vector<double> eta_cell(dof_handler.get_triangulation().n_active_cells());
@@ -1876,9 +2053,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               eta_n = 0.0;
             }
 
-          
+
           eta_cell[cell_index_local] = eta_n;
- 
+
           std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
           cell->get_dof_indices(dof_indices);
 
@@ -1888,46 +2065,49 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           //   {
           //     volume_correction(dof_indices[i]) += eta_n;
 
-          //     n_intersected_cell_arround_dof_for_volume_correction(dof_indices[i]) += 1.0;
+          //     n_intersected_cell_arround_dof_for_volume_correction(dof_indices[i])
+          //     += 1.0;
           //   }
         }
     } // End loop on cells.
 
-  n_intersected_cell_arround_dof_for_volume_correction.compress(VectorOperation::add);
+  n_intersected_cell_arround_dof_for_volume_correction.compress(
+    VectorOperation::add);
   n_intersected_cell_arround_dof_for_volume_correction.update_ghost_values();
 
   // for (auto p : this->locally_active_dofs)
   //   {
-  //     volume_correction(p) /= (n_intersected_cell_arround_dof_for_volume_correction(p) + 1e-16);
+  //     volume_correction(p) /=
+  //     (n_intersected_cell_arround_dof_for_volume_correction(p) + 1e-16);
   //   }
 
-    compute_volume_correction_L2_projection(eta_cell);
+  compute_volume_correction_L2_projection(eta_cell);
 
   // volume_correction.compress(VectorOperation::add);
   volume_correction.update_ghost_values();
-
 }
 
 /**
-   * @brief Compute the L2 projection of the cell-wise correction.
-   *
-   * @param[in] eta_cell Cell-wise correction of the signed distance
-   *
-   * @param[in] mpi_communicator MPI communicator
-   */
+ * @brief Compute the L2 projection of the cell-wise correction.
+ *
+ * @param[in] eta_cell Cell-wise correction of the signed distance
+ *
+ * @param[in] mpi_communicator MPI communicator
+ */
 
 template <int dim, typename VectorType>
 void
-InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction_L2_projection(
-  const  Vector<double> &eta_cell)
-  {
-    const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+  compute_volume_correction_L2_projection(const Vector<double> &eta_cell)
+{
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
 
-    system_matrix_volume_correction = 0;
+  system_matrix_volume_correction = 0;
   system_rhs_volume_correction    = 0;
 
-  FEValues<dim> fe_values(*mapping, *this->fe,
+  FEValues<dim> fe_values(*mapping,
+                          *this->fe,
                           QGauss<dim>(fe->degree + 2),
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
@@ -1945,7 +2125,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction
       if (cell->is_locally_owned())
         {
           const unsigned int local_cell_index = cell->active_cell_index();
-          const unsigned int global_cell_index = cell->global_active_cell_index();
+          const unsigned int global_cell_index =
+            cell->global_active_cell_index();
 
 
           // The cell is not intersected, no need to correct the volume
@@ -1974,7 +2155,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction
                 {
                   cell_rhs(i) +=
                     (fe_values.shape_value(i, q_point) *
-                      eta_cell[local_cell_index] * fe_values.JxW(q_point));
+                     eta_cell[local_cell_index] * fe_values.JxW(q_point));
                 }
             }
           cell->get_dof_indices(local_dof_indices);
@@ -1998,8 +2179,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction
   GlobalVectorType completely_distributed_volume_correction(
     this->locally_owned_dofs, mpi_communicator);
 
-  SolverControl solver_control(max_iterations,
-                                linear_solver_tolerance);
+  SolverControl solver_control(max_iterations, linear_solver_tolerance);
 
   // TrilinosWrappers::SolverCG solver(solver_control);
 
@@ -2014,12 +2194,12 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner =
     std::make_shared<TrilinosWrappers::PreconditionILU>();
   ilu_preconditioner->initialize(system_matrix_volume_correction,
-                                  preconditionerOptions);
+                                 preconditionerOptions);
 
   solver.solve(system_matrix_volume_correction,
-                completely_distributed_volume_correction,
-                system_rhs_volume_correction,
-                *ilu_preconditioner);
+               completely_distributed_volume_correction,
+               system_rhs_volume_correction,
+               *ilu_preconditioner);
 
   // Convert completely_distributed_volume_correction to dealii vector
   this->constraints.distribute(completely_distributed_volume_correction);
@@ -2027,18 +2207,17 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction
 
 
 #ifndef LETHE_USE_LDV
-LinearAlgebra::distributed::Vector<double> tmp_volume_correction(
-  this->locally_owned_dofs, mpi_communicator);
+  LinearAlgebra::distributed::Vector<double> tmp_volume_correction(
+    this->locally_owned_dofs, mpi_communicator);
 
   convert_vector_trilinos_to_dealii(tmp_volume_correction,
-  completely_distributed_volume_correction);
+                                    completely_distributed_volume_correction);
 
   volume_correction = tmp_volume_correction;
 #else
-  volume_correction = completely_distributed_volume_correction;
+  volume_correction            = completely_distributed_volume_correction;
 #endif
-
-  }
+}
 
 template <int dim, typename VectorType>
 void
