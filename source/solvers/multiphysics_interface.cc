@@ -188,6 +188,23 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
         this, nsparam, p_triangulation, p_simulation_control);
     }
 
+  if (multiphysics_parameters.QMOM)
+    {
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("QMOM"));
+      verbosity[PhysicsID::QMOM] =
+        (nsparam.physics_solving_strategy.at(PhysicsID::QMOM).verbosity !=
+           Parameters::Verbosity::quiet ||
+         nsparam.linear_solver.at(PhysicsID::QMOM).verbosity !=
+           Parameters::Verbosity::quiet) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet;
+      active_physics.push_back(PhysicsID::QMOM);
+      // physics[PhysicsID::QMOM] = std::make_shared<QuadratureMethodMoments<dim>>(
+      //   this, nsparam, p_triangulation, p_simulation_control);
+    }
+
   if (multiphysics_parameters.electromagnetics)
     {
       // The volume-averaged form of the time-harmonic Maxwell equations is the
