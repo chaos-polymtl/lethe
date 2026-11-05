@@ -7,6 +7,8 @@
 #include <core/parameters.h>
 #include <core/simulation_control.h>
 
+#include <cstdint>
+
 using namespace dealii;
 
 DeclExceptionMsg(
@@ -75,6 +77,17 @@ set_field_vector(const field                          &id,
 class PhysicalPropertyModel
 {
 public:
+  /**
+   * @brief Part of a complex physical property returned by a model. A
+   * PhysicalPropertyModel can only return a single double value, so this flag
+   * is used to select which part of the complex property is returned.
+   */
+  enum class ComplexComponent : std::int8_t
+  {
+    real,
+    imag
+  };
+
   /**
    * @brief Default constructor. Set the model_depends_on to false for all variables.
    */

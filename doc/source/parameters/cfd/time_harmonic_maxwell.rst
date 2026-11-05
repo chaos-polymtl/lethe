@@ -75,7 +75,7 @@ density.
 
   In unresolved CFD-DEM simulations (``lethe-fluid-vans`` and
   ``lethe-fluid-particles``), :math:`\varepsilon_{r,\text{eff}}` and
-  :math:`\mu_r` in the fluid region can be the effective properties of the
+  :math:`\mu_r` in the fluid region should be the effective properties of the
   fluid-particle mixture, computed from the void fraction with an effective
   medium model. See the :ref:`unresolved dispersed phase <unresolved dispersed phase>`
   and the :ref:`effective medium models <effective medium models>` in the

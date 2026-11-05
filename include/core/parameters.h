@@ -643,7 +643,7 @@ namespace Parameters
     {
       fluid_fluid,
       fluid_solid,
-      fluid_dispersed_phase // Unresolved multiphase fluid
+      fluid_dispersed_phase
     } material_interaction_type = MaterialInteractionsType::fluid_fluid;
 
     // Surface tension models

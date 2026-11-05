@@ -39,6 +39,12 @@ DeclException1(
     << " that you are trying to use does not support the use of a non-constant viscosity model. "
        "Modifications to Lethe are required to take this into account.");
 
+DeclException1(
+  MaterialInteractionIsNotEffectiveMedium,
+  std::string,
+  "The material interaction with id "
+    << arg1
+    << " does not define an effective medium model. Only fluid-dispersed phase interactions do.");
 
 enum material_interactions_type
 {
@@ -392,9 +398,8 @@ public:
   {
     AssertThrow(effective_electric_permittivity_real.at(
                   material_interaction_id) != nullptr,
-                ExcMessage("The material interaction does not define an "
-                           "effective medium model. Only fluid-dispersed "
-                           "phase interactions do."));
+                MaterialInteractionIsNotEffectiveMedium(
+                  material_interaction_id));
     return effective_electric_permittivity_real[material_interaction_id];
   }
 
@@ -411,9 +416,8 @@ public:
   {
     AssertThrow(effective_electric_permittivity_imag.at(
                   material_interaction_id) != nullptr,
-                ExcMessage("The material interaction does not define an "
-                           "effective medium model. Only fluid-dispersed "
-                           "phase interactions do."));
+                MaterialInteractionIsNotEffectiveMedium(
+                  material_interaction_id));
     return effective_electric_permittivity_imag[material_interaction_id];
   }
 
@@ -431,9 +435,8 @@ public:
   {
     AssertThrow(effective_magnetic_permeability_real.at(
                   material_interaction_id) != nullptr,
-                ExcMessage("The material interaction does not define an "
-                           "effective medium model. Only fluid-dispersed "
-                           "phase interactions do."));
+                MaterialInteractionIsNotEffectiveMedium(
+                  material_interaction_id));
     return effective_magnetic_permeability_real[material_interaction_id];
   }
 
@@ -450,9 +453,8 @@ public:
   {
     AssertThrow(effective_magnetic_permeability_imag.at(
                   material_interaction_id) != nullptr,
-                ExcMessage("The material interaction does not define an "
-                           "effective medium model. Only fluid-dispersed "
-                           "phase interactions do."));
+                MaterialInteractionIsNotEffectiveMedium(
+                  material_interaction_id));
     return effective_magnetic_permeability_imag[material_interaction_id];
   }
 
@@ -564,7 +566,7 @@ public:
    * @param material_id The material id of the cell. Cells with material_id=0 are fluid cells (0 or 1) and cells with material_id>0 are solid cells
    * @return true if the material is defined by an effective medium model, false otherwise
    */
-  bool
+  inline bool
   is_effective_medium(const unsigned int fluid_id,
                       const unsigned int material_id) const
   {

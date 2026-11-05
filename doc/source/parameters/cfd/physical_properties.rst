@@ -224,9 +224,9 @@ Physical Properties
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
-* The ``number of unresolved dispersed phases`` parameter controls the number of unresolved dispersed phases, i.e., phases that are not resolved by the mesh, such as the particles in unresolved CFD-DEM simulations. At the moment, at most one unresolved dispersed phase is supported, and its properties are defined in the ``unresolved dispersed phase 0`` subsection (see `Unresolved Dispersed Phase`_).
+* The ``number of unresolved dispersed phases`` parameter controls the number of unresolved dispersed phases, i.e., phases that are not resolved by the mesh, but that would affect a given property. This includes, for example, a suspension of particles in a fluid that is not resolved by the mesh. At the moment, at most one unresolved dispersed phase is supported, and its properties are defined in the ``unresolved dispersed phase 0`` subsection (see `Unresolved Dispersed Phase`_).
 
-* The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, the surface tension between two fluids is implemented in `Two Phase Simulations`_ and the effective electromagnetic properties of a fluid containing an unresolved dispersed phase are implemented in `Effective Medium Models`_.
+* The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment only two categories of material interactions are supported: the surface tension between two fluids is implemented in `Two Phase Simulations`_ and the blending of material properties of a fluid containing an unresolved dispersed phase is implemented in `Effective Medium Models`_.
 
   * The material interaction ``type`` can either be ``fluid_fluid`` (default), ``fluid_solid`` or ``fluid_dispersed_phase``.
 
@@ -266,13 +266,13 @@ Physical Properties
 
     * The ``surface tension model``  and ``surface tension coefficient`` are the same as described in the ``fluid-fluid`` subsection above.
 
-  * In the ``fluid-dispersed phase`` subsection we define the mixture of a fluid and of an unresolved dispersed phase, and the models used to compute its effective properties.
+  * In the ``fluid-dispersed phase`` subsection we define the mixture of a fluid and of an unresolved dispersed phase, and the models used to compute its effective properties (mixing of the properties of the fluid and of the dispersed phase).
 
     * The ``fluid id`` is the id of the fluid hosting the unresolved dispersed phase.
 
     * The ``dispersed phase id`` is the id of the unresolved dispersed phase.
 
-    * The ``electric permittivity effective medium model`` and ``magnetic permeability effective medium model`` specify the models used to compute the effective electric permittivity and the effective magnetic permeability of the mixture. They are the only properties that can be computed for the mixture at the moment. The choices are ``none`` (default) and ``bruggeman``. For more details on these models, see `Effective Medium Models`_.
+    * The ``electric permittivity effective medium model`` and ``magnetic permeability effective medium model`` specify the models used to compute the effective electric permittivity and the effective magnetic permeability of the mixture. They are the only effectiveproperties that can be computed for a mixture of a fluid with an unresolved dispersed phase at the moment. The choices of models are ``none`` (default) and ``bruggeman``. For more details on these models, see `Effective Medium Models`_.
 
 .. note::
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
@@ -926,7 +926,7 @@ The same polynomial model is also available for the ``electric permittivity mode
 
 .. _effective medium models:
 
-Effective Medium Models
+Effective Medium Models (Blending Rules of Properties in Mixtures)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The effective medium models compute the electromagnetic properties of the mixture defined by a ``fluid_dispersed_phase`` material interaction (see `Unresolved Dispersed Phase`_). They combine the properties of the fluid (phase 1), the properties of the unresolved dispersed phase (phase 2) and the void fraction :math:`\varepsilon_f`, which is the volume fraction of the fluid. The electric permittivity and the magnetic permeability are mixed independently, with the models selected by the ``electric permittivity effective medium model`` and ``magnetic permeability effective medium model`` parameters, respectively.

@@ -53,14 +53,13 @@ compute_effective_electromagnetic_properties(
       physical_properties_manager
         .get_effective_magnetic_permeability_imag(material_interaction_id)
         ->vector_value(field_values_vectors, permeability_imag);
-
+    }
+  else
+    {
       // The mixing law is applied to the complete complex permittivity
       // eps' + i(eps'' + sigma) of each phase, so the conductivity of both
       // phases is already included in the imaginary part of the effective
       // permittivity. The conductivity vector is therefore left at zero.
-    }
-  else
-    {
       physical_properties_manager
         .get_electric_permittivity_real(0, material_id)
         ->vector_value(field_values_vectors, permittivity_real);
@@ -348,8 +347,6 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
         electromagnetic_properties_depend_on(properties_manager,
                                              material_id,
                                              field::void_fraction);
-      std::ranges::fill(this->temperature_values, 0.);
-      std::ranges::fill(this->void_fraction_values, 1.);
 
       this->fe_values_trial_interior.reinit(cell);
       this->fe_values_test.reinit(cell_test);

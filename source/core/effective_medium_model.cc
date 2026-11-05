@@ -12,10 +12,10 @@
 EffectiveMediumModel::EffectiveMediumModel(
   const Parameters::PhysicalProperties &physical_properties,
   const unsigned int                    material_interaction_id,
-  const EffectiveMediumProperty         property,
-  const Component                       component)
+  const EffectiveMediumProperty        &property,
+  const ComplexComponent               &complex_component)
   : property(property)
-  , component(component)
+  , complex_component(complex_component)
 {
   AssertThrow(material_interaction_id <
                 physical_properties.number_of_material_interactions,
@@ -63,7 +63,7 @@ std::shared_ptr<EffectiveMediumModel>
 EffectiveMediumModel::model_cast_real(
   const Parameters::PhysicalProperties &physical_properties,
   const unsigned int                    material_interaction_id,
-  const EffectiveMediumProperty         property)
+  const EffectiveMediumProperty        &property)
 {
   const Parameters::MaterialInteractions &interaction =
     physical_properties.material_interactions.at(material_interaction_id);
@@ -76,23 +76,23 @@ EffectiveMediumModel::model_cast_real(
     return std::make_shared<NoEffectiveMediumModel>(physical_properties,
                                                     material_interaction_id,
                                                     property,
-                                                    Component::real);
+                                                    ComplexComponent::real);
   else if (model_type == Parameters::MaterialInteractions::
                            EffectiveMediumModelType::bruggeman)
     return std::make_shared<BruggemanEffectiveMediumModel>(
-      physical_properties, material_interaction_id, property, Component::real);
+      physical_properties,
+      material_interaction_id,
+      property,
+      ComplexComponent::real);
   else
-    AssertThrow(
-      false,
-      ExcMessage(
-        "Invalid effective medium model. The choices are <none|bruggeman>"));
+    AssertThrow(false, InvalidEffectiveMediumModel());
 }
 
 std::shared_ptr<EffectiveMediumModel>
 EffectiveMediumModel::model_cast_imag(
   const Parameters::PhysicalProperties &physical_properties,
   const unsigned int                    material_interaction_id,
-  const EffectiveMediumProperty         property)
+  const EffectiveMediumProperty        &property)
 {
   const Parameters::MaterialInteractions &interaction =
     physical_properties.material_interactions.at(material_interaction_id);
@@ -105,16 +105,16 @@ EffectiveMediumModel::model_cast_imag(
     return std::make_shared<NoEffectiveMediumModel>(physical_properties,
                                                     material_interaction_id,
                                                     property,
-                                                    Component::imag);
+                                                    ComplexComponent::imag);
   else if (model_type == Parameters::MaterialInteractions::
                            EffectiveMediumModelType::bruggeman)
     return std::make_shared<BruggemanEffectiveMediumModel>(
-      physical_properties, material_interaction_id, property, Component::imag);
+      physical_properties,
+      material_interaction_id,
+      property,
+      ComplexComponent::imag);
   else
-    AssertThrow(
-      false,
-      ExcMessage(
-        "Invalid effective medium model. The choices are <none|bruggeman>"));
+    AssertThrow(false, InvalidEffectiveMediumModel());
 }
 
 double
@@ -125,7 +125,7 @@ EffectiveMediumModel::value(const std::map<field, double> &field_values)
   const std::complex<double> phase_2_property =
     phase_value(phase_2_models, field_values);
 
-  return get_component(
+  return get_complex_component(
     this->apply_mixing_law(field_values, phase_1_property, phase_2_property));
 }
 
@@ -151,7 +151,7 @@ EffectiveMediumModel::vector_value(
                                 mixture_property);
 
   for (unsigned int i = 0; i < n_points; ++i)
-    property_vector[i] = get_component(mixture_property[i]);
+    property_vector[i] = get_complex_component(mixture_property[i]);
 }
 
 double
@@ -231,7 +231,7 @@ EffectiveMediumModel::phase_value(
                 phase_models[1]->value(field_values)};
     }
 
-  AssertThrow(false, ExcMessage("Invalid effective medium property."));
+  Assert(false, ExcMessage("Invalid effective medium property."));
   return {0.0, 0.0};
 }
 
@@ -270,11 +270,12 @@ EffectiveMediumModel::phase_vector_value(
 }
 
 double
-EffectiveMediumModel::get_component(
+EffectiveMediumModel::get_complex_component(
   const std::complex<double> mixture_property) const
 {
-  return (component == Component::real) ? std::real(mixture_property) :
-                                          std::imag(mixture_property);
+  return (complex_component == ComplexComponent::real) ?
+           std::real(mixture_property) :
+           std::imag(mixture_property);
 }
 
 Parameters::MaterialInteractions::EffectiveMediumModelType
@@ -300,11 +301,11 @@ BruggemanEffectiveMediumModel::BruggemanEffectiveMediumModel(
   const Parameters::PhysicalProperties &physical_properties,
   const unsigned int                    material_interaction_id,
   const EffectiveMediumProperty         property,
-  const Component                       component)
+  const ComplexComponent                complex_component)
   : EffectiveMediumModel(physical_properties,
                          material_interaction_id,
                          property,
-                         component)
+                         complex_component)
 {
   // The Bruggeman mixing law depends on the property of phase 2 and on the
   // void fraction
@@ -318,9 +319,9 @@ BruggemanEffectiveMediumModel::apply_mixing_law(
   const std::complex<double>     phase_1_property,
   const std::complex<double>     phase_2_property) const
 {
-  AssertThrow(field_values.contains(field::void_fraction),
-              PhysicialPropertyModelFieldUndefined(
-                "BruggemanEffectiveMediumModel", "void_fraction"));
+  Assert(field_values.contains(field::void_fraction),
+         PhysicialPropertyModelFieldUndefined("BruggemanEffectiveMediumModel",
+                                              "void_fraction"));
 
   return bruggeman(field_values.at(field::void_fraction),
                    phase_1_property,
@@ -334,9 +335,9 @@ BruggemanEffectiveMediumModel::vector_apply_mixing_law(
   const std::vector<std::complex<double>>    &phase_2_property,
   std::vector<std::complex<double>>          &mixture_property) const
 {
-  AssertThrow(field_vectors.contains(field::void_fraction),
-              PhysicialPropertyModelFieldUndefined(
-                "BruggemanEffectiveMediumModel", "void_fraction"));
+  Assert(field_vectors.contains(field::void_fraction),
+         PhysicialPropertyModelFieldUndefined("BruggemanEffectiveMediumModel",
+                                              "void_fraction"));
 
   const std::vector<double> &void_fraction =
     field_vectors.at(field::void_fraction);
@@ -355,12 +356,12 @@ BruggemanEffectiveMediumModel::bruggeman(
   const std::complex<double> phase_1_property,
   const std::complex<double> phase_2_property)
 {
-  AssertThrow(std::real(phase_1_property) > 0.0 &&
-                std::imag(phase_1_property) >= 0.0,
-              InvalidPhysicalPropertyComplex(phase_1_property));
-  AssertThrow(std::real(phase_2_property) > 0.0 &&
-                std::imag(phase_2_property) >= 0.0,
-              InvalidPhysicalPropertyComplex(phase_2_property));
+  Assert(std::real(phase_1_property) > 0.0 &&
+           std::imag(phase_1_property) >= 0.0,
+         InvalidPhysicalPropertyComplex(phase_1_property));
+  Assert(std::real(phase_2_property) > 0.0 &&
+           std::imag(phase_2_property) >= 0.0,
+         InvalidPhysicalPropertyComplex(phase_2_property));
 
   // We clamp the void fraction to be between 0 and 1, since the Bruggeman model
   // is only valid for void fractions in this range and slightly out of range
@@ -395,7 +396,7 @@ BruggemanEffectiveMediumModel::bruggeman(
   if (std::real(root_2) > 0.0 && std::imag(root_2) >= -imaginary_part_tolerance)
     return {std::real(root_2), std::max(std::imag(root_2), 0.0)};
 
-  AssertThrow(
+  Assert(
     false,
     ExcMessage(
       "The computed effective property is not in the first quadrant of the complex plane."));

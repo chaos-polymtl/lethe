@@ -21,6 +21,10 @@ DeclException1(
   << "Invalid physical property value: " << arg1
   << ". The physical property values must be in the first quadrant of the complex plane (positive real part and non-negative imaginary part).");
 
+DeclExceptionMsg(
+  InvalidEffectiveMediumModel,
+  "The effective medium model is not valid. The available models are 'none' and 'bruggeman'.");
+
 /**
  * @brief Physical property of a mixture that can be calculated with an
  * effective medium model.
@@ -45,19 +49,6 @@ class EffectiveMediumModel : public PhysicalPropertyModel
 {
 public:
   /**
-   * @brief Flag for the complex number part of the mixture property that is
-   * returned by the model. This is required because a PhysicalPropertyModel can
-   * only return a single double value, but mixing laws for complex properties
-   * require the calculation of both the real and imaginary parts in the same
-   * model.
-   */
-  enum class Component : std::int8_t
-  {
-    real,
-    imag
-  };
-
-  /**
    * @brief Constructor. Gets the materials of the two phases from the material
    * interaction, creates the models of their property and sets the fields on
    * which these models depend.
@@ -66,13 +57,14 @@ public:
    * @param[in] material_interaction_id Index of the material interaction that
    * defines the mixture.
    * @param[in] property Mixture property calculated by the model.
-   * @param[in] component Part of the mixture property returned by the model.
+   * @param[in] complex_component Part of the mixture property returned by the
+   * model.
    */
   EffectiveMediumModel(
     const Parameters::PhysicalProperties &physical_properties,
     const unsigned int                    material_interaction_id,
-    const EffectiveMediumProperty         property,
-    const Component                       component);
+    const EffectiveMediumProperty        &property,
+    const ComplexComponent               &complex_component);
 
   /**
    * @brief Creates the model of the real part of a mixture property, with the
@@ -88,7 +80,7 @@ public:
   static std::shared_ptr<EffectiveMediumModel>
   model_cast_real(const Parameters::PhysicalProperties &physical_properties,
                   const unsigned int                    material_interaction_id,
-                  const EffectiveMediumProperty         property);
+                  const EffectiveMediumProperty        &property);
 
   /**
    * @brief Creates the model of the imaginary part of a mixture property,
@@ -104,7 +96,7 @@ public:
   static std::shared_ptr<EffectiveMediumModel>
   model_cast_imag(const Parameters::PhysicalProperties &physical_properties,
                   const unsigned int                    material_interaction_id,
-                  const EffectiveMediumProperty         property);
+                  const EffectiveMediumProperty        &property);
 
   /**
    * @brief Calculates the selected part of the mixture property.
@@ -251,14 +243,14 @@ private:
     std::vector<std::complex<double>> &phase_property) const;
 
   /**
-   * @brief Returns the selected complex component of a mixture property.
+   * @brief Returns the selected part (real or imaginary) of a mixture property.
    *
    * @param[in] mixture_property Property of the mixture.
    *
    * @return Real or imaginary part of the mixture property.
    */
   double
-  get_component(const std::complex<double> mixture_property) const;
+  get_complex_component(const std::complex<double> mixture_property) const;
 
   /**
    * @brief Returns the effective medium model chosen in a material interaction
@@ -277,7 +269,7 @@ private:
   const EffectiveMediumProperty property;
 
   /// Part of the mixture property returned by the model
-  const Component component;
+  const ComplexComponent complex_component;
 };
 
 /**
@@ -348,13 +340,14 @@ public:
    * @param[in] material_interaction_id Index of the material interaction that
    * defines the mixture.
    * @param[in] property Mixture property calculated by the model.
-   * @param[in] component Part of the mixture property returned by the model.
+   * @param[in] complex_component Part of the mixture property returned by the
+   * model.
    */
   BruggemanEffectiveMediumModel(
     const Parameters::PhysicalProperties &physical_properties,
     const unsigned int                    material_interaction_id,
     const EffectiveMediumProperty         property,
-    const Component                       component);
+    const ComplexComponent                complex_component);
 
   /**
    * @brief Calculates the mixture property with the Bruggeman effective medium
