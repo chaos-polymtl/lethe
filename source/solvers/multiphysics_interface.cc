@@ -7,6 +7,7 @@
 #include <solvers/continuum_solid_dynamics.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/qmom.h>
 #include <solvers/tracer.h>
 
 #include <deal.II/base/exceptions.h>
