@@ -41,7 +41,7 @@ DeclException1(
 
 DeclException1(
   MaterialInteractionIsNotEffectiveMedium,
-  std::string,
+  unsigned int,
   "The material interaction with id "
     << arg1
     << " does not define an effective medium model. Only fluid-dispersed phase interactions do.");
