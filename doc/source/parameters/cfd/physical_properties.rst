@@ -272,7 +272,7 @@ Physical Properties
 
     * The ``dispersed phase id`` is the id of the unresolved dispersed phase.
 
-    * The ``electric permittivity effective medium model`` and ``magnetic permeability effective medium model`` specify the models used to compute the effective electric permittivity and the effective magnetic permeability of the mixture. They are the only effectiveproperties that can be computed for a mixture of a fluid with an unresolved dispersed phase at the moment. The choices of models are ``none`` (default) and ``bruggeman``. For more details on these models, see `Effective Medium Models`_.
+    * The ``electric permittivity effective medium model`` and ``magnetic permeability effective medium model`` specify the models used to compute the effective electric permittivity and the effective magnetic permeability of the mixture. They are the only effective properties that can be computed for a mixture of a fluid with an unresolved dispersed phase at the moment. The choices of models are ``none`` (default) and ``bruggeman``. For more details on these models, see `Effective Medium Models`_.
 
 .. note::
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
@@ -927,7 +927,7 @@ The same polynomial model is also available for the ``electric permittivity mode
 .. _effective medium models:
 
 Effective Medium Models (Blending Rules of Properties in Mixtures)
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The effective medium models compute the electromagnetic properties of the mixture defined by a ``fluid_dispersed_phase`` material interaction (see `Unresolved Dispersed Phase`_). They combine the properties of the fluid (phase 1), the properties of the unresolved dispersed phase (phase 2) and the void fraction :math:`\varepsilon_f`, which is the volume fraction of the fluid. The electric permittivity and the magnetic permeability are mixed independently, with the models selected by the ``electric permittivity effective medium model`` and ``magnetic permeability effective medium model`` parameters, respectively.
 
