@@ -145,7 +145,8 @@ template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<dim> &dof_handler,
-  const Point<dim>      &point)
+  const Point<dim>      &point,
+  const bool             use_global_levels)
 {
   // Define temporary variables to store search parameters and intermediate
   // results
@@ -154,10 +155,22 @@ LetheGridTools::find_cell_around_point_with_tree(
 
   bool         cell_found_on_level_search = false;
   unsigned int lvl                        = 0;
-  unsigned int max_lvl_search = dof_handler.get_triangulation().n_levels() - 2;
 
-  if (max_lvl_search < 4)
-    max_lvl_search = dof_handler.get_triangulation().n_levels();
+  unsigned int max_lvl_search;
+  if (use_global_levels)
+    {
+      // Periodic stencils may cross ranks with fewer local refinement levels.
+      // Preserve the search order while avoiding local-level underflow.
+      const unsigned int levels =
+        dof_handler.get_triangulation().n_global_levels();
+      max_lvl_search = levels > 5 ? levels - 2 : levels;
+    }
+  else
+    {
+      max_lvl_search = dof_handler.get_triangulation().n_levels() - 2;
+      if (max_lvl_search < 4)
+        max_lvl_search = dof_handler.get_triangulation().n_levels();
+    }
 
   while (lvl < max_lvl_search)
     {
@@ -343,7 +356,8 @@ LetheGridTools::find_cell_around_point_with_neighbors(
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
                                                        &vertices_cell_map,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const Point<dim>                                     &point)
+  const Point<dim>                                     &point,
+  const bool                                            use_global_levels)
 {
   // Find the cells that share a vertex with the original cell.
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -359,7 +373,9 @@ LetheGridTools::find_cell_around_point_with_neighbors(
     }
   // The cell is not found near the initial cell, so we use the cell tree
   // algorithm instead (much slower).
-  return LetheGridTools::find_cell_around_point_with_tree(dof_handler, point);
+  return LetheGridTools::find_cell_around_point_with_tree(dof_handler,
+                                                          point,
+                                                          use_global_levels);
 }
 
 template <int dim>
@@ -1059,11 +1075,13 @@ LetheGridTools::find_cells_cut_by_object(
 template DoFHandler<3>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<3> &dof_handler,
-  const Point<3>      &point);
+  const Point<3>      &point,
+  const bool           use_global_levels);
 template DoFHandler<2>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<2> &dof_handler,
-  const Point<2>      &point);
+  const Point<2>      &point,
+  const bool           use_global_levels);
 
 template void
 LetheGridTools::vertices_cell_mapping(
@@ -1093,7 +1111,8 @@ LetheGridTools::find_cell_around_point_with_neighbors(
   std::map<unsigned int, std::set<DoFHandler<2>::active_cell_iterator>>
                                             &vertices_cell_map,
   const DoFHandler<2>::active_cell_iterator &cell,
-  const Point<2>                            &point);
+  const Point<2>                            &point,
+  const bool                                 use_global_levels);
 
 template typename DoFHandler<3>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_neighbors(
@@ -1101,7 +1120,8 @@ LetheGridTools::find_cell_around_point_with_neighbors(
   std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
                                             &vertices_cell_map,
   const DoFHandler<3>::active_cell_iterator &cell,
-  const Point<3>                            &point);
+  const Point<3>                            &point,
+  const bool                                 use_global_levels);
 
 template std::vector<DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_cells_around_cell<2>(
