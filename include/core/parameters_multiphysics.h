@@ -617,7 +617,7 @@ namespace Parameters
     bool cahn_hilliard            = false;
     bool electromagnetics         = false;
     bool continuum_solid_dynamics = false;
-    bool qmom                     = false;
+    bool QMOM                     = false;
 
     // subparameters for heat_transfer
     bool viscous_dissipation    = false;
