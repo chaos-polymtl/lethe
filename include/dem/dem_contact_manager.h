@@ -12,6 +12,7 @@
 #include <dem/particle_wall_broad_search.h>
 
 #include <array>
+#include <limits>
 
 using namespace DEM;
 
@@ -117,16 +118,27 @@ public:
    * It checks if the adaptive sparse contacts is enabled and use proper
    * functions.
    *
+   * Only the pairs whose distance is within the neighborhood threshold are
+   * stored as candidates, since the fine search would discard the other ones.
+   * The periodic pairs are checked with the minimum image convention.
+   *
    * @param[in,out] particle_handler Storage of particles and their accessor
    * functions.
    * @param[in] sparse_particle_contact_object Allow to check the mobility
    * status of cells.
+   * @param[in] neighborhood_threshold_squared Square of the neighborhood
+   * threshold distance, which is the same value as the one given to
+   * execute_particle_particle_fine_search. The default (infinite) value
+   * stores all the pairs of particles in neighboring cells as candidates,
+   * without computing their distance.
    */
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     const AdaptiveSparseContacts<dim, PropertiesIndex>
-      &sparse_particle_contact_object);
+                &sparse_particle_contact_object,
+    const double neighborhood_threshold_squared =
+      std::numeric_limits<double>::infinity());
 
   /**
    * @brief Execute the particle-wall broad searches with adaptive sparse

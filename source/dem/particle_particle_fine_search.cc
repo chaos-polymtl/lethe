@@ -293,6 +293,19 @@ nearest_periodic_translation(
   return {nearest_translation, found_periodic_translation};
 }
 
+// nearest_periodic_translation is also used by the periodic broad search
+template std::pair<Tensor<1, 2>, bool>
+nearest_periodic_translation<2>(
+  const Point<2, double>      &particle_one_location,
+  const Point<2, double>      &particle_two_real_location,
+  const std::array<double, 2> &periodic_offset_per_direction);
+
+template std::pair<Tensor<1, 3>, bool>
+nearest_periodic_translation<3>(
+  const Point<3, double>      &particle_one_location,
+  const Point<3, double>      &particle_two_real_location,
+  const std::array<double, 3> &periodic_offset_per_direction);
+
 // 2D templates
 template void
 particle_particle_fine_search<2, local_particle_particle>(

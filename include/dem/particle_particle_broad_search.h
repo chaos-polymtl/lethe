@@ -7,9 +7,13 @@
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 
+#include <deal.II/base/point.h>
+
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
+
+#include <array>
 
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
@@ -32,6 +36,10 @@
  * @param[out] ghost_contact_pair_candidates Ankerl unordered dense map. Stores
  * potential pairs of local-ghost particle in contact. Keys are particle ids and
  * mapped types are vectors of particle ids.
+ * @param[in] neighborhood_threshold_squared Square of the neighborhood
+ * threshold distance. Only the pairs whose squared distance is lower than or
+ * equal to this value are stored as candidates. If it is infinite, all the
+ * pairs are stored without computing their distance.
  */
 template <int dim>
 void
@@ -44,7 +52,8 @@ find_particle_particle_contact_pairs(
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &local_contact_pair_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &ghost_contact_pair_candidates);
+              &ghost_contact_pair_candidates,
+  const double neighborhood_threshold_squared);
 
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
@@ -74,6 +83,10 @@ find_particle_particle_contact_pairs(
  * mapped types are vectors of particle ids.
  * @param[in] sparse_contacts_object The object that contains the
  * information about the mobility status of cells
+ * @param[in] neighborhood_threshold_squared Square of the neighborhood
+ * threshold distance. Only the pairs whose squared distance is lower than or
+ * equal to this value are stored as candidates. If it is infinite, all the
+ * pairs are stored without computing their distance.
  */
 template <int dim, typename PropertiesIndex>
 void
@@ -87,7 +100,8 @@ find_particle_particle_contact_pairs(
     &local_contact_pair_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &ghost_contact_pair_candidates,
-  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object,
+  const double neighborhood_threshold_squared);
 
 /**
  * @brief Finds vectors of pairs (particle_particle_candidates) which contains the
@@ -121,6 +135,14 @@ find_particle_particle_contact_pairs(
  * dense map. Stores potential pairs of local-ghost periodic particles in
  * contact. Keys are ghost at boundary 0 particle ids and mapped types are
  * vectors of local particle ids at boundary 1.
+ * @param[in] neighborhood_threshold_squared Square of the neighborhood
+ * threshold distance. Only the pairs whose squared distance is lower than or
+ * equal to this value are stored as candidates. If it is infinite, all the
+ * pairs are stored without computing their distance.
+ * @param[in] periodic_offset_per_direction An array whose component d holds
+ * the signed periodic offset of the domain along direction d (0 if d is not
+ * periodic). It is used to compute the distance between the particles with
+ * the minimum image convention.
  */
 template <int dim>
 void
@@ -137,7 +159,9 @@ find_particle_particle_periodic_contact_pairs(
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &ghost_contact_pair_periodic_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &ghost_local_contact_pair_periodic_candidates);
+                                &ghost_local_contact_pair_periodic_candidates,
+  const double                   neighborhood_threshold_squared,
+  const std::array<double, dim> &periodic_offset_per_direction);
 
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -175,6 +199,14 @@ find_particle_particle_periodic_contact_pairs(
  * vectors of local particle ids at boundary 1.
  * @param sparse_contacts_object The object that contains the
  * information about the mobility status of cells
+ * @param[in] neighborhood_threshold_squared Square of the neighborhood
+ * threshold distance. Only the pairs whose squared distance is lower than or
+ * equal to this value are stored as candidates. If it is infinite, all the
+ * pairs are stored without computing their distance.
+ * @param[in] periodic_offset_per_direction An array whose component d holds
+ * the signed periodic offset of the domain along direction d (0 if d is not
+ * periodic). It is used to compute the distance between the particles with
+ * the minimum image convention.
  */
 template <int dim, typename PropertiesIndex>
 void
@@ -192,31 +224,84 @@ find_particle_particle_periodic_contact_pairs(
     &ghost_contact_pair_periodic_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &ghost_local_contact_pair_periodic_candidates,
-  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object,
+  const double                   neighborhood_threshold_squared,
+  const std::array<double, dim> &periodic_offset_per_direction);
 
 /**
  * @brief Stores the candidate particle-particle collision pairs with a given
  * particle iterator. particle_begin iterator is useful to skip storage of the
  * first particle in main cell (particle_begin will be the iterator after the
  * particles_to_evaluate.begin() in that case). When particle_begin is
- * particles_to_evaluate.begin(), it stores all the particle id in
- * contact_pair_candidates.
+ * particles_to_evaluate.begin(), all the particles of the range are evaluated.
+ * Only the particles that are within the neighborhood threshold of the main
+ * particle are stored in contact_pair_candidates, since the fine search would
+ * discard the other ones anyway.
  *
- * @param main_particle_id The id of the main particle to store the candidate.
- * @param particle_begin The particle iterator to start storing particle ids.
- * @param particles_to_evaluate The particle range to evaluate with the
+ * @param[in] main_particle_id The id of the main particle to store the
+ * candidate.
+ * @param[in] main_particle_location The location of the main particle.
+ * @param[in] particle_begin The particle iterator to start storing particle
+ * ids.
+ * @param[in] particles_to_evaluate The particle range to evaluate with the
  * particle iterator prior storing ids.
- * @param contact_pair_candidates A map which will contain all the particle
- * pairs candidate.
+ * @param[in] neighborhood_threshold_squared Square of the neighborhood
+ * threshold distance. Only the particles whose squared distance to the main
+ * particle is lower than or equal to this value are stored. If it is
+ * infinite, all the particles are stored without computing their distance.
+ * @param[in,out] contact_pair_candidates A map which will contain all the
+ * particle pairs candidate.
  */
 template <int dim>
 inline void
 store_candidates(
   const types::particle_index &main_particle_id,
+  const Point<dim>            &main_particle_location,
   const typename dealii::Particles::ParticleHandler<
     dim>::particle_iterator_range::iterator &particle_begin,
   const typename dealii::Particles::ParticleHandler<
     dim>::particle_iterator_range &particles_to_evaluate,
+  const double                     neighborhood_threshold_squared,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &contact_pair_candidates);
+
+/**
+ * @brief Stores the candidate periodic particle-particle collision pairs with
+ * a given particle iterator. Only the particles whose nearest periodic image
+ * is within the neighborhood threshold of the main particle are stored in
+ * contact_pair_candidates. The nearest periodic image is found with the same
+ * function as in the periodic fine search, so a pair that is not stored here
+ * would be discarded by the fine search anyway.
+ *
+ * @param[in] main_particle_id The id of the main particle to store the
+ * candidate.
+ * @param[in] main_particle_location The location of the main particle.
+ * @param[in] particle_begin The particle iterator to start storing particle
+ * ids.
+ * @param[in] particles_to_evaluate The particle range to evaluate with the
+ * particle iterator prior storing ids.
+ * @param[in] neighborhood_threshold_squared Square of the neighborhood
+ * threshold distance. Only the particles whose squared distance to the main
+ * particle, with the minimum image convention, is lower than or equal to this
+ * value are stored. If it is infinite, all the particles are stored without
+ * computing their distance.
+ * @param[in] periodic_offset_per_direction An array whose component d holds
+ * the signed periodic offset of the domain along direction d (0 if d is not
+ * periodic).
+ * @param[in,out] contact_pair_candidates A map which will contain all the
+ * periodic particle pairs candidate.
+ */
+template <int dim>
+inline void
+store_periodic_candidates(
+  const types::particle_index &main_particle_id,
+  const Point<dim>            &main_particle_location,
+  const typename dealii::Particles::ParticleHandler<
+    dim>::particle_iterator_range::iterator &particle_begin,
+  const typename dealii::Particles::ParticleHandler<
+    dim>::particle_iterator_range &particles_to_evaluate,
+  const double                     neighborhood_threshold_squared,
+  const std::array<double, dim>   &periodic_offset_per_direction,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &contact_pair_candidates);
 
