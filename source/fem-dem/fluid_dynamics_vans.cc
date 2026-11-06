@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/dem_properties.h>
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
 #include <core/utilities.h>
@@ -48,9 +49,8 @@ FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
   // the multiphysics interface.
   this->multiphysics->enable_projected_particle_fields(
     PhysicsID::void_fraction);
-  if (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_temperature)
-    this->multiphysics->enable_projected_particle_fields(
+  static if constexpr (DEM::has_thermal_properties<PropertiesIndex>) this
+    ->multiphysics->enable_projected_particle_fields(
       PhysicsID::particle_temperature);
 
   unsigned int n_pbc = 0;
@@ -100,19 +100,18 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
   this->multiphysics->set_previous_solutions(
     PhysicsID::void_fraction, particle_projector.previous_void_fraction);
 
-  if (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_temperature)
-    {
-      this->multiphysics->set_dof_handler(
-        PhysicsID::particle_temperature,
-        particle_projector.particle_temperature.dof_handler);
-      this->multiphysics->set_mapping(PhysicsID::particle_temperature,
-                                      particle_projector.mapping);
-      this->multiphysics->set_solution(
-        PhysicsID::particle_temperature,
-        particle_projector.particle_temperature
-          .particle_field_locally_relevant_solution);
-    }
+  static if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+  {
+    this->multiphysics->set_dof_handler(
+      PhysicsID::particle_temperature,
+      particle_projector.particle_temperature.dof_handler);
+    this->multiphysics->set_mapping(PhysicsID::particle_temperature,
+                                    particle_projector.mapping);
+    this->multiphysics->set_solution(
+      PhysicsID::particle_temperature,
+      particle_projector.particle_temperature
+        .particle_field_locally_relevant_solution);
+  }
 }
 
 template <int dim, typename PropertiesIndex>

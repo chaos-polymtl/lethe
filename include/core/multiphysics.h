@@ -49,8 +49,8 @@ enum PhysicsID : unsigned int
   /// Projected particle temperature from DEM (not an auxiliary physics). Like
   /// the void fraction, it is computed by the particle projector of the VANS
   /// solvers and registered by them in the multiphysics interface. Only
-  /// available with the VANS formulation, when the projection of the particle
-  /// temperature is enabled (project particle temperature = true).
+  /// available with the VANS formulation in thermal CFD-DEM simulations
+  /// (solver type = dem_mp).
   particle_temperature = 8
 };
 

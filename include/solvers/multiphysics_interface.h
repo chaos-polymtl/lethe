@@ -42,7 +42,7 @@ DeclException1(
   PhysicsIDNotAvailable,
   int,
   << " The physics with ID " << arg1
-  << " required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the projected fields to be available. For the temperature projected field to be available, make sure the `project particle temperature` option is enabled in the parameter file. ");
+  << " required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the projected particle fields to be available. The projected particle temperature field is only available in thermal CFD-DEM simulations (solver type = dem_mp). ");
 
 template <int dim>
 class MultiphysicsInterface
@@ -97,7 +97,8 @@ public:
   /**
    * @brief Make a field projected by the particle projector of the VANS
    * solvers available in the interface. The VANS solvers call it in their
-   * constructor (always for the void fraction).
+   * constructor: always for the void fraction, and for the particle
+   * temperature in thermal CFD-DEM simulations (solver type = dem_mp).
    *
    * @param[in] physics_id The ID of the projected field to enable.
    */

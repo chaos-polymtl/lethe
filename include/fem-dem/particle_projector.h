@@ -387,23 +387,10 @@ public:
         "The projection of the particle velocity currently requires that the QCM method be used for the calculation of the void fraction."));
 
     AssertThrow(
-      !void_fraction_parameters->project_particle_temperature ||
+      !DEM::has_thermal_properties<PropertiesIndex> ||
         void_fraction_parameters->l2_smoothing_length > 0,
       ExcMessage(
-        "The projection of the particle temperature field requires that the l2 smoothing length be > 0. Otherwise, the Poisson equation used in the Neumann boundary is invalid."));
-
-    AssertThrow(
-      void_fraction_parameters->project_particle_temperature == false ||
-        (void_fraction_parameters->project_particle_temperature &&
-         void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm),
-      ExcMessage(
-        "The projection of the particle temperature currently requires that the QCM method be used for the calculation of the void fraction."));
-
-    AssertThrow(
-      !void_fraction_parameters->project_particle_temperature ||
-        DEM::has_thermal_properties<PropertiesIndex>,
-      ExcMessage(
-        "The projection of the temperature fields cannot be done if the particle properties do not have thermal properties."));
+        "The particle temperature is always projected in thermal CFD-DEM simulations (solver type = dem_mp), which requires that the l2 smoothing length be > 0. Otherwise, the Poisson equation used in the Neumann boundary is invalid."));
   }
 
   /**
@@ -447,7 +434,9 @@ public:
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions);
 
   /**
-   * @brief Calculate the void fraction.
+   * @brief Calculate the void fraction, then project the particle fields that
+   * are updated with it: the particle velocity, when its projection is
+   * enabled, and the particle temperature, in thermal CFD-DEM simulations.
    *
    * @param[in] time Current time for which the void fraction is to be
    * calculated.
@@ -455,6 +444,13 @@ public:
    */
   void
   calculate_void_fraction(const double time);
+
+  /**
+   * @brief Project the particle temperature onto the fluid mesh with the QCM,
+   * then copy it into the vector provided to the multiphysics interface.
+   */
+  void
+  calculate_particle_temperature_projection();
 
   /**
    * @brief Calculate all the necessary information for the particle-fluid coupling.
@@ -923,9 +919,7 @@ private:
   /// When set, setup_dofs() will additionally call distribute_mg_dofs() on the
   /// void-fraction DoFHandler. This is required by local-smoothing multigrid
   /// (LSMG) of the VANS matrix-free solver. The flag is propagated to every
-  /// ParticleFieldQCM by enable_multigrid_level_dofs() except for the
-  /// particle_temperature field, which is not used in the VANS matrix-free
-  /// solver.
+  /// ParticleFieldQCM by enable_multigrid_level_dofs().
   bool multigrid_level_dofs_required = false;
 
 public:

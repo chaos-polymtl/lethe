@@ -108,12 +108,6 @@ namespace Parameters
       "Specify whether the particle velocity is projected using QCM");
 
     prm.declare_entry(
-      "project particle temperature",
-      Patterns::Tools::Convert<bool>::to_string(project_particle_temperature),
-      Patterns::Bool(),
-      "Specify whether the particle temperature is projected onto the fluid mesh using QCM, making it available to the other physics through the multiphysics interface. Requires the qcm mode, an l2 smoothing length > 0 and solver type = dem_mp.");
-
-    prm.declare_entry(
       "output qcm",
       Patterns::Tools::Convert<bool>::to_string(output_qcm),
       Patterns::Bool(),
@@ -150,8 +144,6 @@ namespace Parameters
     n_quadrature_points = prm.get_integer("n quadrature points");
 
     project_particle_velocity = prm.get_bool("project particle velocity");
-
-    project_particle_temperature = prm.get_bool("project particle temperature");
 
     output_qcm = prm.get_bool("output qcm");
 
