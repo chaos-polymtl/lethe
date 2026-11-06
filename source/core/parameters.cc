@@ -1219,15 +1219,17 @@ namespace Parameters
   {
     prm.enter_subsection("QMOM");
     {
-      molar_mass_aqueous          = prm.get_double("molar mass aqueous");
-      molar_mass_organic          = prm.get_double("molar mass organic");
-      mole_fraction_solubility_aqueous = prm.get_double("mole fraction solubility aqueous");
-      mole_fraction_solubility_organic = prm.get_double("mole fraction solubility organic");
-      permittivity_aqueous        = prm.get_double("permittivity aqueous");
-      permittivity_organic        = prm.get_double("permittivity organic");
-      density_aqueous             = prm.get_double("density aqueous");
-      density_organic             = prm.get_double("density organic");
-      viscosity_mixture           = prm.get_double("viscosity mixture");
+      molar_mass_aqueous = prm.get_double("molar mass aqueous");
+      molar_mass_organic = prm.get_double("molar mass organic");
+      mole_fraction_solubility_aqueous =
+        prm.get_double("mole fraction solubility aqueous");
+      mole_fraction_solubility_organic =
+        prm.get_double("mole fraction solubility organic");
+      permittivity_aqueous = prm.get_double("permittivity aqueous");
+      permittivity_organic = prm.get_double("permittivity organic");
+      density_aqueous      = prm.get_double("density aqueous");
+      density_organic      = prm.get_double("density organic");
+      viscosity_mixture    = prm.get_double("viscosity mixture");
     }
     prm.leave_subsection();
   }

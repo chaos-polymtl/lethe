@@ -16,7 +16,9 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_simplex_p.h>
 #include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_tools.h>
@@ -56,13 +58,9 @@ QMOM<dim>::QMOM(
   , ethanol_extractor(ethanol_component)
   , free_lipids_extractor(free_lipids_component)
 {
-  AssertThrow(!simulation_parameters.mesh.simplex,
-              ExcMessage("The QMOM physics does not support simplex meshes "
-                         "yet. Use a quadrilateral or hexahedral mesh."));
-
   // Relative tolerance used to compare parameter values
   constexpr double parameter_relative_tolerance = 1e-12;
-  const auto       values_are_equal = [](const double first_value,
+  const auto       values_are_equal             = [](const double first_value,
                                    const double second_value) {
     return std::abs(first_value - second_value) <=
            parameter_relative_tolerance *
@@ -73,22 +71,21 @@ QMOM<dim>::QMOM(
   // and are not rescaled by the dimensionality subsection
   const Parameters::Dimensionality &dimensionality =
     simulation_parameters.dimensionality;
-  const bool dimensionality_is_si = values_are_equal(dimensionality.length, 1.) &&
-                                    values_are_equal(dimensionality.mass, 1.) &&
-                                    values_are_equal(dimensionality.time, 1.) &&
-                                    values_are_equal(dimensionality.temperature,
-                                                     1.);
+  const bool dimensionality_is_si =
+    values_are_equal(dimensionality.length, 1.) &&
+    values_are_equal(dimensionality.mass, 1.) &&
+    values_are_equal(dimensionality.time, 1.) &&
+    values_are_equal(dimensionality.temperature, 1.);
   AssertThrow(dimensionality_is_si,
-              ExcMessage(
-                "The QMOM physics only supports SI units, but the "
-                "dimensionality subsection sets length = " +
-                std::to_string(dimensionality.length) +
-                ", mass = " + std::to_string(dimensionality.mass) +
-                ", time = " + std::to_string(dimensionality.time) +
-                " and temperature = " +
-                std::to_string(dimensionality.temperature) +
-                ". Remove the dimensionality subsection or set these "
-                "parameters to 1."));
+              ExcMessage("The QMOM physics only supports SI units, but the "
+                         "dimensionality subsection sets length = " +
+                         std::to_string(dimensionality.length) +
+                         ", mass = " + std::to_string(dimensionality.mass) +
+                         ", time = " + std::to_string(dimensionality.time) +
+                         " and temperature = " +
+                         std::to_string(dimensionality.temperature) +
+                         ". Remove the dimensionality subsection or set these "
+                         "parameters to 1."));
 
   // The initial lipid concentration in the organic phase is set both in the
   // QMOM subsection and in the QMOM initial conditions
@@ -125,13 +122,29 @@ QMOM<dim>::QMOM(
               << std::scientific;
 
   // Ethanol and free lipids concentrations followed by the moments. All the
-  // components share the same degree, so that they have the same support
-  // points.
-  fe = std::make_unique<FESystem<dim>>(
-    FE_Q<dim>(simulation_parameters.fem_parameters.qmom_degree), n_components);
-  mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
-  cell_quadrature = std::make_unique<QGauss<dim>>(fe->degree + 1);
-  face_quadrature = std::make_unique<QGauss<dim - 1>>(fe->degree + 1);
+  // components share the same scalar element, so that they have the same
+  // support points.
+  const unsigned int qmom_degree =
+    simulation_parameters.fem_parameters.qmom_degree;
+  if (simulation_parameters.mesh.simplex)
+    {
+      // Simplex meshes (triangles and tetrahedra)
+      const FE_SimplexP<dim> scalar_fe(qmom_degree);
+      fe      = std::make_unique<FESystem<dim>>(scalar_fe, n_components);
+      mapping = std::make_shared<MappingFE<dim>>(scalar_fe);
+      cell_quadrature = std::make_unique<QGaussSimplex<dim>>(qmom_degree + 1);
+      face_quadrature =
+        std::make_unique<QGaussSimplex<dim - 1>>(qmom_degree + 1);
+    }
+  else
+    {
+      // Quadrilateral and hexahedral meshes
+      fe =
+        std::make_unique<FESystem<dim>>(FE_Q<dim>(qmom_degree), n_components);
+      mapping         = std::make_shared<MappingQ<dim>>(qmom_degree);
+      cell_quadrature = std::make_unique<QGauss<dim>>(qmom_degree + 1);
+      face_quadrature = std::make_unique<QGauss<dim - 1>>(qmom_degree + 1);
+    }
 
   moment_extractors.reserve(n_moments);
   for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)

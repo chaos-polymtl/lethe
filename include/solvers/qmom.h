@@ -86,11 +86,12 @@ public:
   static constexpr unsigned int n_scalars = 2;
 
   /// Number of transported moments. With QMOM, 2N moments define a quadrature
-  /// of N nodes, so 8 moments give a 4-node quadrature.
-  static constexpr unsigned int n_moments = 8;
+  /// of N nodes, where N is set by the "number of nodes" parameter of the
+  /// QMOM subsection.
+  const unsigned int n_moments;
 
   /// Total number of components of the FESystem
-  static constexpr unsigned int n_components = n_scalars + n_moments;
+  const unsigned int n_components;
 
   /// Component of the ethanol concentration
   static constexpr unsigned int ethanol_component = 0;
@@ -103,7 +104,8 @@ public:
   static constexpr unsigned int first_moment_component = n_scalars;
 
   /**
-   * @brief Constructor of the QMOM physics.
+   * @brief Constructor of the QMOM physics. It verifies that the QMOM
+   * parameters are consistent with the features supported so far.
    *
    * @param[in] multiphysics_interface Multiphysics interface through which the
    * QMOM physics exchanges fields with the other physics.
@@ -358,12 +360,12 @@ private:
 
   /// FESystem: n_scalars concentration components + n_moments moment
   /// components
-  std::shared_ptr<FiniteElement<dim>> fe;
+  std::unique_ptr<FiniteElement<dim>> fe;
 
   /// Mapping, cell and face quadratures
   std::shared_ptr<Mapping<dim>>        mapping;
-  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
-  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
+  std::unique_ptr<Quadrature<dim>>     cell_quadrature;
+  std::unique_ptr<Quadrature<dim - 1>> face_quadrature;
 
   /// Extractors of the ethanol and free lipids concentrations
   const FEValuesExtractors::Scalar ethanol_extractor;
@@ -390,7 +392,7 @@ private:
   std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions;
 
   /// Solution transfer for mesh adaptation and checkpointing
-  std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
+  std::unique_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
   std::vector<SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
 };

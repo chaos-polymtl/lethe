@@ -1,0 +1,5 @@
+## [Master] - 2026/11/02
+
+### Added
+
+- MAJOR This PR adds the skeleton of the quadrature method of moments (QMOM) auxiliary physics, which transports the ethanol concentration, the free lipids concentration and the first 2N raw moments of the particle size distribution (N quadrature nodes), and which relies on the optional QMOMKit library for the phase-space evolution. It adds the `qmom` parameter in the `multiphysics` subsection, the `qmom degree` parameter in the `FEM` subsection, the `QMOM` subsection (number of nodes, splitting scheme, phase-space evolution, nucleation/coalescence/growth switches, operating conditions and physical constants), `QMOM` subsections in the fluid `physical properties` and in the `initial conditions`, and `qmom` subsections in the `linear solver` and `non-linear solver` subsections. The QMOM fields are allocated, written to the output files and checkpointed, but their equations are not solved yet. Enabling the physics in a build without QMOMKit throws an error. [#XXXX](https://github.com/chaos-polymtl/lethe/pull/XXXX)

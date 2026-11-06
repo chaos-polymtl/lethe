@@ -489,8 +489,7 @@ namespace Parameters
     /// transported.
     unsigned int number_of_nodes = 1;
     /// Splitting scheme for physical-phase space solver
-    Parameters::QMOMSplittingScheme splitting_scheme =
-      QMOMSplittingScheme::lie;
+    Parameters::QMOMSplittingScheme splitting_scheme = QMOMSplittingScheme::lie;
 
     /// Include the nucleation source
     bool enable_nucleation = true;
