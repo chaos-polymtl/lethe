@@ -236,6 +236,10 @@ test()
                                             pcout,
                                             FluidDynamicsFormulation::VANS);
 
+    // Enable the void fraction, as done by the VANS solvers in their
+    // constructor
+    multiphysics.enable_projected_particle_fields(PhysicsID::void_fraction);
+
     // Register the void fraction, as done by the VANS solvers in setup_dofs()
     multiphysics.set_dof_handler(PhysicsID::void_fraction, dof_handler);
     multiphysics.set_mapping(PhysicsID::void_fraction, mapping);
