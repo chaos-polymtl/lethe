@@ -60,6 +60,7 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 /**
@@ -118,7 +119,7 @@ spatial_shape(const Point<dim> &p, const unsigned int component)
   if constexpr (dim == 3)
     z = p[2];
 
-  if (component == dim)
+  if (std::cmp_equal(component, dim))
     return x - z;
   if (component == 0)
     return 1. + x + y * y;
@@ -197,7 +198,7 @@ compute_reference_statistics(const Point<dim> &p)
       total_time        = time + time_step;
 
       std::array<double, dim + 1> value;
-      for (unsigned int c = 0; c < dim + 1; ++c)
+      for (int c = 0; c < dim + 1; ++c)
         {
           value[c] = spatial_shape(p, c) * time_factor(time);
           sum_value[c] += time_step * value[c];
@@ -205,7 +206,7 @@ compute_reference_statistics(const Point<dim> &p)
         }
 
       std::array<double, dim> fluctuation;
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         {
           fluctuation[d] = value[d] - statistics.average[d];
           sum_normal[d] += fluctuation[d] * fluctuation[d] * time_step;
@@ -220,7 +221,7 @@ compute_reference_statistics(const Point<dim> &p)
     }
 
   statistics.k = 0.;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       statistics.normal[d] = sum_normal[d] / total_time;
       statistics.k += 0.5 * statistics.normal[d];
@@ -374,11 +375,14 @@ check(const FiniteElement<dim> &fe,
   const std::vector<std::string> component_names =
     (dim == 2) ? std::vector<std::string>{"u", "v", "p"} :
                  std::vector<std::string>{"u", "v", "w", "p"};
+  // Averages, normal stresses, k, shear stresses and unused shear slots
+  constexpr unsigned int     n_shear_stresses = (dim == 3) ? 3 : 1;
   std::vector<QuantityError> errors;
-  for (unsigned int c = 0; c < dim + 1; ++c)
+  errors.reserve((dim + 1) + dim + 1 + n_shear_stresses + 1);
+  for (int c = 0; c < dim + 1; ++c)
     errors.push_back({"<" + component_names[c] + ">"});
   const unsigned int normal_index = errors.size();
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     errors.push_back(
       {"<" + component_names[d] + "'" + component_names[d] + "'>"});
   const unsigned int k_index = errors.size();
@@ -430,7 +434,7 @@ check(const FiniteElement<dim> &fe,
 
           errors[component].add((*average)(dof), reference.average[component]);
 
-          if (component < dim)
+          if (std::cmp_less(component, dim))
             {
               errors[normal_index + component].add(normal_stresses(dof),
                                                    reference.normal[component]);

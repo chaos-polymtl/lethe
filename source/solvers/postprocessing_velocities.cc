@@ -112,13 +112,13 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 
       // Velocity fluctuations u', v' and w'
       std::array<double, dim> fluctuation;
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         fluctuation[d] = local_evaluation_point(velocity_dofs[d]) -
                          average_velocities(velocity_dofs[d]);
 
       // u'u'*dt, v'v'*dt and w'w'*dt
       double sum_normal_stresses = 0.;
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         {
           const double normal_stress_dt = fluctuation[d] * fluctuation[d] * dt;
           reynolds_normal_stress_dt(velocity_dofs[d]) = normal_stress_dt;
@@ -221,7 +221,7 @@ AverageVelocities<dim, VectorType, DofsType>::
   // freedom of a velocity support point are the degrees of freedom of the dim
   // components with the same index within this base element.
   const unsigned int velocity_base = fe.component_to_base_index(0).first;
-  for (unsigned int d = 1; d < dim; ++d)
+  for (int d = 1; d < dim; ++d)
     Assert(fe.component_to_base_index(d).first == velocity_base,
            ExcInternalError());
 
@@ -245,7 +245,7 @@ AverageVelocities<dim, VectorType, DofsType>::
   std::vector<std::array<unsigned int, dim>> local_velocity_dofs(
     n_velocity_nodes);
   for (unsigned int i = 0; i < n_velocity_nodes; ++i)
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       local_velocity_dofs[i][d] = fe.component_to_system_index(d, i);
 
   // Cell-local index of the pressure at every velocity node. Every pressure
@@ -295,7 +295,7 @@ AverageVelocities<dim, VectorType, DofsType>::
           is_gathered[index_within_owned_dofs] = true;
 
           SupportPointDoFs support_point;
-          for (unsigned int d = 0; d < dim; ++d)
+          for (int d = 0; d < dim; ++d)
             {
               support_point.velocity[d] =
                 dof_indices[local_velocity_dofs[i][d]];
