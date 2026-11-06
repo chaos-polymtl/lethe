@@ -5,7 +5,12 @@
 #define lethe_simulation_parameters_h
 
 #include <core/ale.h>
-#include <core/boundary_conditions.h>
+#include <core/boundary_conditions_cahn_hilliard.h>
+#include <core/boundary_conditions_cls.h>
+#include <core/boundary_conditions_heat_transfer.h>
+#include <core/boundary_conditions_navier_stokes.h>
+#include <core/boundary_conditions_time_harmonic_maxwell.h>
+#include <core/boundary_conditions_tracer.h>
 #include <core/dimensionality.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
