@@ -2,19 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Test the QCM projection of a field (here the particle temperature is
- * used for the test case) on a mesh with hanging nodes.
+ * @brief Test the QCM projection of the particle temperature on a mesh with
+ * hanging nodes.
  *
- * All the particles carry the same temperature T_0. The QCM average of the
- * particle temperature is therefore T_0 at every quadrature point that sees
- * particles, and the constant field T_0 solves the smoothed L2 projection
- * exactly, including at the hanging nodes, since the constrained finite
- * element space contains the constant functions. The test prints the minimum
- * and the maximum of the projected temperature over the degrees of freedom,
- * which must both be T_0:
- * - in the deal.II vector of the projection, on the locally owned cells;
- * - in its copy provided to the multiphysics interface, on the locally owned
- *   and ghost cells, which also checks the ghost values of the copy.
+ * The particles carry the temperature T = 300 + 10 x. The test prints the
+ * integral of the projected temperature provided to the multiphysics interface
+ * and its L2 distance to T. These are regression values: the projection is not
+ * exactly T, since the QCM filter is truncated near the boundary and the
+ * smoothing imposes a zero normal gradient there.
  */
 
 // Deal.II includes
@@ -22,18 +17,18 @@
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/mpi.h>
 #include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/utilities.h>
 
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
+#include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping_q1.h>
 
 #include <deal.II/grid/filtered_iterator.h>
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
-
-#include <deal.II/lac/vector.h>
 
 #include <deal.II/particles/generators.h>
 #include <deal.II/particles/particle_handler.h>
@@ -46,10 +41,9 @@
 
 #include <fem-dem/particle_projector.h>
 
-#include <algorithm>
 #include <cmath>
 #include <exception>
-#include <limits>
+#include <iomanip>
 #include <memory>
 #include <vector>
 
@@ -104,11 +98,16 @@ generate_particle_grid(const Point<3>                &pt1,
           << particle_handler.n_global_particles() << std::endl;
 }
 
+/**
+ * @brief Project the particle temperature T = 300 + 10 x, then print the
+ * integral of the projection and its L2 distance to T.
+ */
 void
 test()
 {
-  // Temperature carried by all the particles
-  const double particle_temperature = 300.;
+  // Particle temperature T = temperature_at_origin + temperature_gradient * x
+  const double temperature_at_origin = 300.;
+  const double temperature_gradient  = 10.;
 
   // Unit cube refined twice, then once more in the octant [0, 0.5]^3, which
   // creates hanging nodes at the interface between the two refinement levels.
@@ -131,8 +130,7 @@ test()
           << std::endl;
 
   // Particles with thermal properties, one at the center of each cell of a
-  // 16 x 16 x 16 grid (the grid for the particles is independent of the grid
-  // for the fluid domain and is uniformly refined everywhere).
+  // 16 x 16 x 16 grid
   const MappingQ1<3>            mapping;
   Particles::ParticleHandler<3> particle_handler;
   particle_handler.initialize(domain_triangulation,
@@ -145,11 +143,6 @@ test()
                          domain_triangulation,
                          particle_handler);
 
-  // Exchange ghost particles after particle_triangulation (inside
-  // generate_particle_grid) has gone out of scope so that its destructor does
-  // not overlap with MPI operations from the ghost exchange.
-  particle_handler.exchange_ghost_particles(true);
-
   // Particle diameter that gives a solid fraction of 0.1 in the unit cube
   const double target_solid_fraction = 0.1;
   const double particle_diameter =
@@ -161,15 +154,20 @@ test()
     {
       auto particle_properties = particle.get_properties();
       particle_properties[DEM::CFDDEMMPProperties::dp] = particle_diameter;
-      particle_properties[DEM::CFDDEMMPProperties::T]  = particle_temperature;
+      particle_properties[DEM::CFDDEMMPProperties::T] =
+        temperature_at_origin +
+        temperature_gradient * particle.get_location()[0];
     }
 
-  // The projection of the particle temperature requires the qcm mode and an
-  // l2 smoothing length > 0.
+  // Exchange the ghost particles once their properties are set
+  particle_handler.exchange_ghost_particles(true);
+
+  // The projection of the particle temperature requires an l2 smoothing
+  // length > 0.
   std::shared_ptr<Parameters::VoidFractionParameters<3>>
-    void_fraction_parameters = make_default_void_fraction_parameters();
-  void_fraction_parameters->l2_smoothing_length          = 0.1;
-  void_fraction_parameters->project_particle_temperature = true;
+    void_fraction_parameters     = make_default_void_fraction_parameters();
+  void_fraction_parameters->mode = Parameters::VoidFractionMode::qcm;
+  void_fraction_parameters->l2_smoothing_length = 0.1;
 
   Parameters::LinearSolver linear_solver_parameters =
     make_default_linear_solver();
@@ -192,71 +190,53 @@ test()
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(boundary_conditions);
 
-  // The particle temperature is projected, and copied for the multiphysics
-  // interface, right after the void fraction.
   particle_projector.calculate_void_fraction(0.);
+  particle_projector.calculate_particle_temperature_projection();
 
-  const auto &temperature_field = particle_projector.particle_temperature;
+  // Integral of the projected temperature provided to the multiphysics
+  // interface, and its L2 distance to T
+  const auto     &temperature_field = particle_projector.particle_temperature;
+  const QGauss<3> quadrature(temperature_field.fe->degree + 1);
+  FEValues<3>     fe_values(*particle_projector.mapping,
+                        *temperature_field.fe,
+                        quadrature,
+                        update_values | update_quadrature_points |
+                          update_JxW_values);
 
-  // Number of degrees of freedom constrained by the hanging nodes
-  unsigned int n_constrained_dofs = 0;
-  for (const auto dof : temperature_field.locally_owned_dofs)
-    {
-      if (temperature_field.particle_field_constraints.is_constrained(dof))
-        ++n_constrained_dofs;
-    }
-  n_constrained_dofs = Utilities::MPI::sum(n_constrained_dofs, MPI_COMM_WORLD);
-
-  deallog << "Number of constrained temperature DoFs: " << n_constrained_dofs
-          << std::endl;
-
-  // Minimum and maximum of the projected temperature, for the deal.II vector
-  // of the projection (locally owned cells) and for its copy in the interface
-  // (locally owned and ghost cells).
-  Vector<double> cell_values(temperature_field.fe->n_dofs_per_cell());
-  double         min_projection     = std::numeric_limits<double>::max();
-  double         max_projection     = std::numeric_limits<double>::lowest();
-  double         min_interface_copy = std::numeric_limits<double>::max();
-  double         max_interface_copy = std::numeric_limits<double>::lowest();
+  std::vector<double> projected_temperature(quadrature.size());
+  double              integral            = 0.;
+  double              squared_l2_distance = 0.;
 
   for (const auto &cell :
        temperature_field.dof_handler->active_cell_iterators())
     {
-      if (cell->is_artificial())
+      if (!cell->is_locally_owned())
         continue;
 
-      if (cell->is_locally_owned())
-        {
-          cell->get_dof_values(temperature_field.particle_field_solution,
-                               cell_values);
-          for (const double value : cell_values)
-            {
-              min_projection = std::min(min_projection, value);
-              max_projection = std::max(max_projection, value);
-            }
-        }
+      fe_values.reinit(cell);
+      fe_values.get_function_values(
+        *particle_projector.particle_temperature_locally_relevant,
+        projected_temperature);
 
-      cell->get_dof_values(
-        *temperature_field.particle_field_locally_relevant_solution,
-        cell_values);
-      for (const double value : cell_values)
+      for (unsigned int q = 0; q < quadrature.size(); ++q)
         {
-          min_interface_copy = std::min(min_interface_copy, value);
-          max_interface_copy = std::max(max_interface_copy, value);
+          const double particle_temperature =
+            temperature_at_origin +
+            temperature_gradient * fe_values.quadrature_point(q)[0];
+
+          integral += projected_temperature[q] * fe_values.JxW(q);
+          squared_l2_distance +=
+            Utilities::fixed_power<2>(projected_temperature[q] -
+                                      particle_temperature) *
+            fe_values.JxW(q);
         }
     }
 
-  min_projection     = Utilities::MPI::min(min_projection, MPI_COMM_WORLD);
-  max_projection     = Utilities::MPI::max(max_projection, MPI_COMM_WORLD);
-  min_interface_copy = Utilities::MPI::min(min_interface_copy, MPI_COMM_WORLD);
-  max_interface_copy = Utilities::MPI::max(max_interface_copy, MPI_COMM_WORLD);
-
-  deallog << "Projected temperature: min = " << min_projection
-          << ", max = " << max_projection << " (expected "
-          << particle_temperature << ")" << std::endl;
-  deallog << "Interface copy, ghosts included: min = " << min_interface_copy
-          << ", max = " << max_interface_copy << " (expected "
-          << particle_temperature << ")" << std::endl;
+  deallog << "Integral of the projected temperature: "
+          << Utilities::MPI::sum(integral, MPI_COMM_WORLD) << std::endl;
+  deallog << "L2 distance to 300 + 10 x: "
+          << std::sqrt(Utilities::MPI::sum(squared_l2_distance, MPI_COMM_WORLD))
+          << std::endl;
 }
 
 int
@@ -266,6 +246,7 @@ main(int argc, char *argv[])
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
       MPILogInitAll                    all;
+      deallog << std::fixed << std::setprecision(3);
 
       test();
     }
