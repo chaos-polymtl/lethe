@@ -47,7 +47,7 @@ namespace BoundaryConditions
    *
    */
   template <int dim>
-  class NSBoundaryFunctions
+  class NavierStokesBoundaryFunctions
   {
   public:
     // Velocity components
@@ -86,7 +86,7 @@ namespace BoundaryConditions
 
     */
 
-    NSBoundaryFunctions()
+    NavierStokesBoundaryFunctions()
       : traction_fn(dim + 1) // The traction function has dim components for the
                              // traction vector plus 1 for the pressure.
     {}
@@ -98,14 +98,15 @@ namespace BoundaryConditions
    * coherently.
    */
   template <int dim>
-  class NSBoundaryConditions : public BoundaryConditions
+  class NavierStokesBoundaryConditions : public BoundaryConditions
   {
   public:
     /// Functions for (u : x component of the velocity, v : y component of the
     /// velocity
     ///, w : z-component of the velocity, p : pressure, Neumann traction:
     /// traction_fn) for all boundaries
-    std::map<types::boundary_id, std::shared_ptr<NSBoundaryFunctions<dim>>>
+    std::map<types::boundary_id,
+             std::shared_ptr<NavierStokesBoundaryFunctions<dim>>>
       navier_stokes_functions;
 
     void
@@ -145,7 +146,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::createNoSlip()
+  NavierStokesBoundaryConditions<dim>::createNoSlip()
   {
     this->type[0]                       = BoundaryType::noslip;
     this->number_of_boundary_conditions = 1;
@@ -162,7 +163,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::declare_default_entry(
+  NavierStokesBoundaryConditions<dim>::declare_default_entry(
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
@@ -190,9 +191,9 @@ namespace BoundaryConditions
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
 
-    // Create a dummy NSBoundaryFunctions object to declare the appropriate
-    // parameters for this boundary condition.
-    NSBoundaryFunctions<dim> temporary_fluid_dynamics_functions;
+    // Create a dummy NavierStokesBoundaryFunctions object to declare the
+    // appropriate parameters for this boundary condition.
+    NavierStokesBoundaryFunctions<dim> temporary_fluid_dynamics_functions;
 
 
     prm.enter_subsection("u");
@@ -253,7 +254,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
+  NavierStokesBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
     // Parse the list of boundary ids
     std::vector<types::boundary_id> boundary_ids =
@@ -275,7 +276,7 @@ namespace BoundaryConditions
         // condition to ensure that they have a defined function and a center of
         // rotation.
         navier_stokes_functions[boundary_id] =
-          std::make_shared<NSBoundaryFunctions<dim>>();
+          std::make_shared<NavierStokesBoundaryFunctions<dim>>();
 
         prm.enter_subsection("u");
         navier_stokes_functions[boundary_id]->u.parse_parameters(prm);
@@ -338,7 +339,7 @@ namespace BoundaryConditions
             // and a center of rotation. Parse the information of the boundary
             // id to duplicate it.
             navier_stokes_functions[periodic_boundary_id] =
-              std::make_shared<NSBoundaryFunctions<dim>>();
+              std::make_shared<NavierStokesBoundaryFunctions<dim>>();
 
             prm.enter_subsection("u");
             navier_stokes_functions[periodic_boundary_id]->u.parse_parameters(
@@ -387,7 +388,7 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  NSBoundaryConditions<dim>::declare_parameters(
+  NavierStokesBoundaryConditions<dim>::declare_parameters(
     ParameterHandler  &prm,
     const unsigned int number_of_boundary_conditions)
   {
@@ -429,7 +430,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  NavierStokesBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("boundary conditions");
     {

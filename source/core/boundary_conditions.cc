@@ -10,10 +10,10 @@
 
 namespace BoundaryConditions
 {
-  extern template class NSBoundaryConditions<2>;
-  extern template class NSBoundaryConditions<3>;
-  extern template class HTBoundaryConditions<2>;
-  extern template class HTBoundaryConditions<3>;
+  extern template class NavierStokesBoundaryConditions<2>;
+  extern template class NavierStokesBoundaryConditions<3>;
+  extern template class HeatTransferBoundaryConditions<2>;
+  extern template class HeatTransferBoundaryConditions<3>;
   extern template class TracerBoundaryConditions<2>;
   extern template class TracerBoundaryConditions<3>;
   extern template class CLSBoundaryConditions<2>;

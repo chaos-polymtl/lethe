@@ -415,7 +415,8 @@ public:
    */
   void
   setup_constraints(
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions);
+    const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+      &boundary_conditions);
 
   /**
    * @brief Calculate the void fraction.

@@ -62,7 +62,7 @@ namespace BoundaryConditions
    */
 
   template <int dim>
-  class HTBoundaryConditions : public BoundaryConditions
+  class HeatTransferBoundaryConditions : public BoundaryConditions
   {
   public:
     std::map<types::boundary_id,
@@ -107,7 +107,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  HTBoundaryConditions<dim>::declare_default_entry(
+  HeatTransferBoundaryConditions<dim>::declare_default_entry(
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
@@ -173,7 +173,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  HTBoundaryConditions<dim>::declare_parameters(
+  HeatTransferBoundaryConditions<dim>::declare_parameters(
     ParameterHandler  &prm,
     const unsigned int number_of_boundary_conditions)
   {
@@ -214,7 +214,7 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  HTBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
+  HeatTransferBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
     // Parse the list of boundary ids
     std::vector<types::boundary_id> boundary_ids =
@@ -301,7 +301,7 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  HTBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  HeatTransferBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("boundary conditions heat transfer");
     {
