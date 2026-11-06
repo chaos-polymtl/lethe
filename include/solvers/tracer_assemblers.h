@@ -4,6 +4,7 @@
 #ifndef lethe_tracer_assemblers_h
 #define lethe_tracer_assemblers_h
 
+#include <core/boundary_conditions_tracer.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>

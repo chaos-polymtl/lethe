@@ -4,6 +4,7 @@
 #ifndef lethe_cahn_hilliard_assemblers_h
 #define lethe_cahn_hilliard_assemblers_h
 
+#include <core/boundary_conditions_cahn_hilliard.h>
 #include <core/simulation_control.h>
 
 #include <solvers/cahn_hilliard_scratch_data.h>

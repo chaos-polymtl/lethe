@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_postprocessing_cfd_h
 #define lethe_postprocessing_cfd_h
 
-#include <core/boundary_conditions.h>
+#include <core/boundary_conditions_navier_stokes.h>
 
 #include <solvers/physical_properties_manager.h>
 

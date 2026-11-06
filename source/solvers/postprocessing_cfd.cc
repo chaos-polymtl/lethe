@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Base
@@ -26,7 +26,7 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
-#include <core/boundary_conditions.h>
+#include <core/boundary_conditions_navier_stokes.h>
 #include <core/parameters.h>
 #include <core/rheological_model.h>
 #include <core/vector.h>
