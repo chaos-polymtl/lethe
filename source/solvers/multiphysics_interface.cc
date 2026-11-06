@@ -192,7 +192,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     {
       // The volume-averaged form of the time-harmonic Maxwell equations is the
       // same as the standard form, but uses the volume-averaged material
-      // properties (to be implemented in the future).
+      // properties.
       verbosity[PhysicsID::electromagnetics] =
         (nsparam.linear_solver.at(PhysicsID::electromagnetics).verbosity !=
          Parameters::Verbosity::quiet) ?

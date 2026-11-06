@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -107,7 +107,9 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
           mobility_cahn_hilliard_model->vector_value(fields,
                                                      mobility_cahn_hilliard);
           mobility_cahn_hilliard_model->vector_jacobian(
-            fields, phase_order_cahn_hilliard, mobility_cahn_hilliard_gradient);
+            fields,
+            field::phase_order_cahn_hilliard,
+            mobility_cahn_hilliard_gradient);
 
           break;
         }

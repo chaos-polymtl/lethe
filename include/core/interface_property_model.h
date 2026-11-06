@@ -28,11 +28,11 @@ public:
    */
   InterfacePropertyModel()
   {
-    model_depends_on[shear_rate]                = false;
-    model_depends_on[temperature]               = false;
-    model_depends_on[temperature_p1]            = false;
-    model_depends_on[pressure]                  = false;
-    model_depends_on[phase_order_cahn_hilliard] = false;
+    model_depends_on[field::shear_rate]                = false;
+    model_depends_on[field::temperature]               = false;
+    model_depends_on[field::temperature_p1]            = false;
+    model_depends_on[field::pressure]                  = false;
+    model_depends_on[field::phase_order_cahn_hilliard] = false;
   }
 
   /**

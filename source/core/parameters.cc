@@ -30,6 +30,11 @@ DeclException1(NumberOfSolidsError,
                << "Number of solids: " << arg1
                << " is larger than 1. This is currently not supported.");
 
+DeclException1(NumberOfUnresolvedDispersedPhasesError,
+               int,
+               << "Number of unresolved dispersed phases: " << arg1
+               << " is larger than 1. This is currently not supported.");
+
 DeclException1(NumberOfMaterialInteractionsError,
                int,
                << "Number of material interactions: " << arg1
@@ -1154,6 +1159,7 @@ namespace Parameters
   {
     fluids.resize(max_fluids);
     solids.resize(max_solids);
+    unresolved_dispersed_phases.resize(max_unresolved_dispersed_phases);
     material_interactions.resize(max_material_interactions);
 
     prm.enter_subsection("physical properties");
@@ -1182,6 +1188,21 @@ namespace Parameters
           solids[i_solid].declare_parameters(prm, "solid", i_solid);
         }
 
+      // Definition of the unresolved dispersed phases in the simulation
+      for (unsigned int i_dispersed_phase = 0;
+           i_dispersed_phase < max_unresolved_dispersed_phases;
+           ++i_dispersed_phase)
+        {
+          unresolved_dispersed_phases[i_dispersed_phase].declare_parameters(
+            prm, "unresolved dispersed phase", i_dispersed_phase);
+        }
+
+      prm.declare_entry("number of unresolved dispersed phases",
+                        Patterns::Tools::Convert<unsigned int>::to_string(
+                          number_of_unresolved_dispersed_phases),
+                        Patterns::Integer(),
+                        "Number of unresolved dispersed phases");
+
       prm.declare_entry(
         "reference temperature",
         Patterns::Tools::Convert<double>::to_string(reference_temperature),
@@ -1195,7 +1216,7 @@ namespace Parameters
       Patterns::Tools::Convert<unsigned int>::to_string(
         number_of_material_interactions),
       Patterns::Integer(),
-      "Number of material interactions (either fluid-fluid or fluid-solid)");
+      "Number of material interactions (fluid-fluid, fluid-solid or fluid-dispersed phase)");
 
     for (unsigned int i_material_interaction = 0;
          i_material_interaction < max_material_interactions;
@@ -1233,6 +1254,20 @@ namespace Parameters
       AssertThrow(number_of_solids <= max_solids,
                   NumberOfSolidsError(number_of_solids));
 
+      number_of_unresolved_dispersed_phases =
+        prm.get_integer("number of unresolved dispersed phases");
+      AssertThrow(number_of_unresolved_dispersed_phases <=
+                    max_unresolved_dispersed_phases,
+                  NumberOfUnresolvedDispersedPhasesError(
+                    number_of_unresolved_dispersed_phases));
+      for (unsigned int i_dispersed_phase = 0;
+           i_dispersed_phase < number_of_unresolved_dispersed_phases;
+           ++i_dispersed_phase)
+        {
+          unresolved_dispersed_phases[i_dispersed_phase].parse_parameters(
+            prm, "unresolved dispersed phase", i_dispersed_phase, dimensions);
+        }
+
       // Definition of interactions between materials
       number_of_material_interactions =
         prm.get_integer("number of material interactions");
@@ -1246,16 +1281,32 @@ namespace Parameters
         {
           material_interactions[i_material_interaction].parse_parameters(
             prm, i_material_interaction, dimensions);
+
+          // fluid-fluid interactions
           if (material_interactions[i_material_interaction]
                 .material_interaction_type ==
               MaterialInteractions::MaterialInteractionsType::fluid_fluid)
             fluid_fluid_interactions_with_material_interaction_ids.insert(
               material_interactions[i_material_interaction]
                 .fluid_fluid_interaction_with_material_interaction_id);
-          else // fluid-solid interaction
+
+          // fluid-solid interactions
+          else if (material_interactions[i_material_interaction]
+                     .material_interaction_type ==
+                   MaterialInteractions::MaterialInteractionsType::fluid_solid)
             fluid_solid_interactions_with_material_interaction_ids.insert(
               material_interactions[i_material_interaction]
                 .fluid_solid_interaction_with_material_interaction_id);
+
+          // fluid-dispersed phase interactions
+          else if (material_interactions[i_material_interaction]
+                     .material_interaction_type ==
+                   MaterialInteractions::MaterialInteractionsType::
+                     fluid_dispersed_phase)
+            fluid_dispersed_phase_interactions_with_material_interaction_ids
+              .insert(
+                material_interactions[i_material_interaction]
+                  .fluid_dispersed_phase_interaction_with_material_interaction_id);
         }
 
       reference_temperature = prm.get_double("reference temperature");
@@ -1773,6 +1824,34 @@ namespace Parameters
         mobility_cahn_hilliard_parameters.declare_parameters(prm);
       }
       prm.leave_subsection();
+
+      // Fluid-dispersed phase interactions
+      prm.enter_subsection("fluid-dispersed phase interaction");
+      {
+        prm.declare_entry(
+          "fluid id",
+          "0",
+          Patterns::Integer(),
+          "ID of the fluid hosting the unresolved dispersed phase");
+        prm.declare_entry(
+          "dispersed phase id",
+          "0",
+          Patterns::Integer(),
+          "ID of the unresolved dispersed phase mixed with the fluid");
+
+        // Effective medium model
+        declare_enum_entry(
+          prm,
+          "electric permittivity effective medium model",
+          electric_permittivity_effective_medium_model,
+          "Model used for the calculation of the effective electric properties.");
+        declare_enum_entry(
+          prm,
+          "magnetic permeability effective medium model",
+          magnetic_permeability_effective_medium_model,
+          "Model used for the calculation of the effective magnetic properties.");
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -1819,7 +1898,8 @@ namespace Parameters
           }
           prm.leave_subsection();
         }
-      else // Solid-fluid interactions
+      else if (material_interaction_type ==
+               MaterialInteractionsType::fluid_solid)
         {
           prm.enter_subsection("fluid-solid interaction");
           std::pair<unsigned int, unsigned int> fluid_solid_interaction;
@@ -1836,6 +1916,29 @@ namespace Parameters
             "surface tension model");
           surface_tension_parameters.parse_parameters(prm, dimensions);
 
+          prm.leave_subsection();
+        }
+      else if (material_interaction_type ==
+               MaterialInteractionsType::fluid_dispersed_phase)
+        {
+          prm.enter_subsection("fluid-dispersed phase interaction");
+          std::pair<unsigned int, unsigned int>
+            fluid_dispersed_phase_interaction;
+          fluid_dispersed_phase_interaction.first = prm.get_integer("fluid id");
+          fluid_dispersed_phase_interaction.second =
+            prm.get_integer("dispersed phase id");
+          fluid_dispersed_phase_interaction_with_material_interaction_id.first =
+            fluid_dispersed_phase_interaction;
+          fluid_dispersed_phase_interaction_with_material_interaction_id
+            .second = id;
+
+          // Effective medium model
+          electric_permittivity_effective_medium_model =
+            string_to_enum<EffectiveMediumModelType>(
+              prm.get("electric permittivity effective medium model"));
+          magnetic_permeability_effective_medium_model =
+            string_to_enum<EffectiveMediumModelType>(
+              prm.get("magnetic permeability effective medium model"));
           prm.leave_subsection();
         }
     }
