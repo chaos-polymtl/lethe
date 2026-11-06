@@ -23,7 +23,7 @@ Variable and Function Names
   for (unsigned int k = 0; k < nf; ++k)
 
   // Prefer
-  number_of_fluids = prm.get_integer("number of fluids");
+  unsigned int number_of_fluids = prm.get_integer("number of fluids");
   for (unsigned int i_fluid = 0; i_fluid < number_of_fluids; ++i_fluid)
 
 Class and Type Names
@@ -44,7 +44,7 @@ Lethe is used by many people who did not write the code they run, and simulation
 
 In practice:
 
-* **Validate the parameters when they are read.** Restrict the range of an entry with its pattern in ``declare_parameters`` (e.g., ``Patterns::Double(0.)`` for a quantity that cannot be negative) and check the consistency between parameters with ``AssertThrow`` in ``parse_parameters``. Errors are then reported before the mesh is even read.
+* **Validate the parameters when they are read.** Restrict the range of an entry with its pattern in ``declare_parameters`` (e.g., ``Patterns::Double(0.)`` for a quantity that cannot be negative, ``Patterns::Double(0.,1.)`` for a quantity within the closed interval [0,1] ) and check the consistency between parameters with ``AssertThrow`` in ``parse_parameters``. Errors are then reported before the mesh is even read.
 * **Check the preconditions of functions**: sizes with ``AssertDimension``, indices with ``AssertIndexRange`` and values that must be finite with ``AssertIsFinite``.
 * **Handle every case.** A ``switch`` or an ``if``/``else if`` chain on an ``enum class`` handles every value. A combination of features that is not supported throws an exception instead of silently doing nothing.
 * **Guard divisions** by quantities that can vanish (cell measure, density, time step, norm of a gradient) and give tolerances a name. Never compare floating-point numbers with ``==``.
