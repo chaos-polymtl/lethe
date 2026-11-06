@@ -176,8 +176,6 @@ public:
                    const bool neumann_boundaries,
                    const bool conservative_projection)
     : dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
-    , particle_field_locally_relevant_solution(
-        std::make_shared<GlobalVectorType>())
     , neumann_boundaries(neumann_boundaries)
     , conservative_projection(conservative_projection)
     , matrix_requires_assembly(true)
@@ -200,12 +198,6 @@ public:
 
   /// deal.II vector for the particle field solution.
   LinearAlgebra::distributed::Vector<double> particle_field_solution;
-
-  /// Copy of the particle field solution, with locally relevant ghost values,
-  /// in the vector type of the multiphysics interface. It is only allocated
-  /// and filled for the fields that are provided to the multiphysics
-  /// interface.
-  std::shared_ptr<GlobalVectorType> particle_field_locally_relevant_solution;
 
   /// Finite element for the particle field
   std::shared_ptr<FESystem<dim>> fe;
@@ -373,6 +365,11 @@ public:
     // Initialize the void fraction current solution vector
     void_fraction_locally_relevant = std::make_shared<GlobalVectorType>();
 
+    // Initialize the particle temperature vector provided to the multiphysics
+    // interface
+    particle_temperature_locally_relevant =
+      std::make_shared<GlobalVectorType>();
+
     AssertThrow(
       !void_fraction_parameters->project_particle_velocity ||
         void_fraction_parameters->l2_smoothing_length > 0,
@@ -434,9 +431,7 @@ public:
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions);
 
   /**
-   * @brief Calculate the void fraction, then project the particle fields that
-   * are updated with it: the particle velocity, when its projection is
-   * enabled, and the particle temperature, in thermal CFD-DEM simulations.
+   * @brief Calculate the void fraction.
    *
    * @param[in] time Current time for which the void fraction is to be
    * calculated.
@@ -447,7 +442,8 @@ public:
 
   /**
    * @brief Project the particle temperature onto the fluid mesh with the QCM,
-   * then copy it into the vector provided to the multiphysics interface.
+   * then copy it into particle_temperature_locally_relevant, the vector
+   * provided to the multiphysics interface.
    */
   void
   calculate_particle_temperature_projection();
@@ -938,6 +934,11 @@ public:
   /// projected.
   ParticleFieldQCM<dim, 1, DEM::temperature_property_index<PropertiesIndex>>
     particle_temperature;
+
+  /// Copy of the projected particle temperature, including the locally
+  /// relevant ghost values, in the vector type of the multiphysics interface.
+  /// It is a shared pointer because it is used by the multiphysics interface.
+  std::shared_ptr<GlobalVectorType> particle_temperature_locally_relevant;
 
   /// Projector used to save the forces used in the two-way coupling scheme,
   /// without drag. This field is volumetric. The integral of this field over

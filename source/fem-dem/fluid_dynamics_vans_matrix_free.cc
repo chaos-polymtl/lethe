@@ -591,11 +591,9 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::FluidDynamicsVANSMatrixFree(
   // the multiphysics interface.
   this->multiphysics->enable_projected_particle_fields(
     PhysicsID::void_fraction);
-  static if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
-  {
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
     this->multiphysics->enable_projected_particle_fields(
       PhysicsID::particle_temperature);
-  }
 
 
   unsigned int n_pbc = 0;
@@ -659,18 +657,17 @@ FluidDynamicsVANSMatrixFree<dim, PropertiesIndex>::setup_dofs()
   this->multiphysics->set_previous_solutions(
     PhysicsID::void_fraction, particle_projector.previous_void_fraction);
 
-  static if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
-  {
-    this->multiphysics->set_dof_handler(
-      PhysicsID::particle_temperature,
-      particle_projector.particle_temperature.dof_handler);
-    this->multiphysics->set_mapping(PhysicsID::particle_temperature,
-                                    particle_projector.mapping);
-    this->multiphysics->set_solution(
-      PhysicsID::particle_temperature,
-      particle_projector.particle_temperature
-        .particle_field_locally_relevant_solution);
-  }
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      this->multiphysics->set_dof_handler(
+        PhysicsID::particle_temperature,
+        particle_projector.particle_temperature.dof_handler);
+      this->multiphysics->set_mapping(PhysicsID::particle_temperature,
+                                      particle_projector.mapping);
+      this->multiphysics->set_solution(
+        PhysicsID::particle_temperature,
+        particle_projector.particle_temperature_locally_relevant);
+    }
 }
 
 template <int dim, typename PropertiesIndex>

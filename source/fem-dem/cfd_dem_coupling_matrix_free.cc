@@ -1723,10 +1723,14 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
   // Initialize the DEM parameters and generate the ghost particles
   initialize_dem_parameters();
 
-  // Calculate first instance of void fraction once particles are set up
+  // Calculate first instance of void fraction and of the projected particle
+  // temperature once particles are set up
   if (!dem_action_manager->check_restart_simulation())
-    this->particle_projector.initialize_void_fraction(
-      this->simulation_control->get_current_time());
+    {
+      this->particle_projector.initialize_void_fraction(
+        this->simulation_control->get_current_time());
+      this->particle_projector.calculate_particle_temperature_projection();
+    }
 
   // Output the solution after initializing the void fraction
   if (!this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1761,6 +1765,11 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
       // the particle projector.
       this->particle_projector.calculate_void_fraction(
         this->simulation_control->get_current_time());
+
+      // Project the particle temperature onto the fluid mesh (thermal CFD-DEM
+      // simulations only), so that the other physics see the particle
+      // temperature of the current time step
+      this->particle_projector.calculate_particle_temperature_projection();
 
       if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
         {

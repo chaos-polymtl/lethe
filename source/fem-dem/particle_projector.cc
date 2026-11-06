@@ -192,18 +192,18 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
 
   // Only allocate the particle temperature field in thermal CFD-DEM
   // simulations (solver type = dem_mp)
-  static if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
-  {
-    particle_temperature.setup_dofs();
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      particle_temperature.setup_dofs();
 
-    // The particle temperature is provided to the multiphysics interface,
-    // so we need to ensure the solution vector is reinitialized with the
-    // correct locally relevant dofs.
-    particle_temperature.particle_field_locally_relevant_solution->reinit(
-      particle_temperature.locally_owned_dofs,
-      particle_temperature.locally_relevant_dofs,
-      mpi_communicator);
-  }
+      // The particle temperature is provided to the multiphysics interface,
+      // so we need to ensure the solution vector is reinitialized with the
+      // correct locally relevant dofs.
+      particle_temperature_locally_relevant->reinit(
+        particle_temperature.locally_owned_dofs,
+        particle_temperature.locally_relevant_dofs,
+        mpi_communicator);
+    }
 }
 
 
@@ -292,10 +292,6 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction(
   if (void_fraction_parameters->mode == Parameters::VoidFractionMode::function)
     {
       calculate_void_fraction_function(time);
-
-      // The particle temperature is projected whatever the void fraction mode
-      calculate_particle_temperature_projection();
-
       // If its a function, no need to solve a linear system of equations so
       // return.
       return;
@@ -324,8 +320,6 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction(
     {
       calculate_field_projection(particle_velocity);
     }
-
-  calculate_particle_temperature_projection();
 }
 
 template <int dim, typename PropertiesIndex>
@@ -335,33 +329,30 @@ ParticleProjector<dim,
 {
   // Only the particles of thermal CFD-DEM simulations (solver type = dem_mp)
   // carry a temperature
-  static if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
-  {
-    calculate_field_projection(particle_temperature);
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      calculate_field_projection(particle_temperature);
 
 // Transfer the particle temperature solution to the multiphysics interface
 // vector. This is needed since the multiphysics interface uses a different
 // vector type than the one used in the particle projector depending on the
 // build configuration.
 #ifndef LETHE_USE_LDV
+      GlobalVectorType temporary_solution_vector(
+        particle_temperature.locally_owned_dofs,
+        particle_temperature.dof_handler->get_mpi_communicator());
 
-    GlobalVectorType temporary_solution_vector(
-      particle_temperature.locally_owned_dofs,
-      particle_temperature.dof_handler->get_mpi_communicator());
-
-    convert_vector_dealii_to_trilinos(
-      temporary_solution_vector, particle_temperature.particle_field_solution);
-
-    *particle_temperature.particle_field_locally_relevant_solution =
-      temporary_solution_vector;
-#else
-    particle_temperature.particle_field_locally_relevant_solution
-      ->copy_locally_owned_data_from(
+      convert_vector_dealii_to_trilinos(
+        temporary_solution_vector,
         particle_temperature.particle_field_solution);
-    particle_temperature.particle_field_locally_relevant_solution
-      ->update_ghost_values();
+
+      *particle_temperature_locally_relevant = temporary_solution_vector;
+#else
+      particle_temperature_locally_relevant->copy_locally_owned_data_from(
+        particle_temperature.particle_field_solution);
+      particle_temperature_locally_relevant->update_ghost_values();
 #endif
-  }
+    }
 }
 
 
