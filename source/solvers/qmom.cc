@@ -2,8 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/dimensionality.h>
+#include <core/parameters_multiphysics.h>
 #include <core/utilities.h>
 
+#include <solvers/initial_conditions.h>
 #include <solvers/qmom.h>
 
 #include <deal.II/base/exceptions.h>
@@ -23,6 +26,7 @@
 
 #include <deal.II/numerics/data_component_interpretation.h>
 
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <string>
@@ -37,6 +41,9 @@ QMOM<dim>::QMOM(
   const std::shared_ptr<SimulationControl> &p_simulation_control)
   : AuxiliaryPhysics<dim, GlobalVectorType>(
       p_simulation_parameters.physics_solving_strategy.at(PhysicsID::qmom))
+  , n_moments(
+      2 * p_simulation_parameters.multiphysics.qmom_parameters.number_of_nodes)
+  , n_components(n_scalars + n_moments)
   , multiphysics(multiphysics_interface)
   , computing_timer(p_triangulation->get_mpi_communicator(),
                     this->pcout,
@@ -51,38 +58,95 @@ QMOM<dim>::QMOM(
 {
   AssertThrow(!simulation_parameters.mesh.simplex,
               ExcMessage("The QMOM physics does not support simplex meshes "
-                         "yet."));
+                         "yet. Use a quadrilateral or hexahedral mesh."));
+
+  // Relative tolerance used to compare parameter values
+  constexpr double parameter_relative_tolerance = 1e-12;
+  const auto       values_are_equal = [](const double first_value,
+                                   const double second_value) {
+    return std::abs(first_value - second_value) <=
+           parameter_relative_tolerance *
+             std::max({1., std::abs(first_value), std::abs(second_value)});
+  };
+
+  // The QMOM phase properties and operating conditions are given in SI units
+  // and are not rescaled by the dimensionality subsection
+  const Parameters::Dimensionality &dimensionality =
+    simulation_parameters.dimensionality;
+  const bool dimensionality_is_si = values_are_equal(dimensionality.length, 1.) &&
+                                    values_are_equal(dimensionality.mass, 1.) &&
+                                    values_are_equal(dimensionality.time, 1.) &&
+                                    values_are_equal(dimensionality.temperature,
+                                                     1.);
+  AssertThrow(dimensionality_is_si,
+              ExcMessage(
+                "The QMOM physics only supports SI units, but the "
+                "dimensionality subsection sets length = " +
+                std::to_string(dimensionality.length) +
+                ", mass = " + std::to_string(dimensionality.mass) +
+                ", time = " + std::to_string(dimensionality.time) +
+                " and temperature = " +
+                std::to_string(dimensionality.temperature) +
+                ". Remove the dimensionality subsection or set these "
+                "parameters to 1."));
+
+  // The initial lipid concentration in the organic phase is set both in the
+  // QMOM subsection and in the QMOM initial conditions
+  const Parameters::QMOM &qmom_parameters =
+    simulation_parameters.multiphysics.qmom_parameters;
+  const Parameters::QMOMInitialConditions &qmom_initial_conditions =
+    simulation_parameters.initial_condition->qmom;
+  AssertThrow(
+    values_are_equal(qmom_parameters.initial_concentration_organic,
+                     qmom_initial_conditions.initial_lipid_concentration),
+    ExcMessage(
+      "The initial lipid concentration in the organic phase is set to " +
+      std::to_string(qmom_parameters.initial_concentration_organic) +
+      " by \"initial concentration organic\" in the QMOM subsection, but to " +
+      std::to_string(qmom_initial_conditions.initial_lipid_concentration) +
+      " by \"initial lipid concentration\" in the QMOM subsection of the "
+      "initial conditions. Set both parameters to the same value."));
+
+  // The QMOM initial conditions are not applied yet: all the fields are
+  // initialized to zero
+  const Parameters::QMOMInitialConditions default_qmom_initial_conditions;
+  AssertThrow(
+    qmom_initial_conditions.distribution_shape ==
+        default_qmom_initial_conditions.distribution_shape &&
+      values_are_equal(
+        qmom_initial_conditions.initial_lipid_concentration,
+        default_qmom_initial_conditions.initial_lipid_concentration),
+    ExcMessage(
+      "The QMOM initial conditions are not implemented yet: all the QMOM "
+      "fields are initialized to zero. Remove the QMOM subsection from the "
+      "initial conditions subsection."));
 
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
 
-  const unsigned int scalar_degree =
-    simulation_parameters.fem_parameters.qmom_scalar_degree;
-  const unsigned int moment_degree =
-    simulation_parameters.fem_parameters.qmom_moment_degree;
-
-  // Ethanol and free lipids concentrations followed by the moments
-  fe = std::make_shared<FESystem<dim>>(FE_Q<dim>(scalar_degree),
-                                       n_scalars,
-                                       FE_Q<dim>(moment_degree),
-                                       n_moments);
-  // fe->degree is the highest degree of the two groups of fields
+  // Ethanol and free lipids concentrations followed by the moments. All the
+  // components share the same degree, so that they have the same support
+  // points.
+  fe = std::make_unique<FESystem<dim>>(
+    FE_Q<dim>(simulation_parameters.fem_parameters.qmom_degree), n_components);
   mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
-  cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
-  face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
+  cell_quadrature = std::make_unique<QGauss<dim>>(fe->degree + 1);
+  face_quadrature = std::make_unique<QGauss<dim - 1>>(fe->degree + 1);
 
   moment_extractors.reserve(n_moments);
-  for (unsigned int k = 0; k < n_moments; ++k)
-    moment_extractors.emplace_back(first_moment_component + k);
+  for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+    moment_extractors.emplace_back(first_moment_component + i_moment);
 
   present_solution = std::make_shared<GlobalVectorType>();
   solution_transfer =
-    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
+    std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
   previous_solutions = std::make_shared<std::vector<GlobalVectorType>>(
     maximum_number_of_previous_solutions());
   previous_solutions_transfer.reserve(previous_solutions->size());
-  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
+  for (unsigned int i_previous_solution = 0;
+       i_previous_solution < previous_solutions->size();
+       ++i_previous_solution)
     previous_solutions_transfer.emplace_back(
       SolutionTransfer<dim, GlobalVectorType>(*dof_handler));
 }
@@ -96,8 +160,9 @@ QMOM<dim>::gather_output_hook()
   std::vector<std::string> solution_names(n_components);
   solution_names[ethanol_component]     = "ethanol_concentration";
   solution_names[free_lipids_component] = "free_lipids_concentration";
-  for (unsigned int k = 0; k < n_moments; ++k)
-    solution_names[first_moment_component + k] = "moment_" + std::to_string(k);
+  for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+    solution_names[first_moment_component + i_moment] =
+      "moment_" + std::to_string(i_moment);
 
   const std::vector<DataComponentInterpretation::DataComponentInterpretation>
     component_interpretation(n_components,
@@ -129,8 +194,11 @@ template <int dim>
 void
 QMOM<dim>::percolate_time_vectors()
 {
-  for (unsigned int i = previous_solutions->size() - 1; i > 0; --i)
-    (*previous_solutions)[i] = (*previous_solutions)[i - 1];
+  for (unsigned int i_previous_solution = previous_solutions->size() - 1;
+       i_previous_solution > 0;
+       --i_previous_solution)
+    (*previous_solutions)[i_previous_solution] =
+      (*previous_solutions)[i_previous_solution - 1];
   (*previous_solutions)[0] = *present_solution;
 }
 
@@ -155,9 +223,12 @@ void
 QMOM<dim>::pre_mesh_adaptation()
 {
   solution_transfer->prepare_for_coarsening_and_refinement(*present_solution);
-  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
-    previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
-      (*previous_solutions)[i]);
+  for (unsigned int i_previous_solution = 0;
+       i_previous_solution < previous_solutions->size();
+       ++i_previous_solution)
+    previous_solutions_transfer[i_previous_solution]
+      .prepare_for_coarsening_and_refinement(
+        (*previous_solutions)[i_previous_solution]);
 }
 
 template <int dim>
@@ -166,18 +237,22 @@ QMOM<dim>::post_mesh_adaptation()
 {
   const auto mpi_communicator = triangulation->get_mpi_communicator();
 
-  GlobalVectorType tmp(locally_owned_dofs, mpi_communicator);
-  solution_transfer->interpolate(tmp);
-  nonzero_constraints.distribute(tmp);
-  *present_solution = tmp;
+  GlobalVectorType interpolated_solution(locally_owned_dofs, mpi_communicator);
+  solution_transfer->interpolate(interpolated_solution);
+  nonzero_constraints.distribute(interpolated_solution);
+  *present_solution = interpolated_solution;
 
-  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
+  for (unsigned int i_previous_solution = 0;
+       i_previous_solution < previous_solutions->size();
+       ++i_previous_solution)
     {
-      GlobalVectorType tmp_previous_solution(locally_owned_dofs,
-                                             mpi_communicator);
-      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
-      nonzero_constraints.distribute(tmp_previous_solution);
-      (*previous_solutions)[i] = tmp_previous_solution;
+      GlobalVectorType interpolated_previous_solution(locally_owned_dofs,
+                                                      mpi_communicator);
+      previous_solutions_transfer[i_previous_solution].interpolate(
+        interpolated_previous_solution);
+      nonzero_constraints.distribute(interpolated_previous_solution);
+      (*previous_solutions)[i_previous_solution] =
+        interpolated_previous_solution;
     }
 }
 
@@ -191,7 +266,8 @@ QMOM<dim>::compute_error_estimate(
 {
   AssertThrow(false,
               ExcMessage("Mesh adaptation based on QMOM variables is not "
-                         "implemented yet."));
+                         "implemented yet. Remove the QMOM variables from the "
+                         "mesh adaptation subsection."));
 }
 
 template <int dim>
@@ -201,7 +277,7 @@ QMOM<dim>::write_checkpoint()
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
   solution_transfer =
-    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
+    std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
   sol_set_transfer.emplace_back(&(*present_solution));
   for (const auto &previous_solution : *previous_solutions)
@@ -223,18 +299,24 @@ QMOM<dim>::read_checkpoint()
 
   std::vector<GlobalVectorType> distributed_previous_solutions;
   distributed_previous_solutions.reserve(previous_solutions->size());
-  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
+  for (unsigned int i_previous_solution = 0;
+       i_previous_solution < previous_solutions->size();
+       ++i_previous_solution)
     {
       distributed_previous_solutions.emplace_back(
         GlobalVectorType(locally_owned_dofs, mpi_communicator));
-      input_vectors[i + 1] = &distributed_previous_solutions[i];
+      input_vectors[i_previous_solution + 1] =
+        &distributed_previous_solutions[i_previous_solution];
     }
 
   solution_transfer->deserialize(input_vectors);
 
   *present_solution = distributed_system;
-  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
-    (*previous_solutions)[i] = distributed_previous_solutions[i];
+  for (unsigned int i_previous_solution = 0;
+       i_previous_solution < previous_solutions->size();
+       ++i_previous_solution)
+    (*previous_solutions)[i_previous_solution] =
+      distributed_previous_solutions[i_previous_solution];
 }
 
 template <int dim>

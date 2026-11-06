@@ -297,6 +297,54 @@ namespace Parameters
   };
 
   /**
+   * @brief Material parameters of the aqueous and organic phases used in QMOM
+   * LNP simulations
+   */
+  struct QMOMPhaseProperties
+  {
+    /* Solvent properties: aqueous phase */
+    // Aqueous phase density [kg/m3]
+    double density_aqueous = 997;
+    // Aqueous phase molar mass [kg/mol]
+    double molar_mass_aqueous = 0.018015;
+    // Mole fraction solubility of lipid in pure aqueous phase [-]
+    double mole_fraction_solubility_aqueous = 2e-8;
+    // Relative permittivity of aqueous phase [-]
+    double permittivity_aqueous = 78.2;
+
+    /* Solvent properties: organic phase */
+    // Organic phase density [kg/m3]
+    double density_organic = 789;
+    // Organic phase molar mass [kg/mol]
+    double molar_mass_organic = 0.046069;
+    // Mole fraction solubility of lipid in pure organic phase [-]
+    double mole_fraction_solubility_organic = 2.9e-3;
+    // Relative permittivity of organic phase [-]
+    double permittivity_organic = 24.3;
+
+    // Dynamic viscosity of aqueous/organic mixture [Pa s]
+    double viscosity_mixture = 2e-3;
+
+    /**
+     * @brief Declare the QMOM phase properties in the parameter handler.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    static void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the QMOM phase properties. They are given in SI units and
+     * are not rescaled by the dimensionality, which the QMOM physics verifies
+     * at setup.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Power-law rheological model to solve for non-Newtonian
    * flows.
    */
@@ -528,6 +576,9 @@ namespace Parameters
 
     // Phase change parameters
     PhaseChange phase_change_parameters;
+
+    // QMOM LNP phase properties
+    QMOMPhaseProperties qmom_phase_properties;
 
     // non-Newtonian model parameters
     enum class RheologicalModel : std::int8_t
@@ -1457,12 +1508,9 @@ namespace Parameters
     /// model.
     unsigned int solid_volume_fraction_degree = 1;
 
-    /// Polynomial degree of the scalars of the QMOM physics (ethanol
-    /// concentration and free lipids concentration).
-    unsigned int qmom_scalar_degree = 1;
-
-    /// Polynomial degree of the moments of the QMOM physics.
-    unsigned int qmom_moment_degree = 1;
+    /// Polynomial degree of all the fields of the QMOM physics (ethanol
+    /// concentration, free lipids concentration and moments).
+    unsigned int qmom_degree = 1;
 
     static void
     declare_parameters(ParameterHandler &prm);

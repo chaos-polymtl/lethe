@@ -14,6 +14,8 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/utilities.h>
 
+#include <numbers>
+
 using namespace dealii;
 
 namespace Parameters
@@ -454,6 +456,83 @@ namespace Parameters
   };
 
   /**
+   * @brief QMOM phase space evolution parameters used by QMOMKit
+   */
+  struct QMOMPhaseEvolution
+  {
+    /// Enable the adaptive quadrature node count
+    bool enable_adaptive_node_count = false;
+
+    void
+    declare_parameters(ParameterHandler &prm) const;
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief QMOM splitting scheme for the physical-phase space solver
+   */
+  enum class QMOMSplittingScheme : std::int8_t
+  {
+    lie,
+    strang
+  };
+
+  /**
+   * @brief Parameters for a quadrature method of moments (QMOM) simulation
+   */
+  struct QMOM
+  {
+    Parameters::QMOMPhaseEvolution phase_evolution;
+
+    /// Number of nodes of the quadrature. 2 * number_of_nodes moments are
+    /// transported.
+    unsigned int number_of_nodes = 1;
+    /// Splitting scheme for physical-phase space solver
+    Parameters::QMOMSplittingScheme splitting_scheme =
+      QMOMSplittingScheme::lie;
+
+    /// Include the nucleation source
+    bool enable_nucleation = true;
+    /// Include the coalescence source
+    bool enable_coalescence = true;
+    /// Include the growth source
+    bool enable_growth = true;
+
+    /* Operating conditions */
+    /// Operating temperature
+    double operating_temperature = 295;
+    /// Flow rate ratio (relation between aqueous and organic phases)
+    double flow_rate_ratio = 1.;
+    /// Total flow rate
+    double total_flow_rate = 1.;
+    /// Mixing time scale
+    double mixing_time_scale = 0.;
+    /// Initial lipid concentration in organic mixture
+    double initial_concentration_organic = 1.;
+    /// Ion concentration in mixture
+    double ion_concentration_mixture = 1.;
+
+    /* Universal constants */
+    // Boltzmann's constant [m2 kg /s2 /K]
+    double boltzmann_constant = 1.380649e-23;
+    // Avogadro's number [1/mol]
+    double avogadro_number = 6.02214076e23;
+    // Elementary charge [C]
+    double elementary_charge = 1.6021766e-19;
+    // Permittivity in a vacuum [F/m]
+    double permittivity_vacuum = 8.8541878188e-12;
+    // Volume shape factor
+    double shape_factor = std::numbers::pi / 6;
+
+    void
+    declare_parameters(ParameterHandler &prm) const;
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+
+  /**
    * @brief TimeHarmonicMaxwell - Defines the parameters for
    * time-harmonic Maxwell simulations.
    */
@@ -551,6 +630,7 @@ namespace Parameters
     Parameters::CLS                      cls_parameters;
     Parameters::CahnHilliard             cahn_hilliard_parameters;
     Parameters::TimeHarmonicMaxwell<dim> time_harmonic_maxwell_parameters;
+    Parameters::QMOM                     qmom_parameters;
 
     void
     declare_parameters(ParameterHandler &prm) const;

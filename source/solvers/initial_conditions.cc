@@ -103,6 +103,31 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  void
+  QMOMInitialConditions::declare_parameters(ParameterHandler &prm)
+  {
+    const QMOMInitialConditions defaults;
+
+    declare_enum_entry(prm,
+                       "distribution shape",
+                       defaults.distribution_shape,
+                       "Type of distribution used to initialize the moments");
+
+    prm.declare_entry("initial lipid concentration",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.initial_lipid_concentration),
+                      Patterns::Double(0.),
+                      "Initial lipid concentration in the organic phase");
+  }
+
+  void
+  QMOMInitialConditions::parse_parameters(ParameterHandler &prm)
+  {
+    distribution_shape =
+      string_to_enum<QMOMDistributionShape>(prm.get("distribution shape"));
+    initial_lipid_concentration = prm.get_double("initial lipid concentration");
+  }
+
   template <int dim>
   void
   InitialConditions<dim>::declare_parameters(ParameterHandler &prm)
@@ -143,6 +168,10 @@ namespace Parameters
           projection_step_diffusion_factor),
         Patterns::Double(),
         "Factor applied to the diffusion term in the projection step");
+      prm.leave_subsection();
+
+      prm.enter_subsection("QMOM");
+      qmom.declare_parameters(prm);
       prm.leave_subsection();
 
       prm.enter_subsection("cahn hilliard");
@@ -199,6 +228,10 @@ namespace Parameters
 
         projection_step_diffusion_factor = prm.get_double("diffusion factor");
       }
+      prm.leave_subsection();
+
+      prm.enter_subsection("QMOM");
+      qmom.parse_parameters(prm);
       prm.leave_subsection();
 
       ramp.parse_parameters(prm);

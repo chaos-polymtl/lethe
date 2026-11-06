@@ -133,6 +133,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
   cls_parameters.declare_parameters(prm);
   cahn_hilliard_parameters.declare_parameters(prm);
   time_harmonic_maxwell_parameters.declare_parameters(prm);
+  qmom_parameters.declare_parameters(prm);
 }
 
 template <int dim>
@@ -161,6 +162,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
   cls_parameters.parse_parameters(prm);
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
   time_harmonic_maxwell_parameters.parse_parameters(prm, dimensions);
+  qmom_parameters.parse_parameters(prm);
 }
 
 void
@@ -748,6 +750,173 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
       epsilon *= dimensions.cahn_hilliard_epsilon_scaling;
     }
     prm.leave_subsection();
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPhaseEvolution::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMPhaseEvolution defaults;
+  prm.enter_subsection("phase evolution");
+  {
+    prm.declare_entry("enable adaptive node count",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_adaptive_node_count),
+                      Patterns::Bool(),
+                      "Enable adaptive quadrature node count <true|false>");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPhaseEvolution::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("phase evolution");
+  {
+    enable_adaptive_node_count = prm.get_bool("enable adaptive node count");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOM defaults;
+  prm.enter_subsection("QMOM");
+  {
+    phase_evolution.declare_parameters(prm);
+
+    declare_enum_entry(
+      prm,
+      "splitting scheme",
+      defaults.splitting_scheme,
+      "Splitting scheme for the physical-phase space evolution <lie|strang>");
+
+    prm.declare_entry("number of nodes",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.number_of_nodes),
+                      Patterns::Integer(1),
+                      "Number of nodes of the quadrature. The 2N first raw "
+                      "moments are transported for N nodes.");
+
+    prm.declare_entry("enable nucleation",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_nucleation),
+                      Patterns::Bool(),
+                      "Include nucleation source <true|false>");
+
+    prm.declare_entry("enable coalescence",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_coalescence),
+                      Patterns::Bool(),
+                      "Include coalescence source <true|false>");
+
+    prm.declare_entry("enable growth",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_growth),
+                      Patterns::Bool(),
+                      "Include growth source <true|false>");
+
+    prm.declare_entry("operating temperature",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.operating_temperature),
+                      Patterns::Double(0.),
+                      "Operating temperature");
+
+    prm.declare_entry("flow rate ratio",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.flow_rate_ratio),
+                      Patterns::Double(0.),
+                      "Flow rate ratio between aqueous and organic phases");
+
+    prm.declare_entry("total flow rate",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.total_flow_rate),
+                      Patterns::Double(0.),
+                      "Total flow rate of the mixture");
+
+    prm.declare_entry("mixing time scale",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.mixing_time_scale),
+                      Patterns::Double(0.),
+                      "Mixing time scale between aqueous and organic phases");
+
+    prm.declare_entry("initial concentration organic",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.initial_concentration_organic),
+                      Patterns::Double(0.),
+                      "Initial lipid concentration in organic phase");
+
+    prm.declare_entry("ion concentration mixture",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.ion_concentration_mixture),
+                      Patterns::Double(0.),
+                      "Ion concentration in mixture");
+
+    prm.declare_entry("boltzmann constant",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.boltzmann_constant),
+                      Patterns::Double(0.),
+                      "Boltzmann's constant");
+
+    prm.declare_entry("avogadro number",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.avogadro_number),
+                      Patterns::Double(0.),
+                      "Avogadro's number");
+
+    prm.declare_entry("elementary charge",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.elementary_charge),
+                      Patterns::Double(0.),
+                      "Elementary charge");
+
+    prm.declare_entry("permittivity vacuum",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.permittivity_vacuum),
+                      Patterns::Double(0.),
+                      "Permittivity in a vacuum");
+
+    prm.declare_entry("shape factor",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.shape_factor),
+                      Patterns::Double(0.),
+                      "Volume shape factor");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOM::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("QMOM");
+  {
+    phase_evolution.parse_parameters(prm);
+
+    number_of_nodes  = prm.get_integer("number of nodes");
+    splitting_scheme = string_to_enum<Parameters::QMOMSplittingScheme>(
+      prm.get("splitting scheme"));
+
+    enable_nucleation  = prm.get_bool("enable nucleation");
+    enable_coalescence = prm.get_bool("enable coalescence");
+    enable_growth      = prm.get_bool("enable growth");
+
+    // Operational conditions
+    operating_temperature = prm.get_double("operating temperature");
+    flow_rate_ratio       = prm.get_double("flow rate ratio");
+    total_flow_rate       = prm.get_double("total flow rate");
+    mixing_time_scale     = prm.get_double("mixing time scale");
+    initial_concentration_organic =
+      prm.get_double("initial concentration organic");
+    ion_concentration_mixture = prm.get_double("ion concentration mixture");
+
+    // Universal constants
+    boltzmann_constant  = prm.get_double("boltzmann constant");
+    avogadro_number     = prm.get_double("avogadro number");
+    elementary_charge   = prm.get_double("elementary charge");
+    permittivity_vacuum = prm.get_double("permittivity vacuum");
+    shape_factor        = prm.get_double("shape factor");
   }
   prm.leave_subsection();
 }
