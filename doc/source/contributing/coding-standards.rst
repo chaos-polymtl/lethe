@@ -40,7 +40,7 @@ Class and Type Names
 Defensive Programming
 ---------------------
 
-Lethe is used by many people who did not write the code they run, and simulations often run for hours or days on clusters. A simulation that stops immediately with a clear error message costs its user a few minutes. A simulation that silently runs with a wrong value can produce results that look plausible but are wrong, which costs much more. Lethe must therefore be written defensively: every assumption made by a piece of code is either enforced by the compiler or checked explicitly, and errors are reported as early as possible, with a message that explains how to fix them.
+Lethe is used by many people who did not write the code they run, and simulations often run for hours or days on clusters. A simulation that stops immediately with a clear error message costs its user a few minutes. A simulation that silently runs with a wrong value can produce no results at all or results that look plausible but are wrong, which costs much more. Lethe must therefore be written defensively: every assumption made by a piece of code is either enforced by the compiler or checked explicitly, and errors are reported as early as possible, with a message that explains how to fix them.
 
 In practice:
 
