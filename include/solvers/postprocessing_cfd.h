@@ -199,13 +199,13 @@ calculate_apparent_viscosity(
  */
 template <int dim, typename VectorType>
 std::vector<std::map<types::boundary_id, Tensor<1, dim>>>
-calculate_forces(
-  const DoFHandler<dim>                               &dof_handler,
-  const VectorType                                    &evaluation_point,
-  const PhysicalPropertiesManager                     &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const Quadrature<dim - 1>                           &face_quadrature_formula,
-  const Mapping<dim>                                  &mapping);
+calculate_forces(const DoFHandler<dim>           &dof_handler,
+                 const VectorType                &evaluation_point,
+                 const PhysicalPropertiesManager &properties_manager,
+                 const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+                                           &boundary_conditions,
+                 const Quadrature<dim - 1> &face_quadrature_formula,
+                 const Mapping<dim>        &mapping);
 
 
 /**
@@ -230,13 +230,13 @@ calculate_forces(
  */
 template <int dim, typename VectorType>
 std::map<types::boundary_id, Tensor<1, 3>>
-calculate_torques(
-  const DoFHandler<dim>                               &dof_handler,
-  const VectorType                                    &evaluation_point,
-  const PhysicalPropertiesManager                     &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const Quadrature<dim - 1>                           &face_quadrature_formula,
-  const Mapping<dim>                                  &mapping);
+calculate_torques(const DoFHandler<dim>           &dof_handler,
+                  const VectorType                &evaluation_point,
+                  const PhysicalPropertiesManager &properties_manager,
+                  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+                                            &boundary_conditions,
+                  const Quadrature<dim - 1> &face_quadrature_formula,
+                  const Mapping<dim>        &mapping);
 
 
 /**

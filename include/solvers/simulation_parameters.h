@@ -40,18 +40,19 @@ public:
   Parameters::MeshAdaptation mesh_adaptation;
   Parameters::Mesh<dim>      mesh;
   Parameters::Dimensionality dimensionality;
-  std::shared_ptr<Parameters::MeshBoxRefinement<dim>> mesh_box_refinement;
-  std::shared_ptr<Parameters::Nitsche<dim>>           nitsche;
-  Parameters::SimulationControl                       simulation_control;
-  Parameters::Timer                                   timer;
-  Parameters::FEM                                     fem_parameters;
-  Parameters::Forces                                  forces_parameters;
-  std::shared_ptr<Parameters::Laser<dim>>             laser_parameters;
-  Parameters::PostProcessing<dim>                     post_processing;
-  Parameters::Restart                                 restart_parameters;
-  Parameters::Manifolds                               manifolds_parameters;
-  BoundaryConditions::NSBoundaryConditions<dim>       boundary_conditions;
-  BoundaryConditions::HTBoundaryConditions<dim>       boundary_conditions_ht;
+  std::shared_ptr<Parameters::MeshBoxRefinement<dim>>     mesh_box_refinement;
+  std::shared_ptr<Parameters::Nitsche<dim>>               nitsche;
+  Parameters::SimulationControl                           simulation_control;
+  Parameters::Timer                                       timer;
+  Parameters::FEM                                         fem_parameters;
+  Parameters::Forces                                      forces_parameters;
+  std::shared_ptr<Parameters::Laser<dim>>                 laser_parameters;
+  Parameters::PostProcessing<dim>                         post_processing;
+  Parameters::Restart                                     restart_parameters;
+  Parameters::Manifolds                                   manifolds_parameters;
+  BoundaryConditions::NavierStokesBoundaryConditions<dim> boundary_conditions;
+  BoundaryConditions::HeatTransferBoundaryConditions<dim>
+                                                    boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::CLSBoundaryConditions<dim>    boundary_conditions_cls;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
@@ -145,7 +146,7 @@ public:
       }
 
     post_processing.declare_parameters(prm);
-    Parameters::DynamicFlowControl ::declare_parameters(prm);
+    Parameters::DynamicFlowControl::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);
