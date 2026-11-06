@@ -84,10 +84,9 @@ LinearTemperature<dim>::value(const Point<dim> &p,
 }
 
 /**
- * @brief Interpolate a function into a ghosted vector, the same way the
- * ParticleProjector fills the copy of the particle temperature provided to
- * the interface: interpolate into a locally owned vector, then assign it to
- * the ghosted vector, which imports the ghost values.
+ * @brief Interpolate a function into a ghosted vector. A ghosted vector cannot
+ * be written to, so the function is interpolated into a locally owned vector,
+ * which is then assigned to the ghosted vector to import the ghost values.
  *
  * @param[in] mapping Mapping used for the interpolation.
  * @param[in] dof_handler DoFHandler of the field.
