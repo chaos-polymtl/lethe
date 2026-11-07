@@ -5,7 +5,12 @@
 #define lethe_simulation_parameters_h
 
 #include <core/ale.h>
-#include <core/boundary_conditions.h>
+#include <core/boundary_conditions_cahn_hilliard.h>
+#include <core/boundary_conditions_cls.h>
+#include <core/boundary_conditions_heat_transfer.h>
+#include <core/boundary_conditions_navier_stokes.h>
+#include <core/boundary_conditions_time_harmonic_maxwell.h>
+#include <core/boundary_conditions_tracer.h>
 #include <core/dimensionality.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
@@ -35,18 +40,19 @@ public:
   Parameters::MeshAdaptation mesh_adaptation;
   Parameters::Mesh<dim>      mesh;
   Parameters::Dimensionality dimensionality;
-  std::shared_ptr<Parameters::MeshBoxRefinement<dim>> mesh_box_refinement;
-  std::shared_ptr<Parameters::Nitsche<dim>>           nitsche;
-  Parameters::SimulationControl                       simulation_control;
-  Parameters::Timer                                   timer;
-  Parameters::FEM                                     fem_parameters;
-  Parameters::Forces                                  forces_parameters;
-  std::shared_ptr<Parameters::Laser<dim>>             laser_parameters;
-  Parameters::PostProcessing<dim>                     post_processing;
-  Parameters::Restart                                 restart_parameters;
-  Parameters::Manifolds                               manifolds_parameters;
-  BoundaryConditions::NSBoundaryConditions<dim>       boundary_conditions;
-  BoundaryConditions::HTBoundaryConditions<dim>       boundary_conditions_ht;
+  std::shared_ptr<Parameters::MeshBoxRefinement<dim>>     mesh_box_refinement;
+  std::shared_ptr<Parameters::Nitsche<dim>>               nitsche;
+  Parameters::SimulationControl                           simulation_control;
+  Parameters::Timer                                       timer;
+  Parameters::FEM                                         fem_parameters;
+  Parameters::Forces                                      forces_parameters;
+  std::shared_ptr<Parameters::Laser<dim>>                 laser_parameters;
+  Parameters::PostProcessing<dim>                         post_processing;
+  Parameters::Restart                                     restart_parameters;
+  Parameters::Manifolds                                   manifolds_parameters;
+  BoundaryConditions::NavierStokesBoundaryConditions<dim> boundary_conditions;
+  BoundaryConditions::HeatTransferBoundaryConditions<dim>
+                                                    boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::CLSBoundaryConditions<dim>    boundary_conditions_cls;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
@@ -140,7 +146,7 @@ public:
       }
 
     post_processing.declare_parameters(prm);
-    Parameters::DynamicFlowControl ::declare_parameters(prm);
+    Parameters::DynamicFlowControl::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);

@@ -4,6 +4,7 @@
 #ifndef lethe_heat_transfer_assemblers_h
 #define lethe_heat_transfer_assemblers_h
 
+#include <core/boundary_conditions_heat_transfer.h>
 #include <core/evaporation_model.h>
 #include <core/simulation_control.h>
 
@@ -128,7 +129,7 @@ public:
  *
  * @param simulation_control Shared pointer of the SimulationControl object
  * controlling the current simulation
- * @param p_boundary_conditions_ht HTBoundaryConditions object that hold
+ * @param p_boundary_conditions_ht HeatTransferBoundaryConditions object that hold
  * boundary condition information for the Heat-Transfer solver
  *
  * @ingroup assemblers
@@ -139,7 +140,7 @@ class HeatTransferAssemblerRobinBC : public HeatTransferAssemblerBase<dim>
 public:
   HeatTransferAssemblerRobinBC(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::HTBoundaryConditions<dim>
+    const BoundaryConditions::HeatTransferBoundaryConditions<dim>
       &p_boundary_conditions_ht)
     : simulation_control(simulation_control)
     , boundary_conditions_ht(p_boundary_conditions_ht)
@@ -164,8 +165,9 @@ public:
   assemble_rhs(const HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData          &copy_data) override;
 
-  const std::shared_ptr<SimulationControl>             simulation_control;
-  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const BoundaryConditions::HeatTransferBoundaryConditions<dim>
+    &boundary_conditions_ht;
 };
 
 

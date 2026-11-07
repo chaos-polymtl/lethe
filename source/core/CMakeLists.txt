@@ -55,6 +55,12 @@ add_library(lethe-core
   ../../include/core/auxiliary_math_functions.h
   ../../include/core/bdf.h
   ../../include/core/boundary_conditions.h
+  ../../include/core/boundary_conditions_cahn_hilliard.h
+  ../../include/core/boundary_conditions_cls.h
+  ../../include/core/boundary_conditions_heat_transfer.h
+  ../../include/core/boundary_conditions_navier_stokes.h
+  ../../include/core/boundary_conditions_time_harmonic_maxwell.h
+  ../../include/core/boundary_conditions_tracer.h
   ../../include/core/checkpoint_control.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
