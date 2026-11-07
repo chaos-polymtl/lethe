@@ -524,12 +524,11 @@ SimulationControlTransient::is_output_iteration()
                                    previous_time + margin;
       const double upper_bound = next_time + margin;
 
-      return std::any_of(output_times_vector.begin(),
-                         output_times_vector.end(),
-                         [&](const double output_time) {
-                           return output_time > lower_bound &&
-                                  output_time <= upper_bound;
-                         });
+      return std::ranges::any_of(output_times_vector,
+                                 [&](const double output_time) {
+                                   return output_time > lower_bound &&
+                                          output_time <= upper_bound;
+                                 });
     }
 
   // Case 3. Only a specific time interval is specified
