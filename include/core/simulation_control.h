@@ -974,17 +974,6 @@ protected:
    */
   std::vector<double> output_times_vector;
 
-  /// Counter to move between output times given in output_times_vector
-  unsigned int output_times_counter;
-
-  /**
-   * @brief Flag indicating whether there are more output times to check
-   *
-   * Set to true when all specific output times in output_times_vector have been
-   * reached.
-   */
-  bool no_more_output_times;
-
   /**
    * @brief Flag to override the time step with the set value upon restart
    */
@@ -1080,9 +1069,20 @@ public:
    * iteration is an output iteration if the time step that leads to it reaches
    * or crosses one of these output times. The initial iteration and the last
    * iteration are also output iterations. In all cases, the current time must
-   * lie within the output time interval. This criterion only depends on the
-   * current and previous times, so calling this function several times within
-   * the same iteration always returns the same result.
+   * lie within the output time interval.
+   *
+   * When specific output times are used, they may be given in any order. An
+   * iteration is an output iteration if the time step that leads to it, or
+   * the next time step, reaches or crosses one of these output times. Since
+   * the output times do not necessarily correspond to the time of an
+   * iteration, the iterations before and after each output time are thus
+   * written. At the initial iteration, only the output times equal to the
+   * current time are considered. Several output times may lie within the same
+   * time step.
+   *
+   * These criteria only depend on the current, previous and next times, so
+   * calling this function several times within the same iteration always
+   * returns the same result.
    *
    * @return true if output should be written at this iteration, false otherwise
    */
@@ -1090,23 +1090,11 @@ public:
   is_output_iteration() override;
 
   /**
-   * @brief Save the simulation control information to a checkpoint file
-   *
-   * Saves the time step vector, the CFL value, the time, the iteration number
-   * and the index of the output times vector if time control is used.
-   *
-   * @param[in] prefix The prefix of the checkpoint file for the simulation
-   */
-  void
-  save(const std::string &prefix) override;
-
-  /**
    * @brief Read the simulation control information from a checkpoint file
    *
-   * Reads and updates the time step vector, the CFL value, the time, the
-   * iteration number and the index of the output times vector if time control
-   * is used. Allows changing the time step if adaptive time stepping is
-   * disabled.
+   * Reads and updates the time step vector, the CFL value, the time and the
+   * iteration number. Allows changing the time step if adaptive time stepping
+   * is disabled.
    *
    * @param[in] prefix The prefix of the checkpoint file for the simulation
    */

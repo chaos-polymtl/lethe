@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test checks whether the is_output_iteration behaves correctly for iteration output control and time output control (in the case of constant time step and adaptive time step). The output is also checked at the initial iteration. For the output time frequency, the test also checks that the initial and last iterations are written, that the output times do not drift when the output time frequency is not a multiple of the time step, that the output time interval is respected, and that repeated calls within the same iteration return the same result.
+ * @brief This test checks whether the is_output_iteration behaves correctly for iteration output control and time output control (in the case of constant time step and adaptive time step). The output is also checked at the initial iteration. For the output time frequency, the test also checks that the initial and last iterations are written, that the output times do not drift when the output time frequency is not a multiple of the time step, that the output time interval is respected, and that repeated calls within the same iteration return the same result. For specific output times, the test also checks that unsorted output times, an output time at the initial time, and several output times within the same time step are handled, and that repeated calls within the same iteration return the same result.
  */
 
 // Lethe
@@ -105,7 +105,7 @@ test()
             << "    Time : " << simulation_control.get_current_time()
             << std::endl;
 
-    if (simulation_control.is_output_iteration())
+    if (is_output_iteration_queried_twice(simulation_control))
       deallog << "This is an output iteration" << std::endl;
 
     while (simulation_control.integrate())
@@ -117,7 +117,7 @@ test()
         if (simulation_control.is_at_start())
           deallog << "This is the first time step" << std::endl;
 
-        if (simulation_control.is_output_iteration())
+        if (is_output_iteration_queried_twice(simulation_control))
           deallog << "This is an output iteration" << std::endl;
       }
   }
@@ -265,7 +265,7 @@ test()
             << "    Time step : " << simulation_control.get_time_step()
             << std::endl;
 
-    if (simulation_control.is_output_iteration())
+    if (is_output_iteration_queried_twice(simulation_control))
       deallog << "This is an output iteration" << std::endl;
 
     while (simulation_control.integrate())
@@ -278,7 +278,7 @@ test()
         if (simulation_control.is_at_start())
           deallog << "This is the first time step" << std::endl;
 
-        if (simulation_control.is_output_iteration())
+        if (is_output_iteration_queried_twice(simulation_control))
           deallog << "This is an output iteration" << std::endl;
 
         simulation_control.set_CFL(simulation_control.get_time_step());
@@ -445,6 +445,50 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Constant time stepping - output time frequency within interval"
             << std::endl;
+    deallog << "*************************************************" << std::endl;
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
+            << "    Time : " << simulation_control.get_current_time()
+            << std::endl;
+
+    if (is_output_iteration_queried_twice(simulation_control))
+      deallog << "This is an output iteration" << std::endl;
+
+    while (simulation_control.integrate())
+      {
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
+                << "    Time : " << simulation_control.get_current_time()
+                << std::endl;
+
+        if (simulation_control.is_at_start())
+          deallog << "This is the first time step" << std::endl;
+
+        if (is_output_iteration_queried_twice(simulation_control))
+          deallog << "This is an output iteration" << std::endl;
+      }
+  }
+
+  {
+    simulation_control_parameters.time_step_adaptation_required     = false;
+    simulation_control_parameters.adapt_with_cfl                    = false;
+    simulation_control_parameters.time_step_independent_of_end_time = false;
+    simulation_control_parameters.time_end                          = 1.0;
+    simulation_control_parameters.dt                                = 0.1;
+    simulation_control_parameters.output_control =
+      Parameters::SimulationControl::OutputControl::time;
+    simulation_control_parameters.output_times_vector   = {0.75, 0, 0.32, 0.31};
+    simulation_control_parameters.output_time_frequency = -1;
+    simulation_control_parameters.output_time_interval  = {0,
+                                                           1.7976931348623157e3};
+
+    SimulationControlTransient simulation_control(
+      simulation_control_parameters);
+
+    // Constant time-stepping - specific output times that are not sorted,
+    // include the initial time, and of which two (0.31 and 0.32) lie within the
+    // same time step. The initial iteration must be written, as well as the
+    // iterations before and after each other output time.
+    deallog << "*************************************************" << std::endl;
+    deallog << "Constant time stepping - specific output times" << std::endl;
     deallog << "*************************************************" << std::endl;
     deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
