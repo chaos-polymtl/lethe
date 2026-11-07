@@ -88,7 +88,7 @@ var searchData=
   ['initialize_5fshape_5ffrom_5fvector_85',['initialize_shape_from_vector',['../namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca',1,'ShapeGenerator']]],
   ['initialize_5fsubequations_86',['initialize_subequations',['../classCLSSubequationsInterface.html#accbaaaa85af3e88ef9c6e8463777c9ba',1,'CLSSubequationsInterface']]],
   ['initialize_5ftime_5fstepping_5fdata_87',['initialize_time_stepping_data',['../classNavierStokesOperatorBase.html#a8d55fd4d0df8b72260f0d06947267eef',1,'NavierStokesOperatorBase']]],
-  ['initialize_5fvectors_88',['initialize_vectors',['../classAverageScalar.html#aae4d0f6711714d977190ebe8133304b5',1,'AverageScalar::initialize_vectors()'],['../classAverageVelocities.html#a915abd4f4b0a5206367825a4c3d0a9b8',1,'AverageVelocities::initialize_vectors()']]],
+  ['initialize_5fvectors_88',['initialize_vectors',['../classAverageScalar.html#aae4d0f6711714d977190ebe8133304b5',1,'AverageScalar::initialize_vectors()'],['../classAverageVelocities.html#a447748c00fb0461f56a2167d275b108e',1,'AverageVelocities::initialize_vectors()']]],
   ['initialize_5fvoid_5ffraction_89',['initialize_void_fraction',['../classParticleProjector.html#a8afada8a39064eba4075ec323f7c679c',1,'ParticleProjector']]],
   ['inlet_5fboundary_5fid_90',['inlet_boundary_id',['../classParameters_1_1PostProcessing.html#a059fa348f8316c7684898c051625267c',1,'Parameters::PostProcessing']]],
   ['inlet_5foffset_91',['inlet_offset',['../classGridBirminghamFluidizedBed.html#a5660d8ecaad063c7ce430d698e862688',1,'GridBirminghamFluidizedBed']]],

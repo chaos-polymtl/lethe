@@ -11,10 +11,10 @@
 <!-- Node0 -->
 <g id="Node000000" class="node">
 <title>Node0</title>
-<g id="a_Node000000"><a xlink:href="classGridUniformChannelWithMeshedSquarePrism.html" target="_top" xlink:title="Generates a rectangular channel mesh with a meshed square obstacle in 2D (extruded to a square prism ...">
+<g id="a_Node000000"><a xlink:href="classGridUniformChannelWithMeshedCylinder.html" target="_top" xlink:title="Generates a rectangular channel mesh with a meshed cylinder obstacle. By default, this geometry defin...">
 <polygon fill="white" stroke="#666666" points="177,-30 0,-30 0,0 177,0 177,-30"/>
 <text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">GridUniformChannelWithMeshed</text>
-<text text-anchor="middle" x="88.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SquarePrism&lt; dim, spacedim &gt;</text>
+<text text-anchor="middle" x="88.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">Cylinder&lt; dim, spacedim &gt;</text>
 </a>
 </g>
 </g>

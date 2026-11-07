@@ -33,9 +33,10 @@ var searchData=
   ['statistics_30',['statistics',['../classstatistics.html',1,'']]],
   ['subsimulationcontroldem_31',['SubSimulationControlDEM',['../classSubSimulationControlDEM.html',1,'']]],
   ['superquadric_32',['Superquadric',['../classSuperquadric.html',1,'']]],
-  ['surfacetensionconstant_33',['SurfaceTensionConstant',['../classSurfaceTensionConstant.html',1,'']]],
-  ['surfacetensionlinear_34',['SurfaceTensionLinear',['../classSurfaceTensionLinear.html',1,'']]],
-  ['surfacetensionmodel_35',['SurfaceTensionModel',['../classSurfaceTensionModel.html',1,'']]],
-  ['surfacetensionparameters_36',['SurfaceTensionParameters',['../structParameters_1_1SurfaceTensionParameters.html',1,'Parameters']]],
-  ['surfacetensionphasechange_37',['SurfaceTensionPhaseChange',['../classSurfaceTensionPhaseChange.html',1,'']]]
+  ['supportpointdofs_33',['SupportPointDoFs',['../structAverageVelocities_1_1SupportPointDoFs.html',1,'AverageVelocities']]],
+  ['surfacetensionconstant_34',['SurfaceTensionConstant',['../classSurfaceTensionConstant.html',1,'']]],
+  ['surfacetensionlinear_35',['SurfaceTensionLinear',['../classSurfaceTensionLinear.html',1,'']]],
+  ['surfacetensionmodel_36',['SurfaceTensionModel',['../classSurfaceTensionModel.html',1,'']]],
+  ['surfacetensionparameters_37',['SurfaceTensionParameters',['../structParameters_1_1SurfaceTensionParameters.html',1,'Parameters']]],
+  ['surfacetensionphasechange_38',['SurfaceTensionPhaseChange',['../classSurfaceTensionPhaseChange.html',1,'']]]
 ];

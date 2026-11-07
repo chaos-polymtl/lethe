@@ -772,41 +772,22 @@
 </a>
 </g>
 </g>
-<!-- Node152 -->
-<g id="Node000152" class="node">
-<title>Node152</title>
-<g id="a_Node000152"><a xlink:title=" ">
+<!-- Node153 -->
+<g id="Node000153" class="node">
+<title>Node153</title>
+<g id="a_Node000153"><a xlink:title=" ">
 <polygon fill="#e0e0e0" stroke="#999999" points="1744.5,-426 1645.5,-426 1645.5,-396 1744.5,-396 1744.5,-426"/>
 <text text-anchor="start" x="1653.5" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/lac/sparse</text>
 <text text-anchor="middle" x="1695" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">_matrix.h</text>
 </a>
 </g>
 </g>
-<!-- Node62&#45;&gt;Node152 -->
-<g id="edge94_Node000062_Node000152" class="edge">
-<title>Node62&#45;&gt;Node152</title>
-<g id="a_edge94_Node000062_Node000152"><a xlink:title=" ">
+<!-- Node62&#45;&gt;Node153 -->
+<g id="edge94_Node000062_Node000153" class="edge">
+<title>Node62&#45;&gt;Node153</title>
+<g id="a_edge94_Node000062_Node000153"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M1740.91,-461.8C1733.27,-453.51 1723.48,-442.89 1714.9,-433.59"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="1717.41,-431.14 1708.06,-426.16 1712.26,-435.89 1717.41,-431.14"/>
-</a>
-</g>
-</g>
-<!-- Node153 -->
-<g id="Node000153" class="node">
-<title>Node153</title>
-<g id="a_Node000153"><a xlink:title=" ">
-<polygon fill="#e0e0e0" stroke="#999999" points="1863.5,-426 1762.5,-426 1762.5,-396 1863.5,-396 1863.5,-426"/>
-<text text-anchor="start" x="1770.5" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/lac/trilinos</text>
-<text text-anchor="middle" x="1813" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">_precondition.h</text>
-</a>
-</g>
-</g>
-<!-- Node62&#45;&gt;Node153 -->
-<g id="edge95_Node000062_Node000153" class="edge">
-<title>Node62&#45;&gt;Node153</title>
-<g id="a_edge95_Node000062_Node000153"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1767.09,-461.8C1774.73,-453.51 1784.52,-442.89 1793.1,-433.59"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="1795.74,-435.89 1799.94,-426.16 1790.59,-431.14 1795.74,-435.89"/>
 </a>
 </g>
 </g>
@@ -814,18 +795,18 @@
 <g id="Node000154" class="node">
 <title>Node154</title>
 <g id="a_Node000154"><a xlink:title=" ">
-<polygon fill="#e0e0e0" stroke="#999999" points="1982.5,-426 1881.5,-426 1881.5,-396 1982.5,-396 1982.5,-426"/>
-<text text-anchor="start" x="1889.5" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/lac/trilinos</text>
-<text text-anchor="middle" x="1932" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">_solver.h</text>
+<polygon fill="#e0e0e0" stroke="#999999" points="1863.5,-426 1762.5,-426 1762.5,-396 1863.5,-396 1863.5,-426"/>
+<text text-anchor="start" x="1770.5" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/lac/trilinos</text>
+<text text-anchor="middle" x="1813" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">_precondition.h</text>
 </a>
 </g>
 </g>
 <!-- Node62&#45;&gt;Node154 -->
-<g id="edge96_Node000062_Node000154" class="edge">
+<g id="edge95_Node000062_Node000154" class="edge">
 <title>Node62&#45;&gt;Node154</title>
-<g id="a_edge96_Node000062_Node000154"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1793.06,-461.95C1819.61,-452.41 1854.92,-439.71 1883.3,-429.51"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="1884.8,-432.69 1893.03,-426.01 1882.43,-426.1 1884.8,-432.69"/>
+<g id="a_edge95_Node000062_Node000154"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M1767.09,-461.8C1774.73,-453.51 1784.52,-442.89 1793.1,-433.59"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1795.74,-435.89 1799.94,-426.16 1790.59,-431.14 1795.74,-435.89"/>
 </a>
 </g>
 </g>
@@ -833,16 +814,35 @@
 <g id="Node000155" class="node">
 <title>Node155</title>
 <g id="a_Node000155"><a xlink:title=" ">
+<polygon fill="#e0e0e0" stroke="#999999" points="1982.5,-426 1881.5,-426 1881.5,-396 1982.5,-396 1982.5,-426"/>
+<text text-anchor="start" x="1889.5" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/lac/trilinos</text>
+<text text-anchor="middle" x="1932" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">_solver.h</text>
+</a>
+</g>
+</g>
+<!-- Node62&#45;&gt;Node155 -->
+<g id="edge96_Node000062_Node000155" class="edge">
+<title>Node62&#45;&gt;Node155</title>
+<g id="a_edge96_Node000062_Node000155"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M1793.06,-461.95C1819.61,-452.41 1854.92,-439.71 1883.3,-429.51"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1884.8,-432.69 1893.03,-426.01 1882.43,-426.1 1884.8,-432.69"/>
+</a>
+</g>
+</g>
+<!-- Node156 -->
+<g id="Node000156" class="node">
+<title>Node156</title>
+<g id="a_Node000156"><a xlink:title=" ">
 <polygon fill="#e0e0e0" stroke="#999999" points="2101.5,-426 2000.5,-426 2000.5,-396 2101.5,-396 2101.5,-426"/>
 <text text-anchor="start" x="2008.5" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/lac/trilinos</text>
 <text text-anchor="middle" x="2051" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">_sparse_matrix.h</text>
 </a>
 </g>
 </g>
-<!-- Node62&#45;&gt;Node155 -->
-<g id="edge97_Node000062_Node000155" class="edge">
-<title>Node62&#45;&gt;Node155</title>
-<g id="a_edge97_Node000062_Node000155"><a xlink:title=" ">
+<!-- Node62&#45;&gt;Node156 -->
+<g id="edge97_Node000062_Node000156" class="edge">
+<title>Node62&#45;&gt;Node156</title>
+<g id="a_edge97_Node000062_Node000156"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M1818.24,-462.97C1863.85,-453.62 1926.78,-440.49 1990.65,-426.27"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="1991.49,-429.67 2000.49,-424.08 1989.97,-422.84 1991.49,-429.67"/>
 </a>
