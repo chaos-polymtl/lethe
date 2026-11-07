@@ -1,0 +1,701 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Documentation" href="documentation.html" /><link rel="prev" title="Pull Requests" href="pull-requests.html" />
+
+    <link rel="shortcut icon" href="../_static/lethe_favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>Coding Standards - Lethe documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=dba6e9e0" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Lethe  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">Lethe  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../installation/installation.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation/regular_installation.html">Regular Installation on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/windows_wsl.html">Windows with WSL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/apple_arm.html">Installation on Apple ARM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/docker.html">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/digital_alliance.html">Running Lethe on Digital Research Alliance of Canada Clusters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../applications.html">Applications Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../structure.html">Folder Structure of Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../first_simulation.html">Launching Your First Simulation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../parameters/parameters.html">Parameters Guide</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Parameters Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../parameters/cfd/cfd.html">General, CFD and Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of General, CFD and Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/ale.html">Arbitrary Lagrangian-Eulerian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/analytical_solution.html">Analytical Solution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/boundary_conditions_cfd.html">Boundary Conditions - CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/box_refinement.html">Box Refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/conservative_level_set.html">Conservative Level-Set (Multiphase Flow)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/constrain_stasis.html">Constrain Stasis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/dimensionality.html">Dimensionality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/dynamic_flow_control.html">Dynamic Flow Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/fem.html">Finite Element Interpolation (FEM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/force_and_torque.html">Force and Torque Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/initial_conditions.html">Initial Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/laser_heat_source.html">Laser Heat Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/linear_solver_control.html">Linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/manifolds.html">Manifolds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/mesh_adaptation_control.html">Mesh Adaptation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/mortar.html">Mortar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/multiphysics.html">Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/nitsche.html">Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/non-linear_solver_control.html">Non-linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/physical_properties.html">Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/restart.html">Restart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/source_term.html">Source Term</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/stabilization.html">Stabilization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/time_harmonic_maxwell.html">Time-Harmonic Maxwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/cfd/velocity_source.html">Velocity Source</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../parameters/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/test.html">Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/model_parameters.html">Model Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/lagrangian_physical_properties.html">Lagrangian Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/insertion_info.html">Insertion Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/floating_wall.html">Floating Wall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/solid_objects.html">Solid Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/boundary_conditions.html">Boundary Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/post-processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/dem/particle_ray_tracing.html">Particle Ray Tracing</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/unresolved-cfd-dem/cfd-dem.html">CFD-DEM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../parameters/unresolved-cfd-dem/void-fraction.html">Void Fraction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../parameters/sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp-Immersed-Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples/incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-mms/2d-mms.html">Method of Manufactured Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html">Transient Flow around an Ahmed Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html">Transient Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html">Flow around NACA0012 at Low Reynolds Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html">Taylor-Couette Flow Using Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html">Sudden-Expansion Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/2d-paddle-mixer-mortar/2d-paddle-mixer-mortar.html">Paddle Mixer Using the Mortar Method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html">Flow around a Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html">Flow over Periodic Hills</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/3d-turbulent-flow-around-cylinder/3d-turbulent-flow-around-cylinder.html">Turbulent Flow Around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html">Ribbon Mixer Using a Single Rotating Reference Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html">Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../examples/multiphysics/cls.html">CLS</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of CLS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/rising-bubble/rising-bubble.html">Rising Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html">Sloshing in a Rectangular Tank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/capillary-wave/capillary-wave.html">Capillary Wave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/rayleigh-plateau-instability/rayleigh-plateau-instability.html">Rayleigh-Plateau Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/3d-dam-break/3d-dam-break.html">3D Dam-Break with an Obstacle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html">Water Injection in a Closed Cell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/air-bubble-compression/air-bubble-compression.html">Air Bubble Compression</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../examples/multiphysics/heat-transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/cooling-fin/cooling-fin.html">Cooling Fin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html">Rayleigh-Bénard Convection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/stefan-problem/stefan-problem.html">Stefan Problem: Melting of a Solid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html">Warming up a Viscous Fluid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/melting-cavity/melting-cavity.html">Melting Cavity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/static-irradiation/static-irradiation.html">Static Irradiation of a Bare Plate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html">Concentric Heat Exchanger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/cylinder-cooling/cylinder-cooling.html">Cooling of a Cylinder</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../examples/multiphysics/tracer.html">Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/tracer-in-static-mixer/tracer-in-static-mixer.html">Tracer in Static Mixer</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../examples/multiphysics/chns.html">CHNS</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of CHNS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/jurins-law/jurins-law.html">Jurin’s Law</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/bubble-detachment-shear-flow/bubble-detachment-shear-flow.html">Bubble detachment in shear flow</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../examples/multiphysics/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/waveguide/waveguide.html">Waveguide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/fichera-oven/fichera-oven.html">Fichera Oven</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/multiphysics/microwave-heating/microwave-heating.html">Microwave Heating</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/bouncing-particle/bouncing-particle.html">Bouncing Particle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/oblique-wall-impact/oblique-wall-impact.html">Oblique Wall Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/packing-in-circle/packing-in-circle.html">Packing in Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/packing-in-ball/packing-in-ball.html">Packing in Ball</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.html">Small Scale Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing.html">Small Scale Rotating Drum Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/rotating-drum/rotating-drum.html">Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/rotation-of-box/rotation-of-box.html">Rotation of Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/sandpile-formation/sandpile-formation.html">Sandpile Formation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/silo/silo.html">Silo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/rectangular-hopper/rectangular-hopper.html">Rectangular Hopper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/granular-dam-break/granular-dam-break.html">Granular Dam-Break</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/plate-discharge/plate-discharge.html">Plate Discharge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/bunny-drill/bunny-drill.html">Bunny Drill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/granular-mixer/granular-mixer.html">Granular Mixer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem/granuheap/granuheap.html">Granuheap</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples/dem-mp/dem-mp.html">DEM-Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of DEM-Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem-mp/heat-transfer-in-aligned-particles/heat-transfer-in-aligned-particles.html">Heat Transfer in Aligned Particles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/dem-mp/heated-packed-bed/heated-packed-bed.html">Heated Packed Bed</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/single-particle-sedimentation/single-particle-sedimentation.html">Single Particle Sedimentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html">Cylindrical Packed Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed/gas-solid-fluidized-cylinder-bed.html">Gas-Solid Fluidized Cylinder Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed/pseudo-2d-gas-solid-fluidized-bed.html">Pseudo-2D Gas-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/gas-solid-spouted-rectangular-bed/gas-solid-spouted-rectangular-bed.html">Gas-Solid Spouted Rectangular Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html">Liquid-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html">Boycott Effect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html">Gas-Solid Spouted Cylinder Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html">Dense Pneumatic Conveying</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples/sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp Immersed Boundary Solver</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of Sharp Immersed Boundary Solver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../examples/sharp-immersed-boundary/resolved-cfd-dem.html">Resolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of Resolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/sedimentation-1-particle/sedimentation-1-particle.html">Sedimentation of One Particle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/sedimentation-64-particles/sedimentation-64-particles.html">Sedimentation of 64 Particles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/sedimentation-1-cuboid/sedimentation-1-cuboid.html">Sedimentation of One Cuboid Particle</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../examples/sharp-immersed-boundary/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.html">Flow around a Cylinder Using the Sharp Interface Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.html">Non-Newtonian Flow past a Sphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller.html">Inclined 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html">3D Static Mixer Using RBF Sharp Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/cylindrical-particle-drag-evaluation-with-sharp-interface/cylindrical-particle-drag-evaluation-with-sharp-interface.html">Flow around a Finite Cylindrical Particle Using the Sharp Interface Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/couette-2d-3d/couette-2d-3d.html">Couette Flow with Immersed Particles</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../examples/sharp-immersed-boundary/geometry-definition.html">Geometry Definition</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of Geometry Definition</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../examples/sharp-immersed-boundary/simple-plane-model-from-composite/simple-plane-model-from-composite.html">Simple Plane Model From Composite</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory/theory.html">Theory</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of Theory</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/notation.html">Notation</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../theory/multiphysics/fluid_dynamics/fluid_dynamics.html">Fluid Dynamics</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Fluid Dynamics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/fluid_dynamics/navier-stokes.html">The Incompressible Navier-Stokes Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/fluid_dynamics/fem_formulation.html">Origin of the Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/fluid_dynamics/stabilization.html">On the Need for Stabilization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/fluid_dynamics/linear_solvers.html">Linear Solvers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/fluid_dynamics/rheology.html">Rheology and Non-Newtonian Fluids</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../theory/multiphysics/heat_transfer/heat_transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/heat_transfer/heat_equation.html">Heat Transfer Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/heat_transfer/heat_equation.html#finite-element-formulation">Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/heat_transfer/heat_equation.html#stabilization-techniques">Stabilization Techniques</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../theory/multiphysics/passive_tracer/passive_tracer.html">Passive Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Passive Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/passive_tracer/passive_tracer_equations.html">Passive Tracer Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/passive_tracer/passive_tracer_equations.html#stabilization-techniques">Stabilization Techniques</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphysics/electromagnetism/dpg_time_harmonic_maxwell.html">DPG formulation for time-harmonic Maxwell problems</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../theory/multiphase/cfd/cfd.html">Fluid-Fluid Flows - Interface Capturing Models</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of Fluid-Fluid Flows - Interface Capturing Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphase/cfd/cls.html">The Conservative Level-Set (CLS) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/multiphase/dem/dem.html">Granular Flows - Discrete Element Method (DEM)</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../theory/multiphase/cfd_dem/cfd_dem.html">Particle-laden Flows - CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of Particle-laden Flows - CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphase/cfd_dem/resolved_cfd-dem.html">Resolved CFD-DEM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../theory/multiphase/cfd_dem/unresolved_cfd-dem.html">Unresolved CFD-DEM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tools/tools.html">Tools</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of Tools</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tools/automatic_launch/automatic_launch.html">How to Automatically Create and Launch Lethe Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/command-line-interface-options.html">Command-line Interface Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/gmsh/gmsh.html">Introduction on How to Use GMSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/inlet_profile_generator/inlet_profile_generator.html">Inlet profile generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/pointwise/pointwise.html">Introduction on How to Use Pointwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/postprocessing/postprocessing_paraview.html">Remote Data Visualization on ParaView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/postprocessing/postprocessing_pyvista.html">Post-processing Lethe with PyVista</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/updating-test-results.html">Updating Test Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../referencing.html">Referencing Lethe</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="contributing.html">Contributing</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle navigation of Contributing</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pull-requests.html">Pull Requests</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Coding Standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animation-videos.html">Animation Videos</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="coding-standards">
+<h1>Coding Standards<a class="headerlink" href="#coding-standards" title="Link to this heading">#</a></h1>
+<p>Lethe follows the <a class="reference external" href="https://dealii.org/developer/doxygen/deal.II/CodingConventions.html">coding conventions of deal.II</a>, with the additions described on this page. Formatting is not discussed here, since it is handled automatically by clang-format (see <a class="reference internal" href="pull-requests.html"><span class="doc">Pull Requests</span></a>). These rules apply to all new and modified code and are verified during the review. When in doubt, imitate the code that surrounds your change.</p>
+<section id="variable-and-function-names">
+<h2>Variable and Function Names<a class="headerlink" href="#variable-and-function-names" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Variables, functions and files use <code class="docutils literal notranslate"><span class="pre">snake_case</span></code>.</p></li>
+<li><p>Names are complete words that describe the physical or numerical meaning of the quantity: <code class="docutils literal notranslate"><span class="pre">kinematic_viscosity</span></code> or <code class="docutils literal notranslate"><span class="pre">pressure_scaling_tolerance</span></code>, not <code class="docutils literal notranslate"><span class="pre">nu</span></code> or <code class="docutils literal notranslate"><span class="pre">tol</span></code>. Short mathematical names are only used for local indices that follow the deal.II conventions, such as <code class="docutils literal notranslate"><span class="pre">q</span></code> for the quadrature points and <code class="docutils literal notranslate"><span class="pre">i</span></code> and <code class="docutils literal notranslate"><span class="pre">j</span></code> for the shape functions in assembly loops.</p></li>
+<li><p>Quantities that count something start with <code class="docutils literal notranslate"><span class="pre">n_</span></code>: <code class="docutils literal notranslate"><span class="pre">n_q_points</span></code>, <code class="docutils literal notranslate"><span class="pre">n_dofs</span></code>.</p></li>
+<li><p>A variable that stores a parameter mirrors the name of the parameter in the parameter file. For example, <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">fluids</span></code> is stored in <code class="docutils literal notranslate"><span class="pre">number_of_fluids</span></code>. This makes it easy to find where a parameter is used in the code.</p></li>
+<li><p>Booleans read as a statement: <code class="docutils literal notranslate"><span class="pre">is_</span></code>, <code class="docutils literal notranslate"><span class="pre">has_</span></code> or <code class="docutils literal notranslate"><span class="pre">enable_</span></code> variables, <code class="docutils literal notranslate"><span class="pre">density_is_constant()</span></code> or <code class="docutils literal notranslate"><span class="pre">is_non_newtonian()</span></code> functions.</p></li>
+<li><p>Functions start with a verb that describes what they do: <code class="docutils literal notranslate"><span class="pre">setup_dofs</span></code>, <code class="docutils literal notranslate"><span class="pre">assemble_system_matrix</span></code>, <code class="docutils literal notranslate"><span class="pre">get_</span></code> and <code class="docutils literal notranslate"><span class="pre">set_</span></code> accessors.</p></li>
+<li><p>Member variables have no prefix or suffix (no <code class="docutils literal notranslate"><span class="pre">m_</span></code> or trailing <code class="docutils literal notranslate"><span class="pre">_</span></code>). In class templates, members of a base class are accessed through <code class="docutils literal notranslate"><span class="pre">this-&gt;</span></code>.</p></li>
+<li><p>Constants have a name, are declared <code class="docutils literal notranslate"><span class="pre">constexpr</span></code> or <code class="docutils literal notranslate"><span class="pre">const</span></code> close to where they are used and also use <code class="docutils literal notranslate"><span class="pre">snake_case</span></code>. Do not use magic numbers in the code. <code class="docutils literal notranslate"><span class="pre">ALL_CAPS</span></code> is reserved for preprocessor macros.</p></li>
+</ul>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Avoid</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prm</span><span class="p">.</span><span class="n">get_integer</span><span class="p">(</span><span class="s">"number of fluids"</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nf</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span>
+
+<span class="c1">// Prefer</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_fluids</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prm</span><span class="p">.</span><span class="n">get_integer</span><span class="p">(</span><span class="s">"number of fluids"</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i_fluid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i_fluid</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">number_of_fluids</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i_fluid</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="class-and-type-names">
+<h2>Class and Type Names<a class="headerlink" href="#class-and-type-names" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Classes, structures and type aliases use <code class="docutils literal notranslate"><span class="pre">UpperCamelCase</span></code> without underscores: <code class="docutils literal notranslate"><span class="pre">SimulationControl</span></code>, <code class="docutils literal notranslate"><span class="pre">FluidDynamicsMatrixBased</span></code>, <code class="docutils literal notranslate"><span class="pre">GlobalVectorType</span></code>. Acronyms keep their capital letters: <code class="docutils literal notranslate"><span class="pre">CFDDEMSolver</span></code>, <code class="docutils literal notranslate"><span class="pre">GLSNavierStokesAssemblerCore</span></code>, <code class="docutils literal notranslate"><span class="pre">CLSAssemblerBDF</span></code>.</p></li>
+<li><p>An abstract base class ends with <code class="docutils literal notranslate"><span class="pre">Base</span></code> and the name of a derived class states what it specializes. For example, <code class="docutils literal notranslate"><span class="pre">CahnHilliardFilterBase</span></code> is implemented by <code class="docutils literal notranslate"><span class="pre">CahnHilliardTanhFilter</span></code> and <code class="docutils literal notranslate"><span class="pre">CahnHilliardClipFilter</span></code>.</p></li>
+<li><p>A file is named after the main class it contains, in <code class="docutils literal notranslate"><span class="pre">snake_case</span></code>. <code class="docutils literal notranslate"><span class="pre">FluidDynamicsMatrixBased</span></code> is declared in <code class="docutils literal notranslate"><span class="pre">include/solvers/fluid_dynamics_matrix_based.h</span></code> and implemented in <code class="docutils literal notranslate"><span class="pre">source/solvers/fluid_dynamics_matrix_based.cc</span></code>. The header guard is <code class="docutils literal notranslate"><span class="pre">lethe_&lt;file_name&gt;_h</span></code>, here <code class="docutils literal notranslate"><span class="pre">lethe_fluid_dynamics_matrix_based_h</span></code>.</p></li>
+<li><p>Namespaces use <code class="docutils literal notranslate"><span class="pre">UpperCamelCase</span></code>: <code class="docutils literal notranslate"><span class="pre">Parameters</span></code>, <code class="docutils literal notranslate"><span class="pre">BoundaryConditions</span></code>, <code class="docutils literal notranslate"><span class="pre">DEM</span></code>.</p></li>
+<li><p>A choice between options is an <code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">class</span></code> with an <code class="docutils literal notranslate"><span class="pre">UpperCamelCase</span></code> name and <code class="docutils literal notranslate"><span class="pre">snake_case</span></code> values, such as <code class="docutils literal notranslate"><span class="pre">Parameters::SimulationControl::TimeSteppingMethod::bdf2</span></code>. Do not encode options with integers, booleans or strings.</p></li>
+<li><p>Template parameters follow deal.II: <code class="docutils literal notranslate"><span class="pre">dim</span></code> and <code class="docutils literal notranslate"><span class="pre">spacedim</span></code> for the dimensions, <code class="docutils literal notranslate"><span class="pre">UpperCamelCase</span></code> for types (<code class="docutils literal notranslate"><span class="pre">VectorType</span></code>, <code class="docutils literal notranslate"><span class="pre">Number</span></code>).</p></li>
+<li><p>Exceptions declared with the <code class="docutils literal notranslate"><span class="pre">DeclException</span></code> macros use <code class="docutils literal notranslate"><span class="pre">UpperCamelCase</span></code> and are named after the error they report: <code class="docutils literal notranslate"><span class="pre">FileDoesNotExist</span></code>, <code class="docutils literal notranslate"><span class="pre">NumberOfFluidsError</span></code>.</p></li>
+</ul>
+</section>
+<section id="defensive-programming">
+<h2>Defensive Programming<a class="headerlink" href="#defensive-programming" title="Link to this heading">#</a></h2>
+<p>Lethe is used by many people who did not write the code they run, and simulations often run for hours or days on clusters. A simulation that stops immediately with a clear error message costs its user a few minutes. A simulation that silently runs with a wrong value can produce no results at all or results that look plausible but are wrong, which costs much more. Lethe must therefore be written defensively: every assumption made by a piece of code is either enforced by the compiler or checked explicitly, and errors are reported as early as possible, with a message that explains how to fix them.</p>
+<p>In practice:</p>
+<ul class="simple">
+<li><p><strong>Validate the parameters when they are read.</strong> Restrict the range of an entry with its pattern in <code class="docutils literal notranslate"><span class="pre">declare_parameters</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">Patterns::Double(0.)</span></code> for a quantity that cannot be negative, <code class="docutils literal notranslate"><span class="pre">Patterns::Double(0.,1.)</span></code> for a quantity within the closed interval [0,1] ) and check the consistency between parameters with <code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code> in <code class="docutils literal notranslate"><span class="pre">parse_parameters</span></code>. Errors are then reported before the mesh is even read.</p></li>
+<li><p><strong>Check the preconditions of functions</strong>: sizes with <code class="docutils literal notranslate"><span class="pre">AssertDimension</span></code>, indices with <code class="docutils literal notranslate"><span class="pre">AssertIndexRange</span></code> and values that must be finite with <code class="docutils literal notranslate"><span class="pre">AssertIsFinite</span></code>.</p></li>
+<li><p><strong>Handle every case.</strong> A <code class="docutils literal notranslate"><span class="pre">switch</span></code> or an <code class="docutils literal notranslate"><span class="pre">if</span></code>/<code class="docutils literal notranslate"><span class="pre">else</span> <span class="pre">if</span></code> chain on an <code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">class</span></code> handles every value. A combination of features that is not supported throws an exception instead of silently doing nothing.</p></li>
+<li><p><strong>Guard divisions</strong> by quantities that can vanish (cell measure, density, time step, norm of a gradient) and give tolerances a name. Never compare floating-point numbers with <code class="docutils literal notranslate"><span class="pre">==</span></code>.</p></li>
+<li><p><strong>Let the compiler help you.</strong> Declare <code class="docutils literal notranslate"><span class="pre">const</span></code> every variable that does not change after its initialization, pass large objects by <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">&amp;</span></code> and initialize every variable where it is declared.</p></li>
+<li><p><strong>Write useful error messages.</strong> A message states what is wrong, the offending value and how to fix it. Exceptions raised in more than one place are declared in <code class="docutils literal notranslate"><span class="pre">include/core/exceptions.h</span></code>: reuse them and add yours there. For example:</p></li>
+</ul>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">DeclException2</span><span class="p">(</span>
+<span class="w">  </span><span class="n">FileDoesNotExist</span><span class="p">,</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span>
+<span class="w">  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"The "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">arg2</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" &lt;"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">arg1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"&gt; does not exist. "</span>
+<span class="w">  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Verify that its name is spelled correctly. Relative paths are "</span>
+<span class="w">  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"interpreted from the directory in which the application was launched, "</span>
+<span class="w">  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"not from the directory of the parameter file."</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-or-assertthrow">
+<h2><code class="docutils literal notranslate"><span class="pre">Assert</span></code> or <code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code><a class="headerlink" href="#assert-or-assertthrow" title="Link to this heading">#</a></h2>
+<p>deal.II provides two families of assertion macros, which differ in when they are checked:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Assert</span></code> (as well as <code class="docutils literal notranslate"><span class="pre">AssertDimension</span></code>, <code class="docutils literal notranslate"><span class="pre">AssertIndexRange</span></code> and <code class="docutils literal notranslate"><span class="pre">AssertIsFinite</span></code>) is only checked in Debug mode. In Release mode, it is removed by the compiler and costs nothing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code> is checked in both Debug and Release modes, at the cost of a test every time it is evaluated.</p></li>
+</ul>
+<p>Choose between them according to where the check is located:</p>
+<ul class="simple">
+<li><p><strong>In loops and other performance-critical sections</strong> (loops over cells, faces, quadrature points, degrees of freedom or particles, matrix-free operator evaluations, contact detection), use <code class="docutils literal notranslate"><span class="pre">Assert</span></code>. Since it is free in Release mode, use it generously to check sizes, indices and internal invariants.</p></li>
+<li><p><strong>Outside performance-critical sections</strong> (constructors, setup functions, parameter parsing, reading of meshes and files, checks done once per time step or per linear solve), use <code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code> for robustness. Its cost is negligible there, and the check then also protects Release builds, which are the ones used for production runs. This also applies to internal consistency checks.</p></li>
+<li><p><strong>Errors that a user can trigger</strong> (a value in the parameter file, a mesh, a restart file, an unsupported combination of features, a file that cannot be read) are always checked with <code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code>. Do this check once, outside the loops, during parsing or setup: an <code class="docutils literal notranslate"><span class="pre">Assert</span></code> located in a loop catches nothing in a Release build.</p></li>
+</ul>
+<div class="table-wrapper docutils container">
+<table class="docutils align-center">
+<thead>
+<tr class="row-odd"><th class="head"><p>Check</p></th>
+<th class="head"><p>Location</p></th>
+<th class="head"><p>Macro</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Entry of the parameter file out of range or inconsistent with another entry</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">parse_parameters</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Boundary condition or feature not supported by a solver</p></td>
+<td><p>Setup</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Size of a solution vector once the degrees of freedom are distributed</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setup_dofs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Index of a shape function or of a quadrature point</p></td>
+<td><p>Assembly loop</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AssertIndexRange</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Size of a local matrix or vector</p></td>
+<td><p>Assembly loop</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AssertDimension</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Value computed at a quadrature point is finite</p></td>
+<td><p>Assembly loop</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AssertIsFinite</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Parameter parsing: a user error, checked once and in every build</span>
+<span class="n">AssertThrow</span><span class="p">(</span><span class="n">number_of_fluids</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">max_fluids</span><span class="p">,</span>
+<span class="w">            </span><span class="n">NumberOfFluidsError</span><span class="p">(</span><span class="n">number_of_fluids</span><span class="p">));</span>
+
+<span class="c1">// Assembly: an internal invariant in a loop, checked in Debug mode only</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n_q_points</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">q</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n_dofs</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="n">AssertIndexRange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">local_rhs</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">        </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code> must fail on all the processes at the same time. Checks on parameters already do, since every process reads the same parameter file. A condition that depends on locally owned data can, however, fail on a single process. That process stops while the others wait for it in the next collective communication, and the simulation can hang until it reaches its wall time. Reduce such a condition over all the processes before checking it:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">negative_density_found</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="n">Utilities</span><span class="o">::</span><span class="n">MPI</span><span class="o">::</span><span class="n">logical_or</span><span class="p">(</span><span class="n">local_negative_density_found</span><span class="p">,</span>
+<span class="w">                             </span><span class="n">mpi_communicator</span><span class="p">);</span>
+<span class="n">AssertThrow</span><span class="p">(</span><span class="o">!</span><span class="n">negative_density_found</span><span class="p">,</span>
+<span class="w">            </span><span class="n">ExcMessage</span><span class="p">(</span><span class="s">"A negative density was found. Verify the "</span>
+<span class="w">                       </span><span class="s">"physical properties of the fluids."</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="smart-pointers">
+<h2>Smart Pointers<a class="headerlink" href="#smart-pointers" title="Link to this heading">#</a></h2>
+<p>Memory in Lethe is managed with smart pointers, so that every object has a clearly identified owner and is released automatically:</p>
+<ul>
+<li><p>Do not use <code class="docutils literal notranslate"><span class="pre">new</span></code> and <code class="docutils literal notranslate"><span class="pre">delete</span></code>. Create objects with <code class="docutils literal notranslate"><span class="pre">std::make_unique</span></code> or <code class="docutils literal notranslate"><span class="pre">std::make_shared</span></code>. A raw pointer, when one is needed to interface with an external library, never owns the object it points to.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">std::unique_ptr</span></code> when an object has a single owner. This is the default choice, including for objects that are only created when they are needed:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">FEValues</span><span class="o">&lt;</span><span class="n">dim</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">fe_values_temperature</span><span class="p">;</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">needs_temperature</span><span class="p">)</span>
+<span class="w">  </span><span class="n">fe_values_temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">FEValues</span><span class="o">&lt;</span><span class="n">dim</span><span class="o">&gt;&gt;</span><span class="p">(</span>
+<span class="w">    </span><span class="o">*</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mapping</span><span class="p">,</span>
+<span class="w">    </span><span class="n">dof_handler_temperature</span><span class="o">-&gt;</span><span class="n">get_fe</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">temperature_quadrature</span><span class="p">,</span>
+<span class="w">    </span><span class="n">update_values</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">update_quadrature_points</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">std::shared_ptr</span></code> only when the ownership is really shared, that is when several objects hold the same object and none of them is guaranteed to outlive the others. In Lethe, this is the case of the triangulation, the mapping and the <code class="docutils literal notranslate"><span class="pre">SimulationControl</span></code>, which are shared by the solver, its auxiliary physics and the physical property models:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">simulation_control</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">SimulationControlTransient</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">  </span><span class="n">simulation_parameters</span><span class="p">.</span><span class="n">simulation_control</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>Only pass a smart pointer to a function that shares the ownership of the object, such as a constructor that stores it. Lethe passes them as <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">std::shared_ptr&lt;T&gt;</span> <span class="pre">&amp;</span></code>. A function that only uses the object takes it by reference (<code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">T</span> <span class="pre">&amp;</span></code>).</p></li>
+<li><p>Avoid cycles of <code class="docutils literal notranslate"><span class="pre">std::shared_ptr</span></code> (two objects that own each other): neither of them is ever destroyed.</p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="documentation.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Documentation</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="pull-requests.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Pull Requests</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021-2026, Lethe
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Coding Standards</a><ul>
+<li><a class="reference internal" href="#variable-and-function-names">Variable and Function Names</a></li>
+<li><a class="reference internal" href="#class-and-type-names">Class and Type Names</a></li>
+<li><a class="reference internal" href="#defensive-programming">Defensive Programming</a></li>
+<li><a class="reference internal" href="#assert-or-assertthrow"><code class="docutils literal notranslate"><span class="pre">Assert</span></code> or <code class="docutils literal notranslate"><span class="pre">AssertThrow</span></code></a></li>
+<li><a class="reference internal" href="#smart-pointers">Smart Pointers</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=7cec7674"></script>
+    </body>
+</html>
