@@ -954,8 +954,15 @@ protected:
   /// Maximum allowed time step
   double max_dt;
 
-  /// Time of the last output
-  double time_last_output;
+  /**
+   * @brief Tolerance, as a fraction of the time step, used to decide whether an
+   * output time of the output time frequency has been reached
+   *
+   * An output time that lies within this tolerance after the current time is
+   * considered as reached. This prevents round-off errors accumulated in the
+   * current time from delaying an output by one iteration.
+   */
+  static constexpr double output_time_tolerance = 1e-6;
 
   /// Output frequency for time-based output control
   double output_time_frequency;
@@ -1066,6 +1073,16 @@ public:
    *
    * Output iterations are determined based on the value of the output time,
    * the output interval, and the output frequency within the interval.
+   *
+   * When an output time frequency is used, the output times are
+   * \f$t_k = t_{\text{start}} + k \Delta t_{\text{output}}\f$, where
+   * \f$t_{\text{start}}\f$ is the lower bound of the output time interval. An
+   * iteration is an output iteration if the time step that leads to it reaches
+   * or crosses one of these output times. The initial iteration and the last
+   * iteration are also output iterations. In all cases, the current time must
+   * lie within the output time interval. This criterion only depends on the
+   * current and previous times, so calling this function several times within
+   * the same iteration always returns the same result.
    *
    * @return true if output should be written at this iteration, false otherwise
    */

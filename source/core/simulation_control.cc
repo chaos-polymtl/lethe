@@ -5,6 +5,7 @@
 #include <core/utilities.h>
 
 #include <cfloat>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -14,6 +15,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   : method(param.method)
   , assembly_method(param.method)
   , current_time(0)
+  , previous_time(0)
   , time_step(param.dt)
   , initial_time_step(param.dt)
   , end_time(param.time_end)
@@ -241,6 +243,11 @@ SimulationControl::read(const std::string &prefix)
   input >> buffer >> current_time;
   input >> buffer >> iteration_number;
 
+  // The previous time is only known once the next iteration is integrated.
+  // Until then, set it to the current time so that queries made before the
+  // first iteration after the restart (e.g., is_output_iteration) are defined.
+  previous_time = current_time;
+
   // Fix time step to be the last time_step that was used
   time_step = time_step_vector[0];
 }
@@ -287,7 +294,6 @@ SimulationControlTransient::SimulationControlTransient(
   , adapt_with_cfl(param.adapt_with_cfl)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
-  , time_last_output(0.)
   , output_time_frequency(param.output_time_frequency)
   , output_times_vector(param.output_times_vector)
   , output_times_counter(0)
@@ -296,7 +302,13 @@ SimulationControlTransient::SimulationControlTransient(
   , output_time_interval(param.output_time_interval)
   , end_control(param.end_control)
   , output_control(param.output_control)
-{}
+{
+  AssertThrow(output_control !=
+                  Parameters::SimulationControl::OutputControl::time ||
+                output_time_frequency == -1 || output_time_frequency > 0,
+              ExcMessage("The output time frequency must be strictly positive. "
+                         "Set it to -1 to disable it."));
+}
 
 void
 SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
@@ -451,19 +463,34 @@ SimulationControlTransient::is_output_iteration()
   // If time control there are several options:
 
   // Case 1. A specific output time frequency is given (with or without a
-  // specific time interval):
+  // specific time interval). The output times are
+  // t_k = t_start + k * output_time_frequency, where t_start is the lower bound
+  // of the output time interval. This criterion only depends on the current
+  // and previous times, so it returns the same result when it is called
+  // several times within the same iteration.
   if (output_time_frequency != -1)
     {
-      if ((current_time - time_last_output) - output_time_frequency >
-            -1e-12 * output_time_frequency &&
-          current_time >= output_time_interval[0] &&
-          current_time <= output_time_interval[1])
-        {
-          time_last_output = current_time;
-          return true;
-        }
-      else // if it does not match the time frequency we do not output
+      const double start_time = output_time_interval[0];
+
+      // We never output outside of the output time interval
+      if (current_time < start_time || current_time > output_time_interval[1])
         return false;
+
+      // As for iteration control, we always output the initial iteration and
+      // the last iteration of the simulation
+      if (iteration_number == 0 || is_at_end())
+        return true;
+
+      // We output if the time step that led to the current time reached or
+      // crossed an output time. The tolerance prevents round-off errors
+      // accumulated in the current time from delaying an output by one
+      // iteration.
+      const double margin            = output_time_tolerance * time_step;
+      const auto   output_time_index = [&](const double time) {
+        return std::floor((time - start_time + margin) / output_time_frequency);
+      };
+
+      return output_time_index(current_time) > output_time_index(previous_time);
     }
 
   // For cases 2 and 3:
