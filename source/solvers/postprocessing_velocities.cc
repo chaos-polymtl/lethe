@@ -6,7 +6,17 @@
 
 #include <solvers/postprocessing_velocities.h>
 
+#include <deal.II/base/index_set.h>
+#include <deal.II/base/point.h>
+
+#include <deal.II/fe/fe.h>
+
+#include <deal.II/lac/vector_operation.h>
+
+#include <array>
 #include <fstream>
+#include <type_traits>
+#include <vector>
 
 template <int dim, typename VectorType, typename DofsType>
 AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
@@ -16,6 +26,7 @@ AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
   , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler, true)
   , total_time_for_average(0.0)
   , has_started_averaging(false)
+  , dof_handler(dof_handler)
 {
   // Initialize average velocity solution vector shared pointer
   get_av = std::make_shared<VectorType>();
@@ -79,207 +90,64 @@ AverageVelocities<dim, VectorType, DofsType>::update_average_velocities()
     }
 }
 
-// Since Trilinos vectors and block vectors data doesn't have the same
-// structure, those vectors need to be processed in different ways.
-// Same about the dimension, where 2D solutions are stored in (u,v,p) groups
-// for vectors and [(u,v)][p] for block vectors and where 3D solutions
-// are stored in (u,v,w,p) groups for vectors and [(u,v,w)][p] for
-// block vectors.
+// The Reynolds stresses are computed at every locally owned velocity support
+// point from the degrees of freedom of its velocity components, which are
+// gathered by gather_locally_owned_support_points(). The global indices of the
+// degrees of freedom are also the global indices of the vectors, including the
+// block vectors, whose blocks hold the velocity and the pressure degrees of
+// freedom numbered component-wise. The stresses are stored in the slots of the
+// solution: (<u'u'>, <v'v'>, <w'w'>, k) in the normal stress vector and
+// (<u'v'>, <v'w'>, <w'u'>, 0) in the shear stress vector, where k is only
+// stored at the pressure degrees of freedom that share a velocity support
+// point. In 2D, the v slot of the shear stress vector is not used.
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   const VectorType &local_evaluation_point)
 {
-  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
-                std::is_same_v<VectorType, GlobalBlockVectorType>)
+  for (const SupportPointDoFs &support_point : locally_owned_support_points)
     {
-      unsigned int begin_index, end_index;
+      const std::array<types::global_dof_index, dim> &velocity_dofs =
+        support_point.velocity;
 
-      // As explained in the comment above, about the structure of Trilinos
-      // vectors, a function is required to get the index of the turbulence
-      // kinetic energy. Trilinos vector : rss = (<u'u'>,<v'v'>,<w'w'>,k) =>
-      // k_index = i + dim Trilinos blocks : rss = [(<u'u'>,<v'v'>,<w'w'>)][k])
-      // => k_index = i / dim The k_index lambda is later changed for block
-      // vectors.
-      unsigned int (*k_index)(unsigned int) = [](unsigned int i) {
-        return i + dim;
-      };
+      // Velocity fluctuations u', v' and w'
+      std::array<double, dim> fluctuation;
+      for (int d = 0; d < dim; ++d)
+        fluctuation[d] = local_evaluation_point(velocity_dofs[d]) -
+                         average_velocities(velocity_dofs[d]);
 
-      const GlobalVectorType *local_solution, *local_average;
-      GlobalVectorType       *rns_dt, *rss_dt, *k_dt;
-
-      if constexpr (std::is_same_v<VectorType, GlobalVectorType>)
+      // u'u'*dt, v'v'*dt and w'w'*dt
+      double sum_normal_stresses = 0.;
+      for (int d = 0; d < dim; ++d)
         {
-          if constexpr (std::is_same_v<VectorType,
-                                       dealii::TrilinosWrappers::MPI::Vector>)
-            {
-              begin_index = local_evaluation_point.local_range().first;
-              end_index   = local_evaluation_point.local_range().second;
-            }
-          else if constexpr (std::is_same_v<VectorType,
-                                            dealii::LinearAlgebra::distributed::
-                                              Vector<double>>)
-            {
-              begin_index =
-                local_evaluation_point.get_partitioner()->local_range().first;
-              end_index =
-                local_evaluation_point.get_partitioner()->local_range().second;
-            }
-
-          else
-            {
-              AssertThrow(false, ExcNotImplemented());
-            }
-          local_solution = &local_evaluation_point;
-          local_average  = &average_velocities;
-          rns_dt         = &reynolds_normal_stress_dt;
-          rss_dt         = &reynolds_shear_stress_dt;
-          k_dt           = &reynolds_normal_stress_dt;
-        }
-      else if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
-        {
-          if constexpr (std::is_same_v<
-                          VectorType,
-                          dealii::TrilinosWrappers::MPI::BlockVector>)
-            {
-              begin_index = local_evaluation_point.block(0).local_range().first;
-              end_index = local_evaluation_point.block(0).local_range().second;
-            }
-          else if constexpr (std::is_same_v<VectorType,
-                                            dealii::LinearAlgebra::distributed::
-                                              BlockVector<double>>)
-            {
-              begin_index = local_evaluation_point.block(0)
-                              .get_partitioner()
-                              ->local_range()
-                              .first;
-              end_index = local_evaluation_point.block(0)
-                            .get_partitioner()
-                            ->local_range()
-                            .second;
-            }
-          else
-            {
-            }
-          local_solution = &local_evaluation_point.block(0);
-          local_average  = &average_velocities.block(0);
-          rns_dt         = &reynolds_normal_stress_dt.block(0);
-          rss_dt         = &reynolds_shear_stress_dt.block(0);
-          k_dt           = &reynolds_normal_stress_dt.block(1);
-          k_index        = [](unsigned int i) { return i / dim; };
+          const double normal_stress_dt = fluctuation[d] * fluctuation[d] * dt;
+          reynolds_normal_stress_dt(velocity_dofs[d]) = normal_stress_dt;
+          sum_normal_stresses += normal_stress_dt;
         }
 
-      for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
+      // u'v'*dt
+      reynolds_shear_stress_dt(velocity_dofs[0]) =
+        fluctuation[0] * fluctuation[1] * dt;
+
+      if constexpr (dim == 3)
         {
-          // u'u'*dt
-          (*rns_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
-                         ((*local_solution)[i] - (*local_average)[i]) * dt;
+          // v'w'*dt
+          reynolds_shear_stress_dt(velocity_dofs[1]) =
+            fluctuation[1] * fluctuation[2] * dt;
 
-          // v'v'*dt
-          (*rns_dt)[i + 1] =
-            ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-            ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
-
-          // u'v'*dt
-          (*rss_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
-                         ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-                         dt;
-
-          // k*dt = 1/2(u'u'+v'v')*dt (turbulence kinetic energy)
-          // Note : k_dt and rns_dt are both pointers of
-          // reynolds_normal_stress_dt for Trilinos vector (not block vectors)
-          (*k_dt)[k_index(i)] = ((*rns_dt)[i] + (*rns_dt)[i + 1]) / 2;
-
-          if (dim == 3)
-            {
-              // w'w'*dt
-              (*rns_dt)[i + 2] =
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
-
-              // v'w'*dt
-              (*rss_dt)[i + 1] =
-                ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
-
-              // w'u'*dt
-              (*rss_dt)[i + 2] =
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
-                ((*local_solution)[i] - (*local_average)[i]) * dt;
-
-              // k*dt = 1/2(u'u'+v'v'+w'w')*dt
-              (*k_dt)[k_index(i)] = (*k_dt)[k_index(i)] + (*rns_dt)[i + 2] / 2;
-            }
+          // w'u'*dt
+          reynolds_shear_stress_dt(velocity_dofs[2]) =
+            fluctuation[2] * fluctuation[0] * dt;
         }
+
+      // k*dt = 1/2(u'u'+v'v'+w'w')*dt (turbulent kinetic energy)
+      if (support_point.pressure != numbers::invalid_dof_index)
+        reynolds_normal_stress_dt(support_point.pressure) =
+          0.5 * sum_normal_stresses;
     }
 
-#ifndef LETHE_USE_LDV
-  if constexpr (std::is_same_v<VectorType,
-                               LinearAlgebra::distributed::Vector<double>>)
-    {
-      unsigned int begin_index, end_index;
-      unsigned int (*k_index)(unsigned int) = [](unsigned int i) {
-        return i + dim;
-      };
-      const LinearAlgebra::distributed::Vector<double> *local_solution,
-        *local_average;
-      LinearAlgebra::distributed::Vector<double> *rns_dt, *rss_dt, *k_dt;
-
-      local_evaluation_point.update_ghost_values();
-      begin_index =
-        local_evaluation_point.get_partitioner()->local_range().first;
-      end_index =
-        local_evaluation_point.get_partitioner()->local_range().second;
-      local_solution = &local_evaluation_point;
-      local_average  = &average_velocities;
-      rns_dt         = &reynolds_normal_stress_dt;
-      rss_dt         = &reynolds_shear_stress_dt;
-      k_dt           = &reynolds_normal_stress_dt;
-
-      for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
-        {
-          // u'u'*dt
-          (*rns_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
-                         ((*local_solution)[i] - (*local_average)[i]) * dt;
-
-          // v'v'*dt
-          (*rns_dt)[i + 1] =
-            ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-            ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
-
-          // u'v'*dt
-          (*rss_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
-                         ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-                         dt;
-
-          // // k*dt = 1/2(u'u'+v'v')*dt (turbulence kinetic energy)
-          // // Note : k_dt and rns_dt are both pointers of
-          // // reynolds_normal_stress_dt
-          (*k_dt)[k_index(i)] = ((*rns_dt)[i] + (*rns_dt)[i + 1]) / 2;
-
-          if (dim == 3)
-            {
-              // w'w'*dt
-              (*rns_dt)[i + 2] =
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
-
-              // v'w'*dt
-              (*rss_dt)[i + 1] =
-                ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
-
-              // w'u'*dt
-              (*rss_dt)[i + 2] =
-                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
-                ((*local_solution)[i] - (*local_average)[i]) * dt;
-
-              // k*dt = 1/2(u'u'+v'v'+w'w')*dt
-              (*k_dt)[k_index(i)] = (*k_dt)[k_index(i)] + (*rns_dt)[i + 2] / 2;
-            }
-        }
-    }
-#endif
+  reynolds_normal_stress_dt.compress(VectorOperation::insert);
+  reynolds_shear_stress_dt.compress(VectorOperation::insert);
 
   // Sum of all reynolds stresses during simulation.
   sum_reynolds_normal_stress_dt += reynolds_normal_stress_dt;
@@ -294,15 +162,10 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
-  const DofsType     &locally_owned_dofs,
-  const DofsType     &locally_relevant_dofs,
-  const unsigned int &dofs_per_vertex,
-  const MPI_Comm     &mpi_communicator)
+  const DofsType &locally_owned_dofs,
+  const DofsType &locally_relevant_dofs,
+  const MPI_Comm &mpi_communicator)
 {
-  // Save the number of dofs per vertex. If solution is in block vectors,
-  // this is the number of dofs about velocity, dim.
-  n_dofs_per_vertex = dofs_per_vertex;
-
   // Reinitialisation of the average velocity and reynolds stress vectors
   // to get the right length.
   velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
@@ -332,6 +195,125 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   sum_rss_dt_with_ghost_cells.reinit(locally_owned_dofs,
                                      locally_relevant_dofs,
                                      mpi_communicator);
+
+  // The Reynolds stresses are written using the global indices of the degrees
+  // of freedom, which requires vectors that span all of them.
+  AssertDimension(reynolds_normal_stress_dt.size(), dof_handler.n_dofs());
+
+  gather_locally_owned_support_points();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::
+  gather_locally_owned_support_points()
+{
+  // Tolerance used to identify two unit support points of the reference cell.
+  constexpr double support_point_tolerance = 1e-12;
+
+  Assert(!dof_handler.has_hp_capabilities(), ExcNotImplemented());
+
+  const FiniteElement<dim> &fe = dof_handler.get_fe();
+  AssertDimension(fe.n_components(), dim + 1);
+  Assert(fe.is_primitive(), ExcNotImplemented());
+
+  // All the velocity components share one base element, so the degrees of
+  // freedom of a velocity support point are the degrees of freedom of the dim
+  // components with the same index within this base element.
+  const unsigned int velocity_base = fe.component_to_base_index(0).first;
+  for (int d = 1; d < dim; ++d)
+    Assert(fe.component_to_base_index(d).first == velocity_base,
+           ExcInternalError());
+
+  const FiniteElement<dim> &velocity_fe = fe.base_element(velocity_base);
+  const FiniteElement<dim> &pressure_fe =
+    fe.base_element(fe.component_to_base_index(dim).first);
+  AssertThrow(velocity_fe.has_support_points() &&
+                pressure_fe.has_support_points(),
+              ExcMessage(
+                "The time-averaged Reynolds stresses require velocity and "
+                "pressure finite elements with support points."));
+
+  const unsigned int n_velocity_nodes = velocity_fe.n_dofs_per_cell();
+  const unsigned int n_pressure_nodes = pressure_fe.n_dofs_per_cell();
+  const std::vector<Point<dim>> &velocity_unit_support_points =
+    velocity_fe.get_unit_support_points();
+  const std::vector<Point<dim>> &pressure_unit_support_points =
+    pressure_fe.get_unit_support_points();
+
+  // Cell-local indices of the velocity components of every velocity node
+  std::vector<std::array<unsigned int, dim>> local_velocity_dofs(
+    n_velocity_nodes);
+  for (unsigned int i = 0; i < n_velocity_nodes; ++i)
+    for (int d = 0; d < dim; ++d)
+      local_velocity_dofs[i][d] = fe.component_to_system_index(d, i);
+
+  // Cell-local index of the pressure at every velocity node. Every pressure
+  // node is paired with the first velocity node that has the same unit support
+  // point and that is not paired yet. With equal-order elements, this pairs the
+  // nodes with the same index. With bubble functions, which all have their
+  // support point at the center of the cell, the Lagrange nodes are paired
+  // first, since they are numbered before the bubble functions.
+  std::vector<unsigned int> local_pressure_dofs(n_velocity_nodes,
+                                                numbers::invalid_unsigned_int);
+  for (unsigned int j = 0; j < n_pressure_nodes; ++j)
+    for (unsigned int i = 0; i < n_velocity_nodes; ++i)
+      if (local_pressure_dofs[i] == numbers::invalid_unsigned_int &&
+          velocity_unit_support_points[i].distance(
+            pressure_unit_support_points[j]) < support_point_tolerance)
+        {
+          local_pressure_dofs[i] = fe.component_to_system_index(dim, j);
+          break;
+        }
+
+  // Gather the global indices of every locally owned velocity support point
+  // once. A support point is identified by the degree of freedom of its first
+  // velocity component. All the degrees of freedom of a support point belong to
+  // the same mesh object, and therefore to the same process.
+  const IndexSet   &locally_owned_dofs = dof_handler.locally_owned_dofs();
+  std::vector<bool> is_gathered(locally_owned_dofs.n_elements(), false);
+  std::vector<types::global_dof_index> dof_indices(fe.n_dofs_per_cell());
+
+  locally_owned_support_points.clear();
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      cell->get_dof_indices(dof_indices);
+      for (unsigned int i = 0; i < n_velocity_nodes; ++i)
+        {
+          const types::global_dof_index first_velocity_dof =
+            dof_indices[local_velocity_dofs[i][0]];
+          if (!locally_owned_dofs.is_element(first_velocity_dof))
+            continue;
+
+          const types::global_dof_index index_within_owned_dofs =
+            locally_owned_dofs.index_within_set(first_velocity_dof);
+          if (is_gathered[index_within_owned_dofs])
+            continue;
+          is_gathered[index_within_owned_dofs] = true;
+
+          SupportPointDoFs support_point;
+          for (int d = 0; d < dim; ++d)
+            {
+              support_point.velocity[d] =
+                dof_indices[local_velocity_dofs[i][d]];
+              Assert(locally_owned_dofs.is_element(support_point.velocity[d]),
+                     ExcInternalError());
+            }
+
+          support_point.pressure =
+            (local_pressure_dofs[i] == numbers::invalid_unsigned_int) ?
+              numbers::invalid_dof_index :
+              dof_indices[local_pressure_dofs[i]];
+          Assert(support_point.pressure == numbers::invalid_dof_index ||
+                   locally_owned_dofs.is_element(support_point.pressure),
+                 ExcInternalError());
+
+          locally_owned_support_points.push_back(support_point);
+        }
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>

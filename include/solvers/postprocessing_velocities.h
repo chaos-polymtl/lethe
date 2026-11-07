@@ -6,7 +6,16 @@
 
 #include <core/parameters.h>
 
+#include <deal.II/base/types.h>
+
+#include <deal.II/dofs/dof_handler.h>
+
 #include <deal.II/numerics/solution_transfer.h>
+
+#include <array>
+#include <memory>
+#include <string>
+#include <vector>
 
 using namespace dealii;
 
@@ -16,6 +25,16 @@ using namespace dealii;
  * independent components of the Reynolds stresses tensor \f$(\langle u'u'
  * \rangle, \langle v'v' \rangle, \langle w'w' \rangle, \langle u'v' \rangle,
  * \langle v'w' \rangle, \langle w'u' \rangle)\f$.
+ *
+ * The Reynolds stresses are computed at every velocity support point from the
+ * degrees of freedom of the velocity components at that point. They are stored
+ * in vectors with the layout of the solution: the normal stresses in the
+ * velocity slots and the turbulent kinetic energy in the pressure slot of the
+ * normal stress vector, and \f$\langle u'v' \rangle\f$, \f$\langle v'w'
+ * \rangle\f$ and \f$\langle w'u' \rangle\f$ in the u, v and w slots of the
+ * shear stress vector. The turbulent kinetic energy is only stored at the
+ * pressure degrees of freedom that share their support point with a velocity
+ * support point.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved.
@@ -35,7 +54,9 @@ public:
    * and the Reynolds stresses, the total time for average and average
    * calculation variables.
    *
-   * @param[in] dof_handler Used to initialize the solution transfer objects.
+   * @param[in] dof_handler Used to initialize the solution transfer objects
+   * and to pair the degrees of freedom of the velocity components that share a
+   * support point. It must outlive the object.
    *
    */
   AverageVelocities(DoFHandler<dim> &dof_handler);
@@ -116,24 +137,22 @@ public:
   /**
    * @brief Initialize all the important vectors for the average velocities and
    * reynolds stresses calculation. This includes the vector for the
-   * checkpoints.
+   * checkpoints. Also gather the degrees of freedom of the locally owned
+   * velocity support points used to calculate the Reynolds stresses. This
+   * must be called after the degrees of freedom of the DoFHandler given to
+   * the constructor have been distributed and renumbered.
    *
    * @param[in] locally_owned_dofs The owned dofs.
    *
-   * @param[in] locally_owned_rs_components The owned Reynolds stress
-   * components.
-   *
-   * @param[in] dofs_per_vertex The number of dofs per vortex (dim for block
-   * vectors).
+   * @param[in] locally_relevant_dofs The locally relevant dofs.
    *
    * @param[in] mpi_communicator The communicator information.
    *
    */
   void
-  initialize_vectors(const DofsType     &locally_owned_dofs,
-                     const DofsType     &locally_relevant_dofs,
-                     const unsigned int &dofs_per_vertex,
-                     const MPI_Comm     &mpi_communicator);
+  initialize_vectors(const DofsType &locally_owned_dofs,
+                     const DofsType &locally_relevant_dofs,
+                     const MPI_Comm &mpi_communicator);
 
   /**
    * @brief Prepare average velocity object for dynamic mesh adaptation.
@@ -205,6 +224,40 @@ public:
   zero_average_after_restart();
 
 private:
+  /**
+   * @brief Global indices of the degrees of freedom located at one velocity
+   * support point.
+   */
+  struct SupportPointDoFs
+  {
+    /**
+     * @brief Degrees of freedom of the dim velocity components.
+     */
+    std::array<types::global_dof_index, dim> velocity;
+
+    /**
+     * @brief Degree of freedom of the pressure at the same support point, or
+     * numbers::invalid_dof_index if the pressure has no degree of freedom
+     * there (e.g. at the velocity support points of a Q2-Q1 element that are
+     * not vertices).
+     */
+    types::global_dof_index pressure;
+  };
+
+  /**
+   * @brief Gather the degrees of freedom of every locally owned velocity
+   * support point, with the pressure degree of freedom at the same point.
+   *
+   * The velocity components of a support point are paired through the finite
+   * element, since the global numbering of the degrees of freedom does not
+   * group them when a mesh object carries more than one degree of freedom per
+   * component (velocity degree of 3 or more, unequal velocity and pressure
+   * degrees, bubble enrichment). The pressure degree of freedom is the one with
+   * the same unit support point.
+   */
+  void
+  gather_locally_owned_support_points();
+
   /**
    * @brief Inverse for total time for averaging.
    *
@@ -360,11 +413,16 @@ private:
   bool has_started_averaging;
 
   /**
-   * @brief Number of degrees of freedom per vertex needed to calculate correctly
-   * Reynolds stresses.
+   * @brief DoFHandler of the velocity and pressure fields.
    *
    */
-  unsigned int n_dofs_per_vertex;
+  const DoFHandler<dim> &dof_handler;
+
+  /**
+   * @brief Degrees of freedom of the locally owned velocity support points.
+   *
+   */
+  std::vector<SupportPointDoFs> locally_owned_support_points;
 };
 
 #endif

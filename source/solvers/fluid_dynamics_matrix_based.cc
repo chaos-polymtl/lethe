@@ -175,11 +175,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
       this->simulation_parameters.initial_condition->type ==
         Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
     {
-      this->average_velocities->initialize_vectors(
-        this->locally_owned_dofs,
-        this->locally_relevant_dofs,
-        this->fe->n_dofs_per_vertex(),
-        this->mpi_communicator);
+      this->average_velocities->initialize_vectors(this->locally_owned_dofs,
+                                                   this->locally_relevant_dofs,
+                                                   this->mpi_communicator);
     }
 
   double global_volume =

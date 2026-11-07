@@ -8,7 +8,10 @@
 
 // Deal.II includes
 #include <deal.II/base/index_set.h>
+#include <deal.II/base/types.h>
 
+#include <deal.II/dofs/dof_handler.h>
+#include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -60,15 +63,7 @@ test()
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  std::vector<IndexSet> locally_owned_dofs(2);
-  std::vector<IndexSet> locally_relevant_dofs(2);
-
-  locally_owned_dofs[0].set_size(4);
-  locally_owned_dofs[1].set_size(4);
-  locally_owned_dofs[0].add_range(0, 3);
-  locally_owned_dofs[1].add_range(0, 1);
-
-  // Make triangulation and dummy dof_handler to construct average velocities
+  // Make triangulation and dof_handler to construct average velocities
   parallel::distributed::Triangulation<dim> tria(
     mpi_communicator,
     typename Triangulation<dim>::MeshSmoothing(
@@ -76,6 +71,32 @@ test()
       Triangulation<dim>::smoothing_on_coarsening));
   GridGenerator::hyper_cube(tria, -1, 1);
   DoFHandler<dim> dof_handler(tria);
+
+  // With a Q1 element on a single cell numbered component-wise, as in the
+  // block solver, the velocity block holds (u, v, w) of the vertices, starting
+  // with (0, 1, 2) for the first vertex, and the pressure block holds p of the
+  // vertices, starting with 0 for the first vertex.
+  dof_handler.distribute_dofs(FESystem<dim>(FE_Q<dim>(1), dim + 1));
+
+  std::vector<unsigned int> block_component(dim + 1, 0);
+  block_component[dim] = 1;
+  DoFRenumbering::component_wise(dof_handler, block_component);
+
+  const std::vector<types::global_dof_index> dofs_per_block =
+    DoFTools::count_dofs_per_fe_block(dof_handler, block_component);
+  const types::global_dof_index n_velocity_dofs = dofs_per_block[0];
+  const types::global_dof_index n_dofs          = dof_handler.n_dofs();
+
+  const IndexSet &owned_dofs = dof_handler.locally_owned_dofs();
+  const IndexSet  relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(dof_handler);
+
+  const std::vector<IndexSet> locally_owned_dofs = {
+    owned_dofs.get_view(0, n_velocity_dofs),
+    owned_dofs.get_view(n_velocity_dofs, n_dofs)};
+  const std::vector<IndexSet> locally_relevant_dofs = {
+    relevant_dofs.get_view(0, n_velocity_dofs),
+    relevant_dofs.get_view(n_velocity_dofs, n_dofs)};
 
   AverageVelocities<dim, GlobalBlockVectorType, std::vector<IndexSet>> average(
     dof_handler);
@@ -99,7 +120,6 @@ test()
   // Initialize averaged vectors
   average.initialize_vectors(locally_owned_dofs,
                              locally_relevant_dofs,
-                             3,
                              mpi_communicator);
 
   // Time loop
