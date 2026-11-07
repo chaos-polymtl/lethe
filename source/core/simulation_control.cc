@@ -471,8 +471,18 @@ SimulationControlTransient::is_output_iteration()
     {
       const double start_time = output_time_interval[0];
 
-      // We never output outside of the output time interval
-      if (current_time < start_time || current_time > output_time_interval[1])
+      // The tolerance prevents round-off errors accumulated in the current time
+      // from delaying or skipping an output. It is proportional to the output
+      // time frequency, and not to the time step, so that it is the same at
+      // every iteration. Consequently, every output time is attributed to
+      // exactly one iteration, even when the time step changes.
+      const double margin = output_time_tolerance * output_time_frequency;
+
+      // We never output outside of the output time interval. The same
+      // tolerance is used so that the bounds of the interval are considered as
+      // reached when they are reached up to round-off errors.
+      if (current_time < start_time - margin ||
+          current_time > output_time_interval[1] + margin)
         return false;
 
       // As for iteration control, we always output the initial iteration and
@@ -481,11 +491,8 @@ SimulationControlTransient::is_output_iteration()
         return true;
 
       // We output if the time step that led to the current time reached or
-      // crossed an output time. The tolerance prevents round-off errors
-      // accumulated in the current time from delaying an output by one
-      // iteration.
-      const double margin            = output_time_tolerance * time_step;
-      const auto   output_time_index = [&](const double time) {
+      // crossed an output time
+      const auto output_time_index = [&](const double time) {
         return std::floor((time - start_time + margin) / output_time_frequency);
       };
 

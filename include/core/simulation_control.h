@@ -955,12 +955,17 @@ protected:
   double max_dt;
 
   /**
-   * @brief Tolerance, as a fraction of the time step, used to decide whether an
-   * output time of the output time frequency has been reached
+   * @brief Relative tolerance used to decide whether an output time has been
+   * reached
    *
    * An output time that lies within this tolerance after the current time is
    * considered as reached. This prevents round-off errors accumulated in the
-   * current time from delaying an output by one iteration.
+   * current time from delaying or skipping an output. With an output time
+   * frequency, the tolerance is relative to the output time frequency, so that
+   * it does not change from one iteration to the next and every output time is
+   * attributed to exactly one iteration. It also applies to the bounds of the
+   * output time interval. With specific output times, the tolerance is relative
+   * to the time step.
    */
   static constexpr double output_time_tolerance = 1e-6;
 
@@ -1069,7 +1074,10 @@ public:
    * iteration is an output iteration if the time step that leads to it reaches
    * or crosses one of these output times. The initial iteration and the last
    * iteration are also output iterations. In all cases, the current time must
-   * lie within the output time interval.
+   * lie within the output time interval. Both the output times and the bounds
+   * of the interval are considered as reached up to
+   * SimulationControlTransient::output_time_tolerance times the output time
+   * frequency.
    *
    * When specific output times are used, they may be given in any order. An
    * iteration is an output iteration if the time step that leads to it, or
