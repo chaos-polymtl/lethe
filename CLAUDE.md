@@ -30,7 +30,8 @@ core ──► dem ──────┐
 - `core` includes no other Lethe library. `dem` and `solvers` include only
   `core` and **never each other**. `fem-dem` may include all three.
 - Include Lethe headers as `<module/file.h>`, never `"file.h"`: `checkdeps`
-  only parses the angle-bracket form. `qmomkit/` headers are allowed only in
+  classifies an include by its `core/`, `dem/`, … prefix and reports any other
+  form as an unintended dependency. `qmomkit/` headers are allowed only in
   `solvers` and `fem-dem`, under `#ifdef LETHE_WITH_QMOMKIT`.
 - `target_link_libraries` mirrors the graph (`lethe-dem`, `lethe-solvers` →
   `lethe-core`; `lethe-fem-dem` → all three). Never add a link to make a build pass.
@@ -51,7 +52,9 @@ core ──► dem ──────┐
 - Prefer matching a nearby solver/model/test pattern over inventing a new
   structure.
 - Check whether the change affects `.prm` parameters, restart files, output
-  text, MPI behavior, or release notes.
+  text, MPI behavior, or release notes. Tests diff stdout against `.output`
+  golden files, so changing printed text breaks them: explain why the new
+  output is intended before regenerating them.
 
 Parameters are declared in `include/core/parameters*.h` and
 `source/core/parameters*.cc`, and documented in `doc/source/parameters/`.
@@ -82,8 +85,10 @@ a build already exists. Expensive, only when asked: `run_clang_tidy.sh
 ## What CI runs
 
 `Check_indent`, `Check_prm_indent` and the Sphinx build (`-W`: any warning is
-an error) run first; the jobs below start only if they pass, and are skipped
-when only `doc/` and `release_notes/` change.
+an error) run first; the jobs below start only if they pass. On a pull request,
+a job is skipped when every changed file is in a folder it ignores: the builds
+ignore `doc/`, `release_notes/`, `contrib/` and `examples/`; clang-tidy and the
+example check ignore `doc/`, `release_notes/` and `contrib/`.
 
 - Debug build + full `ctest`.
 - Release build + `ctest` against deal.II master **and v9.7.1**: guard newer
@@ -185,7 +190,9 @@ Reviews: 2 reviewers for small changes, 3 for large or architectural ones.
 Replying to reviewers is the developer's responsibility
 (`doc/source/contributing/pull-requests.rst`): draft replies, never post them.
 
-When reviewing code, prioritize bugs, MPI/distributed correctness, numerical
+When reviewing code, first read the `.claude/rules/` files that match the
+changed paths, since a diff alone may not load them. Prioritize bugs,
+MPI/distributed correctness, numerical
 robustness, performance regressions, missing tests/docs/release notes, and
 dependency violations. Do not nitpick formatting handled by Lethe's tools.
 
