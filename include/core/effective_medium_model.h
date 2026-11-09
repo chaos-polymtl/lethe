@@ -67,7 +67,7 @@ public:
     const ComplexComponent               &complex_component);
 
   /**
-   * @brief Creates the model of a mixture property, with the mixing law given 
+   * @brief Creates the model of a mixture property, with the mixing law given
    * by the material interaction.
    *
    * @param[in] physical_properties Physical properties parameters.
@@ -81,9 +81,9 @@ public:
    */
   static std::shared_ptr<EffectiveMediumModel>
   model_cast(const Parameters::PhysicalProperties &physical_properties,
-                  const unsigned int                    material_interaction_id,
-                  const EffectiveMediumProperty        &property,
-                  const ComplexComponent               &complex_component);
+             const unsigned int                    material_interaction_id,
+             const EffectiveMediumProperty        &property,
+             const ComplexComponent               &complex_component);
 
   /**
    * @brief Calculates the selected part of the mixture property.
@@ -171,20 +171,32 @@ public:
 
 protected:
   /**
+   * @brief Models of the property of a phase. The effective property of the phase can be complex and builded from the sum of the real part models plus i times the sum of the imaginary part models (e.g., eps_eff = eps' + i (eps'' + sigma) for the permittivity).
+   */
+  struct PhaseModels
+  {
+    /// Models whose values are summed to give the real part of the property
+    std::vector<std::shared_ptr<PhysicalPropertyModel>> real_part_terms;
+
+    /// Models whose values are summed to give the imaginary part of the
+    /// property
+    std::vector<std::shared_ptr<PhysicalPropertyModel>> imaginary_part_terms;
+  };
+
+  /**
    * @brief Adds the fields on which the models of a phase depend to the fields
    * on which the mixture property depends.
    *
    * @param[in] phase_models Models of the property of the phase.
    */
   void
-  add_phase_dependencies(
-    const std::vector<std::shared_ptr<PhysicalPropertyModel>> &phase_models);
+  add_phase_dependencies(const PhaseModels &phase_models);
 
   /// Models of the property of phase 1
-  std::vector<std::shared_ptr<PhysicalPropertyModel>> phase_1_models;
+  PhaseModels phase_1_models;
 
   /// Models of the property of phase 2
-  std::vector<std::shared_ptr<PhysicalPropertyModel>> phase_2_models;
+  PhaseModels phase_2_models;
 
 private:
   /**
@@ -196,13 +208,12 @@ private:
    *
    * @return Models of the property.
    */
-  static std::vector<std::shared_ptr<PhysicalPropertyModel>>
+  static PhaseModels
   create_phase_models(const Parameters::Material   &material_properties,
                       const EffectiveMediumProperty property);
 
   /**
-   * @brief Calculates the property of a phase from its models, according to
-   * the mixture property.
+   * @brief Calculates the complex property of a phase from its models.
    *
    * @param[in] phase_models Models of the property of the phase.
    * @param[in] field_values Values of the fields.
@@ -210,13 +221,12 @@ private:
    * @return Property of the phase.
    */
   std::complex<double>
-  phase_value(
-    const std::vector<std::shared_ptr<PhysicalPropertyModel>> &phase_models,
-    const std::map<field, double> &field_values) const;
+  phase_value(const PhaseModels             &phase_models,
+              const std::map<field, double> &field_values) const;
 
   /**
-   * @brief Calculates the property of a phase at multiple points from its
-   * models, according to the mixture property.
+   * @brief Calculates the complex property of a phase at multiple points from
+   * its models.
    *
    * @param[in] phase_models Models of the property of the phase.
    * @param[in] field_vectors Values of the fields at each point.
@@ -224,10 +234,9 @@ private:
    * size sets the number of points.
    */
   void
-  phase_vector_value(
-    const std::vector<std::shared_ptr<PhysicalPropertyModel>> &phase_models,
-    const std::map<field, std::vector<double>>                &field_vectors,
-    std::vector<std::complex<double>> &phase_property) const;
+  phase_vector_value(const PhaseModels                          &phase_models,
+                     const std::map<field, std::vector<double>> &field_vectors,
+                     std::vector<std::complex<double>> &phase_property) const;
 
   /**
    * @brief Returns the selected part (real or imaginary) of a mixture property.
@@ -251,9 +260,6 @@ private:
   static Parameters::MaterialInteractions::EffectiveMediumModelType
   get_model_type(const Parameters::MaterialInteractions &interaction,
                  const EffectiveMediumProperty           property);
-
-  /// Mixture property calculated by the model
-  const EffectiveMediumProperty property;
 
   /// Part of the mixture property returned by the model
   const ComplexComponent complex_component;

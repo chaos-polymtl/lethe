@@ -14,8 +14,7 @@ EffectiveMediumModel::EffectiveMediumModel(
   const unsigned int                    material_interaction_id,
   const EffectiveMediumProperty        &property,
   const ComplexComponent               &complex_component)
-  : property(property)
-  , complex_component(complex_component)
+  : complex_component(complex_component)
 {
   AssertThrow(material_interaction_id <
                 physical_properties.number_of_material_interactions,
@@ -143,41 +142,45 @@ EffectiveMediumModel::vector_jacobian(
 }
 
 void
-EffectiveMediumModel::add_phase_dependencies(
-  const std::vector<std::shared_ptr<PhysicalPropertyModel>> &phase_models)
+EffectiveMediumModel::add_phase_dependencies(const PhaseModels &phase_models)
 {
   // The mixture property depends on a field if at least one model of the phase
   // depends on it. The use of or (||) ensures that a field on which the
   // mixture property already depends is not erased.
   for (auto &[field_id, mixture_depends_on_field] : this->model_depends_on)
-    for (const auto &model : phase_models)
-      mixture_depends_on_field =
-        mixture_depends_on_field || model->depends_on(field_id);
+    {
+      for (const auto &model : phase_models.real_part_terms)
+        mixture_depends_on_field =
+          mixture_depends_on_field || model->depends_on(field_id);
+      for (const auto &model : phase_models.imaginary_part_terms)
+        mixture_depends_on_field =
+          mixture_depends_on_field || model->depends_on(field_id);
+    }
 }
 
-std::vector<std::shared_ptr<PhysicalPropertyModel>>
+EffectiveMediumModel::PhaseModels
 EffectiveMediumModel::create_phase_models(
   const Parameters::Material   &material_properties,
   const EffectiveMediumProperty property)
 {
-  std::vector<std::shared_ptr<PhysicalPropertyModel>> phase_models;
+  PhaseModels phase_models;
 
   switch (property)
     {
       case EffectiveMediumProperty::electric_permittivity:
-        // Models of eps', eps'' and sigma
-        phase_models.push_back(
+        // Complex permittivity: eps' + i (eps'' + sigma)
+        phase_models.real_part_terms.push_back(
           ElectricPermittivityModel::model_cast_real(material_properties));
-        phase_models.push_back(
+        phase_models.imaginary_part_terms.push_back(
           ElectricPermittivityModel::model_cast_imag(material_properties));
-        phase_models.push_back(
+        phase_models.imaginary_part_terms.push_back(
           ElectricConductivityModel::model_cast(material_properties));
         break;
       case EffectiveMediumProperty::magnetic_permeability:
-        // Models of mu' and mu''
-        phase_models.push_back(
+        // Complex permeability: mu' + i mu''
+        phase_models.real_part_terms.push_back(
           MagneticPermeabilityModel::model_cast_real(material_properties));
-        phase_models.push_back(
+        phase_models.imaginary_part_terms.push_back(
           MagneticPermeabilityModel::model_cast_imag(material_properties));
         break;
     }
@@ -187,54 +190,43 @@ EffectiveMediumModel::create_phase_models(
 
 std::complex<double>
 EffectiveMediumModel::phase_value(
-  const std::vector<std::shared_ptr<PhysicalPropertyModel>> &phase_models,
-  const std::map<field, double>                             &field_values) const
+  const PhaseModels             &phase_models,
+  const std::map<field, double> &field_values) const
 {
-  switch (property)
-    {
-      case EffectiveMediumProperty::electric_permittivity:
-        // Complex permittivity: eps' + i (eps'' + sigma)
-        return {phase_models[0]->value(field_values),
-                phase_models[1]->value(field_values) +
-                  phase_models[2]->value(field_values)};
-      case EffectiveMediumProperty::magnetic_permeability:
-        // Complex permeability: mu' + i mu''
-        return {phase_models[0]->value(field_values),
-                phase_models[1]->value(field_values)};
-    }
+  double real_part = 0.0;
+  for (const auto &model : phase_models.real_part_terms)
+    real_part += model->value(field_values);
 
-  Assert(false, ExcMessage("Invalid effective medium property."));
-  return {0.0, 0.0};
+  double imaginary_part = 0.0;
+  for (const auto &model : phase_models.imaginary_part_terms)
+    imaginary_part += model->value(field_values);
+
+  return {real_part, imaginary_part};
 }
 
 void
 EffectiveMediumModel::phase_vector_value(
-  const std::vector<std::shared_ptr<PhysicalPropertyModel>> &phase_models,
-  const std::map<field, std::vector<double>>                &field_vectors,
-  std::vector<std::complex<double>> &phase_property) const
+  const PhaseModels                          &phase_models,
+  const std::map<field, std::vector<double>> &field_vectors,
+  std::vector<std::complex<double>>          &phase_property) const
 {
   const unsigned int  n_points = phase_property.size();
-  std::vector<double> real_part(n_points);
-  std::vector<double> imaginary_part(n_points);
+  std::vector<double> real_part(n_points, 0.0);
+  std::vector<double> imaginary_part(n_points, 0.0);
+  std::vector<double> term_values(n_points);
 
-  switch (property)
+  for (const auto &model : phase_models.real_part_terms)
     {
-      case EffectiveMediumProperty::electric_permittivity:
-        {
-          // Complex permittivity: eps' + i (eps'' + sigma)
-          std::vector<double> conductivity(n_points);
-          phase_models[0]->vector_value(field_vectors, real_part);
-          phase_models[1]->vector_value(field_vectors, imaginary_part);
-          phase_models[2]->vector_value(field_vectors, conductivity);
-          for (unsigned int i = 0; i < n_points; ++i)
-            imaginary_part[i] += conductivity[i];
-          break;
-        }
-      case EffectiveMediumProperty::magnetic_permeability:
-        // Complex permeability: mu' + i mu''
-        phase_models[0]->vector_value(field_vectors, real_part);
-        phase_models[1]->vector_value(field_vectors, imaginary_part);
-        break;
+      model->vector_value(field_vectors, term_values);
+      for (unsigned int i = 0; i < n_points; ++i)
+        real_part[i] += term_values[i];
+    }
+
+  for (const auto &model : phase_models.imaginary_part_terms)
+    {
+      model->vector_value(field_vectors, term_values);
+      for (unsigned int i = 0; i < n_points; ++i)
+        imaginary_part[i] += term_values[i];
     }
 
   for (unsigned int i = 0; i < n_points; ++i)
