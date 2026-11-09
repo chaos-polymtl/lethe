@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_boundary_conditions_time_harmonic_maxwell_h
@@ -114,13 +114,11 @@ namespace BoundaryConditions
              std::shared_ptr<Functions::ParsedFunction<dim>>>
       excitation_z_imag;
 
-
     void
     parse_boundary(ParameterHandler &prm);
     void
     declare_default_entry(ParameterHandler  &prm,
                           types::boundary_id default_boundary_id);
-
 
     /**
      * @brief Declares the Time Harmonic Maxwell boundary conditions
@@ -445,7 +443,6 @@ namespace BoundaryConditions
       }
   }
 
-
   /**
    * @brief Parse the boundary conditions
    * Calls parse_boundary method for each boundary (max 14 boundaries)
@@ -512,7 +509,6 @@ public:
   double
   value(const Point<dim> &point, const unsigned int component) const override;
 };
-
 
 /**
  * @brief Calculates the value of an imposed electric field equations.
@@ -590,7 +586,6 @@ public:
   double
   value(const Point<dim> &point, const unsigned int component) const override;
 };
-
 
 /**
  * @brief Calculates the value of an imposed magnetic field equations.

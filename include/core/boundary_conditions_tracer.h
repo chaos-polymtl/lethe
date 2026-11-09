@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_boundary_conditions_tracer_h
@@ -40,7 +40,6 @@ namespace BoundaryConditions
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
       tracer;
-
 
     void
     declare_default_entry(ParameterHandler  &prm,
@@ -143,7 +142,6 @@ namespace BoundaryConditions
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
    */
-
   template <int dim>
   void
   TracerBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
@@ -157,7 +155,6 @@ namespace BoundaryConditions
       boundary_ids.size() > 0,
       ExcMessage(
         "A boundary id has not been set for one of the tracer boundary conditions. Please ensure that the id is set for every boundary condition."));
-
 
     // Loop through all boundary ids to ensure that they are all non-negative
     // and unique

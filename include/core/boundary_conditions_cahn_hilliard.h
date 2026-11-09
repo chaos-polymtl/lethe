@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_boundary_conditions_cahn_hilliard_h
@@ -30,7 +30,6 @@ namespace BoundaryConditions
   /**
    * @brief This class manages the functions associated with function-type boundary conditions
    * of the Cahn-Hilliard equations
-   *
    */
   template <int dim>
   class CahnHilliardBoundaryFunctions
@@ -161,7 +160,6 @@ namespace BoundaryConditions
    * @brief Parse the information for a boundary condition
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
-   *
    */
 
   template <int dim>
@@ -275,8 +273,7 @@ namespace BoundaryConditions
 
 /**
  * @brief Class that implements a boundary conditions for the Cahn-Hilliard equation
- * where the phase and chemical potential are defined using individual
- * functions
+ * where the phase and chemical potential are defined using individual functions
  */
 template <int dim>
 class CahnHilliardFunctionDefined : public Function<dim>

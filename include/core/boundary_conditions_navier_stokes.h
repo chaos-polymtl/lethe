@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_boundary_conditions_navier_stokes_h
@@ -44,7 +44,6 @@ namespace BoundaryConditions
   /**
    * @brief This class manages the functions associated with function-type boundary conditions
    * of the Navier-Stokes equations
-   *
    */
   template <int dim>
   class NavierStokesBoundaryFunctions
@@ -174,7 +173,6 @@ namespace BoundaryConditions
                        deprecated_boundary_type_names,
                        fluid_dynamics_boundary_types);
 
-
     prm.declare_entry("id",
                       Utilities::to_string(default_boundary_id, 2),
                       Patterns::List(Patterns::Integer()),
@@ -194,7 +192,6 @@ namespace BoundaryConditions
     // Create a dummy NavierStokesBoundaryFunctions object to declare the
     // appropriate parameters for this boundary condition.
     NavierStokesBoundaryFunctions<dim> temporary_fluid_dynamics_functions;
-
 
     prm.enter_subsection("u");
     temporary_fluid_dynamics_functions.u.declare_parameters(prm);
@@ -294,11 +291,9 @@ namespace BoundaryConditions
         navier_stokes_functions[boundary_id]->p.parse_parameters(prm);
         prm.leave_subsection();
 
-
         prm.enter_subsection("traction fn");
         navier_stokes_functions[boundary_id]->traction_fn.parse_parameters(prm);
         prm.leave_subsection();
-
 
         prm.enter_subsection("center of rotation");
         navier_stokes_functions[boundary_id]->center_of_rotation[0] =
@@ -356,12 +351,10 @@ namespace BoundaryConditions
               prm);
             prm.leave_subsection();
 
-
             prm.enter_subsection("traction fn");
             navier_stokes_functions[periodic_boundary_id]
               ->traction_fn.parse_parameters(prm);
             prm.leave_subsection();
-
 
             prm.enter_subsection("p");
             navier_stokes_functions[periodic_boundary_id]->p.parse_parameters(
@@ -384,7 +377,6 @@ namespace BoundaryConditions
           prm.get_double("boundary layer thickness");
       }
   }
-
 
   template <int dim>
   void
@@ -421,7 +413,6 @@ namespace BoundaryConditions
     }
     prm.leave_subsection();
   }
-
 
   /**
    * @brief Parse the boundary conditions
