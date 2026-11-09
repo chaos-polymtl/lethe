@@ -1069,8 +1069,10 @@ QMOM<dim>::calculate_L2_errors()
         }
     }
 
-  std::vector<double> errors =
-    Utilities::MPI::sum(squared_errors, triangulation->get_mpi_communicator());
+  std::vector<double> errors(n_components);
+  Utilities::MPI::sum(squared_errors,
+                      triangulation->get_mpi_communicator(),
+                      errors);
   for (double &error : errors)
     error = std::sqrt(error);
   return errors;
