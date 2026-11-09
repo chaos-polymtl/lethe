@@ -60,10 +60,11 @@ EffectiveMediumModel::EffectiveMediumModel(
 }
 
 std::shared_ptr<EffectiveMediumModel>
-EffectiveMediumModel::model_cast_real(
+EffectiveMediumModel::model_cast(
   const Parameters::PhysicalProperties &physical_properties,
   const unsigned int                    material_interaction_id,
-  const EffectiveMediumProperty        &property)
+  const EffectiveMediumProperty        &property,
+  const ComplexComponent               &complex_component)
 {
   const Parameters::MaterialInteractions &interaction =
     physical_properties.material_interactions.at(material_interaction_id);
@@ -76,43 +77,14 @@ EffectiveMediumModel::model_cast_real(
     return std::make_shared<NoEffectiveMediumModel>(physical_properties,
                                                     material_interaction_id,
                                                     property,
-                                                    ComplexComponent::real);
+                                                    complex_component);
   else if (model_type == Parameters::MaterialInteractions::
                            EffectiveMediumModelType::bruggeman)
     return std::make_shared<BruggemanEffectiveMediumModel>(
       physical_properties,
       material_interaction_id,
       property,
-      ComplexComponent::real);
-  else
-    AssertThrow(false, InvalidEffectiveMediumModel());
-}
-
-std::shared_ptr<EffectiveMediumModel>
-EffectiveMediumModel::model_cast_imag(
-  const Parameters::PhysicalProperties &physical_properties,
-  const unsigned int                    material_interaction_id,
-  const EffectiveMediumProperty        &property)
-{
-  const Parameters::MaterialInteractions &interaction =
-    physical_properties.material_interactions.at(material_interaction_id);
-
-  const Parameters::MaterialInteractions::EffectiveMediumModelType model_type =
-    get_model_type(interaction, property);
-
-  if (model_type ==
-      Parameters::MaterialInteractions::EffectiveMediumModelType::none)
-    return std::make_shared<NoEffectiveMediumModel>(physical_properties,
-                                                    material_interaction_id,
-                                                    property,
-                                                    ComplexComponent::imag);
-  else if (model_type == Parameters::MaterialInteractions::
-                           EffectiveMediumModelType::bruggeman)
-    return std::make_shared<BruggemanEffectiveMediumModel>(
-      physical_properties,
-      material_interaction_id,
-      property,
-      ComplexComponent::imag);
+      complex_component);
   else
     AssertThrow(false, InvalidEffectiveMediumModel());
 }

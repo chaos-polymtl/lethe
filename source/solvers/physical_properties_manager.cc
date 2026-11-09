@@ -234,28 +234,32 @@ PhysicalPropertiesManager::initialize(
             fluid_dispersed_phase)
         {
           effective_electric_permittivity_real[i] =
-            EffectiveMediumModel::model_cast_real(
+            EffectiveMediumModel::model_cast(
               physical_properties,
               i,
-              EffectiveMediumProperty::electric_permittivity);
+              EffectiveMediumProperty::electric_permittivity,
+               EffectiveMediumModel::ComplexComponent::real);
 
           effective_electric_permittivity_imag[i] =
-            EffectiveMediumModel::model_cast_imag(
+            EffectiveMediumModel::model_cast(
               physical_properties,
               i,
-              EffectiveMediumProperty::electric_permittivity);
+              EffectiveMediumProperty::electric_permittivity,
+               EffectiveMediumModel::ComplexComponent::imag);
 
           effective_magnetic_permeability_real[i] =
-            EffectiveMediumModel::model_cast_real(
+            EffectiveMediumModel::model_cast(
               physical_properties,
               i,
-              EffectiveMediumProperty::magnetic_permeability);
+              EffectiveMediumProperty::magnetic_permeability,
+               EffectiveMediumModel::ComplexComponent::real);
 
           effective_magnetic_permeability_imag[i] =
-            EffectiveMediumModel::model_cast_imag(
+            EffectiveMediumModel::model_cast(
               physical_properties,
               i,
-              EffectiveMediumProperty::magnetic_permeability);
+              EffectiveMediumProperty::magnetic_permeability,
+              EffectiveMediumModel::ComplexComponent::imag);
 
           // Here we also initialize the interaction container using the first
           // material of the interaction, as it is the host of the dispersed

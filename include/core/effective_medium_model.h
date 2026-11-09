@@ -67,36 +67,23 @@ public:
     const ComplexComponent               &complex_component);
 
   /**
-   * @brief Creates the model of the real part of a mixture property, with the
-   * mixing law given by the material interaction.
+   * @brief Creates the model of a mixture property, with the mixing law given 
+   * by the material interaction.
    *
    * @param[in] physical_properties Physical properties parameters.
    * @param[in] material_interaction_id Index of the material interaction that
    * defines the mixture.
    * @param[in] property Mixture property calculated by the model.
+   * @param[in] complex_component Part of the mixture property returned by the
+   * model.
    *
    * @return A shared pointer to the created effective medium model.
    */
   static std::shared_ptr<EffectiveMediumModel>
-  model_cast_real(const Parameters::PhysicalProperties &physical_properties,
+  model_cast(const Parameters::PhysicalProperties &physical_properties,
                   const unsigned int                    material_interaction_id,
-                  const EffectiveMediumProperty        &property);
-
-  /**
-   * @brief Creates the model of the imaginary part of a mixture property,
-   * with the mixing law given by the material interaction.
-   *
-   * @param[in] physical_properties Physical properties parameters.
-   * @param[in] material_interaction_id Index of the material interaction that
-   * defines the mixture.
-   * @param[in] property Mixture property calculated by the model.
-   *
-   * @return A shared pointer to the created effective medium model.
-   */
-  static std::shared_ptr<EffectiveMediumModel>
-  model_cast_imag(const Parameters::PhysicalProperties &physical_properties,
-                  const unsigned int                    material_interaction_id,
-                  const EffectiveMediumProperty        &property);
+                  const EffectiveMediumProperty        &property,
+                  const ComplexComponent               &complex_component);
 
   /**
    * @brief Calculates the selected part of the mixture property.

@@ -161,9 +161,11 @@ namespace
     field_values[field::temperature]   = temperature;
 
     const auto real_model =
-      EffectiveMediumModel::model_cast_real(physical_properties, 0, property);
+      EffectiveMediumModel::model_cast(physical_properties, 0, property,
+                                        EffectiveMediumModel::ComplexComponent::real);
     const auto imag_model =
-      EffectiveMediumModel::model_cast_imag(physical_properties, 0, property);
+      EffectiveMediumModel::model_cast(physical_properties, 0, property,
+                                        EffectiveMediumModel::ComplexComponent::imag);
 
     return {real_model->value(field_values), imag_model->value(field_values)};
   }
@@ -437,10 +439,12 @@ namespace
     std::map<field, std::vector<double>> field_vectors;
     field_vectors[field::void_fraction] = void_fractions;
 
-    const auto real_model = EffectiveMediumModel::model_cast_real(
-      mixture, 0, EffectiveMediumProperty::electric_permittivity);
-    const auto imag_model = EffectiveMediumModel::model_cast_imag(
-      mixture, 0, EffectiveMediumProperty::electric_permittivity);
+    const auto real_model = EffectiveMediumModel::model_cast(
+      mixture, 0, EffectiveMediumProperty::electric_permittivity,
+      EffectiveMediumModel::ComplexComponent::real);
+    const auto imag_model = EffectiveMediumModel::model_cast(
+      mixture, 0, EffectiveMediumProperty::electric_permittivity,
+      EffectiveMediumModel::ComplexComponent::imag);
 
     std::vector<double> real_values(n_points);
     std::vector<double> imag_values(n_points);
@@ -518,12 +522,15 @@ namespace
                      EffectiveMediumModelType::bruggeman,
                      EffectiveMediumModelType::bruggeman);
 
-    const auto permittivity_real = EffectiveMediumModel::model_cast_real(
-      bruggeman_mixture, 0, EffectiveMediumProperty::electric_permittivity);
-    const auto permittivity_imag = EffectiveMediumModel::model_cast_imag(
-      bruggeman_mixture, 0, EffectiveMediumProperty::electric_permittivity);
-    const auto permeability_real = EffectiveMediumModel::model_cast_real(
-      bruggeman_mixture, 0, EffectiveMediumProperty::magnetic_permeability);
+    const auto permittivity_real = EffectiveMediumModel::model_cast(
+      bruggeman_mixture, 0, EffectiveMediumProperty::electric_permittivity,
+      EffectiveMediumModel::ComplexComponent::real);
+    const auto permittivity_imag = EffectiveMediumModel::model_cast(
+      bruggeman_mixture, 0, EffectiveMediumProperty::electric_permittivity,
+      EffectiveMediumModel::ComplexComponent::imag);
+    const auto permeability_real = EffectiveMediumModel::model_cast(
+      bruggeman_mixture, 0, EffectiveMediumProperty::magnetic_permeability,
+      EffectiveMediumModel::ComplexComponent::real);
 
     deallog << "Bruggeman permittivity (real part) depends on the void "
                "fraction"
@@ -554,8 +561,9 @@ namespace
                      dispersed_phase,
                      EffectiveMediumModelType::none,
                      EffectiveMediumModelType::none);
-    const auto none_permittivity_real = EffectiveMediumModel::model_cast_real(
-      none_mixture, 0, EffectiveMediumProperty::electric_permittivity);
+    const auto none_permittivity_real = EffectiveMediumModel::model_cast(
+      none_mixture, 0, EffectiveMediumProperty::electric_permittivity,
+      EffectiveMediumModel::ComplexComponent::real);
 
     deallog << "None permittivity (real part) depends on the void fraction"
             << std::endl;
