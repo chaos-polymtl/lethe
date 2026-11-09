@@ -42,7 +42,7 @@ The default parameters are:
 
 * The ``inlet boundary id`` parameter is the boundary where the average velocity intended is controlled (for CFD solvers only).
 
-* The ``flow direction`` parameter sets the absolute direction. It should be ``0`` if the flow is in the :math:`x` direction, ``1`` in the :math:`y` direction and ``2`` in the :math:`z` direction.
+* The ``flow direction`` parameter sets the absolute direction. It should be ``0`` if the flow is in the :math:`x` direction, ``1`` in the :math:`y` direction and ``2`` in the :math:`z` direction. It must be smaller than the dimension of the problem: ``2`` is rejected in 2D.
 
 * The ``initial beta`` parameter sets an initial :math:`\beta` coefficient that may speed up the convergence of the average velocity target. Some tests should be done to find a good initial :math:`\beta` coefficient.
 
@@ -50,9 +50,9 @@ The default parameters are:
 
   A good method to find a reasonable initial beta is to test two or three different initial beta parameters, write down the given flow rate at the first time step in the simulation and do a regression. The correlation is linear and giving a proper value will reduce the time it takes to reach the target velocity.
 
-* The ``alpha`` parameter is a relaxation coefficient that is used to control the convergence speed or stability. The higher the value, the faster the convergence. However, if the value is too high, there might be oscillations and the simulation could be unstable.
+* The ``alpha`` parameter is a non-negative relaxation coefficient that is used to control the convergence speed or stability. The higher the value, the faster the convergence. However, if the value is too high, there might be oscillations and the simulation could be unstable.
 
-* The ``beta threshold`` parameter is the threshold on beta calculated at the previous time step that prevents the new calculated beta force to be updated. If ``abs(beta_n - beta_n+1) < abs(beta_n * beta_threshold)``, the previous beta value is kept. This could avoid the reassembly of the matrix because of the updated force term when reuse matrix option is enabled for the non-linear solver.
+* The ``beta threshold`` parameter is the non-negative threshold on beta calculated at the previous time step that prevents the new calculated beta force to be updated. If ``abs(beta_n - beta_n+1) < abs(beta_n * beta_threshold)``, the previous beta value is kept. This could avoid the reassembly of the matrix because of the updated force term when reuse matrix option is enabled for the non-linear solver.
 
 Reference
 ---------
