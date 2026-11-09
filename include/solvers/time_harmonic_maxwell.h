@@ -483,11 +483,13 @@ private:
 
   /**
    * @brief Reconstruct the interior solution from the skeleton solution after solving
-   * the linear system on the skeleton only. The local DPG system of each cell
-   * is assembled again to compute the interior solution
-   * \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ and the DPG residual
-   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ when the DPG error
-   * estimate on the cell and is not stored anywhere else.
+   * the linear system on the skeleton only. Since the local DPG systems are
+   * not stored after the assembly, the local DPG system of each cell is
+   * assembled again to compute the interior solution
+   * \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ and, when the DPG error
+   * estimator is enabled, the DPG residual
+   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ whose norm is the error
+   * indicator of the cell.
    */
   void
   reconstruct_interior_solution();
@@ -503,9 +505,10 @@ private:
    * @brief Assemble the uncondensed local DPG system (\f$G\f$, \f$B\f$,
    * \f$\hat{B}\f$ and \f$l\f$) of a cell with the cell and face assemblers,
    * and compute the condensation operators that are common to the assembly
-   * and to the interior reconstruction: \f$G^{-1}\f$,
-   * \f$M_4 = B^\dagger G^{-1}\f$, \f$M_1^{-1} = (B^\dagger G^{-1}B)^{-1}\f$
-   * and \f$M_2 = B^\dagger G^{-1}\hat{B}\f$.
+   * and to the interior reconstruction: the Cholesky factorizations of the
+   * Gram matrix \f$G\f$ and of \f$M_1 = B^\dagger G^{-1}B\f$, the matrix
+   * \f$M_2 = B^\dagger G^{-1}\hat{B}\f$ and the vector
+   * \f$M_4 l = B^\dagger G^{-1} l\f$.
    *
    * @param[in] cell The cell of the interior trial space DoFHandler.
    *
