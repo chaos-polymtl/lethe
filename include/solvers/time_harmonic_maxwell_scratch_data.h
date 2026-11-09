@@ -22,6 +22,7 @@
 #include <deal.II/fe/fe_values_extractors.h>
 #include <deal.II/fe/mapping.h>
 
+#include <array>
 #include <complex>
 #include <map>
 #include <memory>
@@ -129,6 +130,22 @@ public:
   };
 
   /**
+   * @brief Fields of the [E_real, E_imag, H_real, H_imag] finite element
+   * systems, numbered in the order in which they appear in the systems
+   * following the convention.
+   */
+  enum ElectromagneticFieldComponents : unsigned int
+  {
+    E_real = 0,
+    E_imag = 1,
+    H_real = 2,
+    H_imag = 3
+  };
+
+  // Number of fields of the finite element systems
+  static constexpr unsigned int n_electromagnetic_fields = 4;
+
+  /**
    * @brief Constructor. Creates the FEValues and FEFaceValues objects of the
    * interior trial, skeleton trial and test spaces and allocates the memory of
    * the scratch. It does not do any evaluation, since this is done at the cell
@@ -229,8 +246,9 @@ public:
   /**
    * @brief Allocate the memory of all the members of the scratch. It also
    * classifies the shape functions of the three finite element spaces with the
-   * ShapeFunctionType flags and builds the lists of local dof indices of each
-   * field.
+   * ShapeFunctionType flags, builds the lists of local dof indices of the
+   * electric and magnetic fields and stores the local dof index of each base
+   * function for each of the four fields.
    */
   void
   allocate() override;
@@ -255,12 +273,18 @@ public:
    *
    * @param[out] magnetic_dofs Local indices of the shape functions that belong
    * to the magnetic field (H_real or H_imag).
+   *
+   * @param[out] base_dofs Local dof index of each base function for each
+   * field: base_dofs[field][a].
    */
   void
-  classify_shape_functions(const FiniteElement<dim>   &fe,
-                           std::vector<unsigned char> &shape_function_type,
-                           std::vector<unsigned int>  &electric_dofs,
-                           std::vector<unsigned int>  &magnetic_dofs) const;
+  classify_shape_functions(
+    const FiniteElement<dim>   &fe,
+    std::vector<unsigned char> &shape_function_type,
+    std::vector<unsigned int>  &electric_dofs,
+    std::vector<unsigned int>  &magnetic_dofs,
+    std::array<std::vector<unsigned int>, n_electromagnetic_fields> &base_dofs)
+    const;
 
   /**
    * @brief Enable the evaluation of the temperature field, on which the
@@ -469,13 +493,13 @@ public:
   FEFaceValues<dim> fe_face_values_test;
 
   // Extractor for the FESystem of the real component of the electric field
-  const FEValuesExtractors::Vector extractor_E_real{0};
+  const FEValuesExtractors::Vector extractor_E_real{E_real * dim};
   // Extractor for the FESystem of the imaginary component of the electric field
-  const FEValuesExtractors::Vector extractor_E_imag{dim};
+  const FEValuesExtractors::Vector extractor_E_imag{E_imag * dim};
   // Extractor for the FESystem of the real component of the magnetic field
-  const FEValuesExtractors::Vector extractor_H_real{2 * dim};
+  const FEValuesExtractors::Vector extractor_H_real{H_real * dim};
   // Extractor for the FESystem of the imaginary component of the magnetic field
-  const FEValuesExtractors::Vector extractor_H_imag{3 * dim};
+  const FEValuesExtractors::Vector extractor_H_imag{H_imag * dim};
 
   // Number of quadrature points
   unsigned int n_q_points;
@@ -487,6 +511,12 @@ public:
   unsigned int n_dofs_trial_interior;
   // Number of dofs of the skeleton trial space
   unsigned int n_dofs_trial_skeleton;
+  // Number of base functions of the test space
+  unsigned int n_base_functions_test;
+  // Number of base functions of the interior trial space
+  unsigned int n_base_functions_trial_interior;
+  // Number of base functions of the skeleton trial space
+  unsigned int n_base_functions_trial_skeleton;
 
   // Classification of the shape functions of the test space
   std::vector<unsigned char> shape_function_type_test;
@@ -513,6 +543,21 @@ public:
   // Local dof indices of the skeleton trial functions associated with the
   // magnetic field (H_hat)
   std::vector<unsigned int> trial_skeleton_dofs_magnetic;
+
+  // Local dof index of each base function of the test space for each field:
+  // test_base_dofs[field][a]. The electric test functions (F) are the E_real
+  // and E_imag fields of the test space and the magnetic ones (I) are the
+  // H_real and H_imag fields.
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+    test_base_dofs;
+  // Local dof index of each base function of the interior trial space for each
+  // field: trial_interior_base_dofs[field][a]
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+    trial_interior_base_dofs;
+  // Local dof index of each base function of the skeleton trial space for each
+  // field: trial_skeleton_base_dofs[field][a]
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+    trial_skeleton_base_dofs;
 
   // Cell container for the volume integrals weights
   std::vector<double> JxW;

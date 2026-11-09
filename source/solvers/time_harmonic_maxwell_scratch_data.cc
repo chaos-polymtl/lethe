@@ -9,6 +9,7 @@
 #include <deal.II/base/exceptions.h>
 
 #include <algorithm>
+#include <string>
 
 void
 compute_effective_electromagnetic_properties(
@@ -160,22 +161,32 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->n_dofs_trial_skeleton = fe_trial_skeleton.n_dofs_per_cell();
 
   // Classify the shape functions of each space according to the field they
-  // belong to and gather their local indices in the corresponding lists. This
-  // is only done once since it only depends on the finite elements. Since the
-  // three spaces are [E_real, E_imag, H_real, H_imag] finite element systems,
-  // every shape function belongs to exactly one field.
+  // belong to, gather their local indices in the corresponding lists and store
+  // the local dof index of each base function for each field. This is only
+  // done once since it only depends on the finite elements. Since the three
+  // spaces are [E_real, E_imag, H_real, H_imag] finite element systems, every
+  // shape function belongs to exactly one field.
   classify_shape_functions(fe_test,
                            this->shape_function_type_test,
                            this->test_dofs_electric,
-                           this->test_dofs_magnetic);
+                           this->test_dofs_magnetic,
+                           this->test_base_dofs);
   classify_shape_functions(fe_trial_interior,
                            this->shape_function_type_trial_interior,
                            this->trial_interior_dofs_electric,
-                           this->trial_interior_dofs_magnetic);
+                           this->trial_interior_dofs_magnetic,
+                           this->trial_interior_base_dofs);
   classify_shape_functions(fe_trial_skeleton,
                            this->shape_function_type_trial_skeleton,
                            this->trial_skeleton_dofs_electric,
-                           this->trial_skeleton_dofs_magnetic);
+                           this->trial_skeleton_dofs_magnetic,
+                           this->trial_skeleton_base_dofs);
+
+  this->n_base_functions_test = this->test_base_dofs[E_real].size();
+  this->n_base_functions_trial_interior =
+    this->trial_interior_base_dofs[E_real].size();
+  this->n_base_functions_trial_skeleton =
+    this->trial_skeleton_base_dofs[E_real].size();
 
   // Cell quadrature
   this->JxW               = std::vector<double>(n_q_points);
@@ -247,11 +258,20 @@ TimeHarmonicMaxwellScratchData<dim>::classify_shape_functions(
   const FiniteElement<dim>   &fe,
   std::vector<unsigned char> &shape_function_type,
   std::vector<unsigned int>  &electric_dofs,
-  std::vector<unsigned int>  &magnetic_dofs) const
+  std::vector<unsigned int>  &magnetic_dofs,
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields> &base_dofs)
+  const
 {
+  // Since the four fields use the same base element, each field has a quarter
+  // of the shape functions of the finite element system.
+  const unsigned int n_base_functions =
+    fe.n_dofs_per_cell() / n_electromagnetic_fields;
+
   shape_function_type.assign(fe.n_dofs_per_cell(), 0);
   electric_dofs.clear();
   magnetic_dofs.clear();
+  for (auto &field_base_dofs : base_dofs)
+    field_base_dofs.assign(n_base_functions, numbers::invalid_unsigned_int);
 
   for (unsigned int k = 0; k < fe.n_dofs_per_cell(); ++k)
     {
@@ -268,6 +288,68 @@ TimeHarmonicMaxwellScratchData<dim>::classify_shape_functions(
         electric_dofs.emplace_back(k);
       else if (shape_function_type[k] & is_magnetic)
         magnetic_dofs.emplace_back(k);
+
+      // Field of the shape function
+      unsigned int field_index = numbers::invalid_unsigned_int;
+      switch (shape_function_type[k])
+        {
+          case electric_real:
+            field_index = E_real;
+            break;
+          case electric_imag:
+            field_index = E_imag;
+            break;
+          case magnetic_real:
+            field_index = H_real;
+            break;
+          case magnetic_imag:
+            field_index = H_imag;
+            break;
+          default:
+            AssertThrow(false,
+                        ExcMessage(
+                          "The shape function " + std::to_string(k) +
+                          " of the finite element " + fe.get_name() +
+                          " does not belong to exactly one of the E_real, "
+                          "E_imag, H_real and H_imag fields."));
+        }
+
+      // Base function of the shape function k. The function
+      // system_to_base_index identifies k by three indices:
+      //  - the base element it belongs to (one per field);
+      //  - the component of the field it represents. FE_DGQ^dim builds a
+      //    vector field from the scalar FE_DGQ, which represents one component
+      //    (x, y or z) of the field. FE_Nedelec is a vector element that
+      //    represents the three components at once, so this index is always 0;
+      //  - its index within the base element.
+      // The base function combines the field component and the index within
+      // the base element to number the shape functions of one field from 0 to
+      // n_base_functions - 1. Since the four base elements are identical, a
+      // base function is the same function in the four fields.
+      const auto        &base_index            = fe.system_to_base_index(k);
+      const unsigned int base_element          = base_index.first.first;
+      const unsigned int field_component       = base_index.first.second;
+      const unsigned int index_in_base_element = base_index.second;
+      const unsigned int n_dofs_base_element =
+        fe.base_element(base_element).n_dofs_per_cell();
+      const unsigned int base_function =
+        field_component * n_dofs_base_element + index_in_base_element;
+
+      // Each base function must appear exactly once in each field. Since the
+      // finite element has 4 * n_base_functions shape functions, checking that
+      // no entry is written twice also guarantees that all the entries of
+      // base_dofs are filled.
+      AssertThrow(base_function < n_base_functions &&
+                    base_dofs[field_index][base_function] ==
+                      numbers::invalid_unsigned_int,
+                  ExcMessage(
+                    "The four fields of the finite element " + fe.get_name() +
+                    " do not use the same base element. The time-harmonic "
+                    "Maxwell solver requires the E_real, E_imag, H_real and "
+                    "H_imag fields to be discretized with the same finite "
+                    "element."));
+
+      base_dofs[field_index][base_function] = k;
     }
 }
 
