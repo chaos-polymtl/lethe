@@ -86,7 +86,8 @@ namespace BoundaryConditions
     std::map<types::boundary_id, double> beta;
 
     /// Map containing the boundary layer thickness tangent component parameter
-    /// for partial slip for a corresponding id.
+    /// for partial slip for a corresponding id Map containing Dirichlet BCs for
+    /// a corresponding boundary id
     std::map<types::boundary_id, double> boundary_layer_thickness;
 
     /// Number of boundary conditions
