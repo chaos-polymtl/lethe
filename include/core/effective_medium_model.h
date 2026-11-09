@@ -267,7 +267,7 @@ private:
 
 /**
  * @brief Mixture without effective medium model: the mixture property is the
- * property of phase 1. It is used when one of the phases as no impact on the
+ * property of phase 1. It is used when one of the phases has no impact on the
  * mixture property.
  */
 class NoEffectiveMediumModel final : public EffectiveMediumModel

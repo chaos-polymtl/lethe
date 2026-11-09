@@ -421,7 +421,6 @@ public:
     return effective_electric_permittivity_imag[material_interaction_id];
   }
 
-
   /**
    * @brief Returns the effective medium model of the real part of the magnetic
    * permeability of the mixture defined by a material interaction.
@@ -556,7 +555,6 @@ public:
   {
     return reference_temperature;
   }
-
 
   /**
    * @brief Returns true if the material with the given fluid_id and material_id

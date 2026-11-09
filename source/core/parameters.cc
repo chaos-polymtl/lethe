@@ -47,6 +47,10 @@ DeclException2(
   << "The first fluid's id is " << arg1 << " and the id of the second fluid is "
   << arg2 << ". The first fluid's id should be lower than the second fluid's.");
 
+DeclExceptionMsg(
+  MaterialInteractionTypeError,
+  "Invalid material interaction type. The choices are <fluid_fluid|fluid_solid|fluid_dispersed_phase>.");
+
 DeclException1(
   TwoDimensionalLaserError,
   unsigned int,
@@ -1307,6 +1311,9 @@ namespace Parameters
               .insert(
                 material_interactions[i_material_interaction]
                   .fluid_dispersed_phase_interaction_with_material_interaction_id);
+
+          else
+            AssertThrow(false, MaterialInteractionTypeError());
         }
 
       reference_temperature = prm.get_double("reference temperature");
@@ -1940,6 +1947,10 @@ namespace Parameters
             string_to_enum<EffectiveMediumModelType>(
               prm.get("magnetic permeability effective medium model"));
           prm.leave_subsection();
+        }
+      else
+        {
+          AssertThrow(false, MaterialInteractionTypeError());
         }
     }
     prm.leave_subsection();
