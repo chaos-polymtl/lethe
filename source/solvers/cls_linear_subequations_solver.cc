@@ -122,7 +122,7 @@ CLSLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
   const double rescale_metric =
     simulation_parameters.linear_solver.at(PhysicsID::CLS)
         .rescale_residual_by_volume ?
-      GridTools::volume(*this->triangulation, *this->mapping) :
+      std::sqrt(GridTools::volume(*this->triangulation, *this->mapping)) :
       1.0;
   const double linear_solver_tolerance =
     this->simulation_parameters.linear_solver.at(PhysicsID::CLS)
