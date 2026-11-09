@@ -2011,8 +2011,8 @@ namespace Parameters
       prm.declare_entry(
         "qmom degree",
         Patterns::Tools::Convert<unsigned int>::to_string(defaults.qmom_degree),
-        Patterns::Integer(1),
-        "interpolation degree of the ethanol and free lipids concentrations and of the moments of the QMOM physics.");
+        Patterns::Integer(0),
+        "interpolation degree of the discontinuous Galerkin discretization of the ethanol and free lipids concentrations and of the moments of the QMOM physics. A degree of 0 corresponds to a finite volume discretization.");
 
       prm.declare_entry(
         "tracer uses dg",

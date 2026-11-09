@@ -239,11 +239,10 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       AssertThrow(fluid_dynamics_formulation ==
                     FluidDynamicsFormulation::standard,
                   PhysicsVANSFormNotImplementedError("QMOM"));
+      // The QMOM physics is advanced explicitly and has no non-linear solver
       verbosity[PhysicsID::qmom] =
-        (nsparam.physics_solving_strategy.at(PhysicsID::qmom).verbosity !=
-           Parameters::Verbosity::quiet ||
-         nsparam.linear_solver.at(PhysicsID::qmom).verbosity !=
-           Parameters::Verbosity::quiet) ?
+        (nsparam.linear_solver.at(PhysicsID::qmom).verbosity !=
+         Parameters::Verbosity::quiet) ?
           Parameters::Verbosity::verbose :
           Parameters::Verbosity::quiet;
       active_physics.push_back(PhysicsID::qmom);

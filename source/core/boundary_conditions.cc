@@ -11,6 +11,8 @@ namespace BoundaryConditions
   extern template class HTBoundaryConditions<3>;
   extern template class TracerBoundaryConditions<2>;
   extern template class TracerBoundaryConditions<3>;
+  extern template class QMOMBoundaryConditions<2>;
+  extern template class QMOMBoundaryConditions<3>;
   extern template class CLSBoundaryConditions<2>;
   extern template class CLSBoundaryConditions<3>;
   extern template class CahnHilliardBoundaryConditions<2>;

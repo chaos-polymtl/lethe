@@ -6,6 +6,11 @@
 
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
+#include <deal.II/base/utilities.h>
+
+#include <memory>
+#include <string>
 
 DeclException1(
   SharpeningThresholdError,
@@ -786,6 +791,7 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
   prm.enter_subsection("QMOM");
   {
     phase_evolution.declare_parameters(prm);
+    time_integration.declare_parameters(prm);
 
     declare_enum_entry(
       prm,
@@ -893,6 +899,7 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("QMOM");
   {
     phase_evolution.parse_parameters(prm);
+    time_integration.parse_parameters(prm);
 
     number_of_nodes  = prm.get_integer("number of nodes");
     splitting_scheme = string_to_enum<Parameters::QMOMSplittingScheme>(
@@ -919,6 +926,99 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
     shape_factor        = prm.get_double("shape factor");
   }
   prm.leave_subsection();
+}
+
+void
+Parameters::QMOMTimeIntegration::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMTimeIntegration defaults;
+  prm.enter_subsection("time integration");
+  {
+    declare_enum_entry(prm,
+                       "scheme",
+                       defaults.scheme,
+                       "Explicit strong-stability-preserving Runge-Kutta "
+                       "scheme of the physical-space transport");
+
+    prm.declare_entry(
+      "maximum cfl",
+      Patterns::Tools::Convert<double>::to_string(defaults.maximum_cfl),
+      Patterns::Double(0.),
+      "Maximum discontinuous Galerkin CFL number (2p+1)|u|dt/h of a "
+      "transport sub-step. The transport is sub-cycled within each time "
+      "step to satisfy this bound.");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMTimeIntegration::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("time integration");
+  {
+    scheme =
+      string_to_enum<Parameters::QMOMTimeIntegrationScheme>(prm.get("scheme"));
+    maximum_cfl = prm.get_double("maximum cfl");
+    AssertThrow(maximum_cfl > 0.,
+                ExcMessage("The \"maximum cfl\" of the QMOM time integration "
+                           "must be strictly positive, but it is set to " +
+                           std::to_string(maximum_cfl) + "."));
+  }
+  prm.leave_subsection();
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::declare_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("ethanol concentration");
+  Functions::ParsedFunction<dim>::declare_parameters(prm);
+  prm.leave_subsection();
+
+  prm.enter_subsection("free lipids concentration");
+  Functions::ParsedFunction<dim>::declare_parameters(prm);
+  prm.leave_subsection();
+
+  // The number of moments is not known yet: a single expression is declared
+  // by default, which applies to all the moments
+  prm.enter_subsection("moments");
+  Functions::ParsedFunction<dim>::declare_parameters(prm);
+  prm.leave_subsection();
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("ethanol concentration");
+  ethanol_concentration = std::make_shared<Functions::ParsedFunction<dim>>();
+  ethanol_concentration->parse_parameters(prm);
+  prm.leave_subsection();
+
+  prm.enter_subsection("free lipids concentration");
+  free_lipids_concentration =
+    std::make_shared<Functions::ParsedFunction<dim>>();
+  free_lipids_concentration->parse_parameters(prm);
+  prm.leave_subsection();
+
+  // The expressions are split as in FunctionParser, so that the number of
+  // components of the moments function matches the number of expressions
+  prm.enter_subsection("moments");
+  const unsigned int n_moment_expressions =
+    Utilities::split_string_list(prm.get("Function expression"), ';').size();
+  moments =
+    std::make_shared<Functions::ParsedFunction<dim>>(n_moment_expressions);
+  moments->parse_parameters(prm);
+  prm.leave_subsection();
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::set_time(const double time) const
+{
+  ethanol_concentration->set_time(time);
+  free_lipids_concentration->set_time(time);
+  moments->set_time(time);
 }
 
 template <int dim>
@@ -1237,3 +1337,5 @@ template struct Parameters::TimeHarmonicMaxwell<2>;
 template struct Parameters::TimeHarmonicMaxwell<3>;
 template struct Parameters::Multiphysics<2>;
 template struct Parameters::Multiphysics<3>;
+template struct Parameters::QMOMFunctions<2>;
+template struct Parameters::QMOMFunctions<3>;

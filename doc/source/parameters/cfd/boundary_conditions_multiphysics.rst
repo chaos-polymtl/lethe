@@ -123,6 +123,45 @@ For tracer boundary conditions, the defaults parameters are:
     * ``outlet`` to impose an outflow when using the tracer Discontinuous-Galerkin implementation;
     * ``none`` is a do-nothing boundary condition.
 
+QMOM
+^^^^
+
+The boundary conditions of the quadrature method of moments (see :doc:`qmom`) apply to the advective flux of all its fields: the ethanol concentration, the free lipids concentration and the moments. The default parameters are:
+
+.. code-block:: text
+
+  subsection boundary conditions qmom
+    set number         = 1
+    set time dependent = false
+    subsection bc 0
+      set id   = 0
+      set type = outlet
+      subsection dirichlet
+        subsection ethanol concentration
+          set Function expression = 0
+        end
+        subsection free lipids concentration
+          set Function expression = 0
+        end
+        subsection moments
+          set Function expression = 0
+        end
+      end
+    end
+  end
+
+* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions.
+
+* ``type``: This is the type of boundary condition being imposed. Since the fields are advected with an upwind flux, the boundary conditions act where the flow enters (:math:`\mathbf{u} \cdot \mathbf{n} < 0`) or leaves (:math:`\mathbf{u} \cdot \mathbf{n} > 0`) the domain:
+
+  * ``dirichlet``: the values of the ``dirichlet`` subsection enter the domain where the flow enters, and the values inside the domain leave it where the flow leaves. This is the boundary condition of inlets.
+  * ``outlet``: the values inside the domain leave it where the flow leaves, and nothing enters where the flow enters (backflow).
+  * ``none``: the advective flux is zero. This is the natural choice for walls.
+
+  Boundaries without a QMOM boundary condition are treated as ``none``.
+
+* ``dirichlet``: values imposed by a ``dirichlet`` boundary condition, as functions of space and time. The ``moments`` function takes either a single expression, applied to every moment, or one expression per moment, separated by semicolons (e.g. ``set Function expression = 1; 0; 0; 0`` for :math:`2N = 4` moments).
+
 CLS
 ^^^
 

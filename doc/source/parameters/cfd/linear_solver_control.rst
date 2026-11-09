@@ -2,7 +2,7 @@
 Linear Solver
 =============
 
-In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``CLS``, ``heat transfer``, ``cahn hilliard``, ``tracer``, ``electromagnetics`` , ``void fraction``, ``continuum solid dynamics`` and ``qmom``) and it is possible to specify linear solver parameters for each of them. The ``CLS pde-based interface reinitialization`` subequation has also its own subsection.
+In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``CLS``, ``heat transfer``, ``cahn hilliard``, ``tracer``, ``electromagnetics`` , ``void fraction``, ``continuum solid dynamics`` and ``qmom``) and it is possible to specify linear solver parameters for each of them. The ``CLS pde-based interface reinitialization`` subequation has also its own subsection. The ``qmom`` physics is advanced explicitly and solves no linear system: only the ``verbosity`` of its subsection is used, to print the number of transport sub-steps of each time step.
 
 In the example below, only ``fluid dynamics`` is used, however, the same block can be used for other physics.
 

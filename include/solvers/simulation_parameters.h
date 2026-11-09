@@ -48,6 +48,7 @@ public:
   BoundaryConditions::NSBoundaryConditions<dim>       boundary_conditions;
   BoundaryConditions::HTBoundaryConditions<dim>       boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
+  BoundaryConditions::QMOMBoundaryConditions<dim>   boundary_conditions_qmom;
   BoundaryConditions::CLSBoundaryConditions<dim>    boundary_conditions_cls;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     boundary_conditions_cahn_hilliard;
@@ -103,6 +104,8 @@ public:
     boundary_conditions_ht.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_tracer.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_qmom.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_cls.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
@@ -211,6 +214,7 @@ public:
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
     boundary_conditions_tracer.parse_parameters(prm);
+    boundary_conditions_qmom.parse_parameters(prm);
     boundary_conditions_cls.parse_parameters(prm);
     boundary_conditions_cahn_hilliard.parse_parameters(prm);
     boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
@@ -608,9 +612,10 @@ private:
     "CLS",
     "cahn hilliard",
     "void fraction",
-    "continuum solid dynamics",
-    "qmom"};
-  std::vector<std::string> linear_physics_names = {"electromagnetics"};
+    "continuum solid dynamics"};
+  // The QMOM physics is advanced explicitly: it is driven by the linear solver
+  // strategy, which calls its assembly and solve functions once per time step
+  std::vector<std::string> linear_physics_names = {"electromagnetics", "qmom"};
   // Names of subequations within CLS that inherits from PhysicsSolver
   std::vector<std::string> cls_subequations_names = {
     "CLS PDE-based interface reinitialization"};

@@ -12,8 +12,10 @@
 #include <core/parameters.h>
 
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
 #include <deal.II/base/utilities.h>
 
+#include <memory>
 #include <numbers>
 
 using namespace dealii;
@@ -479,11 +481,119 @@ namespace Parameters
   };
 
   /**
+   * @brief Explicit strong-stability-preserving Runge-Kutta (SSP-RK) schemes
+   * used to advance the physical-space transport of the QMOM fields:
+   *  - ssprk1: forward Euler (first order, one stage);
+   *  - ssprk2: Heun's method (second order, two stages);
+   *  - ssprk3: Shu-Osher scheme (third order, three stages).
+   */
+  enum class QMOMTimeIntegrationScheme : std::int8_t
+  {
+    ssprk1,
+    ssprk2,
+    ssprk3
+  };
+
+  /**
+   * @brief Parameters of the explicit time integration of the physical-space
+   * transport of the QMOM fields. The transport is sub-cycled within each
+   * time step of the fluid dynamics, so that the CFL condition of the
+   * explicit discontinuous Galerkin discretization is satisfied.
+   */
+  struct QMOMTimeIntegration
+  {
+    /// SSP-RK scheme used for the transport
+    QMOMTimeIntegrationScheme scheme = QMOMTimeIntegrationScheme::ssprk3;
+
+    /// Maximum value of the discontinuous Galerkin CFL number
+    /// (2p + 1) |u| dt / h of a transport sub-step, where p is the polynomial
+    /// degree and h the minimal vertex distance of the cell. The number of
+    /// sub-steps per time step is the smallest one that satisfies this bound.
+    double maximum_cfl = 0.5;
+
+    /**
+     * @brief Declare the time integration parameters.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the time integration parameters.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Functions of space and time prescribing the fields of the QMOM
+   * physics: the ethanol concentration, the free lipids concentration and the
+   * raw moments of the particle size distribution. They are used for the
+   * initial conditions, the Dirichlet boundary conditions and the analytical
+   * solution.
+   *
+   * The number of moments depends on the "number of nodes" parameter of the
+   * QMOM subsection, which is not known when the parameters are declared. The
+   * moments function therefore accepts either a single expression, applied to
+   * every moment, or one expression per moment. The QMOM physics verifies the
+   * number of expressions once the number of moments is known.
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
+  template <int dim>
+  struct QMOMFunctions
+  {
+    /// Ethanol concentration
+    std::shared_ptr<Functions::ParsedFunction<dim>> ethanol_concentration;
+
+    /// Free lipids concentration
+    std::shared_ptr<Functions::ParsedFunction<dim>> free_lipids_concentration;
+
+    /// Raw moments M_0 to M_{2N-1}, or a single function applied to all of
+    /// them
+    std::shared_ptr<Functions::ParsedFunction<dim>> moments;
+
+    /**
+     * @brief Declare the "ethanol concentration", "free lipids concentration"
+     * and "moments" subsections in the current subsection. All the functions
+     * are zero by default.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    static void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the functions from the current subsection. The number of
+     * components of the moments function is the number of expressions
+     * separated by semicolons.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Set the time of all the functions.
+     *
+     * @param[in] time New time.
+     */
+    void
+    set_time(const double time) const;
+  };
+
+  /**
    * @brief Parameters for a quadrature method of moments (QMOM) simulation
    */
   struct QMOM
   {
     Parameters::QMOMPhaseEvolution phase_evolution;
+
+    /// Explicit time integration of the physical-space transport
+    Parameters::QMOMTimeIntegration time_integration;
 
     /// Number of nodes of the quadrature. 2 * number_of_nodes moments are
     /// transported.

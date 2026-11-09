@@ -1508,8 +1508,10 @@ namespace Parameters
     /// model.
     unsigned int solid_volume_fraction_degree = 1;
 
-    /// Polynomial degree of all the fields of the QMOM physics (ethanol
-    /// concentration, free lipids concentration and moments).
+    /// Polynomial degree of the discontinuous Galerkin discretization of all
+    /// the fields of the QMOM physics (ethanol concentration, free lipids
+    /// concentration and moments). A degree of 0 is a finite volume
+    /// discretization.
     unsigned int qmom_degree = 1;
 
     static void

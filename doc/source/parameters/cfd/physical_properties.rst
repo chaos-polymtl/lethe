@@ -858,7 +858,36 @@ Lethe supports two types of models for the time-harmonic Maxwell equations. Sett
 
 where :math:`\sigma_r(T)` is the dimensionless electric conductivity at temperature :math:`T`, :math:`a_i` are the polynomial coefficients, and :math:`n` is the order of the polynomial.
 
-The same polynomial model is also available for the ``electric permittivity model`` parameter and ``magnetic permeability model`` parameter. 
+The same polynomial model is also available for the ``electric permittivity model`` parameter and ``magnetic permeability model`` parameter.
+
+QMOM Phase Properties
+~~~~~~~~~~~~~~~~~~~~~~
+
+The quadrature method of moments (see :doc:`qmom`) models a mixture of an aqueous phase and an organic phase, which form a single fluid. The properties of both phases are set in the ``QMOM`` subsection of the fluid, in SI units. They are used by the phase-space sources, which are not implemented yet. The default values are:
+
+.. code-block:: text
+
+  subsection physical properties
+    subsection fluid 0
+      subsection QMOM
+        set density aqueous                  = 997
+        set molar mass aqueous               = 0.018015
+        set mole fraction solubility aqueous = 2e-08
+        set permittivity aqueous             = 78.2
+        set density organic                  = 789
+        set molar mass organic               = 0.046069
+        set mole fraction solubility organic = 0.0029
+        set permittivity organic             = 24.3
+        set viscosity mixture                = 0.002
+      end
+    end
+  end
+
+* ``density aqueous`` and ``density organic``: densities of the aqueous and organic phases in :math:`\text{kg/m}^3`.
+* ``molar mass aqueous`` and ``molar mass organic``: molar masses of the aqueous and organic phases in :math:`\text{kg/mol}`.
+* ``mole fraction solubility aqueous`` and ``mole fraction solubility organic``: mole fraction solubility of the lipids in the pure aqueous and organic phases.
+* ``permittivity aqueous`` and ``permittivity organic``: relative permittivities of the aqueous and organic phases.
+* ``viscosity mixture``: dynamic viscosity of the mixture in :math:`\text{Pa s}`.
 
 References
 ***********

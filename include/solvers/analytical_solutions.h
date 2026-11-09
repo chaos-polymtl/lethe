@@ -5,6 +5,7 @@
 #define lethe_analytical_solutions_h
 
 #include <core/parameters.h>
+#include <core/parameters_multiphysics.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
@@ -140,6 +141,12 @@ namespace AnalyticalSolutions
      * ParsedFunction that contains the analytical solution for the tracer.
      */
     Functions::ParsedFunction<dim> tracer;
+
+    /**
+     * Functions that contain the analytical solution for the fields of the
+     * QMOM physics.
+     */
+    Parameters::QMOMFunctions<dim> qmom;
 
     /**
      * ParsedFunction that contains the analytical solution for the phase.

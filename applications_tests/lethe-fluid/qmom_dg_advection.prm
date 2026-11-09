@@ -1,0 +1,210 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Advection of the ten QMOM fields (four quadrature nodes) by a uniform
+# velocity u = (1, 0). Each field is a smooth profile f(x - t), imposed through
+# a time-dependent Dirichlet condition at the inlet (x = 0) and leaving
+# through an outlet (x = 1). The exact solution is used as initial condition,
+# inlet value and analytical solution. The CFL number of the time step is
+# larger than the maximum CFL, so that the transport is sub-cycled.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 0.2
+  set time step        = 0.05
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+  set qmom degree     = 1
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+  subsection QMOM
+    subsection ethanol concentration
+      set Function expression = 1+0.5*sin(2*pi*(x-t))
+    end
+    subsection free lipids concentration
+      set Function expression = 1+0.5*cos(2*pi*(x-t))
+    end
+    subsection moments
+      set Function expression = 1*(1+0.25*sin(2*pi*(x-t)+0)); 2*(1+0.25*sin(2*pi*(x-t)+1)); 3*(1+0.25*sin(2*pi*(x-t)+2)); 4*(1+0.25*sin(2*pi*(x-t)+3)); 5*(1+0.25*sin(2*pi*(x-t)+4)); 6*(1+0.25*sin(2*pi*(x-t)+5)); 7*(1+0.25*sin(2*pi*(x-t)+6)); 8*(1+0.25*sin(2*pi*(x-t)+7))
+    end
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = 0, 0 : 1, 1 : true
+  set initial refinement = 4
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics = false
+  set qmom           = true
+end
+
+#---------------------------------------------------
+# QMOM
+#---------------------------------------------------
+
+subsection QMOM
+  set number of nodes = 4
+  subsection time integration
+    set scheme      = ssprk3
+    set maximum cfl = 0.5
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+  subsection QMOM
+    subsection ethanol concentration
+      set Function expression = 1+0.5*sin(2*pi*(x-t))
+    end
+    subsection free lipids concentration
+      set Function expression = 1+0.5*cos(2*pi*(x-t))
+    end
+    subsection moments
+      set Function expression = 1*(1+0.25*sin(2*pi*(x-t)+0)); 2*(1+0.25*sin(2*pi*(x-t)+1)); 3*(1+0.25*sin(2*pi*(x-t)+2)); 4*(1+0.25*sin(2*pi*(x-t)+3)); 5*(1+0.25*sin(2*pi*(x-t)+4)); 6*(1+0.25*sin(2*pi*(x-t)+5)); 7*(1+0.25*sin(2*pi*(x-t)+6)); 8*(1+0.25*sin(2*pi*(x-t)+7))
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+  subsection bc 3
+    set id   = 3
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions QMOM
+#---------------------------------------------------
+
+subsection boundary conditions qmom
+  set number         = 3
+  set time dependent = true
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      subsection ethanol concentration
+        set Function expression = 1+0.5*sin(2*pi*(x-t))
+      end
+      subsection free lipids concentration
+        set Function expression = 1+0.5*cos(2*pi*(x-t))
+      end
+      subsection moments
+        set Function expression = 1*(1+0.25*sin(2*pi*(x-t)+0)); 2*(1+0.25*sin(2*pi*(x-t)+1)); 3*(1+0.25*sin(2*pi*(x-t)+2)); 4*(1+0.25*sin(2*pi*(x-t)+3)); 5*(1+0.25*sin(2*pi*(x-t)+4)); 6*(1+0.25*sin(2*pi*(x-t)+5)); 7*(1+0.25*sin(2*pi*(x-t)+6)); 8*(1+0.25*sin(2*pi*(x-t)+7))
+      end
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2, 3
+    set type = none
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection qmom
+    set verbosity = verbose
+  end
+end

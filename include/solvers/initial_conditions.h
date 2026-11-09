@@ -4,6 +4,8 @@
 #ifndef lethe_initial_conditions_h
 #define lethe_initial_conditions_h
 
+#include <core/parameters_multiphysics.h>
+
 #include <deal.II/base/parameter_acceptor.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
@@ -65,30 +67,6 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
-  /**
-   * @brief Type of distribution used in QMOMKit to initialize the moments
-   */
-  enum class QMOMDistributionShape
-  {
-    lognormal,
-    normal,
-    beta
-  };
-
-  struct QMOMInitialConditions
-  {
-    /// Distribution shape
-    QMOMDistributionShape distribution_shape = QMOMDistributionShape::normal;
-
-    /// Initial lipid concentration in the organic phase
-    double initial_lipid_concentration = 1.0;
-
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
   template <int dim>
   class InitialConditions
   {
@@ -120,8 +98,8 @@ namespace Parameters
       CLSInitialConditionType::none;
     double projection_step_diffusion_factor = 1;
 
-    // QMOM
-    QMOMInitialConditions qmom;
+    // QMOM: ethanol concentration, free lipids concentration and moments
+    QMOMFunctions<dim> qmom;
 
     // Non-Newtonian
     Ramp ramp;
