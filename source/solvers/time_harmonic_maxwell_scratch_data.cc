@@ -219,6 +219,11 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->phi_E.reinit(n_q_points, n_dofs_trial_interior);
   this->phi_H.reinit(n_q_points, n_dofs_trial_interior);
 
+  // Test and interior trial functions at the cell quadrature points
+  this->phi_test.reinit(n_base_functions_test, n_q_points);
+  this->curl_phi_test.reinit(n_base_functions_test, n_q_points);
+  this->phi_trial_interior.reinit(n_base_functions_trial_interior, n_q_points);
+
   // Face quadrature
   this->face_at_boundary       = false;
   this->face_boundary_id       = numbers::invalid_boundary_id;
@@ -487,6 +492,29 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
                 fe_values_trial_interior[extractor_H_real].value(k, q) +
                 imag * fe_values_trial_interior[extractor_H_imag].value(k, q);
             }
+        }
+
+      // Base functions of the test space and their curl. Since the four
+      // fields share the same base functions, they are evaluated with the
+      // E_real shape functions only.
+      for (unsigned int a = 0; a < n_base_functions_test; ++a)
+        {
+          const unsigned int k = this->test_base_dofs[E_real][a];
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              phi_test[a][q] = fe_values_test[extractor_E_real].value(k, q);
+              curl_phi_test[a][q] = fe_values_test[extractor_E_real].curl(k, q);
+            }
+        }
+
+      // Base functions of the interior trial space, evaluated in the same
+      // way
+      for (unsigned int c = 0; c < n_base_functions_trial_interior; ++c)
+        {
+          const unsigned int k = this->trial_interior_base_dofs[E_real][c];
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            phi_trial_interior[c][q] =
+              fe_values_trial_interior[extractor_E_real].value(k, q);
         }
     }
 }

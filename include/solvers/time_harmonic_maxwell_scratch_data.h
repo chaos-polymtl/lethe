@@ -597,6 +597,13 @@ public:
   // Cell interior trial magnetic functions
   Table<2, Tensor<1, dim, std::complex<double>>> phi_H;
 
+  // Cell base functions of the test space
+  Table<2, Tensor<1, dim>> phi_test;
+  // Cell curl of the base functions of the test space
+  Table<2, Tensor<1, dim>> curl_phi_test;
+  // Cell base functions of the interior trial space
+  Table<2, Tensor<1, dim>> phi_trial_interior;
+
   // Flag to indicate whether the current face is at the boundary of the domain
   bool face_at_boundary;
   // Boundary ID of the current face, used to determine the appropriate boundary
