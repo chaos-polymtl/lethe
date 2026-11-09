@@ -91,16 +91,19 @@ electromagnetic_properties_depend_on(
 /**
  * @brief Class that stores the information required by the assembly of the
  * Discontinuous Petrov-Galerkin (DPG) ultraweak formulation of the
- * time-harmonic Maxwell equations. For each cell, it evaluates the complex
- * shape functions of the test space (\f$\mathbf{F}\f$ for the electric test
- * functions and \f$\mathbf{I}\f$ for the magnetic ones, with their curls and
- * complex conjugates) and of the interior trial space (\f$\mathbf{E}\f$ and
- * \f$\mathbf{H}\f$) and the effective material properties at the quadrature
- * points. For each face of the cell, it evaluates the test functions and the
- * tangential traces of the skeleton trial space (\f$\hat{\mathbf{E}}\f$ and
- * \f$\hat{\mathbf{H}}\f$) at the face quadrature points. The complex values are
- * stored with their complex conjugates because the conjugate of a complex
- * tensor is not implemented in deal.II.
+ * time-harmonic Maxwell equations. For each cell, it evaluates the base
+ * functions of the test space with their curls, the base functions of the
+ * interior trial space and the effective material properties at the
+ * quadrature points. The base functions are real and shared by the four
+ * fields of a space: the complex test functions (\f$\mathbf{F}\f$ for the
+ * electric ones and \f$\mathbf{I}\f$ for the magnetic ones) and the complex
+ * interior trial functions (\f$\mathbf{E}\f$ and \f$\mathbf{H}\f$) are a base
+ * function multiplied by 1 (real part) or i (imaginary part). For each face of
+ * the cell, it evaluates the complex test functions and the tangential traces
+ * of the skeleton trial space (\f$\hat{\mathbf{E}}\f$ and
+ * \f$\hat{\mathbf{H}}\f$) at the face quadrature points. The complex face
+ * values are stored with their complex conjugates because the conjugate of a
+ * complex tensor is not implemented in deal.II.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions. Only
  * dim = 3 is supported.
@@ -153,6 +156,8 @@ public:
    *
    * @param[in] properties_manager Manager of the physical property models.
    *
+   * @param[in] omega Angular frequency of the electromagnetic fields.
+   *
    * @param[in] fe_trial_interior Finite element of the interior trial space.
    *
    * @param[in] fe_trial_skeleton Finite element of the skeleton trial space.
@@ -167,6 +172,7 @@ public:
    */
   TimeHarmonicMaxwellScratchData(
     const PhysicalPropertiesManager &properties_manager,
+    const double                     omega,
     const FiniteElement<dim>        &fe_trial_interior,
     const FiniteElement<dim>        &fe_trial_skeleton,
     const FiniteElement<dim>        &fe_test,
@@ -174,6 +180,7 @@ public:
     const Quadrature<dim - 1>       &face_quadrature,
     const Mapping<dim>              &mapping)
     : properties_manager(properties_manager)
+    , omega(omega)
     , fe_values_trial_interior(mapping,
                                fe_trial_interior,
                                cell_quadrature,
@@ -205,6 +212,7 @@ public:
    */
   TimeHarmonicMaxwellScratchData(const TimeHarmonicMaxwellScratchData<dim> &sd)
     : properties_manager(sd.properties_manager)
+    , omega(sd.omega)
     , fe_values_trial_interior(sd.fe_values_trial_interior.get_mapping(),
                                sd.fe_values_trial_interior.get_fe(),
                                sd.fe_values_trial_interior.get_quadrature(),
@@ -275,7 +283,7 @@ public:
    * to the magnetic field (H_real or H_imag).
    *
    * @param[out] base_dofs Local dof index of each base function for each
-   * field: base_dofs[field][a].
+   * field: base_dofs[field][i].
    */
   void
   classify_shape_functions(
@@ -465,6 +473,13 @@ public:
   calculate_physical_properties();
 
   /**
+   * @brief Compute the coefficients of the cell terms of the DPG system at the
+   * cell quadrature points.
+   */
+  void
+  calculate_cell_coefficients();
+
+  /**
    * @brief Compute the effective electromagnetic properties at the face
    * quadrature points from the fields gathered by the scratch.
    */
@@ -473,6 +488,8 @@ public:
 
   // Physical properties
   const PhysicalPropertiesManager properties_manager;
+  // Angular frequency of the electromagnetic fields
+  const double omega;
   // ID of the material of the current cell, used to determine the appropriate
   // material properties from the input parameters.
   unsigned int material_id;
@@ -545,17 +562,17 @@ public:
   std::vector<unsigned int> trial_skeleton_dofs_magnetic;
 
   // Local dof index of each base function of the test space for each field:
-  // test_base_dofs[field][a]. The electric test functions (F) are the E_real
+  // test_base_dofs[field][i]. The electric test functions (F) are the E_real
   // and E_imag fields of the test space and the magnetic ones (I) are the
   // H_real and H_imag fields.
   std::array<std::vector<unsigned int>, n_electromagnetic_fields>
     test_base_dofs;
   // Local dof index of each base function of the interior trial space for each
-  // field: trial_interior_base_dofs[field][a]
+  // field: trial_interior_base_dofs[field][i]
   std::array<std::vector<unsigned int>, n_electromagnetic_fields>
     trial_interior_base_dofs;
   // Local dof index of each base function of the skeleton trial space for each
-  // field: trial_skeleton_base_dofs[field][a]
+  // field: trial_skeleton_base_dofs[field][i]
   std::array<std::vector<unsigned int>, n_electromagnetic_fields>
     trial_skeleton_base_dofs;
 
@@ -575,27 +592,16 @@ public:
   // Effective magnetic permeabilities at the cell quadrature points
   std::vector<std::complex<double>> effective_magnetic_permeabilities;
 
-  // Cell electric test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_F;
-  // Cell complex conjugate of the electric test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_F_conj;
-  // Cell curl of the electric test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_F;
-  // Cell complex conjugate of the curl of the electric test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_F_conj;
-  // Cell magnetic test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_I;
-  // Cell complex conjugate of the magnetic test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_I_conj;
-  // Cell curl of the magnetic test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_I;
-  // Cell complex conjugate of the curl of the magnetic test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_I_conj;
-
-  // Cell interior trial electric functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_E;
-  // Cell interior trial magnetic functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_H;
+  // (1 + |iweps|^2) JxW, weight of (phi_j, phi_i) in the FF block of G
+  std::vector<double> JxW_FF;
+  // (1 + |iwmu|^2) JxW, weight of (phi_j, phi_i) in the II block of G
+  std::vector<double> JxW_II;
+  // iweps JxW
+  std::vector<std::complex<double>> iweps_JxW;
+  // conj(iwmu) JxW
+  std::vector<std::complex<double>> conj_iwmu_JxW;
+  // iwmu JxW
+  std::vector<std::complex<double>> iwmu_JxW;
 
   // Cell base functions of the test space
   Table<2, Tensor<1, dim>> phi_test;

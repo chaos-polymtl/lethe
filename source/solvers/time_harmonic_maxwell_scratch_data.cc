@@ -207,17 +207,12 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->effective_magnetic_permeabilities =
     std::vector<std::complex<double>>(n_q_points);
 
-  // Test and interior trial functions at the cell quadrature points
-  this->phi_F.reinit(n_q_points, n_dofs_test);
-  this->phi_F_conj.reinit(n_q_points, n_dofs_test);
-  this->curl_phi_F.reinit(n_q_points, n_dofs_test);
-  this->curl_phi_F_conj.reinit(n_q_points, n_dofs_test);
-  this->phi_I.reinit(n_q_points, n_dofs_test);
-  this->phi_I_conj.reinit(n_q_points, n_dofs_test);
-  this->curl_phi_I.reinit(n_q_points, n_dofs_test);
-  this->curl_phi_I_conj.reinit(n_q_points, n_dofs_test);
-  this->phi_E.reinit(n_q_points, n_dofs_trial_interior);
-  this->phi_H.reinit(n_q_points, n_dofs_trial_interior);
+  // Coefficients of the cell terms of the DPG system
+  this->JxW_FF        = std::vector<double>(n_q_points);
+  this->JxW_II        = std::vector<double>(n_q_points);
+  this->iweps_JxW     = std::vector<std::complex<double>>(n_q_points);
+  this->conj_iwmu_JxW = std::vector<std::complex<double>>(n_q_points);
+  this->iwmu_JxW      = std::vector<std::complex<double>>(n_q_points);
 
   // Test and interior trial functions at the cell quadrature points
   this->phi_test.reinit(n_base_functions_test, n_q_points);
@@ -419,8 +414,6 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
     }
   else
     {
-      static constexpr std::complex<double> imag{0., 1.};
-
       this->material_id = cell->material_id();
 
       // We check if the physical properties depend on the temperature and
@@ -442,78 +435,28 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
         this->fe_values_trial_interior.get_quadrature_points();
 
       for (unsigned int q = 0; q < n_q_points; ++q)
-        {
-          this->JxW[q] = this->fe_values_trial_interior.JxW(q);
-
-          // Electric test functions F
-          for (const unsigned int k : this->test_dofs_electric)
-            {
-              phi_F[q][k] = fe_values_test[extractor_E_real].value(k, q) +
-                            imag * fe_values_test[extractor_E_imag].value(k, q);
-              phi_F_conj[q][k] =
-                fe_values_test[extractor_E_real].value(k, q) -
-                imag * fe_values_test[extractor_E_imag].value(k, q);
-
-              curl_phi_F[q][k] =
-                fe_values_test[extractor_E_real].curl(k, q) +
-                imag * fe_values_test[extractor_E_imag].curl(k, q);
-              curl_phi_F_conj[q][k] =
-                fe_values_test[extractor_E_real].curl(k, q) -
-                imag * fe_values_test[extractor_E_imag].curl(k, q);
-            }
-
-          // Magnetic test functions I
-          for (const unsigned int k : this->test_dofs_magnetic)
-            {
-              phi_I[q][k] = fe_values_test[extractor_H_real].value(k, q) +
-                            imag * fe_values_test[extractor_H_imag].value(k, q);
-              phi_I_conj[q][k] =
-                fe_values_test[extractor_H_real].value(k, q) -
-                imag * fe_values_test[extractor_H_imag].value(k, q);
-
-              curl_phi_I[q][k] =
-                fe_values_test[extractor_H_real].curl(k, q) +
-                imag * fe_values_test[extractor_H_imag].curl(k, q);
-              curl_phi_I_conj[q][k] =
-                fe_values_test[extractor_H_real].curl(k, q) -
-                imag * fe_values_test[extractor_H_imag].curl(k, q);
-            }
-
-          // Interior electric (E) and magnetic (H) trial functions
-          for (const unsigned int k : this->trial_interior_dofs_electric)
-            {
-              phi_E[q][k] =
-                fe_values_trial_interior[extractor_E_real].value(k, q) +
-                imag * fe_values_trial_interior[extractor_E_imag].value(k, q);
-            }
-          for (const unsigned int k : this->trial_interior_dofs_magnetic)
-            {
-              phi_H[q][k] =
-                fe_values_trial_interior[extractor_H_real].value(k, q) +
-                imag * fe_values_trial_interior[extractor_H_imag].value(k, q);
-            }
-        }
+        this->JxW[q] = this->fe_values_trial_interior.JxW(q);
 
       // Base functions of the test space and their curl. Since the four
       // fields share the same base functions, they are evaluated with the
       // E_real shape functions only.
-      for (unsigned int a = 0; a < n_base_functions_test; ++a)
+      for (unsigned int i = 0; i < n_base_functions_test; ++i)
         {
-          const unsigned int k = this->test_base_dofs[E_real][a];
+          const unsigned int k = this->test_base_dofs[E_real][i];
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              phi_test[a][q] = fe_values_test[extractor_E_real].value(k, q);
-              curl_phi_test[a][q] = fe_values_test[extractor_E_real].curl(k, q);
+              phi_test[i][q] = fe_values_test[extractor_E_real].value(k, q);
+              curl_phi_test[i][q] = fe_values_test[extractor_E_real].curl(k, q);
             }
         }
 
       // Base functions of the interior trial space, evaluated in the same
       // way
-      for (unsigned int c = 0; c < n_base_functions_trial_interior; ++c)
+      for (unsigned int j = 0; j < n_base_functions_trial_interior; ++j)
         {
-          const unsigned int k = this->trial_interior_base_dofs[E_real][c];
+          const unsigned int k = this->trial_interior_base_dofs[E_real][j];
           for (unsigned int q = 0; q < n_q_points; ++q)
-            phi_trial_interior[c][q] =
+            phi_trial_interior[j][q] =
               fe_values_trial_interior[extractor_E_real].value(k, q);
         }
     }
@@ -628,6 +571,27 @@ TimeHarmonicMaxwellScratchData<dim>::calculate_physical_properties()
     this->material_id,
     this->effective_electric_permittivities,
     this->effective_magnetic_permeabilities);
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwellScratchData<dim>::calculate_cell_coefficients()
+{
+  static constexpr std::complex<double> imag{0., 1.};
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const std::complex<double> iweps =
+        imag * omega * this->effective_electric_permittivities[q];
+      const std::complex<double> iwmu =
+        imag * omega * this->effective_magnetic_permeabilities[q];
+
+      this->JxW_FF[q]        = (1. + std::norm(iweps)) * this->JxW[q];
+      this->JxW_II[q]        = (1. + std::norm(iwmu)) * this->JxW[q];
+      this->iweps_JxW[q]     = iweps * this->JxW[q];
+      this->conj_iwmu_JxW[q] = std::conj(iwmu) * this->JxW[q];
+      this->iwmu_JxW[q]      = iwmu * this->JxW[q];
+    }
 }
 
 template <int dim>

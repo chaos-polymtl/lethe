@@ -2119,8 +2119,16 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
 
   setup_assemblers();
 
+  // Angular frequency of the electromagnetic fields, used by the scratch data
+  // to compute the coefficients of the cell terms
+  const double omega =
+    2.0 * numbers::PI *
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters
+      .electromagnetic_frequency;
+
   auto scratch_data = TimeHarmonicMaxwellScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
+    omega,
     *this->fe_trial_interior,
     *this->fe_trial_skeleton,
     *this->fe_test,
@@ -2212,6 +2220,7 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
                                         *void_fraction_solution);
     }
   scratch_data.calculate_physical_properties();
+  scratch_data.calculate_cell_coefficients();
 
   // We reset the local matrices and vector where we are aggregating the
   // information of the current cell.
@@ -2472,8 +2481,16 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
   // over the locally owned cells
   this->squared_residual_L2_norm = 0.0;
 
+  // Angular frequency of the electromagnetic fields, used by the scratch data
+  // to compute the coefficients of the cell terms
+  const double omega =
+    2.0 * numbers::PI *
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters
+      .electromagnetic_frequency;
+
   auto scratch_data = TimeHarmonicMaxwellScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
+    omega,
     *this->fe_trial_interior,
     *this->fe_trial_skeleton,
     *this->fe_test,
