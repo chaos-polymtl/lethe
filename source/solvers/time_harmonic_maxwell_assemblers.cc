@@ -233,11 +233,9 @@ namespace
   /**
    * @brief Add a complex value to a 2x2 block of a local matrix of the real DPG
    * system. Each shape function is a real base function multiplied by s = 1
-   * (real part) or by the imaginary unit (imaginary part). The entry of the
-   * shape functions s_row phi_i (row) and s_column phi_j (column) is
-   * Re(s_column conj(s_row) z), where z is the complex value of the pair of
-   * base functions (i, j). This gives the block [[Re z, -Im z], [Im z, Re z]]
-   * for the (real, imaginary) rows of i and the (real, imaginary) columns of j.
+   * (real part) or by the imaginary unit (imaginary part). This gives the block
+   * [[Re z, -Im z], [Im z, Re z]] for the (real, imaginary) rows of i and the
+   * (real, imaginary) columns of j when multiplying shape functions.
    *
    * @param[in,out] matrix Local matrix.
    *

@@ -2298,17 +2298,15 @@ TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
 
   assemble_local_dpg_system(cell, scratch_data, copy_data);
 
-  // The matrix $G^{-1} \hat{B}$ is only needed for the assembly. We use it to
-  // construct the matrix $M_3 = \hat{B}^\dagger G^{-1} \hat{B}$ and, since $G$
-  // is symmetric, the vector
+  // The matrix $G^{-1} \hat{B}$ is used to construct the matrix $M_3 =
+  // \hat{B}^\dagger G^{-1} \hat{B}$ and, since $G$ is symmetric, the vector
   // $M_5 l = \hat{B}^\dagger G^{-1} l = (G^{-1} \hat{B})^\dagger l$.
   copy_data.G_inverse_B_hat = copy_data.B_hat_matrix;
   copy_data.G_matrix.solve(copy_data.G_inverse_B_hat);
   copy_data.B_hat_matrix.Tmmult(copy_data.M3_matrix, copy_data.G_inverse_B_hat);
   copy_data.G_inverse_B_hat.Tvmult(copy_data.M5_l, copy_data.l_vector);
 
-  // The matrix $M_1^{-1} M_2$ is also only needed for the assembly. We compute
-  // it by solving with a copy of $M_2$.
+  // We compute the matrix $M_1^{-1} M_2$
   copy_data.M1_inverse_M2 = copy_data.M2_matrix;
   copy_data.M1_matrix.solve(copy_data.M1_inverse_M2);
 
@@ -2316,20 +2314,20 @@ TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
   // condensed system.
 
   // The cell matrix is obtained with the formula
-  // $M_3 - M_2^\dagger (M_1^{-1} M_2)$. $M_3$ is not used afterwards, so the
-  // product is subtracted from it in place.
+  // $M_3 - M_2^\dagger (M_1^{-1} M_2)$.
   copy_data.M2_matrix.Tmmult(copy_data.tmp_matrix_M2M1M2,
                              copy_data.M1_inverse_M2);
   copy_data.M3_matrix.add(-1.0, copy_data.tmp_matrix_M2M1M2);
+
   // This line is used to convert the LAPACK matrix to a full matrix so we can
   // perform the distribution to the global system.
   copy_data.local_matrix = copy_data.M3_matrix;
 
   // Then we compute the cell RHS using $M_5 l - M_2^\dagger M_1^{-1} M_4 l$.
   // Since $M_1$ is symmetric, $M_2^\dagger M_1^{-1} M_4 l =
-  // (M_1^{-1} M_2)^\dagger M_4 l$. The sadd function computes
-  // local_rhs = -1 * local_rhs + 1 * M5_l.
+  // (M_1^{-1} M_2)^\dagger M_4 l$.
   copy_data.M1_inverse_M2.Tvmult(copy_data.local_rhs, copy_data.M4_l);
+  // The sadd function computes local_rhs = -1 * local_rhs + 1 * M5_l.
   copy_data.local_rhs.sadd(-1.0, 1.0, copy_data.M5_l);
 
   // Get the local dof indices for the skeleton trial space to be able to
