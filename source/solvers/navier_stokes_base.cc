@@ -2257,7 +2257,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   // build purely locally-owned temporaries and copy the result into the
   // ghosted solution vectors below. For deal.II's parallel distributed vector
   // SolutionTransfer expects the targets to have their ghosts set up, so in
-  // that case we keep the ghosted construction.
+  // that case we keep the ghosted construction. In both cases, the ghost values
+  // of the solution vectors are updated after the copy.
   std::vector<VectorType *> x_system(1 + previous_solutions->size());
 
   auto make_distributed = [this]() {
@@ -2296,6 +2297,13 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
     {
       (*previous_solutions)[i] = distributed_previous_solutions[i];
     }
+
+  // The deserialized vectors have no ghost values, so the copies above zero the
+  // ghost entries of deal.II vectors. Update them, since the solution is read
+  // before the first solve (e.g. by the dynamic flow control).
+  this->present_solution->update_ghost_values();
+  for (auto &previous_solution : *previous_solutions)
+    previous_solution.update_ghost_values();
 
   this->restore_average_velocities_after_checkpoint();
 }

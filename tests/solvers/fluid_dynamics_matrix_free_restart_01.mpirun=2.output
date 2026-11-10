@@ -1,0 +1,101 @@
+
+DEAL:0::Time step 1 : average velocity = 2.00000, beta = 1.00000
+DEAL:0::Time step 2 : average velocity = 2.04000, beta = 16.3333
+DEAL:0::Time step 3 : average velocity = 2.10000, beta = 34.7333
+DEAL:0::State before the checkpoint
+DEAL:0::  Time                   : 0.200000
+DEAL:0::  Iteration              : 3
+DEAL:0::  Present solution       : 3.28469
+DEAL:0::  Previous solution 0    : 3.28469
+DEAL:0::  Previous solution 1    : 3.13538
+DEAL:0::  Previous solution 2    : 3.04580
+DEAL:0::  Inlet average velocity : 2.20000
+DEAL:0::Time step 4 : average velocity = 2.20000, beta = 51.7333
+DEAL:0::Time step 5 : average velocity = 2.30000, beta = 67.7333
+DEAL:0::Time step 6 : average velocity = 2.40000, beta = 82.7333
+DEAL:0::State at the end of the continuous run
+DEAL:0::  Time                   : 0.500000
+DEAL:0::  Iteration              : 6
+DEAL:0::  Present solution       : 3.73260
+DEAL:0::  Previous solution 0    : 3.73260
+DEAL:0::  Previous solution 1    : 3.58329
+DEAL:0::  Previous solution 2    : 3.43399
+DEAL:0::  Inlet average velocity : 2.50000
+DEAL:0::State before the restart
+DEAL:0::  Time                   : 0.00000
+DEAL:0::  Iteration              : 0
+DEAL:0::  Present solution       : 0.00000
+DEAL:0::  Previous solution 0    : 0.00000
+DEAL:0::  Previous solution 1    : 0.00000
+DEAL:0::  Previous solution 2    : 0.00000
+DEAL:0::  Inlet average velocity : 0.00000
+DEAL:0::State after the restart
+DEAL:0::  Time                   : 0.200000
+DEAL:0::  Iteration              : 3
+DEAL:0::  Present solution       : 3.28469
+DEAL:0::  Previous solution 0    : 3.28469
+DEAL:0::  Previous solution 1    : 3.13538
+DEAL:0::  Previous solution 2    : 3.04580
+DEAL:0::  Inlet average velocity : 2.20000
+DEAL:0::Time step 4 : average velocity = 2.20000, beta = 51.7333
+DEAL:0::Time step 5 : average velocity = 2.30000, beta = 67.7333
+DEAL:0::Time step 6 : average velocity = 2.40000, beta = 82.7333
+DEAL:0::State at the end of the restarted run
+DEAL:0::  Time                   : 0.500000
+DEAL:0::  Iteration              : 6
+DEAL:0::  Present solution       : 3.73260
+DEAL:0::  Previous solution 0    : 3.73260
+DEAL:0::  Previous solution 1    : 3.58329
+DEAL:0::  Previous solution 2    : 3.43399
+DEAL:0::  Inlet average velocity : 2.50000
+
+DEAL:1::Time step 1 : average velocity = 2.00000, beta = 1.00000
+DEAL:1::Time step 2 : average velocity = 2.04000, beta = 16.3333
+DEAL:1::Time step 3 : average velocity = 2.10000, beta = 34.7333
+DEAL:1::State before the checkpoint
+DEAL:1::  Time                   : 0.200000
+DEAL:1::  Iteration              : 3
+DEAL:1::  Present solution       : 3.28469
+DEAL:1::  Previous solution 0    : 3.28469
+DEAL:1::  Previous solution 1    : 3.13538
+DEAL:1::  Previous solution 2    : 3.04580
+DEAL:1::  Inlet average velocity : 2.20000
+DEAL:1::Time step 4 : average velocity = 2.20000, beta = 51.7333
+DEAL:1::Time step 5 : average velocity = 2.30000, beta = 67.7333
+DEAL:1::Time step 6 : average velocity = 2.40000, beta = 82.7333
+DEAL:1::State at the end of the continuous run
+DEAL:1::  Time                   : 0.500000
+DEAL:1::  Iteration              : 6
+DEAL:1::  Present solution       : 3.73260
+DEAL:1::  Previous solution 0    : 3.73260
+DEAL:1::  Previous solution 1    : 3.58329
+DEAL:1::  Previous solution 2    : 3.43399
+DEAL:1::  Inlet average velocity : 2.50000
+DEAL:1::State before the restart
+DEAL:1::  Time                   : 0.00000
+DEAL:1::  Iteration              : 0
+DEAL:1::  Present solution       : 0.00000
+DEAL:1::  Previous solution 0    : 0.00000
+DEAL:1::  Previous solution 1    : 0.00000
+DEAL:1::  Previous solution 2    : 0.00000
+DEAL:1::  Inlet average velocity : 0.00000
+DEAL:1::State after the restart
+DEAL:1::  Time                   : 0.200000
+DEAL:1::  Iteration              : 3
+DEAL:1::  Present solution       : 3.28469
+DEAL:1::  Previous solution 0    : 3.28469
+DEAL:1::  Previous solution 1    : 3.13538
+DEAL:1::  Previous solution 2    : 3.04580
+DEAL:1::  Inlet average velocity : 2.20000
+DEAL:1::Time step 4 : average velocity = 2.20000, beta = 51.7333
+DEAL:1::Time step 5 : average velocity = 2.30000, beta = 67.7333
+DEAL:1::Time step 6 : average velocity = 2.40000, beta = 82.7333
+DEAL:1::State at the end of the restarted run
+DEAL:1::  Time                   : 0.500000
+DEAL:1::  Iteration              : 6
+DEAL:1::  Present solution       : 3.73260
+DEAL:1::  Previous solution 0    : 3.73260
+DEAL:1::  Previous solution 1    : 3.58329
+DEAL:1::  Previous solution 2    : 3.43399
+DEAL:1::  Inlet average velocity : 2.50000
+
