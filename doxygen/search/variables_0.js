@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['a_0',['a',['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a'],['../structLetheGridTools_1_1TriangleProjectionData.html#aa88e4d2916995004d1f321e9b7ac695d',1,'LetheGridTools::TriangleProjectionData::a'],['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A'],['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structSDIRKTable.html#ae1417a4a022a84850f33cc4aab21e29b',1,'SDIRKTable::A']]],
+  ['a_0',['a',['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A'],['../structSDIRKTable.html#ae1417a4a022a84850f33cc4aab21e29b',1,'SDIRKTable::A'],['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structLetheGridTools_1_1TriangleProjectionData.html#aa88e4d2916995004d1f321e9b7ac695d',1,'LetheGridTools::TriangleProjectionData::a'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a']]],
   ['a_5fii_1',['a_ii',['../structTimeSteppingData.html#a3bb8c78f16bcb7a94b4d9c4effd05822',1,'TimeSteppingData']]],
   ['a_5fij_2',['a_ij',['../classSDIRKStageData.html#ae03ac44622ed29f42ce5741bbd50be55',1,'SDIRKStageData']]],
   ['a_5finverse_3',['A_inverse',['../classBlockDiagPreconditioner.html#aaebbf0f342b00811c1839c90176936bc',1,'BlockDiagPreconditioner']]],
@@ -33,7 +33,7 @@ var searchData=
   ['amat_5fpreconditioner_30',['amat_preconditioner',['../classBlockSchurPreconditioner.html#a68e479b3866d38dbe5bdb496920af5bf',1,'BlockSchurPreconditioner::amat_preconditioner'],['../classBlockDiagPreconditioner.html#ae1039b4e20f49c2b38905cca6f338881',1,'BlockDiagPreconditioner::amat_preconditioner']]],
   ['ambient_5fgas_5fdensity_31',['ambient_gas_density',['../structParameters_1_1Evaporation.html#aa1bfa15d2215d8ddfe7dc0a7b99097c4',1,'Parameters::Evaporation']]],
   ['ambient_5fgas_5fdensity_5finv_32',['ambient_gas_density_inv',['../classEvaporationModelConstant.html#ab9b5b1ad326566c19499a61489bd21cd',1,'EvaporationModelConstant']]],
-  ['ambient_5fpressure_33',['ambient_pressure',['../structParameters_1_1Evaporation.html#ab14c31ce76943270fd03674aa610c456',1,'Parameters::Evaporation::ambient_pressure'],['../classEvaporationModelTemperature.html#affe46e774948d52ae22b4c52dfff44bc',1,'EvaporationModelTemperature::ambient_pressure']]],
+  ['ambient_5fpressure_33',['ambient_pressure',['../classEvaporationModelTemperature.html#affe46e774948d52ae22b4c52dfff44bc',1,'EvaporationModelTemperature::ambient_pressure'],['../structParameters_1_1Evaporation.html#ab14c31ce76943270fd03674aa610c456',1,'Parameters::Evaporation::ambient_pressure']]],
   ['amg_5faggregation_5fthreshold_34',['amg_aggregation_threshold',['../structParameters_1_1LinearSolver.html#a10d6799aef45e5cb7f445d7ec41c75d9',1,'Parameters::LinearSolver']]],
   ['amg_5fn_5fcycles_35',['amg_n_cycles',['../structParameters_1_1LinearSolver.html#a85921591dfcd7b47bb5df194111a96f0',1,'Parameters::LinearSolver']]],
   ['amg_5fprecond_5filu_5fatol_36',['amg_precond_ilu_atol',['../structParameters_1_1LinearSolver.html#ae6b6cc9f43f463b67838d7d237af2b06',1,'Parameters::LinearSolver']]],
@@ -52,7 +52,7 @@ var searchData=
   ['apparent_5fviscosity_5ftable_49',['apparent_viscosity_table',['../classNavierStokesBase.html#a67c36cce57ca8e833124304b210cd505',1,'NavierStokesBase']]],
   ['approximate_5fradius_5ffor_5fcontact_50',['approximate_radius_for_contact',['../classParameters_1_1IBParticles.html#adc1e711b31c842ef7e07b83d80eed132',1,'Parameters::IBParticles']]],
   ['assemble_5fnavier_5fstokes_5finside_51',['assemble_navier_stokes_inside',['../classParameters_1_1IBParticles.html#ac890e21595b4cd438e24d92193d30a4e',1,'Parameters::IBParticles']]],
-  ['assemblers_52',['assemblers',['../classTracer.html#a810c0db83b2edc9811d463fa2f919cd8',1,'Tracer::assemblers'],['../classTimeHarmonicMaxwell.html#af12a054ce6c661e3455f2beb77cd554c',1,'TimeHarmonicMaxwell::assemblers'],['../classHeatTransfer.html#aa3beb012e2186d3f8e35d9ebde0dcf1f',1,'HeatTransfer::assemblers'],['../classConservativeLevelSet.html#a5ed78835dc54f150d94f7f23951e1597',1,'ConservativeLevelSet::assemblers'],['../classCahnHilliard.html#a3f10bd232c9b5997e7fbe4c7c04a2daa',1,'CahnHilliard::assemblers'],['../classNavierStokesBase.html#acc40827c7d61b7a25e4066d31a0a4274',1,'NavierStokesBase::assemblers']]],
+  ['assemblers_52',['assemblers',['../classTracer.html#a810c0db83b2edc9811d463fa2f919cd8',1,'Tracer::assemblers'],['../classConservativeLevelSet.html#a5ed78835dc54f150d94f7f23951e1597',1,'ConservativeLevelSet::assemblers'],['../classTimeHarmonicMaxwell.html#af12a054ce6c661e3455f2beb77cd554c',1,'TimeHarmonicMaxwell::assemblers'],['../classHeatTransfer.html#aa3beb012e2186d3f8e35d9ebde0dcf1f',1,'HeatTransfer::assemblers'],['../classCahnHilliard.html#a3f10bd232c9b5997e7fbe4c7c04a2daa',1,'CahnHilliard::assemblers'],['../classNavierStokesBase.html#acc40827c7d61b7a25e4066d31a0a4274',1,'NavierStokesBase::assemblers']]],
   ['assemblers_5finside_5fib_53',['assemblers_inside_ib',['../classFluidDynamicsSharp.html#aef21bd5d4911c27668c3ebe91afe5652',1,'FluidDynamicsSharp']]],
   ['assembly_5fmethod_54',['assembly_method',['../classSimulationControl.html#afcef58567807100d062bceb13c9540a5',1,'SimulationControl']]],
   ['average_55',['average',['../classstatistics.html#a0288afba1bf979183eed4fe63c9d6677',1,'statistics']]],
@@ -65,10 +65,9 @@ var searchData=
   ['average_5ftemperature_62',['average_temperature',['../classHeatTransfer.html#a24f594ace60e7681dda3c348adb56384',1,'HeatTransfer']]],
   ['average_5ftemperature_5fto_5foutput_63',['average_temperature_to_output',['../classHeatTransfer.html#a1df0e51da1b4c819f024e55f572f1c43',1,'HeatTransfer']]],
   ['average_5fvelocities_64',['average_velocities',['../classNavierStokesBase.html#adec3bd335a2baef8a6409cf34ffd8a02',1,'NavierStokesBase::average_velocities'],['../classAverageVelocities.html#a1bf176d8cb26d2933280a6a47c6b69b0',1,'AverageVelocities::average_velocities']]],
-  ['average_5fvelocity_5f0_65',['average_velocity_0',['../structParameters_1_1DynamicFlowControl.html#a0d9efb0bb38d618828028669fdef22e8',1,'Parameters::DynamicFlowControl::average_velocity_0'],['../classFlowControl.html#add256a67717dc0487757017e76ac9722',1,'FlowControl::average_velocity_0']]],
-  ['average_5fvelocity_5f1n_66',['average_velocity_1n',['../classFlowControl.html#a8ae774535e50107219c481d41488953b',1,'FlowControl']]],
-  ['average_5fvelocity_5ffile_5fname_67',['average_velocity_file_name',['../classParameters_1_1InitialConditions.html#a8153d8e4aede20142fd8dd9d725095e9',1,'Parameters::InitialConditions']]],
-  ['average_5fvelocity_5ffolder_68',['average_velocity_folder',['../classParameters_1_1InitialConditions.html#ad7057047793622a590cab56728a37853',1,'Parameters::InitialConditions']]],
-  ['axis_5fmax_69',['axis_max',['../classInsertionPacked.html#a124b6d4adff40b2f68a0efd9347efc9e',1,'InsertionPacked::axis_max'],['../classInsertionVolume.html#a39b820160aa26778e9d21811183c2e3f',1,'InsertionVolume::axis_max']]],
-  ['axis_5fmin_70',['axis_min',['../classInsertionPacked.html#a4f42157eb08361645c241b364b8982c9',1,'InsertionPacked::axis_min'],['../classInsertionVolume.html#a2d65e6fe07aa1d0a560a52aee47a48cd',1,'InsertionVolume::axis_min']]]
+  ['average_5fvelocity_5f0_65',['average_velocity_0',['../structParameters_1_1DynamicFlowControl.html#a0d9efb0bb38d618828028669fdef22e8',1,'Parameters::DynamicFlowControl']]],
+  ['average_5fvelocity_5ffile_5fname_66',['average_velocity_file_name',['../classParameters_1_1InitialConditions.html#a8153d8e4aede20142fd8dd9d725095e9',1,'Parameters::InitialConditions']]],
+  ['average_5fvelocity_5ffolder_67',['average_velocity_folder',['../classParameters_1_1InitialConditions.html#ad7057047793622a590cab56728a37853',1,'Parameters::InitialConditions']]],
+  ['axis_5fmax_68',['axis_max',['../classInsertionPacked.html#a124b6d4adff40b2f68a0efd9347efc9e',1,'InsertionPacked::axis_max'],['../classInsertionVolume.html#a39b820160aa26778e9d21811183c2e3f',1,'InsertionVolume::axis_max']]],
+  ['axis_5fmin_69',['axis_min',['../classInsertionPacked.html#a4f42157eb08361645c241b364b8982c9',1,'InsertionPacked::axis_min'],['../classInsertionVolume.html#a2d65e6fe07aa1d0a560a52aee47a48cd',1,'InsertionVolume::axis_min']]]
 ];

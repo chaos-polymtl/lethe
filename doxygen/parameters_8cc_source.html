@@ -5222,327 +5222,328 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l04976" name="l04976"></a><span class="lineno"> 4976</span>      prm.declare_entry(<span class="stringliteral">&quot;inlet boundary id&quot;</span>,</div>
 <div class="line"><a id="l04977" name="l04977"></a><span class="lineno"> 4977</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
 <div class="line"><a id="l04978" name="l04978"></a><span class="lineno"> 4978</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#af4d0d02ed67879423fb561b28e02e1cd">boundary_flow_id</a>),</div>
-<div class="line"><a id="l04979" name="l04979"></a><span class="lineno"> 4979</span>                        Patterns::Integer(),</div>
+<div class="line"><a id="l04979" name="l04979"></a><span class="lineno"> 4979</span>                        Patterns::Integer(0),</div>
 <div class="line"><a id="l04980" name="l04980"></a><span class="lineno"> 4980</span>                        <span class="stringliteral">&quot;Boundary id of the inlet flow&quot;</span>);</div>
-<div class="line"><a id="l04981" name="l04981"></a><span class="lineno"> 4981</span>      prm.declare_entry(<span class="stringliteral">&quot;flow direction&quot;</span>,</div>
-<div class="line"><a id="l04982" name="l04982"></a><span class="lineno"> 4982</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
-<div class="line"><a id="l04983" name="l04983"></a><span class="lineno"> 4983</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#a4fc86a056de790858e5b842aadafeaf5">flow_direction</a>),</div>
-<div class="line"><a id="l04984" name="l04984"></a><span class="lineno"> 4984</span>                        Patterns::Integer(),</div>
-<div class="line"><a id="l04985" name="l04985"></a><span class="lineno"> 4985</span>                        <span class="stringliteral">&quot;Flow direction at flow inlet&quot;</span>);</div>
-<div class="line"><a id="l04986" name="l04986"></a><span class="lineno"> 4986</span>      prm.declare_entry(<span class="stringliteral">&quot;initial beta&quot;</span>,</div>
-<div class="line"><a id="l04987" name="l04987"></a><span class="lineno"> 4987</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l04988" name="l04988"></a><span class="lineno"> 4988</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#aa183d8a7373ee26f561abff3f42d13f6">beta_0</a>),</div>
-<div class="line"><a id="l04989" name="l04989"></a><span class="lineno"> 4989</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l04990" name="l04990"></a><span class="lineno"> 4990</span>                        <span class="stringliteral">&quot;Beta coefficient value for the first step time&quot;</span>);</div>
-<div class="line"><a id="l04991" name="l04991"></a><span class="lineno"> 4991</span>      prm.declare_entry(<span class="stringliteral">&quot;alpha&quot;</span>,</div>
-<div class="line"><a id="l04992" name="l04992"></a><span class="lineno"> 4992</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l04993" name="l04993"></a><span class="lineno"> 4993</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#a4703ee383e76332e750c49d45a03c8b6">alpha</a>),</div>
-<div class="line"><a id="l04994" name="l04994"></a><span class="lineno"> 4994</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l04995" name="l04995"></a><span class="lineno"> 4995</span>                        <span class="stringliteral">&quot;Relaxation coefficient for flow controller&quot;</span>);</div>
-<div class="line"><a id="l04996" name="l04996"></a><span class="lineno"> 4996</span>      prm.declare_entry(<span class="stringliteral">&quot;enable beta particle&quot;</span>,</div>
-<div class="line"><a id="l04997" name="l04997"></a><span class="lineno"> 4997</span>                        Patterns::Tools::Convert&lt;bool&gt;::to_string(</div>
-<div class="line"><a id="l04998" name="l04998"></a><span class="lineno"> 4998</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#a442a9f7244734af10f292a3dcdfd9d4f">enable_beta_particle</a>),</div>
-<div class="line"><a id="l04999" name="l04999"></a><span class="lineno"> 4999</span>                        Patterns::Bool(),</div>
-<div class="line"><a id="l05000" name="l05000"></a><span class="lineno"> 5000</span>                        <span class="stringliteral">&quot;Enable beta force for particles&quot;</span>);</div>
-<div class="line"><a id="l05001" name="l05001"></a><span class="lineno"> 5001</span>      prm.declare_entry(</div>
-<div class="line"><a id="l05002" name="l05002"></a><span class="lineno"> 5002</span>        <span class="stringliteral">&quot;beta threshold&quot;</span>,</div>
-<div class="line"><a id="l05003" name="l05003"></a><span class="lineno"> 5003</span>        Patterns::Tools::Convert&lt;double&gt;::to_string(defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#afbc6616574a0ba3e5af0abe15a92be7b">beta_threshold</a>),</div>
-<div class="line"><a id="l05004" name="l05004"></a><span class="lineno"> 5004</span>        Patterns::Double(),</div>
-<div class="line"><a id="l05005" name="l05005"></a><span class="lineno"> 5005</span>        <span class="stringliteral">&quot;Relative threshold on the change of the beta force below which the previous beta force is kept&quot;</span>);</div>
-<div class="line"><a id="l05006" name="l05006"></a><span class="lineno"> 5006</span>      <a class="code hl_function" href="core_2utilities_8h.html#ae144e62fbab8568f6af31a6cd1c5f509">declare_enum_entry</a>(</div>
-<div class="line"><a id="l05007" name="l05007"></a><span class="lineno"> 5007</span>        prm,</div>
-<div class="line"><a id="l05008" name="l05008"></a><span class="lineno"> 5008</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
-<div class="line"><a id="l05009" name="l05009"></a><span class="lineno"> 5009</span>        defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#af65a6466c5e3ef1c7184d2653a0a9ffb">verbosity</a>,</div>
-<div class="line"><a id="l05010" name="l05010"></a><span class="lineno"> 5010</span>        <span class="stringliteral">&quot;State whether from the flow control information should be printed.&quot;</span>,</div>
-<div class="line"><a id="l05011" name="l05011"></a><span class="lineno"> 5011</span>        <a class="code hl_function" href="namespaceParameters.html#af205406d624398cf22fd0702f607e43b">deprecated_verbosity_names</a>(),</div>
-<div class="line"><a id="l05012" name="l05012"></a><span class="lineno"> 5012</span>        <a class="code hl_function" href="namespaceParameters.html#a5fb7113b91c00be9fa2bae1fd229f8ce">quiet_or_verbose</a>());</div>
-<div class="line"><a id="l05013" name="l05013"></a><span class="lineno"> 5013</span>    }</div>
-<div class="line"><a id="l05014" name="l05014"></a><span class="lineno"> 5014</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l05015" name="l05015"></a><span class="lineno"> 5015</span>  }</div>
+<div class="line"><a id="l04981" name="l04981"></a><span class="lineno"> 4981</span>      prm.declare_entry(</div>
+<div class="line"><a id="l04982" name="l04982"></a><span class="lineno"> 4982</span>        <span class="stringliteral">&quot;flow direction&quot;</span>,</div>
+<div class="line"><a id="l04983" name="l04983"></a><span class="lineno"> 4983</span>        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
+<div class="line"><a id="l04984" name="l04984"></a><span class="lineno"> 4984</span>          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#a4fc86a056de790858e5b842aadafeaf5">flow_direction</a>),</div>
+<div class="line"><a id="l04985" name="l04985"></a><span class="lineno"> 4985</span>        Patterns::Integer(0, 2),</div>
+<div class="line"><a id="l04986" name="l04986"></a><span class="lineno"> 4986</span>        <span class="stringliteral">&quot;Flow direction at flow inlet (0 for x, 1 for y and 2 for z)&quot;</span>);</div>
+<div class="line"><a id="l04987" name="l04987"></a><span class="lineno"> 4987</span>      prm.declare_entry(<span class="stringliteral">&quot;initial beta&quot;</span>,</div>
+<div class="line"><a id="l04988" name="l04988"></a><span class="lineno"> 4988</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l04989" name="l04989"></a><span class="lineno"> 4989</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#aa183d8a7373ee26f561abff3f42d13f6">beta_0</a>),</div>
+<div class="line"><a id="l04990" name="l04990"></a><span class="lineno"> 4990</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l04991" name="l04991"></a><span class="lineno"> 4991</span>                        <span class="stringliteral">&quot;Beta coefficient value for the first step time&quot;</span>);</div>
+<div class="line"><a id="l04992" name="l04992"></a><span class="lineno"> 4992</span>      prm.declare_entry(<span class="stringliteral">&quot;alpha&quot;</span>,</div>
+<div class="line"><a id="l04993" name="l04993"></a><span class="lineno"> 4993</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l04994" name="l04994"></a><span class="lineno"> 4994</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#a4703ee383e76332e750c49d45a03c8b6">alpha</a>),</div>
+<div class="line"><a id="l04995" name="l04995"></a><span class="lineno"> 4995</span>                        Patterns::Double(0.),</div>
+<div class="line"><a id="l04996" name="l04996"></a><span class="lineno"> 4996</span>                        <span class="stringliteral">&quot;Relaxation coefficient for flow controller&quot;</span>);</div>
+<div class="line"><a id="l04997" name="l04997"></a><span class="lineno"> 4997</span>      prm.declare_entry(<span class="stringliteral">&quot;enable beta particle&quot;</span>,</div>
+<div class="line"><a id="l04998" name="l04998"></a><span class="lineno"> 4998</span>                        Patterns::Tools::Convert&lt;bool&gt;::to_string(</div>
+<div class="line"><a id="l04999" name="l04999"></a><span class="lineno"> 4999</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#a442a9f7244734af10f292a3dcdfd9d4f">enable_beta_particle</a>),</div>
+<div class="line"><a id="l05000" name="l05000"></a><span class="lineno"> 5000</span>                        Patterns::Bool(),</div>
+<div class="line"><a id="l05001" name="l05001"></a><span class="lineno"> 5001</span>                        <span class="stringliteral">&quot;Enable beta force for particles&quot;</span>);</div>
+<div class="line"><a id="l05002" name="l05002"></a><span class="lineno"> 5002</span>      prm.declare_entry(</div>
+<div class="line"><a id="l05003" name="l05003"></a><span class="lineno"> 5003</span>        <span class="stringliteral">&quot;beta threshold&quot;</span>,</div>
+<div class="line"><a id="l05004" name="l05004"></a><span class="lineno"> 5004</span>        Patterns::Tools::Convert&lt;double&gt;::to_string(defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#afbc6616574a0ba3e5af0abe15a92be7b">beta_threshold</a>),</div>
+<div class="line"><a id="l05005" name="l05005"></a><span class="lineno"> 5005</span>        Patterns::Double(0.),</div>
+<div class="line"><a id="l05006" name="l05006"></a><span class="lineno"> 5006</span>        <span class="stringliteral">&quot;Relative threshold on the change of the beta force below which the previous beta force is kept&quot;</span>);</div>
+<div class="line"><a id="l05007" name="l05007"></a><span class="lineno"> 5007</span>      <a class="code hl_function" href="core_2utilities_8h.html#ae144e62fbab8568f6af31a6cd1c5f509">declare_enum_entry</a>(</div>
+<div class="line"><a id="l05008" name="l05008"></a><span class="lineno"> 5008</span>        prm,</div>
+<div class="line"><a id="l05009" name="l05009"></a><span class="lineno"> 5009</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
+<div class="line"><a id="l05010" name="l05010"></a><span class="lineno"> 5010</span>        defaults.<a class="code hl_variable" href="structParameters_1_1DynamicFlowControl.html#af65a6466c5e3ef1c7184d2653a0a9ffb">verbosity</a>,</div>
+<div class="line"><a id="l05011" name="l05011"></a><span class="lineno"> 5011</span>        <span class="stringliteral">&quot;State whether from the flow control information should be printed.&quot;</span>,</div>
+<div class="line"><a id="l05012" name="l05012"></a><span class="lineno"> 5012</span>        <a class="code hl_function" href="namespaceParameters.html#af205406d624398cf22fd0702f607e43b">deprecated_verbosity_names</a>(),</div>
+<div class="line"><a id="l05013" name="l05013"></a><span class="lineno"> 5013</span>        <a class="code hl_function" href="namespaceParameters.html#a5fb7113b91c00be9fa2bae1fd229f8ce">quiet_or_verbose</a>());</div>
+<div class="line"><a id="l05014" name="l05014"></a><span class="lineno"> 5014</span>    }</div>
+<div class="line"><a id="l05015" name="l05015"></a><span class="lineno"> 5015</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l05016" name="l05016"></a><span class="lineno"> 5016</span>  }</div>
 </div>
-<div class="line"><a id="l05016" name="l05016"></a><span class="lineno"> 5016</span> </div>
-<div class="line"><a id="l05017" name="l05017"></a><span class="lineno"> 5017</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen05018" data-start="{" data-end="}">
-<div class="line"><a id="l05018" name="l05018"></a><span class="lineno"><a class="line" href="structParameters_1_1DynamicFlowControl.html#a7a2d1e1a7f756661c1f1bc658d48d0fd"> 5018</a></span>  <a class="code hl_function" href="structParameters_1_1DynamicFlowControl.html#a7a2d1e1a7f756661c1f1bc658d48d0fd">DynamicFlowControl::parse_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l05019" name="l05019"></a><span class="lineno"> 5019</span>  {</div>
-<div class="line"><a id="l05020" name="l05020"></a><span class="lineno"> 5020</span>    prm.enter_subsection(<span class="stringliteral">&quot;flow control&quot;</span>);</div>
-<div class="line"><a id="l05021" name="l05021"></a><span class="lineno"> 5021</span>    {</div>
-<div class="line"><a id="l05022" name="l05022"></a><span class="lineno"> 5022</span>      <span class="comment">// Enable flow control</span></div>
-<div class="line"><a id="l05023" name="l05023"></a><span class="lineno"> 5023</span>      enable_flow_control = prm.get_bool(<span class="stringliteral">&quot;enable&quot;</span>);</div>
-<div class="line"><a id="l05024" name="l05024"></a><span class="lineno"> 5024</span> </div>
-<div class="line"><a id="l05025" name="l05025"></a><span class="lineno"> 5025</span>      <span class="comment">// Set the target value for the flow control and flow direction</span></div>
-<div class="line"><a id="l05026" name="l05026"></a><span class="lineno"> 5026</span>      average_velocity_0 = prm.get_double(<span class="stringliteral">&quot;average velocity&quot;</span>);</div>
-<div class="line"><a id="l05027" name="l05027"></a><span class="lineno"> 5027</span>      flow_direction     = prm.get_integer(<span class="stringliteral">&quot;flow direction&quot;</span>);</div>
-<div class="line"><a id="l05028" name="l05028"></a><span class="lineno"> 5028</span>      boundary_flow_id   = prm.get_integer(<span class="stringliteral">&quot;inlet boundary id&quot;</span>);</div>
-<div class="line"><a id="l05029" name="l05029"></a><span class="lineno"> 5029</span> </div>
-<div class="line"><a id="l05030" name="l05030"></a><span class="lineno"> 5030</span>      <span class="comment">// Tuning parameters for the flow controller</span></div>
-<div class="line"><a id="l05031" name="l05031"></a><span class="lineno"> 5031</span>      beta_0         = prm.get_double(<span class="stringliteral">&quot;initial beta&quot;</span>);</div>
-<div class="line"><a id="l05032" name="l05032"></a><span class="lineno"> 5032</span>      alpha          = prm.get_double(<span class="stringliteral">&quot;alpha&quot;</span>);</div>
-<div class="line"><a id="l05033" name="l05033"></a><span class="lineno"> 5033</span>      beta_threshold = prm.get_double(<span class="stringliteral">&quot;beta threshold&quot;</span>);</div>
-<div class="line"><a id="l05034" name="l05034"></a><span class="lineno"> 5034</span> </div>
-<div class="line"><a id="l05035" name="l05035"></a><span class="lineno"> 5035</span>      <span class="comment">// Enable printing of flow control information</span></div>
-<div class="line"><a id="l05036" name="l05036"></a><span class="lineno"> 5036</span>      <a class="code hl_variable" href="classParameters_1_1PostProcessing.html#a3d09dc66cd67a64f0011bd33d9f3aa98">verbosity</a> = string_to_enum&lt;Verbosity&gt;(prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>),</div>
-<div class="line"><a id="l05037" name="l05037"></a><span class="lineno"> 5037</span>                                            <a class="code hl_function" href="namespaceParameters.html#af205406d624398cf22fd0702f607e43b">deprecated_verbosity_names</a>(),</div>
-<div class="line"><a id="l05038" name="l05038"></a><span class="lineno"> 5038</span>                                            <span class="stringliteral">&quot;verbosity&quot;</span>);</div>
-<div class="line"><a id="l05039" name="l05039"></a><span class="lineno"> 5039</span> </div>
-<div class="line"><a id="l05040" name="l05040"></a><span class="lineno"> 5040</span>      <span class="comment">// Enable beta force for particles (CFD-DEM)</span></div>
-<div class="line"><a id="l05041" name="l05041"></a><span class="lineno"> 5041</span>      enable_beta_particle = prm.get_bool(<span class="stringliteral">&quot;enable beta particle&quot;</span>);</div>
-<div class="line"><a id="l05042" name="l05042"></a><span class="lineno"> 5042</span>    }</div>
-<div class="line"><a id="l05043" name="l05043"></a><span class="lineno"> 5043</span> </div>
-<div class="line"><a id="l05044" name="l05044"></a><span class="lineno"> 5044</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l05045" name="l05045"></a><span class="lineno"> 5045</span>  }</div>
+<div class="line"><a id="l05017" name="l05017"></a><span class="lineno"> 5017</span> </div>
+<div class="line"><a id="l05018" name="l05018"></a><span class="lineno"> 5018</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen05019" data-start="{" data-end="}">
+<div class="line"><a id="l05019" name="l05019"></a><span class="lineno"><a class="line" href="structParameters_1_1DynamicFlowControl.html#a7a2d1e1a7f756661c1f1bc658d48d0fd"> 5019</a></span>  <a class="code hl_function" href="structParameters_1_1DynamicFlowControl.html#a7a2d1e1a7f756661c1f1bc658d48d0fd">DynamicFlowControl::parse_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l05020" name="l05020"></a><span class="lineno"> 5020</span>  {</div>
+<div class="line"><a id="l05021" name="l05021"></a><span class="lineno"> 5021</span>    prm.enter_subsection(<span class="stringliteral">&quot;flow control&quot;</span>);</div>
+<div class="line"><a id="l05022" name="l05022"></a><span class="lineno"> 5022</span>    {</div>
+<div class="line"><a id="l05023" name="l05023"></a><span class="lineno"> 5023</span>      <span class="comment">// Enable flow control</span></div>
+<div class="line"><a id="l05024" name="l05024"></a><span class="lineno"> 5024</span>      enable_flow_control = prm.get_bool(<span class="stringliteral">&quot;enable&quot;</span>);</div>
+<div class="line"><a id="l05025" name="l05025"></a><span class="lineno"> 5025</span> </div>
+<div class="line"><a id="l05026" name="l05026"></a><span class="lineno"> 5026</span>      <span class="comment">// Set the target value for the flow control and flow direction</span></div>
+<div class="line"><a id="l05027" name="l05027"></a><span class="lineno"> 5027</span>      average_velocity_0 = prm.get_double(<span class="stringliteral">&quot;average velocity&quot;</span>);</div>
+<div class="line"><a id="l05028" name="l05028"></a><span class="lineno"> 5028</span>      flow_direction     = prm.get_integer(<span class="stringliteral">&quot;flow direction&quot;</span>);</div>
+<div class="line"><a id="l05029" name="l05029"></a><span class="lineno"> 5029</span>      boundary_flow_id   = prm.get_integer(<span class="stringliteral">&quot;inlet boundary id&quot;</span>);</div>
+<div class="line"><a id="l05030" name="l05030"></a><span class="lineno"> 5030</span> </div>
+<div class="line"><a id="l05031" name="l05031"></a><span class="lineno"> 5031</span>      <span class="comment">// Tuning parameters for the flow controller</span></div>
+<div class="line"><a id="l05032" name="l05032"></a><span class="lineno"> 5032</span>      beta_0         = prm.get_double(<span class="stringliteral">&quot;initial beta&quot;</span>);</div>
+<div class="line"><a id="l05033" name="l05033"></a><span class="lineno"> 5033</span>      alpha          = prm.get_double(<span class="stringliteral">&quot;alpha&quot;</span>);</div>
+<div class="line"><a id="l05034" name="l05034"></a><span class="lineno"> 5034</span>      beta_threshold = prm.get_double(<span class="stringliteral">&quot;beta threshold&quot;</span>);</div>
+<div class="line"><a id="l05035" name="l05035"></a><span class="lineno"> 5035</span> </div>
+<div class="line"><a id="l05036" name="l05036"></a><span class="lineno"> 5036</span>      <span class="comment">// Enable printing of flow control information</span></div>
+<div class="line"><a id="l05037" name="l05037"></a><span class="lineno"> 5037</span>      <a class="code hl_variable" href="classParameters_1_1PostProcessing.html#a3d09dc66cd67a64f0011bd33d9f3aa98">verbosity</a> = string_to_enum&lt;Verbosity&gt;(prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>),</div>
+<div class="line"><a id="l05038" name="l05038"></a><span class="lineno"> 5038</span>                                            <a class="code hl_function" href="namespaceParameters.html#af205406d624398cf22fd0702f607e43b">deprecated_verbosity_names</a>(),</div>
+<div class="line"><a id="l05039" name="l05039"></a><span class="lineno"> 5039</span>                                            <span class="stringliteral">&quot;verbosity&quot;</span>);</div>
+<div class="line"><a id="l05040" name="l05040"></a><span class="lineno"> 5040</span> </div>
+<div class="line"><a id="l05041" name="l05041"></a><span class="lineno"> 5041</span>      <span class="comment">// Enable beta force for particles (CFD-DEM)</span></div>
+<div class="line"><a id="l05042" name="l05042"></a><span class="lineno"> 5042</span>      enable_beta_particle = prm.get_bool(<span class="stringliteral">&quot;enable beta particle&quot;</span>);</div>
+<div class="line"><a id="l05043" name="l05043"></a><span class="lineno"> 5043</span>    }</div>
+<div class="line"><a id="l05044" name="l05044"></a><span class="lineno"> 5044</span> </div>
+<div class="line"><a id="l05045" name="l05045"></a><span class="lineno"> 5045</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l05046" name="l05046"></a><span class="lineno"> 5046</span>  }</div>
 </div>
-<div class="line"><a id="l05046" name="l05046"></a><span class="lineno"> 5046</span> </div>
-<div class="line"><a id="l05047" name="l05047"></a><span class="lineno"> 5047</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen05048" data-start="{" data-end="}">
-<div class="line"><a id="l05048" name="l05048"></a><span class="lineno"><a class="line" href="structParameters_1_1Evaporation.html#aaf73c8a4033d20f19e0b588de4a39738"> 5048</a></span>  <a class="code hl_function" href="structParameters_1_1Evaporation.html#aaf73c8a4033d20f19e0b588de4a39738">Evaporation::declare_parameters</a>(dealii::ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l05049" name="l05049"></a><span class="lineno"> 5049</span>  {</div>
-<div class="line"><a id="l05050" name="l05050"></a><span class="lineno"> 5050</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1Evaporation.html">Evaporation</a> defaults;</div>
-<div class="line"><a id="l05051" name="l05051"></a><span class="lineno"> 5051</span>    prm.enter_subsection(<span class="stringliteral">&quot;evaporation&quot;</span>);</div>
-<div class="line"><a id="l05052" name="l05052"></a><span class="lineno"> 5052</span>    {</div>
-<div class="line"><a id="l05053" name="l05053"></a><span class="lineno"> 5053</span>      <a class="code hl_function" href="core_2utilities_8h.html#ae144e62fbab8568f6af31a6cd1c5f509">declare_enum_entry</a>(</div>
-<div class="line"><a id="l05054" name="l05054"></a><span class="lineno"> 5054</span>        prm,</div>
-<div class="line"><a id="l05055" name="l05055"></a><span class="lineno"> 5055</span>        <span class="stringliteral">&quot;evaporation mass flux model&quot;</span>,</div>
-<div class="line"><a id="l05056" name="l05056"></a><span class="lineno"> 5056</span>        defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#ae42d81884b2864647c4dc3cbc7b12196">evaporative_mass_flux_model_type</a>,</div>
-<div class="line"><a id="l05057" name="l05057"></a><span class="lineno"> 5057</span>        <span class="stringliteral">&quot;Model used for the calculation of the evaporative mass flux.&quot;</span>);</div>
-<div class="line"><a id="l05058" name="l05058"></a><span class="lineno"> 5058</span>      prm.declare_entry(</div>
-<div class="line"><a id="l05059" name="l05059"></a><span class="lineno"> 5059</span>        <span class="stringliteral">&quot;enable evaporative cooling&quot;</span>,</div>
-<div class="line"><a id="l05060" name="l05060"></a><span class="lineno"> 5060</span>        Patterns::Tools::Convert&lt;bool&gt;::to_string(</div>
-<div class="line"><a id="l05061" name="l05061"></a><span class="lineno"> 5061</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a8462500c96b3c31e8eacccb457d71d8a">enable_evaporation_cooling</a>),</div>
-<div class="line"><a id="l05062" name="l05062"></a><span class="lineno"> 5062</span>        Patterns::Bool(),</div>
-<div class="line"><a id="l05063" name="l05063"></a><span class="lineno"> 5063</span>        <span class="stringliteral">&quot;Enable the evaporative cooling at the free surface (gas/liquid interface) in the energy equation &lt;true|false&gt;&quot;</span>);</div>
-<div class="line"><a id="l05064" name="l05064"></a><span class="lineno"> 5064</span>      prm.declare_entry(</div>
-<div class="line"><a id="l05065" name="l05065"></a><span class="lineno"> 5065</span>        <span class="stringliteral">&quot;enable recoil pressure&quot;</span>,</div>
-<div class="line"><a id="l05066" name="l05066"></a><span class="lineno"> 5066</span>        Patterns::Tools::Convert&lt;bool&gt;::to_string(</div>
-<div class="line"><a id="l05067" name="l05067"></a><span class="lineno"> 5067</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#ac90083ce7ea6c73f36aa256d0fa3e0c8">enable_recoil_pressure</a>),</div>
-<div class="line"><a id="l05068" name="l05068"></a><span class="lineno"> 5068</span>        Patterns::Bool(),</div>
-<div class="line"><a id="l05069" name="l05069"></a><span class="lineno"> 5069</span>        <span class="stringliteral">&quot;Enable the recoil pressure due to evaporation at the free surface (gas/liquid interface) in the momentum equation &lt;true|false&gt;&quot;</span>);</div>
-<div class="line"><a id="l05070" name="l05070"></a><span class="lineno"> 5070</span>      prm.declare_entry(</div>
-<div class="line"><a id="l05071" name="l05071"></a><span class="lineno"> 5071</span>        <span class="stringliteral">&quot;evaporation mass flux&quot;</span>,</div>
-<div class="line"><a id="l05072" name="l05072"></a><span class="lineno"> 5072</span>        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05073" name="l05073"></a><span class="lineno"> 5073</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a8854b397c579f22145c1156361e6a551">evaporation_mass_flux</a>),</div>
-<div class="line"><a id="l05074" name="l05074"></a><span class="lineno"> 5074</span>        Patterns::Double(),</div>
-<div class="line"><a id="l05075" name="l05075"></a><span class="lineno"> 5075</span>        <span class="stringliteral">&quot;Evaporation mass flux used if the constant evaporation model is selected in M*L^-2*T^-1&quot;</span>);</div>
-<div class="line"><a id="l05076" name="l05076"></a><span class="lineno"> 5076</span>      prm.declare_entry(</div>
-<div class="line"><a id="l05077" name="l05077"></a><span class="lineno"> 5077</span>        <span class="stringliteral">&quot;evaporation coefficient&quot;</span>,</div>
-<div class="line"><a id="l05078" name="l05078"></a><span class="lineno"> 5078</span>        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05079" name="l05079"></a><span class="lineno"> 5079</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#aab0f33a1a8a8ac9852a0bfefd4126db8">evaporation_coefficient</a>),</div>
-<div class="line"><a id="l05080" name="l05080"></a><span class="lineno"> 5080</span>        Patterns::Double(),</div>
-<div class="line"><a id="l05081" name="l05081"></a><span class="lineno"> 5081</span>        <span class="stringliteral">&quot;Evaporation coefficient corresponding to the ratio between the net mass flux (evaporation-condensation) and the mass flux of evaporation&quot;</span>);</div>
-<div class="line"><a id="l05082" name="l05082"></a><span class="lineno"> 5082</span>      prm.declare_entry(</div>
-<div class="line"><a id="l05083" name="l05083"></a><span class="lineno"> 5083</span>        <span class="stringliteral">&quot;recoil pressure coefficient&quot;</span>,</div>
-<div class="line"><a id="l05084" name="l05084"></a><span class="lineno"> 5084</span>        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05085" name="l05085"></a><span class="lineno"> 5085</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a6b362c400fb37bd3f87df52f456210e9">recoil_pressure_coefficient</a>),</div>
-<div class="line"><a id="l05086" name="l05086"></a><span class="lineno"> 5086</span>        Patterns::Double(),</div>
-<div class="line"><a id="l05087" name="l05087"></a><span class="lineno"> 5087</span>        <span class="stringliteral">&quot;Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaporation&quot;</span>);</div>
-<div class="line"><a id="l05088" name="l05088"></a><span class="lineno"> 5088</span>      prm.declare_entry(<span class="stringliteral">&quot;molar mass&quot;</span>,</div>
-<div class="line"><a id="l05089" name="l05089"></a><span class="lineno"> 5089</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05090" name="l05090"></a><span class="lineno"> 5090</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#aabbeda39bfc01880beca1475b0be9fec">molar_mass</a>),</div>
-<div class="line"><a id="l05091" name="l05091"></a><span class="lineno"> 5091</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05092" name="l05092"></a><span class="lineno"> 5092</span>                        <span class="stringliteral">&quot;Molar mass of the material in M*N^-1&quot;</span>);</div>
-<div class="line"><a id="l05093" name="l05093"></a><span class="lineno"> 5093</span>      prm.declare_entry(<span class="stringliteral">&quot;boiling temperature&quot;</span>,</div>
-<div class="line"><a id="l05094" name="l05094"></a><span class="lineno"> 5094</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05095" name="l05095"></a><span class="lineno"> 5095</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#ae99dfdbd7b47f3bcfffc27243fb8412b">boiling_temperature</a>),</div>
-<div class="line"><a id="l05096" name="l05096"></a><span class="lineno"> 5096</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05097" name="l05097"></a><span class="lineno"> 5097</span>                        <span class="stringliteral">&quot;Boiling temperature in Theta&quot;</span>);</div>
-<div class="line"><a id="l05098" name="l05098"></a><span class="lineno"> 5098</span>      prm.declare_entry(<span class="stringliteral">&quot;evaporation latent heat&quot;</span>,</div>
-<div class="line"><a id="l05099" name="l05099"></a><span class="lineno"> 5099</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05100" name="l05100"></a><span class="lineno"> 5100</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a6f0c4b175d7e18f2270cc6f673e823d6">latent_heat_evaporation</a>),</div>
-<div class="line"><a id="l05101" name="l05101"></a><span class="lineno"> 5101</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05102" name="l05102"></a><span class="lineno"> 5102</span>                        <span class="stringliteral">&quot;Latent heat of evaporation in L^2*T^-2&quot;</span>);</div>
-<div class="line"><a id="l05103" name="l05103"></a><span class="lineno"> 5103</span>      prm.declare_entry(<span class="stringliteral">&quot;ambient pressure&quot;</span>,</div>
-<div class="line"><a id="l05104" name="l05104"></a><span class="lineno"> 5104</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05105" name="l05105"></a><span class="lineno"> 5105</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#ab14c31ce76943270fd03674aa610c456">ambient_pressure</a>),</div>
-<div class="line"><a id="l05106" name="l05106"></a><span class="lineno"> 5106</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05107" name="l05107"></a><span class="lineno"> 5107</span>                        <span class="stringliteral">&quot;Pressure of the ambient gas in M*L^-1*T^-2&quot;</span>);</div>
-<div class="line"><a id="l05108" name="l05108"></a><span class="lineno"> 5108</span>      prm.declare_entry(<span class="stringliteral">&quot;ambient gas density&quot;</span>,</div>
-<div class="line"><a id="l05109" name="l05109"></a><span class="lineno"> 5109</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05110" name="l05110"></a><span class="lineno"> 5110</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#aa1bfa15d2215d8ddfe7dc0a7b99097c4">ambient_gas_density</a>),</div>
-<div class="line"><a id="l05111" name="l05111"></a><span class="lineno"> 5111</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05112" name="l05112"></a><span class="lineno"> 5112</span>                        <span class="stringliteral">&quot;Ambient gas density in M*L^-3&quot;</span>);</div>
-<div class="line"><a id="l05113" name="l05113"></a><span class="lineno"> 5113</span>      prm.declare_entry(<span class="stringliteral">&quot;liquid density&quot;</span>,</div>
-<div class="line"><a id="l05114" name="l05114"></a><span class="lineno"> 5114</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05115" name="l05115"></a><span class="lineno"> 5115</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a2afe9f292373e4fc92dae4791d33f494">liquid_density</a>),</div>
-<div class="line"><a id="l05116" name="l05116"></a><span class="lineno"> 5116</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05117" name="l05117"></a><span class="lineno"> 5117</span>                        <span class="stringliteral">&quot;Liquid density in M*L^-3&quot;</span>);</div>
-<div class="line"><a id="l05118" name="l05118"></a><span class="lineno"> 5118</span>      prm.declare_entry(<span class="stringliteral">&quot;universal gas constant&quot;</span>,</div>
-<div class="line"><a id="l05119" name="l05119"></a><span class="lineno"> 5119</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05120" name="l05120"></a><span class="lineno"> 5120</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a15f2f02a2d8e907300c55573a1468a36">universal_gas_constant</a>),</div>
-<div class="line"><a id="l05121" name="l05121"></a><span class="lineno"> 5121</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05122" name="l05122"></a><span class="lineno"> 5122</span>                        <span class="stringliteral">&quot;Universal gas constant in M*L^2*T^-2*Theta^-1*N^-1&quot;</span>);</div>
-<div class="line"><a id="l05123" name="l05123"></a><span class="lineno"> 5123</span>    }</div>
-<div class="line"><a id="l05124" name="l05124"></a><span class="lineno"> 5124</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l05125" name="l05125"></a><span class="lineno"> 5125</span>  }</div>
+<div class="line"><a id="l05047" name="l05047"></a><span class="lineno"> 5047</span> </div>
+<div class="line"><a id="l05048" name="l05048"></a><span class="lineno"> 5048</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen05049" data-start="{" data-end="}">
+<div class="line"><a id="l05049" name="l05049"></a><span class="lineno"><a class="line" href="structParameters_1_1Evaporation.html#aaf73c8a4033d20f19e0b588de4a39738"> 5049</a></span>  <a class="code hl_function" href="structParameters_1_1Evaporation.html#aaf73c8a4033d20f19e0b588de4a39738">Evaporation::declare_parameters</a>(dealii::ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l05050" name="l05050"></a><span class="lineno"> 5050</span>  {</div>
+<div class="line"><a id="l05051" name="l05051"></a><span class="lineno"> 5051</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1Evaporation.html">Evaporation</a> defaults;</div>
+<div class="line"><a id="l05052" name="l05052"></a><span class="lineno"> 5052</span>    prm.enter_subsection(<span class="stringliteral">&quot;evaporation&quot;</span>);</div>
+<div class="line"><a id="l05053" name="l05053"></a><span class="lineno"> 5053</span>    {</div>
+<div class="line"><a id="l05054" name="l05054"></a><span class="lineno"> 5054</span>      <a class="code hl_function" href="core_2utilities_8h.html#ae144e62fbab8568f6af31a6cd1c5f509">declare_enum_entry</a>(</div>
+<div class="line"><a id="l05055" name="l05055"></a><span class="lineno"> 5055</span>        prm,</div>
+<div class="line"><a id="l05056" name="l05056"></a><span class="lineno"> 5056</span>        <span class="stringliteral">&quot;evaporation mass flux model&quot;</span>,</div>
+<div class="line"><a id="l05057" name="l05057"></a><span class="lineno"> 5057</span>        defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#ae42d81884b2864647c4dc3cbc7b12196">evaporative_mass_flux_model_type</a>,</div>
+<div class="line"><a id="l05058" name="l05058"></a><span class="lineno"> 5058</span>        <span class="stringliteral">&quot;Model used for the calculation of the evaporative mass flux.&quot;</span>);</div>
+<div class="line"><a id="l05059" name="l05059"></a><span class="lineno"> 5059</span>      prm.declare_entry(</div>
+<div class="line"><a id="l05060" name="l05060"></a><span class="lineno"> 5060</span>        <span class="stringliteral">&quot;enable evaporative cooling&quot;</span>,</div>
+<div class="line"><a id="l05061" name="l05061"></a><span class="lineno"> 5061</span>        Patterns::Tools::Convert&lt;bool&gt;::to_string(</div>
+<div class="line"><a id="l05062" name="l05062"></a><span class="lineno"> 5062</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a8462500c96b3c31e8eacccb457d71d8a">enable_evaporation_cooling</a>),</div>
+<div class="line"><a id="l05063" name="l05063"></a><span class="lineno"> 5063</span>        Patterns::Bool(),</div>
+<div class="line"><a id="l05064" name="l05064"></a><span class="lineno"> 5064</span>        <span class="stringliteral">&quot;Enable the evaporative cooling at the free surface (gas/liquid interface) in the energy equation &lt;true|false&gt;&quot;</span>);</div>
+<div class="line"><a id="l05065" name="l05065"></a><span class="lineno"> 5065</span>      prm.declare_entry(</div>
+<div class="line"><a id="l05066" name="l05066"></a><span class="lineno"> 5066</span>        <span class="stringliteral">&quot;enable recoil pressure&quot;</span>,</div>
+<div class="line"><a id="l05067" name="l05067"></a><span class="lineno"> 5067</span>        Patterns::Tools::Convert&lt;bool&gt;::to_string(</div>
+<div class="line"><a id="l05068" name="l05068"></a><span class="lineno"> 5068</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#ac90083ce7ea6c73f36aa256d0fa3e0c8">enable_recoil_pressure</a>),</div>
+<div class="line"><a id="l05069" name="l05069"></a><span class="lineno"> 5069</span>        Patterns::Bool(),</div>
+<div class="line"><a id="l05070" name="l05070"></a><span class="lineno"> 5070</span>        <span class="stringliteral">&quot;Enable the recoil pressure due to evaporation at the free surface (gas/liquid interface) in the momentum equation &lt;true|false&gt;&quot;</span>);</div>
+<div class="line"><a id="l05071" name="l05071"></a><span class="lineno"> 5071</span>      prm.declare_entry(</div>
+<div class="line"><a id="l05072" name="l05072"></a><span class="lineno"> 5072</span>        <span class="stringliteral">&quot;evaporation mass flux&quot;</span>,</div>
+<div class="line"><a id="l05073" name="l05073"></a><span class="lineno"> 5073</span>        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05074" name="l05074"></a><span class="lineno"> 5074</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a8854b397c579f22145c1156361e6a551">evaporation_mass_flux</a>),</div>
+<div class="line"><a id="l05075" name="l05075"></a><span class="lineno"> 5075</span>        Patterns::Double(),</div>
+<div class="line"><a id="l05076" name="l05076"></a><span class="lineno"> 5076</span>        <span class="stringliteral">&quot;Evaporation mass flux used if the constant evaporation model is selected in M*L^-2*T^-1&quot;</span>);</div>
+<div class="line"><a id="l05077" name="l05077"></a><span class="lineno"> 5077</span>      prm.declare_entry(</div>
+<div class="line"><a id="l05078" name="l05078"></a><span class="lineno"> 5078</span>        <span class="stringliteral">&quot;evaporation coefficient&quot;</span>,</div>
+<div class="line"><a id="l05079" name="l05079"></a><span class="lineno"> 5079</span>        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05080" name="l05080"></a><span class="lineno"> 5080</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#aab0f33a1a8a8ac9852a0bfefd4126db8">evaporation_coefficient</a>),</div>
+<div class="line"><a id="l05081" name="l05081"></a><span class="lineno"> 5081</span>        Patterns::Double(),</div>
+<div class="line"><a id="l05082" name="l05082"></a><span class="lineno"> 5082</span>        <span class="stringliteral">&quot;Evaporation coefficient corresponding to the ratio between the net mass flux (evaporation-condensation) and the mass flux of evaporation&quot;</span>);</div>
+<div class="line"><a id="l05083" name="l05083"></a><span class="lineno"> 5083</span>      prm.declare_entry(</div>
+<div class="line"><a id="l05084" name="l05084"></a><span class="lineno"> 5084</span>        <span class="stringliteral">&quot;recoil pressure coefficient&quot;</span>,</div>
+<div class="line"><a id="l05085" name="l05085"></a><span class="lineno"> 5085</span>        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05086" name="l05086"></a><span class="lineno"> 5086</span>          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a6b362c400fb37bd3f87df52f456210e9">recoil_pressure_coefficient</a>),</div>
+<div class="line"><a id="l05087" name="l05087"></a><span class="lineno"> 5087</span>        Patterns::Double(),</div>
+<div class="line"><a id="l05088" name="l05088"></a><span class="lineno"> 5088</span>        <span class="stringliteral">&quot;Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaporation&quot;</span>);</div>
+<div class="line"><a id="l05089" name="l05089"></a><span class="lineno"> 5089</span>      prm.declare_entry(<span class="stringliteral">&quot;molar mass&quot;</span>,</div>
+<div class="line"><a id="l05090" name="l05090"></a><span class="lineno"> 5090</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05091" name="l05091"></a><span class="lineno"> 5091</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#aabbeda39bfc01880beca1475b0be9fec">molar_mass</a>),</div>
+<div class="line"><a id="l05092" name="l05092"></a><span class="lineno"> 5092</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05093" name="l05093"></a><span class="lineno"> 5093</span>                        <span class="stringliteral">&quot;Molar mass of the material in M*N^-1&quot;</span>);</div>
+<div class="line"><a id="l05094" name="l05094"></a><span class="lineno"> 5094</span>      prm.declare_entry(<span class="stringliteral">&quot;boiling temperature&quot;</span>,</div>
+<div class="line"><a id="l05095" name="l05095"></a><span class="lineno"> 5095</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05096" name="l05096"></a><span class="lineno"> 5096</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#ae99dfdbd7b47f3bcfffc27243fb8412b">boiling_temperature</a>),</div>
+<div class="line"><a id="l05097" name="l05097"></a><span class="lineno"> 5097</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05098" name="l05098"></a><span class="lineno"> 5098</span>                        <span class="stringliteral">&quot;Boiling temperature in Theta&quot;</span>);</div>
+<div class="line"><a id="l05099" name="l05099"></a><span class="lineno"> 5099</span>      prm.declare_entry(<span class="stringliteral">&quot;evaporation latent heat&quot;</span>,</div>
+<div class="line"><a id="l05100" name="l05100"></a><span class="lineno"> 5100</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05101" name="l05101"></a><span class="lineno"> 5101</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a6f0c4b175d7e18f2270cc6f673e823d6">latent_heat_evaporation</a>),</div>
+<div class="line"><a id="l05102" name="l05102"></a><span class="lineno"> 5102</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05103" name="l05103"></a><span class="lineno"> 5103</span>                        <span class="stringliteral">&quot;Latent heat of evaporation in L^2*T^-2&quot;</span>);</div>
+<div class="line"><a id="l05104" name="l05104"></a><span class="lineno"> 5104</span>      prm.declare_entry(<span class="stringliteral">&quot;ambient pressure&quot;</span>,</div>
+<div class="line"><a id="l05105" name="l05105"></a><span class="lineno"> 5105</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05106" name="l05106"></a><span class="lineno"> 5106</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#ab14c31ce76943270fd03674aa610c456">ambient_pressure</a>),</div>
+<div class="line"><a id="l05107" name="l05107"></a><span class="lineno"> 5107</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05108" name="l05108"></a><span class="lineno"> 5108</span>                        <span class="stringliteral">&quot;Pressure of the ambient gas in M*L^-1*T^-2&quot;</span>);</div>
+<div class="line"><a id="l05109" name="l05109"></a><span class="lineno"> 5109</span>      prm.declare_entry(<span class="stringliteral">&quot;ambient gas density&quot;</span>,</div>
+<div class="line"><a id="l05110" name="l05110"></a><span class="lineno"> 5110</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05111" name="l05111"></a><span class="lineno"> 5111</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#aa1bfa15d2215d8ddfe7dc0a7b99097c4">ambient_gas_density</a>),</div>
+<div class="line"><a id="l05112" name="l05112"></a><span class="lineno"> 5112</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05113" name="l05113"></a><span class="lineno"> 5113</span>                        <span class="stringliteral">&quot;Ambient gas density in M*L^-3&quot;</span>);</div>
+<div class="line"><a id="l05114" name="l05114"></a><span class="lineno"> 5114</span>      prm.declare_entry(<span class="stringliteral">&quot;liquid density&quot;</span>,</div>
+<div class="line"><a id="l05115" name="l05115"></a><span class="lineno"> 5115</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05116" name="l05116"></a><span class="lineno"> 5116</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a2afe9f292373e4fc92dae4791d33f494">liquid_density</a>),</div>
+<div class="line"><a id="l05117" name="l05117"></a><span class="lineno"> 5117</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05118" name="l05118"></a><span class="lineno"> 5118</span>                        <span class="stringliteral">&quot;Liquid density in M*L^-3&quot;</span>);</div>
+<div class="line"><a id="l05119" name="l05119"></a><span class="lineno"> 5119</span>      prm.declare_entry(<span class="stringliteral">&quot;universal gas constant&quot;</span>,</div>
+<div class="line"><a id="l05120" name="l05120"></a><span class="lineno"> 5120</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05121" name="l05121"></a><span class="lineno"> 5121</span>                          defaults.<a class="code hl_variable" href="structParameters_1_1Evaporation.html#a15f2f02a2d8e907300c55573a1468a36">universal_gas_constant</a>),</div>
+<div class="line"><a id="l05122" name="l05122"></a><span class="lineno"> 5122</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05123" name="l05123"></a><span class="lineno"> 5123</span>                        <span class="stringliteral">&quot;Universal gas constant in M*L^2*T^-2*Theta^-1*N^-1&quot;</span>);</div>
+<div class="line"><a id="l05124" name="l05124"></a><span class="lineno"> 5124</span>    }</div>
+<div class="line"><a id="l05125" name="l05125"></a><span class="lineno"> 5125</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l05126" name="l05126"></a><span class="lineno"> 5126</span>  }</div>
 </div>
-<div class="line"><a id="l05126" name="l05126"></a><span class="lineno"> 5126</span> </div>
-<div class="line"><a id="l05127" name="l05127"></a><span class="lineno"> 5127</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen05128" data-start="{" data-end="}">
-<div class="line"><a id="l05128" name="l05128"></a><span class="lineno"><a class="line" href="structParameters_1_1Evaporation.html#a00ae8d9b4e214c9bd1c47eb96ff2726c"> 5128</a></span>  <a class="code hl_function" href="structParameters_1_1Evaporation.html#a00ae8d9b4e214c9bd1c47eb96ff2726c">Evaporation::parse_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l05129" name="l05129"></a><span class="lineno"> 5129</span>  {</div>
-<div class="line"><a id="l05130" name="l05130"></a><span class="lineno"> 5130</span>    prm.enter_subsection(<span class="stringliteral">&quot;evaporation&quot;</span>);</div>
-<div class="line"><a id="l05131" name="l05131"></a><span class="lineno"> 5131</span>    {</div>
-<div class="line"><a id="l05132" name="l05132"></a><span class="lineno"> 5132</span>      evaporative_mass_flux_model_type =</div>
-<div class="line"><a id="l05133" name="l05133"></a><span class="lineno"> 5133</span>        string_to_enum&lt;EvaporativeMassFluxModelType&gt;(</div>
-<div class="line"><a id="l05134" name="l05134"></a><span class="lineno"> 5134</span>          prm.get(<span class="stringliteral">&quot;evaporation mass flux model&quot;</span>));</div>
-<div class="line"><a id="l05135" name="l05135"></a><span class="lineno"> 5135</span> </div>
-<div class="line"><a id="l05136" name="l05136"></a><span class="lineno"> 5136</span>      enable_evaporation_cooling = prm.get_bool(<span class="stringliteral">&quot;enable evaporative cooling&quot;</span>);</div>
-<div class="line"><a id="l05137" name="l05137"></a><span class="lineno"> 5137</span>      enable_recoil_pressure     = prm.get_bool(<span class="stringliteral">&quot;enable recoil pressure&quot;</span>);</div>
-<div class="line"><a id="l05138" name="l05138"></a><span class="lineno"> 5138</span> </div>
-<div class="line"><a id="l05139" name="l05139"></a><span class="lineno"> 5139</span>      evaporation_mass_flux   = prm.get_double(<span class="stringliteral">&quot;evaporation mass flux&quot;</span>);</div>
-<div class="line"><a id="l05140" name="l05140"></a><span class="lineno"> 5140</span>      evaporation_coefficient = prm.get_double(<span class="stringliteral">&quot;evaporation coefficient&quot;</span>);</div>
-<div class="line"><a id="l05141" name="l05141"></a><span class="lineno"> 5141</span>      recoil_pressure_coefficient =</div>
-<div class="line"><a id="l05142" name="l05142"></a><span class="lineno"> 5142</span>        prm.get_double(<span class="stringliteral">&quot;recoil pressure coefficient&quot;</span>);</div>
-<div class="line"><a id="l05143" name="l05143"></a><span class="lineno"> 5143</span>      molar_mass              = prm.get_double(<span class="stringliteral">&quot;molar mass&quot;</span>);</div>
-<div class="line"><a id="l05144" name="l05144"></a><span class="lineno"> 5144</span>      boiling_temperature     = prm.get_double(<span class="stringliteral">&quot;boiling temperature&quot;</span>);</div>
-<div class="line"><a id="l05145" name="l05145"></a><span class="lineno"> 5145</span>      latent_heat_evaporation = prm.get_double(<span class="stringliteral">&quot;evaporation latent heat&quot;</span>);</div>
-<div class="line"><a id="l05146" name="l05146"></a><span class="lineno"> 5146</span>      ambient_pressure        = prm.get_double(<span class="stringliteral">&quot;ambient pressure&quot;</span>);</div>
-<div class="line"><a id="l05147" name="l05147"></a><span class="lineno"> 5147</span>      ambient_gas_density     = prm.get_double(<span class="stringliteral">&quot;ambient gas density&quot;</span>);</div>
-<div class="line"><a id="l05148" name="l05148"></a><span class="lineno"> 5148</span>      liquid_density          = prm.get_double(<span class="stringliteral">&quot;liquid density&quot;</span>);</div>
-<div class="line"><a id="l05149" name="l05149"></a><span class="lineno"> 5149</span>      universal_gas_constant  = prm.get_double(<span class="stringliteral">&quot;universal gas constant&quot;</span>);</div>
-<div class="line"><a id="l05150" name="l05150"></a><span class="lineno"> 5150</span>    }</div>
-<div class="line"><a id="l05151" name="l05151"></a><span class="lineno"> 5151</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l05152" name="l05152"></a><span class="lineno"> 5152</span>  }</div>
+<div class="line"><a id="l05127" name="l05127"></a><span class="lineno"> 5127</span> </div>
+<div class="line"><a id="l05128" name="l05128"></a><span class="lineno"> 5128</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen05129" data-start="{" data-end="}">
+<div class="line"><a id="l05129" name="l05129"></a><span class="lineno"><a class="line" href="structParameters_1_1Evaporation.html#a00ae8d9b4e214c9bd1c47eb96ff2726c"> 5129</a></span>  <a class="code hl_function" href="structParameters_1_1Evaporation.html#a00ae8d9b4e214c9bd1c47eb96ff2726c">Evaporation::parse_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l05130" name="l05130"></a><span class="lineno"> 5130</span>  {</div>
+<div class="line"><a id="l05131" name="l05131"></a><span class="lineno"> 5131</span>    prm.enter_subsection(<span class="stringliteral">&quot;evaporation&quot;</span>);</div>
+<div class="line"><a id="l05132" name="l05132"></a><span class="lineno"> 5132</span>    {</div>
+<div class="line"><a id="l05133" name="l05133"></a><span class="lineno"> 5133</span>      evaporative_mass_flux_model_type =</div>
+<div class="line"><a id="l05134" name="l05134"></a><span class="lineno"> 5134</span>        string_to_enum&lt;EvaporativeMassFluxModelType&gt;(</div>
+<div class="line"><a id="l05135" name="l05135"></a><span class="lineno"> 5135</span>          prm.get(<span class="stringliteral">&quot;evaporation mass flux model&quot;</span>));</div>
+<div class="line"><a id="l05136" name="l05136"></a><span class="lineno"> 5136</span> </div>
+<div class="line"><a id="l05137" name="l05137"></a><span class="lineno"> 5137</span>      enable_evaporation_cooling = prm.get_bool(<span class="stringliteral">&quot;enable evaporative cooling&quot;</span>);</div>
+<div class="line"><a id="l05138" name="l05138"></a><span class="lineno"> 5138</span>      enable_recoil_pressure     = prm.get_bool(<span class="stringliteral">&quot;enable recoil pressure&quot;</span>);</div>
+<div class="line"><a id="l05139" name="l05139"></a><span class="lineno"> 5139</span> </div>
+<div class="line"><a id="l05140" name="l05140"></a><span class="lineno"> 5140</span>      evaporation_mass_flux   = prm.get_double(<span class="stringliteral">&quot;evaporation mass flux&quot;</span>);</div>
+<div class="line"><a id="l05141" name="l05141"></a><span class="lineno"> 5141</span>      evaporation_coefficient = prm.get_double(<span class="stringliteral">&quot;evaporation coefficient&quot;</span>);</div>
+<div class="line"><a id="l05142" name="l05142"></a><span class="lineno"> 5142</span>      recoil_pressure_coefficient =</div>
+<div class="line"><a id="l05143" name="l05143"></a><span class="lineno"> 5143</span>        prm.get_double(<span class="stringliteral">&quot;recoil pressure coefficient&quot;</span>);</div>
+<div class="line"><a id="l05144" name="l05144"></a><span class="lineno"> 5144</span>      molar_mass              = prm.get_double(<span class="stringliteral">&quot;molar mass&quot;</span>);</div>
+<div class="line"><a id="l05145" name="l05145"></a><span class="lineno"> 5145</span>      boiling_temperature     = prm.get_double(<span class="stringliteral">&quot;boiling temperature&quot;</span>);</div>
+<div class="line"><a id="l05146" name="l05146"></a><span class="lineno"> 5146</span>      latent_heat_evaporation = prm.get_double(<span class="stringliteral">&quot;evaporation latent heat&quot;</span>);</div>
+<div class="line"><a id="l05147" name="l05147"></a><span class="lineno"> 5147</span>      ambient_pressure        = prm.get_double(<span class="stringliteral">&quot;ambient pressure&quot;</span>);</div>
+<div class="line"><a id="l05148" name="l05148"></a><span class="lineno"> 5148</span>      ambient_gas_density     = prm.get_double(<span class="stringliteral">&quot;ambient gas density&quot;</span>);</div>
+<div class="line"><a id="l05149" name="l05149"></a><span class="lineno"> 5149</span>      liquid_density          = prm.get_double(<span class="stringliteral">&quot;liquid density&quot;</span>);</div>
+<div class="line"><a id="l05150" name="l05150"></a><span class="lineno"> 5150</span>      universal_gas_constant  = prm.get_double(<span class="stringliteral">&quot;universal gas constant&quot;</span>);</div>
+<div class="line"><a id="l05151" name="l05151"></a><span class="lineno"> 5151</span>    }</div>
+<div class="line"><a id="l05152" name="l05152"></a><span class="lineno"> 5152</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l05153" name="l05153"></a><span class="lineno"> 5153</span>  }</div>
 </div>
-<div class="line"><a id="l05153" name="l05153"></a><span class="lineno"> 5153</span> </div>
-<div class="line"><a id="l05154" name="l05154"></a><span class="lineno"> 5154</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l05155" name="l05155"></a><span class="lineno"> 5155</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen05156" data-start="{" data-end="}">
-<div class="line"><a id="l05156" name="l05156"></a><span class="lineno"><a class="line" href="structParameters_1_1Mortar.html#a1f56c32ef7a5b9c83d87cdfa6a53b88f"> 5156</a></span>  <a class="code hl_function" href="structParameters_1_1Mortar.html#a1f56c32ef7a5b9c83d87cdfa6a53b88f">Mortar&lt;dim&gt;::declare_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l05157" name="l05157"></a><span class="lineno"> 5157</span>  {</div>
-<div class="line"><a id="l05158" name="l05158"></a><span class="lineno"> 5158</span>    prm.enter_subsection(<span class="stringliteral">&quot;mortar&quot;</span>);</div>
-<div class="line"><a id="l05159" name="l05159"></a><span class="lineno"> 5159</span>    {</div>
-<div class="line"><a id="l05160" name="l05160"></a><span class="lineno"> 5160</span>      prm.declare_entry(<span class="stringliteral">&quot;enable&quot;</span>,</div>
-<div class="line"><a id="l05161" name="l05161"></a><span class="lineno"> 5161</span>                        Patterns::Tools::Convert&lt;bool&gt;::to_string(enable),</div>
-<div class="line"><a id="l05162" name="l05162"></a><span class="lineno"> 5162</span>                        Patterns::Bool(),</div>
-<div class="line"><a id="l05163" name="l05163"></a><span class="lineno"> 5163</span>                        <span class="stringliteral">&quot;Enable mortar interface &lt;true|false&gt;&quot;</span>);</div>
-<div class="line"><a id="l05164" name="l05164"></a><span class="lineno"> 5164</span>      <a class="code hl_function" href="core_2utilities_8h.html#ae144e62fbab8568f6af31a6cd1c5f509">declare_enum_entry</a>(prm,</div>
-<div class="line"><a id="l05165" name="l05165"></a><span class="lineno"> 5165</span>                         <span class="stringliteral">&quot;interface type&quot;</span>,</div>
-<div class="line"><a id="l05166" name="l05166"></a><span class="lineno"> 5166</span>                         interface_type,</div>
-<div class="line"><a id="l05167" name="l05167"></a><span class="lineno"> 5167</span>                         <span class="stringliteral">&quot;Type of mortar interface.&quot;</span>);</div>
-<div class="line"><a id="l05168" name="l05168"></a><span class="lineno"> 5168</span>      rotor_mesh = std::make_shared&lt;Mesh&lt;dim&gt;&gt;();</div>
-<div class="line"><a id="l05169" name="l05169"></a><span class="lineno"> 5169</span>      rotor_mesh-&gt;declare_parameters(prm);</div>
-<div class="line"><a id="l05170" name="l05170"></a><span class="lineno"> 5170</span>      prm.declare_entry(<span class="stringliteral">&quot;rotor boundary id&quot;</span>,</div>
-<div class="line"><a id="l05171" name="l05171"></a><span class="lineno"> 5171</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
-<div class="line"><a id="l05172" name="l05172"></a><span class="lineno"> 5172</span>                          rotor_boundary_id),</div>
-<div class="line"><a id="l05173" name="l05173"></a><span class="lineno"> 5173</span>                        Patterns::Integer(),</div>
-<div class="line"><a id="l05174" name="l05174"></a><span class="lineno"> 5174</span>                        <span class="stringliteral">&quot;Rotor boundary ID # of the mortar matching interface&quot;</span>);</div>
-<div class="line"><a id="l05175" name="l05175"></a><span class="lineno"> 5175</span>      prm.declare_entry(</div>
-<div class="line"><a id="l05176" name="l05176"></a><span class="lineno"> 5176</span>        <span class="stringliteral">&quot;stator boundary id&quot;</span>,</div>
-<div class="line"><a id="l05177" name="l05177"></a><span class="lineno"> 5177</span>        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(stator_boundary_id),</div>
-<div class="line"><a id="l05178" name="l05178"></a><span class="lineno"> 5178</span>        Patterns::Integer(),</div>
-<div class="line"><a id="l05179" name="l05179"></a><span class="lineno"> 5179</span>        <span class="stringliteral">&quot;Stator boundary ID # of the mortar matching interface&quot;</span>);</div>
-<div class="line"><a id="l05180" name="l05180"></a><span class="lineno"> 5180</span>      prm.declare_entry(<span class="stringliteral">&quot;center of rotation&quot;</span>,</div>
-<div class="line"><a id="l05181" name="l05181"></a><span class="lineno"> 5181</span>                        Patterns::Tools::Convert&lt;Point&lt;dim&gt;&gt;::to_string(</div>
-<div class="line"><a id="l05182" name="l05182"></a><span class="lineno"> 5182</span>                          center_of_rotation),</div>
-<div class="line"><a id="l05183" name="l05183"></a><span class="lineno"> 5183</span>                        Patterns::List(Patterns::Double()),</div>
-<div class="line"><a id="l05184" name="l05184"></a><span class="lineno"> 5184</span>                        <span class="stringliteral">&quot;Center of rotation coordinates of rotor domain&quot;</span>);</div>
-<div class="line"><a id="l05185" name="l05185"></a><span class="lineno"> 5185</span> </div>
-<div class="line"><a id="l05186" name="l05186"></a><span class="lineno"> 5186</span>      prm.declare_entry(<span class="stringliteral">&quot;rotation axis direction&quot;</span>,</div>
-<div class="line"><a id="l05187" name="l05187"></a><span class="lineno"> 5187</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
-<div class="line"><a id="l05188" name="l05188"></a><span class="lineno"> 5188</span>                          rotation_axis_direction),</div>
-<div class="line"><a id="l05189" name="l05189"></a><span class="lineno"> 5189</span>                        Patterns::Integer(0, 2),</div>
-<div class="line"><a id="l05190" name="l05190"></a><span class="lineno"> 5190</span>                        <span class="stringliteral">&quot;Direction of the rotation axis. Choices are &lt;0|1|2&gt;.&quot;</span>);</div>
-<div class="line"><a id="l05191" name="l05191"></a><span class="lineno"> 5191</span> </div>
-<div class="line"><a id="l05192" name="l05192"></a><span class="lineno"> 5192</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor rotation angle&quot;</span>);</div>
-<div class="line"><a id="l05193" name="l05193"></a><span class="lineno"> 5193</span>      rotor_rotation_angle = std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
-<div class="line"><a id="l05194" name="l05194"></a><span class="lineno"> 5194</span>      rotor_rotation_angle-&gt;declare_parameters(prm);</div>
-<div class="line"><a id="l05195" name="l05195"></a><span class="lineno"> 5195</span>      prm.leave_subsection();</div>
-<div class="line"><a id="l05196" name="l05196"></a><span class="lineno"> 5196</span> </div>
-<div class="line"><a id="l05197" name="l05197"></a><span class="lineno"> 5197</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor angular velocity&quot;</span>);</div>
-<div class="line"><a id="l05198" name="l05198"></a><span class="lineno"> 5198</span>      rotor_angular_velocity =</div>
-<div class="line"><a id="l05199" name="l05199"></a><span class="lineno"> 5199</span>        std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
-<div class="line"><a id="l05200" name="l05200"></a><span class="lineno"> 5200</span>      rotor_angular_velocity-&gt;declare_parameters(prm);</div>
-<div class="line"><a id="l05201" name="l05201"></a><span class="lineno"> 5201</span>      prm.leave_subsection();</div>
-<div class="line"><a id="l05202" name="l05202"></a><span class="lineno"> 5202</span> </div>
-<div class="line"><a id="l05203" name="l05203"></a><span class="lineno"> 5203</span>      prm.declare_entry(<span class="stringliteral">&quot;penalty factor&quot;</span>,</div>
-<div class="line"><a id="l05204" name="l05204"></a><span class="lineno"> 5204</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(sip_factor),</div>
-<div class="line"><a id="l05205" name="l05205"></a><span class="lineno"> 5205</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05206" name="l05206"></a><span class="lineno"> 5206</span>                        <span class="stringliteral">&quot;Penalty factor for mortar elements&quot;</span>);</div>
-<div class="line"><a id="l05207" name="l05207"></a><span class="lineno"> 5207</span>      prm.declare_entry(<span class="stringliteral">&quot;oversampling factor&quot;</span>,</div>
-<div class="line"><a id="l05208" name="l05208"></a><span class="lineno"> 5208</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
-<div class="line"><a id="l05209" name="l05209"></a><span class="lineno"> 5209</span>                          oversampling_factor),</div>
-<div class="line"><a id="l05210" name="l05210"></a><span class="lineno"> 5210</span>                        Patterns::Integer(),</div>
-<div class="line"><a id="l05211" name="l05211"></a><span class="lineno"> 5211</span>                        <span class="stringliteral">&quot;Oversampling factor for quadrature points&quot;</span>);</div>
-<div class="line"><a id="l05212" name="l05212"></a><span class="lineno"> 5212</span>      prm.declare_entry(<span class="stringliteral">&quot;radius tolerance&quot;</span>,</div>
-<div class="line"><a id="l05213" name="l05213"></a><span class="lineno"> 5213</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
-<div class="line"><a id="l05214" name="l05214"></a><span class="lineno"> 5214</span>                          radius_tolerance),</div>
-<div class="line"><a id="l05215" name="l05215"></a><span class="lineno"> 5215</span>                        Patterns::Double(),</div>
-<div class="line"><a id="l05216" name="l05216"></a><span class="lineno"> 5216</span>                        <span class="stringliteral">&quot;Tolerance used for the interface radius computation&quot;</span>);</div>
-<div class="line"><a id="l05217" name="l05217"></a><span class="lineno"> 5217</span>      prm.declare_entry(<span class="stringliteral">&quot;cell weight&quot;</span>,</div>
-<div class="line"><a id="l05218" name="l05218"></a><span class="lineno"> 5218</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
-<div class="line"><a id="l05219" name="l05219"></a><span class="lineno"> 5219</span>                          cell_weight),</div>
-<div class="line"><a id="l05220" name="l05220"></a><span class="lineno"> 5220</span>                        Patterns::Integer(),</div>
-<div class="line"><a id="l05221" name="l05221"></a><span class="lineno"> 5221</span>                        <span class="stringliteral">&quot;Cell weight for load balancing of mortar cells&quot;</span>);</div>
-<div class="line"><a id="l05222" name="l05222"></a><span class="lineno"> 5222</span>      <a class="code hl_function" href="core_2utilities_8h.html#ae144e62fbab8568f6af31a6cd1c5f509">declare_enum_entry</a>(</div>
-<div class="line"><a id="l05223" name="l05223"></a><span class="lineno"> 5223</span>        prm,</div>
-<div class="line"><a id="l05224" name="l05224"></a><span class="lineno"> 5224</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
-<div class="line"><a id="l05225" name="l05225"></a><span class="lineno"> 5225</span>        <a class="code hl_variable" href="classParameters_1_1PostProcessing.html#a3d09dc66cd67a64f0011bd33d9f3aa98">verbosity</a>,</div>
-<div class="line"><a id="l05226" name="l05226"></a><span class="lineno"> 5226</span>        <span class="stringliteral">&quot;State whether from the mortar information should be printed.&quot;</span>,</div>
-<div class="line"><a id="l05227" name="l05227"></a><span class="lineno"> 5227</span>        <a class="code hl_function" href="namespaceParameters.html#af205406d624398cf22fd0702f607e43b">deprecated_verbosity_names</a>());</div>
-<div class="line"><a id="l05228" name="l05228"></a><span class="lineno"> 5228</span>    }</div>
-<div class="line"><a id="l05229" name="l05229"></a><span class="lineno"> 5229</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l05230" name="l05230"></a><span class="lineno"> 5230</span>  }</div>
+<div class="line"><a id="l05154" name="l05154"></a><span class="lineno"> 5154</span> </div>
+<div class="line"><a id="l05155" name="l05155"></a><span class="lineno"> 5155</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l05156" name="l05156"></a><span class="lineno"> 5156</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen05157" data-start="{" data-end="}">
+<div class="line"><a id="l05157" name="l05157"></a><span class="lineno"><a class="line" href="structParameters_1_1Mortar.html#a1f56c32ef7a5b9c83d87cdfa6a53b88f"> 5157</a></span>  <a class="code hl_function" href="structParameters_1_1Mortar.html#a1f56c32ef7a5b9c83d87cdfa6a53b88f">Mortar&lt;dim&gt;::declare_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l05158" name="l05158"></a><span class="lineno"> 5158</span>  {</div>
+<div class="line"><a id="l05159" name="l05159"></a><span class="lineno"> 5159</span>    prm.enter_subsection(<span class="stringliteral">&quot;mortar&quot;</span>);</div>
+<div class="line"><a id="l05160" name="l05160"></a><span class="lineno"> 5160</span>    {</div>
+<div class="line"><a id="l05161" name="l05161"></a><span class="lineno"> 5161</span>      prm.declare_entry(<span class="stringliteral">&quot;enable&quot;</span>,</div>
+<div class="line"><a id="l05162" name="l05162"></a><span class="lineno"> 5162</span>                        Patterns::Tools::Convert&lt;bool&gt;::to_string(enable),</div>
+<div class="line"><a id="l05163" name="l05163"></a><span class="lineno"> 5163</span>                        Patterns::Bool(),</div>
+<div class="line"><a id="l05164" name="l05164"></a><span class="lineno"> 5164</span>                        <span class="stringliteral">&quot;Enable mortar interface &lt;true|false&gt;&quot;</span>);</div>
+<div class="line"><a id="l05165" name="l05165"></a><span class="lineno"> 5165</span>      <a class="code hl_function" href="core_2utilities_8h.html#ae144e62fbab8568f6af31a6cd1c5f509">declare_enum_entry</a>(prm,</div>
+<div class="line"><a id="l05166" name="l05166"></a><span class="lineno"> 5166</span>                         <span class="stringliteral">&quot;interface type&quot;</span>,</div>
+<div class="line"><a id="l05167" name="l05167"></a><span class="lineno"> 5167</span>                         interface_type,</div>
+<div class="line"><a id="l05168" name="l05168"></a><span class="lineno"> 5168</span>                         <span class="stringliteral">&quot;Type of mortar interface.&quot;</span>);</div>
+<div class="line"><a id="l05169" name="l05169"></a><span class="lineno"> 5169</span>      rotor_mesh = std::make_shared&lt;Mesh&lt;dim&gt;&gt;();</div>
+<div class="line"><a id="l05170" name="l05170"></a><span class="lineno"> 5170</span>      rotor_mesh-&gt;declare_parameters(prm);</div>
+<div class="line"><a id="l05171" name="l05171"></a><span class="lineno"> 5171</span>      prm.declare_entry(<span class="stringliteral">&quot;rotor boundary id&quot;</span>,</div>
+<div class="line"><a id="l05172" name="l05172"></a><span class="lineno"> 5172</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
+<div class="line"><a id="l05173" name="l05173"></a><span class="lineno"> 5173</span>                          rotor_boundary_id),</div>
+<div class="line"><a id="l05174" name="l05174"></a><span class="lineno"> 5174</span>                        Patterns::Integer(),</div>
+<div class="line"><a id="l05175" name="l05175"></a><span class="lineno"> 5175</span>                        <span class="stringliteral">&quot;Rotor boundary ID # of the mortar matching interface&quot;</span>);</div>
+<div class="line"><a id="l05176" name="l05176"></a><span class="lineno"> 5176</span>      prm.declare_entry(</div>
+<div class="line"><a id="l05177" name="l05177"></a><span class="lineno"> 5177</span>        <span class="stringliteral">&quot;stator boundary id&quot;</span>,</div>
+<div class="line"><a id="l05178" name="l05178"></a><span class="lineno"> 5178</span>        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(stator_boundary_id),</div>
+<div class="line"><a id="l05179" name="l05179"></a><span class="lineno"> 5179</span>        Patterns::Integer(),</div>
+<div class="line"><a id="l05180" name="l05180"></a><span class="lineno"> 5180</span>        <span class="stringliteral">&quot;Stator boundary ID # of the mortar matching interface&quot;</span>);</div>
+<div class="line"><a id="l05181" name="l05181"></a><span class="lineno"> 5181</span>      prm.declare_entry(<span class="stringliteral">&quot;center of rotation&quot;</span>,</div>
+<div class="line"><a id="l05182" name="l05182"></a><span class="lineno"> 5182</span>                        Patterns::Tools::Convert&lt;Point&lt;dim&gt;&gt;::to_string(</div>
+<div class="line"><a id="l05183" name="l05183"></a><span class="lineno"> 5183</span>                          center_of_rotation),</div>
+<div class="line"><a id="l05184" name="l05184"></a><span class="lineno"> 5184</span>                        Patterns::List(Patterns::Double()),</div>
+<div class="line"><a id="l05185" name="l05185"></a><span class="lineno"> 5185</span>                        <span class="stringliteral">&quot;Center of rotation coordinates of rotor domain&quot;</span>);</div>
+<div class="line"><a id="l05186" name="l05186"></a><span class="lineno"> 5186</span> </div>
+<div class="line"><a id="l05187" name="l05187"></a><span class="lineno"> 5187</span>      prm.declare_entry(<span class="stringliteral">&quot;rotation axis direction&quot;</span>,</div>
+<div class="line"><a id="l05188" name="l05188"></a><span class="lineno"> 5188</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
+<div class="line"><a id="l05189" name="l05189"></a><span class="lineno"> 5189</span>                          rotation_axis_direction),</div>
+<div class="line"><a id="l05190" name="l05190"></a><span class="lineno"> 5190</span>                        Patterns::Integer(0, 2),</div>
+<div class="line"><a id="l05191" name="l05191"></a><span class="lineno"> 5191</span>                        <span class="stringliteral">&quot;Direction of the rotation axis. Choices are &lt;0|1|2&gt;.&quot;</span>);</div>
+<div class="line"><a id="l05192" name="l05192"></a><span class="lineno"> 5192</span> </div>
+<div class="line"><a id="l05193" name="l05193"></a><span class="lineno"> 5193</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor rotation angle&quot;</span>);</div>
+<div class="line"><a id="l05194" name="l05194"></a><span class="lineno"> 5194</span>      rotor_rotation_angle = std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
+<div class="line"><a id="l05195" name="l05195"></a><span class="lineno"> 5195</span>      rotor_rotation_angle-&gt;declare_parameters(prm);</div>
+<div class="line"><a id="l05196" name="l05196"></a><span class="lineno"> 5196</span>      prm.leave_subsection();</div>
+<div class="line"><a id="l05197" name="l05197"></a><span class="lineno"> 5197</span> </div>
+<div class="line"><a id="l05198" name="l05198"></a><span class="lineno"> 5198</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor angular velocity&quot;</span>);</div>
+<div class="line"><a id="l05199" name="l05199"></a><span class="lineno"> 5199</span>      rotor_angular_velocity =</div>
+<div class="line"><a id="l05200" name="l05200"></a><span class="lineno"> 5200</span>        std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
+<div class="line"><a id="l05201" name="l05201"></a><span class="lineno"> 5201</span>      rotor_angular_velocity-&gt;declare_parameters(prm);</div>
+<div class="line"><a id="l05202" name="l05202"></a><span class="lineno"> 5202</span>      prm.leave_subsection();</div>
+<div class="line"><a id="l05203" name="l05203"></a><span class="lineno"> 5203</span> </div>
+<div class="line"><a id="l05204" name="l05204"></a><span class="lineno"> 5204</span>      prm.declare_entry(<span class="stringliteral">&quot;penalty factor&quot;</span>,</div>
+<div class="line"><a id="l05205" name="l05205"></a><span class="lineno"> 5205</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(sip_factor),</div>
+<div class="line"><a id="l05206" name="l05206"></a><span class="lineno"> 5206</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05207" name="l05207"></a><span class="lineno"> 5207</span>                        <span class="stringliteral">&quot;Penalty factor for mortar elements&quot;</span>);</div>
+<div class="line"><a id="l05208" name="l05208"></a><span class="lineno"> 5208</span>      prm.declare_entry(<span class="stringliteral">&quot;oversampling factor&quot;</span>,</div>
+<div class="line"><a id="l05209" name="l05209"></a><span class="lineno"> 5209</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
+<div class="line"><a id="l05210" name="l05210"></a><span class="lineno"> 5210</span>                          oversampling_factor),</div>
+<div class="line"><a id="l05211" name="l05211"></a><span class="lineno"> 5211</span>                        Patterns::Integer(),</div>
+<div class="line"><a id="l05212" name="l05212"></a><span class="lineno"> 5212</span>                        <span class="stringliteral">&quot;Oversampling factor for quadrature points&quot;</span>);</div>
+<div class="line"><a id="l05213" name="l05213"></a><span class="lineno"> 5213</span>      prm.declare_entry(<span class="stringliteral">&quot;radius tolerance&quot;</span>,</div>
+<div class="line"><a id="l05214" name="l05214"></a><span class="lineno"> 5214</span>                        Patterns::Tools::Convert&lt;double&gt;::to_string(</div>
+<div class="line"><a id="l05215" name="l05215"></a><span class="lineno"> 5215</span>                          radius_tolerance),</div>
+<div class="line"><a id="l05216" name="l05216"></a><span class="lineno"> 5216</span>                        Patterns::Double(),</div>
+<div class="line"><a id="l05217" name="l05217"></a><span class="lineno"> 5217</span>                        <span class="stringliteral">&quot;Tolerance used for the interface radius computation&quot;</span>);</div>
+<div class="line"><a id="l05218" name="l05218"></a><span class="lineno"> 5218</span>      prm.declare_entry(<span class="stringliteral">&quot;cell weight&quot;</span>,</div>
+<div class="line"><a id="l05219" name="l05219"></a><span class="lineno"> 5219</span>                        Patterns::Tools::Convert&lt;unsigned int&gt;::to_string(</div>
+<div class="line"><a id="l05220" name="l05220"></a><span class="lineno"> 5220</span>                          cell_weight),</div>
+<div class="line"><a id="l05221" name="l05221"></a><span class="lineno"> 5221</span>                        Patterns::Integer(),</div>
+<div class="line"><a id="l05222" name="l05222"></a><span class="lineno"> 5222</span>                        <span class="stringliteral">&quot;Cell weight for load balancing of mortar cells&quot;</span>);</div>
+<div class="line"><a id="l05223" name="l05223"></a><span class="lineno"> 5223</span>      <a class="code hl_function" href="core_2utilities_8h.html#ae144e62fbab8568f6af31a6cd1c5f509">declare_enum_entry</a>(</div>
+<div class="line"><a id="l05224" name="l05224"></a><span class="lineno"> 5224</span>        prm,</div>
+<div class="line"><a id="l05225" name="l05225"></a><span class="lineno"> 5225</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
+<div class="line"><a id="l05226" name="l05226"></a><span class="lineno"> 5226</span>        <a class="code hl_variable" href="classParameters_1_1PostProcessing.html#a3d09dc66cd67a64f0011bd33d9f3aa98">verbosity</a>,</div>
+<div class="line"><a id="l05227" name="l05227"></a><span class="lineno"> 5227</span>        <span class="stringliteral">&quot;State whether from the mortar information should be printed.&quot;</span>,</div>
+<div class="line"><a id="l05228" name="l05228"></a><span class="lineno"> 5228</span>        <a class="code hl_function" href="namespaceParameters.html#af205406d624398cf22fd0702f607e43b">deprecated_verbosity_names</a>());</div>
+<div class="line"><a id="l05229" name="l05229"></a><span class="lineno"> 5229</span>    }</div>
+<div class="line"><a id="l05230" name="l05230"></a><span class="lineno"> 5230</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l05231" name="l05231"></a><span class="lineno"> 5231</span>  }</div>
 </div>
-<div class="line"><a id="l05231" name="l05231"></a><span class="lineno"> 5231</span> </div>
-<div class="line"><a id="l05232" name="l05232"></a><span class="lineno"> 5232</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l05233" name="l05233"></a><span class="lineno"> 5233</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen05234" data-start="{" data-end="}">
-<div class="line"><a id="l05234" name="l05234"></a><span class="lineno"><a class="line" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb"> 5234</a></span>  <a class="code hl_function" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">Mortar&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l05235" name="l05235"></a><span class="lineno"> 5235</span>  {</div>
-<div class="line"><a id="l05236" name="l05236"></a><span class="lineno"> 5236</span>    prm.enter_subsection(<span class="stringliteral">&quot;mortar&quot;</span>);</div>
-<div class="line"><a id="l05237" name="l05237"></a><span class="lineno"> 5237</span>    {</div>
-<div class="line"><a id="l05238" name="l05238"></a><span class="lineno"> 5238</span>      enable         = prm.get_bool(<span class="stringliteral">&quot;enable&quot;</span>);</div>
-<div class="line"><a id="l05239" name="l05239"></a><span class="lineno"> 5239</span>      interface_type = string_to_enum&lt;InterfaceType&gt;(prm.get(<span class="stringliteral">&quot;interface type&quot;</span>));</div>
-<div class="line"><a id="l05240" name="l05240"></a><span class="lineno"> 5240</span>      rotor_mesh-&gt;parse_parameters(prm);</div>
-<div class="line"><a id="l05241" name="l05241"></a><span class="lineno"> 5241</span>      rotor_boundary_id  = prm.get_integer(<span class="stringliteral">&quot;rotor boundary id&quot;</span>);</div>
-<div class="line"><a id="l05242" name="l05242"></a><span class="lineno"> 5242</span>      stator_boundary_id = prm.get_integer(<span class="stringliteral">&quot;stator boundary id&quot;</span>);</div>
-<div class="line"><a id="l05243" name="l05243"></a><span class="lineno"> 5243</span>      center_of_rotation =</div>
-<div class="line"><a id="l05244" name="l05244"></a><span class="lineno"> 5244</span>        value_string_to_tensor&lt;dim&gt;(prm.get(<span class="stringliteral">&quot;center of rotation&quot;</span>));</div>
-<div class="line"><a id="l05245" name="l05245"></a><span class="lineno"> 5245</span>      rotation_axis_direction = prm.get_integer(<span class="stringliteral">&quot;rotation axis direction&quot;</span>);</div>
-<div class="line"><a id="l05246" name="l05246"></a><span class="lineno"> 5246</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor rotation angle&quot;</span>);</div>
-<div class="line"><a id="l05247" name="l05247"></a><span class="lineno"> 5247</span>      rotor_rotation_angle-&gt;parse_parameters(prm);</div>
-<div class="line"><a id="l05248" name="l05248"></a><span class="lineno"> 5248</span>      rotor_rotation_angle-&gt;set_time(0);</div>
-<div class="line"><a id="l05249" name="l05249"></a><span class="lineno"> 5249</span>      prm.leave_subsection();</div>
-<div class="line"><a id="l05250" name="l05250"></a><span class="lineno"> 5250</span> </div>
-<div class="line"><a id="l05251" name="l05251"></a><span class="lineno"> 5251</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor angular velocity&quot;</span>);</div>
-<div class="line"><a id="l05252" name="l05252"></a><span class="lineno"> 5252</span>      rotor_angular_velocity-&gt;parse_parameters(prm);</div>
-<div class="line"><a id="l05253" name="l05253"></a><span class="lineno"> 5253</span>      rotor_angular_velocity-&gt;set_time(0);</div>
-<div class="line"><a id="l05254" name="l05254"></a><span class="lineno"> 5254</span>      prm.leave_subsection();</div>
-<div class="line"><a id="l05255" name="l05255"></a><span class="lineno"> 5255</span> </div>
-<div class="line"><a id="l05256" name="l05256"></a><span class="lineno"> 5256</span>      sip_factor          = prm.get_double(<span class="stringliteral">&quot;penalty factor&quot;</span>);</div>
-<div class="line"><a id="l05257" name="l05257"></a><span class="lineno"> 5257</span>      oversampling_factor = prm.get_integer(<span class="stringliteral">&quot;oversampling factor&quot;</span>);</div>
-<div class="line"><a id="l05258" name="l05258"></a><span class="lineno"> 5258</span>      radius_tolerance    = prm.get_double(<span class="stringliteral">&quot;radius tolerance&quot;</span>);</div>
-<div class="line"><a id="l05259" name="l05259"></a><span class="lineno"> 5259</span>      cell_weight         = prm.get_integer(<span class="stringliteral">&quot;cell weight&quot;</span>);</div>
-<div class="line"><a id="l05260" name="l05260"></a><span class="lineno"> 5260</span> </div>
-<div class="line"><a id="l05261" name="l05261"></a><span class="lineno"> 5261</span>      <span class="comment">// Enable printing of mortar information</span></div>
-<div class="line"><a id="l05262" name="l05262"></a><span class="lineno"> 5262</span>      <a class="code hl_variable" href="classParameters_1_1PostProcessing.html#a3d09dc66cd67a64f0011bd33d9f3aa98">verbosity</a> = string_to_enum&lt;Verbosity&gt;(prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>),</div>
-<div class="line"><a id="l05263" name="l05263"></a><span class="lineno"> 5263</span>                                            <a class="code hl_function" href="namespaceParameters.html#af205406d624398cf22fd0702f607e43b">deprecated_verbosity_names</a>(),</div>
-<div class="line"><a id="l05264" name="l05264"></a><span class="lineno"> 5264</span>                                            <span class="stringliteral">&quot;verbosity&quot;</span>);</div>
-<div class="line"><a id="l05265" name="l05265"></a><span class="lineno"> 5265</span>    }</div>
-<div class="line"><a id="l05266" name="l05266"></a><span class="lineno"> 5266</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l05267" name="l05267"></a><span class="lineno"> 5267</span>  }</div>
+<div class="line"><a id="l05232" name="l05232"></a><span class="lineno"> 5232</span> </div>
+<div class="line"><a id="l05233" name="l05233"></a><span class="lineno"> 5233</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l05234" name="l05234"></a><span class="lineno"> 5234</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen05235" data-start="{" data-end="}">
+<div class="line"><a id="l05235" name="l05235"></a><span class="lineno"><a class="line" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb"> 5235</a></span>  <a class="code hl_function" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">Mortar&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l05236" name="l05236"></a><span class="lineno"> 5236</span>  {</div>
+<div class="line"><a id="l05237" name="l05237"></a><span class="lineno"> 5237</span>    prm.enter_subsection(<span class="stringliteral">&quot;mortar&quot;</span>);</div>
+<div class="line"><a id="l05238" name="l05238"></a><span class="lineno"> 5238</span>    {</div>
+<div class="line"><a id="l05239" name="l05239"></a><span class="lineno"> 5239</span>      enable         = prm.get_bool(<span class="stringliteral">&quot;enable&quot;</span>);</div>
+<div class="line"><a id="l05240" name="l05240"></a><span class="lineno"> 5240</span>      interface_type = string_to_enum&lt;InterfaceType&gt;(prm.get(<span class="stringliteral">&quot;interface type&quot;</span>));</div>
+<div class="line"><a id="l05241" name="l05241"></a><span class="lineno"> 5241</span>      rotor_mesh-&gt;parse_parameters(prm);</div>
+<div class="line"><a id="l05242" name="l05242"></a><span class="lineno"> 5242</span>      rotor_boundary_id  = prm.get_integer(<span class="stringliteral">&quot;rotor boundary id&quot;</span>);</div>
+<div class="line"><a id="l05243" name="l05243"></a><span class="lineno"> 5243</span>      stator_boundary_id = prm.get_integer(<span class="stringliteral">&quot;stator boundary id&quot;</span>);</div>
+<div class="line"><a id="l05244" name="l05244"></a><span class="lineno"> 5244</span>      center_of_rotation =</div>
+<div class="line"><a id="l05245" name="l05245"></a><span class="lineno"> 5245</span>        value_string_to_tensor&lt;dim&gt;(prm.get(<span class="stringliteral">&quot;center of rotation&quot;</span>));</div>
+<div class="line"><a id="l05246" name="l05246"></a><span class="lineno"> 5246</span>      rotation_axis_direction = prm.get_integer(<span class="stringliteral">&quot;rotation axis direction&quot;</span>);</div>
+<div class="line"><a id="l05247" name="l05247"></a><span class="lineno"> 5247</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor rotation angle&quot;</span>);</div>
+<div class="line"><a id="l05248" name="l05248"></a><span class="lineno"> 5248</span>      rotor_rotation_angle-&gt;parse_parameters(prm);</div>
+<div class="line"><a id="l05249" name="l05249"></a><span class="lineno"> 5249</span>      rotor_rotation_angle-&gt;set_time(0);</div>
+<div class="line"><a id="l05250" name="l05250"></a><span class="lineno"> 5250</span>      prm.leave_subsection();</div>
+<div class="line"><a id="l05251" name="l05251"></a><span class="lineno"> 5251</span> </div>
+<div class="line"><a id="l05252" name="l05252"></a><span class="lineno"> 5252</span>      prm.enter_subsection(<span class="stringliteral">&quot;rotor angular velocity&quot;</span>);</div>
+<div class="line"><a id="l05253" name="l05253"></a><span class="lineno"> 5253</span>      rotor_angular_velocity-&gt;parse_parameters(prm);</div>
+<div class="line"><a id="l05254" name="l05254"></a><span class="lineno"> 5254</span>      rotor_angular_velocity-&gt;set_time(0);</div>
+<div class="line"><a id="l05255" name="l05255"></a><span class="lineno"> 5255</span>      prm.leave_subsection();</div>
+<div class="line"><a id="l05256" name="l05256"></a><span class="lineno"> 5256</span> </div>
+<div class="line"><a id="l05257" name="l05257"></a><span class="lineno"> 5257</span>      sip_factor          = prm.get_double(<span class="stringliteral">&quot;penalty factor&quot;</span>);</div>
+<div class="line"><a id="l05258" name="l05258"></a><span class="lineno"> 5258</span>      oversampling_factor = prm.get_integer(<span class="stringliteral">&quot;oversampling factor&quot;</span>);</div>
+<div class="line"><a id="l05259" name="l05259"></a><span class="lineno"> 5259</span>      radius_tolerance    = prm.get_double(<span class="stringliteral">&quot;radius tolerance&quot;</span>);</div>
+<div class="line"><a id="l05260" name="l05260"></a><span class="lineno"> 5260</span>      cell_weight         = prm.get_integer(<span class="stringliteral">&quot;cell weight&quot;</span>);</div>
+<div class="line"><a id="l05261" name="l05261"></a><span class="lineno"> 5261</span> </div>
+<div class="line"><a id="l05262" name="l05262"></a><span class="lineno"> 5262</span>      <span class="comment">// Enable printing of mortar information</span></div>
+<div class="line"><a id="l05263" name="l05263"></a><span class="lineno"> 5263</span>      <a class="code hl_variable" href="classParameters_1_1PostProcessing.html#a3d09dc66cd67a64f0011bd33d9f3aa98">verbosity</a> = string_to_enum&lt;Verbosity&gt;(prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>),</div>
+<div class="line"><a id="l05264" name="l05264"></a><span class="lineno"> 5264</span>                                            <a class="code hl_function" href="namespaceParameters.html#af205406d624398cf22fd0702f607e43b">deprecated_verbosity_names</a>(),</div>
+<div class="line"><a id="l05265" name="l05265"></a><span class="lineno"> 5265</span>                                            <span class="stringliteral">&quot;verbosity&quot;</span>);</div>
+<div class="line"><a id="l05266" name="l05266"></a><span class="lineno"> 5266</span>    }</div>
+<div class="line"><a id="l05267" name="l05267"></a><span class="lineno"> 5267</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l05268" name="l05268"></a><span class="lineno"> 5268</span>  }</div>
 </div>
-<div class="line"><a id="l05268" name="l05268"></a><span class="lineno"> 5268</span> </div>
-<div class="line"><a id="l05269" name="l05269"></a><span class="lineno"> 5269</span>  <span class="comment">// Explicitly instantiate template classes and structs</span></div>
-<div class="line"><a id="l05270" name="l05270"></a><span class="lineno"> 5270</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05271" name="l05271"></a><span class="lineno"> 5271</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05272" name="l05272"></a><span class="lineno"> 5272</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1PostProcessing.html">PostProcessing&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05273" name="l05273"></a><span class="lineno"> 5273</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1PostProcessing.html">PostProcessing&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05274" name="l05274"></a><span class="lineno"> 5274</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05275" name="l05275"></a><span class="lineno"> 5275</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05276" name="l05276"></a><span class="lineno"> 5276</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;1&gt;</a>;</div>
-<div class="line"><a id="l05277" name="l05277"></a><span class="lineno"> 5277</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;1, 2&gt;</a>;</div>
-<div class="line"><a id="l05278" name="l05278"></a><span class="lineno"> 5278</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05279" name="l05279"></a><span class="lineno"> 5279</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;2, 3&gt;</a>;</div>
-<div class="line"><a id="l05280" name="l05280"></a><span class="lineno"> 5280</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05281" name="l05281"></a><span class="lineno"> 5281</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1MeshBoxRefinement.html">MeshBoxRefinement&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05282" name="l05282"></a><span class="lineno"> 5282</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1MeshBoxRefinement.html">MeshBoxRefinement&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05283" name="l05283"></a><span class="lineno"> 5283</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05284" name="l05284"></a><span class="lineno"> 5284</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05285" name="l05285"></a><span class="lineno"> 5285</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;2&gt;</a>;</div>
-<div class="line"><a id="l05286" name="l05286"></a><span class="lineno"> 5286</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;3&gt;</a>;</div>
-<div class="line"><a id="l05287" name="l05287"></a><span class="lineno"> 5287</span> </div>
-<div class="line"><a id="l05288" name="l05288"></a><span class="lineno"> 5288</span>} <span class="comment">// namespace Parameters</span></div>
+<div class="line"><a id="l05269" name="l05269"></a><span class="lineno"> 5269</span> </div>
+<div class="line"><a id="l05270" name="l05270"></a><span class="lineno"> 5270</span>  <span class="comment">// Explicitly instantiate template classes and structs</span></div>
+<div class="line"><a id="l05271" name="l05271"></a><span class="lineno"> 5271</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05272" name="l05272"></a><span class="lineno"> 5272</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05273" name="l05273"></a><span class="lineno"> 5273</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1PostProcessing.html">PostProcessing&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05274" name="l05274"></a><span class="lineno"> 5274</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1PostProcessing.html">PostProcessing&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05275" name="l05275"></a><span class="lineno"> 5275</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05276" name="l05276"></a><span class="lineno"> 5276</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05277" name="l05277"></a><span class="lineno"> 5277</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;1&gt;</a>;</div>
+<div class="line"><a id="l05278" name="l05278"></a><span class="lineno"> 5278</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;1, 2&gt;</a>;</div>
+<div class="line"><a id="l05279" name="l05279"></a><span class="lineno"> 5279</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05280" name="l05280"></a><span class="lineno"> 5280</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;2, 3&gt;</a>;</div>
+<div class="line"><a id="l05281" name="l05281"></a><span class="lineno"> 5281</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Mesh.html">Mesh&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05282" name="l05282"></a><span class="lineno"> 5282</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1MeshBoxRefinement.html">MeshBoxRefinement&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05283" name="l05283"></a><span class="lineno"> 5283</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1MeshBoxRefinement.html">MeshBoxRefinement&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05284" name="l05284"></a><span class="lineno"> 5284</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05285" name="l05285"></a><span class="lineno"> 5285</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05286" name="l05286"></a><span class="lineno"> 5286</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;2&gt;</a>;</div>
+<div class="line"><a id="l05287" name="l05287"></a><span class="lineno"> 5287</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;3&gt;</a>;</div>
+<div class="line"><a id="l05288" name="l05288"></a><span class="lineno"> 5288</span> </div>
+<div class="line"><a id="l05289" name="l05289"></a><span class="lineno"> 5289</span>} <span class="comment">// namespace Parameters</span></div>
 </div>
 </div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html"><div class="ttname"><a href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a></div><div class="ttdoc">Class used to rescale physical properties for cases where the main dimensions of the problems (Length...</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00023">dimensionality.h:24</a></div></div>
@@ -5780,14 +5781,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_a4703ee383e76332e750c49d45a03c8b6"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#a4703ee383e76332e750c49d45a03c8b6">Parameters::DynamicFlowControl::alpha</a></div><div class="ttdeci">double alpha</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02190">parameters.h:2190</a></div></div>
 <div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_a4fc86a056de790858e5b842aadafeaf5"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#a4fc86a056de790858e5b842aadafeaf5">Parameters::DynamicFlowControl::flow_direction</a></div><div class="ttdeci">unsigned int flow_direction</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02183">parameters.h:2183</a></div></div>
 <div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_a5d11c97ca4ea7b7f0d43449b28a03546"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#a5d11c97ca4ea7b7f0d43449b28a03546">Parameters::DynamicFlowControl::enable_flow_control</a></div><div class="ttdeci">bool enable_flow_control</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02174">parameters.h:2174</a></div></div>
-<div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_a7a2d1e1a7f756661c1f1bc658d48d0fd"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#a7a2d1e1a7f756661c1f1bc658d48d0fd">Parameters::DynamicFlowControl::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05018">parameters.cc:5018</a></div></div>
+<div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_a7a2d1e1a7f756661c1f1bc658d48d0fd"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#a7a2d1e1a7f756661c1f1bc658d48d0fd">Parameters::DynamicFlowControl::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05019">parameters.cc:5019</a></div></div>
 <div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_aa062640b715f16b20dc863b568bb06e1"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#aa062640b715f16b20dc863b568bb06e1">Parameters::DynamicFlowControl::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l04961">parameters.cc:4961</a></div></div>
 <div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_aa183d8a7373ee26f561abff3f42d13f6"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#aa183d8a7373ee26f561abff3f42d13f6">Parameters::DynamicFlowControl::beta_0</a></div><div class="ttdeci">double beta_0</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02186">parameters.h:2186</a></div></div>
 <div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_af4d0d02ed67879423fb561b28e02e1cd"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#af4d0d02ed67879423fb561b28e02e1cd">Parameters::DynamicFlowControl::boundary_flow_id</a></div><div class="ttdeci">unsigned int boundary_flow_id</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02180">parameters.h:2180</a></div></div>
 <div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_af65a6466c5e3ef1c7184d2653a0a9ffb"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#af65a6466c5e3ef1c7184d2653a0a9ffb">Parameters::DynamicFlowControl::verbosity</a></div><div class="ttdeci">Verbosity verbosity</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02197">parameters.h:2197</a></div></div>
 <div class="ttc" id="astructParameters_1_1DynamicFlowControl_html_afbc6616574a0ba3e5af0abe15a92be7b"><div class="ttname"><a href="structParameters_1_1DynamicFlowControl.html#afbc6616574a0ba3e5af0abe15a92be7b">Parameters::DynamicFlowControl::beta_threshold</a></div><div class="ttdeci">double beta_threshold</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02194">parameters.h:2194</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html"><div class="ttname"><a href="structParameters_1_1Evaporation.html">Parameters::Evaporation</a></div><div class="ttdoc">Evaporation - Defines the subparameters for the evaporation cooling and recoil pressure at the free s...</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02213">parameters.h:2214</a></div></div>
-<div class="ttc" id="astructParameters_1_1Evaporation_html_a00ae8d9b4e214c9bd1c47eb96ff2726c"><div class="ttname"><a href="structParameters_1_1Evaporation.html#a00ae8d9b4e214c9bd1c47eb96ff2726c">Parameters::Evaporation::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05128">parameters.cc:5128</a></div></div>
+<div class="ttc" id="astructParameters_1_1Evaporation_html_a00ae8d9b4e214c9bd1c47eb96ff2726c"><div class="ttname"><a href="structParameters_1_1Evaporation.html#a00ae8d9b4e214c9bd1c47eb96ff2726c">Parameters::Evaporation::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05129">parameters.cc:5129</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html_a15f2f02a2d8e907300c55573a1468a36"><div class="ttname"><a href="structParameters_1_1Evaporation.html#a15f2f02a2d8e907300c55573a1468a36">Parameters::Evaporation::universal_gas_constant</a></div><div class="ttdeci">double universal_gas_constant</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02234">parameters.h:2234</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html_a2afe9f292373e4fc92dae4791d33f494"><div class="ttname"><a href="structParameters_1_1Evaporation.html#a2afe9f292373e4fc92dae4791d33f494">Parameters::Evaporation::liquid_density</a></div><div class="ttdeci">double liquid_density</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02233">parameters.h:2233</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html_a6b362c400fb37bd3f87df52f456210e9"><div class="ttname"><a href="structParameters_1_1Evaporation.html#a6b362c400fb37bd3f87df52f456210e9">Parameters::Evaporation::recoil_pressure_coefficient</a></div><div class="ttdeci">double recoil_pressure_coefficient</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02227">parameters.h:2227</a></div></div>
@@ -5797,7 +5798,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructParameters_1_1Evaporation_html_aa1bfa15d2215d8ddfe7dc0a7b99097c4"><div class="ttname"><a href="structParameters_1_1Evaporation.html#aa1bfa15d2215d8ddfe7dc0a7b99097c4">Parameters::Evaporation::ambient_gas_density</a></div><div class="ttdeci">double ambient_gas_density</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02232">parameters.h:2232</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html_aab0f33a1a8a8ac9852a0bfefd4126db8"><div class="ttname"><a href="structParameters_1_1Evaporation.html#aab0f33a1a8a8ac9852a0bfefd4126db8">Parameters::Evaporation::evaporation_coefficient</a></div><div class="ttdeci">double evaporation_coefficient</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02226">parameters.h:2226</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html_aabbeda39bfc01880beca1475b0be9fec"><div class="ttname"><a href="structParameters_1_1Evaporation.html#aabbeda39bfc01880beca1475b0be9fec">Parameters::Evaporation::molar_mass</a></div><div class="ttdeci">double molar_mass</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02228">parameters.h:2228</a></div></div>
-<div class="ttc" id="astructParameters_1_1Evaporation_html_aaf73c8a4033d20f19e0b588de4a39738"><div class="ttname"><a href="structParameters_1_1Evaporation.html#aaf73c8a4033d20f19e0b588de4a39738">Parameters::Evaporation::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05048">parameters.cc:5048</a></div></div>
+<div class="ttc" id="astructParameters_1_1Evaporation_html_aaf73c8a4033d20f19e0b588de4a39738"><div class="ttname"><a href="structParameters_1_1Evaporation.html#aaf73c8a4033d20f19e0b588de4a39738">Parameters::Evaporation::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05049">parameters.cc:5049</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html_ab14c31ce76943270fd03674aa610c456"><div class="ttname"><a href="structParameters_1_1Evaporation.html#ab14c31ce76943270fd03674aa610c456">Parameters::Evaporation::ambient_pressure</a></div><div class="ttdeci">double ambient_pressure</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02231">parameters.h:2231</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html_ac90083ce7ea6c73f36aa256d0fa3e0c8"><div class="ttname"><a href="structParameters_1_1Evaporation.html#ac90083ce7ea6c73f36aa256d0fa3e0c8">Parameters::Evaporation::enable_recoil_pressure</a></div><div class="ttdeci">bool enable_recoil_pressure</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02222">parameters.h:2222</a></div></div>
 <div class="ttc" id="astructParameters_1_1Evaporation_html_ae42d81884b2864647c4dc3cbc7b12196"><div class="ttname"><a href="structParameters_1_1Evaporation.html#ae42d81884b2864647c4dc3cbc7b12196">Parameters::Evaporation::evaporative_mass_flux_model_type</a></div><div class="ttdeci">enum Parameters::Evaporation::EvaporativeMassFluxModelType evaporative_mass_flux_model_type</div></div>
@@ -5933,8 +5934,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructParameters_1_1MobilityCahnHilliardParameters_html_a3cc99f9f9530c0f1b16b52f5f86c5f6f"><div class="ttname"><a href="structParameters_1_1MobilityCahnHilliardParameters.html#a3cc99f9f9530c0f1b16b52f5f86c5f6f">Parameters::MobilityCahnHilliardParameters::parse_parameters</a></div><div class="ttdeci">void parse_parameters(const ParameterHandler &amp;prm, const Parameters::Dimensionality &amp;dimensions)</div><div class="ttdoc">Parse the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l00787">parameters.cc:787</a></div></div>
 <div class="ttc" id="astructParameters_1_1MobilityCahnHilliardParameters_html_ab9a45d0978953e9e488442b96f05d34e"><div class="ttname"><a href="structParameters_1_1MobilityCahnHilliardParameters.html#ab9a45d0978953e9e488442b96f05d34e">Parameters::MobilityCahnHilliardParameters::mobility_cahn_hilliard_constant</a></div><div class="ttdeci">double mobility_cahn_hilliard_constant</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00462">parameters.h:462</a></div></div>
 <div class="ttc" id="astructParameters_1_1Mortar_html"><div class="ttname"><a href="structParameters_1_1Mortar.html">Parameters::Mortar</a></div><div class="ttdoc">Mortar - Defines parameters used to construct mortar elements.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l02246">parameters.h:2247</a></div></div>
-<div class="ttc" id="astructParameters_1_1Mortar_html_a1f56c32ef7a5b9c83d87cdfa6a53b88f"><div class="ttname"><a href="structParameters_1_1Mortar.html#a1f56c32ef7a5b9c83d87cdfa6a53b88f">Parameters::Mortar::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05156">parameters.cc:5156</a></div></div>
-<div class="ttc" id="astructParameters_1_1Mortar_html_af5442ef0871c207bbadf1b9f699ed4eb"><div class="ttname"><a href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">Parameters::Mortar::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05234">parameters.cc:5234</a></div></div>
+<div class="ttc" id="astructParameters_1_1Mortar_html_a1f56c32ef7a5b9c83d87cdfa6a53b88f"><div class="ttname"><a href="structParameters_1_1Mortar.html#a1f56c32ef7a5b9c83d87cdfa6a53b88f">Parameters::Mortar::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05157">parameters.cc:5157</a></div></div>
+<div class="ttc" id="astructParameters_1_1Mortar_html_af5442ef0871c207bbadf1b9f699ed4eb"><div class="ttname"><a href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">Parameters::Mortar::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters_8cc_source.html#l05235">parameters.cc:5235</a></div></div>
 <div class="ttc" id="astructParameters_1_1MultipleAdaptationParameters_html"><div class="ttname"><a href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a></div><div class="ttdoc">Mesh Adaptation Parameters that can differ for each refinement variable.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l01840">parameters.h:1841</a></div></div>
 <div class="ttc" id="astructParameters_1_1MultipleAdaptationParameters_html_a8feef14a2efcfbd178fd431ee9b560c3"><div class="ttname"><a href="structParameters_1_1MultipleAdaptationParameters.html#a8feef14a2efcfbd178fd431ee9b560c3">Parameters::MultipleAdaptationParameters::refinement_fraction</a></div><div class="ttdeci">double refinement_fraction</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l01853">parameters.h:1853</a></div></div>
 <div class="ttc" id="astructParameters_1_1MultipleAdaptationParameters_html_a9fbbca2b9813a1e4d64bfc490173ca6c"><div class="ttname"><a href="structParameters_1_1MultipleAdaptationParameters.html#a9fbbca2b9813a1e4d64bfc490173ca6c">Parameters::MultipleAdaptationParameters::error_estimator</a></div><div class="ttdeci">enum Parameters::MultipleAdaptationParameters::ErrorEstimator error_estimator</div></div>

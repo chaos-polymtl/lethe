@@ -148,7 +148,7 @@ var searchData=
   ['print_5fxyz_145',['print_xyz',['../classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee',1,'Visualization']]],
   ['project_5fto_5fd_5flinear_5fobject_146',['project_to_d_linear_object',['../namespaceLetheGridTools.html#a8d97c7d2159ec1d7de69ef8127d0aef0',1,'LetheGridTools']]],
   ['prolongate_147',['prolongate',['../classMGTransferMatrixFreeWrapper.html#a939d5dc12865777c859677848d868a48',1,'MGTransferMatrixFreeWrapper']]],
-  ['proportional_5fflow_5fcontroller_148',['proportional_flow_controller',['../classFlowControl.html#af7d056138ae4650a3a826912549dfb0b',1,'FlowControl']]],
+  ['proportional_5fflow_5fcontroller_148',['proportional_flow_controller',['../classFlowControl.html#a80baa5b970e2ec8c1dffe462e0da5d5e',1,'FlowControl']]],
   ['provide_5fresidual_149',['provide_residual',['../classSimulationControl.html#a703ebae3866b52ac64946bad2bdb4285',1,'SimulationControl']]],
   ['provide_5fsimulation_5fcontrol_150',['provide_simulation_control',['../classPhysicalPropertyModel.html#a5498f882d9e5425f853d6457667b7035',1,'PhysicalPropertyModel::provide_simulation_control()'],['../classPhysicalPropertiesManager.html#ac5fccb08af48a9a00164bda038a51f04',1,'PhysicalPropertiesManager::provide_simulation_control()']]],
   ['pspgsupgnavierstokesassemblercore_151',['PSPGSUPGNavierStokesAssemblerCore',['../classPSPGSUPGNavierStokesAssemblerCore.html#a26f8600ee023607458ae973591b926a1',1,'PSPGSUPGNavierStokesAssemblerCore']]]

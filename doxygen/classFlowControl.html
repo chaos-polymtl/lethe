@@ -87,7 +87,9 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
 <a href="classFlowControl-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">FlowControl&lt; dim &gt; Class Template Reference</div></div>
 </div><!--header-->
@@ -99,49 +101,70 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aeab13df0da2212c7c37408b69e131f30" id="r_aeab13df0da2212c7c37408b69e131f30"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#aeab13df0da2212c7c37408b69e131f30">FlowControl</a> (const <a class="el" href="structParameters_1_1DynamicFlowControl.html">Parameters::DynamicFlowControl</a> &amp;flow_control)</td></tr>
 <tr class="separator:aeab13df0da2212c7c37408b69e131f30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e8755cf979872c69e4fc4501f9d3b69" id="r_a5e8755cf979872c69e4fc4501f9d3b69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a5e8755cf979872c69e4fc4501f9d3b69">calculate_beta</a> (const double &amp;average_velocity, const double &amp;dt, const unsigned int &amp;step_number)</td></tr>
-<tr class="separator:a5e8755cf979872c69e4fc4501f9d3b69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7d056138ae4650a3a826912549dfb0b" id="r_af7d056138ae4650a3a826912549dfb0b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#af7d056138ae4650a3a826912549dfb0b">proportional_flow_controller</a> (const double &amp;average_velocity_n, const double &amp;dt)</td></tr>
-<tr class="separator:af7d056138ae4650a3a826912549dfb0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f8d388638224072acc18b94f0c11f9e" id="r_a3f8d388638224072acc18b94f0c11f9e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a3f8d388638224072acc18b94f0c11f9e">main_flow_controller</a> (const double &amp;average_velocity_n, const double &amp;dt)</td></tr>
-<tr class="separator:a3f8d388638224072acc18b94f0c11f9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2791ebecf309e0e6b18e9ecea02d7c3f" id="r_a2791ebecf309e0e6b18e9ecea02d7c3f"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a2791ebecf309e0e6b18e9ecea02d7c3f">get_beta</a> ()</td></tr>
-<tr class="separator:a2791ebecf309e0e6b18e9ecea02d7c3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7de4613db00f044a2d5319f3661d523" id="r_ae7de4613db00f044a2d5319f3661d523"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#ae7de4613db00f044a2d5319f3661d523">get_beta_particles</a> (const double &amp;fluid_density, const double &amp;particle_density)</td></tr>
-<tr class="separator:ae7de4613db00f044a2d5319f3661d523"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6715e2e6e717d86e9694add121d71a6c" id="r_a6715e2e6e717d86e9694add121d71a6c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a6715e2e6e717d86e9694add121d71a6c">save</a> (const std::string &amp;prefix)</td></tr>
-<tr class="separator:a6715e2e6e717d86e9694add121d71a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a973249710dd8a28e70fdcf11409cf022" id="r_a973249710dd8a28e70fdcf11409cf022"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a973249710dd8a28e70fdcf11409cf022">calculate_beta</a> (const double &amp;average_velocity_n, const double &amp;dt, const unsigned int &amp;step_number)</td></tr>
+<tr class="separator:a973249710dd8a28e70fdcf11409cf022"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84037f1cc88e210cfa728fd296e1f2b5" id="r_a84037f1cc88e210cfa728fd296e1f2b5"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a84037f1cc88e210cfa728fd296e1f2b5">get_beta</a> () const</td></tr>
+<tr class="separator:a84037f1cc88e210cfa728fd296e1f2b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2e556fdef77e2ab767a83fb60d8671b" id="r_ae2e556fdef77e2ab767a83fb60d8671b"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#ae2e556fdef77e2ab767a83fb60d8671b">get_beta_particles</a> (const double &amp;fluid_density, const double &amp;particle_density) const</td></tr>
+<tr class="separator:ae2e556fdef77e2ab767a83fb60d8671b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6013155a77fb72b1cac5eb5860ed1fb" id="r_ac6013155a77fb72b1cac5eb5860ed1fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#ac6013155a77fb72b1cac5eb5860ed1fb">save</a> (const std::string &amp;prefix) const</td></tr>
+<tr class="separator:ac6013155a77fb72b1cac5eb5860ed1fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4421d3fa66392a41b0d800c36f6a9492" id="r_a4421d3fa66392a41b0d800c36f6a9492"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a4421d3fa66392a41b0d800c36f6a9492">read</a> (const std::string &amp;prefix)</td></tr>
 <tr class="separator:a4421d3fa66392a41b0d800c36f6a9492"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:a80baa5b970e2ec8c1dffe462e0da5d5e" id="r_a80baa5b970e2ec8c1dffe462e0da5d5e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a80baa5b970e2ec8c1dffe462e0da5d5e">proportional_flow_controller</a> (const double &amp;average_velocity_n, const double &amp;dt) const</td></tr>
+<tr class="separator:a80baa5b970e2ec8c1dffe462e0da5d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68908c7c56929a24c7e05a714b3f664e" id="r_a68908c7c56929a24c7e05a714b3f664e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a68908c7c56929a24c7e05a714b3f664e">main_flow_controller</a> (const double &amp;average_velocity_n, const double &amp;dt) const</td></tr>
+<tr class="separator:a68908c7c56929a24c7e05a714b3f664e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:aaf16a6a43fc8174bbeef9a0af9e81685" id="r_aaf16a6a43fc8174bbeef9a0af9e81685"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#aaf16a6a43fc8174bbeef9a0af9e81685">beta</a></td></tr>
 <tr class="separator:aaf16a6a43fc8174bbeef9a0af9e81685"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add256a67717dc0487757017e76ac9722" id="r_add256a67717dc0487757017e76ac9722"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#add256a67717dc0487757017e76ac9722">average_velocity_0</a></td></tr>
-<tr class="separator:add256a67717dc0487757017e76ac9722"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9ca2a1b21eaf39cc47d1d889feb97fe" id="r_ab9ca2a1b21eaf39cc47d1d889feb97fe"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#ab9ca2a1b21eaf39cc47d1d889feb97fe">beta_0</a></td></tr>
-<tr class="separator:ab9ca2a1b21eaf39cc47d1d889feb97fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fc6d79e5bde6f2882ef24da357f56d5" id="r_a8fc6d79e5bde6f2882ef24da357f56d5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a8fc6d79e5bde6f2882ef24da357f56d5">target_average_velocity</a></td></tr>
+<tr class="separator:a8fc6d79e5bde6f2882ef24da357f56d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf54fd6aa5f44a12b701d1fe7448d19e" id="r_acf54fd6aa5f44a12b701d1fe7448d19e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#acf54fd6aa5f44a12b701d1fe7448d19e">initial_beta</a></td></tr>
+<tr class="separator:acf54fd6aa5f44a12b701d1fe7448d19e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1799d2f88e1a0adadfc92e7852685c65" id="r_a1799d2f88e1a0adadfc92e7852685c65"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a1799d2f88e1a0adadfc92e7852685c65">alpha</a></td></tr>
 <tr class="separator:a1799d2f88e1a0adadfc92e7852685c65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3451785c2ee653a616cb9bea00cda404" id="r_a3451785c2ee653a616cb9bea00cda404"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a3451785c2ee653a616cb9bea00cda404">beta_threshold</a></td></tr>
 <tr class="separator:a3451785c2ee653a616cb9bea00cda404"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19769bbf4028d49ce417aa4980e82a8b" id="r_a19769bbf4028d49ce417aa4980e82a8b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a19769bbf4028d49ce417aa4980e82a8b">beta_n</a></td></tr>
-<tr class="separator:a19769bbf4028d49ce417aa4980e82a8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ae774535e50107219c481d41488953b" id="r_a8ae774535e50107219c481d41488953b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a8ae774535e50107219c481d41488953b">average_velocity_1n</a></td></tr>
-<tr class="separator:a8ae774535e50107219c481d41488953b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f91f9e2bda34997d257fa86a145de59" id="r_a9f91f9e2bda34997d257fa86a145de59"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a9f91f9e2bda34997d257fa86a145de59">previous_beta</a> = 0.0</td></tr>
+<tr class="separator:a9f91f9e2bda34997d257fa86a145de59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fa793dad84fad6f6440c40e2ea8c7dc" id="r_a2fa793dad84fad6f6440c40e2ea8c7dc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a2fa793dad84fad6f6440c40e2ea8c7dc">previous_average_velocity</a> = 0.0</td></tr>
+<tr class="separator:a2fa793dad84fad6f6440c40e2ea8c7dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a450ad4a1f4caab72f1950ae8d8300f42" id="r_a450ad4a1f4caab72f1950ae8d8300f42"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a450ad4a1f4caab72f1950ae8d8300f42">flow_direction</a></td></tr>
 <tr class="separator:a450ad4a1f4caab72f1950ae8d8300f42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80d14d2c68789e091a9c3277a4414361" id="r_a80d14d2c68789e091a9c3277a4414361"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a80d14d2c68789e091a9c3277a4414361">no_force</a></td></tr>
-<tr class="separator:a80d14d2c68789e091a9c3277a4414361"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32c0e8b195226d56637cd5db22ae9115" id="r_a32c0e8b195226d56637cd5db22ae9115"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a32c0e8b195226d56637cd5db22ae9115">threshold_factor</a></td></tr>
-<tr class="separator:a32c0e8b195226d56637cd5db22ae9115"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6548fc6c0e27cca25b04e1b46cc054d7" id="r_a6548fc6c0e27cca25b04e1b46cc054d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a6548fc6c0e27cca25b04e1b46cc054d7">force_free_deceleration_is_allowed</a> = true</td></tr>
+<tr class="separator:a6548fc6c0e27cca25b04e1b46cc054d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23fcdedfbb4101a9fb9446765bb340f0" id="r_a23fcdedfbb4101a9fb9446765bb340f0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a23fcdedfbb4101a9fb9446765bb340f0">force_free_velocity_band_factor</a></td></tr>
+<tr class="separator:a23fcdedfbb4101a9fb9446765bb340f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
+Static Private Attributes</h2></td></tr>
+<tr class="memitem:a7e4e67a8e9a6a060134b70878afe150c" id="r_a7e4e67a8e9a6a060134b70878afe150c"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a7e4e67a8e9a6a060134b70878afe150c">zero_beta_tolerance</a> = 1e-6</td></tr>
+<tr class="separator:a7e4e67a8e9a6a060134b70878afe150c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fd37749e2ae294c7a86c9c0b9e12d4a" id="r_a2fd37749e2ae294c7a86c9c0b9e12d4a"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#a2fd37749e2ae294c7a86c9c0b9e12d4a">initial_force_free_velocity_band_factor</a> = 1.01</td></tr>
+<tr class="separator:a2fd37749e2ae294c7a86c9c0b9e12d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad042c208408ca3c388b054aed4d4f786" id="r_ad042c208408ca3c388b054aed4d4f786"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFlowControl.html#ad042c208408ca3c388b054aed4d4f786">minimum_force_free_velocity_band_factor</a> = 1.00125</td></tr>
+<tr class="separator:ad042c208408ca3c388b054aed4d4f786"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class FlowControl&lt; dim &gt;</div><p>Class allows to dynamically control the flow with a beta coefficient calculated at each step time. </p>
+class FlowControl&lt; dim &gt;</div><p>Dynamic flow controller that drives the average velocity of the flow towards a target value. </p>
+<p>At each time step, the controller calculates a force coefficient beta, applied as a source term in the momentum equation along the flow direction, from the average velocity of the previous time steps. The main controller is based on Wang, 2009, "A non-body conformal grid method for simulations of
+laminar and turbulent flows with a compressible large eddy simulation
+solver".</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00018">18</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00030">30</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aeab13df0da2212c7c37408b69e131f30" name="aeab13df0da2212c7c37408b69e131f30"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeab13df0da2212c7c37408b69e131f30">&#9670;&#160;</a></span>FlowControl()</h2>
@@ -150,6 +173,9 @@ class FlowControl&lt; dim &gt;</div><p>Class allows to dynamically control the f
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;<a class="el" href="classFlowControl.html">::FlowControl</a> </td>
@@ -159,15 +185,30 @@ template&lt;int dim&gt; </div>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00011">11</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
+<p>Constructor of the flow controller. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">flow_control</td><td><a class="el" href="namespaceParameters.html">Parameters</a> of the dynamic flow control. When the flow control is enabled, its flow direction must be smaller than <code>dim</code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00018">18</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l02174">Parameters::DynamicFlowControl::enable_flow_control</a>, and <a class="el" href="flow__control_8h_source.html#l00190">FlowControl&lt; dim &gt;::flow_direction</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a5e8755cf979872c69e4fc4501f9d3b69" name="a5e8755cf979872c69e4fc4501f9d3b69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e8755cf979872c69e4fc4501f9d3b69">&#9670;&#160;</a></span>calculate_beta()</h2>
+<a id="a973249710dd8a28e70fdcf11409cf022" name="a973249710dd8a28e70fdcf11409cf022"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a973249710dd8a28e70fdcf11409cf022">&#9670;&#160;</a></span>calculate_beta()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +219,7 @@ template&lt;int dim&gt; </div>
           <td class="memname">void <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::calculate_beta </td>
           <td>(</td>
           <td class="paramtype">const double &amp;&#160;</td>
-          <td class="paramname"><em>average_velocity</em>, </td>
+          <td class="paramname"><em>average_velocity_n</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -200,22 +241,23 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>calculate_beta. This function calculates a beta coefficient which applies a force to the flow in order to adjust the flow rate to a desired average velocity through the previous flow rate. Once the flow rate is reached, the algorithm calculates a new beta to keep a constant flow rate. </p>
+<p>Calculate the beta force coefficient applied during the current time step. </p>
+<p>The coefficient adjusts the flow rate towards the target average velocity. Once the target is reached, the controller calculates the beta force that keeps the flow rate constant. The new coefficient is stored and can be obtained with <a class="el" href="classFlowControl.html#a84037f1cc88e210cfa728fd296e1f2b5" title="Get the beta force of the current time step.">get_beta()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">average_velocity.</td><td>The last step average_velocity</td></tr>
-    <tr><td class="paramname">dt.</td><td>The current time step</td></tr>
-    <tr><td class="paramname">step_number.</td><td>The current step </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">average_velocity_n</td><td>Average velocity of the last time step.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>Current time step.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">step_number</td><td>Current time step number. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00025">25</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00069">69</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
 
 </div>
 </div>
-<a id="a2791ebecf309e0e6b18e9ecea02d7c3f" name="a2791ebecf309e0e6b18e9ecea02d7c3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2791ebecf309e0e6b18e9ecea02d7c3f">&#9670;&#160;</a></span>get_beta()</h2>
+<a id="a84037f1cc88e210cfa728fd296e1f2b5" name="a84037f1cc88e210cfa728fd296e1f2b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84037f1cc88e210cfa728fd296e1f2b5">&#9670;&#160;</a></span>get_beta()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -229,7 +271,7 @@ template&lt;int dim&gt; </div>
           <td class="memname">Tensor&lt; 1, dim &gt; <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::get_beta </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -239,16 +281,17 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>get_beta. This function gives the beta force of the step time </p>
+<p>Get the beta force of the current time step. </p>
+<dl class="section return"><dt>Returns</dt><dd>Beta force tensor, whose only non-zero component is along the flow direction. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00079">79</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00068">68</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="flow__control_8h_source.html#l00116">FlowControl&lt; dim &gt;::beta</a>.</p>
+<p class="reference">References <a class="el" href="flow__control_8h_source.html#l00167">FlowControl&lt; dim &gt;::beta</a>.</p>
 
 </div>
 </div>
-<a id="ae7de4613db00f044a2d5319f3661d523" name="ae7de4613db00f044a2d5319f3661d523"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7de4613db00f044a2d5319f3661d523">&#9670;&#160;</a></span>get_beta_particles()</h2>
+<a id="ae2e556fdef77e2ab767a83fb60d8671b" name="ae2e556fdef77e2ab767a83fb60d8671b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2e556fdef77e2ab767a83fb60d8671b">&#9670;&#160;</a></span>get_beta_particles()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,7 +316,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td>
+          <td></td><td> const</td>
         </tr>
       </table>
   </td>
@@ -283,16 +326,25 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>get_beta_particle. This function gives the beta force of the CFD time step scaled for particles. </p>
+<p>Get the beta force of the current time step scaled for the particles. </p>
+<p>The particles are subjected to the same pressure gradient as the fluid, which gives beta_p * rho_p = beta_f * rho_f, in units of a pressure gradient M/(T²L²).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">fluid_density</td><td>Density of the fluid.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">particle_density</td><td>Density of the particles.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Beta force for the particles. It is a tensor of dimension 3 since it is added to the gravity of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters, which is always a tensor of dimension 3. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00089">89</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00090">90</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="flow__control_8h_source.html#l00116">FlowControl&lt; dim &gt;::beta</a>.</p>
+<p class="reference">References <a class="el" href="flow__control_8h_source.html#l00167">FlowControl&lt; dim &gt;::beta</a>.</p>
 
 </div>
 </div>
-<a id="a3f8d388638224072acc18b94f0c11f9e" name="a3f8d388638224072acc18b94f0c11f9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f8d388638224072acc18b94f0c11f9e">&#9670;&#160;</a></span>main_flow_controller()</h2>
+<a id="a68908c7c56929a24c7e05a714b3f664e" name="a68908c7c56929a24c7e05a714b3f664e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68908c7c56929a24c7e05a714b3f664e">&#9670;&#160;</a></span>main_flow_controller()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -317,29 +369,33 @@ template&lt;int dim&gt; </div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td>
+          <td></td><td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>main_flow_controller. This function calculates a beta coefficient based on a formula described by Wang, 2009 in "A non-body conformal grid
-method for simulations
-of laminar and turbulent flows with a compressible
-large eddy simulation solver" </p>
+<p>Calculate a beta force from the previous beta force and the average velocities of the last two time steps, following Wang (2009). </p>
+<p>Once the target average velocity has been reached, a beta force opposed to the target flow is set to zero.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">average_velocity_n</td><td>Average velocity of the last time step.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>Current time step.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Beta force calculated by the main controller. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00059">59</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
-
-<p class="reference">References <a class="el" href="flow__control_8h_source.html#l00123">FlowControl&lt; dim &gt;::alpha</a>, <a class="el" href="flow__control_8h_source.html#l00119">FlowControl&lt; dim &gt;::average_velocity_0</a>, <a class="el" href="flow__control_8h_source.html#l00128">FlowControl&lt; dim &gt;::average_velocity_1n</a>, <a class="el" href="flow__control_8h_source.html#l00127">FlowControl&lt; dim &gt;::beta_n</a>, and <a class="el" href="flow__control_8h_source.html#l00134">FlowControl&lt; dim &gt;::no_force</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00048">48</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
 
 </div>
 </div>
-<a id="af7d056138ae4650a3a826912549dfb0b" name="af7d056138ae4650a3a826912549dfb0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7d056138ae4650a3a826912549dfb0b">&#9670;&#160;</a></span>proportional_flow_controller()</h2>
+<a id="a80baa5b970e2ec8c1dffe462e0da5d5e" name="a80baa5b970e2ec8c1dffe462e0da5d5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80baa5b970e2ec8c1dffe462e0da5d5e">&#9670;&#160;</a></span>proportional_flow_controller()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -364,21 +420,27 @@ template&lt;int dim&gt; </div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td>
+          <td></td><td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>proportional_flow_controller. This function calculates a beta only with the last step average velocity. It is used to initialize the beta if there's no initial beta value at 1st time step and the 2nd time step. </p>
+<p>Calculate a beta force from the last average velocity only. It is used for the first and second time steps, when no initial beta is given or when the history of the main controller is not available yet. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">average_velocity_n</td><td>Average velocity of the last time step.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>Current time step.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Beta force calculated by the proportional controller. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00045">45</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
-
-<p class="reference">References <a class="el" href="flow__control_8h_source.html#l00123">FlowControl&lt; dim &gt;::alpha</a>, and <a class="el" href="flow__control_8h_source.html#l00119">FlowControl&lt; dim &gt;::average_velocity_0</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00040">40</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
 
 </div>
 </div>
@@ -400,14 +462,22 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00121">121</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
+<p>Read the state of the flow controller from a checkpoint file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>Prefix of the checkpoint files. The state is read from the file named <code>prefix</code> followed by the extension .flowcontrol. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00174">174</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8cc_source.html#l00225">check_file_exists()</a>.</p>
 
 </div>
 </div>
-<a id="a6715e2e6e717d86e9694add121d71a6c" name="a6715e2e6e717d86e9694add121d71a6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6715e2e6e717d86e9694add121d71a6c">&#9670;&#160;</a></span>save()</h2>
+<a id="ac6013155a77fb72b1cac5eb5860ed1fb" name="ac6013155a77fb72b1cac5eb5860ed1fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6013155a77fb72b1cac5eb5860ed1fb">&#9670;&#160;</a></span>save()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -419,12 +489,20 @@ template&lt;int dim&gt; </div>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>prefix</em></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00108">108</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
+<p>Save the state of the flow controller to a checkpoint file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>Prefix of the checkpoint files. The state is written in the file named <code>prefix</code> followed by the extension .flowcontrol. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8cc_source.html#l00156">156</a> of file <a class="el" href="flow__control_8cc_source.html">flow_control.cc</a>.</p>
 
 </div>
 </div>
@@ -451,59 +529,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00123">123</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p>Relaxation coefficient of the controllers. </p>
 
-</div>
-</div>
-<a id="add256a67717dc0487757017e76ac9722" name="add256a67717dc0487757017e76ac9722"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add256a67717dc0487757017e76ac9722">&#9670;&#160;</a></span>average_velocity_0</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::average_velocity_0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00119">119</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
-
-</div>
-</div>
-<a id="a8ae774535e50107219c481d41488953b" name="a8ae774535e50107219c481d41488953b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ae774535e50107219c481d41488953b">&#9670;&#160;</a></span>average_velocity_1n</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::average_velocity_1n</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00128">128</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00177">177</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 
 </div>
 </div>
@@ -528,60 +556,9 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Beta force of the current time step. Only its component along the flow direction is non-zero. </p>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00116">116</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
-
-</div>
-</div>
-<a id="ab9ca2a1b21eaf39cc47d1d889feb97fe" name="ab9ca2a1b21eaf39cc47d1d889feb97fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab9ca2a1b21eaf39cc47d1d889feb97fe">&#9670;&#160;</a></span>beta_0</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::beta_0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00122">122</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
-
-</div>
-</div>
-<a id="a19769bbf4028d49ce417aa4980e82a8b" name="a19769bbf4028d49ce417aa4980e82a8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19769bbf4028d49ce417aa4980e82a8b">&#9670;&#160;</a></span>beta_n</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::beta_n</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00127">127</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00167">167</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 
 </div>
 </div>
@@ -606,8 +583,9 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Relative change of the beta force below which the previous beta force is kept. </p>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00124">124</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00181">181</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 
 </div>
 </div>
@@ -633,12 +611,14 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00131">131</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p>Direction of the flow (0 for x, 1 for y and 2 for z). </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00190">190</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 
 </div>
 </div>
-<a id="a80d14d2c68789e091a9c3277a4414361" name="a80d14d2c68789e091a9c3277a4414361"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80d14d2c68789e091a9c3277a4414361">&#9670;&#160;</a></span>no_force</h2>
+<a id="a6548fc6c0e27cca25b04e1b46cc054d7" name="a6548fc6c0e27cca25b04e1b46cc054d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6548fc6c0e27cca25b04e1b46cc054d7">&#9670;&#160;</a></span>force_free_deceleration_is_allowed</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -649,7 +629,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::no_force</td>
+          <td class="memname">bool <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::force_free_deceleration_is_allowed = true</td>
         </tr>
       </table>
   </td>
@@ -658,13 +638,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>True while the target average velocity has not been reached once without any force applied. In that state, an average velocity slightly above the target (within the force-free velocity band) is allowed to decrease without any force, through the pressure drop only. </p>
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00134">134</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00196">196</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 
 </div>
 </div>
-<a id="a32c0e8b195226d56637cd5db22ae9115" name="a32c0e8b195226d56637cd5db22ae9115"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a32c0e8b195226d56637cd5db22ae9115">&#9670;&#160;</a></span>threshold_factor</h2>
+<a id="a23fcdedfbb4101a9fb9446765bb340f0" name="a23fcdedfbb4101a9fb9446765bb340f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23fcdedfbb4101a9fb9446765bb340f0">&#9670;&#160;</a></span>force_free_velocity_band_factor</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -675,7 +656,118 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::threshold_factor</td>
+          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::force_free_velocity_band_factor</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">    <a class="code hl_variable" href="classFlowControl.html#a2fd37749e2ae294c7a86c9c0b9e12d4a">initial_force_free_velocity_band_factor</a></div>
+<div class="ttc" id="aclassFlowControl_html_a2fd37749e2ae294c7a86c9c0b9e12d4a"><div class="ttname"><a href="classFlowControl.html#a2fd37749e2ae294c7a86c9c0b9e12d4a">FlowControl::initial_force_free_velocity_band_factor</a></div><div class="ttdeci">static constexpr double initial_force_free_velocity_band_factor</div><div class="ttdef"><b>Definition</b> <a href="flow__control_8h_source.html#l00159">flow_control.h:159</a></div></div>
+</div><!-- fragment --><p>Ratio of the upper limit of the force-free velocity band to the target average velocity. Its distance to 1 is halved when the pressure drop alone is too slow to bring the average velocity back to the target. </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00201">201</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+
+</div>
+</div>
+<a id="acf54fd6aa5f44a12b701d1fe7448d19e" name="acf54fd6aa5f44a12b701d1fe7448d19e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf54fd6aa5f44a12b701d1fe7448d19e">&#9670;&#160;</a></span>initial_beta</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::initial_beta</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Initial beta force given by the user. It is only used when its magnitude is larger than zero_beta_tolerance. </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00174">174</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+
+</div>
+</div>
+<a id="a2fd37749e2ae294c7a86c9c0b9e12d4a" name="a2fd37749e2ae294c7a86c9c0b9e12d4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fd37749e2ae294c7a86c9c0b9e12d4a">&#9670;&#160;</a></span>initial_force_free_velocity_band_factor</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::initial_force_free_velocity_band_factor = 1.01</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Initial ratio of the upper limit of the force-free velocity band to the target average velocity. </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00159">159</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+
+</div>
+</div>
+<a id="ad042c208408ca3c388b054aed4d4f786" name="ad042c208408ca3c388b054aed4d4f786"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad042c208408ca3c388b054aed4d4f786">&#9670;&#160;</a></span>minimum_force_free_velocity_band_factor</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::minimum_force_free_velocity_band_factor = 1.00125</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Smallest ratio of the upper limit of the force-free velocity band to the target average velocity. The band stops shrinking below this value. </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00163">163</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+
+</div>
+</div>
+<a id="a2fa793dad84fad6f6440c40e2ea8c7dc" name="a2fa793dad84fad6f6440c40e2ea8c7dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fa793dad84fad6f6440c40e2ea8c7dc">&#9670;&#160;</a></span>previous_average_velocity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::previous_average_velocity = 0.0</td>
         </tr>
       </table>
   </td>
@@ -685,7 +777,93 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00135">135</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+<p>Average velocity of the previous time step. </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00187">187</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+
+</div>
+</div>
+<a id="a9f91f9e2bda34997d257fa86a145de59" name="a9f91f9e2bda34997d257fa86a145de59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f91f9e2bda34997d257fa86a145de59">&#9670;&#160;</a></span>previous_beta</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::previous_beta = 0.0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Beta force applied during the previous time step. </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00184">184</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+
+</div>
+</div>
+<a id="a8fc6d79e5bde6f2882ef24da357f56d5" name="a8fc6d79e5bde6f2882ef24da357f56d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fc6d79e5bde6f2882ef24da357f56d5">&#9670;&#160;</a></span>target_average_velocity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::target_average_velocity</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Target average velocity. </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00170">170</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
+
+</div>
+</div>
+<a id="a7e4e67a8e9a6a060134b70878afe150c" name="a7e4e67a8e9a6a060134b70878afe150c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e4e67a8e9a6a060134b70878afe150c">&#9670;&#160;</a></span>zero_beta_tolerance</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double <a class="el" href="classFlowControl.html">FlowControl</a>&lt; dim &gt;::zero_beta_tolerance = 1e-6</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Below this magnitude, a beta force is considered to be zero. </p>
+
+<p class="definition">Definition at line <a class="el" href="flow__control_8h_source.html#l00155">155</a> of file <a class="el" href="flow__control_8h_source.html">flow_control.h</a>.</p>
 
 </div>
 </div>
