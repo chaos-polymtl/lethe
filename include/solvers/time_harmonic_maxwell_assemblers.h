@@ -259,12 +259,19 @@ private:
  * electric trace with the surface admittance \f$Y\f$ and the excitation
  * \f$\mathbf{g}\f$, which gives the terms
  * \f$-\langle Y \hat{\mathbf{E}}, \mathbf{F} \rangle\f$ in \f$\hat{B}\f$ and
- * \f$-\langle \mathbf{g}, \mathbf{F} \rangle\f$ in \f$l\f$. Since the energy
+ * \f$-\langle \mathbf{g}, \mathbf{F} \rangle\f$ in \f$l\f$, where only the
+ * tangential component of \f$\mathbf{g}\f$ is used since the left-hand side
+ * of the Robin boundary condition is tangential. Since the energy
  * norm that is minimized is also modified on these faces, it also assembles
  * the boundary terms of the Gram matrix
  * \f$G\f$:
- *\f[\left(\mathbf{n}\times\mathbf{I}+Y*\mathbf{n}\times(\mathbf{F}\times\mathbf{n}),
-\mathbf{n}\times\tilde{\mathbf{I}}+Y*\mathbf{n}\times(\tilde{\mathbf{F}}\times\mathbf{n})\right)_{\Gamma_R}.\f]
+ *\f[\left(\mathbf{n}\times\mathbf{I}+Y^*\mathbf{n}\times(\mathbf{F}\times\mathbf{n}),
+\mathbf{n}\times\tilde{\mathbf{I}}+Y^*\mathbf{n}\times(\tilde{\mathbf{F}}\times\mathbf{n})\right)_{\Gamma_R},\f]
+ * where \f$Y^*\f$ is the complex conjugate of \f$Y\f$ and the inner product
+ * is conjugated in its first argument. This term only involves the tangential
+ * traces of the test functions, which are in \f$L^2(\Gamma_R)\f$ for the test
+ * space \f$\{\mathbf{y} \in H(\mathrm{curl},\Omega_h) : \mathbf{n}\times
+ * \mathbf{y}|_{\Gamma_R} \in (L^2(\Gamma_R))^3\}\f$.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

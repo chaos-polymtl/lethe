@@ -156,37 +156,35 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   // Initialize the sizes
   this->n_q_points      = this->fe_values_test.get_quadrature().size();
   this->n_face_q_points = this->fe_face_values_test.get_quadrature().size();
-  this->n_dofs_test     = fe_test.n_dofs_per_cell();
-  this->n_dofs_trial_interior = fe_trial_interior.n_dofs_per_cell();
-  this->n_dofs_trial_skeleton = fe_trial_skeleton.n_dofs_per_cell();
 
-  // Classify the shape functions of each space according to the field they
-  // belong to, gather their local indices in the corresponding lists and store
-  // the local dof index of each base function for each field. This is only
-  // done once since it only depends on the finite elements. Since the three
-  // spaces are [E_real, E_imag, H_real, H_imag] finite element systems, every
-  // shape function belongs to exactly one field.
-  classify_shape_functions(fe_test,
-                           this->shape_function_type_test,
-                           this->test_dofs_electric,
-                           this->test_dofs_magnetic,
-                           this->test_base_dofs);
-  classify_shape_functions(fe_trial_interior,
-                           this->shape_function_type_trial_interior,
-                           this->trial_interior_dofs_electric,
-                           this->trial_interior_dofs_magnetic,
-                           this->trial_interior_base_dofs);
-  classify_shape_functions(fe_trial_skeleton,
-                           this->shape_function_type_trial_skeleton,
-                           this->trial_skeleton_dofs_electric,
-                           this->trial_skeleton_dofs_magnetic,
-                           this->trial_skeleton_base_dofs);
+  // Compute the local dof index of each base function for each field of each
+  // space. This is only done once since it only depends on the finite
+  // elements.
+  std::vector<unsigned int> test_base_function_of_dof;
+  std::vector<unsigned int> trial_interior_base_function_of_dof;
+  std::vector<unsigned int> trial_skeleton_base_function_of_dof;
+  compute_base_dofs(fe_test, this->test_base_dofs, test_base_function_of_dof);
+  compute_base_dofs(fe_trial_interior,
+                    this->trial_interior_base_dofs,
+                    trial_interior_base_function_of_dof);
+  compute_base_dofs(fe_trial_skeleton,
+                    this->trial_skeleton_base_dofs,
+                    trial_skeleton_base_function_of_dof);
 
   this->n_base_functions_test = this->test_base_dofs[E_real].size();
   this->n_base_functions_trial_interior =
     this->trial_interior_base_dofs[E_real].size();
   this->n_base_functions_trial_skeleton =
     this->trial_skeleton_base_dofs[E_real].size();
+
+  // Base functions of the test and skeleton trial spaces associated with each
+  // face of the reference cell
+  compute_face_base_functions(fe_test,
+                              test_base_function_of_dof,
+                              this->face_test_base_functions);
+  compute_face_base_functions(fe_trial_skeleton,
+                              trial_skeleton_base_function_of_dof,
+                              this->face_trial_skeleton_base_functions);
 
   // Cell quadrature
   this->JxW               = std::vector<double>(n_q_points);
@@ -220,6 +218,7 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->phi_trial_interior.reinit(n_base_functions_trial_interior, n_q_points);
 
   // Face quadrature
+  this->face_no                = 0;
   this->face_at_boundary       = false;
   this->face_boundary_id       = numbers::invalid_boundary_id;
   this->face_JxW               = std::vector<double>(n_face_q_points);
@@ -241,78 +240,57 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->face_effective_magnetic_permeabilities =
     std::vector<std::complex<double>>(n_face_q_points);
 
-  // Test and skeleton trial functions at the face quadrature points
-  this->phi_F_face.reinit(n_face_q_points, n_dofs_test);
-  this->phi_F_face_conj.reinit(n_face_q_points, n_dofs_test);
-  this->phi_I_face_conj.reinit(n_face_q_points, n_dofs_test);
-  this->n_cross_phi_I_face.reinit(n_face_q_points, n_dofs_test);
-  this->n_cross_phi_I_face_conj.reinit(n_face_q_points, n_dofs_test);
-  this->phi_E_hat.reinit(n_face_q_points, n_dofs_trial_skeleton);
-  this->n_cross_phi_E_hat.reinit(n_face_q_points, n_dofs_trial_skeleton);
-  this->n_cross_phi_H_hat.reinit(n_face_q_points, n_dofs_trial_skeleton);
+  // Test and skeleton trial base functions at the face quadrature points
+  this->phi_test_face.reinit(n_base_functions_test, n_face_q_points);
+  this->n_cross_phi_test_face.reinit(n_base_functions_test, n_face_q_points);
+  this->tangential_phi_trial_skeleton.reinit(n_base_functions_trial_skeleton,
+                                             n_face_q_points);
+  this->n_cross_tangential_phi_trial_skeleton.reinit(
+    n_base_functions_trial_skeleton, n_face_q_points);
 }
 
 template <int dim>
 void
-TimeHarmonicMaxwellScratchData<dim>::classify_shape_functions(
-  const FiniteElement<dim>   &fe,
-  std::vector<unsigned char> &shape_function_type,
-  std::vector<unsigned int>  &electric_dofs,
-  std::vector<unsigned int>  &magnetic_dofs,
-  std::array<std::vector<unsigned int>, n_electromagnetic_fields> &base_dofs)
-  const
+TimeHarmonicMaxwellScratchData<dim>::compute_base_dofs(
+  const FiniteElement<dim>                                        &fe,
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields> &base_dofs,
+  std::vector<unsigned int> &base_function_of_dof) const
 {
   // Since the four fields use the same base element, each field has a quarter
   // of the shape functions of the finite element system.
   const unsigned int n_base_functions =
     fe.n_dofs_per_cell() / n_electromagnetic_fields;
 
-  shape_function_type.assign(fe.n_dofs_per_cell(), 0);
-  electric_dofs.clear();
-  magnetic_dofs.clear();
+  // Extractor of each field, indexed by the ElectromagneticFieldComponents
+  // enumeration
+  const std::array<FEValuesExtractors::Vector, n_electromagnetic_fields>
+    field_extractors = {
+      {extractor_E_real, extractor_E_imag, extractor_H_real, extractor_H_imag}};
+
+  base_function_of_dof.assign(fe.n_dofs_per_cell(),
+                              numbers::invalid_unsigned_int);
   for (auto &field_base_dofs : base_dofs)
     field_base_dofs.assign(n_base_functions, numbers::invalid_unsigned_int);
 
   for (unsigned int k = 0; k < fe.n_dofs_per_cell(); ++k)
     {
-      if (fe.shape_function_belongs_to(k, extractor_E_real))
-        shape_function_type[k] |= electric_real;
-      if (fe.shape_function_belongs_to(k, extractor_E_imag))
-        shape_function_type[k] |= electric_imag;
-      if (fe.shape_function_belongs_to(k, extractor_H_real))
-        shape_function_type[k] |= magnetic_real;
-      if (fe.shape_function_belongs_to(k, extractor_H_imag))
-        shape_function_type[k] |= magnetic_imag;
-
-      if (shape_function_type[k] & is_electric)
-        electric_dofs.emplace_back(k);
-      else if (shape_function_type[k] & is_magnetic)
-        magnetic_dofs.emplace_back(k);
-
-      // Field of the shape function
-      unsigned int field_index = numbers::invalid_unsigned_int;
-      switch (shape_function_type[k])
-        {
-          case electric_real:
-            field_index = E_real;
-            break;
-          case electric_imag:
-            field_index = E_imag;
-            break;
-          case magnetic_real:
-            field_index = H_real;
-            break;
-          case magnetic_imag:
-            field_index = H_imag;
-            break;
-          default:
-            AssertThrow(false,
-                        ExcMessage(
-                          "The shape function " + std::to_string(k) +
-                          " of the finite element " + fe.get_name() +
-                          " does not belong to exactly one of the E_real, "
-                          "E_imag, H_real and H_imag fields."));
-        }
+      // Field of the shape function. Each shape function must belong to
+      // exactly one field.
+      unsigned int field_index    = numbers::invalid_unsigned_int;
+      unsigned int n_owner_fields = 0;
+      for (unsigned int candidate_field = 0;
+           candidate_field < n_electromagnetic_fields;
+           ++candidate_field)
+        if (fe.shape_function_belongs_to(k, field_extractors[candidate_field]))
+          {
+            field_index = candidate_field;
+            ++n_owner_fields;
+          }
+      AssertThrow(n_owner_fields == 1,
+                  ExcMessage("The shape function " + std::to_string(k) +
+                             " of the finite element " + fe.get_name() +
+                             " does not belong to exactly one of the E_real, "
+                             "E_imag, H_real and H_imag fields."));
 
       // Base function of the shape function k. The function
       // system_to_base_index identifies k by three indices:
@@ -350,6 +328,33 @@ TimeHarmonicMaxwellScratchData<dim>::classify_shape_functions(
                     "element."));
 
       base_dofs[field_index][base_function] = k;
+      base_function_of_dof[k]               = base_function;
+    }
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwellScratchData<dim>::compute_face_base_functions(
+  const FiniteElement<dim>               &fe,
+  const std::vector<unsigned int>        &base_function_of_dof,
+  std::vector<std::vector<unsigned int>> &face_base_functions) const
+{
+  const unsigned int n_faces = fe.reference_cell().n_faces();
+  face_base_functions.assign(n_faces, std::vector<unsigned int>());
+
+  for (unsigned int face = 0; face < n_faces; ++face)
+    {
+      // The degrees of freedom located on the face belong to the four fields,
+      // so each base function associated with the face appears four times. The
+      // duplicates are removed after sorting the list.
+      face_base_functions[face].reserve(fe.n_dofs_per_face(face));
+      for (unsigned int i = 0; i < fe.n_dofs_per_face(face); ++i)
+        face_base_functions[face].emplace_back(
+          base_function_of_dof[fe.face_to_cell_index(i, face)]);
+
+      std::ranges::sort(face_base_functions[face]);
+      const auto duplicates = std::ranges::unique(face_base_functions[face]);
+      face_base_functions[face].erase(duplicates.begin(), duplicates.end());
     }
 }
 
@@ -478,9 +483,8 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
     }
   else
     {
-      static constexpr std::complex<double> imag{0., 1.};
-
       const auto face        = cell_skeleton->face(face_no);
+      this->face_no          = face_no;
       this->face_at_boundary = face->at_boundary();
       this->face_boundary_id = this->face_at_boundary ?
                                  face->boundary_id() :
@@ -493,65 +497,46 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
 
       for (unsigned int q = 0; q < n_face_q_points; ++q)
         {
-          const Tensor<1, dim> &normal =
-            this->fe_face_values_trial_skeleton.normal_vector(q);
-
           this->face_JxW[q] = this->fe_face_values_trial_skeleton.JxW(q);
           this->face_quadrature_points[q] =
             this->fe_face_values_trial_skeleton.quadrature_point(q);
-          this->face_normals[q] = normal;
+          this->face_normals[q] =
+            this->fe_face_values_trial_skeleton.normal_vector(q);
+        }
 
-          // Electric test functions F
-          for (const unsigned int k : this->test_dofs_electric)
+      // Base functions of the test space associated with the face, evaluated
+      // with the E_real shape functions since the four fields share the same
+      // base functions. The face terms of the bilinear forms, of the test norm
+      // and of the load vector only involve the tangential traces of the test
+      // functions, which vanish on this face for the other base functions.
+      for (const unsigned int i : this->face_test_base_functions[face_no])
+        {
+          const unsigned int k = this->test_base_dofs[E_real][i];
+          for (unsigned int q = 0; q < n_face_q_points; ++q)
             {
-              phi_F_face[q][k] =
-                fe_face_values_test[extractor_E_real].value(k, q) +
-                imag * fe_face_values_test[extractor_E_imag].value(k, q);
-              phi_F_face_conj[q][k] =
-                fe_face_values_test[extractor_E_real].value(k, q) -
-                imag * fe_face_values_test[extractor_E_imag].value(k, q);
+              phi_test_face[i][q] =
+                fe_face_values_test[extractor_E_real].value(k, q);
+              n_cross_phi_test_face[i][q] =
+                cross_product_3d(face_normals[q], phi_test_face[i][q]);
             }
+        }
 
-          // Magnetic test functions I
-          for (const unsigned int k : this->test_dofs_magnetic)
+      // Base functions of the skeleton trial space associated with the face.
+      // To be in H^-1/2(curl), the fields need to have the tangential trace
+      // mapping (n x (E x n)) which extracts the tangential component of the
+      // field at the face.
+      for (const unsigned int j :
+           this->face_trial_skeleton_base_functions[face_no])
+        {
+          const unsigned int k = this->trial_skeleton_base_dofs[E_real][j];
+          for (unsigned int q = 0; q < n_face_q_points; ++q)
             {
-              phi_I_face_conj[q][k] =
-                fe_face_values_test[extractor_H_real].value(k, q) -
-                imag * fe_face_values_test[extractor_H_imag].value(k, q);
-
-              n_cross_phi_I_face[q][k] = cross_product_3d(
-                normal,
-                fe_face_values_test[extractor_H_real].value(k, q) +
-                  imag * fe_face_values_test[extractor_H_imag].value(k, q));
-              n_cross_phi_I_face_conj[q][k] = cross_product_3d(
-                normal,
-                fe_face_values_test[extractor_H_real].value(k, q) -
-                  imag * fe_face_values_test[extractor_H_imag].value(k, q));
-            }
-
-          // Skeleton trial functions. To be in H^-1/2(curl), the fields need
-          // to have the tangential trace mapping (n x (E x n)) which extracts
-          // the tangential component of the field at the face.
-          for (const unsigned int k : this->trial_skeleton_dofs_electric)
-            {
-              phi_E_hat[q][k] = tangential_component(
-                fe_face_values_trial_skeleton[extractor_E_real].value(k, q) +
-                  imag *
-                    fe_face_values_trial_skeleton[extractor_E_imag].value(k, q),
-                normal);
-              n_cross_phi_E_hat[q][k] =
-                cross_product_3d(normal, phi_E_hat[q][k]);
-            }
-          for (const unsigned int k : this->trial_skeleton_dofs_magnetic)
-            {
-              n_cross_phi_H_hat[q][k] = cross_product_3d(
-                normal,
-                tangential_component(
-                  fe_face_values_trial_skeleton[extractor_H_real].value(k, q) +
-                    imag *
-                      fe_face_values_trial_skeleton[extractor_H_imag].value(k,
-                                                                            q),
-                  normal));
+              tangential_phi_trial_skeleton[j][q] = tangential_component(
+                fe_face_values_trial_skeleton[extractor_E_real].value(k, q),
+                face_normals[q]);
+              n_cross_tangential_phi_trial_skeleton[j][q] =
+                cross_product_3d(face_normals[q],
+                                 tangential_phi_trial_skeleton[j][q]);
             }
         }
     }
