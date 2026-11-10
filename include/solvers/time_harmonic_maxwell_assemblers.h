@@ -207,9 +207,7 @@ compute_robin_boundary_data(
   const std::complex<double> &effective_magnetic_permeability);
 
 /**
- * @brief Powers through a boundary: the net power entering the domain and, on
- * a boundary with a Robin boundary condition, its split into the incident,
- * outgoing and cross powers, such that net = incident - outgoing + cross.
+ * @brief Powers through a boundary such that net = incident - outgoing + cross.
  */
 struct BoundaryPowerTypes
 {

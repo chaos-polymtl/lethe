@@ -658,9 +658,7 @@ private:
   /**
    * @brief Compute the electromagnetic powers (net power through each
    * boundary, incident, outgoing and cross powers on the Robin boundaries, and
-   * power absorbed in each material), add them to the electromagnetic power
-   * table and write this table. If the post-processing verbosity is verbose,
-   * also print a summary of the power balance.
+   * power absorbed in each material).
    */
   void
   compute_power_balance();
@@ -944,11 +942,12 @@ private:
   /**
    * Electric amplitudes of all the waveguide ports relative to the maximum
    * amplitude of all the ports. The electric amplitude of a port is
-   * \f$ \sqrt{P_\mathrm{input} Z_0/P_\mathrm{port}} \f$, where
-   * \f$P_\mathrm{input}\f$ is the input power provided by the user for a given
-   * waveguide port and \f$P_\mathrm{port}\f$ is the power computed from
-   * integrating the Poynting vector of the electromagnetic fields at the inlet
-   * associated with the waveguide port condition.
+   * \f$ \sqrt{P_\mathrm{input} Z_0/P_\mathrm{port}} \f$ and is always computed
+   * in dimensional units, where \f$P_\mathrm{input}\f$ is the input power
+   * provided by the user for a given waveguide port and \f$P_\mathrm{port}\f$
+   * is the power computed from integrating the Poynting vector of the
+   * electromagnetic fields at the inlet associated with the waveguide port
+   * condition.
    */
   std::vector<double> waveguide_ports_relative_amplitudes;
 

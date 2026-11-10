@@ -339,7 +339,7 @@ Multiphysics Post-processing
 
 * ``calculate electromagnetic power``: controls if the calculation of the electromagnetic powers is enabled for the time-harmonic Maxwell equations. The powers are computed after each solve of the time-harmonic Maxwell equations and written in the file ``<electromagnetic power name>.dat`` of the output folder. They are defined below with the non-dimensional fields :math:`\mathbf{E}` and :math:`\mathbf{H}` of the time-harmonic Maxwell equations. If the ``electromagnetic scaling type`` is not ``none``, they are converted to W, regardless of the ``dimensionality`` of the problem, by the factor :math:`E_0^2 L^2 / Z_0`, where :math:`E_0` is the electric field amplitude used to scale the solution (in V/m), :math:`L` is the length unit of the mesh (in m) and :math:`Z_0` is the impedance of free space. Otherwise, they are non-dimensional. The following powers are computed:
 
-  1. the net power entering the domain through each boundary :math:`\Gamma`, i.e. the flux of the time-averaged Poynting vector through :math:`\Gamma`, where :math:`\mathbf{n}` is the outward normal and :math:`\mathbf{E}_T` is the tangential electric field:
+  1. The net power entering the domain through each boundary :math:`\Gamma`, i.e. the flux of the time-averaged Poynting vector through :math:`\Gamma`, where :math:`\mathbf{n}` is the outward normal and :math:`\mathbf{E}_T` is the tangential electric field:
 
   .. math::
 
@@ -350,21 +350,21 @@ Multiphysics Post-processing
   .. Tip::
     The net power through the ``pec`` and ``pmc`` boundaries must vanish, which provides a sanity check.
 
-  2. the incident power :math:`P_\text{in}`, the outgoing power :math:`P_\text{out}` and the cross power :math:`P_\text{cross}` for each Robin boundary, i.e. each boundary with a ``silver_muller``, ``impedance_boundary`` or ``waveguide_port`` boundary condition, which all follow the same boundary condition :math:`\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}`. The tangential electric field on the boundary is split into an incident wave entering the domain, :math:`\mathbf{n}\times\mathbf{H}_\text{in} = Y\mathbf{E}_\text{in}`, and an outgoing wave, :math:`\mathbf{n}\times\mathbf{H}_\text{out} = -Y\mathbf{E}_\text{out}`. The boundary condition then gives :math:`\mathbf{E}_\text{in} = \mathbf{g}/(2Y)` and :math:`\mathbf{E}_\text{out} = \mathbf{E}_T - \mathbf{E}_\text{in}`. The powers are defined from the Poynting flux of each wave as:
+  2. The incident power :math:`P_\text{in}`, the outgoing power :math:`P_\text{out}` and the cross power :math:`P_\text{cross}` (the Poynting flux due to the interaction between the incident and outgoing waves) for each Robin boundary, i.e. each boundary with a ``silver_muller``, ``impedance_boundary`` or ``waveguide_port`` boundary condition, which all follow the same boundary condition :math:`\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}`. The total tangential electric field on the boundary :math:`\mathbf{E}_T` is split into an incident wave entering the domain, :math:`\mathbf{n}\times\mathbf{H}_\text{in} = Y\mathbf{E}_\text{in}`, and an outgoing wave, :math:`\mathbf{n}\times\mathbf{H}_\text{out} = -Y\mathbf{E}_\text{out}`. The boundary condition then gives :math:`\mathbf{E}_\text{in} = \mathbf{g}/(2Y)` and :math:`\mathbf{E}_\text{out} = \mathbf{E}_T - \mathbf{E}_\text{in}`. Consequentally, the powers are defined from the Poynting flux of each wave as:
 
   .. math::
 
       P_\text{in} = \frac{\mathrm{Re}(Y)}{2}\int_\Gamma |\mathbf{E}_\text{in}|^2 \qquad P_\text{out} = \frac{\mathrm{Re}(Y)}{2}\int_\Gamma |\mathbf{E}_\text{out}|^2 \qquad P_\text{cross} = \mathrm{Im}(Y)\int_\Gamma \mathrm{Im}\left(\mathbf{E}_\text{out}\cdot\mathbf{E}_\text{in}^*\right)
 
-  such that the net power entering the domain through the boundary is :math:`P_\text{net} = P_\text{in} - P_\text{out} + P_\text{cross}`. On a waveguide port that is the only excited boundary, :math:`P_\text{in}` is the power of the incident mode (i.e. the ``waveguide power`` when the ``electromagnetic scaling type`` is ``power``) and :math:`P_\text{out}` is the reflected power. With several excited boundaries, :math:`P_\text{out}` also contains the waves coming from the other excited boundaries. On a boundary without excitation (:math:`\mathbf{g}=\mathbf{0}`), :math:`P_\text{in}=0` and :math:`P_\text{out}` is the transmitted power. The cross power vanishes for a real admittance, i.e. when the medium at the boundary is lossless. In a lossy medium, it accounts for the cross term of the Poynting flux of the two waves (i.e. the interaction between the incident and outgoing waves). The output table is appended with the columns ``incident_power_bc_i``, ``outgoing_power_bc_i`` and ``cross_power_bc_i``, where ``i`` is the boundary id.
+  such that the net power entering the domain through the boundary is :math:`P_\text{net} = P_\text{in} - P_\text{out} + P_\text{cross}`. The output table is appended with the columns ``incident_power_bc_i``, ``outgoing_power_bc_i`` and ``cross_power_bc_i``, where ``i`` is the boundary id.
 
-  3. the power absorbed in each material :math:`\Omega_m`:
+  3. The power absorbed in each material :math:`\Omega_m`:
 
   .. math::
 
       P_\text{abs} = \frac{\omega}{2}\int_{\Omega_m} \left((\varepsilon_r'' + \sigma_r)|\mathbf{E}|^2 + \mu_r''|\mathbf{H}|^2\right)
 
-  where :math:`\omega` is the non-dimensional angular frequency, :math:`\varepsilon_r''` and :math:`\mu_r''` are the imaginary parts of the relative electric permittivity and magnetic permeability, and :math:`\sigma_r` is the dimensionless electric conductivity (see :doc:`physical properties <physical_properties>`). It is the integral over the material of the electromagnetic heat source of the heat transfer equation (Joule, dielectric and magnetic losses). The output table is appended with one column per material, named ``absorbed_power_material_i``, where ``i`` is the material id (``0`` for the fluid and ``i`` for the i-th solid).
+  where :math:`\omega` is the non-dimensional angular frequency, :math:`\varepsilon_r''` and :math:`\mu_r''` are the imaginary parts of the relative electric permittivity and magnetic permeability, and :math:`\sigma_r` is the dimensionless electric conductivity (see :doc:`physical properties <physical_properties>`). The output table is appended with one column per material, named ``absorbed_power_material_i``, where ``i`` is the material id (``0`` for the fluid and ``i`` for the i-th solid).
 
   If ``verbosity = verbose``, a summary is also printed in the terminal. It lists the powers of all the boundaries, the power absorbed in each material and the power balance, with the labels of the summary:
 
@@ -375,7 +375,7 @@ Multiphysics Post-processing
         \text{reflected} &= \sum_{\text{Robin},\, P_\text{in} > 0} P_\text{out}, &
         \text{transmitted} &= \sum_{\text{Robin},\, P_\text{in} = 0} P_\text{out}, \\
         \text{cross} &= \sum_{\text{Robin}} P_\text{cross}, &
-        \text{net entering, non-Robin} &= \sum_{\text{non-Robin}} P_\text{net}, &
+        \text{net entering} &= \sum_{\text{non-Robin}} P_\text{net}, &
         \text{absorbed} &= \sum_{m} P_\text{abs},
       \end{align}
 
@@ -383,7 +383,7 @@ Multiphysics Post-processing
 
   .. math::
 
-      \text{imbalance} = \sum_{\Gamma} P_\text{net} - \text{absorbed} = \text{incident} - \text{reflected} - \text{transmitted} + \text{cross} + \text{net entering, non-Robin} - \text{absorbed}
+      \text{imbalance} = \text{incident} - \text{reflected} - \text{transmitted} + \text{cross} + \text{net entering} - \text{absorbed}
 
   The percentages are relative to the incident power.
 
