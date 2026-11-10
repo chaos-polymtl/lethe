@@ -4976,13 +4976,14 @@ namespace Parameters
       prm.declare_entry("inlet boundary id",
                         Patterns::Tools::Convert<unsigned int>::to_string(
                           defaults.boundary_flow_id),
-                        Patterns::Integer(),
+                        Patterns::Integer(0),
                         "Boundary id of the inlet flow");
-      prm.declare_entry("flow direction",
-                        Patterns::Tools::Convert<unsigned int>::to_string(
-                          defaults.flow_direction),
-                        Patterns::Integer(),
-                        "Flow direction at flow inlet");
+      prm.declare_entry(
+        "flow direction",
+        Patterns::Tools::Convert<unsigned int>::to_string(
+          defaults.flow_direction),
+        Patterns::Integer(0, 2),
+        "Flow direction at flow inlet (0 for x, 1 for y and 2 for z)");
       prm.declare_entry("initial beta",
                         Patterns::Tools::Convert<double>::to_string(
                           defaults.beta_0),
@@ -4991,7 +4992,7 @@ namespace Parameters
       prm.declare_entry("alpha",
                         Patterns::Tools::Convert<double>::to_string(
                           defaults.alpha),
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Relaxation coefficient for flow controller");
       prm.declare_entry("enable beta particle",
                         Patterns::Tools::Convert<bool>::to_string(
@@ -5001,7 +5002,7 @@ namespace Parameters
       prm.declare_entry(
         "beta threshold",
         Patterns::Tools::Convert<double>::to_string(defaults.beta_threshold),
-        Patterns::Double(),
+        Patterns::Double(0.),
         "Relative threshold on the change of the beta force below which the previous beta force is kept");
       declare_enum_entry(
         prm,
