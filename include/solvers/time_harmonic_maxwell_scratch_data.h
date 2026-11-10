@@ -544,9 +544,9 @@ public:
 
   // Cell container for the volume integrals weights
   std::vector<double> JxW;
-  // (1 + |iweps|^2) JxW, weight of (phi_j, phi_i) in the FF block of G
+  // (1 + |iweps|^2) JxW, weight of (phi_i, phi_j) in the FF block of G
   std::vector<double> JxW_FF_container;
-  // (1 + |iwmu|^2) JxW, weight of (phi_j, phi_i) in the II block of G
+  // (1 + |iwmu|^2) JxW, weight of (phi_i, phi_j) in the II block of G
   std::vector<double> JxW_II_container;
   // iweps JxW
   std::vector<std::complex<double>> iweps_JxW_container;
