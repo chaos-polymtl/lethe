@@ -10,8 +10,8 @@
 
 namespace BoundaryConditions
 {
-  extern template class NavierStokesBoundaryConditions<2>;
-  extern template class NavierStokesBoundaryConditions<3>;
+  extern template class FluidDynamicsBoundaryConditions<2>;
+  extern template class FluidDynamicsBoundaryConditions<3>;
   extern template class HeatTransferBoundaryConditions<2>;
   extern template class HeatTransferBoundaryConditions<3>;
   extern template class TracerBoundaryConditions<2>;

@@ -92,12 +92,12 @@ namespace BoundaryConditions
   };
 
   /**
-   * @brief This class manages the boundary conditions for Navier-Stokes solver
+   * @brief This class manages the boundary conditions forhe fluid dynamics solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
   template <int dim>
-  class NavierStokesBoundaryConditions : public BoundaryConditions
+  class FluidDynamicsBoundaryConditions : public BoundaryConditions
   {
   public:
     /// Functions for (u : x component of the velocity, v : y component of the
@@ -145,7 +145,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NavierStokesBoundaryConditions<dim>::createNoSlip()
+  FluidDynamicsBoundaryConditions<dim>::createNoSlip()
   {
     this->type[0]                       = BoundaryType::noslip;
     this->number_of_boundary_conditions = 1;
@@ -162,7 +162,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NavierStokesBoundaryConditions<dim>::declare_default_entry(
+  FluidDynamicsBoundaryConditions<dim>::declare_default_entry(
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
@@ -251,7 +251,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NavierStokesBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
+  FluidDynamicsBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
     // Parse the list of boundary ids
     std::vector<types::boundary_id> boundary_ids =
@@ -380,7 +380,7 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  NavierStokesBoundaryConditions<dim>::declare_parameters(
+  FluidDynamicsBoundaryConditions<dim>::declare_parameters(
     ParameterHandler  &prm,
     const unsigned int number_of_boundary_conditions)
   {
@@ -421,7 +421,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NavierStokesBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  FluidDynamicsBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("boundary conditions");
     {

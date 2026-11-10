@@ -91,7 +91,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const StabilizationType                           stabilization,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
-  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
              &boundary_conditions,
   const bool &enable_hessians_jacobian,
   const bool &enable_hessians_residual,
@@ -126,7 +126,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const StabilizationType                           stabilization,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
-  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
              &boundary_conditions,
   const bool &enable_hessians_jacobian,
   const bool &enable_hessians_residual,

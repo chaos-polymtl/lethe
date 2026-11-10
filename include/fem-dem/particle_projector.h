@@ -429,7 +429,7 @@ public:
    */
   void
   setup_constraints(
-    const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &boundary_conditions);
 
   /**

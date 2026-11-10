@@ -210,7 +210,7 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
 template <int dim, typename PropertiesIndex>
 void
 ParticleProjector<dim, PropertiesIndex>::setup_constraints(
-  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
     &boundary_conditions)
 {
   has_periodic_boundaries = false;

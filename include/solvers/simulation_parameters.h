@@ -50,7 +50,7 @@ public:
   Parameters::PostProcessing<dim>                         post_processing;
   Parameters::Restart                                     restart_parameters;
   Parameters::Manifolds                                   manifolds_parameters;
-  BoundaryConditions::NavierStokesBoundaryConditions<dim> boundary_conditions;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<dim> boundary_conditions;
   BoundaryConditions::HeatTransferBoundaryConditions<dim>
                                                     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;

@@ -882,7 +882,7 @@ std::vector<std::map<types::boundary_id, Tensor<1, dim>>>
 calculate_forces(const DoFHandler<dim>           &dof_handler,
                  const VectorType                &evaluation_point,
                  const PhysicalPropertiesManager &properties_manager,
-                 const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+                 const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
                                            &boundary_conditions,
                  const Quadrature<dim - 1> &face_quadrature_formula,
                  const Mapping<dim>        &mapping)
@@ -994,7 +994,7 @@ calculate_forces<2, GlobalVectorType>(
   const DoFHandler<2>             &dof_handler,
   const GlobalVectorType          &evaluation_point,
   const PhysicalPropertiesManager &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<2>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
                       &boundary_conditions,
   const Quadrature<1> &face_quadrature_formula,
   const Mapping<2>    &mapping);
@@ -1003,7 +1003,7 @@ calculate_forces<3, GlobalVectorType>(
   const DoFHandler<3>             &dof_handler,
   const GlobalVectorType          &evaluation_point,
   const PhysicalPropertiesManager &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<3>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
                       &boundary_conditions,
   const Quadrature<2> &face_quadrature_formula,
   const Mapping<3>    &mapping);
@@ -1013,7 +1013,7 @@ calculate_forces<2, GlobalBlockVectorType>(
   const DoFHandler<2>             &dof_handler,
   const GlobalBlockVectorType     &evaluation_point,
   const PhysicalPropertiesManager &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<2>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
                       &boundary_conditions,
   const Quadrature<1> &face_quadrature_formula,
   const Mapping<2>    &mapping);
@@ -1023,7 +1023,7 @@ calculate_forces<3, GlobalBlockVectorType>(
   const DoFHandler<3>             &dof_handler,
   const GlobalBlockVectorType     &evaluation_point,
   const PhysicalPropertiesManager &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<3>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
                       &boundary_conditions,
   const Quadrature<2> &face_quadrature_formula,
   const Mapping<3>    &mapping);
@@ -1034,7 +1034,7 @@ calculate_forces<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const PhysicalPropertiesManager                  &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<2>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
                       &boundary_conditions,
   const Quadrature<1> &face_quadrature_formula,
   const Mapping<2>    &mapping);
@@ -1044,7 +1044,7 @@ calculate_forces<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const PhysicalPropertiesManager                  &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<3>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
                       &boundary_conditions,
   const Quadrature<2> &face_quadrature_formula,
   const Mapping<3>    &mapping);
@@ -1055,7 +1055,7 @@ std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques(const DoFHandler<dim>           &dof_handler,
                   const VectorType                &evaluation_point,
                   const PhysicalPropertiesManager &properties_manager,
-                  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+                  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
                                             &boundary_conditions,
                   const Quadrature<dim - 1> &face_quadrature_formula,
                   const Mapping<dim>        &mapping)
@@ -1168,7 +1168,7 @@ calculate_torques<2, GlobalVectorType>(
   const DoFHandler<2>             &dof_handler,
   const GlobalVectorType          &evaluation_point,
   const PhysicalPropertiesManager &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<2>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
                       &boundary_conditions,
   const Quadrature<1> &face_quadrature_formula,
   const Mapping<2>    &mapping);
@@ -1178,7 +1178,7 @@ calculate_torques<3, GlobalVectorType>(
   const DoFHandler<3>             &dof_handler,
   const GlobalVectorType          &evaluation_point,
   const PhysicalPropertiesManager &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<3>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
                       &boundary_conditions,
   const Quadrature<2> &face_quadrature_formula,
   const Mapping<3>    &mapping);
@@ -1188,7 +1188,7 @@ calculate_torques<2, GlobalBlockVectorType>(
   const DoFHandler<2>             &dof_handler,
   const GlobalBlockVectorType     &evaluation_point,
   const PhysicalPropertiesManager &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<2>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
                       &boundary_conditions,
   const Quadrature<1> &face_quadrature_formula,
   const Mapping<2>    &mapping);
@@ -1198,7 +1198,7 @@ calculate_torques<3, GlobalBlockVectorType>(
   const DoFHandler<3>             &dof_handler,
   const GlobalBlockVectorType     &evaluation_point,
   const PhysicalPropertiesManager &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<3>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
                       &boundary_conditions,
   const Quadrature<2> &face_quadrature_formula,
   const Mapping<3>    &mapping);
@@ -1209,7 +1209,7 @@ calculate_torques<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const PhysicalPropertiesManager                  &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<2>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
                       &boundary_conditions,
   const Quadrature<1> &face_quadrature_formula,
   const Mapping<2>    &mapping);
@@ -1219,7 +1219,7 @@ calculate_torques<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const PhysicalPropertiesManager                  &properties_manager,
-  const BoundaryConditions::NavierStokesBoundaryConditions<3>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
                       &boundary_conditions,
   const Quadrature<2> &face_quadrature_formula,
   const Mapping<3>    &mapping);

@@ -494,7 +494,7 @@ class PressureBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   PressureBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &pressure_boundary_conditions_input)
     : simulation_control(simulation_control)
     , pressure_boundary_conditions(pressure_boundary_conditions_input)
@@ -519,7 +519,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
-  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
     &pressure_boundary_conditions;
 };
 
@@ -538,7 +538,7 @@ class NeumannTractionBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   NeumannTractionBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &neumann_traction_boundary_condition_input)
     : simulation_control(simulation_control)
     , neumann_traction_boundary_condition(
@@ -566,7 +566,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
-  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
     &neumann_traction_boundary_condition;
 };
 
@@ -586,7 +586,7 @@ class WeakDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   WeakDirichletBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &boundary_conditions_input)
     : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
@@ -611,7 +611,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
-  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
     &boundary_conditions;
 };
 
@@ -632,7 +632,7 @@ class PartialSlipDirichletBoundaryCondition
 public:
   PartialSlipDirichletBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &boundary_conditions_input)
     : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
@@ -657,7 +657,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
-  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
     &boundary_conditions;
 };
 
@@ -678,7 +678,7 @@ class OutletBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   OutletBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &boundary_conditions_input)
     : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
@@ -703,7 +703,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
-  const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
     &boundary_conditions;
 };
 

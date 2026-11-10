@@ -211,7 +211,7 @@ public:
     const StabilizationType                   stabilization,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
                &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual,
@@ -253,7 +253,7 @@ public:
          const StabilizationType                   stabilization,
          const unsigned int                        mg_level,
          const std::shared_ptr<SimulationControl> &simulation_control,
-         const BoundaryConditions::NavierStokesBoundaryConditions<dim>
+         const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
                     &boundary_conditions,
          const bool &enable_hessians_jacobian,
          const bool &enable_hessians_residual,
@@ -715,7 +715,7 @@ protected:
    * initialization of the boundary conditions.
    *
    */
-  BoundaryConditions::NavierStokesBoundaryConditions<dim> boundary_conditions;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<dim> boundary_conditions;
 
   /**
    * @brief Flag to turn hessian terms from jacobian on or off.
