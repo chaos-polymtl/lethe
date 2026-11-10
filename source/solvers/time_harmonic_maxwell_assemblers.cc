@@ -986,7 +986,7 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
           const auto tangential_phi_j =
             scratch_data.tangential_phi_trial_skeleton[j];
 
-          std::complex<double> z(0.);
+          std::complex<double> z_FE(0.);
           for (unsigned int q = 0; q < n_face_q_points; ++q)
             z_FE -= Y_JxW_container[q] * (phi_i[q] * tangential_phi_j[q]);
 

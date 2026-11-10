@@ -157,9 +157,8 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->n_q_points      = this->fe_values_test.get_quadrature().size();
   this->n_face_q_points = this->fe_face_values_test.get_quadrature().size();
 
-  // Compute the local dof index of each base function for each field of each
-  // space. This is only done once since it only depends on the finite
-  // elements.
+  // Build the local dof index array relationship [field][base_function] of each
+  // base function for each field of each space.
   build_local_dof_index_map(fe_test, this->test_local_dof_index_map);
   build_local_dof_index_map(fe_trial_interior,
                             this->trial_interior_local_dof_index_map);
@@ -172,9 +171,8 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   this->n_base_functions_trial_skeleton =
     this->trial_skeleton_local_dof_index_map[E_real].size();
 
-  // Base functions of the test and skeleton trial spaces whose tangential
-  // trace does not vanish on each face of the reference cell. The interior
-  // trial space has no face terms.
+  // Use the local dof index maps to identify which base functions have a
+  // tangential trace on the face.
   identify_tangential_base_functions(fe_test,
                                      this->test_local_dof_index_map,
                                      this->test_tangential_base_functions);
@@ -184,7 +182,6 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
     this->trial_skeleton_tangential_base_functions);
 
   // Cell quadrature
-  this->JxW               = std::vector<double>(n_q_points);
   this->quadrature_points = std::vector<Point<dim>>(n_q_points);
 
   // Temperature, void fraction and effective properties at the cell quadrature
@@ -203,6 +200,7 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
     std::vector<std::complex<double>>(n_q_points);
 
   // Coefficients of the cell terms of the DPG system
+  this->JxW                 = std::vector<double>(n_q_points);
   this->JxW_FF_container    = std::vector<double>(n_q_points);
   this->JxW_II_container    = std::vector<double>(n_q_points);
   this->iweps_JxW_container = std::vector<std::complex<double>>(n_q_points);
@@ -253,7 +251,9 @@ TimeHarmonicMaxwellScratchData<dim>::build_local_dof_index_map(
     &local_dof_index_map) const
 {
   // Since the four fields use the same base element, each field has a quarter
-  // of the shape functions of the finite element system.
+  // of the shape functions of the finite element system. This division only
+  // implies unsigned integer division and is always exact because the finite
+  // element system is built by repeating the same base element.
   const unsigned int n_base_functions =
     fe.n_dofs_per_cell() / n_electromagnetic_fields;
 
@@ -263,10 +263,17 @@ TimeHarmonicMaxwellScratchData<dim>::build_local_dof_index_map(
     field_extractors = {
       {extractor_E_real, extractor_E_imag, extractor_H_real, extractor_H_imag}};
 
+  // Initialize the local dof index map with invalid values. The map is a 2D
+  // array indexed by [field][base_function] that stores the local dof index of
+  // each base function for each field.
   for (auto &field_local_dof_indices : local_dof_index_map)
     field_local_dof_indices.assign(n_base_functions,
                                    numbers::invalid_unsigned_int);
 
+  // Loop over the dofs of the finite element system to identify its field and
+  // shape function. The local dof index of each shape function is stored in the
+  // local dof index map at the position corresponding to its field and base
+  // function.
   for (unsigned int k = 0; k < fe.n_dofs_per_cell(); ++k)
     {
       // Field of the shape function. Each shape function must belong to
@@ -513,9 +520,7 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
 
       // Base functions of the test space associated with the face, evaluated
       // with the E_real shape functions since the four fields share the same
-      // base functions. The face terms of the bilinear forms, of the test norm
-      // and of the load vector only involve the tangential traces of the test
-      // functions, which vanish on this face for the other base functions.
+      // base functions.
       for (const unsigned int i : this->test_tangential_base_functions[face_no])
         {
           const unsigned int k = this->test_local_dof_index_map[E_real][i];
