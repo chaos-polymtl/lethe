@@ -224,7 +224,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rescale_metric =</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>)</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        .rescale_residual_by_volume ?</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>      GridTools::volume(*this-&gt;triangulation, *this-&gt;mapping) :</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>      std::sqrt(GridTools::volume(*this-&gt;triangulation, *this-&gt;mapping)) :</div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>      1.0;</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    this-&gt;simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>)</div>
