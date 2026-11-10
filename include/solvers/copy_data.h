@@ -222,12 +222,11 @@ public:
  * local system: the Gram matrix of the test space \f$G\f$, the matrices of the
  * bilinear form in the cell interior \f$B\f$ and on the skeleton \f$\hat{B}\f$,
  * and the load vector \f$l\f$. The solver then condenses this system on the
- * skeleton unknowns using the operators
- * \f$M_1 = B^\dagger G^{-1} B\f$, \f$M_2 = B^\dagger G^{-1} \hat{B}\f$,
- * \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$, and the vectors
- * \f$M_4 l = B^\dagger G^{-1} l\f$ and \f$M_5 l = \hat{B}^\dagger G^{-1} l\f$,
- * and stores either the condensed skeleton system (assembly) or the
- * reconstructed interior solution (interior reconstruction).
+ * skeleton unknowns using the operators \f$M_1 = B^\dagger G^{-1} B\f$,
+ * \f$M_2 = B^\dagger G^{-1} \hat{B}\f$, \f$M_3 = \hat{B}^\dagger G^{-1}
+ *\hat{B}\f$, and the vectors \f$M_4 l = B^\dagger G^{-1} l\f$ and \f$M_5 l =
+ *\hat{B}^\dagger G^{-1} l\f$, and stores either the condensed skeleton system
+ *(assembly) or the reconstructed interior solution (interior reconstruction).
  **/
 class DPGCopyData
 {
@@ -280,7 +279,7 @@ public:
    * @brief Resets the uncondensed local system to zero. The \f$M_1\f$ matrix
    * is also reset since LAPACKFullMatrix keeps track of its factorization
    * status and forbids writing into it or factorizing it again once it has
-   * been factorized. Assigning zero sets it back to a regular matrix.
+   * been factorized.
    */
   void
   reset()
@@ -316,8 +315,7 @@ public:
   Vector<double> M4_l;
   // Static condensation vector \f$M_5 l = \hat{B}^\dagger G^{-1} l\f$
   Vector<double> M5_l;
-  // Solution of M_1 X = M_2 with the Cholesky factorization of M_1, only used
-  // for the assembly
+  // Solution of M_1 X = M_2 with the Cholesky factorization of M_1
   LAPACKFullMatrix<double> M1_inverse_M2;
   // Temporary matrix product M_2^\dagger M_1^{-1} M_2
   LAPACKFullMatrix<double> tmp_matrix_M2M1M2;

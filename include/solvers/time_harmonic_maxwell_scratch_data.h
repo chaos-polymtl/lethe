@@ -92,20 +92,16 @@ electromagnetic_properties_depend_on(
  * @brief Class that stores the information required by the assembly of the
  * Discontinuous Petrov-Galerkin (DPG) ultraweak formulation of the
  * time-harmonic Maxwell equations. For each cell, it evaluates the base
- * functions of the test space with their curls, the base functions of the
- * interior trial space and the effective material properties at the
- * quadrature points. The base functions are real and shared by the four
- * fields of a space: the complex test functions (\f$\mathbf{F}\f$ for the
- * electric ones and \f$\mathbf{I}\f$ for the magnetic ones) and the complex
- * interior trial functions (\f$\mathbf{E}\f$ and \f$\mathbf{H}\f$) are a base
- * function multiplied by 1 (real part) or i (imaginary part). For each face of
- * the cell, it evaluates at the face quadrature points the base functions of
- * the test space and the tangential traces of the base functions of the
- * skeleton trial space (\f$\hat{\mathbf{E}}\f$ and \f$\hat{\mathbf{H}}\f$),
- * with their cross products with the normal. Since the Nedelec base functions
- * whose degrees of freedom are not located on a face have a zero tangential
- * trace on this face, only the base functions associated with the face are
- * evaluated.
+ * functions of the test space (\f$\mathbf{F}\f$ and \f$\mathbf{I}\f$) with
+ * their curls, the base functions of the interior trial space (\f$\mathbf{E}\f$
+ * and \f$\mathbf{H}\f$) and the effective material properties at the quadrature
+ * points. Additionnaly, for each face of the cell, it evaluates the base
+ * functions of the tangential traces of the test space and the base functions
+ * of the skeleton trial space (\f$\hat{\mathbf{E}}\f$ and
+ * \f$\hat{\mathbf{H}}\f$), with their cross products with the normal. Since the
+ * Nedelec base functions whose degrees of freedom are not located on a face
+ * have a zero tangential trace on this face, only the base functions associated
+ * with the face are evaluated.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions. Only
  * dim = 3 is supported.
@@ -117,9 +113,9 @@ class TimeHarmonicMaxwellScratchData : public PhysicsScratchDataBase
 {
 public:
   /**
-   * @brief Fields of the [E_real, E_imag, H_real, H_imag] finite element
-   * systems, numbered in the order in which they appear in the systems
-   * following the convention.
+   * @brief Fields of the finite element systems, numbered in the order in which
+   * they appear in the systems following the convention : [E_real, E_imag,
+   * H_real, H_imag].
    */
   enum ElectromagneticFieldComponents : unsigned int
   {
@@ -236,22 +232,19 @@ public:
   }
 
   /**
-   * @brief Allocate the memory of all the members of the scratch. It also
-   * stores the local dof index of each base function for each of the four
-   * fields of the three finite element spaces and, for each face of the
-   * reference cell, the base functions of the test and skeleton trial spaces
-   * associated with the face.
+   * @brief Allocate the memory of all the members of the scratch. It builds the lists
+   * of the local dof index of each base function for each of the four
+   * fields of the three finite element spaces for the reference cell. It also
+   * builds the lists of the base functions of the test and skeleton trial
+   * spaces for each face of the reference cell,
    */
   void
   allocate() override;
 
   /**
-   * @brief Compute the local dof index of each base function for each field of
-   * a finite element space of the time-harmonic Maxwell equations, i.e. the
-   * field and the base function of each shape function. The field of each
-   * shape function of the [E_real, E_imag, H_real, H_imag] finite element
-   * system is determined with FiniteElement::shape_function_belongs_to() and
-   * the extractor of the field.
+   * @brief Compute the local dof index list of each base function for each field of
+   * a finite element space of the time-harmonic Maxwell equations [E_real,
+   * E_imag, H_real, H_imag].
    *
    * @param[in] fe Finite element system of the [E_real, E_imag, H_real,
    * H_imag] fields (interior trial, skeleton trial or test space).

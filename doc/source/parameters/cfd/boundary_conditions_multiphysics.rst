@@ -361,8 +361,6 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
       .. math::
         \mathbf{n} \times \mathbf{H} + Y_s \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{g}
 
-      Since the left-hand side of this condition is tangential to the boundary, only the tangential component of :math:`\mathbf{g}` is used; its normal component is ignored.
-
       Example:
 
       .. code-block:: text
