@@ -269,9 +269,8 @@ namespace
 
   /**
    * @brief Add a real value to a 2x2 block of a local matrix of the real DPG
-   * system. This is the block of add_complex_block() for a real z: the real
-   * and imaginary parts are not coupled, so only the diagonal of the block is
-   * filled.
+   * system. This is a special case of the add_complex_block function where to
+   * avoid the overhead of adding close to zero imaginary parts.
    *
    * @param[in,out] matrix Local matrix.
    *
@@ -359,9 +358,9 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
 
   // Gram matrix G (Riesz map of the test space norm). For the test base
   // functions i (rows) and j (columns), the blocks are:
-  // - FF: (1 + |iweps|^2) (phi_j, phi_i) + (curl phi_j, curl phi_i)
-  // - II: (1 + |iwmu|^2) (phi_j, phi_i) + (curl phi_j, curl phi_i)
-  // - FI: iweps (curl phi_j, phi_i) - conj(iwmu) (phi_j, curl phi_i)
+  // - FF: (1 + |iweps|^2) (phi_i, phi_j) + (curl phi_i, curl phi_j)
+  // - II: (1 + |iwmu|^2) (phi_i, phi_j) + (curl phi_i, curl phi_j)
+  // - FI: iweps (phi_i, curl phi_j) - conj(iwmu) (curl phi_i, phi_j)
   // - IF: since G is Hermitian, the block IF(j, i) is conj(FI(i, j)).
   // FF and II are real and symmetric in i and j, so we only loop over the pairs
   // i <= j and add the blocks of the pair (j, i) at the same time.
@@ -382,19 +381,19 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               // The four dot products are shared by the four blocks
-              const double phi_j_phi_i   = phi_j[q] * phi_i[q];
-              const double curl_j_curl_i = curl_phi_j[q] * curl_phi_i[q];
-              const double curl_j_phi_i  = curl_phi_j[q] * phi_i[q];
-              const double phi_j_curl_i  = phi_j[q] * curl_phi_i[q];
+              const double phi_i_phi_j   = phi_i[q] * phi_j[q];
+              const double curl_i_curl_j = curl_phi_i[q] * curl_phi_j[q];
+              const double phi_i_curl_j  = phi_i[q] * curl_phi_j[q];
+              const double curl_i_phi_j  = curl_phi_i[q] * phi_j[q];
 
               z_FF +=
-                JxW_FF_container[q] * phi_j_phi_i + JxW[q] * curl_j_curl_i;
+                JxW_FF_container[q] * phi_i_phi_j + JxW[q] * curl_i_curl_j;
               z_II +=
-                JxW_II_container[q] * phi_j_phi_i + JxW[q] * curl_j_curl_i;
-              z_FI_ij += iweps_JxW_container[q] * curl_j_phi_i -
-                         std::conj(iwmu_JxW_container[q]) * phi_j_curl_i;
-              z_FI_ji += iweps_JxW_container[q] * phi_j_curl_i -
-                         std::conj(iwmu_JxW_container[q]) * curl_j_phi_i;
+                JxW_II_container[q] * phi_i_phi_j + JxW[q] * curl_i_curl_j;
+              z_FI_ij += iweps_JxW_container[q] * phi_i_curl_j -
+                         std::conj(iwmu_JxW_container[q]) * curl_i_phi_j;
+              z_FI_ji += iweps_JxW_container[q] * curl_i_phi_j -
+                         std::conj(iwmu_JxW_container[q]) * phi_i_curl_j;
             }
 
           // Blocks of the pair (i, j)
@@ -423,8 +422,8 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
                             test_dofs_F_imag[i],
                             std::conj(z_FI_ij));
 
-          // Blocks of the pair (j, i), i != j because the diagonal blocks are
-          // already filled by the pair (i, j)
+          // Blocks of the pair (j, i), we skip the case i != j because the
+          // diagonal blocks are already filled by the pair (i, j)
           if (j != i)
             {
               add_real_block(G_matrix,
@@ -457,9 +456,9 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
 
   // Interior bilinear form B. For the test base function i (rows) and the
   // interior trial base function j (columns), the blocks are:
-  // - FE: iweps (phi_j, phi_i)
-  // - FH and IE: (phi_j, curl phi_i)
-  // - IH: -iwmu (phi_j, phi_i)
+  // - FE: iweps (phi_i, phi_j)
+  // - FH and IE: (curl phi_i, phi_j)
+  // - IH: -iwmu (phi_i, phi_j)
   for (unsigned int i = 0; i < n_base_functions_test; ++i)
     {
       const auto phi_i      = scratch_data.phi_test[i];
@@ -474,12 +473,12 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
           std::complex<double> z_IH(0.);
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              const double phi_j_phi_i  = phi_j[q] * phi_i[q];
-              const double phi_j_curl_i = phi_j[q] * curl_phi_i[q];
+              const double phi_i_phi_j  = phi_i[q] * phi_j[q];
+              const double curl_i_phi_j = curl_phi_i[q] * phi_j[q];
 
-              z_FE += iweps_JxW_container[q] * phi_j_phi_i;
-              z_FH += JxW[q] * phi_j_curl_i;
-              z_IH -= iwmu_JxW_container[q] * phi_j_phi_i;
+              z_FE += iweps_JxW_container[q] * phi_i_phi_j;
+              z_FH += JxW[q] * curl_i_phi_j;
+              z_IH -= iwmu_JxW_container[q] * phi_i_phi_j;
             }
 
           add_complex_block(B_matrix,
@@ -494,6 +493,8 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
                          trial_dofs_H_real[j],
                          trial_dofs_H_imag[j],
                          z_FH);
+          // This block is the addition for the result of z_IE = (curl phi_i,
+          // phi_j) which is the same as z_FH, so we can reuse it
           add_real_block(B_matrix,
                          test_dofs_I_real[i],
                          test_dofs_I_imag[i],
@@ -525,9 +526,7 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_rhs(
   return;
 
   // Loop over the quadrature points of the cell. No volume source term is
-  // considered at the moment, so the interior load vector is zero. The
-  // electric test functions of the base function i are its E_real and E_imag
-  // shape functions.
+  // considered at the moment, so the interior load vector is zero.
   for (unsigned int q = 0; q < scratch_data.n_q_points; ++q)
     {
       for (unsigned int i = 0; i < scratch_data.n_base_functions_test; ++i)
@@ -579,13 +578,14 @@ TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_matrix(
 
   LAPACKFullMatrix<double> &B_hat_matrix = copy_data.B_hat_matrix;
 
-  // The skeleton terms only involve the tangential traces of the test and
-  // skeleton trial functions, so only the base functions associated with the
-  // face contribute. For the test base function i (rows) and the skeleton
-  // trial base function j (columns), the blocks are:
+  // For the test base function i (rows) and the skeleton trial base function j
+  // (columns), the blocks are:
   // - IE_hat: <phi_i, n x e_hat_j>
   // - FH_hat: <phi_i, n x h_hat_j>, the same value since the electric and
   //   magnetic skeleton fields share the same base functions
+  // Here we use the precomputed tangential base functions (a subset of base
+  // functions) of the test and trial spaces for the loop to avoid extra
+  // computations of non-contributing base functions.
   for (const unsigned int i :
        scratch_data.test_tangential_base_functions[scratch_data.face_no])
     {
@@ -598,26 +598,28 @@ TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_matrix(
           const auto n_cross_phi_j =
             scratch_data.n_cross_tangential_phi_trial_skeleton[j];
 
-          double z = 0.;
+          double z_IE = 0.;
           for (unsigned int q = 0; q < scratch_data.n_face_q_points; ++q)
-            z += face_JxW[q] * (n_cross_phi_j[q] * phi_i[q]);
+            z_IE += face_JxW[q] * (phi_i[q] * n_cross_phi_j[q]);
 
           add_real_block(B_hat_matrix,
                          test_dofs_I_real[i],
                          test_dofs_I_imag[i],
                          trial_dofs_E_hat_real[j],
                          trial_dofs_E_hat_imag[j],
-                         z);
+                         z_IE);
 
-          // The magnetic trace term is replaced by the Robin boundary condition
-          // on the faces where it is applied.
+          // Here we also add z_FH, which is the same as z_IE. However, we only
+          // do this if the Robin boundary condition is not applied, because in
+          // that case, the magnetic trace term is replaced by the Robin
+          // boundary condition on the faces where it is applied.
           if (!robin_face)
             add_real_block(B_hat_matrix,
                            test_dofs_F_real[i],
                            test_dofs_F_imag[i],
                            trial_dofs_H_hat_real[j],
                            trial_dofs_H_hat_imag[j],
-                           z);
+                           z_IE);
         }
     }
 }
@@ -847,7 +849,7 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
   // Surface admittance Y at the face quadrature points, multiplied by JxW:
   // |Y|^2 JxW and Y JxW. It depends on the boundary condition, so it is
   // computed here and not in the scratch data.
-  std::vector<double>               JxW_YY_container(n_face_q_points);
+  std::vector<double>               YY_JxW_container(n_face_q_points);
   std::vector<std::complex<double>> Y_JxW_container(n_face_q_points);
   for (unsigned int q = 0; q < n_face_q_points; ++q)
     {
@@ -857,27 +859,25 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
                                     bc_type,
                                     waveguide_port_index)
           .second;
-      JxW_YY_container[q] =
+      YY_JxW_container[q] =
         std::norm(boundary_surface_admittance) * face_JxW[q];
       Y_JxW_container[q] = boundary_surface_admittance * face_JxW[q];
     }
 
   // Boundary terms of the Gram matrix G coming from the test norm on the Robin
   // boundaries:
-  // (n x I + Y^* F_t, n x I~ + Y^* F~_t)_{Gamma_R},
+  // (n x I + Y^* F_t, n x I + Y^* F_t)_{Gamma_R},
   // where F_t = n x (F x n) is the tangential trace of F and the inner product
   // is conjugated in its first argument. This term only involves the
   // tangential traces of the test functions, which are in L^2(Gamma_R) for the
-  // test space. Since |n| = 1, F_t . F~_t = (n x F) . (n x F~), so for the test
+  // test space. Since |n| = 1, F_t . F_t = (n x F) . (n x F), so for the test
   // base functions i (rows) and j (columns), the blocks are:
-  // - FF: |Y|^2 <n x phi_j, n x phi_i>
-  // - II: <n x phi_j, n x phi_i>
-  // - FI: Y <n x phi_j, phi_i>
+  // - FF: |Y|^2 <n x phi_i, n x phi_j>
+  // - II: <n x phi_i, n x phi_j>
+  // - FI: Y <phi_i, n x phi_j>
   // - IF: since G is Hermitian, the block IF(j, i) is conj(FI(i, j)).
-  // Only the base functions associated with the face have a tangential trace
-  // on the face, so only them contribute. As for the cell terms, we only loop
-  // over the pairs i <= j and add the blocks of the pair (j, i) at the same
-  // time.
+  // As for the cell terms, we only loop over the pairs i <= j and add the
+  // blocks of the pair (j, i) at the same time.
   for (unsigned int position_i = 0;
        position_i < n_test_tangential_base_functions;
        ++position_i)
@@ -902,13 +902,13 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
             {
               // The FF and II blocks share the dot product of the tangential
               // traces
-              const double n_cross_j_n_cross_i =
-                n_cross_phi_j[q] * n_cross_phi_i[q];
+              const double n_cross_i_n_cross_j =
+                n_cross_phi_i[q] * n_cross_phi_j[q];
 
-              z_FF += JxW_YY_container[q] * n_cross_j_n_cross_i;
-              z_II += face_JxW[q] * n_cross_j_n_cross_i;
-              z_FI_ij += Y_JxW_container[q] * (n_cross_phi_j[q] * phi_i[q]);
-              z_FI_ji += Y_JxW_container[q] * (n_cross_phi_i[q] * phi_j[q]);
+              z_FF += YY_JxW_container[q] * n_cross_i_n_cross_j;
+              z_II += face_JxW[q] * n_cross_i_n_cross_j;
+              z_FI_ij += Y_JxW_container[q] * (phi_i[q] * n_cross_phi_j[q]);
+              z_FI_ji += Y_JxW_container[q] * (phi_j[q] * n_cross_phi_i[q]);
             }
 
           // Blocks of the pair (i, j)
@@ -937,8 +937,8 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
                             test_dofs_F_imag[i],
                             std::conj(z_FI_ij));
 
-          // Blocks of the pair (j, i), i != j because the diagonal blocks are
-          // already filled by the pair (i, j)
+          // Blocks of the pair (j, i), we skip the case i != j because the
+          // diagonal blocks are already filled by the pair (i, j)
           if (j != i)
             {
               add_real_block(G_matrix,
@@ -988,14 +988,14 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
 
           std::complex<double> z(0.);
           for (unsigned int q = 0; q < n_face_q_points; ++q)
-            z -= Y_JxW_container[q] * (tangential_phi_j[q] * phi_i[q]);
+            z_FE -= Y_JxW_container[q] * (phi_i[q] * tangential_phi_j[q]);
 
           add_complex_block(B_hat_matrix,
                             test_dofs_F_real[i],
                             test_dofs_F_imag[i],
                             trial_dofs_E_hat_real[j],
                             trial_dofs_E_hat_imag[j],
-                            z);
+                            z_FE);
         }
     }
 }
@@ -1052,8 +1052,7 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_rhs(
   // Excitation term -<F,g>. For the test base function i, the entries of the
   // real and imaginary parts of the electric test function are the real and
   // imaginary parts of w = <phi_i, g>, since Re(w conj(s)) is Re(w) for s = 1
-  // and Im(w) for s equal to the imaginary unit. Since g is tangential, only
-  // the base functions associated with the face contribute.
+  // and Im(w) for s equal to the imaginary unit.
   for (const unsigned int i :
        scratch_data.test_tangential_base_functions[scratch_data.face_no])
     {
