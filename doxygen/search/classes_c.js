@@ -18,10 +18,11 @@ var searchData=
   ['newtonnonlinearsolverstrategy_15',['NewtonNonLinearSolverStrategy',['../classNewtonNonLinearSolverStrategy.html',1,'']]],
   ['nitsche_16',['Nitsche',['../classParameters_1_1Nitsche.html',1,'Parameters']]],
   ['nitscheobject_17',['NitscheObject',['../classParameters_1_1NitscheObject.html',1,'Parameters']]],
-  ['nonetracerreactionprefactor_18',['NoneTracerReactionPrefactor',['../classNoneTracerReactionPrefactor.html',1,'']]],
-  ['nonlinearsolver_19',['NonLinearSolver',['../structParameters_1_1NonLinearSolver.html',1,'Parameters']]],
-  ['nonnewtonian_20',['NonNewtonian',['../structParameters_1_1NonNewtonian.html',1,'Parameters']]],
-  ['normaldistribution_21',['NormalDistribution',['../classNormalDistribution.html',1,'']]],
-  ['nsboundaryconditions_22',['NSBoundaryConditions',['../classBoundaryConditions_1_1NSBoundaryConditions.html',1,'BoundaryConditions']]],
-  ['nsboundaryfunctions_23',['NSBoundaryFunctions',['../classBoundaryConditions_1_1NSBoundaryFunctions.html',1,'BoundaryConditions']]]
+  ['noeffectivemediummodel_18',['NoEffectiveMediumModel',['../classNoEffectiveMediumModel.html',1,'']]],
+  ['nonetracerreactionprefactor_19',['NoneTracerReactionPrefactor',['../classNoneTracerReactionPrefactor.html',1,'']]],
+  ['nonlinearsolver_20',['NonLinearSolver',['../structParameters_1_1NonLinearSolver.html',1,'Parameters']]],
+  ['nonnewtonian_21',['NonNewtonian',['../structParameters_1_1NonNewtonian.html',1,'Parameters']]],
+  ['normaldistribution_22',['NormalDistribution',['../classNormalDistribution.html',1,'']]],
+  ['nsboundaryconditions_23',['NSBoundaryConditions',['../classBoundaryConditions_1_1NSBoundaryConditions.html',1,'BoundaryConditions']]],
+  ['nsboundaryfunctions_24',['NSBoundaryFunctions',['../classBoundaryConditions_1_1NSBoundaryFunctions.html',1,'BoundaryConditions']]]
 ];

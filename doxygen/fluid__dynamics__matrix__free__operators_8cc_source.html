@@ -1163,7 +1163,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>      <span class="comment">// according to the rheological model</span></div>
 <div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>      <span class="keywordflow">if</span> (this-&gt;properties_manager-&gt;is_non_newtonian())</div>
 <div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>        {</div>
-<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>          <span class="keyword">typename</span> FECellIntegrator::gradient_type <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>;</div>
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>          <span class="keyword">typename</span> FECellIntegrator::gradient_type <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>;</div>
 <div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span>          <span class="keyword">typename</span> FECellIntegrator::value_type    grad_shear_rate = {};</div>
 <div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>          VectorizedArray&lt;number&gt;                  shear_rate_magnitude;</div>
 <div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span> </div>
@@ -1180,15 +1180,15 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span>                {</div>
 <div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>                  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; dim; ++j)</div>
 <div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span>                    {</div>
-<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>                      <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[i][j] = gradient[i][j] + gradient[j][i];</div>
+<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>                      <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[i][j] = gradient[i][j] + gradient[j][i];</div>
 <div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>                    }</div>
 <div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>                }</div>
 <div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span> </div>
 <div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>              <span class="comment">// Store shear rate in the previous_shear_rate</span></div>
-<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>              this-&gt;previous_shear_rate[cell][q] = <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>;</div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>              this-&gt;previous_shear_rate[cell][q] = <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>;</div>
 <div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span> </div>
 <div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>              <span class="comment">// Calculate shear rate magnitude</span></div>
-<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>              shear_rate_magnitude = <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a> * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>;</div>
+<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>              shear_rate_magnitude = <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a> * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>;</div>
 <div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span> </div>
 <div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span>              shear_rate_magnitude = std::max(sqrt(0.5 * shear_rate_magnitude),</div>
 <div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>                                              VectorizedArray&lt;number&gt;(1e-12));</div>
@@ -1226,14 +1226,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span>                {</div>
 <div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span>                  <span class="comment">// Get information from physical properties class</span></div>
 <div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>                  std::map&lt;field, double&gt; fields;</div>
-<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>                  fields[<a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">field::shear_rate</a>] = shear_rate_magnitude[v];</div>
+<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>                  fields[<a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">field::shear_rate</a>] = shear_rate_magnitude[v];</div>
 <div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span> </div>
 <div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span>                  viscosity[v] =</div>
 <div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span>                    this-&gt;properties_manager-&gt;get_rheology()-&gt;value(fields);</div>
 <div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span> </div>
 <div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span>                  grad_viscosity_shear_rate[v] =</div>
 <div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span>                    this-&gt;properties_manager-&gt;get_rheology()-&gt;jacobian(</div>
-<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span>                      fields, <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">field::shear_rate</a>);</div>
+<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span>                      fields, <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">field::shear_rate</a>);</div>
 <div class="line"><a id="l01091" name="l01091"></a><span class="lineno"> 1091</span>                }</div>
 <div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span> </div>
 <div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>              grad_kinematic_viscosity_shear_rate(cell, q) =</div>
@@ -2529,12 +2529,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02357" name="l02357"></a><span class="lineno"> 2357</span>      <span class="keyword">const</span> <span class="keyword">auto</span> tau = this-&gt;stabilization_parameter[cell][q];</div>
 <div class="line"><a id="l02358" name="l02358"></a><span class="lineno"> 2358</span> </div>
 <div class="line"><a id="l02359" name="l02359"></a><span class="lineno"> 2359</span>      <span class="comment">// Calculate shear rate per component</span></div>
-<div class="line"><a id="l02360" name="l02360"></a><span class="lineno"> 2360</span>      <span class="keyword">typename</span> FECellIntegrator::gradient_type <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>;</div>
+<div class="line"><a id="l02360" name="l02360"></a><span class="lineno"> 2360</span>      <span class="keyword">typename</span> FECellIntegrator::gradient_type <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>;</div>
 <div class="line"><a id="l02361" name="l02361"></a><span class="lineno"> 2361</span>      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
 <div class="line"><a id="l02362" name="l02362"></a><span class="lineno"> 2362</span>        {</div>
 <div class="line"><a id="l02363" name="l02363"></a><span class="lineno"> 2363</span>          <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; dim; ++j)</div>
 <div class="line"><a id="l02364" name="l02364"></a><span class="lineno"> 2364</span>            {</div>
-<div class="line"><a id="l02365" name="l02365"></a><span class="lineno"> 2365</span>              <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[i][j] = gradient[i][j] + gradient[j][i];</div>
+<div class="line"><a id="l02365" name="l02365"></a><span class="lineno"> 2365</span>              <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[i][j] = gradient[i][j] + gradient[j][i];</div>
 <div class="line"><a id="l02366" name="l02366"></a><span class="lineno"> 2366</span>            }</div>
 <div class="line"><a id="l02367" name="l02367"></a><span class="lineno"> 2367</span>        }</div>
 <div class="line"><a id="l02368" name="l02368"></a><span class="lineno"> 2368</span> </div>
@@ -2548,7 +2548,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02376" name="l02376"></a><span class="lineno"> 2376</span>          <span class="keywordflow">for</span> (<span class="keywordtype">int</span> k = 0; k &lt; dim; ++k)</div>
 <div class="line"><a id="l02377" name="l02377"></a><span class="lineno"> 2377</span>            {</div>
 <div class="line"><a id="l02378" name="l02378"></a><span class="lineno"> 2378</span>              shear_rate_previous_product +=</div>
-<div class="line"><a id="l02379" name="l02379"></a><span class="lineno"> 2379</span>                <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[i][k] * previous_shear_rate[k][i];</div>
+<div class="line"><a id="l02379" name="l02379"></a><span class="lineno"> 2379</span>                <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[i][k] * previous_shear_rate[k][i];</div>
 <div class="line"><a id="l02380" name="l02380"></a><span class="lineno"> 2380</span>            }</div>
 <div class="line"><a id="l02381" name="l02381"></a><span class="lineno"> 2381</span>        }</div>
 <div class="line"><a id="l02382" name="l02382"></a><span class="lineno"> 2382</span> </div>
@@ -2561,7 +2561,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02389" name="l02389"></a><span class="lineno"> 2389</span>          <span class="comment">// +(q,∇δu)</span></div>
 <div class="line"><a id="l02390" name="l02390"></a><span class="lineno"> 2390</span>          value_result[dim] += gradient[i][i];</div>
 <div class="line"><a id="l02391" name="l02391"></a><span class="lineno"> 2391</span>          <span class="comment">// ν(∇v,(∇δu + ∇δuT))</span></div>
-<div class="line"><a id="l02392" name="l02392"></a><span class="lineno"> 2392</span>          gradient_result[i] += kinematic_viscosity * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[i];</div>
+<div class="line"><a id="l02392" name="l02392"></a><span class="lineno"> 2392</span>          gradient_result[i] += kinematic_viscosity * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[i];</div>
 <div class="line"><a id="l02393" name="l02393"></a><span class="lineno"> 2393</span>          <span class="keywordflow">for</span> (<span class="keywordtype">int</span> k = 0; k &lt; dim; ++k)</div>
 <div class="line"><a id="l02394" name="l02394"></a><span class="lineno"> 2394</span>            {</div>
 <div class="line"><a id="l02395" name="l02395"></a><span class="lineno"> 2395</span>              <span class="comment">// (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))</span></div>
@@ -2590,7 +2590,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02418" name="l02418"></a><span class="lineno"> 2418</span>              <span class="comment">// (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u_adv·∇)δu + (δu·∇)u)·τ∇q</span></div>
 <div class="line"><a id="l02419" name="l02419"></a><span class="lineno"> 2419</span>              gradient_result[dim][i] +=</div>
 <div class="line"><a id="l02420" name="l02420"></a><span class="lineno"> 2420</span>                tau * (-kinematic_viscosity * hessian_diagonal[i][k] -</div>
-<div class="line"><a id="l02421" name="l02421"></a><span class="lineno"> 2421</span>                       kinematic_viscosity_gradient[k] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[k][i] +</div>
+<div class="line"><a id="l02421" name="l02421"></a><span class="lineno"> 2421</span>                       kinematic_viscosity_gradient[k] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[k][i] +</div>
 <div class="line"><a id="l02422" name="l02422"></a><span class="lineno"> 2422</span>                       gradient[i][k] * previous_advective_values[k] +</div>
 <div class="line"><a id="l02423" name="l02423"></a><span class="lineno"> 2423</span>                       previous_gradient[i][k] * value[k]);</div>
 <div class="line"><a id="l02424" name="l02424"></a><span class="lineno"> 2424</span>            }</div>
@@ -2618,7 +2618,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02446" name="l02446"></a><span class="lineno"> 2446</span>                    (gradient[i][l] * previous_advective_values[l] +</div>
 <div class="line"><a id="l02447" name="l02447"></a><span class="lineno"> 2447</span>                     previous_gradient[i][l] * value[l] -</div>
 <div class="line"><a id="l02448" name="l02448"></a><span class="lineno"> 2448</span>                     kinematic_viscosity * hessian_diagonal[i][l] -</div>
-<div class="line"><a id="l02449" name="l02449"></a><span class="lineno"> 2449</span>                     kinematic_viscosity_gradient[i] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[i][l]);</div>
+<div class="line"><a id="l02449" name="l02449"></a><span class="lineno"> 2449</span>                     kinematic_viscosity_gradient[i] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[i][l]);</div>
 <div class="line"><a id="l02450" name="l02450"></a><span class="lineno"> 2450</span>                }</div>
 <div class="line"><a id="l02451" name="l02451"></a><span class="lineno"> 2451</span>              <span class="comment">// +(∇δp)τ(u_adv·∇)v</span></div>
 <div class="line"><a id="l02452" name="l02452"></a><span class="lineno"> 2452</span>              gradient_result[i][k] +=</div>
@@ -2791,14 +2791,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02617" name="l02617"></a><span class="lineno"> 2617</span>          <span class="keyword">typename</span> FECellIntegrator::hessian_type  hessian_result;</div>
 <div class="line"><a id="l02618" name="l02618"></a><span class="lineno"> 2618</span> </div>
 <div class="line"><a id="l02619" name="l02619"></a><span class="lineno"> 2619</span>          <span class="comment">// Additional values/gradients needed</span></div>
-<div class="line"><a id="l02620" name="l02620"></a><span class="lineno"> 2620</span>          <span class="keyword">typename</span> FECellIntegrator::gradient_type <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>;</div>
+<div class="line"><a id="l02620" name="l02620"></a><span class="lineno"> 2620</span>          <span class="keyword">typename</span> FECellIntegrator::gradient_type <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>;</div>
 <div class="line"><a id="l02621" name="l02621"></a><span class="lineno"> 2621</span> </div>
 <div class="line"><a id="l02622" name="l02622"></a><span class="lineno"> 2622</span>          <span class="comment">// Calculate shear rate per component</span></div>
 <div class="line"><a id="l02623" name="l02623"></a><span class="lineno"> 2623</span>          <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
 <div class="line"><a id="l02624" name="l02624"></a><span class="lineno"> 2624</span>            {</div>
 <div class="line"><a id="l02625" name="l02625"></a><span class="lineno"> 2625</span>              <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; dim; ++j)</div>
 <div class="line"><a id="l02626" name="l02626"></a><span class="lineno"> 2626</span>                {</div>
-<div class="line"><a id="l02627" name="l02627"></a><span class="lineno"> 2627</span>                  <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[i][j] = gradient[i][j] + gradient[j][i];</div>
+<div class="line"><a id="l02627" name="l02627"></a><span class="lineno"> 2627</span>                  <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[i][j] = gradient[i][j] + gradient[j][i];</div>
 <div class="line"><a id="l02628" name="l02628"></a><span class="lineno"> 2628</span>                }</div>
 <div class="line"><a id="l02629" name="l02629"></a><span class="lineno"> 2629</span>            }</div>
 <div class="line"><a id="l02630" name="l02630"></a><span class="lineno"> 2630</span> </div>
@@ -2806,7 +2806,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02632" name="l02632"></a><span class="lineno"> 2632</span>          <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
 <div class="line"><a id="l02633" name="l02633"></a><span class="lineno"> 2633</span>            {</div>
 <div class="line"><a id="l02634" name="l02634"></a><span class="lineno"> 2634</span>              <span class="comment">// ν(∇v,(∇u + ∇uT))</span></div>
-<div class="line"><a id="l02635" name="l02635"></a><span class="lineno"> 2635</span>              gradient_result[i] = kinematic_viscosity * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[i];</div>
+<div class="line"><a id="l02635" name="l02635"></a><span class="lineno"> 2635</span>              gradient_result[i] = kinematic_viscosity * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[i];</div>
 <div class="line"><a id="l02636" name="l02636"></a><span class="lineno"> 2636</span>              <span class="comment">// -(∇·v,p)</span></div>
 <div class="line"><a id="l02637" name="l02637"></a><span class="lineno"> 2637</span>              gradient_result[i][i] += -value[dim];</div>
 <div class="line"><a id="l02638" name="l02638"></a><span class="lineno"> 2638</span>              <span class="comment">// +(v,-f)</span></div>
@@ -2839,7 +2839,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02665" name="l02665"></a><span class="lineno"> 2665</span>                  <span class="comment">// (-ν∆u - (∇ν)((∇u + ∇uT)) + (u_adv·∇)u)·τ∇q</span></div>
 <div class="line"><a id="l02666" name="l02666"></a><span class="lineno"> 2666</span>                  gradient_result[dim][i] +=</div>
 <div class="line"><a id="l02667" name="l02667"></a><span class="lineno"> 2667</span>                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] -</div>
-<div class="line"><a id="l02668" name="l02668"></a><span class="lineno"> 2668</span>                           kinematic_viscosity_gradient[k] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[k][i] +</div>
+<div class="line"><a id="l02668" name="l02668"></a><span class="lineno"> 2668</span>                           kinematic_viscosity_gradient[k] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[k][i] +</div>
 <div class="line"><a id="l02669" name="l02669"></a><span class="lineno"> 2669</span>                           gradient[i][k] * advective_value[k]);</div>
 <div class="line"><a id="l02670" name="l02670"></a><span class="lineno"> 2670</span>                }</div>
 <div class="line"><a id="l02671" name="l02671"></a><span class="lineno"> 2671</span>              <span class="comment">// +(-f)·τ∇q</span></div>
@@ -2869,7 +2869,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02695" name="l02695"></a><span class="lineno"> 2695</span>                      gradient_result[i][k] +=</div>
 <div class="line"><a id="l02696" name="l02696"></a><span class="lineno"> 2696</span>                        tau * advective_value[k] *</div>
 <div class="line"><a id="l02697" name="l02697"></a><span class="lineno"> 2697</span>                        (-kinematic_viscosity * hessian_diagonal[i][l] -</div>
-<div class="line"><a id="l02698" name="l02698"></a><span class="lineno"> 2698</span>                         kinematic_viscosity_gradient[l] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>[l][i]);</div>
+<div class="line"><a id="l02698" name="l02698"></a><span class="lineno"> 2698</span>                         kinematic_viscosity_gradient[l] * <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>[l][i]);</div>
 <div class="line"><a id="l02699" name="l02699"></a><span class="lineno"> 2699</span> </div>
 <div class="line"><a id="l02700" name="l02700"></a><span class="lineno"> 2700</span>                      <span class="comment">// + ((u_adv·∇)u)τ(u_adv·∇)v</span></div>
 <div class="line"><a id="l02701" name="l02701"></a><span class="lineno"> 2701</span>                      gradient_result[i][k] += tau * advective_value[k] *</div>
@@ -2992,9 +2992,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::BoundaryType::function_weak</a></div><div class="ttdeci">@ function_weak</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42">BoundaryConditions::BoundaryType::neumann_traction</a></div><div class="ttdeci">@ neumann_traction</div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_af664dc8360ab296677be2d669089e3a6"><div class="ttname"><a href="namespaceLetheGridTools.html#af664dc8360ab296677be2d669089e3a6">LetheGridTools::angular_to_linear_velocity</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; angular_to_linear_velocity(const double omega, const Tensor&lt; 1, dim &gt; &amp;point, const unsigned int rotation_axis_direction=2)</div><div class="ttdoc">Transform angular velocity into linear velocity considering that the angular velocity omega is consta...</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8h_source.html#l00490">lethe_grid_tools.h:490</a></div></div>
-<div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a></div><div class="ttdeci">@ shear_rate</div><div class="ttdef"><b>Definition</b> <a href="physical__property__model_8h_source.html#l00039">physical_property_model.h:39</a></div></div>
+<div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">field::shear_rate</a></div><div class="ttdeci">@ shear_rate</div></div>
 <div class="ttc" id="asdirk__stage__data_8h_html_a44c56258443b05558aa272e0129f3919"><div class="ttname"><a href="sdirk__stage__data_8h.html#a44c56258443b05558aa272e0129f3919">sdirk_table</a></div><div class="ttdeci">SDIRKTable sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Construct the Butcher tableau (A, b, c) for a given SDIRK method.</div><div class="ttdef"><b>Definition</b> <a href="sdirk__stage__data_8cc_source.html#l00019">sdirk_stage_data.cc:19</a></div></div>
-<div class="ttc" id="astructParameters_1_1Stabilization_html_a7f67c17b0ca688dd966290f8610583bb"><div class="ttname"><a href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bb">Parameters::Stabilization::NavierStokesStabilization</a></div><div class="ttdeci">NavierStokesStabilization</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00853">parameters.h:854</a></div></div>
+<div class="ttc" id="astructParameters_1_1Stabilization_html_a7f67c17b0ca688dd966290f8610583bb"><div class="ttname"><a href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bb">Parameters::Stabilization::NavierStokesStabilization</a></div><div class="ttdeci">NavierStokesStabilization</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00880">parameters.h:881</a></div></div>
 <div class="ttc" id="astructParameters_1_1Stabilization_html_a7f67c17b0ca688dd966290f8610583bbaae21e5838883a96aab921c84e14383bb"><div class="ttname"><a href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaae21e5838883a96aab921c84e14383bb">Parameters::Stabilization::NavierStokesStabilization::pspg_supg</a></div><div class="ttdeci">@ pspg_supg</div></div>
 <div class="ttc" id="astructParameters_1_1Stabilization_html_a7f67c17b0ca688dd966290f8610583bbaca6efd547a7b6d9885402b9544f941d5"><div class="ttname"><a href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaca6efd547a7b6d9885402b9544f941d5">Parameters::Stabilization::NavierStokesStabilization::gls</a></div><div class="ttdeci">@ gls</div></div>
 <div class="ttc" id="astructSDIRKTable_html"><div class="ttname"><a href="structSDIRKTable.html">SDIRKTable</a></div><div class="ttdoc">Structure representing a Butcher tableau for a SDIRK method.</div><div class="ttdef"><b>Definition</b> <a href="sdirk__stage__data_8h_source.html#l00033">sdirk_stage_data.h:34</a></div></div>

@@ -518,6 +518,16 @@ combines the medium’s relative permittivity <span class="math notranslate nohi
 conductive losses <span class="math notranslate nohighlight">\(\sigma_r\)</span> into a single complex coefficient via the
 relation <span class="math notranslate nohighlight">\(\varepsilon_{r,\text{eff}} = \varepsilon_r + i \sigma_r\)</span>.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In unresolved CFD-DEM simulations (<code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code> and
+<code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code>), <span class="math notranslate nohighlight">\(\varepsilon_{r,\text{eff}}\)</span> and
+<span class="math notranslate nohighlight">\(\mu_r\)</span> in the fluid region should be the effective properties of the
+fluid-particle mixture, computed from the void fraction with an effective
+medium model. See the <a class="reference internal" href="physical_properties.html#unresolved-dispersed-phase"><span class="std std-ref">unresolved dispersed phase</span></a>
+and the <a class="reference internal" href="physical_properties.html#effective-medium-models"><span class="std std-ref">effective medium models</span></a> in the
+physical properties.</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If the user wants to use different units than the MKS system because, for
@@ -740,6 +750,13 @@ recomputed.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code>: recompute whenever the electromagnetic properties of the
 medium change by more than <code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">threshold</span></code>.</p></li>
 </ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">threshold</span></code> strategy only tracks the changes of the temperature. It
+is therefore not supported when the electromagnetic properties depend on
+the void fraction (e.g., with the <code class="docutils literal notranslate"><span class="pre">bruggeman</span></code> effective medium model),
+and the simulation stops with an error in that case.</p>
+</div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">iteration</span></code>: number of time iterations between two
 electromagnetic solves when <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">iteration</span></code>.</p></li>

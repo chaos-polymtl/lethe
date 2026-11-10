@@ -98,15 +98,16 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="parameters_8h_source.html">core/parameters.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="simulation__control_8h_source.html">core/simulation_control.h</a>&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for physical_property_model.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="physical__property__model_8h__incl.svg" width="4180" height="740"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="physical__property__model_8h__incl.svg" width="3784" height="740"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="physical__property__model_8h__dep__incl.svg" width="4012" height="843"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="physical__property__model_8h__dep__incl.svg" width="4424" height="843"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="physical__property__model_8h_source.html">Go to the source code of this file.</a></p>
@@ -118,18 +119,19 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a0b2c854385812ebfac83689a5c3ead58" id="r_a0b2c854385812ebfac83689a5c3ead58"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> : int { <br />
-&#160;&#160;<a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55">shear_rate</a>
-, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a>
-, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a859d4520f7d26120611d9ef4e94df430">temperature_p1</a>
-, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>
+<tr class="memitem:a0b2c854385812ebfac83689a5c3ead58" id="r_a0b2c854385812ebfac83689a5c3ead58"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> : int { <br />
+&#160;&#160;<a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>
+, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58aeef438f7e448aa48c1f8db568d27b591">temperature</a>
+, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a4bc70373e17b58cc86cf1804c8bb4d6e">temperature_p1</a>
+, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58ae95c158b0893b1e44bb31573f864a13d">temperature_p2</a>
 , <br />
-&#160;&#160;<a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>
-, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">phase_order_cahn_hilliard</a>
-, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373">phase_order_cahn_hilliard_filtered</a>
-, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a45fb291adc4915bb8a8084cb8594bf2d">levelset</a>
+&#160;&#160;<a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58ad99fad96a5d0a7cb2eb41341ea556093">pressure</a>
+, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58aca4df62c1dc15533b1971acdd71d8dd0">phase_order_cahn_hilliard</a>
+, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5f5306c2964bbd1aa22156d3ef16f525">phase_order_cahn_hilliard_filtered</a>
+, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0aca025084bb6b6cfc5574bee664851e">levelset</a>
 , <br />
-&#160;&#160;<a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a48de41abf3ad17c204590a18ae5133c2">tracer_concentration</a>
+&#160;&#160;<a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9858786af1177b92d5ac7d297eb8bfec">tracer_concentration</a>
+, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a53bab7cfc37778cddbc3e7a999a7f2ae">void_fraction</a>
 <br />
  }</td></tr>
 <tr class="separator:a0b2c854385812ebfac83689a5c3ead58"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -151,25 +153,34 @@ Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> : int</td>
+          <td class="memname">enum class <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> : int</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55" name="a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55"></a>shear_rate&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3" name="a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3"></a>temperature&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a859d4520f7d26120611d9ef4e94df430" name="a0b2c854385812ebfac83689a5c3ead58a859d4520f7d26120611d9ef4e94df430"></a>temperature_p1&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07" name="a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07"></a>temperature_p2&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a" name="a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a"></a>pressure&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464" name="a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464"></a>phase_order_cahn_hilliard&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373" name="a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373"></a>phase_order_cahn_hilliard_filtered&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a45fb291adc4915bb8a8084cb8594bf2d" name="a0b2c854385812ebfac83689a5c3ead58a45fb291adc4915bb8a8084cb8594bf2d"></a>levelset&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a48de41abf3ad17c204590a18ae5133c2" name="a0b2c854385812ebfac83689a5c3ead58a48de41abf3ad17c204590a18ae5133c2"></a>tracer_concentration&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696" name="a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696"></a>shear_rate&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58aeef438f7e448aa48c1f8db568d27b591" name="a0b2c854385812ebfac83689a5c3ead58aeef438f7e448aa48c1f8db568d27b591"></a>temperature&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a4bc70373e17b58cc86cf1804c8bb4d6e" name="a0b2c854385812ebfac83689a5c3ead58a4bc70373e17b58cc86cf1804c8bb4d6e"></a>temperature_p1&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58ae95c158b0893b1e44bb31573f864a13d" name="a0b2c854385812ebfac83689a5c3ead58ae95c158b0893b1e44bb31573f864a13d"></a>temperature_p2&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58ad99fad96a5d0a7cb2eb41341ea556093" name="a0b2c854385812ebfac83689a5c3ead58ad99fad96a5d0a7cb2eb41341ea556093"></a>pressure&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58aca4df62c1dc15533b1971acdd71d8dd0" name="a0b2c854385812ebfac83689a5c3ead58aca4df62c1dc15533b1971acdd71d8dd0"></a>phase_order_cahn_hilliard&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a5f5306c2964bbd1aa22156d3ef16f525" name="a0b2c854385812ebfac83689a5c3ead58a5f5306c2964bbd1aa22156d3ef16f525"></a>phase_order_cahn_hilliard_filtered&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a0aca025084bb6b6cfc5574bee664851e" name="a0b2c854385812ebfac83689a5c3ead58a0aca025084bb6b6cfc5574bee664851e"></a>levelset&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a9858786af1177b92d5ac7d297eb8bfec" name="a0b2c854385812ebfac83689a5c3ead58a9858786af1177b92d5ac7d297eb8bfec"></a>tracer_concentration&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0b2c854385812ebfac83689a5c3ead58a53bab7cfc37778cddbc3e7a999a7f2ae" name="a0b2c854385812ebfac83689a5c3ead58a53bab7cfc37778cddbc3e7a999a7f2ae"></a>void_fraction&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00037">37</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00039">39</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
 </div>
 </div>
@@ -322,7 +333,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00051">51</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00054">54</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
 </div>
 </div>

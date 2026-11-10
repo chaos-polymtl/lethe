@@ -97,6 +97,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="density__model_8h_source.html">core/density_model.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="effective__medium__model_8h_source.html">core/effective_medium_model.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="electric__conductivity__model_8h_source.html">core/electric_conductivity_model.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="electric__permittivity__model_8h_source.html">core/electric_permittivity_model.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="magnetic__permeability__model_8h_source.html">core/magnetic_permeability_model.h</a>&gt;</code><br />
@@ -112,7 +113,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for physical_properties_manager.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="physical__properties__manager_8h__incl.svg" width="2323" height="902"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="physical__properties__manager_8h__incl.svg" width="2554" height="902"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -131,6 +132,7 @@ Classes</h2></td></tr>
 Enumerations</h2></td></tr>
 <tr class="memitem:a3374dca42581d32444eb366feb9f3189" id="r_a3374dca42581d32444eb366feb9f3189"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189">material_interactions_type</a> { <a class="el" href="physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6">fluid_fluid</a>
 , <a class="el" href="physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189a2116a68bfe5535ddc1f83113fcede062">fluid_solid</a>
+, <a class="el" href="physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189a4dcb9bdfea05ddbc8f99070018195f18">fluid_dispersed_phase</a>
  }</td></tr>
 <tr class="separator:a3374dca42581d32444eb366feb9f3189"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -140,6 +142,8 @@ Functions</h2></td></tr>
 <tr class="separator:ac657a4500a72769c4c3bda860d58d3e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac135ea5024fc8a8324efe91172865219" id="r_ac135ea5024fc8a8324efe91172865219"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="physical__properties__manager_8h.html#ac135ea5024fc8a8324efe91172865219">DeclException1</a> (RequiresConstantViscosity, std::string, &quot;The following assembler or post-processing utility &quot;&lt;&lt; arg1&lt;&lt; &quot; that you are trying to use does not support the use of a non-constant viscosity model. &quot; &quot;Modifications to Lethe are required to take this into account.&quot;)</td></tr>
 <tr class="separator:ac135ea5024fc8a8324efe91172865219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80f84bde7a3b069409d235612d1c55b8" id="r_a80f84bde7a3b069409d235612d1c55b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="physical__properties__manager_8h.html#a80f84bde7a3b069409d235612d1c55b8">DeclException1</a> (MaterialInteractionIsNotEffectiveMedium, unsigned int, &quot;The material interaction with id &quot;&lt;&lt; arg1&lt;&lt; &quot; does not define an effective medium model. Only fluid-dispersed <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> interactions do.&quot;)</td></tr>
+<tr class="separator:a80f84bde7a3b069409d235612d1c55b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a3374dca42581d32444eb366feb9f3189" name="a3374dca42581d32444eb366feb9f3189"></a>
@@ -156,15 +160,50 @@ Functions</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6" name="a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6"></a>fluid_fluid&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a3374dca42581d32444eb366feb9f3189a2116a68bfe5535ddc1f83113fcede062" name="a3374dca42581d32444eb366feb9f3189a2116a68bfe5535ddc1f83113fcede062"></a>fluid_solid&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a3374dca42581d32444eb366feb9f3189a4dcb9bdfea05ddbc8f99070018195f18" name="a3374dca42581d32444eb366feb9f3189a4dcb9bdfea05ddbc8f99070018195f18"></a>fluid_dispersed_phase&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="physical__properties__manager_8h_source.html#l00042">42</a> of file <a class="el" href="physical__properties__manager_8h_source.html">physical_properties_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__properties__manager_8h_source.html#l00049">49</a> of file <a class="el" href="physical__properties__manager_8h_source.html">physical_properties_manager.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a80f84bde7a3b069409d235612d1c55b8" name="a80f84bde7a3b069409d235612d1c55b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80f84bde7a3b069409d235612d1c55b8">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">MaterialInteractionIsNotEffectiveMedium&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;The material interaction with id &quot;&lt;&lt; arg1&lt;&lt; &quot; does not define an effective medium model. Only fluid-dispersed <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> interactions do.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac657a4500a72769c4c3bda860d58d3e7" name="ac657a4500a72769c4c3bda860d58d3e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac657a4500a72769c4c3bda860d58d3e7">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac657a4500a72769c4c3bda860d58d3e7">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -198,7 +237,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="ac135ea5024fc8a8324efe91172865219" name="ac135ea5024fc8a8324efe91172865219"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac135ea5024fc8a8324efe91172865219">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac135ea5024fc8a8324efe91172865219">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

@@ -104,6 +104,7 @@ $(function() {
 Public Types</h2></td></tr>
 <tr class="memitem:aa83721a319b4784e22860ee35916a6b8" id="r_aa83721a319b4784e22860ee35916a6b8"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8">MaterialInteractionsType</a> : std::int8_t { <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a1b2190c742f3b972ffbe02752ba4f8b2">fluid_fluid</a>
 , <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a7426537cf506209635da9eebebd9886a">fluid_solid</a>
+, <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a630e28726ab7e1f9944c28fec8b6faff">fluid_dispersed_phase</a>
  }</td></tr>
 <tr class="separator:aa83721a319b4784e22860ee35916a6b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95e5a70b22007fa05e326faceaad0f83" id="r_a95e5a70b22007fa05e326faceaad0f83"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#a95e5a70b22007fa05e326faceaad0f83">SurfaceTensionModel</a> : std::int8_t { <a class="el" href="classParameters_1_1MaterialInteractions.html#a95e5a70b22007fa05e326faceaad0f83a617ac08757d38a5a7ed91c224f0e90a0">constant</a>
@@ -115,6 +116,10 @@ Public Types</h2></td></tr>
 , <a class="el" href="classParameters_1_1MaterialInteractions.html#a54e46180a85719f64bf0df8fe5dbb54ea4e59f172f34b9ea77ee20c2d2c69e112">quartic</a>
  }</td></tr>
 <tr class="separator:a54e46180a85719f64bf0df8fe5dbb54e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ab73f9607ff1908e785ff068247b691" id="r_a1ab73f9607ff1908e785ff068247b691"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691">EffectiveMediumModelType</a> : std::int8_t { <a class="el" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691a5a255974197a357eead998c1a2ba6551">bruggeman</a>
+ }</td></tr>
+<tr class="separator:a1ab73f9607ff1908e785ff068247b691"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -137,16 +142,52 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a8b4c2a7c2bae57da89ce413987fe55ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88d1c723836ec2fe0528b903a890a5ec" id="r_a88d1c723836ec2fe0528b903a890a5ec"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1MobilityCahnHilliardParameters.html">MobilityCahnHilliardParameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#a88d1c723836ec2fe0528b903a890a5ec">mobility_cahn_hilliard_parameters</a></td></tr>
 <tr class="separator:a88d1c723836ec2fe0528b903a890a5ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abef703e99663ea14df984ee393b19048" id="r_abef703e99663ea14df984ee393b19048"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691">EffectiveMediumModelType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#abef703e99663ea14df984ee393b19048">electric_permittivity_effective_medium_model</a></td></tr>
+<tr class="separator:abef703e99663ea14df984ee393b19048"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fb306577e156b930ed6269cd43991a5" id="r_a6fb306577e156b930ed6269cd43991a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691">EffectiveMediumModelType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#a6fb306577e156b930ed6269cd43991a5">magnetic_permeability_effective_medium_model</a></td></tr>
+<tr class="separator:a6fb306577e156b930ed6269cd43991a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a349561ff688edba5474bc1cf34c14c0d" id="r_a349561ff688edba5474bc1cf34c14c0d"><td class="memItemLeft" align="right" valign="top">std::pair&lt; std::pair&lt; unsigned int, unsigned int &gt;, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#a349561ff688edba5474bc1cf34c14c0d">fluid_fluid_interaction_with_material_interaction_id</a></td></tr>
 <tr class="separator:a349561ff688edba5474bc1cf34c14c0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe2d6daf44c309092ce3cf1feae02ebd" id="r_abe2d6daf44c309092ce3cf1feae02ebd"><td class="memItemLeft" align="right" valign="top">std::pair&lt; std::pair&lt; unsigned int, unsigned int &gt;, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#abe2d6daf44c309092ce3cf1feae02ebd">fluid_solid_interaction_with_material_interaction_id</a></td></tr>
 <tr class="separator:abe2d6daf44c309092ce3cf1feae02ebd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac50161df041cab6a8c8a32657821924c" id="r_ac50161df041cab6a8c8a32657821924c"><td class="memItemLeft" align="right" valign="top">std::pair&lt; std::pair&lt; unsigned int, unsigned int &gt;, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1MaterialInteractions.html#ac50161df041cab6a8c8a32657821924c">fluid_dispersed_phase_interaction_with_material_interaction_id</a></td></tr>
+<tr class="separator:ac50161df041cab6a8c8a32657821924c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classParameters_1_1MaterialInteractions.html" title="MaterialInteractions - Class that defines physical properties due to interactions between two differe...">MaterialInteractions</a> - Class that defines physical properties due to interactions between two different materials (either fluid-fluid or fluid-solid). </p>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00637">637</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a1ab73f9607ff1908e785ff068247b691" name="a1ab73f9607ff1908e785ff068247b691"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ab73f9607ff1908e785ff068247b691">&#9670;&#160;</a></span>EffectiveMediumModelType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691">Parameters::MaterialInteractions::EffectiveMediumModelType</a> : std::int8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1ab73f9607ff1908e785ff068247b691a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a1ab73f9607ff1908e785ff068247b691a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"><p>No effective medium model is applied; the properties of the fluid phase are used directly. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a1ab73f9607ff1908e785ff068247b691a5a255974197a357eead998c1a2ba6551" name="a1ab73f9607ff1908e785ff068247b691a5a255974197a357eead998c1a2ba6551"></a>bruggeman&#160;</td><td class="fielddoc"><p>Bruggeman effective medium model. </p>
+</td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00668">668</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="aa83721a319b4784e22860ee35916a6b8" name="aa83721a319b4784e22860ee35916a6b8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa83721a319b4784e22860ee35916a6b8">&#9670;&#160;</a></span>MaterialInteractionsType</h2>
 
@@ -169,6 +210,7 @@ Public Attributes</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa83721a319b4784e22860ee35916a6b8a1b2190c742f3b972ffbe02752ba4f8b2" name="aa83721a319b4784e22860ee35916a6b8a1b2190c742f3b972ffbe02752ba4f8b2"></a>fluid_fluid&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="aa83721a319b4784e22860ee35916a6b8a7426537cf506209635da9eebebd9886a" name="aa83721a319b4784e22860ee35916a6b8a7426537cf506209635da9eebebd9886a"></a>fluid_solid&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa83721a319b4784e22860ee35916a6b8a630e28726ab7e1f9944c28fec8b6faff" name="aa83721a319b4784e22860ee35916a6b8a630e28726ab7e1f9944c28fec8b6faff"></a>fluid_dispersed_phase&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00642">642</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
@@ -199,7 +241,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a54e46180a85719f64bf0df8fe5dbb54ea4e59f172f34b9ea77ee20c2d2c69e112" name="a54e46180a85719f64bf0df8fe5dbb54ea4e59f172f34b9ea77ee20c2d2c69e112"></a>quartic&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00658">658</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00659">659</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -228,7 +270,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a95e5a70b22007fa05e326faceaad0f83ad0b50e5bdf6e59d6f8ce448465e09069" name="a95e5a70b22007fa05e326faceaad0f83ad0b50e5bdf6e59d6f8ce448465e09069"></a>phase_change&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00649">649</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00650">650</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -294,9 +336,9 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01701">1701</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01759">1759</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>, <a class="el" href="parameters_8cc_source.html#l00712">Parameters::SurfaceTensionParameters::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00765">Parameters::MobilityCahnHilliardParameters::declare_parameters()</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#a157ad035a5932f82d26ab5c72f407cc6">material_interaction_type</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#a8b4c2a7c2bae57da89ce413987fe55ab">mobility_cahn_hilliard_model</a>, <a class="el" href="parameters_8h_source.html#l00663">mobility_cahn_hilliard_parameters</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#ad4b575a24befd275ed3e050bf74ec9d2">surface_tension_model</a>, and <a class="el" href="parameters_8h_source.html#l00655">surface_tension_parameters</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>, <a class="el" href="parameters_8cc_source.html#l00721">Parameters::SurfaceTensionParameters::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00774">Parameters::MobilityCahnHilliardParameters::declare_parameters()</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#a157ad035a5932f82d26ab5c72f407cc6">material_interaction_type</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#a8b4c2a7c2bae57da89ce413987fe55ab">mobility_cahn_hilliard_model</a>, <a class="el" href="parameters_8h_source.html#l00664">mobility_cahn_hilliard_parameters</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#ad4b575a24befd275ed3e050bf74ec9d2">surface_tension_model</a>, and <a class="el" href="parameters_8h_source.html#l00656">surface_tension_parameters</a>.</p>
 
 </div>
 </div>
@@ -342,13 +384,48 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01781">1781</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01867">1867</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a1b2190c742f3b972ffbe02752ba4f8b2">fluid_fluid</a>, <a class="el" href="parameters_8h_source.html#l00666">fluid_fluid_interaction_with_material_interaction_id</a>, and <a class="el" href="classParameters_1_1MaterialInteractions.html#a157ad035a5932f82d26ab5c72f407cc6">material_interaction_type</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00677">electric_permittivity_effective_medium_model</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a630e28726ab7e1f9944c28fec8b6faff">fluid_dispersed_phase</a>, <a class="el" href="parameters_8h_source.html#l00687">fluid_dispersed_phase_interaction_with_material_interaction_id</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a1b2190c742f3b972ffbe02752ba4f8b2">fluid_fluid</a>, <a class="el" href="parameters_8h_source.html#l00683">fluid_fluid_interaction_with_material_interaction_id</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a7426537cf506209635da9eebebd9886a">fluid_solid</a>, <a class="el" href="parameters_8h_source.html#l00685">fluid_solid_interaction_with_material_interaction_id</a>, <a class="el" href="parameters_8h_source.html#l00679">magnetic_permeability_effective_medium_model</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#a157ad035a5932f82d26ab5c72f407cc6">material_interaction_type</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#a8b4c2a7c2bae57da89ce413987fe55ab">mobility_cahn_hilliard_model</a>, <a class="el" href="parameters_8h_source.html#l00664">mobility_cahn_hilliard_parameters</a>, <a class="el" href="parameters_8cc_source.html#l00754">Parameters::SurfaceTensionParameters::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00787">Parameters::MobilityCahnHilliardParameters::parse_parameters()</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#ad4b575a24befd275ed3e050bf74ec9d2">surface_tension_model</a>, and <a class="el" href="parameters_8h_source.html#l00656">surface_tension_parameters</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="abef703e99663ea14df984ee393b19048" name="abef703e99663ea14df984ee393b19048"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abef703e99663ea14df984ee393b19048">&#9670;&#160;</a></span>electric_permittivity_effective_medium_model</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691">EffectiveMediumModelType</a> Parameters::MaterialInteractions::electric_permittivity_effective_medium_model</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">      <a class="code hl_enumvalue" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691a334c4a4c42fdb79d7ebc3e73b517e6f8">EffectiveMediumModelType::none</a></div>
+<div class="ttc" id="aclassParameters_1_1MaterialInteractions_html_a1ab73f9607ff1908e785ff068247b691a334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::MaterialInteractions::EffectiveMediumModelType::none</a></div><div class="ttdeci">@ none</div></div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00677">677</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="ac50161df041cab6a8c8a32657821924c" name="ac50161df041cab6a8c8a32657821924c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac50161df041cab6a8c8a32657821924c">&#9670;&#160;</a></span>fluid_dispersed_phase_interaction_with_material_interaction_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt;std::pair&lt;unsigned int, unsigned int&gt;, unsigned int&gt; Parameters::MaterialInteractions::fluid_dispersed_phase_interaction_with_material_interaction_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00687">687</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="a349561ff688edba5474bc1cf34c14c0d" name="a349561ff688edba5474bc1cf34c14c0d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a349561ff688edba5474bc1cf34c14c0d">&#9670;&#160;</a></span>fluid_fluid_interaction_with_material_interaction_id</h2>
 
@@ -361,7 +438,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00666">666</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00683">683</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -377,7 +454,25 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00668">668</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00685">685</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a6fb306577e156b930ed6269cd43991a5" name="a6fb306577e156b930ed6269cd43991a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fb306577e156b930ed6269cd43991a5">&#9670;&#160;</a></span>magnetic_permeability_effective_medium_model</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691">EffectiveMediumModelType</a> Parameters::MaterialInteractions::magnetic_permeability_effective_medium_model</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">      <a class="code hl_enumvalue" href="classParameters_1_1MaterialInteractions.html#a1ab73f9607ff1908e785ff068247b691a334c4a4c42fdb79d7ebc3e73b517e6f8">EffectiveMediumModelType::none</a></div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00679">679</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -421,7 +516,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00663">663</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00664">664</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -451,7 +546,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00655">655</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00656">656</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

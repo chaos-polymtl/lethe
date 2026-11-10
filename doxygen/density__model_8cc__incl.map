@@ -1,15 +1,17 @@
 <map id="/home/runner/work/lethe/lethe/source/core/density_model.cc" name="/home/runner/work/lethe/lethe/source/core/density_model.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="947,5,1138,60"/>
-<area shape="rect" id="Node000002" href="$density__model_8h.html" title=" " alt="" coords="961,108,1124,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1045,60,1045,94,1040,94,1040,60"/>
-<area shape="rect" id="Node000003" href="$physical__property__model_8h.html" title=" " alt="" coords="685,181,856,221"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1004,136,850,180,849,175,1002,131"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="877,5,1067,60"/>
+<area shape="rect" id="Node000002" href="$density__model_8h.html" title=" " alt="" coords="891,108,1053,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="975,60,975,94,969,94,969,60"/>
+<area shape="rect" id="Node000003" href="$physical__property__model_8h.html" title=" " alt="" coords="663,181,833,221"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="940,136,816,179,814,174,939,131"/>
 <area shape="rect" id="Node000031" title=" " alt="" coords="1109,761,1195,786"/>
-<area shape="poly" id="edge37_Node000002_Node000031" title=" " alt="" coords="1105,131,1165,149,1226,178,1253,198,1274,221,1288,249,1293,280,1293,613,1290,637,1282,660,1256,699,1221,731,1187,755,1184,751,1218,727,1251,696,1278,657,1285,636,1288,613,1288,281,1283,251,1270,224,1249,202,1223,183,1163,154,1103,136"/>
+<area shape="poly" id="edge38_Node000002_Node000031" title=" " alt="" coords="1054,125,1131,139,1171,151,1209,167,1242,187,1269,212,1287,243,1293,280,1293,613,1290,637,1282,660,1256,699,1221,731,1187,755,1184,751,1218,727,1251,696,1278,657,1285,636,1288,613,1288,281,1282,245,1265,215,1239,191,1206,171,1169,156,1130,144,1053,130"/>
 <area shape="rect" id="Node000004" href="$parameters_8h.html" title=" " alt="" coords="675,431,816,456"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="771,222,751,417,745,417,766,221"/>
-<area shape="rect" id="Node000052" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="524,269,711,295"/>
-<area shape="poly" id="edge30_Node000003_Node000052" title=" " alt="" coords="735,224,653,265,651,261,733,219"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="754,222,760,269,759,350,752,417,747,417,754,350,755,269,749,222"/>
+<area shape="rect" id="Node000052" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="468,269,655,295"/>
+<area shape="poly" id="edge30_Node000003_Node000052" title=" " alt="" coords="704,224,602,266,600,261,702,219"/>
+<area shape="rect" id="Node000056" title=" " alt="" coords="679,269,745,295"/>
+<area shape="poly" id="edge37_Node000003_Node000056" title=" " alt="" coords="742,223,726,258,721,255,737,220"/>
 <area shape="rect" id="Node000005" href="$dimensionality_8h.html" title=" " alt="" coords="1091,599,1253,625"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="816,444,903,449,998,459,1084,476,1118,488,1142,502,1157,521,1167,543,1174,585,1169,586,1162,544,1152,523,1138,506,1116,492,1083,481,998,464,902,454,816,449"/>
 <area shape="rect" id="Node000006" title=" " alt="" coords="915,753,1085,793"/>
@@ -50,13 +52,13 @@
 <area shape="poly" id="edge24_Node000049_Node000009" title=" " alt="" coords="736,708,640,757,638,752,733,703"/>
 <area shape="poly" id="edge22_Node000049_Node000021" title=" " alt="" coords="760,706,758,747,753,747,754,705"/>
 <area shape="poly" id="edge23_Node000049_Node000031" title=" " alt="" coords="833,701,958,721,1098,751,1109,754,1107,759,1097,756,957,726,832,706"/>
-<area shape="poly" id="edge35_Node000052_Node000004" title=" " alt="" coords="638,293,667,314,695,341,721,379,738,417,734,419,716,382,691,344,663,318,635,297"/>
-<area shape="rect" id="Node000053" href="$bdf_8h.html" title=" " alt="" coords="286,350,373,375"/>
-<area shape="poly" id="edge31_Node000052_Node000053" title=" " alt="" coords="576,297,385,349,384,344,575,292"/>
-<area shape="rect" id="Node000055" title=" " alt="" coords="507,343,682,383"/>
-<area shape="poly" id="edge36_Node000052_Node000055" title=" " alt="" coords="617,296,607,330,601,329,611,294"/>
-<area shape="poly" id="edge32_Node000053_Node000004" title=" " alt="" coords="373,370,672,425,671,431,372,375"/>
-<area shape="poly" id="edge34_Node000053_Node000011" title=" " alt="" coords="308,378,272,400,232,432,214,452,200,474,190,497,187,523,187,613,189,634,195,655,215,692,242,725,268,750,264,754,238,728,211,695,190,657,184,635,181,613,181,522,185,496,195,471,210,449,228,429,269,395,305,373"/>
+<area shape="poly" id="edge35_Node000052_Node000004" title=" " alt="" coords="586,293,623,313,662,341,701,380,731,418,727,421,697,383,658,345,620,318,584,297"/>
+<area shape="rect" id="Node000053" href="$bdf_8h.html" title=" " alt="" coords="238,350,325,375"/>
+<area shape="poly" id="edge31_Node000052_Node000053" title=" " alt="" coords="521,297,336,349,335,344,520,292"/>
+<area shape="rect" id="Node000055" title=" " alt="" coords="474,343,649,383"/>
+<area shape="poly" id="edge36_Node000052_Node000055" title=" " alt="" coords="564,295,564,329,559,329,559,295"/>
+<area shape="poly" id="edge32_Node000053_Node000004" title=" " alt="" coords="325,369,665,426,664,431,325,374"/>
+<area shape="poly" id="edge34_Node000053_Node000011" title=" " alt="" coords="270,378,245,402,218,436,196,477,189,500,187,523,187,613,189,634,195,655,215,692,242,725,268,750,264,754,238,728,211,695,190,657,184,635,181,613,181,523,184,499,191,475,214,433,241,398,266,374"/>
 <area shape="rect" id="Node000054" title=" " alt="" coords="5,431,147,456"/>
-<area shape="poly" id="edge33_Node000053_Node000054" title=" " alt="" coords="293,378,127,429,125,424,292,373"/>
+<area shape="poly" id="edge33_Node000053_Node000054" title=" " alt="" coords="252,378,120,428,118,423,251,373"/>
 </map>

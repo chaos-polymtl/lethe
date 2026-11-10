@@ -458,7 +458,7 @@
 <h1>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Lethe supports single phase, two phase (using Conservative Level-Set or Cahn-Hilliard) and conjugate simulations. This is managed using the fluid and solid subsections.</p>
+<p>Lethe supports single phase, two phase (using Conservative Level-Set or Cahn-Hilliard) and conjugate simulations. This is managed using the fluid and solid subsections. In unresolved CFD-DEM simulations, the electromagnetic properties of the particles can also be defined with the unresolved dispersed phase subsection (see <a class="reference internal" href="#unresolved-dispersed-phase">Unresolved Dispersed Phase</a>).</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
   set number of fluids      = 1
@@ -515,6 +515,8 @@
 
   set number of solids = 0
 
+  set number of unresolved dispersed phases = 0
+
   set number of material interactions = 1 #by default it is set to 0
   subsection material interaction 0
     set type = fluid_fluid
@@ -548,6 +550,16 @@
       set liquidus temperature                        = 0
       set solidus temperature                         = 0
     end
+
+    # if fluid-dispersed phase interaction
+    subsection fluid-dispersed phase interaction
+      set fluid id           = 0
+      set dispersed phase id = 0
+
+      # Effective medium models
+      set electric permittivity effective medium model = none
+      set magnetic permeability effective medium model = none
+    end
   end
 end
 </pre></div>
@@ -556,13 +568,13 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">fluids</span></code> parameter controls the number of fluids in the simulation. This parameter is set to <code class="docutils literal notranslate"><span class="pre">1</span></code> except in <a class="reference internal" href="#two-phase-simulations">Two Phase Simulations</a> .</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">reference</span> <span class="pre">temperature</span></code> parameter specifies the reference temperature used in the calculation of some physical properties or the thermal expansion force.</p>
 <ul>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span></code> parameter sets the choice of rheological model. The choices are between <code class="docutils literal notranslate"><span class="pre">newtonian</span></code>, <code class="docutils literal notranslate"><span class="pre">powerlaw</span></code>, <code class="docutils literal notranslate"><span class="pre">carreau</span></code> and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code>. For more details on the rheological models, see  <a class="reference internal" href="#id4">Rheological Models</a> .</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span></code> parameter sets the choice of rheological model. The choices are between <code class="docutils literal notranslate"><span class="pre">newtonian</span></code>, <code class="docutils literal notranslate"><span class="pre">powerlaw</span></code>, <code class="docutils literal notranslate"><span class="pre">carreau</span></code> and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code>. For more details on the rheological models, see  <a class="reference internal" href="#id5">Rheological Models</a> .</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code> parameter is the kinematic viscosity of the newtonian fluid in units of <span class="math notranslate nohighlight">\(\text{Length}^{2} \cdot \text{Time}^{-1}\)</span>. In SI, this is <span class="math notranslate nohighlight">\(\text{m}^{2} \cdot \text{s}^{-1}\)</span>. This viscosity is only used when <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">newtonian</span></code>.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">density</span> <span class="pre">model</span></code> specifies the model used to calculate the density. At the moment, a <code class="docutils literal notranslate"><span class="pre">constant</span></code> density and an <code class="docutils literal notranslate"><span class="pre">isothermal_ideal_gas</span></code> model are supported. For more details on the density models, see <a class="reference internal" href="#id5">Density Models</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">density</span> <span class="pre">model</span></code> specifies the model used to calculate the density. At the moment, a <code class="docutils literal notranslate"><span class="pre">constant</span></code> density and an <code class="docutils literal notranslate"><span class="pre">isothermal_ideal_gas</span></code> model are supported. For more details on the density models, see <a class="reference internal" href="#id6">Density Models</a>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">density</span></code> parameter is the constant density of the fluid in units of <span class="math notranslate nohighlight">\(\text{Mass} \cdot \text{Length}^{-3}\)</span></p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">model</span></code> specifies the model used to calculate the specific heat. At the moment, only a constant specific heat is supported.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span></code> parameter is the constant specific heat of the fluid in units of <span class="math notranslate nohighlight">\(\text{Energy} \cdot \text{Temperature}^{-1} \cdot \text{Mass}^{-1}\)</span> .</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">model</span></code> specifies the model used to calculate the thermal conductivity. At the moment, <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">linear</span></code> thermal conductivity are available. For more details on the thermal conductivity models, see <a class="reference internal" href="#id6">Thermal Conductivity Models</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">model</span></code> specifies the model used to calculate the thermal conductivity. At the moment, <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">linear</span></code> thermal conductivity are available. For more details on the thermal conductivity models, see <a class="reference internal" href="#id7">Thermal Conductivity Models</a>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span></code> parameter is the thermal conductivity coefficient of the fluid with units of <span class="math notranslate nohighlight">\(\text{Power} \cdot \text{Temperature}^{-1} \cdot \text{Length}^{-1}\)</span>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span> <span class="pre">model</span></code> specifies the model used to calculate the thermal expansion coefficient. At the moment, <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> thermal expansion are supported. For more details on the thermal expansion models, see <a class="reference internal" href="#thermal-expansion-models">Thermal Expansion Models</a>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span></code> parameter is the thermal expansion coefficient of the fluid with dimension of <span class="math notranslate nohighlight">\(\text{Temperature}^{-1}\)</span>. It is used to define the buoyancy-driven flow (natural convection) using the Boussinesq approximation, which leads to the definition of the following source term that is added to the Navier-Stokes equation:</p>
@@ -644,9 +656,10 @@ end
 </div>
 <ul>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">solids</span></code> parameter controls the number of solid regions. Solid regions are currently only implemented for <a class="reference internal" href="#conjugate-heat-transfer">Conjugate Heat Transfer</a>.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">material</span> <span class="pre">interactions</span></code> parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in <a class="reference internal" href="#two-phase-simulations">Two Phase Simulations</a>.</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">unresolved</span> <span class="pre">dispersed</span> <span class="pre">phases</span></code> parameter controls the number of unresolved dispersed phases, i.e., phases that are not resolved by the mesh, but that would affect a given property. This includes, for example, a suspension of particles in a fluid that is not resolved by the mesh. At the moment, at most one unresolved dispersed phase is supported, and its properties are defined in the <code class="docutils literal notranslate"><span class="pre">unresolved</span> <span class="pre">dispersed</span> <span class="pre">phase</span> <span class="pre">0</span></code> subsection (see <a class="reference internal" href="#unresolved-dispersed-phase">Unresolved Dispersed Phase</a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">material</span> <span class="pre">interactions</span></code> parameter controls the number of physical properties that are due to the interaction between two materials. At the moment only two categories of material interactions are supported: the surface tension between two fluids is implemented in <a class="reference internal" href="#two-phase-simulations">Two Phase Simulations</a> and the blending of material properties of a fluid containing an unresolved dispersed phase is implemented in <a class="reference internal" href="#effective-medium-models">Effective Medium Models</a>.</p>
 <ul>
-<li><p>The material interaction <code class="docutils literal notranslate"><span class="pre">type</span></code> can either be <code class="docutils literal notranslate"><span class="pre">fluid_fluid</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">fluid_solid</span></code>.</p></li>
+<li><p>The material interaction <code class="docutils literal notranslate"><span class="pre">type</span></code> can either be <code class="docutils literal notranslate"><span class="pre">fluid_fluid</span></code> (default), <code class="docutils literal notranslate"><span class="pre">fluid_solid</span></code> or <code class="docutils literal notranslate"><span class="pre">fluid_dispersed_phase</span></code>.</p></li>
 <li><p>In the <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> subsection we define the pair of fluids and their physical properties.</p>
 <ul>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">first</span> <span class="pre">fluid</span> <span class="pre">id</span></code> is the id of the first fluid.</p></li>
@@ -656,7 +669,7 @@ end
 <p>The <code class="docutils literal notranslate"><span class="pre">second</span> <span class="pre">fluid</span> <span class="pre">id</span></code> should be greater than the <code class="docutils literal notranslate"><span class="pre">first</span> <span class="pre">fluid</span> <span class="pre">id</span></code>.</p>
 </div>
 </li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code> specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, <code class="docutils literal notranslate"><span class="pre">constant</span></code>, <code class="docutils literal notranslate"><span class="pre">linear</span></code>, and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> models are supported. For more details on the surface tension models, see <a class="reference internal" href="#id8">Surface Tension Models</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code> specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, <code class="docutils literal notranslate"><span class="pre">constant</span></code>, <code class="docutils literal notranslate"><span class="pre">linear</span></code>, and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> models are supported. For more details on the surface tension models, see <a class="reference internal" href="#id9">Surface Tension Models</a>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> parameter is a constant surface tension coefficient of the two interacting fluids in units of <span class="math notranslate nohighlight">\(\text{Mass} \cdot \text{Time}^{-2}\)</span>. In SI, this is <span class="math notranslate nohighlight">\(\text{N} \cdot \text{m}^{-1}\)</span>. The surface tension coefficient is used as defined in the Weber number (<span class="math notranslate nohighlight">\(We\)</span>):</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -664,9 +677,9 @@ end
 </div>
 <p>where <span class="math notranslate nohighlight">\(Re\)</span> is the Reynolds number, <span class="math notranslate nohighlight">\(\mu_\text{ref}\)</span> and <span class="math notranslate nohighlight">\(u_\text{ref}\)</span> are some reference viscosity and velocity characterizing the flow problem, and <span class="math notranslate nohighlight">\(\sigma\)</span> is the surface tension coefficient.</p>
 </li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">reference</span> <span class="pre">state</span> <span class="pre">temperature</span></code> parameter is the temperature of the reference state at which the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> is evaluated. This parameter is used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">linear</span></code> surface tension model (see <a class="reference internal" href="#id8">Surface Tension Models</a>).</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">temperature-driven</span> <span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">gradient</span></code> parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of <span class="math notranslate nohighlight">\(\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}\)</span>. In SI, this is <span class="math notranslate nohighlight">\(\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}\)</span>. This parameter is used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">linear</span></code> surface tension model (see <a class="reference internal" href="#id8">Surface Tension Models</a>).</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> parameters are used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> surface tension model (see <a class="reference internal" href="#id8">Surface Tension Models</a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">reference</span> <span class="pre">state</span> <span class="pre">temperature</span></code> parameter is the temperature of the reference state at which the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> is evaluated. This parameter is used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">linear</span></code> surface tension model (see <a class="reference internal" href="#id9">Surface Tension Models</a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">temperature-driven</span> <span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">gradient</span></code> parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of <span class="math notranslate nohighlight">\(\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}\)</span>. In SI, this is <span class="math notranslate nohighlight">\(\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}\)</span>. This parameter is used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">linear</span></code> surface tension model (see <a class="reference internal" href="#id9">Surface Tension Models</a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> parameters are used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> surface tension model (see <a class="reference internal" href="#id9">Surface Tension Models</a>).</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">mobility</span> <span class="pre">model</span></code> specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the pair of fluid. Two models are available: a <code class="docutils literal notranslate"><span class="pre">constant</span></code> mobility and a <code class="docutils literal notranslate"><span class="pre">quartic</span></code> mobility. The reader is referred to the <a class="reference internal" href="cahn_hilliard.html"><span class="doc">Cahn-Hilliard theory guide</span></a> for more details.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">mobility</span> <span class="pre">coefficient</span></code> parameter is the constant mobility coefficient of the two interacting fluids used in the Cahn-Hilliard equations. Its units are <span class="math notranslate nohighlight">\(\text{Length}^{2} \cdot \text{Time}^{-1}\)</span>.</p></li>
 </ul>
@@ -676,6 +689,13 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">id</span></code> is the id of the fluid.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">solid</span> <span class="pre">id</span></code> is the id of the solid.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code>  and <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> are the same as described in the <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> subsection above.</p></li>
+</ul>
+</li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">fluid-dispersed</span> <span class="pre">phase</span></code> subsection we define the mixture of a fluid and of an unresolved dispersed phase, and the models used to compute its effective properties (mixing of the properties of the fluid and of the dispersed phase).</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">id</span></code> is the id of the fluid hosting the unresolved dispersed phase.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">dispersed</span> <span class="pre">phase</span> <span class="pre">id</span></code> is the id of the unresolved dispersed phase.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">effective</span> <span class="pre">medium</span> <span class="pre">model</span></code> and <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">effective</span> <span class="pre">medium</span> <span class="pre">model</span></code> specify the models used to compute the effective electric permittivity and the effective magnetic permeability of the mixture. They are the only effective properties that can be computed for a mixture of a fluid with an unresolved dispersed phase at the moment. The choices of models are <code class="docutils literal notranslate"><span class="pre">none</span></code> (default) and <code class="docutils literal notranslate"><span class="pre">bruggeman</span></code>. For more details on these models, see <a class="reference internal" href="#effective-medium-models">Effective Medium Models</a>.</p></li>
 </ul>
 </li>
 </ul>
@@ -756,8 +776,48 @@ end
 </pre></div>
 </div>
 </section>
+<section id="unresolved-dispersed-phase">
+<span id="id3"></span><h3>Unresolved Dispersed Phase<a class="headerlink" href="#unresolved-dispersed-phase" title="Link to this heading">#</a></h3>
+<p>In unresolved CFD-DEM simulations (<code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code> and <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code>), the particles are smaller than the mesh cells and are not resolved by the mesh. The electromagnetic fields are then solved in the fluid-particle mixture, whose electromagnetic properties depend on the properties of the fluid, on those of the particles and on the local void fraction. The particles form an unresolved dispersed phase, whose properties are defined in the <code class="docutils literal notranslate"><span class="pre">unresolved</span> <span class="pre">dispersed</span> <span class="pre">phase</span> <span class="pre">0</span></code> subsection, in an identical fashion as those of the fluids. The mixture is defined by a <code class="docutils literal notranslate"><span class="pre">fluid_dispersed_phase</span></code> material interaction between the fluid and the dispersed phase, in which the effective medium models are selected (see <a class="reference internal" href="#effective-medium-models">Effective Medium Models</a>).</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set electric permittivity real part = 1
+    set electric permittivity imag part = 0
+  end
+
+  set number of unresolved dispersed phases = 1
+  subsection unresolved dispersed phase 0
+    set electric permittivity real part = 6
+    set electric permittivity imag part = 0.4
+    set electric conductivity           = 0
+  end
+
+  set number of material interactions = 1
+  subsection material interaction 0
+    set type = fluid_dispersed_phase
+    subsection fluid-dispersed phase interaction
+      set fluid id           = 0
+      set dispersed phase id = 0
+
+      set electric permittivity effective medium model = bruggeman
+      set magnetic permeability effective medium model = none
+    end
+  end
+end
+</pre></div>
+</div>
+<p>In the fluid region (<code class="docutils literal notranslate"><span class="pre">material_id=0</span></code>), the time-harmonic Maxwell solver then uses the effective properties of the mixture instead of the properties of the fluid. The meshed solid regions (<code class="docutils literal notranslate"><span class="pre">material_id&gt;0</span></code>) keep their own properties.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">bruggeman</span></code> model depends on the void fraction, which is only available with the volume-averaged Navier-Stokes (VANS) solvers.</p></li>
+<li><p>Temperature-dependent electromagnetic properties (<code class="docutils literal notranslate"><span class="pre">polynomial</span></code> models) are not supported yet for the fluid and the unresolved dispersed phase of a <code class="docutils literal notranslate"><span class="pre">fluid_dispersed_phase</span></code> interaction.</p></li>
+</ul>
+</div>
+</section>
 <section id="immersed-solid-models">
-<span id="id3"></span><h3>Immersed Solid Models<a class="headerlink" href="#immersed-solid-models" title="Link to this heading">#</a></h3>
+<span id="id4"></span><h3>Immersed Solid Models<a class="headerlink" href="#immersed-solid-models" title="Link to this heading">#</a></h3>
 <p>Immersed solid models can be used to affect specific behavior to immersed solids when <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> is used. At the moment, such a model is only available for the <code class="docutils literal notranslate"><span class="pre">tracer</span></code> multiphysics, but additional physics will be included in the future.</p>
 <p>The immersed solid properties models are based on the signed distance function of the immersed solids, and therefore depend on the depth inside the solid. The intent behind these models is to define physical properties in the fluid and solid phases as well as in the transition regions.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">model</span></code> and <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">reaction</span> <span class="pre">constant</span> <span class="pre">model</span></code> parameters set which models are used. The default models are <code class="docutils literal notranslate"><span class="pre">constant</span></code>, which use constant <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span></code> and <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">reaction</span> <span class="pre">constant</span></code>.</p>
@@ -805,7 +865,7 @@ end
 </ul>
 </section>
 <section id="rheological-models">
-<span id="id4"></span><h3>Rheological Models<a class="headerlink" href="#rheological-models" title="Link to this heading">#</a></h3>
+<span id="id5"></span><h3>Rheological Models<a class="headerlink" href="#rheological-models" title="Link to this heading">#</a></h3>
 <p>Two families of rheological models are supported in Lethe. The first one are generalized non Newtonian rheologies (for shear thinning and shear thickening flows). In these models, the viscosity depends on the shear rate. The second family of rheological models possess a viscosity that is independent of the shear rate, but that may depend on other fields such as the temperature.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span></code> parameter sets which rheological model you are using. The default <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span></code> is <code class="docutils literal notranslate"><span class="pre">newtonian</span></code>, which uses a constant <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
@@ -936,7 +996,7 @@ end
 </section>
 </section>
 <section id="density-models">
-<span id="id5"></span><h3>Density Models<a class="headerlink" href="#density-models" title="Link to this heading">#</a></h3>
+<span id="id6"></span><h3>Density Models<a class="headerlink" href="#density-models" title="Link to this heading">#</a></h3>
 <p>Lethe supports both <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">isothermal_ideal_gas</span></code> density models. Constant density assumes a constant density value. Isothermal ideal gas density assumes that the fluid’s density varies according the following state equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -970,7 +1030,7 @@ end
 </div>
 </section>
 <section id="thermal-conductivity-models">
-<span id="id6"></span><h3>Thermal Conductivity Models<a class="headerlink" href="#thermal-conductivity-models" title="Link to this heading">#</a></h3>
+<span id="id7"></span><h3>Thermal Conductivity Models<a class="headerlink" href="#thermal-conductivity-models" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">constant</span></code>, <code class="docutils literal notranslate"><span class="pre">linear</span></code> and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> thermal conductivity models are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that the thermal conductivity <span class="math notranslate nohighlight">\(k\)</span> varies linearly with the temperature, taking the following form:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -1156,7 +1216,7 @@ end
 <section id="interface-physical-property-models">
 <h2>Interface Physical Property Models<a class="headerlink" href="#interface-physical-property-models" title="Link to this heading">#</a></h2>
 <section id="surface-tension-models">
-<span id="id8"></span><h3>Surface Tension Models<a class="headerlink" href="#surface-tension-models" title="Link to this heading">#</a></h3>
+<span id="id9"></span><h3>Surface Tension Models<a class="headerlink" href="#surface-tension-models" title="Link to this heading">#</a></h3>
 <p>Lethe supports three types of surface tension models: <code class="docutils literal notranslate"><span class="pre">constant</span></code>, <code class="docutils literal notranslate"><span class="pre">linear</span></code>, and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code>. A <code class="docutils literal notranslate"><span class="pre">constant</span></code> surface tension model assumes a constant value of surface tension, while a <code class="docutils literal notranslate"><span class="pre">linear</span></code> surface tension assumes that the surface tension evolves linearly with the temperature:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -1207,11 +1267,41 @@ end
 <p>where <span class="math notranslate nohighlight">\(\sigma_r(T)\)</span> is the dimensionless electric conductivity at temperature <span class="math notranslate nohighlight">\(T\)</span>, <span class="math notranslate nohighlight">\(a_i\)</span> are the polynomial coefficients, and <span class="math notranslate nohighlight">\(n\)</span> is the order of the polynomial.</p>
 <p>The same polynomial model is also available for the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">model</span></code> parameter and <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">model</span></code> parameter.</p>
 </section>
+<section id="effective-medium-models-blending-rules-of-properties-in-mixtures">
+<span id="effective-medium-models"></span><h3>Effective Medium Models (Blending Rules of Properties in Mixtures)<a class="headerlink" href="#effective-medium-models-blending-rules-of-properties-in-mixtures" title="Link to this heading">#</a></h3>
+<p>The effective medium models compute the electromagnetic properties of the mixture defined by a <code class="docutils literal notranslate"><span class="pre">fluid_dispersed_phase</span></code> material interaction (see <a class="reference internal" href="#unresolved-dispersed-phase">Unresolved Dispersed Phase</a>). They combine the properties of the fluid (phase 1), the properties of the unresolved dispersed phase (phase 2) and the void fraction <span class="math notranslate nohighlight">\(\varepsilon_f\)</span>, which is the volume fraction of the fluid. The electric permittivity and the magnetic permeability are mixed independently, with the models selected by the <code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">permittivity</span> <span class="pre">effective</span> <span class="pre">medium</span> <span class="pre">model</span></code> and <code class="docutils literal notranslate"><span class="pre">magnetic</span> <span class="pre">permeability</span> <span class="pre">effective</span> <span class="pre">medium</span> <span class="pre">model</span></code> parameters, respectively.</p>
+<p>In the following, <span class="math notranslate nohighlight">\(\alpha\)</span> denotes either the complex effective relative permittivity <span class="math notranslate nohighlight">\(\varepsilon_{r,\text{eff}} = \varepsilon_r + i\sigma_r\)</span> or the complex relative permeability <span class="math notranslate nohighlight">\(\mu_r\)</span>. The conductivity of each phase is included in its effective permittivity before the mixing, so the conductivity of both phases contributes to the imaginary part of the effective permittivity of the mixture.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">none</span></code> (default): the mixture has the properties of the fluid, and the dispersed phase is ignored:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\alpha_\text{eff} = \alpha_1\]</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bruggeman</span></code>: the symmetric Bruggeman effective medium approximation for spherical inclusions <a class="reference external" href="https://doi.org/10.1002/andp.19354160705">[3]</a>. The effective property <span class="math notranslate nohighlight">\(\alpha_\text{eff}\)</span> is the solution of:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\varepsilon_f \frac{\alpha_1 - \alpha_\text{eff}}{\alpha_1 + 2\alpha_\text{eff}} + (1-\varepsilon_f) \frac{\alpha_2 - \alpha_\text{eff}}{\alpha_2 + 2\alpha_\text{eff}} = 0\]</div>
+</div>
+<p>which is a quadratic equation in <span class="math notranslate nohighlight">\(\alpha_\text{eff}\)</span> whose roots are:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\alpha_\text{eff} = \frac{1}{4}\left(b \pm \sqrt{b^2 + 8\alpha_1\alpha_2}\right), \quad b = (3\varepsilon_f - 1)\alpha_1 + (2 - 3\varepsilon_f)\alpha_2\]</div>
+</div>
+<p>The physically admissible root, i.e., the one with a positive real part and a non-negative imaginary part, is retained. The model recovers the properties of the fluid when <span class="math notranslate nohighlight">\(\varepsilon_f = 1\)</span> and those of the dispersed phase when <span class="math notranslate nohighlight">\(\varepsilon_f = 0\)</span>.</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Bruggeman model requires the real part of the properties of both phases to be positive and their imaginary part to be non-negative, which is the case for passive (lossless or lossy) media with the time convention used by Lethe.</p>
+</div>
+</section>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <p><a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[1]</a> B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” <em>Comput. Fluids</em>, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.</p>
 <p><a class="reference external" href="https://doi.org/10.48550/arXiv.2105.09627">[2]</a>  E. Bretin, R. Denis, S. Masnou, A. Sengers, and G. Terii, “A multiphase Cahn-Hilliard system with mobilities and the numerical simulation of dewetting.” arXiv, Apr. 18, 2023. doi: 10.48550/arXiv.2105.09627.</p>
+<p><a class="reference external" href="https://doi.org/10.1002/andp.19354160705">[3]</a> D. A. G. Bruggeman, “Berechnung verschiedener physikalischer Konstanten von heterogenen Substanzen. I. Dielektrizitätskonstanten und Leitfähigkeiten der Mischkörper aus isotropen Substanzen,” <em>Ann. Phys.</em>, vol. 416, no. 7, pp. 636–664, 1935, doi: 10.1002/andp.19354160705.</p>
 </section>
 </section>
 
@@ -1274,6 +1364,7 @@ end
 <li><a class="reference internal" href="#material-physical-property-models">Material Physical Property Models</a><ul>
 <li><a class="reference internal" href="#two-phase-simulations">Two Phase Simulations</a></li>
 <li><a class="reference internal" href="#conjugate-heat-transfer">Conjugate Heat Transfer</a></li>
+<li><a class="reference internal" href="#unresolved-dispersed-phase">Unresolved Dispersed Phase</a></li>
 <li><a class="reference internal" href="#immersed-solid-models">Immersed Solid Models</a></li>
 <li><a class="reference internal" href="#rheological-models">Rheological Models</a><ul>
 <li><a class="reference internal" href="#power-law-model">Power-Law Model</a></li>
@@ -1292,6 +1383,7 @@ end
 <li><a class="reference internal" href="#surface-tension-models">Surface Tension Models</a></li>
 <li><a class="reference internal" href="#cahn-hilliard-mobility-models">Cahn-Hilliard Mobility Models</a></li>
 <li><a class="reference internal" href="#time-harmonic-maxwell-models">Time-Harmonic Maxwell Models</a></li>
+<li><a class="reference internal" href="#effective-medium-models-blending-rules-of-properties-in-mixtures">Effective Medium Models (Blending Rules of Properties in Mixtures)</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#references">References</a></li>

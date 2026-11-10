@@ -115,7 +115,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for time_harmonic_maxwell_scratch_data.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="time__harmonic__maxwell__scratch__data_8h__incl.svg" width="4318" height="1004"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="time__harmonic__maxwell__scratch__data_8h__incl.svg" width="4222" height="843"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -134,6 +134,8 @@ Classes</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:abdde167ba990fd7434f928b1cbc2dab5" id="r_abdde167ba990fd7434f928b1cbc2dab5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time__harmonic__maxwell__scratch__data_8h.html#abdde167ba990fd7434f928b1cbc2dab5">compute_effective_electromagnetic_properties</a> (const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;physical_properties_manager, const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_values_vectors, const unsigned int material_id, std::vector&lt; std::complex&lt; double &gt; &gt; &amp;effective_electric_permittivities, std::vector&lt; std::complex&lt; double &gt; &gt; &amp;effective_magnetic_permeabilities)</td></tr>
 <tr class="separator:abdde167ba990fd7434f928b1cbc2dab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63b6936ac7e96037e3b009d9282969c9" id="r_a63b6936ac7e96037e3b009d9282969c9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time__harmonic__maxwell__scratch__data_8h.html#a63b6936ac7e96037e3b009d9282969c9">electromagnetic_properties_depend_on</a> (const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;physical_properties_manager, const unsigned int material_id, const <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> field_id)</td></tr>
+<tr class="separator:a63b6936ac7e96037e3b009d9282969c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="abdde167ba990fd7434f928b1cbc2dab5" name="abdde167ba990fd7434f928b1cbc2dab5"></a>
@@ -180,7 +182,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Compute the effective electromagnetic properties of a material at a set of points. The effective electric permittivity is \(\varepsilon&#39; + i(\varepsilon&#39;&#39; + \sigma)\) and the effective magnetic permeability is \(\mu&#39; + i\mu&#39;&#39;\), where each property is evaluated with the physical property models of the material. </p>
+<p>Compute the effective electromagnetic properties of a material at a set of points. The effective electric permittivity is \(\varepsilon&#39; + i(\varepsilon&#39;&#39; + \sigma)\) and the effective magnetic permeability is \(\mu&#39; + i\mu&#39;&#39;\), where each property is evaluated with the physical property models of the material. If the material is an effective medium, the properties are given by the effective medium models of its fluid-dispersed phase interaction. The conductivity of both phases is then already included in the imaginary part of the effective permittivity. </p>
 <dl class="section note"><dt>Note</dt><dd>The time-harmonic Maxwell equations do not support multiple fluids so the fluid_id is not necessary to determine the material properties. The material properties only depend on the material_id, which is used to identify the different materials in the input file and assign them their corresponding properties.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -195,7 +197,56 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00014">14</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00199">PhysicalPropertiesManager::get_electric_conductivity()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00228">PhysicalPropertiesManager::get_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00213">PhysicalPropertiesManager::get_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00258">PhysicalPropertiesManager::get_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00243">PhysicalPropertiesManager::get_magnetic_permeability_real()</a>, and <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
+<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00053">fluid_dispersed_phase</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00414">PhysicalPropertiesManager::get_effective_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00396">PhysicalPropertiesManager::get_effective_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00450">PhysicalPropertiesManager::get_effective_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00432">PhysicalPropertiesManager::get_effective_magnetic_permeability_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00207">PhysicalPropertiesManager::get_electric_conductivity()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00236">PhysicalPropertiesManager::get_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00221">PhysicalPropertiesManager::get_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00266">PhysicalPropertiesManager::get_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00251">PhysicalPropertiesManager::get_magnetic_permeability_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00516">PhysicalPropertiesManager::get_material_interaction_id()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00568">PhysicalPropertiesManager::is_effective_medium()</a>, and <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58aeef438f7e448aa48c1f8db568d27b591">temperature</a>.</p>
+
+</div>
+</div>
+<a id="a63b6936ac7e96037e3b009d9282969c9" name="a63b6936ac7e96037e3b009d9282969c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63b6936ac7e96037e3b009d9282969c9">&#9670;&#160;</a></span>electromagnetic_properties_depend_on()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool electromagnetic_properties_depend_on </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>physical_properties_manager</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>material_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>&#160;</td>
+          <td class="paramname"><em>field_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if at least one electromagnetic property of a material depends on a field. If the material is an effective medium, the dependencies are those of the effective medium models of its fluid-dispersed phase interaction. Otherwise, they are those of the electric permittivity, electric conductivity and magnetic permeability models of the material. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">physical_properties_manager</td><td>The object that manages the physical properties of the problem. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">material_id</td><td>The material id of the cell. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_id</td><td>The field for which the dependency is checked. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if at least one electromagnetic property of the material depends on the field, false otherwise. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00096">96</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00053">fluid_dispersed_phase</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00414">PhysicalPropertiesManager::get_effective_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00396">PhysicalPropertiesManager::get_effective_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00450">PhysicalPropertiesManager::get_effective_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00432">PhysicalPropertiesManager::get_effective_magnetic_permeability_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00207">PhysicalPropertiesManager::get_electric_conductivity()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00236">PhysicalPropertiesManager::get_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00221">PhysicalPropertiesManager::get_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00266">PhysicalPropertiesManager::get_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00251">PhysicalPropertiesManager::get_magnetic_permeability_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00516">PhysicalPropertiesManager::get_material_interaction_id()</a>, and <a class="el" href="physical__properties__manager_8h_source.html#l00568">PhysicalPropertiesManager::is_effective_medium()</a>.</p>
 
 </div>
 </div>

@@ -127,6 +127,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa9cb1b9b7c315fe522374dfece6c9df4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9696a6744552e5effcf80b52ba0b3274" id="r_a9696a6744552e5effcf80b52ba0b3274"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a9696a6744552e5effcf80b52ba0b3274">enable_temperature</a> (const FiniteElement&lt; dim &gt; &amp;fe_temperature, const Quadrature&lt; dim &gt; &amp;cell_quadrature, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a9696a6744552e5effcf80b52ba0b3274"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a440e3392c862c0b1801cc9def0d84ce4" id="r_a440e3392c862c0b1801cc9def0d84ce4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a440e3392c862c0b1801cc9def0d84ce4">enable_void_fraction</a> (const FiniteElement&lt; dim &gt; &amp;fe_void_fraction, const Quadrature&lt; dim &gt; &amp;cell_quadrature, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="separator:a440e3392c862c0b1801cc9def0d84ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff9756a37eb0a2efa61ed8d0c947b5a6" id="r_aff9756a37eb0a2efa61ed8d0c947b5a6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#aff9756a37eb0a2efa61ed8d0c947b5a6">reinit</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_test)</td></tr>
 <tr class="separator:aff9756a37eb0a2efa61ed8d0c947b5a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d75a3d25bf6a152add15ac31c3da4d5" id="r_a5d75a3d25bf6a152add15ac31c3da4d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a5d75a3d25bf6a152add15ac31c3da4d5">reinit_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_skeleton, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_test, const unsigned int face_no)</td></tr>
@@ -137,6 +139,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a77e90214aa72ca19bb859894231aab87" id="r_a77e90214aa72ca19bb859894231aab87"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:a77e90214aa72ca19bb859894231aab87"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a77e90214aa72ca19bb859894231aab87">reinit_face_temperature</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_temperature, const unsigned int face_no, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;temperature_solution)</td></tr>
 <tr class="separator:a77e90214aa72ca19bb859894231aab87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaf1d0990d0f8acb64506b9d24ea943e" id="r_acaf1d0990d0f8acb64506b9d24ea943e"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:acaf1d0990d0f8acb64506b9d24ea943e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#acaf1d0990d0f8acb64506b9d24ea943e">reinit_void_fraction</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_void_fraction, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;void_fraction_solution)</td></tr>
+<tr class="separator:acaf1d0990d0f8acb64506b9d24ea943e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc20b6a798aab86cf4a1d72785b1d541" id="r_adc20b6a798aab86cf4a1d72785b1d541"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:adc20b6a798aab86cf4a1d72785b1d541"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#adc20b6a798aab86cf4a1d72785b1d541">reinit_face_void_fraction</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_void_fraction, const unsigned int face_no, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;void_fraction_solution)</td></tr>
+<tr class="separator:adc20b6a798aab86cf4a1d72785b1d541"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a816b62f45652aae0af64904e7f71d85c" id="r_a816b62f45652aae0af64904e7f71d85c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a816b62f45652aae0af64904e7f71d85c">calculate_physical_properties</a> ()</td></tr>
 <tr class="separator:a816b62f45652aae0af64904e7f71d85c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1dcf9c314ef49f220f94629a6ef99486" id="r_a1dcf9c314ef49f220f94629a6ef99486"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a1dcf9c314ef49f220f94629a6ef99486">calculate_face_physical_properties</a> ()</td></tr>
@@ -153,6 +161,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a9cc72a1cbef10cd2f516accf85728238"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ca2c23febbe6305697b2c5ac0ee6c82" id="r_a6ca2c23febbe6305697b2c5ac0ee6c82"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a6ca2c23febbe6305697b2c5ac0ee6c82">cell_material_needs_temperature</a></td></tr>
 <tr class="separator:a6ca2c23febbe6305697b2c5ac0ee6c82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbfbd8151c66c66904165bc20d26282c" id="r_adbfbd8151c66c66904165bc20d26282c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#adbfbd8151c66c66904165bc20d26282c">cell_material_needs_void_fraction</a></td></tr>
+<tr class="separator:adbfbd8151c66c66904165bc20d26282c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a405289feed6340921d80e7558961e8d9" id="r_a405289feed6340921d80e7558961e8d9"><td class="memItemLeft" align="right" valign="top">FEValues&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a405289feed6340921d80e7558961e8d9">fe_values_trial_interior</a></td></tr>
 <tr class="separator:a405289feed6340921d80e7558961e8d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4612f74d85cd6c047504a28d2ffaf4fa" id="r_a4612f74d85cd6c047504a28d2ffaf4fa"><td class="memItemLeft" align="right" valign="top">FEValues&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a4612f74d85cd6c047504a28d2ffaf4fa">fe_values_test</a></td></tr>
@@ -203,6 +213,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a3a81fc79897973a177cbe921f35468ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae357672047d4d535f39214e57efb21c6" id="r_ae357672047d4d535f39214e57efb21c6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#ae357672047d4d535f39214e57efb21c6">temperature_values</a></td></tr>
 <tr class="separator:ae357672047d4d535f39214e57efb21c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8e15e07982dc870391e7b616520094" id="r_a1c8e15e07982dc870391e7b616520094"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a1c8e15e07982dc870391e7b616520094">void_fraction_values</a></td></tr>
+<tr class="separator:a1c8e15e07982dc870391e7b616520094"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb3d085bbbfd185a0706f9afd7d490ec" id="r_afb3d085bbbfd185a0706f9afd7d490ec"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#afb3d085bbbfd185a0706f9afd7d490ec">fields</a></td></tr>
 <tr class="separator:afb3d085bbbfd185a0706f9afd7d490ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade1185e8f611017df92af80f7140ba46" id="r_ade1185e8f611017df92af80f7140ba46"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::complex&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#ade1185e8f611017df92af80f7140ba46">effective_electric_permittivities</a></td></tr>
@@ -241,6 +253,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a65731a29bca8eff9589a601488abe26c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a353fd79b800cf1b9ae29e778550ff6a8" id="r_a353fd79b800cf1b9ae29e778550ff6a8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a353fd79b800cf1b9ae29e778550ff6a8">face_temperature_values</a></td></tr>
 <tr class="separator:a353fd79b800cf1b9ae29e778550ff6a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c8ef8d9b272578b611e17ee4d1fcc27" id="r_a4c8ef8d9b272578b611e17ee4d1fcc27"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a4c8ef8d9b272578b611e17ee4d1fcc27">face_void_fraction_values</a></td></tr>
+<tr class="separator:a4c8ef8d9b272578b611e17ee4d1fcc27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef6a8f26224dce639fdeed187d4fc594" id="r_aef6a8f26224dce639fdeed187d4fc594"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#aef6a8f26224dce639fdeed187d4fc594">face_fields</a></td></tr>
 <tr class="separator:aef6a8f26224dce639fdeed187d4fc594"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bf3a5cd3f539eea7298b38c196de635" id="r_a1bf3a5cd3f539eea7298b38c196de635"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::complex&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a1bf3a5cd3f539eea7298b38c196de635">face_effective_electric_permittivities</a></td></tr>
@@ -269,6 +283,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a7844042cd6741e70069e4ed8f92a23f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafa88004537113ecd28fd588170a9dad" id="r_aafa88004537113ecd28fd588170a9dad"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FEFaceValues&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#aafa88004537113ecd28fd588170a9dad">fe_face_values_temperature</a></td></tr>
 <tr class="separator:aafa88004537113ecd28fd588170a9dad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad132685978bb3c729510e17b1fca70fd" id="r_ad132685978bb3c729510e17b1fca70fd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#ad132685978bb3c729510e17b1fca70fd">gather_void_fraction</a></td></tr>
+<tr class="separator:ad132685978bb3c729510e17b1fca70fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7cc7f0ea897b0200af79c644391c16d" id="r_aa7cc7f0ea897b0200af79c644391c16d"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FEValues&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#aa7cc7f0ea897b0200af79c644391c16d">fe_values_void_fraction</a></td></tr>
+<tr class="separator:aa7cc7f0ea897b0200af79c644391c16d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0976e02d68f3c5f78edac463a0aadbe5" id="r_a0976e02d68f3c5f78edac463a0aadbe5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FEFaceValues&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwellScratchData.html#a0976e02d68f3c5f78edac463a0aadbe5">fe_face_values_void_fraction</a></td></tr>
+<tr class="separator:a0976e02d68f3c5f78edac463a0aadbe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -280,7 +300,7 @@ class TimeHarmonicMaxwellScratchData&lt; dim &gt;</div><p>Class that stores the 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00087">87</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00110">110</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="af252bfdb1743828b05de279be1a0f0e3" name="af252bfdb1743828b05de279be1a0f0e3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af252bfdb1743828b05de279be1a0f0e3">&#9670;&#160;</a></span>ShapeFunctionType</h2>
@@ -306,7 +326,7 @@ template&lt;int dim&gt; </div>
 <tr><td class="fieldname"><a id="af252bfdb1743828b05de279be1a0f0e3a2a8a234fdcfa977d7e61c564d6d7bd89" name="af252bfdb1743828b05de279be1a0f0e3a2a8a234fdcfa977d7e61c564d6d7bd89"></a>is_magnetic&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00097">97</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00120">120</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -391,9 +411,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00128">128</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00151">151</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00061">TimeHarmonicMaxwellScratchData&lt; dim &gt;::allocate()</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00497">TimeHarmonicMaxwellScratchData&lt; dim &gt;::gather_temperature</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00147">TimeHarmonicMaxwellScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00604">TimeHarmonicMaxwellScratchData&lt; dim &gt;::gather_temperature</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00612">TimeHarmonicMaxwellScratchData&lt; dim &gt;::gather_void_fraction</a>.</p>
 
 </div>
 </div>
@@ -431,9 +451,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00165">165</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00189">189</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00061">TimeHarmonicMaxwellScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00182">TimeHarmonicMaxwellScratchData&lt; dim &gt;::enable_temperature()</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00501">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_face_values_temperature</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00499">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_values_temperature</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00497">TimeHarmonicMaxwellScratchData&lt; dim &gt;::gather_temperature</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00147">TimeHarmonicMaxwellScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00276">TimeHarmonicMaxwellScratchData&lt; dim &gt;::enable_temperature()</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00298">TimeHarmonicMaxwellScratchData&lt; dim &gt;::enable_void_fraction()</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00608">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_face_values_temperature</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00616">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_face_values_void_fraction</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00606">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_values_temperature</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00614">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_values_void_fraction</a>, <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00604">TimeHarmonicMaxwellScratchData&lt; dim &gt;::gather_temperature</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00612">TimeHarmonicMaxwellScratchData&lt; dim &gt;::gather_void_fraction</a>.</p>
 
 </div>
 </div>
@@ -467,9 +487,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsScratchDataBase.html#a9cfc31b987c334f3ebc6006b69889ea9">PhysicsScratchDataBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00061">61</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00147">147</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
+<p class="reference">References <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58aeef438f7e448aa48c1f8db568d27b591">temperature</a>, and <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a53bab7cfc37778cddbc3e7a999a7f2ae">void_fraction</a>.</p>
 
 </div>
 </div>
@@ -492,9 +512,9 @@ template&lt;int dim&gt; </div>
 
 <p>Compute the effective electromagnetic properties at the face quadrature points from the fields gathered by the scratch. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00409">409</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00525">525</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00014">compute_effective_electromagnetic_properties()</a>, <a class="el" href="physical__property__model_8h_source.html#l00051">set_field_vector()</a>, and <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00014">compute_effective_electromagnetic_properties()</a>, <a class="el" href="physical__property__model_8h_source.html#l00054">set_field_vector()</a>, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58aeef438f7e448aa48c1f8db568d27b591">temperature</a>, and <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a53bab7cfc37778cddbc3e7a999a7f2ae">void_fraction</a>.</p>
 
 </div>
 </div>
@@ -517,9 +537,9 @@ template&lt;int dim&gt; </div>
 
 <p>Compute the effective electromagnetic properties at the cell quadrature points from the fields gathered by the scratch. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00396">396</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00509">509</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00014">compute_effective_electromagnetic_properties()</a>, <a class="el" href="physical__property__model_8h_source.html#l00051">set_field_vector()</a>, and <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00014">compute_effective_electromagnetic_properties()</a>, <a class="el" href="physical__property__model_8h_source.html#l00054">set_field_vector()</a>, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58aeef438f7e448aa48c1f8db568d27b591">temperature</a>, and <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a53bab7cfc37778cddbc3e7a999a7f2ae">void_fraction</a>.</p>
 
 </div>
 </div>
@@ -574,7 +594,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00152">152</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00246">246</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
 </div>
 </div>
@@ -629,7 +649,62 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00182">182</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00276">276</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+
+</div>
+</div>
+<a id="a440e3392c862c0b1801cc9def0d84ce4" name="a440e3392c862c0b1801cc9def0d84ce4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a440e3392c862c0b1801cc9def0d84ce4">&#9670;&#160;</a></span>enable_void_fraction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::enable_void_fraction </td>
+          <td>(</td>
+          <td class="paramtype">const FiniteElement&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>fe_void_fraction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Quadrature&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cell_quadrature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Quadrature&lt; dim - 1 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>face_quadrature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable the evaluation of the void fraction field, on which the electromagnetic properties of an effective medium may depend. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">fe_void_fraction</td><td>Finite element of the void fraction.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_quadrature</td><td>Quadrature used for the cell integrals.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">face_quadrature</td><td>Quadrature used for the face integrals.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Mapping of the domain. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00298">298</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
 </div>
 </div>
@@ -661,7 +736,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Reinitialize the content of the scratch for a cell. It evaluates the shape functions of the test and interior trial spaces at the quadrature points. The temperature values are set to zero and are only overwritten by reinit_temperature when the material of the cell depends on the temperature. </p>
+<p>Reinitialize the content of the scratch for a cell. It evaluates the shape functions of the test and interior trial spaces at the quadrature points. The temperature values are set to zero and are only overwritten by reinit_temperature when the material of the cell depends on the temperature. Likewise, the void fraction values are set to one (pure fluid) and are only overwritten by reinit_void_fraction when the material of the cell depends on the void fraction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>The cell of the interior trial space DoFHandler over which the assembly is carried out.</td></tr>
@@ -670,9 +745,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00204">204</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00320">320</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00096">electromagnetic_properties_depend_on()</a>, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58aeef438f7e448aa48c1f8db568d27b591">temperature</a>, and <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a53bab7cfc37778cddbc3e7a999a7f2ae">void_fraction</a>.</p>
 
 </div>
 </div>
@@ -710,7 +785,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Reinitialize the content of the scratch for a face of the current cell. It evaluates the test functions and the tangential traces of the skeleton trial space at the face quadrature points. The face temperature values are set to zero and are only overwritten by reinit_face_temperature when the material of the cell depends on the temperature. </p>
+<p>Reinitialize the content of the scratch for a face of the current cell. It evaluates the test functions and the tangential traces of the skeleton trial space at the face quadrature points. The face temperature values are set to zero and are only overwritten by reinit_face_temperature when the material of the cell depends on the temperature. Likewise, the face void fraction values are set to one (pure fluid) and are only overwritten by reinit_face_void_fraction when the material of the cell depends on the void fraction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">cell_skeleton</td><td>The current cell, for the skeleton trial space DoFHandler.</td></tr>
@@ -720,7 +795,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00302">302</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00414">414</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00131">tangential_component()</a>.</p>
 
@@ -786,9 +861,75 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00326">326</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00380">380</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00464">TimeHarmonicMaxwellScratchData&lt; dim &gt;::face_temperature_values</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00501">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_face_values_temperature</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00569">TimeHarmonicMaxwellScratchData&lt; dim &gt;::face_temperature_values</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00608">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_face_values_temperature</a>.</p>
+
+</div>
+</div>
+<a id="adc20b6a798aab86cf4a1d72785b1d541" name="adc20b6a798aab86cf4a1d72785b1d541"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc20b6a798aab86cf4a1d72785b1d541">&#9670;&#160;</a></span>reinit_face_void_fraction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<div class="memtemplate">
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::reinit_face_void_fraction </td>
+          <td>(</td>
+          <td class="paramtype">const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
+          <td class="paramname"><em>cell_void_fraction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>face_no</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>void_fraction_solution</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Evaluate the void fraction field at the quadrature points of a face of the current cell. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">VectorType</td><td>The vector type of the void fraction solution.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_void_fraction</td><td>The current cell, for the void fraction DoFHandler.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">face_no</td><td>Index of the face within the cell.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">void_fraction_solution</td><td>Void fraction solution. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00426">426</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00571">TimeHarmonicMaxwellScratchData&lt; dim &gt;::face_void_fraction_values</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00616">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_face_values_void_fraction</a>.</p>
 
 </div>
 </div>
@@ -845,9 +986,68 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00301">301</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00355">355</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00499">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_values_temperature</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00420">TimeHarmonicMaxwellScratchData&lt; dim &gt;::temperature_values</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00606">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_values_temperature</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00523">TimeHarmonicMaxwellScratchData&lt; dim &gt;::temperature_values</a>.</p>
+
+</div>
+</div>
+<a id="acaf1d0990d0f8acb64506b9d24ea943e" name="acaf1d0990d0f8acb64506b9d24ea943e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acaf1d0990d0f8acb64506b9d24ea943e">&#9670;&#160;</a></span>reinit_void_fraction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<div class="memtemplate">
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::reinit_void_fraction </td>
+          <td>(</td>
+          <td class="paramtype">const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
+          <td class="paramname"><em>cell_void_fraction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>void_fraction_solution</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Evaluate the void fraction field at the cell quadrature points. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">VectorType</td><td>The vector type of the void fraction solution.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_void_fraction</td><td>The current cell, for the void fraction DoFHandler.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">void_fraction_solution</td><td>Void fraction solution. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00402">402</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00614">TimeHarmonicMaxwellScratchData&lt; dim &gt;::fe_values_void_fraction</a>, and <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00525">TimeHarmonicMaxwellScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
 
 </div>
 </div>
@@ -866,7 +1066,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00357">357</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00457">457</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+
+</div>
+</div>
+<a id="adbfbd8151c66c66904165bc20d26282c" name="adbfbd8151c66c66904165bc20d26282c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbfbd8151c66c66904165bc20d26282c">&#9670;&#160;</a></span>cell_material_needs_void_fraction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::cell_material_needs_void_fraction</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00460">460</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -884,7 +1102,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00433">433</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00538">538</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -902,7 +1120,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00435">435</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00540">540</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -920,7 +1138,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00441">441</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00546">546</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -938,7 +1156,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00443">443</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00548">548</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -956,7 +1174,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00424">424</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00529">529</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -974,7 +1192,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00426">426</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00531">531</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -992,7 +1210,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00371">371</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00474">474</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1010,7 +1228,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00369">369</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00472">472</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1028,7 +1246,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00375">375</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00478">478</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1046,7 +1264,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00373">373</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00476">476</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1064,7 +1282,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00451">451</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00556">556</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1082,7 +1300,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00454">454</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00559">559</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1100,7 +1318,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00468">468</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00575">575</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1118,7 +1336,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00470">470</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00577">577</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1136,7 +1354,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00466">466</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00573">573</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1154,7 +1372,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00457">457</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00562">562</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1172,7 +1390,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00461">461</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00566">566</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1190,7 +1408,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00459">459</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00564">564</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1208,7 +1426,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00464">464</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00569">569</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+
+</div>
+</div>
+<a id="a4c8ef8d9b272578b611e17ee4d1fcc27" name="a4c8ef8d9b272578b611e17ee4d1fcc27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c8ef8d9b272578b611e17ee4d1fcc27">&#9670;&#160;</a></span>face_void_fraction_values</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::face_void_fraction_values</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00571">571</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1226,7 +1462,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00501">501</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00608">608</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1244,7 +1480,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00366">366</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00469">469</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1262,7 +1498,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00364">364</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00467">467</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+
+</div>
+</div>
+<a id="a0976e02d68f3c5f78edac463a0aadbe5" name="a0976e02d68f3c5f78edac463a0aadbe5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0976e02d68f3c5f78edac463a0aadbe5">&#9670;&#160;</a></span>fe_face_values_void_fraction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;FEFaceValues&lt;dim&gt; &gt; <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::fe_face_values_void_fraction</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00616">616</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1280,7 +1534,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00499">499</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00606">606</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1298,7 +1552,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00362">362</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00465">465</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1316,7 +1570,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00360">360</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00463">463</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+
+</div>
+</div>
+<a id="aa7cc7f0ea897b0200af79c644391c16d" name="aa7cc7f0ea897b0200af79c644391c16d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7cc7f0ea897b0200af79c644391c16d">&#9670;&#160;</a></span>fe_values_void_fraction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;FEValues&lt;dim&gt; &gt; <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::fe_values_void_fraction</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00614">614</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1334,7 +1606,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00422">422</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00527">527</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1352,7 +1624,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00497">497</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00604">604</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+
+</div>
+</div>
+<a id="ad132685978bb3c729510e17b1fca70fd" name="ad132685978bb3c729510e17b1fca70fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad132685978bb3c729510e17b1fca70fd">&#9670;&#160;</a></span>gather_void_fraction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::gather_void_fraction</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00612">612</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1370,7 +1660,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00415">415</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00518">518</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1388,7 +1678,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00354">354</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00454">454</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1406,7 +1696,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00490">490</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00597">597</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1424,7 +1714,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00493">493</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00600">600</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1442,7 +1732,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00481">481</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00588">588</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1460,7 +1750,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00484">484</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00591">591</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1478,7 +1768,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00382">382</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00485">485</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1496,7 +1786,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00384">384</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00487">487</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1514,7 +1804,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00386">386</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00489">489</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1532,7 +1822,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00380">380</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00483">483</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1550,7 +1840,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00378">378</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00481">481</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1568,7 +1858,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00446">446</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00551">551</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1586,7 +1876,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00487">487</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00594">594</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1604,7 +1894,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00429">429</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00534">534</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1622,7 +1912,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00431">431</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00536">536</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1640,7 +1930,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00473">473</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00580">580</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1658,7 +1948,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00476">476</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00583">583</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1676,7 +1966,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00448">448</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00553">553</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1694,7 +1984,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00437">437</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00542">542</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1712,7 +2002,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00439">439</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00544">544</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1730,7 +2020,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00478">478</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00585">585</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1748,7 +2038,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00351">351</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00451">451</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1766,7 +2056,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00417">417</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00520">520</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1784,7 +2074,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00389">389</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00492">492</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1802,7 +2092,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00391">391</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00494">494</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1820,7 +2110,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00393">393</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00496">496</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1838,7 +2128,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00420">420</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00523">523</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1856,7 +2146,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00397">397</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00500">500</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1874,7 +2164,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00400">400</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00503">503</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1892,7 +2182,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00403">403</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00506">506</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1910,7 +2200,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00406">406</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00509">509</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1928,7 +2218,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00409">409</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00512">512</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1946,7 +2236,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00412">412</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00515">515</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
+
+</div>
+</div>
+<a id="a1c8e15e07982dc870391e7b616520094" name="a1c8e15e07982dc870391e7b616520094"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c8e15e07982dc870391e7b616520094">&#9670;&#160;</a></span>void_fraction_values</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classTimeHarmonicMaxwellScratchData.html">TimeHarmonicMaxwellScratchData</a>&lt; dim &gt;::void_fraction_values</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html#l00525">525</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">time_harmonic_maxwell_scratch_data.h</a>.</p>
 
 </div>
 </div>

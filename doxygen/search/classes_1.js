@@ -10,5 +10,6 @@ var searchData=
   ['boundarycellsinformation_7',['BoundaryCellsInformation',['../classBoundaryCellsInformation.html',1,'']]],
   ['boundaryconditions_8',['BoundaryConditions',['../classBoundaryConditions_1_1BoundaryConditions.html',1,'BoundaryConditions']]],
   ['boundarypostprocessor_9',['BoundaryPostprocessor',['../classBoundaryPostprocessor.html',1,'']]],
-  ['bufferrw_10',['BufferRW',['../classBufferRW.html',1,'']]]
+  ['bruggemaneffectivemediummodel_10',['BruggemanEffectiveMediumModel',['../classBruggemanEffectiveMediumModel.html',1,'']]],
+  ['bufferrw_11',['BufferRW',['../classBufferRW.html',1,'']]]
 ];

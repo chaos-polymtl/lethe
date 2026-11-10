@@ -1,0 +1,9 @@
+<map id="EffectiveMediumModel" name="EffectiveMediumModel">
+<area shape="rect" id="Node000001" title="Effective medium model for the calculation of a physical property of a mixture of two phases...." alt="" coords="133,79,305,104"/>
+<area shape="rect" id="Node000003" href="$classBruggemanEffectiveMediumModel.html" title="Two&#45;phase Bruggeman effective medium approximation for spherical inclusions. With the void fraction &#160;..." alt="" coords="5,152,212,192"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="193,114,137,154,134,150,190,110"/>
+<area shape="rect" id="Node000004" href="$classNoEffectiveMediumModel.html" title="Mixture without effective medium model: the mixture property is the property of phase 1...." alt="" coords="236,159,427,185"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="249,110,316,157,313,161,246,114"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="134,5,305,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,44,222,79,217,79,217,44"/>
+</map>
