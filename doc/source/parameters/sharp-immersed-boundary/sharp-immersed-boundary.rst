@@ -143,8 +143,6 @@ to define a conformal mesh for the fluid between the particles.
 
     .. note::
 
-       The stencil degree used does not alter the order of convergence of the
-       solution.
 
   * The ``enable extrapolation`` parameter controls if extrapolation is used to
     impose the immersed boundary condition. For debugging purposes, this
