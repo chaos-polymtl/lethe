@@ -11,6 +11,7 @@
 
 #include <deal.II/fe/fe_system.h>
 
+#include <deal.II/lac/lapack_support.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 

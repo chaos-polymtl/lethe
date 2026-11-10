@@ -422,7 +422,7 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
                             test_dofs_F_imag[i],
                             std::conj(z_FI_ij));
 
-          // Blocks of the pair (j, i), we skip the case i != j because the
+          // Blocks of the pair (j, i), we skip the case i == j because the
           // diagonal blocks are already filled by the pair (i, j)
           if (j != i)
             {
@@ -937,7 +937,7 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
                             test_dofs_F_imag[i],
                             std::conj(z_FI_ij));
 
-          // Blocks of the pair (j, i), we skip the case i != j because the
+          // Blocks of the pair (j, i), we skip the case i == j because the
           // diagonal blocks are already filled by the pair (i, j)
           if (j != i)
             {
