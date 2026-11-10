@@ -145,6 +145,10 @@ namespace Parameters
         "Factor applied to the diffusion term in the projection step");
       prm.leave_subsection();
 
+      prm.enter_subsection("QMOM");
+      QMOMFunctions<dim>::declare_parameters(prm);
+      prm.leave_subsection();
+
       prm.enter_subsection("cahn hilliard");
       cahn_hilliard.declare_parameters(prm, 2);
       prm.leave_subsection();
@@ -199,6 +203,10 @@ namespace Parameters
 
         projection_step_diffusion_factor = prm.get_double("diffusion factor");
       }
+      prm.leave_subsection();
+
+      prm.enter_subsection("QMOM");
+      qmom.parse_parameters(prm);
       prm.leave_subsection();
 
       ramp.parse_parameters(prm);

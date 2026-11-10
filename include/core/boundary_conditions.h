@@ -4,6 +4,7 @@
 #ifndef lethe_boundary_conditions_h
 #define lethe_boundary_conditions_h
 
+#include <core/parameters_multiphysics.h>
 #include <core/periodic_boundary.h>
 #include <core/utilities.h>
 
@@ -45,6 +46,10 @@ DeclException1(CahnHilliardBoundaryDuplicated,
                << "Cahn Hilliard boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
+DeclException1(QMOMBoundaryDuplicated,
+               types::boundary_id,
+               << "QMOM boundary id: " << arg1
+               << " has already been declared as a boundary condition");
 DeclException1(CLSBoundaryDuplicated,
                types::boundary_id,
                << "CLS boundary id: " << arg1
@@ -83,6 +88,8 @@ namespace BoundaryConditions
     convection_radiation,
     // for tracer
     tracer_dirichlet,
+    // for qmom
+    qmom_dirichlet,
     // for cls
     cls_dirichlet,
     // for cahn hilliard
@@ -1103,6 +1110,183 @@ namespace BoundaryConditions
   TracerBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("boundary conditions tracer");
+    {
+      this->number_of_boundary_conditions = prm.get_integer("number");
+      this->time_dependent                = prm.get_bool("time dependent");
+
+      for (unsigned int n = 0; n < this->number_of_boundary_conditions; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            parse_boundary(prm);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  /**
+   * @brief Boundary conditions of the QMOM physics. They apply to the advective
+   * flux of all the QMOM fields (scalars and moments), which is meant to be
+   * computed with an upwind numerical flux:
+   *  - dirichlet: the prescribed values enter the domain where the flow enters
+   *    (u.n < 0) and the interior values leave it where the flow leaves;
+   *  - outlet: the interior values leave the domain where the flow leaves and
+   *    nothing enters where the flow enters (backflow);
+   *  - none: the advective flux is zero, which is the natural choice for
+   *    walls.
+   * Boundaries without a QMOM boundary condition are treated as none.
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
+  template <int dim>
+  class QMOMBoundaryConditions : public BoundaryConditions
+  {
+  public:
+    /// Values imposed by the Dirichlet boundary conditions, for each boundary
+    /// id of type qmom_dirichlet
+    std::map<types::boundary_id, Parameters::QMOMFunctions<dim>> dirichlet;
+
+    /**
+     * @brief Declare the parameters of one boundary condition.
+     *
+     * @param[in,out] prm Parameter handler.
+     * @param[in] default_boundary_id Default boundary id of the boundary
+     * condition.
+     */
+    void
+    declare_default_entry(ParameterHandler        &prm,
+                          const types::boundary_id default_boundary_id);
+
+    /**
+     * @brief Declare the "boundary conditions qmom" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     * @param[in] number_of_boundary_conditions Maximal number of boundary
+     * conditions, used to declare the "bc i" subsections.
+     */
+    void
+    declare_parameters(ParameterHandler  &prm,
+                       const unsigned int number_of_boundary_conditions);
+
+    /**
+     * @brief Parse one boundary condition.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    parse_boundary(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the "boundary conditions qmom" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  template <int dim>
+  void
+  QMOMBoundaryConditions<dim>::declare_default_entry(
+    ParameterHandler        &prm,
+    const types::boundary_id default_boundary_id)
+  {
+    prm.declare_entry("type",
+                      "outlet",
+                      Patterns::Selection("dirichlet|outlet|none"),
+                      "Type of boundary condition for the QMOM fields. "
+                      "Choices are <dirichlet|outlet|none>.");
+
+    prm.declare_entry("id",
+                      Utilities::int_to_string(default_boundary_id, 2),
+                      Patterns::List(Patterns::Integer()),
+                      "Mesh id for boundary conditions");
+
+    prm.enter_subsection("dirichlet");
+    Parameters::QMOMFunctions<dim>::declare_parameters(prm);
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  QMOMBoundaryConditions<dim>::declare_parameters(
+    ParameterHandler  &prm,
+    const unsigned int number_of_boundary_conditions)
+  {
+    prm.enter_subsection("boundary conditions qmom");
+    {
+      prm.declare_entry("number",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of boundary conditions");
+
+      prm.declare_entry(
+        "time dependent",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the boundary condition is time-dependent");
+
+      for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            declare_default_entry(prm, n);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  QMOMBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
+  {
+    const std::vector<types::boundary_id> boundary_ids =
+      convert_string_to_vector<types::boundary_id>(prm, "id");
+
+    AssertThrow(
+      boundary_ids.size() > 0,
+      ExcMessage(
+        "A boundary id has not been set for one of the QMOM boundary conditions. Please ensure that the id is set for every boundary condition."));
+
+    const std::string op = prm.get("type");
+    for (const auto boundary_id : boundary_ids)
+      {
+        AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                    QMOMBoundaryDuplicated(boundary_id));
+
+        if (op == "dirichlet")
+          {
+            this->type[boundary_id] = BoundaryType::qmom_dirichlet;
+            prm.enter_subsection("dirichlet");
+            dirichlet[boundary_id].parse_parameters(prm);
+            prm.leave_subsection();
+          }
+        else if (op == "outlet")
+          {
+            this->type[boundary_id] = BoundaryType::outlet;
+          }
+        else if (op == "none")
+          {
+            this->type[boundary_id] = BoundaryType::none;
+          }
+        else
+          {
+            AssertThrow(false,
+                        ExcMessage(
+                          "Unknown boundary condition type for QMOM: " + op));
+          }
+      }
+  }
+
+  template <int dim>
+  void
+  QMOMBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("boundary conditions qmom");
     {
       this->number_of_boundary_conditions = prm.get_integer("number");
       this->time_dependent                = prm.get_bool("time dependent");

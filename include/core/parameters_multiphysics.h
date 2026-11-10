@@ -12,7 +12,13 @@
 #include <core/parameters.h>
 
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
 #include <deal.II/base/utilities.h>
+
+#include <memory>
+#include <numbers>
+#include <string>
+#include <vector>
 
 using namespace dealii;
 
@@ -454,6 +460,309 @@ namespace Parameters
   };
 
   /**
+   * @brief Parameters of the phase-space evolution of the QMOM moments, which
+   * is delegated to QMOMKit.
+   */
+  struct QMOMPhaseEvolution
+  {
+    /// Enable the adaptive number of quadrature nodes
+    bool enable_adaptive_node_count = false;
+
+    /**
+     * @brief Declare the "phase evolution" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "phase evolution" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Operator splitting scheme between the physical-space transport (T)
+   * and the phase-space evolution (P) of the QMOM fields:
+   *  - lie: T then P over the whole time step (first order);
+   *  - strang: P over half a time step, T, then P over half a time step
+   *    (second order).
+   */
+  enum class QMOMSplittingScheme : std::int8_t
+  {
+    lie,
+    strang
+  };
+
+  /**
+   * @brief Process parameters of the lipid nanoparticle (LNP) formulation
+   * simulated with the QMOM physics: operating conditions, properties of the
+   * aqueous and organic phases and shape factor of the particles. All of them
+   * are in SI units.
+   */
+  struct QMOMPharma
+  {
+    /* Operating conditions */
+    /// Operating temperature [K]
+    double operating_temperature = 295.;
+    /// Ratio of the aqueous phase flow rate to the organic phase flow rate [-]
+    double flow_rate_ratio = 1.;
+    /// Total flow rate of the aqueous and organic phases [m^3/s]
+    double total_flow_rate = 1.;
+    /// Mixing time scale of the aqueous and organic phases [s]
+    double mixing_time_scale = 0.;
+    /// Initial lipid concentration in the organic phase [mol/m^3]
+    double initial_concentration_organic = 1.;
+    /// Ion concentration in the mixture [mol/m^3]
+    double ion_concentration_mixture = 1.;
+
+    /* Aqueous phase */
+    /// Density of the aqueous phase [kg/m^3]
+    double density_aqueous = 997.;
+    /// Molar mass of the aqueous phase [kg/mol]
+    double molar_mass_aqueous = 0.018015;
+    /// Mole fraction solubility of the lipid in the pure aqueous phase [-]
+    double mole_fraction_solubility_aqueous = 2e-8;
+    /// Relative permittivity of the aqueous phase [-]
+    double permittivity_aqueous = 78.2;
+
+    /* Organic phase */
+    /// Density of the organic phase [kg/m^3]
+    double density_organic = 789.;
+    /// Molar mass of the organic phase [kg/mol]
+    double molar_mass_organic = 0.046069;
+    /// Mole fraction solubility of the lipid in the pure organic phase [-]
+    double mole_fraction_solubility_organic = 2.9e-3;
+    /// Relative permittivity of the organic phase [-]
+    double permittivity_organic = 24.3;
+
+    /* Mixture and particles */
+    /// Dynamic viscosity of the aqueous and organic mixture [Pa s]
+    double viscosity_mixture = 2e-3;
+    /// Volume shape factor of the particles, pi/6 for spheres [-]
+    double shape_factor = std::numbers::pi / 6.;
+
+    /**
+     * @brief Declare the "pharma" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "pharma" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Physical constants used by the QMOM physics, in SI units. Their
+   * default values are the exact values of the 2019 redefinition of the SI
+   * base units and the CODATA 2022 value of the vacuum permittivity.
+   */
+  struct QMOMPhysicalConstants
+  {
+    /// Boltzmann constant [J/K]
+    double boltzmann_constant = 1.380649e-23;
+    /// Avogadro number [1/mol]
+    double avogadro_number = 6.02214076e23;
+    /// Elementary charge [C]
+    double elementary_charge = 1.602176634e-19;
+    /// Vacuum permittivity [F/m]
+    double permittivity_vacuum = 8.8541878188e-12;
+
+    /**
+     * @brief Declare the "physical constants" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "physical constants" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Family of the particle size distribution from which the moments of
+   * the QMOM physics are computed. The raw moments of each family are computed
+   * analytically by QMOMKit:
+   *  - none: no particles, all the moments are zero;
+   *  - normal: mean and standard deviation;
+   *  - lognormal: mean and standard deviation of the logarithm of the size;
+   *  - gamma: shape and scale;
+   *  - weibull: shape and scale;
+   *  - beta: shape parameters alpha and beta, on the interval [0, 1];
+   *  - chi: number of degrees of freedom;
+   *  - chi_squared: number of degrees of freedom.
+   */
+  enum class QMOMDistributionType : std::int8_t
+  {
+    none,
+    normal,
+    lognormal,
+    gamma,
+    weibull,
+    beta,
+    chi,
+    chi_squared
+  };
+
+  /**
+   * @brief Number of parameters of a particle size distribution family, not
+   * counting the number density.
+   *
+   * @param[in] distribution_type Family of the distribution.
+   *
+   * @return Number of parameters of the family.
+   */
+  unsigned int
+  get_number_of_distribution_parameters(
+    const QMOMDistributionType distribution_type);
+
+  /**
+   * @brief Functions of space and time prescribing the fields of the QMOM
+   * physics. They are used for the initial conditions, the Dirichlet boundary
+   * conditions, the analytical solution and the source terms.
+   *
+   * The scalars are given as a list of expressions, one per scalar. The
+   * moments are not given one by one: they are the raw moments of a particle
+   * size distribution, defined by its family and by a list of expressions
+   * whose first entry is the number density, in particles per m^3, followed by
+   * the parameters of the family.
+   *
+   * The number of scalars is not known when the parameters are declared. The
+   * scalars function therefore accepts either a single expression, applied to
+   * every scalar, or one expression per scalar. The QMOM physics verifies the
+   * number of expressions once the number of scalars is known.
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
+  template <int dim>
+  struct QMOMFunctions
+  {
+    /// Scalars, or a single function applied to all of them
+    std::shared_ptr<Functions::ParsedFunction<dim>> scalars;
+
+    /// Family of the particle size distribution
+    QMOMDistributionType distribution_type = QMOMDistributionType::none;
+
+    /// Number density, in particles per m^3, followed by the parameters of
+    /// the particle size distribution. Ignored if the distribution type is
+    /// none.
+    std::shared_ptr<Functions::ParsedFunction<dim>> distribution;
+
+    /**
+     * @brief Declare the scalars function in the current subsection and the
+     * "distribution" subsection. All the functions are zero and the
+     * distribution type is none by default.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    static void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the functions from the current subsection. The number of
+     * components of each function is the number of expressions separated by
+     * semicolons. The number of expressions of the distribution must be one
+     * (the number density) plus the number of parameters of its family.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Set the time of all the functions.
+     *
+     * @param[in] time New time.
+     */
+    void
+    set_time(const double time) const;
+  };
+
+  /**
+   * @brief Parameters of the quadrature method of moments (QMOM) physics,
+   * declared in the "QMOM" subsection.
+   */
+  struct QMOM
+  {
+    /// Number of scalars transported together with the moments
+    unsigned int number_of_scalars = 2;
+
+    /// Names of the scalars, used for the output. scalar_0, scalar_1, ... if
+    /// they are not given in the parameter file.
+    std::vector<std::string> scalar_names = {"scalar_0", "scalar_1"};
+
+    /// Number of transported raw moments M_0 to M_{number_of_moments - 1}
+    unsigned int number_of_moments = 2;
+
+    /**
+     * @brief Get the number of nodes of the quadrature that uses all the
+     * transported moments. N nodes are defined by 2N moments, so an odd number
+     * of moments requires one more node.
+     *
+     * @return Number of moments divided by 2, rounded up.
+     */
+    unsigned int
+    get_number_of_nodes() const
+    {
+      return (number_of_moments + 1) / 2;
+    }
+
+    /// Operator splitting scheme between the physical-space transport and
+    /// the phase-space evolution
+    QMOMSplittingScheme splitting_scheme = QMOMSplittingScheme::lie;
+
+    /// Include the nucleation source
+    bool enable_nucleation = true;
+    /// Include the coalescence source
+    bool enable_coalescence = true;
+    /// Include the growth source
+    bool enable_growth = true;
+
+    /// Phase-space evolution ("phase evolution" subsection)
+    QMOMPhaseEvolution phase_evolution;
+
+    /// Process parameters of the LNP formulation ("pharma" subsection)
+    QMOMPharma pharma;
+
+    /// Physical constants ("physical constants" subsection)
+    QMOMPhysicalConstants physical_constants;
+
+    /**
+     * @brief Declare the "QMOM" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "QMOM" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+
+  /**
    * @brief TimeHarmonicMaxwell - Defines the parameters for
    * time-harmonic Maxwell simulations.
    */
@@ -541,6 +850,7 @@ namespace Parameters
     bool cahn_hilliard            = false;
     bool electromagnetics         = false;
     bool continuum_solid_dynamics = false;
+    bool qmom                     = false;
 
     // subparameters for heat_transfer
     bool viscous_dissipation    = false;
@@ -550,6 +860,7 @@ namespace Parameters
     Parameters::CLS                      cls_parameters;
     Parameters::CahnHilliard             cahn_hilliard_parameters;
     Parameters::TimeHarmonicMaxwell<dim> time_harmonic_maxwell_parameters;
+    Parameters::QMOM                     qmom_parameters;
 
     void
     declare_parameters(ParameterHandler &prm) const;

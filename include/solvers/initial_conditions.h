@@ -4,6 +4,8 @@
 #ifndef lethe_initial_conditions_h
 #define lethe_initial_conditions_h
 
+#include <core/parameters_multiphysics.h>
+
 #include <deal.II/base/parameter_acceptor.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
@@ -95,6 +97,9 @@ namespace Parameters
     CLSInitialConditionType cls_initial_condition_smoothing =
       CLSInitialConditionType::none;
     double projection_step_diffusion_factor = 1;
+
+    // QMOM: scalars and particle size distribution of the moments
+    QMOMFunctions<dim> qmom;
 
     // Non-Newtonian
     Ramp ramp;

@@ -123,6 +123,45 @@ For tracer boundary conditions, the defaults parameters are:
     * ``outlet`` to impose an outflow when using the tracer Discontinuous-Galerkin implementation;
     * ``none`` is a do-nothing boundary condition.
 
+QMOM
+^^^^
+
+The boundary conditions of the quadrature method of moments (see :doc:`qmom`) apply to the advective flux of all its fields: the scalars and the moments. The default parameters are:
+
+.. code-block:: text
+
+  subsection boundary conditions qmom
+    set number         = 1
+    set time dependent = false
+    subsection bc 0
+      set id   = 0
+      set type = outlet
+      subsection dirichlet
+        set Function expression = 0
+        subsection distribution
+          set type                = none
+          set Function expression = 0
+        end
+      end
+    end
+  end
+
+* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions.
+
+* ``type``: This is the type of boundary condition being imposed:
+
+  * ``dirichlet``: imposed ``dirichlet`` boundary conditions for each scalar and for the distribution.
+  * ``outlet``: a natural boundary condition that prevents backflow.
+  * ``none``: the advective flux is zero. This is the natural choice for walls.
+
+  Boundaries without a QMOM boundary condition are treated as ``none``.
+
+* ``dirichlet``: scalars and particle size distribution imposed by a ``dirichlet`` boundary condition, as functions of space and time. The format of this subsection is described in :doc:`qmom`.
+
+.. warning::
+
+  The solver of the QMOM physics is not implemented yet: the boundary conditions are parsed, but not applied.
+
 CLS
 ^^^
 

@@ -24,6 +24,14 @@ If the problem being simulated has a source, it can be added in this section. Th
     subsection cahn hilliard
       set Function expression = 0; 0
     end
+
+    subsection QMOM
+      set Function expression = 0
+      subsection distribution
+        set type                = none
+        set Function expression = 0
+      end
+    end
   end
 
 .. tip::
@@ -55,6 +63,8 @@ If the problem being simulated has a source, it can be added in this section. Th
 * ``subsection tracer``: defines the parameters for the a source term for a tracer. This source term is defined by a ``Function expression`` and can depend on both space (``x``, ``y`` and, if 3D, ``z``) and time (``t``). See :ref:`ex function`.
 
 * ``subsection cahn hilliard``: defines the parameters for a source term in the Cahn-Hilliard equations. This source term is defined by a ``Function expression`` and can depend on both space (``x``, ``y`` and, if 3D, ``z``) and time (``t``). Both the phase order parameter (first component) and chemical potential (second component) can have source terms, hence the two components. See :ref:`ex function`.
+
+* ``subsection QMOM``: defines the source terms of the scalars and of the moments of the quadrature method of moments. The source terms of the moments are the raw moments of a particle size distribution, whose number density is in particles per m\ :sup:`3` per s. The format of this subsection is described in :doc:`qmom`. The source terms are parsed, but not applied yet.
 
 
 .. _ex function:

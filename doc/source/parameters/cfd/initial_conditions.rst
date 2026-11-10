@@ -31,6 +31,14 @@ It is often necessary to set-up complex initial conditions when simulating trans
      set Function expression = if (x<0.5 & y<1, 1, -1); 0
     end
 
+    subsection QMOM
+      set Function expression = 0
+      subsection distribution
+        set type                = none
+        set Function expression = 0
+      end
+    end
+
     subsection ramp
       subsection kinematic viscosity
         set initial kinematic viscosity = 1.0
@@ -78,6 +86,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
 
 * The ``subsection cahn hilliard`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). It works similarly to the ``subsection CLS`` for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at :math:`0`.
 * The ``subsection temperature`` allows the user to define an initial temperature for the fluid domain (if ``set heat transfer = true`` in :doc:`multiphysics`).
+* The ``subsection QMOM`` defines the initial scalars and particle size distribution of the quadrature method of moments (if ``set qmom = true`` in :doc:`multiphysics`). The format of this subsection is described in :doc:`qmom`. With the default distribution type, ``none``, there are no particles initially.
 
 * The ``subsection ramp`` holds the parameters to operate a ramp on either or both the kinematic viscosity and the ``n`` parameter in rheological models (see :doc:`physical_properties` for more information on this parameter). When ramping on the kinematic viscosity value,
 
