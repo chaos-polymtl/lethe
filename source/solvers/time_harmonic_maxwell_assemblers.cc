@@ -328,32 +328,33 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
   // electric (F) and magnetic (I) test functions, and electric (E) and magnetic
   // (H) interior trial functions
   const std::vector<unsigned int> &test_dofs_F_real =
-    scratch_data.test_base_dofs[ScratchData::E_real];
+    scratch_data.test_local_dof_index_map[ScratchData::E_real];
   const std::vector<unsigned int> &test_dofs_F_imag =
-    scratch_data.test_base_dofs[ScratchData::E_imag];
+    scratch_data.test_local_dof_index_map[ScratchData::E_imag];
   const std::vector<unsigned int> &test_dofs_I_real =
-    scratch_data.test_base_dofs[ScratchData::H_real];
+    scratch_data.test_local_dof_index_map[ScratchData::H_real];
   const std::vector<unsigned int> &test_dofs_I_imag =
-    scratch_data.test_base_dofs[ScratchData::H_imag];
+    scratch_data.test_local_dof_index_map[ScratchData::H_imag];
   const std::vector<unsigned int> &trial_dofs_E_real =
-    scratch_data.trial_interior_base_dofs[ScratchData::E_real];
+    scratch_data.trial_interior_local_dof_index_map[ScratchData::E_real];
   const std::vector<unsigned int> &trial_dofs_E_imag =
-    scratch_data.trial_interior_base_dofs[ScratchData::E_imag];
+    scratch_data.trial_interior_local_dof_index_map[ScratchData::E_imag];
   const std::vector<unsigned int> &trial_dofs_H_real =
-    scratch_data.trial_interior_base_dofs[ScratchData::H_real];
+    scratch_data.trial_interior_local_dof_index_map[ScratchData::H_real];
   const std::vector<unsigned int> &trial_dofs_H_imag =
-    scratch_data.trial_interior_base_dofs[ScratchData::H_imag];
+    scratch_data.trial_interior_local_dof_index_map[ScratchData::H_imag];
 
   // Coefficients of the terms at the quadrature points, multiplied by JxW and
   // computed by the scratch data, with iweps = i omega eps and
-  // iwmu = i omega mu
-  const std::vector<double>               &JxW       = scratch_data.JxW;
-  const std::vector<double>               &JxW_FF    = scratch_data.JxW_FF;
-  const std::vector<double>               &JxW_II    = scratch_data.JxW_II;
-  const std::vector<std::complex<double>> &iweps_JxW = scratch_data.iweps_JxW;
-  const std::vector<std::complex<double>> &conj_iwmu_JxW =
-    scratch_data.conj_iwmu_JxW;
-  const std::vector<std::complex<double>> &iwmu_JxW = scratch_data.iwmu_JxW;
+  // iwmu = i omega mu. Since JxW is real, conj(iwmu) JxW is the complex
+  // conjugate of iwmu JxW.
+  const std::vector<double> &JxW              = scratch_data.JxW;
+  const std::vector<double> &JxW_FF_container = scratch_data.JxW_FF_container;
+  const std::vector<double> &JxW_II_container = scratch_data.JxW_II_container;
+  const std::vector<std::complex<double>> &iweps_JxW_container =
+    scratch_data.iweps_JxW_container;
+  const std::vector<std::complex<double>> &iwmu_JxW_container =
+    scratch_data.iwmu_JxW_container;
 
   LAPACKFullMatrix<double> &G_matrix = copy_data.G_matrix;
   LAPACKFullMatrix<double> &B_matrix = copy_data.B_matrix;
@@ -388,12 +389,14 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
               const double curl_j_phi_i  = curl_phi_j[q] * phi_i[q];
               const double phi_j_curl_i  = phi_j[q] * curl_phi_i[q];
 
-              z_FF += JxW_FF[q] * phi_j_phi_i + JxW[q] * curl_j_curl_i;
-              z_II += JxW_II[q] * phi_j_phi_i + JxW[q] * curl_j_curl_i;
-              z_FI_ij +=
-                iweps_JxW[q] * curl_j_phi_i - conj_iwmu_JxW[q] * phi_j_curl_i;
-              z_FI_ji +=
-                iweps_JxW[q] * phi_j_curl_i - conj_iwmu_JxW[q] * curl_j_phi_i;
+              z_FF +=
+                JxW_FF_container[q] * phi_j_phi_i + JxW[q] * curl_j_curl_i;
+              z_II +=
+                JxW_II_container[q] * phi_j_phi_i + JxW[q] * curl_j_curl_i;
+              z_FI_ij += iweps_JxW_container[q] * curl_j_phi_i -
+                         std::conj(iwmu_JxW_container[q]) * phi_j_curl_i;
+              z_FI_ji += iweps_JxW_container[q] * phi_j_curl_i -
+                         std::conj(iwmu_JxW_container[q]) * curl_j_phi_i;
             }
 
           // Blocks of the pair (i, j)
@@ -476,9 +479,9 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_matrix(
               const double phi_j_phi_i  = phi_j[q] * phi_i[q];
               const double phi_j_curl_i = phi_j[q] * curl_phi_i[q];
 
-              z_FE += iweps_JxW[q] * phi_j_phi_i;
+              z_FE += iweps_JxW_container[q] * phi_j_phi_i;
               z_FH += JxW[q] * phi_j_curl_i;
-              z_IH -= iwmu_JxW[q] * phi_j_phi_i;
+              z_IH -= iwmu_JxW_container[q] * phi_j_phi_i;
             }
 
           add_complex_block(B_matrix,
@@ -531,8 +534,10 @@ TimeHarmonicMaxwellAssemblerCore<dim>::assemble_rhs(
     {
       for (unsigned int i = 0; i < scratch_data.n_base_functions_test; ++i)
         {
-          l_vector[scratch_data.test_base_dofs[ScratchData::E_real][i]] += 0.0;
-          l_vector[scratch_data.test_base_dofs[ScratchData::E_imag][i]] += 0.0;
+          l_vector[scratch_data
+                     .test_local_dof_index_map[ScratchData::E_real][i]] += 0.0;
+          l_vector[scratch_data
+                     .test_local_dof_index_map[ScratchData::E_imag][i]] += 0.0;
         }
     }
 }
@@ -556,21 +561,21 @@ TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_matrix(
   // electric (F) and magnetic (I) test functions, and electric (E_hat) and
   // magnetic (H_hat) skeleton trial functions
   const std::vector<unsigned int> &test_dofs_F_real =
-    scratch_data.test_base_dofs[ScratchData::E_real];
+    scratch_data.test_local_dof_index_map[ScratchData::E_real];
   const std::vector<unsigned int> &test_dofs_F_imag =
-    scratch_data.test_base_dofs[ScratchData::E_imag];
+    scratch_data.test_local_dof_index_map[ScratchData::E_imag];
   const std::vector<unsigned int> &test_dofs_I_real =
-    scratch_data.test_base_dofs[ScratchData::H_real];
+    scratch_data.test_local_dof_index_map[ScratchData::H_real];
   const std::vector<unsigned int> &test_dofs_I_imag =
-    scratch_data.test_base_dofs[ScratchData::H_imag];
+    scratch_data.test_local_dof_index_map[ScratchData::H_imag];
   const std::vector<unsigned int> &trial_dofs_E_hat_real =
-    scratch_data.trial_skeleton_base_dofs[ScratchData::E_real];
+    scratch_data.trial_skeleton_local_dof_index_map[ScratchData::E_real];
   const std::vector<unsigned int> &trial_dofs_E_hat_imag =
-    scratch_data.trial_skeleton_base_dofs[ScratchData::E_imag];
+    scratch_data.trial_skeleton_local_dof_index_map[ScratchData::E_imag];
   const std::vector<unsigned int> &trial_dofs_H_hat_real =
-    scratch_data.trial_skeleton_base_dofs[ScratchData::H_real];
+    scratch_data.trial_skeleton_local_dof_index_map[ScratchData::H_real];
   const std::vector<unsigned int> &trial_dofs_H_hat_imag =
-    scratch_data.trial_skeleton_base_dofs[ScratchData::H_imag];
+    scratch_data.trial_skeleton_local_dof_index_map[ScratchData::H_imag];
 
   const std::vector<double> &face_JxW = scratch_data.face_JxW;
 
@@ -584,13 +589,13 @@ TimeHarmonicMaxwellAssemblerSkeleton<dim>::assemble_matrix(
   // - FH_hat: <phi_i, n x h_hat_j>, the same value since the electric and
   //   magnetic skeleton fields share the same base functions
   for (const unsigned int i :
-       scratch_data.face_test_base_functions[scratch_data.face_no])
+       scratch_data.test_tangential_base_functions[scratch_data.face_no])
     {
       const auto phi_i = scratch_data.phi_test_face[i];
 
       for (const unsigned int j :
            scratch_data
-             .face_trial_skeleton_base_functions[scratch_data.face_no])
+             .trial_skeleton_tangential_base_functions[scratch_data.face_no])
         {
           const auto n_cross_phi_j =
             scratch_data.n_cross_tangential_phi_trial_skeleton[j];
@@ -815,26 +820,26 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
   const unsigned int n_face_q_points = scratch_data.n_face_q_points;
 
   // Base functions of the test space associated with the face
-  const std::vector<unsigned int> &face_test_base_functions =
-    scratch_data.face_test_base_functions[scratch_data.face_no];
-  const unsigned int n_face_test_base_functions =
-    face_test_base_functions.size();
+  const std::vector<unsigned int> &test_tangential_base_functions =
+    scratch_data.test_tangential_base_functions[scratch_data.face_no];
+  const unsigned int n_test_tangential_base_functions =
+    test_tangential_base_functions.size();
 
   // Local dof indices of the real and imaginary parts of each base function:
   // electric (F) and magnetic (I) test functions, and electric (E_hat)
   // skeleton trial functions
   const std::vector<unsigned int> &test_dofs_F_real =
-    scratch_data.test_base_dofs[ScratchData::E_real];
+    scratch_data.test_local_dof_index_map[ScratchData::E_real];
   const std::vector<unsigned int> &test_dofs_F_imag =
-    scratch_data.test_base_dofs[ScratchData::E_imag];
+    scratch_data.test_local_dof_index_map[ScratchData::E_imag];
   const std::vector<unsigned int> &test_dofs_I_real =
-    scratch_data.test_base_dofs[ScratchData::H_real];
+    scratch_data.test_local_dof_index_map[ScratchData::H_real];
   const std::vector<unsigned int> &test_dofs_I_imag =
-    scratch_data.test_base_dofs[ScratchData::H_imag];
+    scratch_data.test_local_dof_index_map[ScratchData::H_imag];
   const std::vector<unsigned int> &trial_dofs_E_hat_real =
-    scratch_data.trial_skeleton_base_dofs[ScratchData::E_real];
+    scratch_data.trial_skeleton_local_dof_index_map[ScratchData::E_real];
   const std::vector<unsigned int> &trial_dofs_E_hat_imag =
-    scratch_data.trial_skeleton_base_dofs[ScratchData::E_imag];
+    scratch_data.trial_skeleton_local_dof_index_map[ScratchData::E_imag];
 
   const std::vector<double> &face_JxW = scratch_data.face_JxW;
 
@@ -844,8 +849,8 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
   // Surface admittance Y at the face quadrature points, multiplied by JxW:
   // |Y|^2 JxW and Y JxW. It depends on the boundary condition, so it is
   // computed here and not in the scratch data.
-  std::vector<double>               JxW_YY(n_face_q_points);
-  std::vector<std::complex<double>> Y_JxW(n_face_q_points);
+  std::vector<double>               JxW_YY_container(n_face_q_points);
+  std::vector<std::complex<double>> Y_JxW_container(n_face_q_points);
   for (unsigned int q = 0; q < n_face_q_points; ++q)
     {
       const std::complex<double> boundary_surface_admittance =
@@ -854,8 +859,9 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
                                     bc_type,
                                     waveguide_port_index)
           .second;
-      JxW_YY[q] = std::norm(boundary_surface_admittance) * face_JxW[q];
-      Y_JxW[q]  = boundary_surface_admittance * face_JxW[q];
+      JxW_YY_container[q] =
+        std::norm(boundary_surface_admittance) * face_JxW[q];
+      Y_JxW_container[q] = boundary_surface_admittance * face_JxW[q];
     }
 
   // Boundary terms of the Gram matrix G coming from the test norm on the Robin
@@ -874,18 +880,19 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
   // on the face, so only them contribute. As for the cell terms, we only loop
   // over the pairs i <= j and add the blocks of the pair (j, i) at the same
   // time.
-  for (unsigned int position_i = 0; position_i < n_face_test_base_functions;
+  for (unsigned int position_i = 0;
+       position_i < n_test_tangential_base_functions;
        ++position_i)
     {
-      const unsigned int i             = face_test_base_functions[position_i];
-      const auto         phi_i         = scratch_data.phi_test_face[i];
+      const unsigned int i     = test_tangential_base_functions[position_i];
+      const auto         phi_i = scratch_data.phi_test_face[i];
       const auto         n_cross_phi_i = scratch_data.n_cross_phi_test_face[i];
 
       for (unsigned int position_j = position_i;
-           position_j < n_face_test_base_functions;
+           position_j < n_test_tangential_base_functions;
            ++position_j)
         {
-          const unsigned int j     = face_test_base_functions[position_j];
+          const unsigned int j     = test_tangential_base_functions[position_j];
           const auto         phi_j = scratch_data.phi_test_face[j];
           const auto n_cross_phi_j = scratch_data.n_cross_phi_test_face[j];
 
@@ -900,10 +907,10 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
               const double n_cross_j_n_cross_i =
                 n_cross_phi_j[q] * n_cross_phi_i[q];
 
-              z_FF += JxW_YY[q] * n_cross_j_n_cross_i;
+              z_FF += JxW_YY_container[q] * n_cross_j_n_cross_i;
               z_II += face_JxW[q] * n_cross_j_n_cross_i;
-              z_FI_ij += Y_JxW[q] * (n_cross_phi_j[q] * phi_i[q]);
-              z_FI_ji += Y_JxW[q] * (n_cross_phi_i[q] * phi_j[q]);
+              z_FI_ij += Y_JxW_container[q] * (n_cross_phi_j[q] * phi_i[q]);
+              z_FI_ji += Y_JxW_container[q] * (n_cross_phi_i[q] * phi_j[q]);
             }
 
           // Blocks of the pair (i, j)
@@ -970,20 +977,20 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
   // -Y < phi_i, n x (e_hat_j x n) >. It only involves the tangential trace of
   // the test functions, so only the base functions associated with the face
   // contribute.
-  for (const unsigned int i : face_test_base_functions)
+  for (const unsigned int i : test_tangential_base_functions)
     {
       const auto phi_i = scratch_data.phi_test_face[i];
 
       for (const unsigned int j :
            scratch_data
-             .face_trial_skeleton_base_functions[scratch_data.face_no])
+             .trial_skeleton_tangential_base_functions[scratch_data.face_no])
         {
           const auto tangential_phi_j =
             scratch_data.tangential_phi_trial_skeleton[j];
 
           std::complex<double> z(0.);
           for (unsigned int q = 0; q < n_face_q_points; ++q)
-            z -= Y_JxW[q] * (tangential_phi_j[q] * phi_i[q]);
+            z -= Y_JxW_container[q] * (tangential_phi_j[q] * phi_i[q]);
 
           add_complex_block(B_hat_matrix,
                             test_dofs_F_real[i],
@@ -1022,9 +1029,9 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_rhs(
   // Local dof indices of the real and imaginary parts of each base function of
   // the electric test functions (F)
   const std::vector<unsigned int> &test_dofs_F_real =
-    scratch_data.test_base_dofs[ScratchData::E_real];
+    scratch_data.test_local_dof_index_map[ScratchData::E_real];
   const std::vector<unsigned int> &test_dofs_F_imag =
-    scratch_data.test_base_dofs[ScratchData::E_imag];
+    scratch_data.test_local_dof_index_map[ScratchData::E_imag];
 
   Vector<double> &l_vector = copy_data.l_vector;
 
@@ -1034,9 +1041,10 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_rhs(
   // tangential component of g is meaningful. It is also the only component
   // for which -<F, g> is bounded on the test space, which only controls the
   // tangential trace of F on the Robin boundaries.
-  std::vector<Tensor<1, dim, std::complex<double>>> g_inc_JxW(n_face_q_points);
+  std::vector<Tensor<1, dim, std::complex<double>>> g_inc_JxW_container(
+    n_face_q_points);
   for (unsigned int q = 0; q < n_face_q_points; ++q)
-    g_inc_JxW[q] =
+    g_inc_JxW_container[q] =
       tangential_component(compute_robin_boundary_data(
                              scratch_data, q, bc_type, waveguide_port_index)
                              .first,
@@ -1049,13 +1057,13 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_rhs(
   // and Im(w) for s equal to the imaginary unit. Since g is tangential, only
   // the base functions associated with the face contribute.
   for (const unsigned int i :
-       scratch_data.face_test_base_functions[scratch_data.face_no])
+       scratch_data.test_tangential_base_functions[scratch_data.face_no])
     {
       const auto phi_i = scratch_data.phi_test_face[i];
 
       std::complex<double> w(0.);
       for (unsigned int q = 0; q < n_face_q_points; ++q)
-        w += g_inc_JxW[q] * phi_i[q];
+        w += g_inc_JxW_container[q] * phi_i[q];
 
       l_vector[test_dofs_F_real[i]] -= w.real();
       l_vector[test_dofs_F_imag[i]] -= w.imag();

@@ -236,52 +236,52 @@ public:
    * of the local dof index of each base function for each of the four
    * fields of the three finite element spaces for the reference cell. It also
    * builds the lists of the base functions of the test and skeleton trial
-   * spaces for each face of the reference cell,
+   * spaces whose tangential trace does not vanish on each face of the
+   * reference cell.
    */
   void
   allocate() override;
 
   /**
-   * @brief Compute the local dof index list of each base function for each field of
+   * @brief Build the local dof index list of each base function for each field of
    * a finite element space of the time-harmonic Maxwell equations [E_real,
    * E_imag, H_real, H_imag].
    *
    * @param[in] fe Finite element system of the [E_real, E_imag, H_real,
    * H_imag] fields (interior trial, skeleton trial or test space).
    *
-   * @param[out] base_dofs Local dof index of each base function for each
-   * field: base_dofs[field][i].
-   *
-   * @param[out] base_function_of_dof Base function of each shape function of
-   * the finite element.
+   * @param[out] local_dof_index_map Local dof index of each base function for
+   * each field: local_dof_index_map[field][i].
    */
   void
-  compute_base_dofs(
-    const FiniteElement<dim>                                        &fe,
-    std::array<std::vector<unsigned int>, n_electromagnetic_fields> &base_dofs,
-    std::vector<unsigned int> &base_function_of_dof) const;
+  build_local_dof_index_map(
+    const FiniteElement<dim> &fe,
+    std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+      &local_dof_index_map) const;
 
   /**
-   * @brief Compute, for each face of the reference cell, the base functions of
-   * a finite element space that are associated with the face, i.e. whose
-   * degrees of freedom are located on the edges or the interior of the face.
-   * For Nedelec elements, these are the only base functions whose tangential
-   * trace does not vanish on the face.
+   * @brief Identify, for each face of the reference cell, the base functions of
+   * a finite element space whose tangential trace does not vanish on the face
+   * (the relevant ones for the face integrals, this would not be needed if the
+   * FE_FaceNedelec existed). For Nedelec elements, these are the base functions
+   * whose degrees of freedom are located on the edges or the interior of the
+   * face.
    *
    * @param[in] fe Finite element system of the [E_real, E_imag, H_real,
    * H_imag] fields.
    *
-   * @param[in] base_function_of_dof Base function of each shape function of the
-   * finite element (see compute_base_dofs()).
+   * @param[in] local_dof_index_map Local dof index of each base function for
+   * each field (see compute_local_dof_index_map()).
    *
-   * @param[out] face_base_functions Base functions associated with each face:
-   * face_base_functions[face_no].
+   * @param[out] tangential_base_functions Base functions whose tangential
+   * trace does not vanish on each face: tangential_base_functions[face_no].
    */
   void
-  compute_face_base_functions(
-    const FiniteElement<dim>               &fe,
-    const std::vector<unsigned int>        &base_function_of_dof,
-    std::vector<std::vector<unsigned int>> &face_base_functions) const;
+  identify_tangential_base_functions(
+    const FiniteElement<dim> &fe,
+    const std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+                                           &local_dof_index_map,
+    std::vector<std::vector<unsigned int>> &tangential_base_functions) const;
 
   /**
    * @brief Enable the evaluation of the temperature field, on which the
@@ -340,14 +340,12 @@ public:
   /**
    * @brief Reinitialize the content of the scratch for a face of the current
    * cell. It evaluates the test functions and the tangential traces of the
-   * skeleton trial space at the face quadrature points. Only the base functions
-   * associated with the face are evaluated since the face terms of the bilinear
-   * forms, of the test norm and of the load vector only involve tangential
-   * traces. The face temperature values are set to zero and are only
-   * overwritten by reinit_face_temperature when the material of the cell
-   * depends on the temperature. Likewise, the face void fraction values are set
-   * to one (pure fluid) and are only overwritten by reinit_face_void_fraction
-   * when the material of the cell depends on the void fraction.
+   * skeleton trial space at the face quadrature points. The face temperature
+   * values are set to zero and are only overwritten by reinit_face_temperature
+   * when the material of the cell depends on the temperature. Likewise, the
+   * face void fraction values are set to one (pure fluid) and are only
+   * overwritten by reinit_face_void_fraction when the material of the cell
+   * depends on the void fraction.
    *
    * @param[in] cell_skeleton The current cell, for the skeleton trial space
    * DoFHandler.
@@ -464,8 +462,8 @@ public:
   calculate_physical_properties();
 
   /**
-   * @brief Compute the coefficients of the cell terms of the DPG system at the
-   * cell quadrature points.
+   * @brief Compute the coefficients of the time-harmonic Maxwell equations of
+   * the cell at the quadrature points.
    */
   void
   calculate_cell_coefficients();
@@ -521,29 +519,39 @@ public:
   unsigned int n_base_functions_trial_skeleton;
 
   // Local dof index of each base function of the test space for each field:
-  // test_base_dofs[field][i]. The electric test functions (F) are the E_real
-  // and E_imag fields of the test space and the magnetic ones (I) are the
-  // H_real and H_imag fields.
+  // test_local_dof_index_map[field][i]. The electric test functions (F) are
+  // the E_real and E_imag fields of the test space and the magnetic ones (I)
+  // are the H_real and H_imag fields.
   std::array<std::vector<unsigned int>, n_electromagnetic_fields>
-    test_base_dofs;
+    test_local_dof_index_map;
   // Local dof index of each base function of the interior trial space for each
-  // field: trial_interior_base_dofs[field][i]
+  // field: trial_interior_local_dof_index_map[field][i]
   std::array<std::vector<unsigned int>, n_electromagnetic_fields>
-    trial_interior_base_dofs;
+    trial_interior_local_dof_index_map;
   // Local dof index of each base function of the skeleton trial space for each
-  // field: trial_skeleton_base_dofs[field][i]
+  // field: trial_skeleton_local_dof_index_map[field][i]
   std::array<std::vector<unsigned int>, n_electromagnetic_fields>
-    trial_skeleton_base_dofs;
+    trial_skeleton_local_dof_index_map;
 
-  // Base functions of the test space associated with each face of the
-  // reference cell: face_test_base_functions[face_no]
-  std::vector<std::vector<unsigned int>> face_test_base_functions;
-  // Base functions of the skeleton trial space associated with each face of
-  // the reference cell: face_trial_skeleton_base_functions[face_no]
-  std::vector<std::vector<unsigned int>> face_trial_skeleton_base_functions;
+  // Base functions of the test space whose tangential trace does not vanish on
+  // each face of the reference cell: test_tangential_base_functions[face_no]
+  std::vector<std::vector<unsigned int>> test_tangential_base_functions;
+  // Base functions of the skeleton trial space whose tangential trace does not
+  // vanish on each face of the reference cell:
+  // trial_skeleton_tangential_base_functions[face_no]
+  std::vector<std::vector<unsigned int>>
+    trial_skeleton_tangential_base_functions;
 
   // Cell container for the volume integrals weights
   std::vector<double> JxW;
+  // (1 + |iweps|^2) JxW, weight of (phi_j, phi_i) in the FF block of G
+  std::vector<double> JxW_FF_container;
+  // (1 + |iwmu|^2) JxW, weight of (phi_j, phi_i) in the II block of G
+  std::vector<double> JxW_II_container;
+  // iweps JxW
+  std::vector<std::complex<double>> iweps_JxW_container;
+  // iwmu JxW
+  std::vector<std::complex<double>> iwmu_JxW_container;
   // Cell container for the quadrature points
   std::vector<Point<dim>> quadrature_points;
 
@@ -557,17 +565,6 @@ public:
   std::vector<std::complex<double>> effective_electric_permittivities;
   // Effective magnetic permeabilities at the cell quadrature points
   std::vector<std::complex<double>> effective_magnetic_permeabilities;
-
-  // (1 + |iweps|^2) JxW, weight of (phi_j, phi_i) in the FF block of G
-  std::vector<double> JxW_FF;
-  // (1 + |iwmu|^2) JxW, weight of (phi_j, phi_i) in the II block of G
-  std::vector<double> JxW_II;
-  // iweps JxW
-  std::vector<std::complex<double>> iweps_JxW;
-  // conj(iwmu) JxW
-  std::vector<std::complex<double>> conj_iwmu_JxW;
-  // iwmu JxW
-  std::vector<std::complex<double>> iwmu_JxW;
 
   // Cell base functions of the test space
   Table<2, Tensor<1, dim>> phi_test;
