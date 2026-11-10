@@ -141,8 +141,11 @@ to define a conformal mesh for the fluid between the particles.
     use ``stencil degree=2``). We suggest using the same degree as the velocity
     field in most cases since it improves the condition number of the matrix.
 
+    
     .. note::
 
+       The stencil degree used does not alter the order of convergence of the
+       solution.
 
   * The ``enable extrapolation`` parameter controls if extrapolation is used to
     impose the immersed boundary condition. For debugging purposes, this
