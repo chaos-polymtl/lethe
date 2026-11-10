@@ -452,9 +452,9 @@ private:
       this->triangulation->get_boundary_ids();
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
-        AssertThrow(simulation_parameters.boundary_conditions_cls.type.find(
+        AssertThrow(simulation_parameters.cls_boundary_conditions.type.find(
                       boundary_id_in_tria) !=
-                      simulation_parameters.boundary_conditions_cls.type.end(),
+                      simulation_parameters.cls_boundary_conditions.type.end(),
                     CLSBoundaryConditionMissing(boundary_id_in_tria));
       }
   }

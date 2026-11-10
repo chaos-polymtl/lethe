@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_boundary_conditions_cahn_hilliard_h
-#define lethe_boundary_conditions_cahn_hilliard_h
+#ifndef lethe_cls_boundary_conditions_h
+#define lethe_cls_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
 #include <core/periodic_boundary.h>
@@ -20,41 +20,27 @@
 
 using namespace dealii;
 
-DeclException1(CahnHilliardBoundaryDuplicated,
+DeclException1(CLSBoundaryDuplicated,
                types::boundary_id,
-               << "Cahn Hilliard boundary id: " << arg1
+               << "CLS boundary id: " << arg1
                << " has already been declared as a boundary condition");
+
 
 namespace BoundaryConditions
 {
   /**
-   * @brief This class manages the functions associated with function-type boundary conditions
-   * of the Cahn-Hilliard equations
-   */
-  template <int dim>
-  class CahnHilliardBoundaryFunctions
-  {
-  public:
-    // Cahn-Hilliard variables
-    Functions::ParsedFunction<dim> phi;
-    Functions::ParsedFunction<dim> eta;
-  };
-
-  /**
-   * @brief This class manages the boundary conditions for the Cahn-Hilliard solver
+   * @brief This class manages the boundary conditions for CLS solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
 
   template <int dim>
-  class CahnHilliardBoundaryConditions : public BoundaryConditions
+  class CLSBoundaryConditions : public BoundaryConditions
   {
   public:
-    std::map<types::boundary_id, double> angle_of_contact;
-    std::map<types::boundary_id, double> phase_dirichlet_value;
     std::map<types::boundary_id,
-             std::shared_ptr<CahnHilliardBoundaryFunctions<dim>>>
-      bcFunctions;
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+      phase_indicator;
 
     void
     declare_default_entry(ParameterHandler  &prm,
@@ -69,43 +55,35 @@ namespace BoundaryConditions
   };
 
   /**
-   * @brief Declares the default parameters for the Cahn-Hilliard boundary conditions
+   * @brief Declares the default parameters for a boundary condition id i_bc
    *
-   * @param prm A parameter handler which is currently used to parse the simulation information.
+   * @param prm A parameter handler which is currently used to parse the simulation information
    *
    * @param default_boundary_id Default value given to the boundary id.
    */
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::declare_default_entry(
+  CLSBoundaryConditions<dim>::declare_default_entry(
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
-    prm.declare_entry(
-      "type",
-      "none",
-      Patterns::Selection(
-        "none|noflux|dirichlet|angle_of_contact|free_angle|periodic"),
-      "Type of boundary condition for the Cahn-Hilliard equations"
-      "Choices are <none|noflux|dirichlet|angle_of_contact|free_angle|periodic>.");
+    prm.declare_entry("type",
+                      "none",
+                      Patterns::Selection("none|dirichlet|periodic"),
+                      "Type of boundary condition for CLS"
+                      "Choices are <none|dirichlet|periodic>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
                       Patterns::List(Patterns::Integer()),
                       "Mesh id for boundary conditions");
 
-    prm.declare_entry(
-      "angle value",
-      "0",
-      Patterns::Double(),
-      "Inner angle of contact between the fluid 1 and the boundary (in degrees)");
-
     Functions::ParsedFunction<dim> temporary_function;
-    prm.enter_subsection("phi");
+    prm.enter_subsection("dirichlet");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    // Periodic boundary condition parameters for Cahn-Hilliards physics
+    // Periodic boundary condition parameters for CLS physics
     prm.declare_entry(
       "periodic id",
       "-1",
@@ -128,11 +106,11 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::declare_parameters(
+  CLSBoundaryConditions<dim>::declare_parameters(
     ParameterHandler  &prm,
     const unsigned int number_of_boundary_conditions)
   {
-    prm.enter_subsection("boundary conditions cahn hilliard");
+    prm.enter_subsection("boundary conditions CLS");
     {
       prm.declare_entry("number",
                         "0",
@@ -142,7 +120,7 @@ namespace BoundaryConditions
         "time dependent",
         "false",
         Patterns::Bool(),
-        "Bool to define if the boundary condition is time dependent");
+        "Bool to define if the boundary condition is time-dependent");
 
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {
@@ -164,7 +142,7 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
+  CLSBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
     // Parse the list of boundary ids
     std::vector<types::boundary_id> boundary_ids =
@@ -174,48 +152,30 @@ namespace BoundaryConditions
     AssertThrow(
       boundary_ids.size() > 0,
       ExcMessage(
-        "A boundary id has not been set for one of the Cahn Hilliard boundary conditions. Please ensure that the id is set for every boundary condition."));
+        "A boundary id has not been set for one of the CLS boundary conditions. Please ensure that the id is set for every boundary condition."));
+
     // Loop through all boundary ids to ensure that they are all non-negative
     // and unique
     for (const auto boundary_id : boundary_ids)
       {
         AssertThrow(this->type.find(boundary_id) == this->type.end(),
-                    CahnHilliardBoundaryDuplicated(boundary_id));
+                    CLSBoundaryDuplicated(boundary_id));
 
-        // Create and parse the phase order boundary condition for all cases.
-        prm.enter_subsection("phi");
-        this->bcFunctions[boundary_id] =
-          std::make_shared<CahnHilliardBoundaryFunctions<dim>>();
-        bcFunctions[boundary_id]->phi.parse_parameters(prm);
-        prm.leave_subsection();
-
-        // Do the same with the angle of contact
-        this->angle_of_contact[boundary_id] = prm.get_double("angle value");
-
-        const std::string op = prm.get("type");
-        if (op == "none")
+        if (auto const option = prm.get("type"); option == "none")
           {
             this->type[boundary_id] = BoundaryType::none;
           }
-        else if (op == "noflux")
+
+        if (auto const option = prm.get("type"); option == "dirichlet")
           {
-            this->type[boundary_id] = BoundaryType::cahn_hilliard_noflux;
+            this->type[boundary_id] = BoundaryType::cls_dirichlet;
+            prm.enter_subsection("dirichlet");
+            phase_indicator[boundary_id] =
+              std::make_shared<Functions::ParsedFunction<dim>>();
+            phase_indicator[boundary_id]->parse_parameters(prm);
+            prm.leave_subsection();
           }
-        else if (op == "dirichlet")
-          {
-            this->type[boundary_id] =
-              BoundaryType::cahn_hilliard_dirichlet_phase_order;
-          }
-        else if (op == "angle_of_contact")
-          {
-            this->type[boundary_id] =
-              BoundaryType::cahn_hilliard_angle_of_contact;
-          }
-        else if (op == "free_angle")
-          {
-            this->type[boundary_id] = BoundaryType::cahn_hilliard_free_angle;
-          }
-        else if (op == "periodic")
+        if (auto const option = prm.get("type"); option == "periodic")
           {
             types::boundary_id periodic_boundary_id =
               prm.get_integer("periodic id");
@@ -232,14 +192,9 @@ namespace BoundaryConditions
               .direction   = static_cast<unsigned int>(
                 prm.get_integer("periodic direction"))};
           }
-        else
-          {
-            AssertThrow(
-              false,
-              ExcMessage("Unknown boundary condition type for Cahn-Hilliard."));
-          }
       }
   }
+
 
   /**
    * @brief Parse the boundary conditions
@@ -250,9 +205,9 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  CLSBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("boundary conditions cahn hilliard");
+    prm.enter_subsection("boundary conditions CLS");
     {
       this->number_of_boundary_conditions = prm.get_integer("number");
       this->time_dependent                = prm.get_bool("time dependent");
@@ -268,54 +223,7 @@ namespace BoundaryConditions
     }
     prm.leave_subsection();
   }
+
 } // namespace BoundaryConditions
-
-
-/**
- * @brief Class that implements a boundary conditions for the Cahn-Hilliard equation
- * where the phase and chemical potential are defined using individual functions
- */
-template <int dim>
-class CahnHilliardFunctionDefined : public Function<dim>
-{
-private:
-  Functions::ParsedFunction<dim> *phi;
-
-public:
-  CahnHilliardFunctionDefined(Functions::ParsedFunction<dim> *p_phi)
-    : Function<dim>(2)
-    , phi(p_phi)
-  {}
-
-  virtual double
-  value(const Point<dim> &p, unsigned int component) const override;
-};
-
-
-/**
- * @brief Calculates the value of a Function-type for the Cahn-Hilliard equations
- *
- * @param p A point (generally a gauss point)
- *
- * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
- */
-template <int dim>
-double
-CahnHilliardFunctionDefined<dim>::value(const Point<dim>  &p,
-                                        const unsigned int component) const
-{
-  Assert(component < this->n_components,
-         ExcIndexRange(component, 0, this->n_components));
-
-  if (component == 0)
-    {
-      return phi->value(p);
-    }
-  if (component == 1)
-    {
-      return 0.;
-    }
-  return 0.;
-}
 
 #endif

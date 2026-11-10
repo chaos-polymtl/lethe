@@ -4,7 +4,7 @@
 #ifndef lethe_navier_stokes_assemblers_h
 #define lethe_navier_stokes_assemblers_h
 
-#include <core/boundary_conditions_navier_stokes.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>

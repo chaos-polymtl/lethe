@@ -112,7 +112,7 @@ CLSPDEBasedInterfaceReinitialization<dim>::define_zero_constraints()
         }
     }
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
       if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
         {
@@ -154,14 +154,14 @@ CLSPDEBasedInterfaceReinitialization<dim>::define_non_zero_constraints()
         }
     }
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
       if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
             id,
-            *this->simulation_parameters.boundary_conditions_cls.phase_indicator
+            *this->simulation_parameters.cls_boundary_conditions.phase_indicator
                .at(id),
             this->nonzero_constraints);
         }

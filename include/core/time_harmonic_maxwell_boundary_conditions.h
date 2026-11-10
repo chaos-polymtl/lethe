@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_boundary_conditions_time_harmonic_maxwell_h
-#define lethe_boundary_conditions_time_harmonic_maxwell_h
+#ifndef lethe_time_harmonic_maxwell_boundary_conditions_h
+#define lethe_time_harmonic_maxwell_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
 #include <core/periodic_boundary.h>

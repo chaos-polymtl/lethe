@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/boundary_conditions_cahn_hilliard.h>
-#include <core/boundary_conditions_cls.h>
-#include <core/boundary_conditions_heat_transfer.h>
-#include <core/boundary_conditions_navier_stokes.h>
-#include <core/boundary_conditions_time_harmonic_maxwell.h>
-#include <core/boundary_conditions_tracer.h>
+#include <core/cahn_hilliard_boundary_conditions.h>
+#include <core/cls_boundary_conditions.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
+#include <core/heat_transfer_boundary_conditions.h>
+#include <core/time_harmonic_maxwell_boundary_conditions.h>
+#include <core/tracer_boundary_conditions.h>
 
 namespace BoundaryConditions
 {

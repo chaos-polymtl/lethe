@@ -4,7 +4,7 @@
 #ifndef lethe_postprocessing_cfd_h
 #define lethe_postprocessing_cfd_h
 
-#include <core/boundary_conditions_navier_stokes.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 
 #include <solvers/physical_properties_manager.h>
 

@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_boundary_conditions_heat_transfer_h
-#define lethe_boundary_conditions_heat_transfer_h
+#ifndef lethe_heat_transfer_boundary_conditions_h
+#define lethe_heat_transfer_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
 #include <core/periodic_boundary.h>

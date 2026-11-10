@@ -4,7 +4,7 @@
 #ifndef lethe_heat_transfer_assemblers_h
 #define lethe_heat_transfer_assemblers_h
 
-#include <core/boundary_conditions_heat_transfer.h>
+#include <core/heat_transfer_boundary_conditions.h>
 #include <core/evaporation_model.h>
 #include <core/simulation_control.h>
 

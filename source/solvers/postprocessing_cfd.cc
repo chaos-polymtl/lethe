@@ -26,7 +26,7 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
-#include <core/boundary_conditions_navier_stokes.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/parameters.h>
 #include <core/rheological_model.h>
 #include <core/vector.h>

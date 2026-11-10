@@ -56,13 +56,9 @@ add_library(lethe-core
   ../../include/core/auxiliary_math_functions.h
   ../../include/core/bdf.h
   ../../include/core/boundary_conditions.h
-  ../../include/core/boundary_conditions_cahn_hilliard.h
-  ../../include/core/boundary_conditions_cls.h
-  ../../include/core/boundary_conditions_heat_transfer.h
-  ../../include/core/boundary_conditions_navier_stokes.h
-  ../../include/core/boundary_conditions_time_harmonic_maxwell.h
-  ../../include/core/boundary_conditions_tracer.h
+  ../../include/core/cahn_hilliard_boundary_conditions.h
   ../../include/core/checkpoint_control.h
+  ../../include/core/cls_boundary_conditions.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
@@ -71,6 +67,7 @@ add_library(lethe-core
   ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
+  ../../include/core/fluid_dynamics_boundary_conditions.h
   ../../include/core/grid_birmingham_fluidized_bed.h
   ../../include/core/grid_cube_merged.h
   ../../include/core/grid_cylinder.h
@@ -80,6 +77,7 @@ add_library(lethe-core
   ../../include/core/grid_uniform_channel_with_meshed_cylinder.h
   ../../include/core/grid_uniform_channel_with_meshed_square_prism.h
   ../../include/core/grids.h
+  ../../include/core/heat_transfer_boundary_conditions.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
   ../../include/core/inexact_newton_non_linear_solver_strategy.h
@@ -120,7 +118,9 @@ add_library(lethe-core
   ../../include/core/tensors_and_points_dimension_manipulation.h
   ../../include/core/thermal_conductivity_model.h
   ../../include/core/thermal_expansion_model.h
+  ../../include/core/time_harmonic_maxwell_boundary_conditions.h
   ../../include/core/time_integration_utilities.h
+  ../../include/core/tracer_boundary_conditions.h
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/tracer_reaction_model.h
   ../../include/core/utilities.h)

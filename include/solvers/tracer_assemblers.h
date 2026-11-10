@@ -4,7 +4,7 @@
 #ifndef lethe_tracer_assemblers_h
 #define lethe_tracer_assemblers_h
 
-#include <core/boundary_conditions_tracer.h>
+#include <core/tracer_boundary_conditions.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
@@ -219,8 +219,8 @@ class TracerAssemblerBoundaryNitsche : public TracerFaceAssemblerBase<dim>
 public:
   TracerAssemblerBoundaryNitsche(
     const BoundaryConditions::TracerBoundaryConditions<dim>
-      &p_boundary_conditions_tracer)
-    : boundary_conditions_tracer(p_boundary_conditions_tracer)
+      &p_tracer_boundary_conditions)
+    : tracer_boundary_conditions(p_tracer_boundary_conditions)
   {}
 
   /**
@@ -248,7 +248,7 @@ public:
   assemble_rhs(const TracerScratchData<dim> &scratch_data,
                StabilizedDGMethodsCopyData  &copy_data) override;
 
-  BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
+  BoundaryConditions::TracerBoundaryConditions<dim> tracer_boundary_conditions;
 };
 
 /**

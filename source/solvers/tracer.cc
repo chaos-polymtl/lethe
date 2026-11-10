@@ -56,7 +56,7 @@ Tracer<dim>::setup_assemblers()
       this->inner_face_assembler = std::make_shared<TracerAssemblerSIPG<dim>>();
       this->boundary_face_assembler =
         std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
-          simulation_parameters.boundary_conditions_tracer);
+          simulation_parameters.tracer_boundary_conditions);
 
       // The mortar feature cannot be used with DG elements yet
       if (simulation_parameters.mortar_parameters.enable)
@@ -1372,7 +1372,7 @@ Tracer<dim>::update_boundary_conditions()
 {
   this->update_mortar_configuration();
 
-  if (!this->simulation_parameters.boundary_conditions_tracer.time_dependent)
+  if (!this->simulation_parameters.tracer_boundary_conditions.time_dependent)
     return;
 
   double time = this->simulation_control->get_current_time();
@@ -1383,24 +1383,24 @@ Tracer<dim>::update_boundary_conditions()
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_tracer.type)
+       this->simulation_parameters.tracer_boundary_conditions.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
       if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_tracer.tracer.at(id)
+          this->simulation_parameters.tracer_boundary_conditions.tracer.at(id)
             ->set_time(time);
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
             id,
-            *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
+            *this->simulation_parameters.tracer_boundary_conditions.tracer.at(
               id),
             nonzero_constraints);
         }
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_tracer
+            this->simulation_parameters.tracer_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
@@ -1428,7 +1428,7 @@ Tracer<dim>::define_zero_constraints()
   DoFTools::make_hanging_node_constraints(*this->dof_handler, zero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_tracer.type)
+       this->simulation_parameters.tracer_boundary_conditions.type)
     {
       if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
         {
@@ -1441,7 +1441,7 @@ Tracer<dim>::define_zero_constraints()
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_tracer
+            this->simulation_parameters.tracer_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
@@ -1467,7 +1467,7 @@ Tracer<dim>::define_non_zero_constraints()
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_tracer.type)
+       this->simulation_parameters.tracer_boundary_conditions.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
       if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
@@ -1475,14 +1475,14 @@ Tracer<dim>::define_non_zero_constraints()
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
             id,
-            *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
+            *this->simulation_parameters.tracer_boundary_conditions.tracer.at(
               id),
             nonzero_constraints);
         }
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_tracer
+            this->simulation_parameters.tracer_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
