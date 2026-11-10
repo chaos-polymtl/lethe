@@ -160,31 +160,28 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
   // Compute the local dof index of each base function for each field of each
   // space. This is only done once since it only depends on the finite
   // elements.
-  std::vector<unsigned int> test_base_function_of_dof;
-  std::vector<unsigned int> trial_interior_base_function_of_dof;
-  std::vector<unsigned int> trial_skeleton_base_function_of_dof;
-  compute_base_dofs(fe_test, this->test_base_dofs, test_base_function_of_dof);
-  compute_base_dofs(fe_trial_interior,
-                    this->trial_interior_base_dofs,
-                    trial_interior_base_function_of_dof);
-  compute_base_dofs(fe_trial_skeleton,
-                    this->trial_skeleton_base_dofs,
-                    trial_skeleton_base_function_of_dof);
+  build_local_dof_index_map(fe_test, this->test_local_dof_index_map);
+  build_local_dof_index_map(fe_trial_interior,
+                            this->trial_interior_local_dof_index_map);
+  build_local_dof_index_map(fe_trial_skeleton,
+                            this->trial_skeleton_local_dof_index_map);
 
-  this->n_base_functions_test = this->test_base_dofs[E_real].size();
+  this->n_base_functions_test = this->test_local_dof_index_map[E_real].size();
   this->n_base_functions_trial_interior =
-    this->trial_interior_base_dofs[E_real].size();
+    this->trial_interior_local_dof_index_map[E_real].size();
   this->n_base_functions_trial_skeleton =
-    this->trial_skeleton_base_dofs[E_real].size();
+    this->trial_skeleton_local_dof_index_map[E_real].size();
 
-  // Base functions of the test and skeleton trial spaces associated with each
-  // face of the reference cell
-  compute_face_base_functions(fe_test,
-                              test_base_function_of_dof,
-                              this->face_test_base_functions);
-  compute_face_base_functions(fe_trial_skeleton,
-                              trial_skeleton_base_function_of_dof,
-                              this->face_trial_skeleton_base_functions);
+  // Base functions of the test and skeleton trial spaces whose tangential
+  // trace does not vanish on each face of the reference cell. The interior
+  // trial space has no face terms.
+  identify_tangential_base_functions(fe_test,
+                                     this->test_local_dof_index_map,
+                                     this->test_tangential_base_functions);
+  identify_tangential_base_functions(
+    fe_trial_skeleton,
+    this->trial_skeleton_local_dof_index_map,
+    this->trial_skeleton_tangential_base_functions);
 
   // Cell quadrature
   this->JxW               = std::vector<double>(n_q_points);
@@ -206,11 +203,10 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
     std::vector<std::complex<double>>(n_q_points);
 
   // Coefficients of the cell terms of the DPG system
-  this->JxW_FF        = std::vector<double>(n_q_points);
-  this->JxW_II        = std::vector<double>(n_q_points);
-  this->iweps_JxW     = std::vector<std::complex<double>>(n_q_points);
-  this->conj_iwmu_JxW = std::vector<std::complex<double>>(n_q_points);
-  this->iwmu_JxW      = std::vector<std::complex<double>>(n_q_points);
+  this->JxW_FF_container    = std::vector<double>(n_q_points);
+  this->JxW_II_container    = std::vector<double>(n_q_points);
+  this->iweps_JxW_container = std::vector<std::complex<double>>(n_q_points);
+  this->iwmu_JxW_container  = std::vector<std::complex<double>>(n_q_points);
 
   // Test and interior trial functions at the cell quadrature points
   this->phi_test.reinit(n_base_functions_test, n_q_points);
@@ -251,10 +247,10 @@ TimeHarmonicMaxwellScratchData<dim>::allocate()
 
 template <int dim>
 void
-TimeHarmonicMaxwellScratchData<dim>::compute_base_dofs(
-  const FiniteElement<dim>                                        &fe,
-  std::array<std::vector<unsigned int>, n_electromagnetic_fields> &base_dofs,
-  std::vector<unsigned int> &base_function_of_dof) const
+TimeHarmonicMaxwellScratchData<dim>::build_local_dof_index_map(
+  const FiniteElement<dim> &fe,
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+    &local_dof_index_map) const
 {
   // Since the four fields use the same base element, each field has a quarter
   // of the shape functions of the finite element system.
@@ -267,10 +263,9 @@ TimeHarmonicMaxwellScratchData<dim>::compute_base_dofs(
     field_extractors = {
       {extractor_E_real, extractor_E_imag, extractor_H_real, extractor_H_imag}};
 
-  base_function_of_dof.assign(fe.n_dofs_per_cell(),
-                              numbers::invalid_unsigned_int);
-  for (auto &field_base_dofs : base_dofs)
-    field_base_dofs.assign(n_base_functions, numbers::invalid_unsigned_int);
+  for (auto &field_local_dof_indices : local_dof_index_map)
+    field_local_dof_indices.assign(n_base_functions,
+                                   numbers::invalid_unsigned_int);
 
   for (unsigned int k = 0; k < fe.n_dofs_per_cell(); ++k)
     {
@@ -316,9 +311,9 @@ TimeHarmonicMaxwellScratchData<dim>::compute_base_dofs(
       // Each base function must appear exactly once in each field. Since the
       // finite element has 4 * n_base_functions shape functions, checking that
       // no entry is written twice also guarantees that all the entries of
-      // base_dofs are filled.
+      // local_dof_index_map are filled.
       AssertThrow(base_function < n_base_functions &&
-                    base_dofs[field_index][base_function] ==
+                    local_dof_index_map[field_index][base_function] ==
                       numbers::invalid_unsigned_int,
                   ExcMessage(
                     "The four fields of the finite element " + fe.get_name() +
@@ -327,34 +322,45 @@ TimeHarmonicMaxwellScratchData<dim>::compute_base_dofs(
                     "H_imag fields to be discretized with the same finite "
                     "element."));
 
-      base_dofs[field_index][base_function] = k;
-      base_function_of_dof[k]               = base_function;
+      local_dof_index_map[field_index][base_function] = k;
     }
 }
 
 template <int dim>
 void
-TimeHarmonicMaxwellScratchData<dim>::compute_face_base_functions(
-  const FiniteElement<dim>               &fe,
-  const std::vector<unsigned int>        &base_function_of_dof,
-  std::vector<std::vector<unsigned int>> &face_base_functions) const
+TimeHarmonicMaxwellScratchData<dim>::identify_tangential_base_functions(
+  const FiniteElement<dim> &fe,
+  const std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+                                         &local_dof_index_map,
+  std::vector<std::vector<unsigned int>> &tangential_base_functions) const
 {
+  // Base function of each local dof, i.e. the inverse of the local dof index
+  // map
+  std::vector<unsigned int> base_function_of_dof(fe.n_dofs_per_cell(),
+                                                 numbers::invalid_unsigned_int);
+  for (const auto &field_local_dof_indices : local_dof_index_map)
+    for (unsigned int i = 0; i < field_local_dof_indices.size(); ++i)
+      base_function_of_dof[field_local_dof_indices[i]] = i;
+
   const unsigned int n_faces = fe.reference_cell().n_faces();
-  face_base_functions.assign(n_faces, std::vector<unsigned int>());
+  tangential_base_functions.assign(n_faces, std::vector<unsigned int>());
 
   for (unsigned int face = 0; face < n_faces; ++face)
     {
-      // The degrees of freedom located on the face belong to the four fields,
-      // so each base function associated with the face appears four times. The
-      // duplicates are removed after sorting the list.
-      face_base_functions[face].reserve(fe.n_dofs_per_face(face));
+      // The base functions whose degrees of freedom are located on the face
+      // are the only ones whose tangential trace does not vanish on it. These
+      // degrees of freedom belong to the four fields, so each base function
+      // appears four times. The duplicates are removed after sorting the list.
+      tangential_base_functions[face].reserve(fe.n_dofs_per_face(face));
       for (unsigned int i = 0; i < fe.n_dofs_per_face(face); ++i)
-        face_base_functions[face].emplace_back(
+        tangential_base_functions[face].emplace_back(
           base_function_of_dof[fe.face_to_cell_index(i, face)]);
 
-      std::ranges::sort(face_base_functions[face]);
-      const auto duplicates = std::ranges::unique(face_base_functions[face]);
-      face_base_functions[face].erase(duplicates.begin(), duplicates.end());
+      std::ranges::sort(tangential_base_functions[face]);
+      const auto duplicates =
+        std::ranges::unique(tangential_base_functions[face]);
+      tangential_base_functions[face].erase(duplicates.begin(),
+                                            duplicates.end());
     }
 }
 
@@ -447,7 +453,7 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
       // E_real shape functions only.
       for (unsigned int i = 0; i < n_base_functions_test; ++i)
         {
-          const unsigned int k = this->test_base_dofs[E_real][i];
+          const unsigned int k = this->test_local_dof_index_map[E_real][i];
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               phi_test[i][q] = fe_values_test[extractor_E_real].value(k, q);
@@ -459,7 +465,8 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
       // way
       for (unsigned int j = 0; j < n_base_functions_trial_interior; ++j)
         {
-          const unsigned int k = this->trial_interior_base_dofs[E_real][j];
+          const unsigned int k =
+            this->trial_interior_local_dof_index_map[E_real][j];
           for (unsigned int q = 0; q < n_q_points; ++q)
             phi_trial_interior[j][q] =
               fe_values_trial_interior[extractor_E_real].value(k, q);
@@ -509,9 +516,9 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
       // base functions. The face terms of the bilinear forms, of the test norm
       // and of the load vector only involve the tangential traces of the test
       // functions, which vanish on this face for the other base functions.
-      for (const unsigned int i : this->face_test_base_functions[face_no])
+      for (const unsigned int i : this->test_tangential_base_functions[face_no])
         {
-          const unsigned int k = this->test_base_dofs[E_real][i];
+          const unsigned int k = this->test_local_dof_index_map[E_real][i];
           for (unsigned int q = 0; q < n_face_q_points; ++q)
             {
               phi_test_face[i][q] =
@@ -526,9 +533,10 @@ TimeHarmonicMaxwellScratchData<dim>::reinit_face(
       // mapping (n x (E x n)) which extracts the tangential component of the
       // field at the face.
       for (const unsigned int j :
-           this->face_trial_skeleton_base_functions[face_no])
+           this->trial_skeleton_tangential_base_functions[face_no])
         {
-          const unsigned int k = this->trial_skeleton_base_dofs[E_real][j];
+          const unsigned int k =
+            this->trial_skeleton_local_dof_index_map[E_real][j];
           for (unsigned int q = 0; q < n_face_q_points; ++q)
             {
               tangential_phi_trial_skeleton[j][q] = tangential_component(
@@ -571,11 +579,10 @@ TimeHarmonicMaxwellScratchData<dim>::calculate_cell_coefficients()
       const std::complex<double> iwmu =
         imag * omega * this->effective_magnetic_permeabilities[q];
 
-      this->JxW_FF[q]        = (1. + std::norm(iweps)) * this->JxW[q];
-      this->JxW_II[q]        = (1. + std::norm(iwmu)) * this->JxW[q];
-      this->iweps_JxW[q]     = iweps * this->JxW[q];
-      this->conj_iwmu_JxW[q] = std::conj(iwmu) * this->JxW[q];
-      this->iwmu_JxW[q]      = iwmu * this->JxW[q];
+      this->JxW_FF_container[q]    = (1. + std::norm(iweps)) * this->JxW[q];
+      this->JxW_II_container[q]    = (1. + std::norm(iwmu)) * this->JxW[q];
+      this->iweps_JxW_container[q] = iweps * this->JxW[q];
+      this->iwmu_JxW_container[q]  = iwmu * this->JxW[q];
     }
 }
 
