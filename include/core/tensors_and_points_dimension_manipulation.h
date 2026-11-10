@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022, 2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_tensors_and_points_dimension_manipulation_h
@@ -6,6 +6,8 @@
 
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
+
+#include <complex>
 
 using namespace dealii;
 
@@ -141,6 +143,32 @@ tangential_component(const Tensor<1, dim, Number> &tensor,
     }
   else
     return cross_product_3d(normal, cross_product_3d(tensor, normal));
+}
+
+/**
+ * @brief Compute the Hermitian product of two complex vectors, i.e. the dot
+ * product of the first vector with the complex conjugate of the second one:
+ * \f[
+ * \mathbf{a} \cdot \mathbf{b}^* = \sum_i a_i b_i^*
+ * \f]
+ *
+ * @tparam dim Spatial dimension
+ * @tparam Number Type of the real and imaginary parts of the components
+ *
+ * @param[in] a First vector.
+ * @param[in] b Second vector, which is conjugated.
+ *
+ * @return The Hermitian product of the two vectors.
+ */
+template <int dim, typename Number>
+DEAL_II_ALWAYS_INLINE inline std::complex<Number>
+hermitian_product(const Tensor<1, dim, std::complex<Number>> &a,
+                  const Tensor<1, dim, std::complex<Number>> &b)
+{
+  std::complex<Number> product = 0.;
+  for (unsigned int d = 0; d < dim; ++d)
+    product += a[d] * std::conj(b[d]);
+  return product;
 }
 
 #endif
