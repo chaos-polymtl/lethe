@@ -95,7 +95,7 @@ electromagnetic_properties_depend_on(
  * functions of the test space (\f$\mathbf{F}\f$ and \f$\mathbf{I}\f$) with
  * their curls, the base functions of the interior trial space (\f$\mathbf{E}\f$
  * and \f$\mathbf{H}\f$) and the effective material properties at the quadrature
- * points. Additionnaly, for each face of the cell, it evaluates the base
+ * points. Additionally, for each face of the cell, it evaluates the base
  * functions of the tangential traces of the test space and the base functions
  * of the skeleton trial space (\f$\hat{\mathbf{E}}\f$ and
  * \f$\hat{\mathbf{H}}\f$), with their cross products with the normal. Since the
@@ -114,7 +114,7 @@ class TimeHarmonicMaxwellScratchData : public PhysicsScratchDataBase
 public:
   /**
    * @brief Fields of the finite element systems, numbered in the order in which
-   * they appear in the systems following the convention : [E_real, E_imag,
+   * they appear in the systems following the convention: [E_real, E_imag,
    * H_real, H_imag].
    */
   enum ElectromagneticFieldComponents : unsigned int
@@ -271,7 +271,7 @@ public:
    * H_imag] fields.
    *
    * @param[in] local_dof_index_map Local dof index of each base function for
-   * each field (see compute_local_dof_index_map()).
+   * each field (see build_local_dof_index_map()).
    *
    * @param[out] tangential_base_functions Base functions whose tangential
    * trace does not vanish on each face: tangential_base_functions[face_no].
