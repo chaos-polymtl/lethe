@@ -4,8 +4,8 @@
 #ifndef lethe_tracer_assemblers_h
 #define lethe_tracer_assemblers_h
 
-#include <core/tracer_boundary_conditions.h>
 #include <core/simulation_control.h>
+#include <core/tracer_boundary_conditions.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/multiphysics_interface.h>

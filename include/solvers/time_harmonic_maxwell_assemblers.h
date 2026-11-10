@@ -4,8 +4,8 @@
 #ifndef lethe_time_harmonic_maxwell_assemblers_h
 #define lethe_time_harmonic_maxwell_assemblers_h
 
-#include <core/time_harmonic_maxwell_boundary_conditions.h>
 #include <core/parameters_multiphysics.h>
+#include <core/time_harmonic_maxwell_boundary_conditions.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/physics_assemblers.h>
