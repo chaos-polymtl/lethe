@@ -390,16 +390,6 @@ compute_robin_power_densities(const Tensor<1, dim, std::complex<double>> &E_T,
                               const Tensor<1, dim, std::complex<double>> &g_T,
                               const std::complex<double>                 &Y)
 {
-  // Hermitian product a . b* of two complex vectors
-  const auto hermitian_product =
-    [](const Tensor<1, dim, std::complex<double>> &a,
-       const Tensor<1, dim, std::complex<double>> &b) {
-      std::complex<double> product = 0.;
-      for (unsigned int d = 0; d < dim; ++d)
-        product += a[d] * std::conj(b[d]);
-      return product;
-    };
-
   BoundaryPowerTypes densities;
 
   // The power entering the domain is the negative of the flux of the Poynting
