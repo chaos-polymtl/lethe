@@ -265,13 +265,11 @@ private:
  * norm that is minimized is also modified on these faces, it also assembles
  * the boundary terms of the Gram matrix
  * \f$G\f$:
- *\f[\left(\mathbf{n}\times\mathbf{I}+Y^*\mathbf{n}\times(\mathbf{F}\times\mathbf{n}),
+ * \f[\left(\mathbf{n}\times\mathbf{I}+Y^*\mathbf{n}\times(\mathbf{F}\times\mathbf{n}),
 \mathbf{n}\times\tilde{\mathbf{I}}+Y^*\mathbf{n}\times(\tilde{\mathbf{F}}\times\mathbf{n})\right)_{\Gamma_R},\f]
  * where \f$Y^*\f$ is the complex conjugate of \f$Y\f$ and the inner product
- * is conjugated in its first argument. This term only involves the tangential
- * traces of the test functions, which are in \f$L^2(\Gamma_R)\f$ for the test
- * space \f$\{\mathbf{y} \in H(\mathrm{curl},\Omega_h) : \mathbf{n}\times
- * \mathbf{y}|_{\Gamma_R} \in (L^2(\Gamma_R))^3\}\f$.
+ * is conjugated in its first argument. Again, this term only involves the
+ * tangential traces of the test functions.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

@@ -483,13 +483,11 @@ private:
 
   /**
    * @brief Reconstruct the interior solution from the skeleton solution after solving
-   * the linear system on the skeleton only. Since the local DPG systems are
-   * not stored after the assembly, the local DPG system of each cell is
-   * assembled again to compute the interior solution
-   * \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ and, when the DPG error
-   * estimator is enabled, the DPG residual
-   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ whose norm is the error
-   * indicator of the cell.
+   * the linear system on the skeleton only. The local DPG system of each cell
+   * is assembled again to compute the interior solution
+   * \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ and the DPG residual
+   * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ when the DPG error
+   * estimate on the cell and is not stored anywhere else.
    */
   void
   reconstruct_interior_solution();
