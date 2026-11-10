@@ -51,7 +51,10 @@ enum PhysicsID : unsigned int
   /// solvers and registered by them in the multiphysics interface. Only
   /// available with the VANS formulation in thermal CFD-DEM simulations
   /// (solver type = dem_mp).
-  particle_temperature = 8
+  particle_temperature = 8,
+  /// Quadrature method of moments (scalars and moments of the particle size
+  /// distribution)
+  qmom = 9
 };
 
 /**
@@ -118,6 +121,8 @@ get_physics_id(const std::string &physics_name)
     return PhysicsID::electromagnetics;
   else if (physics_name == "continuum solid dynamics")
     return PhysicsID::continuum_solid_dynamics;
+  else if (physics_name == "qmom")
+    return PhysicsID::qmom;
   else
     AssertThrow(false,
                 dealii::StandardExceptions::ExcMessage(

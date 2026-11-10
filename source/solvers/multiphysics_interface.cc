@@ -7,6 +7,7 @@
 #include <solvers/continuum_solid_dynamics.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/qmom_field_function.h>
 #include <solvers/tracer.h>
 
 #include <deal.II/base/exceptions.h>
@@ -227,6 +228,20 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
                                                       nsparam,
                                                       p_triangulation,
                                                       p_simulation_control);
+    }
+
+  if (multiphysics_parameters.qmom)
+    {
+      // The moments of the particle size distributions are computed by
+      // QMOMKit
+#ifndef LETHE_WITH_QMOMKIT
+      AssertThrow(false, QMOMWithoutQMOMKitError());
+#endif
+      AssertThrow(false,
+                  ExcMessage("The \"qmom\" physics is enabled in the "
+                             "multiphysics subsection, but its solver is not "
+                             "implemented yet. Only its parameters are "
+                             "available. Set \"qmom\" to false."));
     }
 }
 

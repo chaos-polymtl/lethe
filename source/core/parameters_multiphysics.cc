@@ -6,6 +6,13 @@
 
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
+#include <deal.II/base/utilities.h>
+
+#include <algorithm>
+#include <cctype>
+#include <memory>
+#include <string>
 
 DeclException1(
   SharpeningThresholdError,
@@ -103,6 +110,13 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Euler-Euler solid phase calculation <true|false>");
 
+    prm.declare_entry(
+      "qmom",
+      Patterns::Tools::Convert<bool>::to_string(qmom),
+      Patterns::Bool(),
+      "Quadrature method of moments calculation (requires QMOMKit) "
+      "<true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       Patterns::Tools::Convert<bool>::to_string(
@@ -126,6 +140,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
   cls_parameters.declare_parameters(prm);
   cahn_hilliard_parameters.declare_parameters(prm);
   time_harmonic_maxwell_parameters.declare_parameters(prm);
+  qmom_parameters.declare_parameters(prm);
 }
 
 template <int dim>
@@ -143,6 +158,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     cahn_hilliard            = prm.get_bool("cahn hilliard");
     electromagnetics         = prm.get_bool("electromagnetics");
     continuum_solid_dynamics = prm.get_bool("continuum solid dynamics");
+    qmom                     = prm.get_bool("qmom");
 
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");
@@ -153,6 +169,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
   cls_parameters.parse_parameters(prm);
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
   time_harmonic_maxwell_parameters.parse_parameters(prm, dimensions);
+  qmom_parameters.parse_parameters(prm);
 }
 
 void
@@ -744,6 +761,410 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
   prm.leave_subsection();
 }
 
+void
+Parameters::QMOMPhaseEvolution::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMPhaseEvolution defaults;
+  prm.enter_subsection("phase evolution");
+  {
+    prm.declare_entry("enable adaptive node count",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_adaptive_node_count),
+                      Patterns::Bool(),
+                      "Enable adaptive quadrature node count <true|false>");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPhaseEvolution::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("phase evolution");
+  {
+    enable_adaptive_node_count = prm.get_bool("enable adaptive node count");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOM defaults;
+  prm.enter_subsection("QMOM");
+  {
+    prm.declare_entry("number of scalars",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.number_of_scalars),
+                      Patterns::Integer(0),
+                      "Number of scalars transported together with the "
+                      "moments");
+
+    prm.declare_entry("scalar names",
+                      "",
+                      Patterns::List(Patterns::Anything()),
+                      "Comma-separated names of the scalars, used for the "
+                      "output. If empty, the scalars are named scalar_0, "
+                      "scalar_1, ...");
+
+    prm.declare_entry("number of moments",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.number_of_moments),
+                      Patterns::Integer(1),
+                      "Number of transported raw moments. The quadrature has "
+                      "half as many nodes, rounded up.");
+
+    declare_enum_entry(prm,
+                       "splitting scheme",
+                       defaults.splitting_scheme,
+                       "Operator splitting scheme between the physical-space "
+                       "transport and the phase-space evolution");
+
+    prm.declare_entry("enable nucleation",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_nucleation),
+                      Patterns::Bool(),
+                      "Include the nucleation source <true|false>");
+
+    prm.declare_entry("enable coalescence",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_coalescence),
+                      Patterns::Bool(),
+                      "Include the coalescence source <true|false>");
+
+    prm.declare_entry("enable growth",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_growth),
+                      Patterns::Bool(),
+                      "Include the growth source <true|false>");
+
+    phase_evolution.declare_parameters(prm);
+    pharma.declare_parameters(prm);
+    physical_constants.declare_parameters(prm);
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOM::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("QMOM");
+  {
+    number_of_scalars = prm.get_integer("number of scalars");
+    number_of_moments = prm.get_integer("number of moments");
+
+    scalar_names = Utilities::split_string_list(prm.get("scalar names"));
+    if (scalar_names.empty())
+      for (unsigned int i_scalar = 0; i_scalar < number_of_scalars; ++i_scalar)
+        scalar_names.emplace_back("scalar_" + std::to_string(i_scalar));
+    AssertThrow(scalar_names.size() == number_of_scalars,
+                ExcMessage("The \"scalar names\" of the QMOM subsection has " +
+                           std::to_string(scalar_names.size()) +
+                           " names, but the \"number of scalars\" is " +
+                           std::to_string(number_of_scalars) +
+                           ". Give one name per scalar, or no name to use "
+                           "scalar_0, scalar_1, ..."));
+    // The names are used as field names in the output files
+    for (const std::string &scalar_name : scalar_names)
+      AssertThrow(
+        !scalar_name.empty() &&
+          std::ranges::all_of(scalar_name,
+                              [](const char character) {
+                                return std::isalnum(static_cast<unsigned char>(
+                                         character)) != 0 ||
+                                       character == '_';
+                              }),
+        ExcMessage("The scalar name \"" + scalar_name +
+                   "\" of the QMOM subsection is invalid. Scalar names may "
+                   "only contain letters, digits and underscores."));
+
+    splitting_scheme = string_to_enum<Parameters::QMOMSplittingScheme>(
+      prm.get("splitting scheme"));
+
+    enable_nucleation  = prm.get_bool("enable nucleation");
+    enable_coalescence = prm.get_bool("enable coalescence");
+    enable_growth      = prm.get_bool("enable growth");
+
+    phase_evolution.parse_parameters(prm);
+    pharma.parse_parameters(prm);
+    physical_constants.parse_parameters(prm);
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPharma::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMPharma defaults;
+  prm.enter_subsection("pharma");
+  {
+    prm.declare_entry("operating temperature",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.operating_temperature),
+                      Patterns::Double(0.),
+                      "Operating temperature [K]");
+
+    prm.declare_entry(
+      "flow rate ratio",
+      Patterns::Tools::Convert<double>::to_string(defaults.flow_rate_ratio),
+      Patterns::Double(0.),
+      "Ratio of the aqueous phase flow rate to the organic phase flow rate [-]");
+
+    prm.declare_entry(
+      "total flow rate",
+      Patterns::Tools::Convert<double>::to_string(defaults.total_flow_rate),
+      Patterns::Double(0.),
+      "Total flow rate of the aqueous and organic phases [m^3/s]");
+
+    prm.declare_entry(
+      "mixing time scale",
+      Patterns::Tools::Convert<double>::to_string(defaults.mixing_time_scale),
+      Patterns::Double(0.),
+      "Mixing time scale of the aqueous and organic phases [s]");
+
+    prm.declare_entry(
+      "initial concentration organic",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.initial_concentration_organic),
+      Patterns::Double(0.),
+      "Initial lipid concentration in the organic phase [mol/m^3]");
+
+    prm.declare_entry("ion concentration mixture",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.ion_concentration_mixture),
+                      Patterns::Double(0.),
+                      "Ion concentration in the mixture [mol/m^3]");
+
+    prm.declare_entry("density aqueous",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.density_aqueous),
+                      Patterns::Double(0.),
+                      "Density of the aqueous phase [kg/m^3]");
+
+    prm.declare_entry("molar mass aqueous",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.molar_mass_aqueous),
+                      Patterns::Double(0.),
+                      "Molar mass of the aqueous phase [kg/mol]");
+
+    prm.declare_entry(
+      "mole fraction solubility aqueous",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.mole_fraction_solubility_aqueous),
+      Patterns::Double(0., 1.),
+      "Mole fraction solubility of the lipid in the pure aqueous phase [-]");
+
+    prm.declare_entry("permittivity aqueous",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.permittivity_aqueous),
+                      Patterns::Double(0.),
+                      "Relative permittivity of the aqueous phase [-]");
+
+    prm.declare_entry("density organic",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.density_organic),
+                      Patterns::Double(0.),
+                      "Density of the organic phase [kg/m^3]");
+
+    prm.declare_entry("molar mass organic",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.molar_mass_organic),
+                      Patterns::Double(0.),
+                      "Molar mass of the organic phase [kg/mol]");
+
+    prm.declare_entry(
+      "mole fraction solubility organic",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.mole_fraction_solubility_organic),
+      Patterns::Double(0., 1.),
+      "Mole fraction solubility of the lipid in the pure organic phase [-]");
+
+    prm.declare_entry("permittivity organic",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.permittivity_organic),
+                      Patterns::Double(0.),
+                      "Relative permittivity of the organic phase [-]");
+
+    prm.declare_entry(
+      "viscosity mixture",
+      Patterns::Tools::Convert<double>::to_string(defaults.viscosity_mixture),
+      Patterns::Double(0.),
+      "Dynamic viscosity of the aqueous and organic mixture [Pa s]");
+
+    prm.declare_entry(
+      "shape factor",
+      Patterns::Tools::Convert<double>::to_string(defaults.shape_factor),
+      Patterns::Double(0.),
+      "Volume shape factor of the particles, pi/6 for spheres [-]");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPharma::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("pharma");
+  {
+    operating_temperature = prm.get_double("operating temperature");
+    flow_rate_ratio       = prm.get_double("flow rate ratio");
+    total_flow_rate       = prm.get_double("total flow rate");
+    mixing_time_scale     = prm.get_double("mixing time scale");
+    initial_concentration_organic =
+      prm.get_double("initial concentration organic");
+    ion_concentration_mixture = prm.get_double("ion concentration mixture");
+    density_aqueous           = prm.get_double("density aqueous");
+    molar_mass_aqueous        = prm.get_double("molar mass aqueous");
+    mole_fraction_solubility_aqueous =
+      prm.get_double("mole fraction solubility aqueous");
+    permittivity_aqueous = prm.get_double("permittivity aqueous");
+    density_organic      = prm.get_double("density organic");
+    molar_mass_organic   = prm.get_double("molar mass organic");
+    mole_fraction_solubility_organic =
+      prm.get_double("mole fraction solubility organic");
+    permittivity_organic = prm.get_double("permittivity organic");
+    viscosity_mixture    = prm.get_double("viscosity mixture");
+    shape_factor         = prm.get_double("shape factor");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPhysicalConstants::declare_parameters(
+  ParameterHandler &prm) const
+{
+  const QMOMPhysicalConstants defaults;
+  prm.enter_subsection("physical constants");
+  {
+    prm.declare_entry("boltzmann constant",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.boltzmann_constant),
+                      Patterns::Double(0.),
+                      "Boltzmann constant [J/K]");
+
+    prm.declare_entry("avogadro number",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.avogadro_number),
+                      Patterns::Double(0.),
+                      "Avogadro number [1/mol]");
+
+    prm.declare_entry("elementary charge",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.elementary_charge),
+                      Patterns::Double(0.),
+                      "Elementary charge [C]");
+
+    prm.declare_entry("permittivity vacuum",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.permittivity_vacuum),
+                      Patterns::Double(0.),
+                      "Vacuum permittivity [F/m]");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPhysicalConstants::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("physical constants");
+  {
+    boltzmann_constant  = prm.get_double("boltzmann constant");
+    avogadro_number     = prm.get_double("avogadro number");
+    elementary_charge   = prm.get_double("elementary charge");
+    permittivity_vacuum = prm.get_double("permittivity vacuum");
+  }
+  prm.leave_subsection();
+}
+
+unsigned int
+Parameters::get_number_of_distribution_parameters(
+  const QMOMDistributionType distribution_type)
+{
+  switch (distribution_type)
+    {
+      case QMOMDistributionType::none:
+        return 0;
+      case QMOMDistributionType::normal:
+      case QMOMDistributionType::lognormal:
+      case QMOMDistributionType::gamma:
+      case QMOMDistributionType::weibull:
+      case QMOMDistributionType::beta:
+        return 2;
+      case QMOMDistributionType::chi:
+      case QMOMDistributionType::chi_squared:
+        return 1;
+    }
+  AssertThrow(false, ExcInternalError());
+  return 0;
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::declare_parameters(ParameterHandler &prm)
+{
+  // The number of scalars is not known yet: a single expression is declared
+  // by default, which applies to all the scalars
+  Functions::ParsedFunction<dim>::declare_parameters(prm);
+
+  prm.enter_subsection("distribution");
+  {
+    declare_enum_entry(prm,
+                       "type",
+                       QMOMDistributionType::none,
+                       "Family of the particle size distribution from which "
+                       "the moments are computed.");
+    Functions::ParsedFunction<dim>::declare_parameters(prm);
+  }
+  prm.leave_subsection();
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::parse_parameters(ParameterHandler &prm)
+{
+  // The expressions are split as in FunctionParser, so that the number of
+  // components of each function matches the number of expressions
+  const auto count_expressions = [&prm]() {
+    return static_cast<unsigned int>(
+      Utilities::split_string_list(prm.get("Function expression"), ';').size());
+  };
+
+  scalars =
+    std::make_shared<Functions::ParsedFunction<dim>>(count_expressions());
+  scalars->parse_parameters(prm);
+
+  prm.enter_subsection("distribution");
+  {
+    distribution_type = string_to_enum<QMOMDistributionType>(prm.get("type"));
+    const unsigned int n_expressions = count_expressions();
+    if (distribution_type != QMOMDistributionType::none)
+      {
+        const unsigned int n_expected_expressions =
+          1 + get_number_of_distribution_parameters(distribution_type);
+        AssertThrow(n_expressions == n_expected_expressions,
+                    ExcMessage(
+                      "The \"" + prm.get("type") +
+                      "\" particle size distribution of the QMOM physics "
+                      "expects " +
+                      std::to_string(n_expected_expressions) +
+                      " expressions (the number density, in particles per "
+                      "m^3, followed by the parameters of the distribution), "
+                      "but " +
+                      std::to_string(n_expressions) + " are given."));
+      }
+    distribution =
+      std::make_shared<Functions::ParsedFunction<dim>>(n_expressions);
+    distribution->parse_parameters(prm);
+  }
+  prm.leave_subsection();
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::set_time(const double time) const
+{
+  scalars->set_time(time);
+  distribution->set_time(time);
+}
+
 template <int dim>
 void
 Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
@@ -1060,3 +1481,5 @@ template struct Parameters::TimeHarmonicMaxwell<2>;
 template struct Parameters::TimeHarmonicMaxwell<3>;
 template struct Parameters::Multiphysics<2>;
 template struct Parameters::Multiphysics<3>;
+template struct Parameters::QMOMFunctions<2>;
+template struct Parameters::QMOMFunctions<3>;
