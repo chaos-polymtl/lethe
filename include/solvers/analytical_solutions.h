@@ -1,6 +1,5 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2024, 2026 The Lethe
-// Authors SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR
-// LGPL-2.1-or-later
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2026 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_analytical_solutions_h
 #define lethe_analytical_solutions_h

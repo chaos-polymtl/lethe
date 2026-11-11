@@ -761,7 +761,7 @@ namespace Parameters
      * @param[in] time New time.
      */
     void
-    set_time(const double time) const;
+    set_time(const double time);
   };
 
   /**

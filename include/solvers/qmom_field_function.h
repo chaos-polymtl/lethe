@@ -128,7 +128,7 @@ private:
   compute_moments(const Point<dim> &p) const;
 
   /// Functions of the scalars and particle size distribution
-  const Parameters::QMOMFunctions<dim> functions;
+  Parameters::QMOMFunctions<dim> functions;
 
   /// Number of scalars
   const unsigned int n_scalars;
